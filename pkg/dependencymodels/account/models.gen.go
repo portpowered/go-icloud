@@ -55,6 +55,30 @@ func (e CookieSeparator) Valid() bool {
 	}
 }
 
+// Defines values for HTTPContentCoding.
+const (
+	Deflate  HTTPContentCoding = "deflate"
+	Gzip     HTTPContentCoding = "gzip"
+	Identity HTTPContentCoding = "identity"
+	XGzip    HTTPContentCoding = "x-gzip"
+)
+
+// Valid indicates whether the value is a known member of the HTTPContentCoding enum.
+func (e HTTPContentCoding) Valid() bool {
+	switch e {
+	case Deflate:
+		return true
+	case Gzip:
+		return true
+	case Identity:
+		return true
+	case XGzip:
+		return true
+	default:
+		return false
+	}
+}
+
 // AccountDevice Known device metadata fields are optional; future provider fields are preserved.
 type AccountDevice struct {
 	Imei *string `json:"imei,omitempty"`
@@ -211,6 +235,9 @@ type CookieQuotedValueFormat string
 
 // CookieSeparator Separator between native request cookie pairs.
 type CookieSeparator string
+
+// HTTPContentCoding Content codings negotiated by the reference browser headers; other coding names remain provider-extensible.
+type HTTPContentCoding string
 
 // NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
 type NullableJSONValue = json.RawMessage

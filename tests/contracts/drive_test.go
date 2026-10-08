@@ -342,8 +342,9 @@ func TestDriveContentContractsAllowSuccessfulStatuses(t *testing.T) {
 	operation := loadDriveDocument(t, driveContentSchemaPath).Paths.Value(driveContentPath).Get
 
 	for _, status := range []int{http.StatusNoContent, http.StatusPartialContent} {
-		response := replay.Response{Status: status, Headers: nil, Body: replay.Entity{Encoding: driveContractBinaryEncoding,
-			Value: json.RawMessage(`""`), Matchers: nil, ContentTypePattern: "", Parts: nil}}
+		response := replay.Response{BodyRepresentation: "", Status: status, Headers: nil,
+			Body: replay.Entity{Encoding: driveContractBinaryEncoding,
+				Value: json.RawMessage(`""`), Matchers: nil, ContentTypePattern: "", Parts: nil}}
 		validateDriveResponse(t, operation, &response)
 	}
 }

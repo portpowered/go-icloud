@@ -3,8 +3,6 @@ package webtransport
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"io"
 	"net/http"
 	"strings"
 
@@ -72,10 +70,7 @@ func (client *Client) readPrepared(request *http.Request, policy responsePolicy,
 	response.Request = request
 	cookies.update(request.URL, response)
 
-	body, readErr := io.ReadAll(response.Body)
-	closeErr := response.Body.Close()
-
-	err = errors.Join(readErr, closeErr)
+	body, err := readResponseContent(response)
 	if err != nil {
 		return nil, failure(Transport, err, response, body)
 	}

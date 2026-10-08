@@ -6,6 +6,10 @@ info:
 paths: {}
 components:
   schemas:
+    HTTPContentCoding:
+      type: string
+      description: Content codings negotiated by the reference browser headers; other coding names remain provider-extensible.
+      enum: [gzip, x-gzip, deflate, identity]
     UnknownJSONValue:
       description: Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
       anyOf:

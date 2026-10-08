@@ -38,6 +38,26 @@ capture: compressed transfer/framing bytes are not preserved. Interactive
 password/code JSON fields use explicit nonempty/six-digit match rules; original
 Content-Length is excluded only for such redacted bodies during replay.
 
+Synthetic compressed-wire controls explicitly set response `bodyRepresentation`
+to `wire`. Their base64 bytes enter the real content decoder in both languages.
+`decoded` or an omitted representation retains the recorder convention and
+prevents double decoding while preserving the original response headers. Replay
+rejects every other representation. The HTTP content corpus separately binds
+compressed bytes to the pinned requests/urllib3 decoded result or decoding error;
+these invented responses are not live iCloud captures.
+
+The 604 paired HTTP content controls cover complete gzip, zlib and raw DEFLATE,
+every byte prefix of a dynamic stream, fixed/stored blocks, optional gzip headers,
+concatenated members, incomplete trailers and corrupted checksums. Incremental
+DEFLATE uses pinned `github.com/dsnet/compress/flate v0.0.1`; the standard Go
+inflater loses some complete literals at truncated EOF. No padding bytes are
+invented. Go replay compares exact decoded entities and authentication results,
+or a transport failure with the recorded HTTP status and preserved native cause
+(GO-07, LIB-05). It does not reproduce Python exception message text. Python
+replay independently verifies the pinned requests/urllib3 result or full error
+against the same portable pairs (LIB-12). The corpus measures HTTP decoding
+compatibility; it does not establish live account access or full service coverage.
+
 Tokens, cookies, account identifiers, locations, filenames, and response data
 remain in the **private** recording. Passwords and entered codes are never
 stored. The recorder does not automatically sanitize arbitrary personal data.

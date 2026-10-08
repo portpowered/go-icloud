@@ -13,6 +13,8 @@ linters:
           list-mode: strict
           allow:
             - $gostd
+            # Incremental DEFLATE preserves Source output at truncated HTTP EOF.
+            - github.com/dsnet/compress/flate
             - github.com/portpowered/go-icloud
             # Account wire-contract verification uses this pinned schema validator.
             - github.com/getkin/kin-openapi
@@ -25,6 +27,10 @@ linters:
   exclusions:
     generated: strict
     rules:
+      # GO-13: the generated sibling owns protocol's package godoc.
+      - path: internal/protocol/http_content\.go
+        linters: [revive]
+        text: package-comments
       # GO-13: the generated sibling owns the package godoc; a second one fails godoclint.
       - path: internal/accountapi/photo\.go
         linters: [revive]

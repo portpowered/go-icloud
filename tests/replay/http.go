@@ -52,9 +52,12 @@ type Request struct {
 
 // Response records status, repeated headers and exact entity bytes.
 type Response struct {
-	Status  int    `json:"status"`
-	Headers []Pair `json:"headers"`
-	Body    Entity `json:"body"`
+	// BodyRepresentation distinguishes decoded recorder entities from compressed wire controls.
+	// Omitted values retain the recorder's decoded entity convention.
+	BodyRepresentation string `json:"bodyRepresentation,omitempty"`
+	Status             int    `json:"status"`
+	Headers            []Pair `json:"headers"`
+	Body               Entity `json:"body"`
 }
 
 // Exchange binds one request to its response or a named recorded transport failure.
@@ -139,11 +142,19 @@ func validateExchange(exchange Exchange) error {
 		return nil
 	}
 
-	if exchange.Response.Status < 100 || exchange.Response.Status > 599 {
+	return validateResponse(*exchange.Response)
+}
+
+func validateResponse(response Response) error {
+	if response.Status < 100 || response.Status > 599 {
 		return fmt.Errorf("%w: response status", ErrFixture)
 	}
 
-	_, err = decodeEntity(exchange.Response.Body)
+	if value := response.BodyRepresentation; value != "" && value != "decoded" && value != "wire" {
+		return fmt.Errorf("%w: response body representation", ErrFixture)
+	}
+
+	_, err := decodeEntity(response.Body)
 
 	return err
 }
@@ -475,7 +486,9 @@ func (transport *HTTPTransport) response(request *http.Request, wire Response) (
 		Status:     strconv.Itoa(wire.Status) + " " + http.StatusText(wire.Status),
 		StatusCode: wire.Status, Proto: "HTTP/1.1", ProtoMajor: 1, ProtoMinor: 1,
 		Header: header, Body: body, ContentLength: int64(len(data)), TransferEncoding: nil,
-		Close: false, Uncompressed: false, Trailer: nil, Request: request, TLS: nil,
+		// Source records response.content: entity bytes are already decoded even
+		// when the preserved provider headers still include Content-Encoding.
+		Close: false, Uncompressed: wire.BodyRepresentation != "wire", Trailer: nil, Request: request, TLS: nil,
 	}, nil
 }
 

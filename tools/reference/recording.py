@@ -281,13 +281,18 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         response = requests.Response()
         response.status_code = wire["status"]
         response.headers.update(wire["headers"])
-        response._content = base64.b64decode(wire["body"]["value"], validate=True)
+        representation = wire.get("bodyRepresentation", "decoded")
+        if representation not in {"decoded", "wire"}:
+            raise AssertionError("Unsupported response body representation")
+        data = base64.b64decode(wire["body"]["value"], validate=True)
+        if representation == "decoded":
+            response._content = data
         response.request = request
         response.url = request.url
         message = Message()
         for key, value in wire["headers"]:
             message[key] = value
-        raw_body = io.BytesIO(response.content)
+        raw_body = io.BytesIO(data)
         response.raw = HTTPResponse(
             body=raw_body,
             headers=HTTPHeaderDict(wire["headers"]),

@@ -83,6 +83,7 @@ const (
 	GetFamilyMemberPhotoMemberIdName                       = "memberId"
 	GetFamilyMemberPhotoMethod                             = "GET"
 	GetFamilyMemberPhotoPath                               = "/setup/web/family/getMemberPhoto"
+	HTTPContentEncodingName                                = "Content-Encoding"
 	HTTPContentTypeName                                    = "Content-Type"
 	ListAccountDevicesMethod                               = "GET"
 	ListAccountDevicesPath                                 = "/setup/web/device/getDevices"
