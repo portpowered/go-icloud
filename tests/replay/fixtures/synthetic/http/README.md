@@ -179,5 +179,31 @@ Cases cover successful account setup, authorize/init/complete provider refusal,
 paused MFA token login, and auth-shell discovery followed by SMS code delivery.
 All salts, secrets, passwords and challenge values are invented; these are
 implementation-derived protocol examples, not captured authentication evidence.
-Trusted-device bridge lifecycle and hardware security-key behavior remain open;
-the HTTP cases do not replace raw socket transcripts or prove those workflows.
+Hardware security-key interaction is deferred. Modern bridge proof verification
+and complete authenticated login remain open; the SRP HTTP cases alone do not
+prove those workflows.
+
+Combined bridge scenarios carry `bridge_network` with declared P-256 private
+scalars, socket connections/events and a shared HTTP/socket timeline. They run
+actual source key generation, signing, bootstrap, prompt setup and raw WebSocket
+framing. Only the curve-key entropy factory and TCP/TLS factories are injected.
+The variable ECDSA signature must verify against the exact declared public key
+and nonce; the portable bootstrap matcher independently checks canonical
+protobuf fields, field order, expiration and signature envelope. No signature
+bytes or generated connection URL are treated as unconstrained wildcards.
+
+The shared timeline binds connection/wrap/timeout, complete socket wire events,
+HTTP exchanges and close. Receive chunk sizes may vary while each entire event
+and the source client's internal buffer must be consumed. Rejected frames,
+routing, entropy and connection attempts remain failures even if caught. Both
+source cleanup and teardown close retained prompt connections inside the
+declared entropy scope; factories restore on success and failure.
+
+Twelve cases cover prompt setup, repeated prompt calls, step-0 statuses
+200/204/409, refusal, invalid-nonce retry with server time, mismatched session
+UUID, SMS fallback and legacy (`_W`) device-code success/rejection with trust
+and account setup. Modern prompt setup is included; modern SPAKE2 code
+verification is not yet included. Bridge state projects protocol fields,
+verified bootstrap metadata and whether a socket remains active, without
+Python object snapshots. TLS cryptography and live trusted-device interactions
+are not established by these synthetic transcripts.

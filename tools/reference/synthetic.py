@@ -222,7 +222,12 @@ def replay_synthetic(path):
         try:
             observations = {}
             try:
-                with synthetic_entropy(scenario):
+                from bridge_replay import bridge_network
+
+                with (
+                    synthetic_entropy(scenario),
+                    bridge_network(api, scenario, adapter),
+                ):
                     result = execute(api, scenario, observations)
             except AssertionError:
                 raise

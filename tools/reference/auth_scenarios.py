@@ -16,7 +16,7 @@ def auth_error_context(error):
 
 
 def auth_state(api):
-    return {
+    result = {
         "account": api.data,
         "params": dict(api.params),
         "session_data": dict(api.session.data),
@@ -44,6 +44,13 @@ def auth_state(api):
         "session_file_exists": Path(api.session.session_path).exists(),
         "cookie_file_exists": Path(api.session.cookiejar_path).exists(),
     }
+    if api._trusted_device_bridge_state is not None:
+        from bridge_replay import bridge_state
+
+        result["bridge"] = bridge_state(api._trusted_device_bridge_state)
+    if api.two_factor_delivery_notice is not None:
+        result["delivery_notice"] = api.two_factor_delivery_notice
+    return result
 
 
 def execute_auth(api, scenario, observations):
@@ -60,9 +67,15 @@ def execute_auth(api, scenario, observations):
         api.session._save_session_data()
     arguments = scenario["inputs"]
     try:
-        value = getattr(api, scenario["operation"])
-        if callable(value):
-            value = value(*arguments, **scenario.get("keyword_inputs", {}))
+        if scenario["operation"] == "flow":
+            value = []
+            for call in arguments:
+                method = getattr(api, call["operation"])
+                value.append(method(*call.get("inputs", []), **call.get("kwargs", {})))
+        else:
+            value = getattr(api, scenario["operation"])
+            if callable(value):
+                value = value(*arguments, **scenario.get("keyword_inputs", {}))
         return {
             "value": project(value),
             "auth_state": auth_state(api),

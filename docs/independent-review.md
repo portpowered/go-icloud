@@ -126,6 +126,30 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim combined trusted-device bridge audit
+
+The independent reviewer replayed twelve combined cases with 20 HTTP pairs and
+99 socket events. Actual source bootstrap/key generation/signing and raw framing
+execute with declared curve entropy and TCP/TLS factories; the signature is
+verified independently while other bootstrap fields match exactly. A shared
+timeline binds HTTP to socket setup, token/subscription/push and close behavior.
+Cases cover nonce retry, prompt setup/idempotence, provider step-0 statuses,
+refusal, session mismatch, SMS fallback and legacy device-code outcomes.
+
+The reviewer found that rejected extra key or connection attempts could be
+caught without failing the replay. Shared sticky validation now covers those
+factories and every socket boundary. The reviewer independently reran both
+original exploits and confirmed rejection with restored factories. Added
+controls also reject a caught frame mismatch followed by retry, invalid
+signatures, reordered traffic, trailing client-buffer bytes and unused scalar,
+connection or timeline declarations. The finding is **independently resolved**
+under LIB-05. Independent `make check` passes all 57 methods.
+
+Verdict: **limited interim pass**. Synthetic evidence does not establish live
+trusted-device interaction or TLS cryptography. Modern SPAKE2 verification,
+complete authenticated bridge login, Go interoperability and final SDK/release
+criteria remain open. Physical security-key interaction is deferred.
+
 ### Interim SRP sign-in audit
 
 The independent reviewer replayed eight SRP scenarios with 28 HTTP pairs and
