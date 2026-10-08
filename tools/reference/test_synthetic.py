@@ -15,7 +15,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 319)
+        self.assertGreaterEqual(len(fixtures), 355)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -39,6 +39,43 @@ class SyntheticTests(unittest.TestCase):
                     scenario["source"]["commit"] = "wrong"
                 else:
                     scenario["format"] = "unknown-format"
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_drive_transfer_and_failure_state_are_bound(self):
+        for change in ["position", "token", "context", "remaining", "node"]:
+            fixture = (
+                "drive-missing-child"
+                if change == "node"
+                else "drive-upload-binary-refused-1"
+            )
+            scenario = json.loads((FIXTURES / (fixture + ".json")).read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "position":
+                    scenario["error_drive_state"]["file_position"] = 0
+                elif change == "token":
+                    scenario["error_drive_state"]["params"]["token"] = "wrong"
+                elif change == "context":
+                    scenario["error_context"]["response"]["status"] = 200
+                elif change == "remaining":
+                    scenario["exchanges"].append(scenario["exchanges"][-1])
+                else:
+                    scenario["error_node_state"]["root"]["name"] = "wrong"
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_drive_refresh_and_transfer_results_are_bound(self):
+        for fixture in ["drive-root-force-refresh", "drive-upload-position"]:
+            scenario = json.loads((FIXTURES / (fixture + ".json")).read_text())
+            with self.subTest(fixture=fixture), TemporaryDirectory() as directory:
+                if fixture == "drive-upload-position":
+                    scenario["inputs"][1]["position"] += 1
+                else:
+                    scenario["exchanges"].pop()
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(scenario))
                 with self.assertRaises(AssertionError):

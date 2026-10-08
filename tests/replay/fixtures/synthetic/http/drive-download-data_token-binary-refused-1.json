@@ -62,14 +62,54 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "e30="
+          "value": "eyJkYXRhX3Rva2VuIjogeyJ1cmwiOiAiaHR0cHM6Ly9jb250ZW50LmV4YW1wbGUuaW52YWxpZC9zeW50aGV0aWMtZmlsZSJ9fQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://content.example.invalid",
+        "path": "/synthetic-file",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 503,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIERyaXZlIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
         }
       }
     }
   ],
   "error": {
-    "type": "KeyError",
-    "message": "\"'data_token' nor 'package_token'\""
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic Drive refusal\", \"errorCode\": 503}"
   },
   "error_arguments": [
     "synthetic-document"
@@ -83,7 +123,19 @@
   },
   "error_context": {
     "reason": null,
-    "code": null,
-    "response": null
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIERyaXZlIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
+      }
+    }
   }
 }

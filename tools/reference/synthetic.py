@@ -46,6 +46,7 @@ def execute(api, scenario, observations=None):
             state["origin"], state["document_origin"], api.session, params
         )
         arguments = scenario["inputs"]
+        file = None
         if scenario["operation"] == "move_nodes_to_node":
             arguments = [
                 [DriveNode(service, node) for node in arguments[0]],
@@ -55,17 +56,41 @@ def execute(api, scenario, observations=None):
             descriptor = arguments[1]
             file = io.BytesIO(base64.b64decode(descriptor["body"], validate=True))
             file.name = descriptor["name"]
+            file.seek(descriptor.get("position", 0))
             arguments = [arguments[0], file, *arguments[2:]]
-        result = getattr(service, scenario["operation"])(
-            *arguments, **scenario.get("keyword_inputs", {})
-        )
-        if scenario["operation"] == "get_file":
-            return {
-                "status": result.status_code,
-                "headers": list(map(list, result.headers.items())),
-                "body": base64.b64encode(result.content).decode("ascii"),
-            }
-        return result
+        try:
+            if scenario["operation"] == "node_flow":
+                from drive_scenarios import execute_nodes
+
+                return execute_nodes(service, scenario, observations)
+            result = getattr(service, scenario["operation"])(
+                *arguments, **scenario.get("keyword_inputs", {})
+            )
+            if scenario["operation"] == "get_file":
+                try:
+                    return {
+                        "status": result.status_code,
+                        "headers": list(map(list, result.headers.items())),
+                        "body": base64.b64encode(result.content).decode("ascii"),
+                    }
+                finally:
+                    result.close()
+            if scenario.get("observe_transfer"):
+                return {
+                    "value": result,
+                    "params": dict(service.params),
+                    "file_position": file.tell() if file is not None else None,
+                }
+            return result
+        finally:
+            if observations is not None:
+                observations["arguments"] = scenario["inputs"]
+                observations["drive_state"] = {
+                    "params": dict(service.params),
+                    "file_position": file.tell() if file is not None else None,
+                }
+            if file is not None:
+                file.close()
     if scenario["service"] == "account":
         service = AccountService(
             state["origin"], api.session, state.get("china_mainland", False), params
@@ -252,12 +277,24 @@ def replay_synthetic(path):
                     raise AssertionError(
                         "Synthetic auth error state mismatch"
                     ) from error
-                if scenario["service"] == "auth":
+                if scenario["service"] == "drive" and scenario.get(
+                    "error_drive_state"
+                ) != observations.get("drive_state"):
+                    raise AssertionError(
+                        "Synthetic drive error state mismatch"
+                    ) from error
+                if scenario["service"] == "drive" and scenario.get(
+                    "error_node_state"
+                ) != observations.get("node_state"):
+                    raise AssertionError(
+                        "Synthetic drive node state mismatch"
+                    ) from error
+                if scenario["service"] in {"auth", "drive"}:
                     from auth_scenarios import auth_error_context
 
                     if scenario.get("error_context") != auth_error_context(error):
                         raise AssertionError(
-                            "Synthetic auth error context mismatch"
+                            "Synthetic service error context mismatch"
                         ) from error
             else:
                 if (

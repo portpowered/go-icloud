@@ -6,7 +6,7 @@
     "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
   },
   "service": "drive",
-  "operation": "get_file",
+  "operation": "rename_items",
   "initial_state": {
     "origin": "https://drive.example.invalid",
     "document_origin": "https://documents.example.invalid",
@@ -19,14 +19,16 @@
     }
   },
   "inputs": [
-    "synthetic-document"
+    "FILE::synthetic::one",
+    "synthetic-etag",
+    "renamed.txt"
   ],
   "exchanges": [
     {
       "request": {
-        "method": "GET",
-        "origin": "https://documents.example.invalid",
-        "path": "/ws/com.apple.CloudDocs/download/by_id",
+        "method": "POST",
+        "origin": "https://drive.example.invalid",
+        "path": "/renameItems",
         "query": [
           [
             "clientId",
@@ -35,25 +37,29 @@
           [
             "dsid",
             "synthetic-account"
-          ],
-          [
-            "document_id",
-            "synthetic-document"
           ]
         ],
         "headers": [
           [
             "accept",
             "application/json"
+          ],
+          [
+            "content-length",
+            "99"
+          ],
+          [
+            "content-type",
+            "application/json"
           ]
         ],
         "body": {
           "encoding": "base64",
-          "value": ""
+          "value": "eyJpdGVtcyI6IFt7ImRyaXZld3NpZCI6ICJGSUxFOjpzeW50aGV0aWM6Om9uZSIsICJldGFnIjogInN5bnRoZXRpYy1ldGFnIiwgIm5hbWUiOiAicmVuYW1lZC50eHQifV19"
         }
       },
       "response": {
-        "status": 200,
+        "status": 503,
         "headers": [
           [
             "Content-Type",
@@ -62,17 +68,19 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "e30="
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIERyaXZlIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
         }
       }
     }
   ],
   "error": {
-    "type": "KeyError",
-    "message": "\"'data_token' nor 'package_token'\""
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic Drive refusal\", \"errorCode\": 503}"
   },
   "error_arguments": [
-    "synthetic-document"
+    "FILE::synthetic::one",
+    "synthetic-etag",
+    "renamed.txt"
   ],
   "error_drive_state": {
     "params": {
@@ -83,7 +91,19 @@
   },
   "error_context": {
     "reason": null,
-    "code": null,
-    "response": null
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIERyaXZlIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
+      }
+    }
   }
 }

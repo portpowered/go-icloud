@@ -1,0 +1,125 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "drive",
+  "operation": "create_folders",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [
+    "FOLDER::synthetic::root",
+    "Synthetic Folder"
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://drive.example.invalid",
+        "path": "/createFolders",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "content-length",
+            "175"
+          ]
+        ],
+        "body": {
+          "encoding": "json-pattern",
+          "value": {
+            "destinationDrivewsId": "FOLDER::synthetic::root",
+            "folders": [
+              {
+                "clientId": "FOLDER::UNKNOWN_ZONE::TempId-00000000-0000-4000-8000-000000000000",
+                "name": "Synthetic Folder"
+              }
+            ]
+          },
+          "matchers": [
+            {
+              "path": [
+                "folders",
+                0,
+                "clientId"
+              ],
+              "pattern": "FOLDER::UNKNOWN_ZONE::TempId-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 503,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIERyaXZlIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
+        }
+      }
+    }
+  ],
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic Drive refusal\", \"errorCode\": 503}"
+  },
+  "error_arguments": [
+    "FOLDER::synthetic::root",
+    "Synthetic Folder"
+  ],
+  "error_drive_state": {
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "file_position": null
+  },
+  "error_context": {
+    "reason": null,
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIERyaXZlIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
+      }
+    }
+  }
+}

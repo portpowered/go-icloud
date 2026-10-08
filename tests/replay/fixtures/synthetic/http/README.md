@@ -27,6 +27,23 @@ deletion request shapes; missing download tokens; account devices and family
 lists with zero, one, and many results; and storage projections. Other operations
 and error variants remain open in the migration checklist.
 
+Drive node scenarios additionally cover cached zero/one/three-child listings,
+forced and service-level refresh, shared-folder navigation, named lookup,
+provider missing-folder responses, trash navigation and node-backed writes.
+Downloads bind binary content and the empty-file shortcut's absence of traffic.
+Uploads bind multipart bytes, the caller's current file position, custom zones,
+timestamps and session token parameters. Provider refusals cover each transfer
+stage and the selected single-request endpoints; no later exchange may occur
+after a refusal. `observe_transfer` projects the return, parameters and final
+file position. Errors bind `error_arguments`, `error_drive_state`, optional
+`error_node_state`, and the exposed HTTP `error_context`.
+
+These examples preserve a pinned-reference date defect: a negative offset with
+nonzero minutes is decoded incorrectly: `2024-01-02T03:04:05-07:30` yields
+`09:34:05` rather than the correct UTC `10:34:05`.
+The Go client should parse RFC 3339 offsets correctly and document this deliberate
+departure rather than reproduce the defect. No fixture contains live file data.
+
 Find My scenarios cover service initialization, zero/one/many devices, sound,
 messaging, lost mode, erase-token exchange and erase request shapes, unavailable
 capabilities, and missing erase tokens. Its monitor must stop before session

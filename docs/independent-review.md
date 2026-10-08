@@ -314,6 +314,23 @@ independently verified whitespace, boolean, and empty reasons fail and valid
 exclusions remain recorded. Disposition: **scope finding resolved**. This is a
 disclosed denominator correction, not endpoint completeness or final acceptance.
 
+### Interim Drive endpoint audit
+
+The independent reviewer passed all 36 Drive additions and 58 paired exchanges,
+including provider refusal at upload/download stages, node-backed endpoints,
+cached and refreshed folder navigation, empty files and transfer state.
+Its probes rejected changed or missing arguments, file positions, parameters,
+node state and exposed HTTP errors. It independently verified deep-copy
+projections remain snapshots after later node-data mutation, and ran `make check`
+with all 62 methods passing. Drive now contributes 59 scenarios and 89 pairs
+to the 355-scenario, 767-pair HTTP suite.
+
+The reviewer reproduced the negative non-hour date-offset defect and checked
+its disclosed deliberate Go correction. Historical checklist count wording was
+corrected and independently verified. Verdict: **limited interim pass** with
+no remaining blocker for this extension. Complete selected-endpoint/schema
+gates, Go interoperability and final migration acceptance remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.

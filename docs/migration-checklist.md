@@ -68,7 +68,7 @@ duplicate exclusions fail. Authentication's keyring lookup and shared helpers
 used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
-The portable HTTP suite now has 319 scenarios and 709 paired exchanges after
+The portable HTTP suite now has 355 scenarios and 767 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
 entropy and exact proof matching; they also exercise refusal, trust-token reuse,
@@ -81,9 +81,17 @@ or account setup. Physical security-key interaction is deferred; live socket
 evidence, Go interoperability and final SDK/release gates remain open.
 Authentication socket replay adds 53 synthetic ordered duplex scenarios
 (283 events), separate from combined bridge transcripts. Combined replay now
-enters 547/905 functions and executes 3,079/5,385 body statements (57.18%) and
-917/2,076 branch exits. These measurements
+enters 569/905 functions and executes 3,145/5,385 body statements (58.40%) and
+949/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
+Drive now has 59 scenarios and 89 pairs, including navigation/cache/refresh,
+node-backed endpoints, empty downloads, offset uploads and provider refusal at
+each transfer stage. Errors bind file position, token parameters, node state and
+exposed response context. Its pinned date parser mishandles negative offsets
+with nonzero minutes; the Go implementation must correct RFC 3339 conversion.
+These cases are synthetic reference behavior, not observed Apple writes.
+The preceding complete-login milestone entered 547/905 functions and covered
+3,079/5,385 statements (57.18%) and 917/2,076 branch exits.
 The preceding combined-bootstrap milestone entered 506/905 functions and
 covered 2,842/5,385 statements (52.78%) and 851/2,076 branch exits.
 The preceding SRP milestone entered 488/905 functions and covered
@@ -131,7 +139,7 @@ and 95 exchanges; this receipt is not the functional coverage denominator.
 
 The first portable synthetic suite adds 23 scenarios and 23 paired exchanges
 for Drive and account, with service constructors and semantic error checks.
-Combined replay currently enters 176/915 functions and executes 804/5,436
+At that initial milestone, combined replay entered 176/915 functions and executed 804/5,436
 function-body statements (14.79%). The report also gives captured and synthetic
 coverage separately; overlapping statements are counted once in combined
 coverage. This remains an early baseline, far from functional completeness.
@@ -143,7 +151,7 @@ Offline checks include 24 test methods and assert monitor cleanup and error
 meaning. The independent interim review covers the earlier committed 23 cases;
 later additions still need review.
 
-The current portable suite has 65 scenarios and 90 exchanges after adding Drive
+The subsequent portable suite reached 65 scenarios and 90 exchanges after adding Drive
 transfers and Photos initialization/synchronization. Combined replay enters
 221/915 functions and executes 1,005/5,436 body statements (18.49%) and 267/2,094
 branch exits. There are 29 offline test methods, including UUID and multipart

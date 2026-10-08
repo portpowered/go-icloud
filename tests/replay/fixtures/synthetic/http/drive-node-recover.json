@@ -1,0 +1,210 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "drive",
+  "operation": "node_flow",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [
+    {
+      "operation": "get",
+      "inputs": [
+        "Synthetic 0.txt"
+      ]
+    },
+    {
+      "operation": "recover",
+      "inputs": []
+    }
+  ],
+  "keyword_inputs": {},
+  "result": {
+    "values": [
+      {
+        "data": {
+          "drivewsid": "FILE::synthetic::0",
+          "docwsid": "synthetic-file-0",
+          "name": "Synthetic 0",
+          "extension": "txt",
+          "type": "FILE",
+          "size": 18,
+          "etag": "synthetic-etag-0",
+          "zone": "com.apple.CloudDocs",
+          "restorePath": "/synthetic/restore"
+        },
+        "name": "Synthetic 0.txt",
+        "type": "file",
+        "size": 18,
+        "date_changed": null,
+        "date_modified": null,
+        "date_last_open": null
+      },
+      {
+        "items": [
+          {
+            "drivewsid": "FILE::synthetic::0",
+            "status": "OK"
+          }
+        ]
+      }
+    ],
+    "node": {
+      "data": {
+        "drivewsid": "FILE::synthetic::0",
+        "docwsid": "synthetic-file-0",
+        "name": "Synthetic 0",
+        "extension": "txt",
+        "type": "FILE",
+        "size": 18,
+        "etag": "synthetic-etag-0",
+        "zone": "com.apple.CloudDocs",
+        "restorePath": "/synthetic/restore"
+      },
+      "name": "Synthetic 0.txt",
+      "type": "file",
+      "size": 18,
+      "date_changed": null,
+      "date_modified": null,
+      "date_last_open": null
+    },
+    "root": {
+      "data": {
+        "drivewsid": "FOLDER::com.apple.CloudDocs::root",
+        "docwsid": "synthetic-root",
+        "etag": "synthetic-etag",
+        "type": "FOLDER",
+        "zone": "com.apple.CloudDocs",
+        "items": [
+          {
+            "drivewsid": "FILE::synthetic::0",
+            "docwsid": "synthetic-file-0",
+            "name": "Synthetic 0",
+            "extension": "txt",
+            "type": "FILE",
+            "size": 18,
+            "etag": "synthetic-etag-0",
+            "zone": "com.apple.CloudDocs",
+            "restorePath": "/synthetic/restore"
+          }
+        ]
+      },
+      "name": "root",
+      "type": "folder",
+      "size": null,
+      "date_changed": null,
+      "date_modified": null,
+      "date_last_open": null
+    }
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://drive.example.invalid",
+        "path": "/retrieveItemDetailsInFolders",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "74"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "W3siZHJpdmV3c2lkIjogIkZPTERFUjo6Y29tLmFwcGxlLkNsb3VkRG9jczo6cm9vdCIsICJwYXJ0aWFsRGF0YSI6IGZhbHNlfV0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "W3siZHJpdmV3c2lkIjogIkZPTERFUjo6Y29tLmFwcGxlLkNsb3VkRG9jczo6cm9vdCIsICJkb2N3c2lkIjogInN5bnRoZXRpYy1yb290IiwgImV0YWciOiAic3ludGhldGljLWV0YWciLCAidHlwZSI6ICJGT0xERVIiLCAiem9uZSI6ICJjb20uYXBwbGUuQ2xvdWREb2NzIiwgIml0ZW1zIjogW3siZHJpdmV3c2lkIjogIkZJTEU6OnN5bnRoZXRpYzo6MCIsICJkb2N3c2lkIjogInN5bnRoZXRpYy1maWxlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgMCIsICJleHRlbnNpb24iOiAidHh0IiwgInR5cGUiOiAiRklMRSIsICJzaXplIjogMTgsICJldGFnIjogInN5bnRoZXRpYy1ldGFnLTAiLCAiem9uZSI6ICJjb20uYXBwbGUuQ2xvdWREb2NzIiwgInJlc3RvcmVQYXRoIjogIi9zeW50aGV0aWMvcmVzdG9yZSJ9XX1d"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://drive.example.invalid",
+        "path": "/putBackItemsFromTrash",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "76"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJpdGVtcyI6IFt7ImRyaXZld3NpZCI6ICJGSUxFOjpzeW50aGV0aWM6OjAiLCAiZXRhZyI6ICJzeW50aGV0aWMtZXRhZy0wIn1dfQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJpdGVtcyI6IFt7ImRyaXZld3NpZCI6ICJGSUxFOjpzeW50aGV0aWM6OjAiLCAic3RhdHVzIjogIk9LIn1dfQ=="
+        }
+      }
+    }
+  ]
+}
