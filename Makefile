@@ -7,10 +7,10 @@ PYTHON ?= .venv/bin/python
 endif
 
 .DEFAULT_GOAL := check
-.PHONY: check lint build test reference-coverage endpoint-coverage generate-api
+.PHONY: check lint build test reference-coverage endpoint-coverage generate-api sdk-coverage
 
-# Reference capture bootstrap; no public Go iCloud client is implemented yet.
-check: lint build test endpoint-coverage
+# Selected iCloud SDK migration and reference-capture verification.
+check: lint build test endpoint-coverage sdk-coverage
 
 lint:
 	$(GO) vet ./...
@@ -38,3 +38,14 @@ endpoint-coverage:
 generate-api:
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/account/config.yaml api/external/account-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/accountapi/config.yaml api/external/account.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/icloud/config.yaml api/client-models.openapi.yaml
+	$(GO) run ./tools/apiconstants
+
+# LIB-07: measure replay, unit and combined separately, including internal transport.
+sdk-coverage:
+	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-replay.out' ./tests/replay
+	$(GO) run ./tools/coverage -profile coverage-replay.out -min 80
+	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-unit.out' ./pkg/icloud ./internal/accountapi
+	$(GO) run ./tools/coverage -profile coverage-unit.out -min 0
+	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-combined.out' ./tests/replay ./pkg/icloud ./internal/accountapi
+	$(GO) run ./tools/coverage -profile coverage-combined.out -min 80

@@ -126,4 +126,5 @@ components:
         errorReason: {type: string}
         error: {$ref: '#/components/schemas/NullableJSONValue'}
         errorCode: {$ref: '#/components/schemas/NullableJSONValue'}
+        serverErrorCode: {$ref: '#/components/schemas/NullableJSONValue'}
       additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}

@@ -39,6 +39,23 @@ func TestGeneratedFile(t *testing.T) {
 	}
 }
 
+func TestInternalTransportCoverageIsIncluded(t *testing.T) {
+	t.Parallel()
+
+	for file, expected := range map[string]bool{
+		"internal/transport/client.go": true,
+		"pkg/client.go":                true,
+		"internal/testing/helper.go":   false,
+		"pkg/testing/helper.go":        false,
+		"tools/generator/main.go":      false,
+	} {
+		_, included, err := coverageSource("example.com/test/"+file+":1.1,1.2", "example.com/test")
+		if err != nil || included != expected {
+			t.Fatalf("library coverage ownership changed for %s", file)
+		}
+	}
+}
+
 func TestReportUsesStatementWeightsAndExcludesGeneratedFiles(t *testing.T) {
 	t.Parallel()
 

@@ -45,10 +45,13 @@ type AccountError struct {
 	Error nullable.Nullable[NullableJSONValue] `json:"error,omitempty"`
 
 	// ErrorCode An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
-	ErrorCode            nullable.Nullable[NullableJSONValue] `json:"errorCode,omitempty"`
-	ErrorMessage         *string                              `json:"errorMessage,omitempty"`
-	ErrorReason          *string                              `json:"errorReason,omitempty"`
-	Reason               *string                              `json:"reason,omitempty"`
+	ErrorCode    nullable.Nullable[NullableJSONValue] `json:"errorCode,omitempty"`
+	ErrorMessage *string                              `json:"errorMessage,omitempty"`
+	ErrorReason  *string                              `json:"errorReason,omitempty"`
+	Reason       *string                              `json:"reason,omitempty"`
+
+	// ServerErrorCode An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	ServerErrorCode      nullable.Nullable[NullableJSONValue] `json:"serverErrorCode,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue          `json:"-"`
 }
 
@@ -557,6 +560,14 @@ func (a *AccountError) UnmarshalJSON(b []byte) error {
 		delete(object, "reason")
 	}
 
+	if raw, found := object["serverErrorCode"]; found {
+		err = json.Unmarshal(raw, &a.ServerErrorCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'serverErrorCode': %w", err)
+		}
+		delete(object, "serverErrorCode")
+	}
+
 	if len(object) != 0 {
 		a.AdditionalProperties = make(map[string]UnknownJSONValue)
 		for fieldName, fieldBuf := range object {
@@ -608,6 +619,13 @@ func (a AccountError) MarshalJSON() ([]byte, error) {
 		object["reason"], err = json.Marshal(a.Reason)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'reason': %w", err)
+		}
+	}
+
+	if a.ServerErrorCode != nil {
+		object["serverErrorCode"], err = json.Marshal(a.ServerErrorCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'serverErrorCode': %w", err)
 		}
 	}
 

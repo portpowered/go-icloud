@@ -1814,6 +1814,9 @@ func ParseGetAccountPlanSummaryResponse(rsp *http.Response) (*GetAccountPlanSumm
 		}
 		response.JSONDefault = &dest
 
+	case true:
+		// Content-type (text/json) unsupported
+
 	}
 
 	return response, nil
@@ -1846,6 +1849,9 @@ func ParseListAccountDevicesResponse(rsp *http.Response) (*ListAccountDevicesRes
 			return nil, err
 		}
 		response.JSONDefault = &dest
+
+	case true:
+		// Content-type (text/json) unsupported
 
 	}
 
@@ -1880,6 +1886,9 @@ func ParseListAccountFamilyResponse(rsp *http.Response) (*ListAccountFamilyRespo
 		}
 		response.JSONDefault = &dest
 
+	case true:
+		// Content-type (text/json) unsupported
+
 	}
 
 	return response, nil
@@ -1905,6 +1914,9 @@ func ParseGetFamilyMemberPhotoResponse(rsp *http.Response) (*GetFamilyMemberPhot
 			return nil, err
 		}
 		response.JSONDefault = &dest
+
+	case true:
+		// Content-type (text/json) unsupported
 
 	}
 
@@ -1938,6 +1950,9 @@ func ParseGetAccountStorageResponse(rsp *http.Response) (*GetAccountStorageRespo
 			return nil, err
 		}
 		response.JSONDefault = &dest
+
+	case true:
+		// Content-type (text/json) unsupported
 
 	}
 

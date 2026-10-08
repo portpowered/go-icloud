@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: iCloud client models
+  version: 0.1.0
+  description: Caller-owned authentication context and public account device results, independent of provider response envelopes.
+paths: {}
+components:
+  schemas:
+    UnknownJSONValue:
+      description: Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+      x-go-type: json.RawMessage
+    AccountDevice:
+      type: object
+      description: Known device metadata fields are optional; future provider fields are preserved.
+      properties:
+        name: {type: string}
+        modelDisplayName: {type: string}
+        model: {type: string}
+        osVersion: {type: string}
+        udid: {type: string}
+        serialNumber: {type: string}
+        imei: {type: string}
+        latestBackup: {type: string, description: Provider backup timestamp text; no timestamp format is inferred.}
+        modelLargePhotoURL1x: {type: string}
+        modelLargePhotoURL2x: {type: string}
+        modelSmallPhotoURL1x: {type: string}
+        modelSmallPhotoURL2x: {type: string}
+        paymentMethods: {type: array, items: {type: string}, description: Associated payment-method identifiers.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountPaymentMethod:
+      type: object
+      properties:
+        balanceStatus: {type: string}
+        id: {type: string}
+        isCarKey: {type: boolean}
+        lastFourDigits: {type: string}
+        suspensionReason: {type: string}
+        type: {type: string}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    Header:
+      type: object
+      required: [name, value]
+      description: One HTTP response or caller-owned authentication header value; repeated headers remain separate entries.
+      properties:
+        name: {type: string, description: Header name.}
+        value: {type: string, description: Header value; authentication values may contain secrets.}
+    AuthContext:
+      type: object
+      required: [accountID, clientID, accountServiceURL, headers]
+      description: Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+      properties:
+        accountID: {type: string, minLength: 1, x-go-name: AccountID, description: Authenticated account identifier returned by login.}
+        clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
+        accountServiceURL: {type: string, format: uri, x-go-name: AccountServiceURL, description: HTTPS account origin returned by authenticated service discovery.}
+        clientBuildNumber: {type: string, description: Optional build parameter from the authentication context; omission remains omission.}
+        clientMasteringNumber: {type: string, description: Optional mastering parameter from the authentication context; omission remains omission.}
+        headers: {type: array, items: {$ref: '#/components/schemas/Header'}, description: Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.}
+    ResponseMetadata:
+      type: object
+      required: [statusCode, headers]
+      description: Response status and headers, including Set-Cookie values for caller-owned session updates.
+      properties:
+        statusCode: {type: integer, minimum: 100, maximum: 599, description: Provider HTTP response status.}
+        headers: {type: array, items: {$ref: '#/components/schemas/Header'}, description: Header entries sorted by name; repeated values retain order within each name.}
+    AccountMetadata:
+      type: object
+      description: Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    GetAccountDevicesRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, accountServiceURL: 'https://account.example.invalid', headers: []}
+    GetAccountDevicesResult:
+      type: object
+      required: [devices, paymentMethods, additionalMetadata, metadata]
+      description: Fresh account devices and payment-method details. Empty devices are successful; no shared cache is used.
+      properties:
+        devices: {type: array, items: {$ref: '#/components/schemas/AccountDevice'}}
+        paymentMethods: {type: array, items: {$ref: '#/components/schemas/AccountPaymentMethod'}}
+        additionalMetadata: {$ref: '#/components/schemas/AccountMetadata'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example:
+        devices: [{name: synthetic-device, modelDisplayName: Synthetic Model}]
+        paymentMethods: []
+        additionalMetadata: {}
+        metadata: {statusCode: 200, headers: []}
+    ErrorKind:
+      type: string
+      description: Inspectable client failure class; errors preserve their cause separately from their safe display message.
+      enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response]

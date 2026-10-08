@@ -27,6 +27,10 @@ linters:
       - path: internal/accountapi/photo\.go
         linters: [revive]
         text: package-comments
+      # GO-13: models.gen.go owns this package godoc; only the named handwritten file is exempt.
+      - path: pkg/icloud/account_projection\.go
+        linters: [revive]
+        text: package-comments
 
 formatters:
   enable:

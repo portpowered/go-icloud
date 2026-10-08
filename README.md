@@ -44,6 +44,45 @@ Live login, saved-session reuse, account/device reads, Drive listing, and Photos
 listing/pagination have been exercised. The observed Reminders account returned
 `ZONE_NOT_FOUND` for the reference's requested zone; this is a recorded failure,
 not successful reminder-list coverage.
-The Go client has not been implemented or released yet. See
+The first Go SDK operation is implemented: account device reads. The other
+selected operations and native Go authentication are still being built; the SDK
+has not been released. See
 [capture development notes](docs/reference-capture.md) for evidence status,
 reference revisions, recording limitations, and verification commands.
+
+## Go account devices
+
+Use `github.com/portpowered/go-icloud/pkg/icloud`. Authentication context belongs
+to each request. For now, supply the account origin, account/client identifiers
+and cookie/web headers from your caller-owned authenticated session. The SDK
+does not import the reference CLI's private credential files automatically.
+
+```go
+client, err := icloud.New() // optional icloud.WithHTTPTransport for offline replay
+if err != nil {
+    return err
+}
+result, err := client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{
+    Auth: auth, // icloud.AuthContext from the caller's authenticated session
+})
+if err != nil {
+    return err
+}
+for _, device := range result.Devices {
+    if device.Name != nil {
+        fmt.Println(*device.Name)
+    }
+}
+```
+
+Each call fetches fresh devices. Empty results are successful. Device/payment
+metadata and unknown JSON values are retained. Response headers, including
+Set-Cookie, are returned for caller-owned session updates. A shared client stores
+no credentials or cookie jar and supports concurrent requests for separate
+accounts. Set deadlines on `ctx`; automatic redirects are disabled.
+
+Use `errors.As` with `*icloud.ClientError` to inspect `Kind`, `StatusCode`,
+`ResponseBody` and `ResponseHeaders`; `errors.Is` preserves original causes.
+Display messages omit provider content and credentials. Raw response details may
+contain private data. See [account contracts](docs/account-wire-contracts.md)
+for replay scope and remaining work.

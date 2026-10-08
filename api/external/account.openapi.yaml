@@ -147,6 +147,10 @@ paths:
               example: {}
         default: {$ref: '#/components/responses/AccountFailure'}
 components:
+  headers:
+    Content-Type:
+      description: HTTP media type reported by an account response.
+      schema: {type: string}
   parameters:
     ClientID:
       name: clientId
@@ -213,6 +217,8 @@ components:
         application/json:
           schema: {$ref: '#/components/schemas/AccountError'}
           example: {reason: synthetic failure}
+        text/json:
+          schema: {$ref: '#/components/schemas/AccountError'}
   schemas:
     UnknownJSONValue:
       $ref: './account-models.openapi.yaml#/components/schemas/UnknownJSONValue'
