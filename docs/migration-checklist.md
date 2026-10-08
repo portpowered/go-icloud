@@ -117,6 +117,11 @@ each transfer stage. Errors bind file position, token parameters, node state and
 exposed response context. Its pinned date parser mishandles negative offsets
 with nonzero minutes; the Go implementation must correct RFC 3339 conversion.
 These cases are synthetic reference behavior, not observed Apple writes.
+The [Drive wire contracts](drive-wire-contracts.md) now bind all 89 exchanges to
+13 operation contracts, with generated canonical models and internal clients.
+Contract validation, drift checks and negative controls pass. Drive client/SDK
+semantic replay and the full source/schema runtime gate remain open; these
+contract checks do not increase the SDK coverage numerator.
 Find My has 30 scenarios and 55 pairs after adding explicit refresh, family
 readiness/progress/retry bounds and provider refusal at command/token stages.
 Declared waits are consumed offline; received device/user/server state and

@@ -493,10 +493,28 @@ consumer compilation. It reproduced 81.6% replay, 82.5% unit and 92.2% combined
 handwritten SDK/internal transport coverage. Regional routing stays per request;
 nullable family fields and opaque JSON retain their contract-defined values.
 
-No actionable scoped findings remain. Verdict: **limited working-tree pass**
-for the five account reads. Exact-SHA CI approval is still required before merge.
+No actionable scoped findings remain. Verdict: **limited milestone pass**
+for the five account reads. Exact-SHA review approved
+`076aced2d6469ba871a38fedc07cd9b73f26ef3f` after
+[CI 37787206097](https://github.com/portpowered/go-icloud/actions/runs/37787206097)
+passed. PR #4 merged in `bb7eaf9baccfbc3511a2f3ea268accee062e0496`; main passed
+[CI 37787956138](https://github.com/portpowered/go-icloud/actions/runs/37787956138).
 Native authentication, other selected services and full migration acceptance
 remain open.
+
+### Interim Drive wire-contract audit
+
+The reviewer independently passed 59 Drive scenarios/89 pairs across 13
+operations, three generation drift checks, unknown-value presence and timestamp
+controls. It found that the temporary folder identifier accepted arbitrary UUID
+versions/variants. The schema now requires the reference's lowercase UUIDv4
+with RFC 4122 variant; separate negative controls reject wrong versions, variants
+and casing. The reviewer verified the fix (SCHEMA-15) and the exact-route/method
+issuer checks for provider-issued content URLs.
+
+Verdict: **limited working-tree pass**. Exact-SHA approval after CI remains
+required. Drive SDK semantic replay, complete runtime/source gates and the full
+migration acceptance remain open.
 
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each

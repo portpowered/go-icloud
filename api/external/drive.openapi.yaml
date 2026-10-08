@@ -1,0 +1,437 @@
+openapi: 3.0.3
+info:
+  title: iCloud Drive wire API
+  version: 0.1.0
+  description: Drive and document-service operations. Origins are discovered from authenticated account state and supplied by the caller.
+paths:
+  /retrieveItemDetailsInFolders:
+    post:
+      operationId: DriveRetrieveNodes
+      summary: Read Drive node details
+      description: Requested node records.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DriveNodeQueries'}
+      responses:
+        '200':
+          description: Requested node records.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveNodes'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /retrieveAppLibraries:
+    get:
+      operationId: DriveListAppLibraries
+      summary: List Drive application libraries
+      description: Application nodes; an empty list succeeds.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      responses:
+        '200':
+          description: Application nodes; an empty list succeeds.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveAppLibraries'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /createFolders:
+    post:
+      operationId: DriveCreateFolders
+      summary: Create folders
+      description: Provider folder creation results.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      requestBody:
+        required: true
+        content:
+          plain/text:
+            schema: {$ref: '#/components/schemas/DriveCreateFolders'}
+      responses:
+        '200':
+          description: Provider folder creation results.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveCreatedFolders'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /deleteItems:
+    post:
+      operationId: DriveDeleteItems
+      summary: Delete selected items
+      description: Provider item results; permanent trash deletion omits clientId.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DriveItemChanges'}
+      responses:
+        '200':
+          description: Provider item results; permanent trash deletion omits clientId.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveChangedItems'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /renameItems:
+    post:
+      operationId: DriveRenameItems
+      summary: Rename selected items
+      description: Provider item results.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DriveRenameItems'}
+      responses:
+        '200':
+          description: Provider item results.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveChangedItems'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /moveItems:
+    post:
+      operationId: DriveMoveItems
+      summary: Move selected items
+      description: Provider item results, including an empty list.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DriveMoveItems'}
+      responses:
+        '200':
+          description: Provider item results, including an empty list.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveChangedItems'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /moveItemsToTrash:
+    post:
+      operationId: DriveTrashItems
+      summary: Move selected items to trash
+      description: Provider item results.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DriveTrashItems'}
+      responses:
+        '200':
+          description: Provider item results.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveChangedItems'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /putBackItemsFromTrash:
+    post:
+      operationId: DriveRecoverItems
+      summary: Restore selected trash items
+      description: Provider item results.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DriveRecoverItems'}
+      responses:
+        '200':
+          description: Provider item results.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveChangedItems'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /ws/{zone}/download/by_id:
+    get:
+      operationId: DriveGetDownloadTokens
+      summary: Locate downloadable file content
+      description: Data or package token; missing token is an operation-level error.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+        - name: zone
+          in: path
+          required: true
+          description: Document zone from node metadata; com.apple.CloudDocs is the usual private zone.
+          schema: {type: string, minLength: 1}
+        - name: document_id
+          in: query
+          required: true
+          description: Document identifier from the selected node.
+          schema: {type: string, minLength: 1}
+      responses:
+        '200':
+          description: Data or package token; missing token is an operation-level error.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveDownloadTokens'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /ws/{zone}/upload/web:
+    post:
+      operationId: DriveGetUploadDestination
+      summary: Prepare a document upload
+      description: Document identifiers and transfer URLs.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+        - name: zone
+          in: path
+          required: true
+          description: Document zone from node metadata; com.apple.CloudDocs is the usual private zone.
+          schema: {type: string, minLength: 1}
+        - name: token
+          in: query
+          required: true
+          description: Upload authorization extracted from the caller-owned validation cookie.
+          schema: {type: string, minLength: 1}
+      requestBody:
+        required: true
+        content:
+          plain/text:
+            schema: {$ref: '#/components/schemas/DriveUploadRequest'}
+      responses:
+        '200':
+          description: Document identifiers and transfer URLs.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveUploadDestinations'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+  /ws/{zone}/update/documents:
+    post:
+      operationId: DriveUpdateDocument
+      summary: Register uploaded document content
+      description: Provider registration result.
+      parameters:
+        - {$ref: '#/components/parameters/DriveClientID'}
+        - {$ref: '#/components/parameters/DriveDSID'}
+        - {$ref: '#/components/parameters/DriveBuildNumber'}
+        - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveAccept'}
+        - {$ref: '#/components/parameters/DriveCookie'}
+        - {$ref: '#/components/parameters/DriveOrigin'}
+        - {$ref: '#/components/parameters/DriveReferer'}
+        - {$ref: '#/components/parameters/DriveUserAgent'}
+        - {$ref: '#/components/parameters/DriveAcceptEncoding'}
+        - {$ref: '#/components/parameters/DriveConnection'}
+        - name: zone
+          in: path
+          required: true
+          description: Document zone from node metadata; com.apple.CloudDocs is the usual private zone.
+          schema: {type: string, minLength: 1}
+        - name: token
+          in: query
+          required: false
+          description: Upload token retained in the reference request parameters after upload setup.
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          plain/text:
+            schema: {$ref: '#/components/schemas/DriveUpdateDocument'}
+      responses:
+        '200':
+          description: Provider registration result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveUpdatedDocuments'}
+        default: {$ref: '#/components/responses/DriveFailure'}
+components:
+  parameters:
+    DriveClientID:
+      name: clientId
+      in: query
+      required: true
+      description: Authenticated client identifier.
+      schema: {type: string}
+    DriveDSID:
+      name: dsid
+      in: query
+      required: true
+      description: Authenticated account identifier.
+      schema: {type: string}
+    DriveBuildNumber:
+      name: clientBuildNumber
+      in: query
+      required: false
+      description: Optional authenticated build parameter.
+      schema: {type: string}
+    DriveMasteringNumber:
+      name: clientMasteringNumber
+      in: query
+      required: false
+      description: Optional authenticated mastering parameter.
+      schema: {type: string}
+    DriveAccept:
+      name: Accept
+      in: header
+      required: false
+      description: Caller content negotiation.
+      schema: {type: string}
+    DriveCookie:
+      name: Cookie
+      in: header
+      required: false
+      description: Caller-owned session cookies; no shared cookie jar.
+      schema: {type: string}
+    DriveOrigin:
+      name: Origin
+      in: header
+      required: false
+      description: Caller session origin.
+      schema: {type: string}
+    DriveReferer:
+      name: Referer
+      in: header
+      required: false
+      description: Caller session referer.
+      schema: {type: string}
+    DriveUserAgent:
+      name: User-Agent
+      in: header
+      required: false
+      description: Caller session user agent.
+      schema: {type: string}
+    DriveAcceptEncoding:
+      name: Accept-Encoding
+      in: header
+      required: false
+      description: Caller accepted content codings.
+      schema: {type: string}
+    DriveConnection:
+      name: Connection
+      in: header
+      required: false
+      description: Caller connection preference.
+      schema: {type: string}
+  responses:
+    DriveFailure:
+      description: Provider refusal; preserve status, headers and exact body.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/DriveError'}
+  schemas:
+    DriveAppLibraries: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveAppLibraries'}
+    DriveChangedItems: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveChangedItems'}
+    DriveCreateFolders: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveCreateFolders'}
+    DriveCreatedFolders: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveCreatedFolders'}
+    DriveDownloadTokens: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveDownloadTokens'}
+    DriveError: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveError'}
+    DriveItemChanges: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveItemChanges'}
+    DriveMoveItems: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveMoveItems'}
+    DriveNodeQueries: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveNodeQueries'}
+    DriveNodes: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveNodes'}
+    DriveUpdateDocument: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUpdateDocument'}
+    DriveUpdatedDocuments: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUpdatedDocuments'}
+    DriveUploadDestinations: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUploadDestinations'}
+    DriveUploadRequest: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUploadRequest'}
+    DriveRenameItems: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveRenameItems'}
+    DriveTrashItems: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveTrashItems'}
+    DriveRecoverItems: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveRecoverItems'}

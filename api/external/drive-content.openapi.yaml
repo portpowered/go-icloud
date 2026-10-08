@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: iCloud Drive content transfer contract
+  version: 0.1.0
+  description: Provider-issued transfer URLs. This contract describes variable paths, not an allowlist of arbitrary destinations; the caller must bind the exact URL to a preceding token response.
+paths:
+  /{contentPath}:
+    parameters:
+      - name: contentPath
+        in: path
+        required: true
+        description: Provider-issued escaped relative path, which may contain several segments. Preserve the complete URL and any provider query when adapting this template.
+        schema: {type: string, minLength: 1}
+    get:
+      operationId: DriveDownloadContent
+      summary: Download content from a provider-issued URL
+      description: Select data_token.url before package_token.url and append caller authentication parameters as the reference does. Preserve exact bytes, including empty content.
+      responses:
+        '200':
+          description: Exact file bytes, including an empty file.
+          content:
+            '*/*':
+              schema: {type: string, format: binary}
+        default: {$ref: '#/components/responses/DriveContentFailure'}
+    post:
+      operationId: DriveUploadContent
+      summary: Upload file content to a provider-issued URL
+      description: Use the preceding upload destination URL. Send one multipart field whose name is the source filename; content starts at the caller's current file cursor. Do not append document-service authentication parameters.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: {$ref: '#/components/schemas/DriveMultipartUpload'}
+      responses:
+        '200':
+          description: Upload receipt used to register the document.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveUploadReceipt'}
+        default: {$ref: '#/components/responses/DriveContentFailure'}
+components:
+  responses:
+    DriveContentFailure:
+      description: Provider refusal; preserve status, headers and exact body.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/DriveError'}
+  schemas:
+    DriveMultipartUpload:
+      type: object
+      minProperties: 1
+      maxProperties: 1
+      description: One file field named for the source filename; multipart framing and exact content are verified separately.
+      additionalProperties: {type: string, format: binary}
+    DriveUploadReceipt: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUploadReceipt'}
+    DriveError: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveError'}
