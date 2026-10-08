@@ -553,10 +553,38 @@ error evidence, schema constant drift and an independent consumer are checked.
 Existing account replays pass after moving the HTTP mechanics into the shared
 transport (API-02, API-03, LIB-01).
 
-Verdict: **limited working-tree pass** for `GetDriveNode` and
-`ListDriveLibraries`. Exact-SHA approval after CI remains required. Navigation,
-mutations, transfers and complete migration acceptance remain open.
+Verdict: **limited milestone pass** for `GetDriveNode` and
+`ListDriveLibraries`. Exact-SHA review approved
+`d807198bcf0cd03d8dc929811378c93b4a8ba1f0` after
+[CI 37795658444](https://github.com/portpowered/go-icloud/actions/runs/37795658444)
+passed. PR #7 merged in `bab7d9e5f8c4f56f3a5f8bfa41e02d5ec3a71fea`; main passed
+[CI 37796621601](https://github.com/portpowered/go-icloud/actions/runs/37796621601).
+Navigation, mutations, transfers and complete migration acceptance remain open.
 
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.
+
+### Interim Drive SDK mutation audit
+
+The reviewer independently passed sixteen portable mutation scenarios through
+seven public methods and verified their generated request bodies against the
+pinned source. It found that a truncated `x-protocol-prefix: FOLDER` declaration
+could generate folder identifiers rejected by the same schema. Exact anchored
+literal-prefix checking and a prefix-plus-UUIDv4 check now reject that case.
+The reviewer reproduced its original probe and verified the fix. Negative
+controls reject truncated, empty, mistyped and unanchored declarations; a
+changed valid pattern/prefix produces the corresponding constant (SCHEMA-10,
+SCHEMA-15).
+
+Independent race checks pass for all seven mutation body-cleanup failures,
+provider acknowledgements, creation-header ownership, unknown/missing-list
+metadata and repeated two-account paired rename isolation. The Client-only
+interfacebloat exception is accepted as a narrow architecture choice supporting
+one traced interface; API-01 requires operations together in one file and does
+not itself require a single interface. No global linter is disabled (GO-15).
+
+Verdict: **limited working-tree pass**. Exact-SHA approval after CI remains
+required. Twenty-five Drive read/mutation scenarios do not establish parity for
+all 67 reference scenarios. Navigation, transfers and complete migration/release
+acceptance remain open.

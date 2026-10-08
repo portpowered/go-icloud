@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/getkin/kin-openapi/openapi3"
@@ -95,7 +97,7 @@ func TestDriveProtocolConstantsHaveNoDrift(t *testing.T) {
 
 	document := driveConstantsDocument(t)
 
-	values, err := accountConstants(document)
+	values, err := driveConstants(document, driveModelsDocument(t))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,11 +117,12 @@ func TestDriveProtocolConstantsFollowSchemaAndRejectCollisions(t *testing.T) {
 	t.Parallel()
 
 	document := driveConstantsDocument(t)
-	node := document.Components.Schemas["DriveAppLibraries"].Value
+	models := driveModelsDocument(t)
+	node := models.Components.Schemas["DriveAppLibraries"].Value
 	node.Properties["futureItems"] = node.Properties["items"]
 	delete(node.Properties, "items")
 
-	values, err := accountConstants(document)
+	values, err := driveConstants(document, models)
 	if err != nil || values["DriveAppLibrariesFutureItems"] != "futureItems" {
 		t.Fatal("Drive constants did not follow the schema property")
 	}
@@ -134,7 +137,7 @@ func TestDriveProtocolConstantsFollowSchemaAndRejectCollisions(t *testing.T) {
 		}
 	}
 
-	_, err = accountConstants(document)
+	_, err = driveConstants(document, models)
 	if !errors.Is(err, errConstant) {
 		t.Fatal("ambiguous Drive operation/model constant was accepted")
 	}
@@ -152,4 +155,77 @@ func driveConstantsDocument(t *testing.T) *openapi3.T {
 	}
 
 	return document
+}
+
+func driveModelsDocument(t *testing.T) *openapi3.T {
+	t.Helper()
+
+	loader := openapi3.NewLoader()
+	loader.IsExternalRefsAllowed = true
+
+	document, err := loader.LoadFromFile("../../api/external/drive-models.openapi.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return document
+}
+
+func TestDrivePrefixConstantsRejectTruncationAndInvalidDeclarations(t *testing.T) {
+	t.Parallel()
+
+	for _, value := range []any{"FOLDER", "", "OTHER::", 1} {
+		t.Run(fmt.Sprint(value), func(t *testing.T) {
+			t.Parallel()
+
+			models := driveModelsDocument(t)
+			field := models.Components.Schemas["DriveFolderCreation"].Value.Properties["clientId"].Value
+			field.Extensions["x-protocol-prefix"] = value
+
+			_, err := driveConstants(driveConstantsDocument(t), models)
+			if !errors.Is(err, errConstant) {
+				t.Fatal("invalid or truncated identifier prefix was emitted")
+			}
+		})
+	}
+}
+
+func TestDrivePrefixConstantsFollowCompletePatternAndExtension(t *testing.T) {
+	t.Parallel()
+
+	models := driveModelsDocument(t)
+	field := models.Components.Schemas["DriveFolderCreation"].Value.Properties["clientId"].Value
+	field.Pattern = strings.ReplaceAll(field.Pattern, "UNKNOWN_ZONE", "SYNTHETIC_ZONE")
+	field.Extensions["x-protocol-prefix"] = "FOLDER::SYNTHETIC_ZONE::TempId-"
+
+	values, err := driveConstants(driveConstantsDocument(t), models)
+	if err != nil || values["DriveFolderCreationClientIdPrefix"] != "FOLDER::SYNTHETIC_ZONE::TempId-" {
+		t.Fatal("prefix did not follow the canonical model declaration")
+	}
+
+	field.Pattern = strings.TrimPrefix(field.Pattern, "^")
+
+	_, err = driveConstants(driveConstantsDocument(t), models)
+	if !errors.Is(err, errConstant) {
+		t.Fatal("unanchored temporary identifier prefix was emitted")
+	}
+}
+
+func TestDriveRequestMediaConstantsFollowSchema(t *testing.T) {
+	t.Parallel()
+
+	document := driveConstantsDocument(t)
+	content := document.Paths.Value("/createFolders").Post.RequestBody.Value.Content
+	content["application/x-synthetic"] = content["plain/text"]
+	delete(content, "plain/text")
+
+	values, err := driveConstants(document, driveModelsDocument(t))
+	if err != nil || values["MediaApplicationXSynthetic"] != "application/x-synthetic" {
+		t.Fatal("request media type did not follow the route declaration")
+	}
+
+	if _, exists := values["MediaPlainText"]; !exists {
+		// The upload and registration routes still own this request media type.
+		t.Fatal("other route-owned plain/text media was lost")
+	}
 }

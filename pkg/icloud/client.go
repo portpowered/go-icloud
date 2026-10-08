@@ -13,7 +13,25 @@ import (
 
 // Client provides the currently implemented iCloud operations.
 // Credentials belong to each request; a Client can serve multiple accounts.
+//
+//nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// CreateDriveFolder creates one named folder.
+	CreateDriveFolder(ctx context.Context, request CreateDriveFolderRequest) (*CreateDriveFolderResult, error)
+	// RenameDriveNode requests a new node name using its supplied version token.
+	RenameDriveNode(ctx context.Context, request RenameDriveNodeRequest) (*RenameDriveNodeResult, error)
+	// MoveDriveNodes requests movement of the selected nodes, including an empty selection.
+	MoveDriveNodes(ctx context.Context, request MoveDriveNodesRequest) (*MoveDriveNodesResult, error)
+	// TrashDriveNode requests movement of a selected node into trash.
+	TrashDriveNode(ctx context.Context, request TrashDriveNodeRequest) (*TrashDriveNodeResult, error)
+	// RestoreDriveNode requests recovery of a selected trash node.
+	RestoreDriveNode(ctx context.Context, request RestoreDriveNodeRequest) (*RestoreDriveNodeResult, error)
+	// DeleteDriveNode requests ordinary deletion of a selected node.
+	DeleteDriveNode(ctx context.Context, request DeleteDriveNodeRequest) (*DeleteDriveNodeResult, error)
+	// PermanentlyDeleteDriveNode requests permanent deletion of a selected trash node.
+	PermanentlyDeleteDriveNode(ctx context.Context,
+		request PermanentlyDeleteDriveNodeRequest,
+	) (*PermanentlyDeleteDriveNodeResult, error)
 	// GetDriveNode returns fresh node metadata, including available folder contents.
 	GetDriveNode(ctx context.Context, request GetDriveNodeRequest) (*GetDriveNodeResult, error)
 	// ListDriveLibraries returns fresh application-library records.
@@ -240,6 +258,146 @@ func (sdk *SDK) ListDriveLibraries(ctx context.Context,
 		Metadata:           publicMetadata(response.Response)}, nil
 }
 
+// CreateDriveFolder creates one named folder.
+// The result acknowledges the request; background processing may continue.
+func (sdk *SDK) CreateDriveFolder(ctx context.Context,
+	request CreateDriveFolderRequest,
+) (*CreateDriveFolderResult, error) {
+	const operation = "CreateDriveFolder"
+
+	boundary, err := driveRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.web.CreateDriveFolder(ctx, boundary, request.ParentID, request.Name)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveCreated(response), nil
+}
+
+// RenameDriveNode requests a new node name using its supplied version token.
+// The result acknowledges the request; background processing may continue.
+func (sdk *SDK) RenameDriveNode(ctx context.Context,
+	request RenameDriveNodeRequest,
+) (*RenameDriveNodeResult, error) {
+	const operation = "RenameDriveNode"
+
+	boundary, err := driveRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.web.RenameDriveNode(ctx, boundary, driveSelection(request.Node), request.Name)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveChanged(response), nil
+}
+
+// MoveDriveNodes requests movement of the selected nodes, including an empty selection.
+// The result acknowledges the request; background processing may continue.
+func (sdk *SDK) MoveDriveNodes(ctx context.Context,
+	request MoveDriveNodesRequest,
+) (*MoveDriveNodesResult, error) {
+	const operation = "MoveDriveNodes"
+
+	boundary, err := driveRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.web.MoveDriveNodes(ctx, boundary, driveSelections(request.Nodes), request.DestinationID)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveChanged(response), nil
+}
+
+// TrashDriveNode requests movement of a selected node into trash.
+// The result acknowledges the request; background processing may continue.
+func (sdk *SDK) TrashDriveNode(ctx context.Context,
+	request TrashDriveNodeRequest,
+) (*TrashDriveNodeResult, error) {
+	const operation = "TrashDriveNode"
+
+	boundary, err := driveRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.web.TrashDriveNode(ctx, boundary, driveSelection(request.Node))
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveChanged(response), nil
+}
+
+// RestoreDriveNode requests recovery of a selected trash node.
+// The result acknowledges the request; background processing may continue.
+func (sdk *SDK) RestoreDriveNode(ctx context.Context,
+	request RestoreDriveNodeRequest,
+) (*RestoreDriveNodeResult, error) {
+	const operation = "RestoreDriveNode"
+
+	boundary, err := driveRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.web.RestoreDriveNode(ctx, boundary, driveSelection(request.Node))
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveChanged(response), nil
+}
+
+// DeleteDriveNode requests ordinary deletion of a selected node.
+// The result acknowledges the request; background processing may continue.
+func (sdk *SDK) DeleteDriveNode(ctx context.Context,
+	request DeleteDriveNodeRequest,
+) (*DeleteDriveNodeResult, error) {
+	const operation = "DeleteDriveNode"
+
+	boundary, err := driveRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.web.DeleteDriveNode(ctx, boundary, driveSelection(request.Node))
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveChanged(response), nil
+}
+
+// PermanentlyDeleteDriveNode requests permanent deletion of a selected trash node.
+// The result acknowledges the request; background processing may continue.
+func (sdk *SDK) PermanentlyDeleteDriveNode(ctx context.Context,
+	request PermanentlyDeleteDriveNodeRequest,
+) (*PermanentlyDeleteDriveNodeResult, error) {
+	const operation = "PermanentlyDeleteDriveNode"
+
+	boundary, err := driveRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.web.PermanentlyDeleteDriveNode(ctx, boundary, driveSelection(request.Node))
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveChanged(response), nil
+}
+
 func accountRequestContext(auth AuthContext) (webtransport.RequestContext, error) {
 	var boundary webtransport.RequestContext
 
@@ -274,6 +432,30 @@ func requestHeaders(headers []Header) http.Header {
 	result := make(http.Header)
 	for _, header := range headers {
 		result.Add(header.Name, header.Value)
+	}
+
+	return result
+}
+
+func driveRequestContext(auth AuthContext) (webtransport.RequestContext, error) {
+	boundary, err := accountRequestContext(auth)
+	if err != nil {
+		return boundary, err
+	}
+
+	boundary.Origin = auth.DriveServiceURL
+
+	return boundary, nil
+}
+
+func driveSelection(node DriveNodeSelector) webtransport.DriveSelection {
+	return webtransport.DriveSelection{NodeID: node.NodeID, ETag: node.ETag}
+}
+
+func driveSelections(nodes []DriveNodeSelector) []webtransport.DriveSelection {
+	result := make([]webtransport.DriveSelection, 0, len(nodes))
+	for _, node := range nodes {
+		result = append(result, driveSelection(node))
 	}
 
 	return result

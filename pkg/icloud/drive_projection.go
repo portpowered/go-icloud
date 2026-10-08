@@ -1,6 +1,9 @@
 package icloud
 
-import "github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
+import (
+	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
+)
 
 func projectDriveNode(node drive.DriveNode) DriveNode {
 	result := DriveNode{
@@ -32,4 +35,26 @@ func projectDriveNodes(nodes []drive.DriveNode) []DriveNode {
 	}
 
 	return result
+}
+
+func projectDriveOptionalNodes(nodes *[]drive.DriveNode) *[]DriveNode {
+	if nodes == nil {
+		return nil
+	}
+
+	result := projectDriveNodes(*nodes)
+
+	return &result
+}
+
+func projectDriveChanged(response *webtransport.DriveChangedResponse) *DriveItemChangeResult {
+	return &DriveItemChangeResult{Items: projectDriveOptionalNodes(response.Data.Items),
+		AdditionalMetadata: copyAccountMetadata(response.Data.AdditionalProperties),
+		Metadata:           publicMetadata(response.Response)}
+}
+
+func projectDriveCreated(response *webtransport.DriveCreatedResponse) *CreateDriveFolderResult {
+	return &CreateDriveFolderResult{Folders: projectDriveOptionalNodes(response.Data.Folders),
+		AdditionalMetadata: copyAccountMetadata(response.Data.AdditionalProperties),
+		Metadata:           publicMetadata(response.Response)}
 }

@@ -53,6 +53,28 @@ func Drive(ctx context.Context, auth icloud.AuthContext, nodeID string) error {
  return err
 }
 
+
+func DriveMutations(ctx context.Context, auth icloud.AuthContext, node icloud.DriveNodeSelector) error {
+ client, err := icloud.New()
+ if err != nil { return err }
+ _, err = client.CreateDriveFolder(ctx, icloud.CreateDriveFolderRequest{
+ Auth: auth, ParentID: node.NodeID, Name: "Synthetic",
+ })
+ if err != nil { return err }
+ _, err = client.RenameDriveNode(ctx, icloud.RenameDriveNodeRequest{Auth: auth, Node: node, Name: "Synthetic"})
+ if err != nil { return err }
+ _, err = client.MoveDriveNodes(ctx, icloud.MoveDriveNodesRequest{Auth: auth, DestinationID: node.NodeID, Nodes: nil})
+ if err != nil { return err }
+ _, err = client.TrashDriveNode(ctx, icloud.TrashDriveNodeRequest{Auth: auth, Node: node})
+ if err != nil { return err }
+ _, err = client.RestoreDriveNode(ctx, icloud.RestoreDriveNodeRequest{Auth: auth, Node: node})
+ if err != nil { return err }
+ _, err = client.DeleteDriveNode(ctx, icloud.DeleteDriveNodeRequest{Auth: auth, Node: node})
+ if err != nil { return err }
+ _, err = client.PermanentlyDeleteDriveNode(ctx, icloud.PermanentlyDeleteDriveNodeRequest{Auth: auth, Node: node})
+ return err
+}
+
 `
 
 func TestPublicSDKCompilesInIndependentConsumer(t *testing.T) {

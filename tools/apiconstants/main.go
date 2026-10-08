@@ -9,6 +9,8 @@ import (
 	"go/format"
 	"go/token"
 	"os"
+	"regexp"
+	"regexp/syntax"
 	"sort"
 	"strings"
 	"unicode"
@@ -17,8 +19,10 @@ import (
 )
 
 const (
-	protocolDirectoryMode = 0o700
-	protocolFileMode      = 0o600
+	protocolDirectoryMode     = 0o700
+	protocolFileMode          = 0o600
+	prefixProbeUUID           = "00000000-0000-4000-8000-000000000000"
+	minimumPrefixPatternParts = 4
 )
 
 var errConstant = errors.New("invalid or ambiguous protocol constant")
@@ -51,7 +55,12 @@ func generateDriveConstants() error {
 		return fmt.Errorf("validate Drive schema: %w", err)
 	}
 
-	values, err := accountConstants(document)
+	models, err := loader.LoadFromFile("api/external/drive-models.openapi.yaml")
+	if err != nil {
+		return fmt.Errorf("load Drive models: %w", err)
+	}
+
+	values, err := driveConstants(document, models)
 	if err != nil {
 		return err
 	}
@@ -135,8 +144,9 @@ func accountConstants(document *openapi3.T) (map[string]string, error) {
 	}
 
 	for name, schema := range document.Components.Schemas {
-		for property := range schema.Value.Properties {
-			register(name+identifier(property), property)
+		err := registerProperties(name, schema.Value, register)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -145,6 +155,71 @@ func accountConstants(document *openapi3.T) (map[string]string, error) {
 	}
 
 	return values, conflict
+}
+
+func registerProperties(name string, schema *openapi3.Schema, register func(name, value string)) error {
+	for property, field := range schema.Properties {
+		register(name+identifier(property), property)
+
+		value, exists := field.Value.Extensions["x-protocol-prefix"]
+		if !exists {
+			continue
+		}
+
+		prefix, valid := value.(string)
+		if !valid || prefix == "" || !prefixMatchesPattern(prefix, field.Value.Pattern) {
+			return fmt.Errorf("%w: %s prefix must match its anchored pattern", errConstant, name)
+		}
+
+		register(name+identifier(property)+"Prefix", prefix)
+	}
+
+	return nil
+}
+
+func prefixMatchesPattern(prefix, pattern string) bool {
+	parsed, err := syntax.Parse(pattern, syntax.Perl)
+	if err != nil || parsed.Op != syntax.OpConcat || len(parsed.Sub) < minimumPrefixPatternParts {
+		return false
+	}
+
+	literal := parsed.Sub[1]
+	if parsed.Sub[0].Op != syntax.OpBeginText || parsed.Sub[len(parsed.Sub)-1].Op != syntax.OpEndText ||
+		literal.Op != syntax.OpLiteral || literal.Flags&syntax.FoldCase != 0 || string(literal.Rune) != prefix {
+		return false
+	}
+
+	compiled, err := regexp.Compile(pattern)
+
+	return err == nil && compiled.MatchString(prefix+prefixProbeUUID)
+}
+
+func driveConstants(routes, models *openapi3.T) (map[string]string, error) {
+	// The models document owns property names; the route document owns operations and media.
+	routeCopy := *routes
+	components := *routes.Components
+	components.Schemas = nil
+	routeCopy.Components = &components
+
+	values, err := accountConstants(&routeCopy)
+	if err != nil {
+		return nil, err
+	}
+
+	properties, err := accountConstants(models)
+	if err != nil {
+		return nil, err
+	}
+
+	for name, value := range properties {
+		if _, exists := values[name]; exists {
+			return nil, fmt.Errorf("%w: %s", errConstant, name)
+		}
+
+		values[name] = value
+	}
+
+	return values, nil
 }
 
 func registerInlineParameters(operation *openapi3.Operation, register func(name, value string)) {
@@ -158,6 +233,15 @@ func registerInlineParameters(operation *openapi3.Operation, register func(name,
 func registerOperationMedia(operation *openapi3.Operation, values map[string]string,
 	register func(name, value string),
 ) {
+	if operation.RequestBody != nil {
+		for mediaType := range operation.RequestBody.Value.Content {
+			name := "Media" + identifier(mediaType)
+			if value, exists := values[name]; !exists || value != mediaType {
+				register(name, mediaType)
+			}
+		}
+	}
+
 	for _, response := range operation.Responses.Map() {
 		for mediaType := range response.Value.Content {
 			name := "Media" + identifier(mediaType)

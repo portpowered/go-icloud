@@ -194,6 +194,52 @@ type AuthContext struct {
 	Headers []Header `json:"headers"`
 }
 
+// CreateDriveFolderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"name":"Synthetic","parentID":"FOLDER::synthetic::root"}
+type CreateDriveFolderRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Name Desired folder name.
+	Name string `json:"name"`
+
+	// ParentID Destination folder identifier.
+	ParentID string `json:"parentID"`
+}
+
+// CreateDriveFolderResult Example: {"additionalMetadata":{},"folders":[],"metadata":{"headers":[],"statusCode":200}}
+type CreateDriveFolderResult struct {
+	AdditionalMetadata map[string]UnknownJSONValue `json:"additionalMetadata"`
+
+	// Folders Optional created folder records; an empty list remains empty.
+	Folders *[]DriveNode `json:"folders,omitempty"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+}
+
+// DeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
+type DeleteDriveNodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Node Provider identifier and version token for a selected node; obtain the etag from a fresh node read to protect against stale writes.
+	Node DriveNodeSelector `json:"node"`
+}
+
+// DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DriveItemChangeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+type DriveItemChangeResult struct {
+	AdditionalMetadata map[string]UnknownJSONValue `json:"additionalMetadata"`
+
+	// Items Optional provider item records; absence differs from an empty list.
+	Items *[]DriveNode `json:"items,omitempty"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+}
+
 // DriveNode Optional provider node metadata. Folder contents may be absent on a status-only response.
 type DriveNode struct {
 	DateChanged  *time.Time   `json:"dateChanged,omitempty"`
@@ -220,6 +266,15 @@ type DriveNode struct {
 	Type                 *string                     `json:"type,omitempty"`
 	Zone                 *string                     `json:"zone,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// DriveNodeSelector Provider identifier and version token for a selected node; obtain the etag from a fresh node read to protect against stale writes.
+type DriveNodeSelector struct {
+	// ETag Provider version token required by the mutation endpoint; an empty token remains an empty token.
+	ETag string `json:"etag"`
+
+	// NodeID Provider Drive node identifier.
+	NodeID string `json:"nodeID"`
 }
 
 // DriveShareID Provider sharing descriptor; no fixed field is universally required by the reference.
@@ -374,8 +429,50 @@ type ListDriveLibrariesResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// MoveDriveNodesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"destinationID":"FOLDER::synthetic::destination","nodes":[]}
+type MoveDriveNodesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// DestinationID Destination folder identifier.
+	DestinationID string `json:"destinationID"`
+
+	// Nodes Nodes and version tokens; an empty move list is valid.
+	Nodes []DriveNodeSelector `json:"nodes"`
+}
+
+// MoveDriveNodesResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+type MoveDriveNodesResult = DriveItemChangeResult
+
 // NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
 type NullableJSONValue = json.RawMessage
+
+// PermanentlyDeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
+type PermanentlyDeleteDriveNodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Node Provider identifier and version token for a selected node; obtain the etag from a fresh node read to protect against stale writes.
+	Node DriveNodeSelector `json:"node"`
+}
+
+// PermanentlyDeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+type PermanentlyDeleteDriveNodeResult = DriveItemChangeResult
+
+// RenameDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"name":"Synthetic","node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
+type RenameDriveNodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Name Desired node name.
+	Name string `json:"name"`
+
+	// Node Provider identifier and version token for a selected node; obtain the etag from a fresh node read to protect against stale writes.
+	Node DriveNodeSelector `json:"node"`
+}
+
+// RenameDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+type RenameDriveNodeResult = DriveItemChangeResult
 
 // ResponseMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 type ResponseMetadata struct {
@@ -385,6 +482,30 @@ type ResponseMetadata struct {
 	// StatusCode Provider HTTP response status.
 	StatusCode int `json:"statusCode"`
 }
+
+// RestoreDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
+type RestoreDriveNodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Node Provider identifier and version token for a selected node; obtain the etag from a fresh node read to protect against stale writes.
+	Node DriveNodeSelector `json:"node"`
+}
+
+// RestoreDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+type RestoreDriveNodeResult = DriveItemChangeResult
+
+// TrashDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
+type TrashDriveNodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Node Provider identifier and version token for a selected node; obtain the etag from a fresh node read to protect against stale writes.
+	Node DriveNodeSelector `json:"node"`
+}
+
+// TrashDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+type TrashDriveNodeResult = DriveItemChangeResult
 
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage

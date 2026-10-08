@@ -85,13 +85,38 @@ The document-registration operation is named `DriveRegisterDocument`, leaving
 operation-path and model-property constants; generation rejects collisions and
 checks both account and Drive artifacts for drift (SCHEMA-10).
 
-Node navigation and refresh state, mutations, transfers and the complete
-source-to-schema runtime route gate remain open. Nine read scenarios do not
+Seven public mutation methods now execute sixteen existing portable scenarios
+through generated request builders and typed wire models: folder creation,
+rename, movement, trash, recovery, ordinary deletion and permanent deletion.
+Schema `x-order` declarations preserve the pinned request field order. Bulk
+movement preserves order and accepts an empty list; each deletion variant
+retains its own client-identifier behavior. Creation overrides the caller's
+Content-Type for that request, as the reference does, without mutating caller
+headers. No live writes are performed.
+
+The generator derives operation/media constants from the route document and
+field constants from the canonical model document. A model-owned
+`x-protocol-prefix` must match the complete anchored literal prefix and a valid
+UUIDv4 instance. Truncated, mistyped and unanchored declarations fail; a changed
+valid prefix follows the schema. UUIDs use fresh cryptographic entropy. These
+checks enforce generated ownership without handwritten wire models (SCHEMA-10,
+SCHEMA-15). The Client-only interfacebloat exception keeps selected operations
+on one traced interface (API-01); all other lint rules remain enabled.
+
+Unit checks cover read/close failure suppression across all seven mutations,
+invalid provider acknowledgements, missing versus empty lists, unknown JSON
+values and the explicit creation header override. Two-account concurrent
+paired rename tests repeat requests after separate Set-Cookie replies, retaining
+request identity, cookie and result isolation (API-03, API-13). The public
+consumer build exercises all fourteen current methods.
+
+Node navigation and refresh state, transfers and the complete
+source-to-schema runtime route gate remain open. Twenty-five read/mutation scenarios do not
 establish parity for all 67 Drive scenarios. The non-generated library coverage
-measurement includes the five account reads and these two Drive methods;
+measurement includes the five account reads and nine Drive methods;
 schema validation alone is not SDK replay coverage (LIB-07).
-Replay measures 374/462 handwritten SDK/internal statements (81.0%); unit
-measures 393/462 (85.1%); combined measures 428/462 (92.6%). Live Go integration
+Replay measures 500/605 handwritten SDK/internal statements (82.6%); unit
+measures 520/605 (86.0%); combined measures 559/605 (92.4%). Live Go integration
 is still pending. `make lint` and `make check` pass, including the 67 reference
 test methods and all 437 portable HTTP scenarios/991 pairs.
 
