@@ -8,6 +8,8 @@ import base64
 import hashlib
 import json
 import struct
+from contextlib import contextmanager
+from dataclasses import asdict
 from unittest.mock import patch
 from urllib.parse import urlsplit
 
@@ -16,6 +18,30 @@ from network_guard import forbid_network
 
 FIXTURES = ROOT / "tests/replay/fixtures/synthetic/socket"
 GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+
+
+@contextmanager
+def replay_clock(action):
+    """Bind deadline reads to a portable, nondecreasing monotonic trace."""
+    ticks = action["monotonic_ticks"]
+    assert (
+        ticks
+        and all(type(tick) is int and tick >= 0 for tick in ticks)
+        and ticks == sorted(ticks)
+    ), "invalid monotonic trace"
+    consumed = []
+
+    def monotonic():
+        assert len(consumed) < len(ticks), "unexpected monotonic read"
+        tick = ticks[len(consumed)]
+        consumed.append(tick)
+        return tick
+
+    with patch("pyicloud.hsa2_bridge.time.monotonic", monotonic):
+        try:
+            yield
+        finally:
+            assert len(consumed) == len(ticks), "unconsumed monotonic reads"
 
 
 def decode(value):
@@ -139,7 +165,11 @@ class Transcript:
 
 def replay_socket(path):
     verify_reference()
-    from pyicloud.hsa2_bridge import _RawWebSocketClient
+    from pyicloud.hsa2_bridge import (
+        TrustedDeviceBridgeBootstrapper,
+        _encode_web_filter_message,
+        _RawWebSocketClient,
+    )
 
     scenario = json.loads(path.read_text())
     assert scenario["format"] == "portos.socket-scenario.v1"
@@ -169,12 +199,34 @@ def replay_socket(path):
                     results.append(
                         base64.b64encode(client.read_message()).decode("ascii")
                     )
+                elif action["operation"] == "subscribe":
+                    client.send_binary(_encode_web_filter_message(action["topics"]))
+                elif action["operation"] == "wait_push_token":
+                    bridge = TrustedDeviceBridgeBootstrapper(timeout=action["timeout"])
+                    with replay_clock(action):
+                        results.append(
+                            base64.b64encode(
+                                bridge._wait_for_push_token(client)
+                            ).decode("ascii")
+                        )
+                elif action["operation"] == "wait_push":
+                    bridge = TrustedDeviceBridgeBootstrapper(timeout=action["timeout"])
+                    with replay_clock(action):
+                        results.append(
+                            asdict(
+                                bridge._wait_for_bridge_push(
+                                    client, action["topic"], action["topics_by_hash"]
+                                )
+                            )
+                        )
                 else:
                     raise AssertionError("unknown socket action")
         except AssertionError:
             raise
         except Exception as exception:
             error = {"type": type(exception).__name__, "message": str(exception)}
+            if hasattr(exception, "server_timestamp_ms"):
+                error["server_timestamp_ms"] = exception.server_timestamp_ms
         finally:
             if initialized:
                 client.close()

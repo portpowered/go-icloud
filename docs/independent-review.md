@@ -126,6 +126,30 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim bridge-message and deadline audit
+
+The reviewer independently passed the extension through selected subscription,
+push-token and push helpers: exact acknowledgments, topic filtering, semantic
+nonce timestamp and errors, and consumed monotonic traces. Its additional
+probes rejected missing acknowledgments, changed message IDs, appended unread
+frames, missing closure, empty/boolean/decreasing/insufficient/surplus clock
+traces, and premature expiration. It verified restoration of `time.monotonic`
+after successes, provider failures, and rejected probes. The extended socket
+population is 53 scenarios with 283 events. This verifies deterministic deadline
+behavior, not real scheduling/cancellation, full bootstrap or prover behavior.
+This remains a limited interim pass, not final full-library acceptance.
+
+The owner subsequently prioritized selected endpoint behavior and deferred
+additional generic input/utility testing. The reviewer confirmed ten diagnostic
+coverage exclusions against actual source usage: five excluded service facades,
+four reference-CLI password helpers, and a calendar-only helper. Auth-used
+keyring lookup remains included, and candidate network discovery still scans
+the complete included files. It found that whitespace-only reasons passed the
+exclusion gate. The gate now requires a non-whitespace string; the reviewer
+independently verified whitespace, boolean, and empty reasons fail and valid
+exclusions remain recorded. Disposition: **scope finding resolved**. This is a
+disclosed denominator correction, not endpoint completeness or final acceptance.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.

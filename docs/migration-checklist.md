@@ -58,11 +58,26 @@ See [independent review](independent-review.md) for findings and verification.
 
 ## Current coverage baseline
 
-Authentication socket replay adds 18 synthetic ordered duplex scenarios to the
-65 HTTP scenarios. Combined replay now enters 229/915 functions and executes
-1,106/5,436 body statements (20.35%) and 308/2,094 branch exits. The socket cases
-execute the actual pinned raw client at an injected plaintext TCP/TLS boundary;
-they do not establish full bridge login or protobuf/cryptographic coverage.
+The owner clarified that endpoint behavior for the selected five services and
+required authentication is the priority. Further generic malformed-input and
+unrelated utility tests are deferred. The coverage scope now excludes ten named
+functions: five excluded service facades, four reference-CLI password/keyring
+helpers, and the calendar-only case-conversion helper. Each exclusion resolves
+against the pinned source and is listed with its definition line; unknown or
+duplicate exclusions fail. Authentication's keyring lookup and shared helpers
+used by selected endpoints remain included. The remaining scope is conservative
+diagnostic coverage, not proof that every included utility needs endpoint replay.
+
+Authentication socket replay adds 53 synthetic ordered duplex scenarios (283
+events) to the 65 HTTP scenarios. Combined replay now enters 252/905 functions
+and executes 1,290/5,385 body statements (23.96%) and 387/2,076 branch exits.
+Before the scope correction, the same replay covered 1,290/5,436 statements
+(23.73%); the scope correction removed 51 unrelated statements, not missing
+endpoint cases.
+The socket cases execute the actual pinned raw client at an injected plaintext
+TCP/TLS boundary;
+they exercise push-token, subscription, acknowledgment and push decoding, but
+do not establish full bridge login or complete protobuf/cryptographic coverage.
 Failed-upgrade cases show no explicit socket-close call; Go must close on failure.
 See the [socket transcript contract](../tests/replay/fixtures/synthetic/socket/README.md).
 Historical measurements below are retained as progress receipts.

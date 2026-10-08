@@ -12,7 +12,7 @@ from socket_replay import FIXTURES, Transcript, match_frame, replay_socket
 class SocketReplayTests(unittest.TestCase):
     def test_reference_transcripts(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 18)
+        self.assertGreaterEqual(len(fixtures), 53)
         for path in fixtures:
             with self.subTest(scenario=path.stem):
                 replay_socket(path)
@@ -91,6 +91,47 @@ class SocketReplayTests(unittest.TestCase):
         transcript.wrap_socket(raw, "bridge.example.invalid")
         with self.assertRaises(AssertionError):
             transcript.wrap_socket(raw, "bridge.example.invalid")
+
+    def test_bridge_ack_and_semantics_are_bound(self):
+        for change in ["ack", "topic", "result", "extra"]:
+            original = json.loads((FIXTURES / "push-hashed-topic.json").read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "ack":
+                    original["events"][3]["payload"] = "AA=="
+                elif change == "topic":
+                    original["actions"][0]["topic"] = "unexpected.topic"
+                elif change == "result":
+                    original["results"][0]["next_step"] = "6"
+                else:
+                    original["events"].append({"direction": "close"})
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(original))
+                with self.assertRaises(AssertionError):
+                    replay_socket(path)
+
+    def test_nonce_timestamp_and_error_meaning_are_bound(self):
+        for change in ["server_timestamp_ms", "type", "message"]:
+            original = json.loads((FIXTURES / "token-invalid-nonce.json").read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                original["error"][change] = "incorrect"
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(original))
+                with self.assertRaisesRegex(AssertionError, "semantic error"):
+                    replay_socket(path)
+
+    def test_monotonic_trace_is_strict_even_on_failure(self):
+        for fixture in ["token-success", "token-status-rejected"]:
+            for ticks in [[0], [0, 1, 2], [1, 0], [0, -1], [0, "invalid"]]:
+                original = json.loads((FIXTURES / (fixture + ".json")).read_text())
+                with (
+                    self.subTest(fixture=fixture, ticks=ticks),
+                    TemporaryDirectory() as directory,
+                ):
+                    original["actions"][0]["monotonic_ticks"] = ticks
+                    path = Path(directory) / "scenario.json"
+                    path.write_text(json.dumps(original))
+                    with self.assertRaises(AssertionError):
+                        replay_socket(path)
 
 
 if __name__ == "__main__":

@@ -58,8 +58,13 @@ def body_lines(node, statements):
     return lines
 
 
-def summarize(measurement, files, root):
+def summarize(measurement, files, root, policy=None):
     entries = []
+    exclusions = (policy or {}).get("function_exclusions", [])
+    excluded_functions = []
+    exclusion_keys = [(rule["file"], rule["function"]) for rule in exclusions]
+    if len(set(exclusion_keys)) != len(exclusion_keys):
+        raise ValueError("Duplicate function exclusion")
     network_edges = []
     for file in files:
         _, statements, excluded, missing, _ = measurement.analysis2(str(file))
@@ -68,6 +73,13 @@ def summarize(measurement, files, root):
         branches = measurement.branch_stats(str(file))
         tree = ast.parse(file.read_text(encoding="utf-8"))
         for name, node in definitions(tree):
+            key = (file.relative_to(root).as_posix(), name)
+            if key in exclusion_keys:
+                rule = exclusions[exclusion_keys.index(key)]
+                if not isinstance(rule["reason"], str) or not rule["reason"].strip():
+                    raise ValueError("Function exclusion requires a reason")
+                excluded_functions.append({**rule, "definition_line": node.lineno})
+                continue
             lines = body_lines(node, statements)
             entry_lines = sorted(lines)
             function_branches = [
@@ -133,6 +145,10 @@ def summarize(measurement, files, root):
                     ),
                 }
             )
+    if len(excluded_functions) != len(exclusions):
+        raise ValueError(
+            "Function exclusion does not resolve uniquely in pinned source"
+        )
     total = sum(item["statements"] for item in entries)
     hit = sum(item["covered_statements"] for item in entries)
     return {
@@ -158,6 +174,7 @@ def summarize(measurement, files, root):
             ),
         },
         "functions": entries,
+        "excluded_functions": excluded_functions,
         "network_edge_candidates": network_edges,
     }
 
@@ -245,11 +262,13 @@ def main():
         measurement.save()
     if not scenarios:
         raise ValueError("No completed scenarios available for coverage")
-    report = summarize(measurement, files, root)
+    report = summarize(measurement, files, root, policy)
     report["by_evidence"] = {}
     for evidence in ["captured", "synthetic"]:
         measurement.get_data().set_query_contexts(["^" + evidence + ":"])
-        report["by_evidence"][evidence] = summarize(measurement, files, root)["summary"]
+        report["by_evidence"][evidence] = summarize(measurement, files, root, policy)[
+            "summary"
+        ]
     measurement.get_data().set_query_contexts(None)
     report["scope"] = policy
     report["scenarios"] = scenarios

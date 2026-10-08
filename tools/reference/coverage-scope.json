@@ -42,5 +42,18 @@
       "reason": "Reference application CLI is not a provider endpoint implementation."
     }
   ],
-  "policy": "Uncovered included functions remain in the denominator. Unavailable account services and destructive operations require synthetic evidence; they are not coverage exclusions. New reference network edges and shared dependencies must be audited before sign-off."
+  "function_exclusions": [
+    {"file": "base.py", "function": "PyiCloudService.hidemyemail", "reason": "Excluded service facade; Hide My Email is outside the five requested services."},
+    {"file": "base.py", "function": "PyiCloudService.calendar", "reason": "Excluded service facade; calendar was explicitly excluded by the owner."},
+    {"file": "base.py", "function": "PyiCloudService.contacts", "reason": "Excluded service facade; contacts was explicitly excluded by the owner."},
+    {"file": "base.py", "function": "PyiCloudService.notes", "reason": "Excluded service facade; Notes is outside the five requested services."},
+    {"file": "base.py", "function": "PyiCloudService.invites", "reason": "Excluded service facade; Invites is outside the five requested services."},
+    {"file": "utils.py", "function": "get_password", "reason": "Reference application interactive password acquisition; not a requested endpoint behavior."},
+    {"file": "utils.py", "function": "password_exists_in_keyring", "reason": "Reference application local keyring management; not a requested endpoint behavior."},
+    {"file": "utils.py", "function": "store_password_in_keyring", "reason": "Reference application local keyring management; not a requested endpoint behavior."},
+    {"file": "utils.py", "function": "delete_password_in_keyring", "reason": "Reference application local keyring management; not a requested endpoint behavior."},
+    {"file": "utils.py", "function": "camelcase_to_underscore", "reason": "Helper used by excluded calendar service; requested account/auth paths use other helpers."}
+  ],
+  "priorities": "Owner requests endpoint behavior coverage for the five services and required authentication. Further generic malformed-input and non-provider utility testing is deferred. Existing such examples remain synthetic evidence, not endpoint completeness proof.",
+  "policy": "Uncovered included functions remain in the denominator except named source-resolved exclusions. This is a conservative diagnostic scope, not a complete endpoint coverage gate. Unavailable account services and destructive operations require synthetic evidence; they are not coverage exclusions. New reference network edges and shared dependencies must be audited before sign-off."
 }

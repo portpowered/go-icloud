@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from measure import body_lines, definitions, scoped_files
+from measure import body_lines, definitions, scoped_files, summarize
 from network_guard import forbid_network
 
 
@@ -49,6 +49,44 @@ class MeasurementTests(unittest.TestCase):
                 connection.connect_ex(("127.0.0.1", 1))
             with self.assertRaises(AssertionError):
                 socket.create_connection(("127.0.0.1", 1))
+
+    def test_named_exclusions_are_auditable_and_must_resolve(self):
+        class Measurement:
+            def analysis2(self, file):
+                return file, [1, 2, 3, 4], [], [4], ""
+
+            def branch_stats(self, file):
+                return {}
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            file = root / "services.py"
+            file.write_text(
+                "def requested():\n    return 1\ndef excluded():\n    return 2\n"
+            )
+            rule = {
+                "file": "services.py",
+                "function": "excluded",
+                "reason": "Owner excluded this service",
+            }
+            policy = {"function_exclusions": [rule]}
+            report = summarize(Measurement(), [file], root, policy)
+            self.assertEqual(report["summary"]["functions"], 1)
+            self.assertEqual(report["functions"][0]["function"], "requested")
+            self.assertEqual(
+                report["excluded_functions"], [{**rule, "definition_line": 3}]
+            )
+            for rules in [
+                [{**rule, "function": "unknown"}],
+                [rule, rule],
+                [{**rule, "reason": ""}],
+                [{**rule, "reason": "   "}],
+                [{**rule, "reason": True}],
+            ]:
+                with self.subTest(rules=rules), self.assertRaises(ValueError):
+                    summarize(
+                        Measurement(), [file], root, {"function_exclusions": rules}
+                    )
 
 
 if __name__ == "__main__":
