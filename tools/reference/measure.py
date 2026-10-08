@@ -184,6 +184,8 @@ def main():
     try:
         # Import after tracing starts, so constructor/import behavior is visible.
         from replay import replay
+        from socket_replay import FIXTURES as SOCKET_FIXTURES
+        from socket_replay import replay_socket
         from synthetic import FIXTURES, replay_synthetic
 
         scenarios = []
@@ -224,6 +226,17 @@ def main():
                     "name": path.stem,
                     "operation": json.loads(path.read_text())["operation"],
                     "exchanges": count,
+                    "evidence": "synthetic",
+                }
+            )
+        for path in sorted(SOCKET_FIXTURES.glob("*.json")):
+            measurement.switch_context("synthetic:socket:" + path.stem)
+            count = replay_socket(path)
+            scenarios.append(
+                {
+                    "name": path.stem,
+                    "operation": json.loads(path.read_text())["operation"],
+                    "socket_events": count,
                     "evidence": "synthetic",
                 }
             )

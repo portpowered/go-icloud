@@ -58,6 +58,15 @@ See [independent review](independent-review.md) for findings and verification.
 
 ## Current coverage baseline
 
+Authentication socket replay adds 18 synthetic ordered duplex scenarios to the
+65 HTTP scenarios. Combined replay now enters 229/915 functions and executes
+1,106/5,436 body statements (20.35%) and 308/2,094 branch exits. The socket cases
+execute the actual pinned raw client at an injected plaintext TCP/TLS boundary;
+they do not establish full bridge login or protobuf/cryptographic coverage.
+Failed-upgrade cases show no explicit socket-close call; Go must close on failure.
+See the [socket transcript contract](../tests/replay/fixtures/synthetic/socket/README.md).
+Historical measurements below are retained as progress receipts.
+
 The reference coverage command uses pinned coverage.py with statement/branch
 measurement, per-scenario contexts, and an AST inventory of function bodies.
 It does not count a function definition being imported as a function call.

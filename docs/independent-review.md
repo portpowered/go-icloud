@@ -99,6 +99,28 @@ exact-commit CI verification remain open. Do not mark standard 5 satisfied.
 
 ## Reviewer B — final audit pending
 
+### Interim authentication socket audit
+
+The independent reviewer evaluated the 18 implementation-derived socket
+scenarios (88 ordered duplex events) against the actual pinned raw client.
+Its original exploit appended an extra frame or arbitrary trailing bytes to a
+coalesced receive; replay wrongly accepted both because only transcript buffers
+were checked. The runner now retains the reference instance across initializer
+failure and rejects unconsumed bytes in its own buffer after teardown. The
+reviewer independently reran both exploits and the failed-upgrade regression;
+the consumption finding is **resolved**.
+
+The limited audit verified route/SNI/timeout/ownership, ordered send/receive,
+explicit upgrade entropy binding, canonical masked framing, decoded payloads,
+semantic outcomes, and consumption at both buffering layers. `make lint` and
+`make check` passed (35 offline methods). Synthetic-only measurement includes
+all 18 socket cases and credits zero captured functions. Failed upgrades show
+no explicit close call; this injected seam does not prove persistent live leaks.
+
+Verdict: **passes this interim seam only**. TLS cryptography, bridge protobuf and
+bootstrap exchanges, full login lifecycle, live socket captures, and all final
+library criteria remain open. This audit is not final Reviewer B sign-off.
+
 Not assigned yet. Assign a reviewer with fresh context after a complete candidate
 exists. Record its reviewed commit and separate verdict/evidence for every item.
 
