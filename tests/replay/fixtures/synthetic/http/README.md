@@ -23,3 +23,12 @@ shared-folder selectors; rename, delete, move, trash, restore, and permanent
 deletion request shapes; missing download tokens; account devices and family
 lists with zero, one, and many results; and storage projections. Other operations
 and error variants remain open in the migration checklist.
+
+Find My scenarios cover service initialization, zero/one/many devices, sound,
+messaging, lost mode, erase-token exchange and erase request shapes, unavailable
+capabilities, and missing erase tokens. Its monitor must stop before session
+teardown, and offline checks assert no monitor thread survives the suite.
+Reminders scenarios cover zero/one/many lists, sync-token pagination, absent
+zones, per-record errors, missing reminder lookups, query/fallback sync tokens,
+and incremental empty results. These are synthetic cases even when their
+operations overlap captured reads.

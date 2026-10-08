@@ -1,0 +1,80 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "findmy",
+  "operation": "devices",
+  "device_id": "synthetic-device-0",
+  "initial_state": {
+    "origin": "https://findmy.example.invalid",
+    "token_origin": "https://setup.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_data": {
+      "session_token": "synthetic-token"
+    }
+  },
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.example.invalid",
+        "path": "/fmipservice/client/web/initClient",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "177"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbXX0="
+        }
+      }
+    }
+  ],
+  "error": {
+    "type": "PyiCloudNoDevicesException",
+    "message": ""
+  }
+}

@@ -29,13 +29,32 @@ for migration/release sign-off.
 | 10 | Bridge TLS/WebSocket exchanges uncaptured; replay blocks HTTP only | In progress: TCP/socket/HTTP fallback guard added; bridge replay still open |
 | 11 | Reference silently persists token rotations; Go caller-visible token exchange absent | Open |
 | 12 | MDX guides/Pages/reference/rendered-site checks absent | Open |
-| 13 | Copied website/release docs assert nonexistent workflows and retain placeholders | Open |
+| 13 | Copied website/release docs assert nonexistent workflows and retain placeholders | In progress: identified stale claims corrected and independently checked at bootstrap commit; full documentation audit still open |
 | 14 | No checklist, combined reviewer record, reviewed commit, or second reviewer | In progress: checklist/current record added; final reviews still open |
 | 15 | Private Python snapshots/raw values are not portable sanitized Go fixtures; failure type-only comparison; login/socket/teardown gaps | Open |
 | 16 | Python reference CLI is not an installable Go SDK-consuming module | Open |
 
 Changes marked in progress require this reviewer to verify the final fix; the
 implementer's disposition is not an independent passing verdict.
+
+### Reviewer A — interim fix audit
+
+The same independent reviewer inspected commit
+`dd374577c340eca7c3ad587abe0b177f3f5a2843` and independently reran `make check`,
+23 portable Drive/account scenarios (23 exchanges), and coverage measurement.
+It confirmed strict request/result/error matching, consumption, HTTP/TCP
+fallback prohibition for examined paths, separate captured/synthetic contexts,
+and the corrected infrastructure claims. Combined coverage reproduced
+176/915 entered functions and 804/5,436 function-body statements. Synthetic-only
+measurement credited zero statements to captured evidence.
+
+Verdict: **these limited bootstrap fixes pass; full library acceptance does
+not pass**. Actual Go interoperability, complete sockets/endpoint discovery,
+portable captured state, captured error semantics, and all SDK/release gates
+remain open. Coverage by evidence describes execution contexts: one-time
+initialization belongs to whichever context first runs it, so synthetic-only
+and combined synthetic counts need not match. The reviewer did not verify the
+later Reminders and Find My additions in this audit.
 
 ## Reviewer B — final audit pending
 

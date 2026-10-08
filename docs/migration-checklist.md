@@ -82,3 +82,10 @@ Combined replay currently enters 176/915 functions and executes 804/5,436
 function-body statements (14.79%). The report also gives captured and synthetic
 coverage separately; overlapping statements are counted once in combined
 coverage. This remains an early baseline, far from functional completeness.
+
+Subsequent Find My and Reminders cases bring the portable suite to 45 scenarios
+and 53 paired exchanges. Combined coverage enters 202/915 functions and executes
+909/5,436 function-body statements (16.72%), with 231/2,094 branch exits covered.
+Offline checks include 24 test methods and assert monitor cleanup and error
+meaning. The independent interim review covers the earlier committed 23 cases;
+later additions still need review.

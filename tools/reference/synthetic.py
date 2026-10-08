@@ -17,6 +17,22 @@ def execute(api, scenario):
 
     state = scenario["initial_state"]
     params = dict(state["params"])
+    if scenario["service"] == "findmy":
+        from pyicloud.services.findmyiphone import FindMyiPhoneServiceManager
+
+        manager = FindMyiPhoneServiceManager(
+            state["origin"],
+            state["token_origin"],
+            api.session,
+            params,
+            with_family=False,
+            refresh_interval=86400,
+        )
+        api._devices = manager
+        if scenario["operation"] == "devices":
+            return [device.data for device in manager.devices.values()]
+        device = manager[scenario["device_id"]]
+        return getattr(device, scenario["operation"])(*scenario["inputs"])
     if scenario["service"] == "drive":
         service = DriveService(
             state["origin"], state["document_origin"], api.session, params
@@ -39,6 +55,19 @@ def execute(api, scenario):
                 "total_bytes": value.usage.total_storage_in_bytes,
             }
         return value
+    if scenario["service"] == "reminders":
+        from pyicloud.services.reminders.service import RemindersService
+
+        service = RemindersService(state["origin"], api.session, params)
+        operation = scenario["operation"]
+        value = getattr(service, operation)(
+            *scenario["inputs"], **scenario.get("keyword_inputs", {})
+        )
+        if operation in {"lists", "iter_changes", "reminders"}:
+            return [item.model_dump(mode="json") for item in value]
+        if hasattr(value, "model_dump"):
+            return value.model_dump(mode="json")
+        return value
     raise ValueError("Unregistered synthetic service")
 
 
@@ -59,6 +88,7 @@ def replay_synthetic(path):
         )
         api.session.headers.clear()
         api.session.headers.update(scenario["initial_state"]["headers"])
+        api.session.data.update(scenario["initial_state"].get("session_data", {}))
         adapter = ReplayAdapter(scenario["exchanges"])
         api.session.mount("https://", adapter)
         api.session.mount("http://", adapter)
