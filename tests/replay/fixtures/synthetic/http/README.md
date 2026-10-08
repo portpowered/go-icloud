@@ -179,14 +179,15 @@ Cases cover successful account setup, authorize/init/complete provider refusal,
 paused MFA token login, and auth-shell discovery followed by SMS code delivery.
 All salts, secrets, passwords and challenge values are invented; these are
 implementation-derived protocol examples, not captured authentication evidence.
-Hardware security-key interaction is deferred. Modern bridge proof verification
-and complete authenticated login remain open; the SRP HTTP cases alone do not
-prove those workflows.
+Hardware security-key interaction is deferred. The SRP HTTP cases alone do not
+prove complete bridge authentication; the combined full-flow cases below cover
+the synthetic HTTP/socket workflow.
 
 Combined bridge scenarios carry `bridge_network` with declared P-256 private
 scalars, socket connections/events and a shared HTTP/socket timeline. They run
 actual source key generation, signing, bootstrap, prompt setup and raw WebSocket
-framing. Only the curve-key entropy factory and TCP/TLS factories are injected.
+framing. The curve-key and bounded prover-scalar entropy factories plus TCP/TLS
+factories are injected; prover algorithms are not replaced.
 The variable ECDSA signature must verify against the exact declared public key
 and nonce; the portable bootstrap matcher independently checks canonical
 protobuf fields, field order, expiration and signature envelope. No signature
@@ -199,11 +200,34 @@ routing, entropy and connection attempts remain failures even if caught. Both
 source cleanup and teardown close retained prompt connections inside the
 declared entropy scope; factories restore on success and failure.
 
-Twelve cases cover prompt setup, repeated prompt calls, step-0 statuses
+The initial twelve cases cover prompt setup, repeated prompt calls, step-0 statuses
 200/204/409, refusal, invalid-nonce retry with server time, mismatched session
 UUID, SMS fallback and legacy (`_W`) device-code success/rejection with trust
-and account setup. Modern prompt setup is included; modern SPAKE2 code
-verification is not yet included. Bridge state projects protocol fields,
+and account setup. Bridge state projects protocol fields,
 verified bootstrap metadata and whether a socket remains active, without
 Python object snapshots. TLS cryptography and live trusted-device interactions
 are not established by these synthetic transcripts.
+
+Fifteen modern verification cases execute actual scrypt/P-256 SPAKE2 point math,
+HMAC confirmation/key derivation and AES-GCM decryption. Ordered `prover_random`
+samples declare the exact `secrets.randbelow` upper bound and hexadecimal value;
+zero-then-nonzero retry is exercised and every draw must be consumed. Undeclared
+or rejected draws remain failures even if caught, and the factory restores.
+Authoring used the pinned reference's server helper with an invented peer scalar
+to verify both confirmations and encrypted plaintext before recording. Active
+replay uses the actual client prover, not that helper.
+
+Cases cover code-validation statuses 200/204/409/412, final steps 4 and 6,
+rejected confirmation/ciphertext, provider error pushes, session mismatch and
+refused step/code/completion endpoints. The invented decrypted code has an
+explicit base64 entity expectation, binding its exact bytes rather than merely
+its six-digit shape. The recorder still redacts private passwords and codes;
+exact synthetic expectations do not change private capture behavior.
+
+Three complete login cases start with empty session/account/challenge state,
+run actual SRP and automatic auth-shell/bridge setup, then modern or legacy code
+verification and trust/account transitions. Modern 412 retains MFA requirements
+and sends neither trust nor account-login requests. All HTTP and socket events
+share one consumed timeline. These establish synthetic pinned-reference login
+compatibility, not current live Apple behavior, physical device interaction or
+Go interoperability.

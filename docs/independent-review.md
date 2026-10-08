@@ -126,6 +126,33 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim modern proof and full-login audit
+
+The independent reviewer replayed fifteen modern SPAKE2 cases with 65 HTTP
+pairs, then three complete login flows with another 31 HTTP pairs and 32 socket
+events. It reconstructed the server-side scalar-3 handshake, verified client
+confirmations and directly AES-GCM-decrypted the final payloads for six completed
+verification flows. The decrypted invented code matches the exact HTTP entity.
+It independently verified SRP peer proofs for all three complete login flows.
+
+The full flows begin with empty account/session/challenge/cookie state and invoke
+actual `authenticate`, automatic bridge discovery and `validate_2fa_code`.
+Successful modern/legacy cases finish trusted with MFA cleared; modern 412 stays
+untrusted with MFA required and omits trust/account setup. No active prover
+algorithm is replaced. Declared bounded scalar draws are consumed and sticky.
+
+The reviewer confirmed rejected proof/challenge/ciphertext and mixed timeline/
+MFA-state mutations, caught wrong-bound-to-valid entropy retry, exact decrypted
+code mismatch and factory restoration across success and HTTP/crypto failures.
+Private recording still redacts passwords/codes. Independent `make check`
+passes all 60 methods, including the 319-scenario sweep, lint, build and race
+checks. Current totals independently enumerate 319 HTTP scenarios/709 pairs.
+
+Verdict: **limited interim pass**. This establishes pinned-reference synthetic
+proof/login compatibility. Live TLS/socket evidence, Go interoperability and
+all final SDK/release acceptance criteria remain open. Documentation is updated
+to reflect this scope; physical security-key interaction remains deferred.
+
 ### Interim combined trusted-device bridge audit
 
 The independent reviewer replayed twelve combined cases with 20 HTTP pairs and

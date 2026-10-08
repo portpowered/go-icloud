@@ -68,20 +68,24 @@ duplicate exclusions fail. Authentication's keyring lookup and shared helpers
 used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
-The portable HTTP suite now has 301 scenarios and 613 paired exchanges after
+The portable HTTP suite now has 319 scenarios and 709 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
 entropy and exact proof matching; they also exercise refusal, trust-token reuse,
-paused MFA token login and SMS challenge setup. Twelve combined bridge cases
-add 20 HTTP pairs and 99 socket events, with a shared consumed timeline, actual
-bootstrap signing/framing, server-time nonce retry, prompt setup, SMS fallback
-and legacy code verification. Modern SPAKE2 code verification and complete
-trusted-device login remain open; physical security-key interaction is deferred.
+paused MFA token login and SMS challenge setup. Thirty combined bridge cases
+contain 116 HTTP pairs and 297 socket events, with shared consumed timelines,
+actual bootstrap signing/framing and modern SPAKE2/AES-GCM verification, nonce
+retry, prompt setup, SMS fallback and legacy code verification. Three cases
+exercise complete SRP-to-bridge login, including modern rejection without trust
+or account setup. Physical security-key interaction is deferred; live socket
+evidence, Go interoperability and final SDK/release gates remain open.
 Authentication socket replay adds 53 synthetic ordered duplex scenarios
 (283 events), separate from combined bridge transcripts. Combined replay now
-enters 506/905 functions and executes 2,842/5,385 body statements (52.78%) and
-851/2,076 branch exits. These measurements
+enters 547/905 functions and executes 3,079/5,385 body statements (57.18%) and
+917/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
+The preceding combined-bootstrap milestone entered 506/905 functions and
+covered 2,842/5,385 statements (52.78%) and 851/2,076 branch exits.
 The preceding SRP milestone entered 488/905 functions and covered
 2,718/5,385 statements (50.47%) and 822/2,076 branch exits.
 The preceding authentication session milestone entered 481/905 functions and

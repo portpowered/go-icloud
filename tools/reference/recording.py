@@ -257,7 +257,12 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
             if not re.fullmatch("[0-9]+", length) or int(length) != len(body):
                 raise AssertionError("Request Content-Length does not match body bytes")
         try:
-            matched = matches_request(request_record(request), pair["request"])
+            actual = request_record(request)
+            if pair["request"]["body"]["encoding"] == "base64":
+                # Explicit entity expectations (including invented synthetic codes)
+                # match original bytes. Private recordings retain redacted rules.
+                actual["body"] = body_record(request.body)
+            matched = matches_request(actual, pair["request"])
         except (ValueError, KeyError, IndexError, TypeError) as error:
             raise AssertionError("Invalid request or fixture match rule") from error
         if not matched:

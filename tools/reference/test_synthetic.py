@@ -15,7 +15,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 301)
+        self.assertGreaterEqual(len(fixtures), 319)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):

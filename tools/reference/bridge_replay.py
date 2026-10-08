@@ -191,6 +191,7 @@ def bridge_network(api, scenario, adapter):
     timeline = Timeline(network["timeline"])
     connections = []
     scalars = []
+    prover_random = []
     http_used = []
     original_send = adapter.send
     original_factory = api._trusted_device_bridge._websocket_factory
@@ -211,6 +212,17 @@ def bridge_network(api, scenario, adapter):
     def keypair(curve):
         with validation(timeline):
             return keypair_unchecked(curve)
+
+    def randbelow(upper):
+        with validation(timeline):
+            samples = network.get("prover_random", [])
+            assert len(prover_random) < len(samples), "undeclared bridge prover entropy"
+            item = samples[len(prover_random)]
+            assert upper == int(item["upper_hex"], 16), "prover random bound mismatch"
+            value = int(item["value_hex"], 16)
+            assert 0 <= value < upper
+            prover_random.append(value)
+            return value
 
     def websocket_unchecked(url, timeout, origin, user_agent):
         index = len(connections)
@@ -248,6 +260,9 @@ def bridge_network(api, scenario, adapter):
         stack.enter_context(
             patch("pyicloud.hsa2_bridge.ec.generate_private_key", keypair)
         )
+        stack.enter_context(
+            patch("pyicloud.hsa2_bridge_prover.secrets.randbelow", randbelow)
+        )
         api._trusted_device_bridge._websocket_factory = websocket
         try:
             yield
@@ -259,6 +274,7 @@ def bridge_network(api, scenario, adapter):
                     transcript.consumed()
                 assert len(connections) == len(network["connections"])
                 assert len(scalars) == len(network["private_scalars"])
+                assert len(prover_random) == len(network.get("prover_random", []))
                 timeline.consumed()
             finally:
                 api._trusted_device_bridge._websocket_factory = original_factory

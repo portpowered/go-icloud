@@ -11,6 +11,71 @@ from synthetic import FIXTURES, replay_synthetic
 
 
 class BridgeReplayTests(unittest.TestCase):
+    def test_modern_proof_entropy_and_challenge_are_bound(self):
+        original = json.loads(
+            (FIXTURES / "auth-bridge-modern-code-204.json").read_text()
+        )
+        for change in ["scalar", "bound", "missing", "surplus", "proof", "ciphertext"]:
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                scenario = copy.deepcopy(original)
+                samples = scenario["bridge_network"]["prover_random"]
+                if change == "scalar":
+                    samples[0]["value_hex"] = "3"
+                elif change == "bound":
+                    samples[0]["upper_hex"] = "2"
+                elif change == "missing":
+                    del scenario["bridge_network"]["prover_random"]
+                elif change == "surplus":
+                    samples *= 2
+                elif change == "proof":
+                    scenario["exchanges"][2]["request"]["body"]["value"] = "e30="
+                else:
+                    scenario["bridge_network"]["connections"][0]["events"][8][
+                        "data"
+                    ] = "ggA="
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_decrypted_synthetic_code_matches_exact_bytes(self):
+        from pyicloud.hsa2_bridge_prover import TrustedDeviceBridgeProver
+
+        original = TrustedDeviceBridgeProver.decrypt_message
+        observed = []
+
+        def wrong(prover, ciphertext):
+            plaintext = original(prover, ciphertext)
+            observed.append(plaintext)
+            return "654322"
+
+        with patch.object(TrustedDeviceBridgeProver, "decrypt_message", wrong):
+            with self.assertRaises(AssertionError):
+                replay_synthetic(FIXTURES / "auth-bridge-modern-code-204.json")
+        self.assertEqual(observed, ["654321"])
+
+    def test_caught_extra_prover_random_call_is_rejected(self):
+        import secrets
+
+        import synthetic
+        from pyicloud.hsa2_bridge_prover import _P256_ORDER
+
+        original = synthetic.execute
+        attempted = []
+
+        def extra(api, scenario, observations):
+            value = original(api, scenario, observations)
+            try:
+                secrets.randbelow(_P256_ORDER)
+            except AssertionError:
+                attempted.append(True)
+            return value
+
+        with patch.object(synthetic, "execute", extra):
+            with self.assertRaises(AssertionError):
+                replay_synthetic(FIXTURES / "auth-bridge-modern-code-204.json")
+        self.assertEqual(attempted, [True])
+
     def test_bootstrap_wire_and_public_state_are_bound(self):
         original = json.loads((FIXTURES / "auth-bridge-prompt.json").read_text())
         for change in ["nonce", "key", "expiry", "state", "ack", "order", "tail"]:
@@ -129,6 +194,7 @@ class BridgeReplayTests(unittest.TestCase):
 
     def test_bridge_factories_restore_after_success_and_failure(self):
         import os
+        import secrets
         import time
         import uuid
 
@@ -137,6 +203,7 @@ class BridgeReplayTests(unittest.TestCase):
 
         before = (
             ec.generate_private_key,
+            secrets.randbelow,
             hsa2_bridge.socket.create_connection,
             hsa2_bridge.ssl.create_default_context,
             os.urandom,
@@ -145,13 +212,14 @@ class BridgeReplayTests(unittest.TestCase):
             time.time,
             time.sleep,
         )
-        for name in ["prompt", "step0-refused", "nonce-retry"]:
+        for name in ["prompt", "step0-refused", "nonce-retry", "modern-code-204"]:
             with self.subTest(scenario=name):
                 replay_synthetic(FIXTURES / ("auth-bridge-" + name + ".json"))
                 self.assertEqual(
                     before,
                     (
                         ec.generate_private_key,
+                        secrets.randbelow,
                         hsa2_bridge.socket.create_connection,
                         hsa2_bridge.ssl.create_default_context,
                         os.urandom,
