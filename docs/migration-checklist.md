@@ -268,3 +268,23 @@ AuthContext file. Canonical paired synthetic replays bind requests and projected
 results, with an additional explicitly synthetic 401 control. Native login,
 reference-session import, Photos/Reminders commands, writes, consumer installation,
 CLI module release and live verification remain open. Item 16 is not complete.
+
+### Saved-session SDK authentication
+
+`ResumeSession` now validates cookie state and refreshes saved tokens using the
+public saved-credential request model. Thirteen canonical success cases and three
+canonical failures bind source discovery, trust/MFA flags, service URLs, ordered
+response metadata and credential rotation. Two new success-status controls were
+executed against the pinned Source; HTTP inventory is now 497 scenarios/1109
+pairs. Two further Source-executed cases bind empty auth headers to preserved
+saved token/trust/country values, including subsequent refresh request inputs. An explicit synthetic control proves omitted cookie scope is normalized,
+rotated credentials replace stale values and remain off another service origin.
+Password/SRP, MFA completion, accepted terms, CLI import, live verification and
+full authentication acceptance remain open.
+
+Native cookie fidelity now has three further Source-executed controls: embedded
+quotes in saved cookies, quoted response rotation preserved in the returned
+credentials and next refresh request, and explicit Cookie-header precedence.
+Cookie pair/separator/quote formats are schema-generated. A private live Go
+saved-session probe returned provider 421; this is a failed authentication
+attempt, not verification of live service behavior or valid saved credentials.

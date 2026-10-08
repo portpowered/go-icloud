@@ -34,6 +34,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	err = generateExternalConstants("Auth", "auth")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
 	err = generateExternalConstants("Drive", "drive")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

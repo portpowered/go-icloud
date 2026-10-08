@@ -121,7 +121,7 @@ components:
     ErrorKind:
       type: string
       description: Inspectable client failure class; errors preserve their cause separately from their safe display message.
-      enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response, closed, not-directory, not-in-trash, no-devices]
+      enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response, closed, not-directory, not-in-trash, no-devices, authentication-required, terms-required]
 
     NullableJSONValue:
       description: An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
@@ -837,3 +837,39 @@ components:
         location: null
         capabilities: {sound: false, messaging: false, erase: false, lostMode: false, location: false}
         status: {batteryLevel: null, deviceDisplayName: null, deviceStatus: null, name: null}
+
+    ResumeSessionRequest:
+      type: object
+      required: [auth, forceRefresh, allowUntrusted]
+      description: Reuse caller-owned web credentials; no password login or MFA completion occurs.
+      properties:
+        auth: {$ref: '#/components/schemas/SavedSessionCredentials'}
+        accountCountryCode: {type: string, nullable: true, description: Saved account country; missing is sent as null.}
+        trustToken: {type: string, x-go-type-skip-optional-pointer: true, description: Secret saved browser trust token; missing is sent as an empty string.}
+        forceRefresh: {type: boolean, description: Skip cookie validation and use the saved session token.}
+        allowUntrusted: {type: boolean, description: Return paused MFA discovery; a trusted session is otherwise required.}
+    ResumeSessionResult:
+      type: object
+      required: [auth, accountCountryCode, trustToken, trustedSession, requiresTwoFactor, requiresTwoStep, accountData, responses]
+      description: Copied authentication state and discovered account data. Credential fields are private and must not be printed implicitly.
+      properties:
+        accountCountryCode: {type: string, nullable: true, description: Saved or rotated account country used for later token refresh.}
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        trustToken: {type: string, description: Secret rotated or retained browser trust token.}
+        trustedSession: {type: boolean}
+        requiresTwoFactor: {type: boolean}
+        requiresTwoStep: {type: boolean}
+        accountData: {$ref: '#/components/schemas/UnknownJSONValue', description: Exact account-discovery JSON retained as opaque metadata alongside the typed session projection.}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}, description: Ordered authentication response metadata including cookie updates.}
+
+    SavedSessionCredentials:
+      type: object
+      required: [clientID, setupServiceURL, sessionToken, headers, cookies]
+      description: Saved web credentials before account identity and service URLs have been rediscovered.
+      properties:
+        clientID: {type: string, minLength: 1, x-go-name: ClientID}
+        setupServiceURL: {type: string, format: uri, x-go-name: SetupServiceURL, description: HTTPS setup origin for cookie validation and token login.}
+        sessionToken: {type: string, minLength: 1, description: Secret saved web session token.}
+        headers: {type: array, items: {$ref: '#/components/schemas/Header'}}
+        cookies: {type: array, items: {$ref: '#/components/schemas/AuthCookie'}}
+        chinaMainland: {type: boolean, description: Saved account region.}

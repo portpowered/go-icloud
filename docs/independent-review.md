@@ -1011,3 +1011,36 @@ an explicitly disabled Find My monitor; all are now bound by the CLI tests or
 one-shot lifecycle configuration. This milestone does not claim complete CLI,
 live account, authentication or migration acceptance. Exact post-CI approval
 remains required before merge.
+
+### Interim saved-session authentication review
+
+Independent preliminary review found omitted-cookie-scope projection and strict
+HTTP-200 behavior gaps. Initial copied credentials now bind to the first setup
+request host and default directory path before jar seeding and projection merge.
+A cross-service paired control proves stale replacement and host isolation.
+Authentication accepts successful 2xx and parses discovery JSON independently of
+advertised media; canonical Source/Go controls bind 201 validation and 202 token
+refresh with text/plain JSON. Exact post-CI approval and full migration gates
+remain open.
+
+The reviewer also found that empty authentication headers erased saved values.
+Updates now require a nonempty header, matching pinned Source session handling.
+Two canonical Source-executed replays verify preserved token/trust/country and
+exact subsequent refresh inputs; full local checks and exact post-CI approval
+remain required.
+
+Final local make lint/check passed: both Go modules, race/contracts/generation,
+72 Python verification methods and 494 HTTP scenarios/1105 pairs. SDK replay
+coverage is 1718/2025 (84.8%), unit 1085/2025 (53.6%) and combined 1807/2025
+(89.2%); CLI command coverage remains separately 60/75 (80.0%), 38/75 (50.7%)
+and 68/75 (90.7%). These are scoped implementation reports, not complete
+endpoint/migration acceptance (LIB-07). Independent working-tree review found no
+remaining saved-session blocker; exact post-CI SHA approval remains pending.
+
+A private live probe revealed native cookie sanitization warnings. Independent
+invented-value probes confirmed that AddCookie stripped embedded quotes and
+Set-Cookie parsing lost quote framing in returned credentials. Native request
+serialization and response projection now preserve those bytes using generated
+formats. Three Source-executed canonical controls cover seeded embedded quotes,
+quoted rotation with a subsequent refresh, and explicit-header precedence. The
+old commit af7e7b4 is not approved for merge; revised checks/review/CI are pending.

@@ -99,6 +99,31 @@ Coverage for `internal/command` is measured separately from SDK coverage; the
 process entry point is outside that measurement. `make check` verifies both Go
 modules, including their pinned all-linter checks and race tests.
 
+The SDK can now validate cookies and refresh a saved web session token with
+`ResumeSession`. Supply `SavedSessionCredentials`, the saved account country and
+trust token. The returned authentication context includes discovered Account,
+Drive and Find My URLs and copied cookie/token updates:
+
+```go
+resumed, err := client.ResumeSession(ctx, icloud.ResumeSessionRequest{
+    Auth: savedCredentials,
+    AccountCountryCode: savedCountry,
+    TrustToken: savedTrustToken,
+    ForceRefresh: false,
+    AllowUntrusted: false,
+})
+if err != nil {
+    return err
+}
+auth := resumed.Auth // credentials: persist privately and do not print
+```
+
+`authentication-required` requests interactive login; `terms-required` requests
+terms acceptance. This operation performs neither. `AllowUntrusted` can return
+paused MFA discovery. The CLI's reference-session importer, password login and
+MFA completion are still pending; native session reuse has offline replay evidence
+and has not yet been verified against a live account.
+
 Use `github.com/portpowered/go-icloud/pkg/icloud`. Authentication context belongs
 to each request. For now, supply the account origin, account/client identifiers
 and cookie/web headers from your caller-owned authenticated session. Supply structured cookies in `AuthContext.Cookies` when requests should apply provider cookie updates between stages. The SDK

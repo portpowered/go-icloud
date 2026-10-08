@@ -1,0 +1,196 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iCloud saved-session authentication wire API",
+    "version": "0.1.0",
+    "description": "Cookie validation and saved-token refresh; password and MFA routes are not yet bound here."
+  },
+  "servers": [
+    {
+      "url": "https://setup.icloud.com"
+    },
+    {
+      "url": "https://setup.icloud.com.cn"
+    }
+  ],
+  "paths": {
+    "/setup/ws/1/validate": {
+      "post": {
+        "operationId": "ValidateAuthSession",
+        "summary": "Validate saved session",
+        "description": "Returns account authentication state and discovered service URLs. No password is submitted.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
+              }
+            },
+            "*/*": {
+              "schema": {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful account authentication and service discovery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Authentication provider refusal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful account authentication and service discovery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setup/ws/1/accountLogin": {
+      "post": {
+        "operationId": "LoginAuthToken",
+        "summary": "Refresh a saved web token",
+        "description": "Returns account authentication state and discovered service URLs. No password is submitted.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
+              }
+            },
+            "*/*": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful account authentication and service discovery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Authentication provider refusal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful account authentication and service discovery.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "headers": {
+      "X-Apple-Session-Token": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "Secret rotated session credential; persist only explicitly."
+      },
+      "X-Apple-TwoSV-Trust-Token": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "Secret rotated session credential; persist only explicitly."
+      },
+      "X-Apple-ID-Account-Country": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "Rotated account country used for later token refresh."
+      }
+    }
+  }
+}

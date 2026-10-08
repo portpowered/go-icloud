@@ -75,8 +75,15 @@ func (state *CookieState) apply(request *http.Request) {
 		return
 	}
 
-	for _, cookie := range state.jar.Cookies(request.URL) {
-		request.AddCookie(cookie)
+	cookies := state.jar.Cookies(request.URL)
+	pairs := make([]string, 0, len(cookies))
+
+	for _, cookie := range cookies {
+		pairs = append(pairs, fmt.Sprintf(protocol.CookiePairFormatValue, cookie.Name, NativeCookieValue(cookie)))
+	}
+
+	if len(pairs) != 0 {
+		request.Header.Set(protocol.CookieName, strings.Join(pairs, protocol.CookieSeparatorValue))
 	}
 }
 
@@ -87,4 +94,13 @@ func (state *CookieState) update(target *url.URL, response *http.Response) {
 
 	state.initialize(target)
 	state.jar.SetCookies(target, response.Cookies())
+}
+
+// NativeCookieValue preserves version-zero cookie framing used by the reference.
+func NativeCookieValue(cookie *http.Cookie) string {
+	if cookie.Quoted {
+		return fmt.Sprintf(protocol.CookieQuotedValueFormatValue, cookie.Value)
+	}
+
+	return cookie.Value
 }
