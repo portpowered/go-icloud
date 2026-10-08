@@ -93,7 +93,7 @@ later additions still need review.
 The current portable suite has 65 scenarios and 90 exchanges after adding Drive
 transfers and Photos initialization/synchronization. Combined replay enters
 221/915 functions and executes 1,005/5,436 body statements (18.49%) and 267/2,094
-branch exits. There are 27 offline test methods, including UUID and multipart
+branch exits. There are 29 offline test methods, including UUID and multipart
 negative controls. The draft [wire inventory](reference-endpoints.json) lists
 76 HTTP/socket boundaries with resolved pinned source definitions. It still
 requires actual send-site/route/payload/dependency audit and schema bindings;

@@ -104,6 +104,41 @@ class ReplayTests(unittest.TestCase):
             adapter.send(request)
         self.assertEqual(adapter.index, 0)
 
+    def test_multipart_rejects_preamble_epilogue_and_inconsistent_framing(self):
+        request = prepared(files={"synthetic.txt": b"data"})
+        expectation = pair(request)
+        expectation["request"]["body"] = {
+            "encoding": "multipart",
+            "content_type_pattern": "multipart/form-data; boundary=[0-9a-f]{32}",
+            "parts": multipart_parts(request.headers["Content-Type"], request.body),
+        }
+        for before, after in [
+            (b"", b"UNREGISTERED-EPILOGUE"),
+            (b"UNREGISTERED-PREAMBLE\r\n", b""),
+            (b"\r\n", b""),
+            (b"", b"\r\n"),
+        ]:
+            with self.subTest(before=before, after=after):
+                changed = request.copy()
+                changed.body = before + changed.body + after
+                adapter = ReplayAdapter([expectation])
+                with self.assertRaisesRegex(AssertionError, "Content-Length"):
+                    adapter.send(changed)
+                self.assertEqual(adapter.index, 0)
+                with self.assertRaisesRegex(AssertionError, "Invalid multipart"):
+                    multipart_parts(changed.headers["Content-Type"], changed.body)
+
+    def test_content_length_is_validated_for_every_request(self):
+        request = prepared(json={"item": "synthetic"})
+        for length in ["0", "invalid", "-1"]:
+            with self.subTest(length=length):
+                changed = request.copy()
+                changed.headers["Content-Length"] = length
+                adapter = ReplayAdapter([pair(changed)])
+                with self.assertRaisesRegex(AssertionError, "Content-Length"):
+                    adapter.send(changed)
+                self.assertEqual(adapter.index, 0)
+
     def test_success_empty_many_and_provider_error(self):
         cases = [
             (b'{"items":[]}', 200),

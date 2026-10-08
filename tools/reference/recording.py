@@ -153,7 +153,12 @@ def multipart_parts(content_type, body):
     message = BytesParser(policy=email_policy).parsebytes(
         b"Content-Type: " + content_type.encode("ascii") + b"\r\n\r\n" + body
     )
-    if not message.is_multipart() or message.defects:
+    if (
+        not message.is_multipart()
+        or message.defects
+        or message.preamble is not None
+        or message.epilogue not in (None, "")
+    ):
         raise AssertionError("Invalid multipart request")
     parts = []
     for part in message.iter_parts():
@@ -225,6 +230,17 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         if self.index == len(self.exchanges):
             raise AssertionError("Unexpected or duplicate HTTP request")
         pair = self.exchanges[self.index]
+        length = request.headers.get("Content-Length")
+        if length is not None:
+            body = request.body or b""
+            if isinstance(body, str):
+                body = body.encode("utf-8")
+            if (
+                not isinstance(body, bytes)
+                or not re.fullmatch("[0-9]+", length)
+                or int(length) != len(body)
+            ):
+                raise AssertionError("Request Content-Length does not match body bytes")
         try:
             matched = matches_request(request_record(request), pair["request"])
         except (ValueError, KeyError, IndexError, TypeError) as error:

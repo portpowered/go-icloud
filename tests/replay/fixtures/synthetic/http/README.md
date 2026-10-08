@@ -8,8 +8,9 @@ Each scenario contains its source pin, service instantiation inputs, ordinary
 HTTP session state, operation inputs, ordered paired exchanges, and the expected
 semantic result or typed error including its message. Request bodies and response
 bodies use the same base64 entity format as the private recorder. All identities,
-origins, resource names, and account values are invented. There are no cookies or
-credentials in these scenarios.
+origins, resource names, account values, cookies, and token parameters are
+invented. There are no real credentials or private account cookies in these
+scenarios.
 
 The reference runner creates the actual service and session, injects strict
 paired replay below request preparation, and forbids HTTP and socket fallback.

@@ -56,6 +56,24 @@ initialization belongs to whichever context first runs it, so synthetic-only
 and combined synthetic counts need not match. The reviewer did not verify the
 later Reminders and Find My additions in this audit.
 
+### Reviewer A — expanded reference audit
+
+At `37381acfbfeb5ffadfd24620d20f232c94aa5578`, the reviewer independently passed
+`make check` (27 offline methods), 65 portable scenarios/90 exchanges, and
+combined measurement (221/915 functions; 1,005/5,436 statements; 267/2,094 branch
+exits). All 76 draft inventory rows matched their pinned source function names
+and definition lines. It verified the limited Photos, Reminders, Find My,
+Drive-transfer, UUID-pattern, and timestamp claims while leaving full acceptance
+open.
+
+The reviewer found that multipart matching ignored MIME preamble/epilogue and
+accepted appended bytes inconsistent with Content-Length. It also identified a
+stale statement claiming fixtures contained no cookies, although upload cases
+have invented values. Fixes now reject preamble/epilogue, validate byte length
+before every replay send, add negative controls, and correct that statement.
+Disposition: **fixes implemented; independent retest pending**. Do not mark the
+replay finding resolved until the reviewer verifies the fix commit.
+
 ## Reviewer B — final audit pending
 
 Not assigned yet. Assign a reviewer with fresh context after a complete candidate
