@@ -38,26 +38,30 @@ func (e AuthCookieSameSite) Valid() bool {
 
 // Defines values for ErrorKind.
 const (
-	Canceled        ErrorKind = "canceled"
-	Closed          ErrorKind = "closed"
-	Configuration   ErrorKind = "configuration"
-	Forbidden       ErrorKind = "forbidden"
-	InvalidResponse ErrorKind = "invalid-response"
-	NoDevices       ErrorKind = "no-devices"
-	NotDirectory    ErrorKind = "not-directory"
-	NotFound        ErrorKind = "not-found"
-	NotInTrash      ErrorKind = "not-in-trash"
-	Provider        ErrorKind = "provider"
-	RateLimited     ErrorKind = "rate-limited"
-	Timeout         ErrorKind = "timeout"
-	Transport       ErrorKind = "transport"
-	Unauthorized    ErrorKind = "unauthorized"
-	Unavailable     ErrorKind = "unavailable"
+	AuthenticationRequired ErrorKind = "authentication-required"
+	Canceled               ErrorKind = "canceled"
+	Closed                 ErrorKind = "closed"
+	Configuration          ErrorKind = "configuration"
+	Forbidden              ErrorKind = "forbidden"
+	InvalidResponse        ErrorKind = "invalid-response"
+	NoDevices              ErrorKind = "no-devices"
+	NotDirectory           ErrorKind = "not-directory"
+	NotFound               ErrorKind = "not-found"
+	NotInTrash             ErrorKind = "not-in-trash"
+	Provider               ErrorKind = "provider"
+	RateLimited            ErrorKind = "rate-limited"
+	TermsRequired          ErrorKind = "terms-required"
+	Timeout                ErrorKind = "timeout"
+	Transport              ErrorKind = "transport"
+	Unauthorized           ErrorKind = "unauthorized"
+	Unavailable            ErrorKind = "unavailable"
 )
 
 // Valid indicates whether the value is a known member of the ErrorKind enum.
 func (e ErrorKind) Valid() bool {
 	switch e {
+	case AuthenticationRequired:
+		return true
 	case Canceled:
 		return true
 	case Closed:
@@ -79,6 +83,8 @@ func (e ErrorKind) Valid() bool {
 	case Provider:
 		return true
 	case RateLimited:
+		return true
+	case TermsRequired:
 		return true
 	case Timeout:
 		return true
@@ -1079,6 +1085,60 @@ type RestoreDriveNodeRequest struct {
 
 // RestoreDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type RestoreDriveNodeResult = DriveItemChangeResult
+
+// ResumeSessionRequest Reuse caller-owned web credentials; no password login or MFA completion occurs.
+type ResumeSessionRequest struct {
+	// AccountCountryCode Saved account country; missing is sent as null.
+	AccountCountryCode nullable.Nullable[string] `json:"accountCountryCode,omitempty"`
+
+	// AllowUntrusted Return paused MFA discovery; a trusted session is otherwise required.
+	AllowUntrusted bool `json:"allowUntrusted"`
+
+	// Auth Saved web credentials before account identity and service URLs have been rediscovered.
+	Auth SavedSessionCredentials `json:"auth"`
+
+	// ForceRefresh Skip cookie validation and use the saved session token.
+	ForceRefresh bool `json:"forceRefresh"`
+
+	// TrustToken Secret saved browser trust token; missing is sent as an empty string.
+	TrustToken string `json:"trustToken,omitempty"`
+}
+
+// ResumeSessionResult Copied authentication state and discovered account data. Credential fields are private and must not be printed implicitly.
+type ResumeSessionResult struct {
+	// AccountCountryCode Saved or rotated account country used for later token refresh.
+	AccountCountryCode nullable.Nullable[string] `json:"accountCountryCode"`
+
+	// AccountData Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	AccountData UnknownJSONValue `json:"accountData"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth              AuthContext `json:"auth"`
+	RequiresTwoFactor bool        `json:"requiresTwoFactor"`
+	RequiresTwoStep   bool        `json:"requiresTwoStep"`
+
+	// Responses Ordered authentication response metadata including cookie updates.
+	Responses []ResponseMetadata `json:"responses"`
+
+	// TrustToken Secret rotated or retained browser trust token.
+	TrustToken     string `json:"trustToken"`
+	TrustedSession bool   `json:"trustedSession"`
+}
+
+// SavedSessionCredentials Saved web credentials before account identity and service URLs have been rediscovered.
+type SavedSessionCredentials struct {
+	// ChinaMainland Saved account region.
+	ChinaMainland *bool        `json:"chinaMainland,omitempty"`
+	ClientID      string       `json:"clientID"`
+	Cookies       []AuthCookie `json:"cookies"`
+	Headers       []Header     `json:"headers"`
+
+	// SessionToken Secret saved web session token.
+	SessionToken string `json:"sessionToken"`
+
+	// SetupServiceURL HTTPS setup origin for cookie validation and token login.
+	SetupServiceURL string `json:"setupServiceURL"`
+}
 
 // TrashDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
 type TrashDriveNodeRequest struct {

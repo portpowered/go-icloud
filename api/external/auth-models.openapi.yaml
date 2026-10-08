@@ -1,0 +1,179 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iCloud saved-session authentication models",
+    "version": "0.1.0",
+    "description": "Token validation and refresh account discovery; unknown provider metadata remains preserved."
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "UnknownJSONValue": {
+        "description": "Uninterpreted provider metadata retained without loss.",
+        "anyOf": [
+          {
+            "type": "object",
+            "nullable": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnknownJSONValue"
+            }
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ],
+        "x-go-type": "json.RawMessage"
+      },
+      "AuthService": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthIdentity": {
+        "type": "object",
+        "properties": {
+          "dsid": {
+            "type": "string"
+          },
+          "hsaVersion": {
+            "type": "integer"
+          },
+          "languageCode": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthWebServices": {
+        "type": "object",
+        "properties": {
+          "drivews": {
+            "$ref": "#/components/schemas/AuthService"
+          },
+          "docws": {
+            "$ref": "#/components/schemas/AuthService"
+          },
+          "findme": {
+            "$ref": "#/components/schemas/AuthService"
+          },
+          "photos": {
+            "$ref": "#/components/schemas/AuthService"
+          },
+          "reminders": {
+            "$ref": "#/components/schemas/AuthService"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/AuthService"
+        }
+      },
+      "AuthAccountResponse": {
+        "type": "object",
+        "properties": {
+          "dsInfo": {
+            "$ref": "#/components/schemas/AuthIdentity"
+          },
+          "hsaTrustedBrowser": {
+            "type": "boolean"
+          },
+          "hsaChallengeRequired": {
+            "type": "boolean"
+          },
+          "termsUpdateNeeded": {
+            "type": "boolean"
+          },
+          "webservices": {
+            "$ref": "#/components/schemas/AuthWebServices"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthTokenLoginRequest": {
+        "type": "object",
+        "properties": {
+          "accountCountryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "dsWebAuthToken": {
+            "type": "string"
+          },
+          "extended_login": {
+            "type": "boolean"
+          },
+          "trustToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountCountryCode",
+          "dsWebAuthToken",
+          "extended_login",
+          "trustToken"
+        ]
+      },
+      "AuthFailure": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "errorCode": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "WebAuthCookieName": {
+        "type": "string",
+        "enum": [
+          "X-APPLE-WEBAUTH-TOKEN"
+        ],
+        "description": "Cookie required before saved-session validation."
+      },
+      "AuthClientBuildNumber": {
+        "type": "string",
+        "enum": [
+          "2534Project66"
+        ],
+        "description": "Pinned reference default build used after session discovery."
+      },
+      "AuthClientMasteringNumber": {
+        "type": "string",
+        "enum": [
+          "2534B22"
+        ],
+        "description": "Pinned reference default mastering build used after session discovery."
+      }
+    }
+  }
+}
