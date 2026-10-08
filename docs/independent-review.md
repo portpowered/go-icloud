@@ -87,8 +87,15 @@ for `b002f65f8e520d687e2b7448208480e560b4ba00` failed before starting any job
 steps. GitHub's check annotation reports an account payment/spending-limit
 restriction; the runner name is empty. This is not a failing code test or passing
 CI evidence. Local checks and independent retests do not substitute for the
-required CI. Account-owner action is needed before retrying; implementation work
-can continue. Do not mark standard 5 satisfied.
+required CI.
+
+The account owner made the repository public on 2026-10-08. The subsequent
+[CI run](https://github.com/portpowered/go-icloud/actions/runs/37740853708) for
+`d7f45d05f2df5f586da656398d448e52fafab0bc` completed successfully, including
+pinned reference setup, all-linters, build/race checks, and 29 offline methods.
+Actions availability is restored. This verifies the committed bootstrap checks;
+the SDK/module/generation/source/model/coverage gates and final independent
+exact-commit CI verification remain open. Do not mark standard 5 satisfied.
 
 ## Reviewer B — final audit pending
 

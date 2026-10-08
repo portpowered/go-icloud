@@ -22,7 +22,8 @@ SDK before the CLI version that depends on it. CLI nested-module tags use the
 form `cmd/go-icloud/vMAJOR.MINOR.PATCH`; SDK tags use `vMAJOR.MINOR.PATCH`.
 
 A public proxy release requires public repository access. Confirm repository
-visibility as part of publication; the current remote is private. Test
+visibility as part of publication; the account owner made this repository public
+on 2026-10-08. Public visibility is not evidence of a published SDK or CLI. Test
 `go install github.com/portpowered/go-icloud/cmd/go-icloud@<released-version>`
 from a clean environment and record that command in the published guide. Verify
 release-note links against the deployed guides and generated reference before
