@@ -229,3 +229,51 @@ func TestDriveRequestMediaConstantsFollowSchema(t *testing.T) {
 		t.Fatal("other route-owned plain/text media was lost")
 	}
 }
+
+func TestDriveScalarConstantsFollowSchema(t *testing.T) {
+	t.Parallel()
+
+	models := driveModelsDocument(t)
+	models.Components.Schemas["DriveUploadValidationCookieName"].Value.Enum = []any{"X-SYNTHETIC-COOKIE"}
+	models.Components.Schemas["DriveUploadTokenCookieValue"].Value.Pattern = `\bt=([^;]+)`
+	field := models.Components.Schemas["DriveUploadContentDisposition"].Value
+	field.Pattern = `^synthetic; name="[^"]*"; filename="[^"]*"$`
+	field.Extensions["x-protocol-template"] = `synthetic; name="%s"; filename="%s"`
+
+	values, err := driveConstants(driveConstantsDocument(t), models)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if values["DriveUploadValidationCookieNameValue"] != "X-SYNTHETIC-COOKIE" ||
+		values["DriveUploadTokenCookieValuePattern"] != `\bt=([^;]+)` ||
+		values["DriveUploadContentDispositionTemplate"] != field.Extensions["x-protocol-template"] {
+		t.Fatal("scalar constants did not follow their canonical declarations")
+	}
+}
+
+func TestDriveScalarConstantsRejectInvalidFormats(t *testing.T) {
+	t.Parallel()
+
+	for _, value := range []any{1, "", `form-data; name="%d"; filename="%s"`, `other; name="%s"; filename="%s"`} {
+		t.Run(fmt.Sprint(value), func(t *testing.T) {
+			t.Parallel()
+
+			models := driveModelsDocument(t)
+			models.Components.Schemas["DriveUploadContentDisposition"].Value.Extensions["x-protocol-template"] = value
+
+			_, err := driveConstants(driveConstantsDocument(t), models)
+			if !errors.Is(err, errConstant) {
+				t.Fatal("invalid protocol template was emitted")
+			}
+		})
+	}
+
+	models := driveModelsDocument(t)
+	models.Components.Schemas["DriveUploadTokenCookieValue"].Value.Pattern = "["
+
+	_, err := driveConstants(driveConstantsDocument(t), models)
+	if !errors.Is(err, errConstant) {
+		t.Fatal("invalid cookie pattern was emitted")
+	}
+}

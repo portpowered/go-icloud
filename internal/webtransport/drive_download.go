@@ -79,7 +79,8 @@ func downloadTokenURL(tokens drive.DriveDownloadTokens) string {
 
 func driveContentRequest(contentURL string, auth RequestContext) (*http.Request, error) {
 	target, err := url.Parse(contentURL)
-	if err != nil || target.Scheme != "https" || target.Host == "" || target.User != nil || target.Fragment != "" {
+	if err != nil || target.Scheme != protocol.DriveHTTPSchemeValue || target.Host == "" ||
+		target.User != nil || target.Fragment != "" {
 		return nil, errDriveShape
 	}
 

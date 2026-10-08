@@ -58,3 +58,30 @@ func projectDriveCreated(response *webtransport.DriveCreatedResponse) *CreateDri
 		AdditionalMetadata: copyAccountMetadata(response.Data.AdditionalProperties),
 		Metadata:           publicMetadata(response.Response)}
 }
+
+func projectDriveUpload(response *webtransport.DriveUploadResponse) *UploadDriveFileResult {
+	var documents *[]RegisteredDriveDocument
+
+	if response.Registration.Documents != nil {
+		values := make([]RegisteredDriveDocument, 0, len(*response.Registration.Documents))
+		for _, document := range *response.Registration.Documents {
+			values = append(values, RegisteredDriveDocument{DocumentID: document.DocumentId, Status: document.Status,
+				AdditionalProperties: copyAccountMetadata(document.AdditionalProperties)})
+		}
+
+		documents = &values
+	}
+
+	file := response.Receipt.SingleFile
+
+	return &UploadDriveFileResult{UploadToken: response.Token, DocumentID: response.Destination.DocumentId,
+		UploadedFile: UploadedDriveFile{FileChecksum: file.FileChecksum, WrappingKey: file.WrappingKey,
+			ReferenceChecksum: file.ReferenceChecksum, Size: file.Size, Receipt: file.Receipt,
+			AdditionalProperties: copyAccountMetadata(file.AdditionalProperties)},
+		Documents: documents, Status: response.Registration.Status,
+		AdditionalReceiptMetadata:      copyAccountMetadata(response.Receipt.AdditionalProperties),
+		AdditionalRegistrationMetadata: copyAccountMetadata(response.Registration.AdditionalProperties),
+		PreparationMetadata:            publicMetadata(response.Preparation),
+		TransferMetadata:               publicMetadata(response.Transfer),
+		RegistrationMetadata:           publicMetadata(response.Registered)}
+}

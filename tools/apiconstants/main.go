@@ -144,7 +144,7 @@ func accountConstants(document *openapi3.T) (map[string]string, error) {
 	}
 
 	for name, schema := range document.Components.Schemas {
-		err := registerProperties(name, schema.Value, register)
+		err := registerSchemaConstants(name, schema.Value, register)
 		if err != nil {
 			return nil, err
 		}
@@ -313,4 +313,56 @@ func renderConstants(values map[string]string, prefix string) ([]byte, error) {
 	}
 
 	return formatted, nil
+}
+
+func registerSchemaConstants(name string, schema *openapi3.Schema, register func(name, value string)) error {
+	err := registerScalarConstants(name, schema, register)
+	if err != nil {
+		return err
+	}
+
+	return registerProperties(name, schema, register)
+}
+
+func registerScalarConstants(name string, schema *openapi3.Schema, register func(name, value string)) error {
+	if len(schema.Enum) == 1 {
+		if value, valid := schema.Enum[0].(string); valid {
+			register(name+"Value", value)
+		}
+	}
+
+	if schema.Pattern != "" {
+		_, err := regexp.Compile(schema.Pattern)
+		if err != nil {
+			return fmt.Errorf("%w: %s pattern is invalid", errConstant, name)
+		}
+
+		register(name+"Pattern", schema.Pattern)
+	}
+
+	if value, exists := schema.Extensions["x-protocol-template"]; exists {
+		template, valid := value.(string)
+		if !valid || !validProtocolTemplate(template, schema.Pattern) {
+			return fmt.Errorf("%w: %s template must match its pattern", errConstant, name)
+		}
+
+		register(name+"Template", template)
+	}
+
+	return nil
+}
+
+func validProtocolTemplate(template, pattern string) bool {
+	if pattern == "" || !strings.Contains(template, "%s") {
+		return false
+	}
+
+	probe := strings.ReplaceAll(template, "%s", "synthetic")
+	if strings.Contains(probe, "%") {
+		return false
+	}
+
+	compiled, err := regexp.Compile(pattern)
+
+	return err == nil && strings.HasPrefix(pattern, "^") && strings.HasSuffix(pattern, "$") && compiled.MatchString(probe)
 }

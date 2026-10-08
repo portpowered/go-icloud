@@ -82,7 +82,7 @@ verification infrastructure, not an SDK operation port. Explicit JSON pattern
 and credential-redaction rules now instantiate all 16 portable declarations;
 negative controls reject changed fixed fields, string formats, code types and
 ambiguous paths. Multipart rules now bind ordered headers/bytes, filenames and
-strict boundary framing. All 443 scenarios/1003 exchanges instantiate and thirteen
+strict boundary framing. All 444 scenarios/1006 exchanges instantiate and fourteen
 upload pairs match Go's writer. These are matcher checks, not SDK semantic parity.
 Socket/auth timelines, the remaining scenario projections and SDK operations
 remain open. No Python semantic replay is counted as passing Go SDK replay.
@@ -92,11 +92,12 @@ account scenarios/40 exchanges executed through public methods and independent
 schema-generated projections. Family/photo flows derive IDs from public results.
 Two-account replay checks concurrency and repeated fresh requests without shared
 cookies. An independent consumer module compiles. The account milestone measured
-81.6% replay, 82.5% unit and 92.2% combined. With ten Drive methods, current
-handwritten SDK and internal transport coverage is 82.9% replay, 83.4% unit and
-91.8% combined; these figures do not represent the complete service port (LIB-07).
+81.6% replay, 82.5% unit and 92.2% combined. With eleven Drive methods, current
+handwritten SDK and internal transport coverage is 773/918 statements (84.2%)
+replay, 610/918 (66.4%) unit and 833/918 (90.7%) combined; these figures do not
+represent the complete service port (LIB-07).
 
-The portable HTTP suite now has 443 scenarios and 1003 paired exchanges after
+The portable HTTP suite now has 444 scenarios and 1006 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
 entropy and exact proof matching; they also exercise refusal, trust-token reuse,
@@ -112,7 +113,7 @@ Authentication socket replay adds 53 synthetic ordered duplex scenarios
 enters 576/905 functions and executes 3,191/5,385 body statements (59.26%) and
 969/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
-Drive now has 73 scenarios and 127 pairs, including navigation/cache/refresh,
+Drive now has 74 scenarios and 130 pairs, including navigation/cache/refresh,
 node-backed endpoints, empty downloads, offset uploads and provider refusal at
 each transfer stage. Errors bind file position, token parameters, node state and
 exposed response context. Its pinned date parser mishandles negative offsets
@@ -123,11 +124,11 @@ Eight added node-upload/facade cases close measured function-entry gaps for
 document ID/zone, file cursor, empty/binary content and all three upload-stage
 refusals. Owned instrumentation files close on success and failure. New negative
 controls reject changed cursor, zone, node state and unconsumed traffic.
-The [Drive wire contracts](drive-wire-contracts.md) now bind all 127 exchanges to
+The [Drive wire contracts](drive-wire-contracts.md) now bind all 130 exchanges to
 13 operation contracts, with generated canonical models and internal clients.
 Contract validation, drift checks and negative controls pass. Drive client/SDK
-semantic replay now covers 38/73 scenarios: nine reads, sixteen mutations and
-thirteen downloads. Node navigation, uploads, account-session persistence
+semantic replay now covers 47/74 scenarios: nine reads, sixteen mutations and
+thirteen downloads and nine service uploads. Node navigation and account-session persistence
 and the full source/schema runtime gate remain open; schema-only contract checks
 do not increase the SDK coverage numerator.
 Find My has 30 scenarios and 55 pairs after adding explicit refresh, family

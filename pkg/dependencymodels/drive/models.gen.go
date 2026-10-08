@@ -26,6 +26,21 @@ func (e DriveDefaultDocumentZone) Valid() bool {
 	}
 }
 
+// Defines values for DriveFileFlagsIsWritable.
+const (
+	DriveFileFlagsIsWritableTrue DriveFileFlagsIsWritable = true
+)
+
+// Valid indicates whether the value is a known member of the DriveFileFlagsIsWritable enum.
+func (e DriveFileFlagsIsWritable) Valid() bool {
+	switch e {
+	case DriveFileFlagsIsWritableTrue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DriveFileFlagsIsExecutable.
 const (
 	DriveFileFlagsIsExecutableFalse DriveFileFlagsIsExecutable = false
@@ -56,21 +71,6 @@ func (e DriveFileFlagsIsHidden) Valid() bool {
 	}
 }
 
-// Defines values for DriveFileFlagsIsWritable.
-const (
-	DriveFileFlagsIsWritableTrue DriveFileFlagsIsWritable = true
-)
-
-// Valid indicates whether the value is a known member of the DriveFileFlagsIsWritable enum.
-func (e DriveFileFlagsIsWritable) Valid() bool {
-	switch e {
-	case DriveFileFlagsIsWritableTrue:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for DriveNodeQueryPartialData.
 const (
 	DriveNodeQueryPartialDataFalse DriveNodeQueryPartialData = false
@@ -80,21 +80,6 @@ const (
 func (e DriveNodeQueryPartialData) Valid() bool {
 	switch e {
 	case DriveNodeQueryPartialDataFalse:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for DriveUpdateDocumentAllowConflict.
-const (
-	DriveUpdateDocumentAllowConflictTrue DriveUpdateDocumentAllowConflict = true
-)
-
-// Valid indicates whether the value is a known member of the DriveUpdateDocumentAllowConflict enum.
-func (e DriveUpdateDocumentAllowConflict) Valid() bool {
-	switch e {
-	case DriveUpdateDocumentAllowConflictTrue:
 		return true
 	default:
 		return false
@@ -131,6 +116,36 @@ func (e DriveUpdateDocumentCreateShortGuid) Valid() bool {
 	}
 }
 
+// Defines values for DriveUpdateDocumentAllowConflict.
+const (
+	DriveUpdateDocumentAllowConflictTrue DriveUpdateDocumentAllowConflict = true
+)
+
+// Valid indicates whether the value is a known member of the DriveUpdateDocumentAllowConflict enum.
+func (e DriveUpdateDocumentAllowConflict) Valid() bool {
+	switch e {
+	case DriveUpdateDocumentAllowConflictTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DriveUploadContentDispositionHeaderName.
+const (
+	ContentDisposition DriveUploadContentDispositionHeaderName = "Content-Disposition"
+)
+
+// Valid indicates whether the value is a known member of the DriveUploadContentDispositionHeaderName enum.
+func (e DriveUploadContentDispositionHeaderName) Valid() bool {
+	switch e {
+	case ContentDisposition:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DriveUploadRequestType.
 const (
 	FILE DriveUploadRequestType = "FILE"
@@ -140,6 +155,36 @@ const (
 func (e DriveUploadRequestType) Valid() bool {
 	switch e {
 	case FILE:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DriveUploadValidationCookieName.
+const (
+	XAPPLEWEBAUTHVALIDATE DriveUploadValidationCookieName = "X-APPLE-WEBAUTH-VALIDATE"
+)
+
+// Valid indicates whether the value is a known member of the DriveUploadValidationCookieName enum.
+func (e DriveUploadValidationCookieName) Valid() bool {
+	switch e {
+	case XAPPLEWEBAUTHVALIDATE:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for HTTPScheme.
+const (
+	Https HTTPScheme = "https"
+)
+
+// Valid indicates whether the value is a known member of the HTTPScheme enum.
+func (e HTTPScheme) Valid() bool {
+	switch e {
+	case Https:
 		return true
 	default:
 		return false
@@ -181,20 +226,21 @@ type DriveDefaultDocumentZone string
 
 // DriveDocumentData defines model for DriveDocumentData.
 type DriveDocumentData struct {
-	Receipt            *string `json:"receipt,omitempty"`
-	ReferenceSignature string  `json:"reference_signature"`
-	Signature          string  `json:"signature"`
+	Signature          string `json:"signature"`
+	WrappingKey        string `json:"wrapping_key"`
+	ReferenceSignature string `json:"reference_signature"`
 
 	// Size Transferred size in bytes.
-	Size        int64  `json:"size"`
-	WrappingKey string `json:"wrapping_key"`
+	Size    int64   `json:"size"`
+	Receipt *string `json:"receipt,omitempty"`
 }
 
 // DriveDocumentPath defines model for DriveDocumentPath.
 type DriveDocumentPath struct {
-	// Path Filename basename within the selected folder.
-	Path               string `json:"path"`
 	StartingDocumentId string `json:"starting_document_id"`
+
+	// Path Filename basename within the selected folder.
+	Path string `json:"path"`
 }
 
 // DriveDocumentResult defines model for DriveDocumentResult.
@@ -228,19 +274,19 @@ type DriveError struct {
 
 // DriveFileFlags defines model for DriveFileFlags.
 type DriveFileFlags struct {
+	IsWritable   DriveFileFlagsIsWritable   `json:"is_writable"`
 	IsExecutable DriveFileFlagsIsExecutable `json:"is_executable"`
 	IsHidden     DriveFileFlagsIsHidden     `json:"is_hidden"`
-	IsWritable   DriveFileFlagsIsWritable   `json:"is_writable"`
 }
+
+// DriveFileFlagsIsWritable defines model for DriveFileFlags.IsWritable.
+type DriveFileFlagsIsWritable bool
 
 // DriveFileFlagsIsExecutable defines model for DriveFileFlags.IsExecutable.
 type DriveFileFlagsIsExecutable bool
 
 // DriveFileFlagsIsHidden defines model for DriveFileFlags.IsHidden.
 type DriveFileFlagsIsHidden bool
-
-// DriveFileFlagsIsWritable defines model for DriveFileFlags.IsWritable.
-type DriveFileFlagsIsWritable bool
 
 // DriveFolderCreation defines model for DriveFolderCreation.
 type DriveFolderCreation struct {
@@ -362,29 +408,29 @@ type DriveTrashItems struct {
 
 // DriveUpdateDocument defines model for DriveUpdateDocument.
 type DriveUpdateDocument struct {
-	AllowConflict DriveUpdateDocumentAllowConflict `json:"allow_conflict"`
-
-	// Btime Creation time in milliseconds since the Unix epoch.
-	Btime           int64                              `json:"btime"`
+	Data            DriveDocumentData                  `json:"data"`
 	Command         DriveUpdateDocumentCommand         `json:"command"`
 	CreateShortGuid DriveUpdateDocumentCreateShortGuid `json:"create_short_guid"`
-	Data            DriveDocumentData                  `json:"data"`
 	DocumentId      string                             `json:"document_id"`
+	Path            DriveDocumentPath                  `json:"path"`
+	AllowConflict   DriveUpdateDocumentAllowConflict   `json:"allow_conflict"`
 	FileFlags       DriveFileFlags                     `json:"file_flags"`
 
 	// Mtime Modification time in milliseconds since the Unix epoch.
-	Mtime int64             `json:"mtime"`
-	Path  DriveDocumentPath `json:"path"`
-}
+	Mtime int64 `json:"mtime"`
 
-// DriveUpdateDocumentAllowConflict defines model for DriveUpdateDocument.AllowConflict.
-type DriveUpdateDocumentAllowConflict bool
+	// Btime Creation time in milliseconds since the Unix epoch.
+	Btime int64 `json:"btime"`
+}
 
 // DriveUpdateDocumentCommand defines model for DriveUpdateDocument.Command.
 type DriveUpdateDocumentCommand string
 
 // DriveUpdateDocumentCreateShortGuid defines model for DriveUpdateDocument.CreateShortGuid.
 type DriveUpdateDocumentCreateShortGuid bool
+
+// DriveUpdateDocumentAllowConflict defines model for DriveUpdateDocument.AllowConflict.
+type DriveUpdateDocumentAllowConflict bool
 
 // DriveUpdatedDocuments defines model for DriveUpdatedDocuments.
 type DriveUpdatedDocuments struct {
@@ -394,6 +440,12 @@ type DriveUpdatedDocuments struct {
 	Status               *string                     `json:"status,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
+
+// DriveUploadContentDisposition Multipart disposition built from percent-escaped field name and host-platform filename basename.
+type DriveUploadContentDisposition = string
+
+// DriveUploadContentDispositionHeaderName Multipart file-part disposition header name.
+type DriveUploadContentDispositionHeaderName string
 
 // DriveUploadDestination defines model for DriveUploadDestination.
 type DriveUploadDestination struct {
@@ -413,17 +465,24 @@ type DriveUploadReceipt struct {
 
 // DriveUploadRequest Example: {"content_type":"text/plain","filename":"synthetic.txt","size":0,"type":"FILE"}
 type DriveUploadRequest struct {
+	Filename string                 `json:"filename"`
+	Type     DriveUploadRequestType `json:"type"`
+
 	// ContentType MIME type inferred from filename; empty when unknown.
 	ContentType string `json:"content_type"`
-	Filename    string `json:"filename"`
 
 	// Size Complete file size in bytes, independent of the current cursor.
-	Size int64                  `json:"size"`
-	Type DriveUploadRequestType `json:"type"`
+	Size int64 `json:"size"`
 }
 
 // DriveUploadRequestType defines model for DriveUploadRequest.Type.
 type DriveUploadRequestType string
+
+// DriveUploadTokenCookieValue Search this cookie value for a token introduced by a word-boundary t= and terminated by a colon.
+type DriveUploadTokenCookieValue = string
+
+// DriveUploadValidationCookieName Validation cookie scanned by the reference before upload preparation.
+type DriveUploadValidationCookieName string
 
 // DriveUploadedFile defines model for DriveUploadedFile.
 type DriveUploadedFile struct {
@@ -438,6 +497,9 @@ type DriveUploadedFile struct {
 	WrappingKey          string                      `json:"wrappingKey"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
+
+// HTTPScheme HTTPS required by the Go service-origin and provider-issued transfer boundary.
+type HTTPScheme string
 
 // NullableJSONValue Named unknown value preserving omission and explicit null separately.
 type NullableJSONValue = json.RawMessage

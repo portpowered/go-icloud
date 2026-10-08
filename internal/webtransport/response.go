@@ -30,6 +30,12 @@ const (
 func (client *Client) read(ctx context.Context, auth RequestContext,
 	request *http.Request, suffix string,
 ) (*BytesResponse, error) {
+	return client.readWithPolicy(ctx, auth, request, suffix, exactOK)
+}
+
+func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
+	request *http.Request, suffix string, policy responsePolicy,
+) (*BytesResponse, error) {
 	err := validateOrigin(auth.Origin)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
@@ -50,7 +56,7 @@ func (client *Client) read(ctx context.Context, auth RequestContext,
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + suffix
 
-	return client.readPrepared(request, exactOK, auth.Cookies)
+	return client.readPrepared(request, policy, auth.Cookies)
 }
 
 func (client *Client) readPrepared(request *http.Request, policy responsePolicy,
@@ -107,7 +113,8 @@ func responseProviderError(response *BytesResponse) bool {
 
 func responseFailure(stage Stage, cause error, response *BytesResponse) *ResponseError {
 	return &ResponseError{Stage: stage, Cause: cause, Body: response.Body,
-		Status: response.Status, Headers: response.Headers, Prior: nil, CookieScopeURL: response.CookieScopeURL}
+		Status: response.Status, Headers: response.Headers, Prior: nil, CookieScopeURL: response.CookieScopeURL,
+		UploadToken: ""}
 }
 
 func cookieScopeURL(request *http.Request) string {

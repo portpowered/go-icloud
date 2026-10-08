@@ -338,6 +338,8 @@ type DriveUploadContentResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *DriveUploadReceipt
+	// JSON2XX the response for an HTTP 2XX `application/json` response
+	JSON2XX *DriveUploadReceipt
 	// JSONDefault the response for an HTTP default `application/json` response
 	JSONDefault *DriveContentFailure
 }
@@ -345,6 +347,11 @@ type DriveUploadContentResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r DriveUploadContentResponse) GetJSON200() *DriveUploadReceipt {
 	return r.JSON200
+}
+
+// GetJSON2XX returns the response for an HTTP 2XX `application/json` response
+func (r DriveUploadContentResponse) GetJSON2XX() *DriveUploadReceipt {
+	return r.JSON2XX
 }
 
 // GetJSONDefault returns the response for an HTTP default `application/json` response
@@ -457,6 +464,13 @@ func ParseDriveUploadContentResponse(rsp *http.Response) (*DriveUploadContentRes
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
+		var dest DriveUploadReceipt
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON2XX = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest DriveContentFailure

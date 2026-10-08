@@ -35,6 +35,7 @@ const (
 
 // ResponseError preserves exact response evidence and the original failure cause.
 type ResponseError struct {
+	UploadToken    string
 	CookieScopeURL string
 	Prior          []*BytesResponse
 	Stage          Stage
@@ -103,7 +104,7 @@ func (client *Client) GetDevices(ctx context.Context, auth RequestContext) (*Dev
 
 func failure(stage Stage, cause error, response *http.Response, body []byte) *ResponseError {
 	result := &ResponseError{Stage: stage, Cause: cause, Body: body, Status: 0, Headers: nil, Prior: nil,
-		CookieScopeURL: ""}
+		CookieScopeURL: "", UploadToken: ""}
 	if response != nil {
 		result.CookieScopeURL = cookieScopeURL(response.Request)
 		result.Status = response.StatusCode
@@ -119,7 +120,7 @@ func validateOrigin(origin string) error {
 		return fmt.Errorf("parse account origin: %w", err)
 	}
 
-	if parsed.Scheme != "https" || parsed.Host == "" || parsed.User != nil ||
+	if parsed.Scheme != protocol.DriveHTTPSchemeValue || parsed.Host == "" || parsed.User != nil ||
 		parsed.Path != "" || parsed.RawQuery != "" || parsed.Fragment != "" || parsed.ForceQuery {
 		return errInvalidOrigin
 	}

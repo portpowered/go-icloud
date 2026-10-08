@@ -229,6 +229,55 @@ response metadata as well as its current response headers and body.
 Thirteen synthetic paired scenarios verify download results, failures and cookie
 rotation/scoping. Account-session persistence remains caller-owned.
 
+## Go Drive uploads
+
+Supply the document-service URL in `auth.DriveDocumentServiceURL` and the
+caller-owned `X-APPLE-WEBAUTH-VALIDATE` structured cookie in `auth.Cookies`.
+Preparation extracts its upload token before making a request.
+
+```go
+file, err := os.Open(filename)
+if err != nil {
+    return err
+}
+defer file.Close() // the caller owns this file
+uploaded, err := client.UploadDriveFile(ctx, icloud.UploadDriveFileRequest{
+    Auth: auth, ParentID: parentID, Filename: file.Name(), Content: file,
+})
+if err != nil {
+    return err
+}
+_ = uploaded.DocumentID
+_ = uploaded.UploadToken // secret caller-owned session parameter
+_ = uploaded.UploadedFile
+_ = uploaded.PreparationMetadata
+_ = uploaded.TransferMetadata
+_ = uploaded.RegistrationMetadata
+```
+
+Content must implement `io.ReadSeeker`. The declared size is the whole file;
+bytes are transferred from the current cursor. An empty file is supported.
+The SDK leaves the reader open and at its resulting cursor, including on failure.
+Filename determines the MIME type and multipart field; registration uses the
+host platform's filename basename. Omitted zone uses the private document zone.
+Optional `ModificationTime` and `CreationTime` override the client clock;
+`icloud.WithClock` injects a concurrency-safe clock for offline tests.
+
+The SDK prepares the upload, transfers to the provider-issued URL without
+appending document-service parameters, then registers the returned checksums
+and key. Incomplete preparation or receipt replies stop before the next write.
+It preserves 2xx statuses, receipt/registration metadata and unknown fields.
+Acknowledgement does not prove background processing has completed. Uploads
+are never retried automatically. `ClientError.PriorResponses()` retains earlier
+stage responses; `UploadToken()` retains the extracted secret on a failed stage.
+The shared client never saves account parameters or cookies. Keep returned
+updates in your private session store. A session facade that automatically
+carries the token into later operations is still being built.
+
+Nine synthetic service scenarios bind happy, empty, cursor/zone and stage-refusal
+behavior through the public SDK; focused controls reject incomplete provider
+replies before another write. These tests perform no live uploads.
+
 ## Go Drive changes
 
 Supply the Drive authentication context described above. For item changes, pass

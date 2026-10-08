@@ -658,6 +658,44 @@ Handwritten SDK/internal coverage is 604/729 replay statements (82.9%),
 The two exact-line cookie flag-copy exceptions preserve supplied native protocol
 attributes rather than imposing browser policy; all linters remain enabled.
 
-Verdict: **limited working-tree pass**. Exact-SHA approval after CI is required
-before merge. Native auth/session persistence, uploads, navigation and full
+Verdict: **limited milestone pass**. Exact-SHA review approved
+`21f1d5f0ed98d61a1bd983215fa3c355ececda8a` after
+[CI 37809511428](https://github.com/portpowered/go-icloud/actions/runs/37809511428)
+passed. PR #10 merged in `51a4fd7b59dae39ad67c15957d8f0d1e11cf9ad5`; main passed
+[CI 37810409609](https://github.com/portpowered/go-icloud/actions/runs/37810409609).
+Native auth/session persistence, uploads, navigation and full
 migration/release acceptance remain open.
+
+### Interim Drive service-upload audit
+
+Nine portable Source upload scenarios execute through `UploadDriveFile`,
+covering empty content, a nonzero cursor, custom zones, successful 201/202
+responses and refusal at each stage. Complete request matching and public
+receipt/registration projections include unknown metadata and each completed
+stage's response evidence. The independent consumer compiles all sixteen
+public client methods. Drive SDK semantics now cover 47/74 scenarios.
+
+The reviewer found missing required provider fields could allow another write,
+failure tests omitted Source cursor/parameter state, Windows filenames needed
+platform basenames, and preparation/registration rejected successful 2xx
+responses. Required-field validation, fourteen strict malformed-provider
+controls, failure-state assertions, platform path handling and schema-owned 2XX
+responses resolve those findings (LIB-05, API-14, SCHEMA-04). The reviewer
+independently rechecked every fix and passed scoped race tests for the SDK,
+replay, contract/consumer/drift and constant generator packages.
+
+Cookie names, token patterns and multipart disposition templates are generated
+from canonical schema declarations. Generator controls verify declaration
+changes and reject invalid patterns/templates, as required by template rule 4
+(SCHEMA-10). The caller retains ownership of the reader and extracted upload
+token. No live write was performed.
+
+`make lint` and `make check` pass, including all 67 offline Python tests.
+Handwritten SDK/internal coverage is 773/918 replay statements (84.2%),
+610/918 unit (66.4%) and 833/918 combined (90.7%). Live Go integration remains
+pending. Local lint used the same pinned all-linters executable with parallel
+runners enabled because another repository held its shared process lock.
+
+Verdict: **limited working-tree pass**. Exact-SHA review after CI is pending.
+Drive node/session upload behavior, navigation and full migration/release
+acceptance remain open.

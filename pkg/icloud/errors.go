@@ -13,6 +13,7 @@ import (
 // ClientError is an inspectable failure with a safe display message.
 // Use errors.As to inspect it and errors.Is to inspect an underlying cause.
 type ClientError struct {
+	uploadToken    string
 	cookieScopeURL string
 	prior          []ResponseMetadata
 	operation      string
@@ -63,6 +64,7 @@ func newClientError(operation string, kind ErrorKind, status int, body []byte,
 	return &ClientError{
 		prior:          nil,
 		cookieScopeURL: "",
+		uploadToken:    "",
 		operation:      operation, kind: kind, status: status,
 		body: append([]byte(nil), body...), headers: append([]Header(nil), headers...), cause: cause,
 	}
@@ -93,6 +95,7 @@ func adaptFailure(operation string, err error) *ClientError {
 
 	result := newClientError(operation, kind, failure.Status, failure.Body, responseHeaders(failure.Headers), err)
 	result.cookieScopeURL = failure.CookieScopeURL
+	result.uploadToken = failure.UploadToken
 
 	for _, prior := range failure.Prior {
 		result.prior = append(result.prior, publicMetadata(prior))
@@ -136,3 +139,7 @@ func providerKind(status int) ErrorKind {
 // CookieScopeURL returns the response request origin/path for applying Set-Cookie.
 // Query credentials are excluded; an empty value means no response arrived.
 func (failure *ClientError) CookieScopeURL() string { return failure.cookieScopeURL }
+
+// UploadToken returns a secret upload token extracted before a failed upload stage.
+// An empty value means preparation never extracted a token.
+func (failure *ClientError) UploadToken() string { return failure.uploadToken }

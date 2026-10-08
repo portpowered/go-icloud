@@ -298,6 +298,11 @@ paths:
           plain/text:
             schema: {$ref: '#/components/schemas/DriveUploadRequest'}
       responses:
+        '2XX':
+          description: Document identifiers and transfer URLs.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveUploadDestinations'}
         '200':
           description: Document identifiers and transfer URLs.
           content:
@@ -337,6 +342,11 @@ paths:
           plain/text:
             schema: {$ref: '#/components/schemas/DriveUpdateDocument'}
       responses:
+        '2XX':
+          description: Provider registration result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveUpdatedDocuments'}
         '200':
           description: Provider registration result.
           content:
