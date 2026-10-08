@@ -35,12 +35,13 @@ const (
 
 // ResponseError preserves exact response evidence and the original failure cause.
 type ResponseError struct {
-	Prior   []*BytesResponse
-	Stage   Stage
-	Status  int
-	Body    []byte
-	Headers http.Header
-	Cause   error
+	CookieScopeURL string
+	Prior          []*BytesResponse
+	Stage          Stage
+	Status         int
+	Body           []byte
+	Headers        http.Header
+	Cause          error
 }
 
 // Error is safe for display; raw response details remain separately inspectable.
@@ -53,6 +54,7 @@ func (failure *ResponseError) Unwrap() error { return failure.Cause }
 
 // RequestContext is caller-owned request state, never retained by Client.
 type RequestContext struct {
+	Cookies *CookieState
 	Origin  string
 	Params  accountapi.ListAccountDevicesParams
 	Headers http.Header
@@ -60,9 +62,10 @@ type RequestContext struct {
 
 // DevicesResponse separates decoded wire data from HTTP response metadata.
 type DevicesResponse struct {
-	Data    account.AccountDevicesResponse
-	Status  int
-	Headers http.Header
+	CookieScopeURL string
+	Data           account.AccountDevicesResponse
+	Status         int
+	Headers        http.Header
 }
 
 // Client owns an HTTP client without a cookie jar or mutable account context.
@@ -94,12 +97,15 @@ func (client *Client) GetDevices(ctx context.Context, auth RequestContext) (*Dev
 		return nil, responseFailure(Decode, err, response)
 	}
 
-	return &DevicesResponse{Data: data, Status: response.Status, Headers: response.Headers}, nil
+	return &DevicesResponse{CookieScopeURL: response.CookieScopeURL, Data: data, Status: response.Status,
+		Headers: response.Headers}, nil
 }
 
 func failure(stage Stage, cause error, response *http.Response, body []byte) *ResponseError {
-	result := &ResponseError{Stage: stage, Cause: cause, Body: body, Status: 0, Headers: nil, Prior: nil}
+	result := &ResponseError{Stage: stage, Cause: cause, Body: body, Status: 0, Headers: nil, Prior: nil,
+		CookieScopeURL: ""}
 	if response != nil {
+		result.CookieScopeURL = cookieScopeURL(response.Request)
 		result.Status = response.StatusCode
 		result.Headers = response.Header.Clone()
 	}

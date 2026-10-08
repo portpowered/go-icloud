@@ -622,7 +622,42 @@ The final status-policy audit independently passed 204/206 SDK and contract
 controls. Successful content accepts 2xx responses while ordinary reads retain
 their existing exact-200 policy; JSON provider-error handling remains active.
 
-Verdict: **limited working-tree pass**. Exact-SHA approval after CI remains
-required. Thirty-two Drive read/mutation/download scenarios do not establish
+Verdict: **limited milestone pass**. The independent reviewer approved
+`7dda2150faada1ab10740dba7748e81abcb59d86` after
+[CI 37805115228](https://github.com/portpowered/go-icloud/actions/runs/37805115228)
+passed. PR #9 merged in `05be38d814bc93d196e3c498d3f83a4c04d5db9e`; main passed
+[CI 37805852612](https://github.com/portpowered/go-icloud/actions/runs/37805852612).
+Thirty-two Drive read/mutation/download scenarios do not establish
 parity for all 67 reference scenarios. Navigation, uploads and full migration,
 documentation and release acceptance remain open.
+
+### Interim account cookie-context audit
+
+Six new implementation-derived portable Source scenarios independently replay
+against the pinned dependency and through the public SDK. Paired requests and
+complete download results bind cookie rotation, host/path scope, expiry,
+deletion, repeated updates and explicit-header precedence (LIB-05).
+The inventory is 443 HTTP scenarios/1003 pairs, 73 Drive scenarios/127 pairs,
+and thirteen public SDK downloads; Drive SDK semantics cover 38/73 scenarios.
+
+The reviewer found that response headers lacked the dynamic issuer origin/path
+needed for caller-owned cookie persistence, and that an explicit seed domain
+could broaden a host-only cookie. CookieScopeURL now preserves the response
+request origin and escaped path without query credentials; HostOnly binds
+supplied seeds exactly to their host. Both findings were independently verified
+fixed. Six strict exchanges prove content-stage host-only cookie persistence
+across calls without sending it to the token host or a later content subdomain.
+Repeated concurrent two-account downloads verify fresh operation-local jars,
+unchanged caller inputs, explicit-header precedence and stage-specific metadata
+(API-03, API-13). The shared client retains no account jar.
+
+The reviewer independently passed Source, SDK, schema, consumer, generator and
+race checks. `make lint` and `make check` pass, including all 67 Python tests.
+Handwritten SDK/internal coverage is 604/729 replay statements (82.9%),
+608/729 unit (83.4%) and 669/729 combined (91.8%); live Go integration is pending.
+The two exact-line cookie flag-copy exceptions preserve supplied native protocol
+attributes rather than imposing browser policy; all linters remain enabled.
+
+Verdict: **limited working-tree pass**. Exact-SHA approval after CI is required
+before merge. Native auth/session persistence, uploads, navigation and full
+migration/release acceptance remain open.

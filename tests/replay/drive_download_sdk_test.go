@@ -53,7 +53,7 @@ func TestDriveSDKPortableDownloads(t *testing.T) {
 		})
 	}
 
-	if selected != 7 {
+	if selected != 13 {
 		t.Fatal("Drive SDK download inventory changed")
 	}
 }
@@ -136,6 +136,7 @@ func assertDriveDownloadFailure(t *testing.T, scenario driveReadScenario,
 		accountProviderFailure(t, scenario.Error, failure.StatusCode(), failure.ResponseBody())
 	}
 
-	checkSDKMetadata(t, icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders()},
+	checkSDKMetadata(t, icloud.ResponseMetadata{CookieScopeURL: failure.CookieScopeURL(), StatusCode: failure.StatusCode(),
+		Headers: failure.ResponseHeaders()},
 		exchange)
 }

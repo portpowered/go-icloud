@@ -64,11 +64,29 @@ components:
         clientBuildNumber: {type: string, description: Optional build parameter from the authentication context; omission remains omission.}
         clientMasteringNumber: {type: string, description: Optional mastering parameter from the authentication context; omission remains omission.}
         headers: {type: array, items: {$ref: '#/components/schemas/Header'}, description: Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.}
+        cookies: {type: array, x-go-type-skip-optional-pointer: true, items: {$ref: '#/components/schemas/AuthCookie'}, description: 'Caller-owned session cookies. A fresh operation-local jar scopes them by host, path and expiry; explicit Cookie headers keep precedence.'}
+    AuthCookie:
+      type: object
+      required: [name, value]
+      description: Caller-owned web cookie state; credential values may contain secrets.
+      properties:
+        name: {type: string, description: Cookie name.}
+        value: {type: string, description: Secret cookie value.}
+        domain: {type: string, x-go-type-skip-optional-pointer: true, description: Cookie domain; omission binds to the operation's first request host.}
+        hostOnly: {type: boolean, x-go-type-skip-optional-pointer: true, description: Bind exactly to the supplied domain host when true; never send to its subdomains.}
+        path: {type: string, x-go-type-skip-optional-pointer: true, description: Cookie path; omission uses the first request's default cookie path.}
+        secure: {type: boolean, x-go-type-skip-optional-pointer: true, description: Send this cookie only over HTTPS when true.}
+        httpOnly: {type: boolean, x-go-name: HTTPOnly, x-go-type-skip-optional-pointer: true, description: Preserve the cookie's HTTP-only attribute.}
+        expires: {type: string, format: date-time, description: Absolute expiry; omission represents a session cookie.}
+        maxAge: {type: integer, x-go-type-skip-optional-pointer: true, description: 'Expiry in seconds: zero means unspecified and a negative value removes the cookie.'}
+        sameSite: {type: string, enum: [default, lax, strict, none], x-enum-varnames: [AuthCookieSameSiteDefault, AuthCookieSameSiteLax, AuthCookieSameSiteStrict, AuthCookieSameSiteNone], description: Optional browser same-site attribute; native HTTP requests preserve this state without a browser navigation policy.}
+      example: {name: synthetic-session, value: synthetic-secret, domain: '.example.invalid', path: '/', secure: true}
     ResponseMetadata:
       type: object
       required: [statusCode, headers]
       description: Response status and headers, including Set-Cookie values for caller-owned session updates.
       properties:
+        cookieScopeURL: {type: string, x-go-name: CookieScopeURL, x-go-type-skip-optional-pointer: true, description: Request HTTPS origin and escaped path without query credentials; use this URL to apply Set-Cookie host and default-path scope.}
         statusCode: {type: integer, minimum: 100, maximum: 599, description: Provider HTTP response status.}
         headers: {type: array, items: {$ref: '#/components/schemas/Header'}, description: Header entries sorted by name; repeated values retain order within each name.}
     AccountMetadata:

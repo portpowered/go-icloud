@@ -51,11 +51,24 @@ has not been released. See
 [capture development notes](docs/reference-capture.md) for evidence status,
 reference revisions, recording limitations, and verification commands.
 
+## Supply session cookies
+
+```go
+auth.Cookies = []icloud.AuthCookie{{
+    Name: "session", Value: sessionCookie,
+    Domain: "icloud.com", Path: "/", Secure: true,
+}}
+```
+
+Set `HostOnly: true` when a cookie belongs only to the exact supplied host.
+Leave `Domain` empty only when binding to the operation's first request host.
+Keep credentials in your private session store.
+
 ## Go account devices
 
 Use `github.com/portpowered/go-icloud/pkg/icloud`. Authentication context belongs
 to each request. For now, supply the account origin, account/client identifiers
-and cookie/web headers from your caller-owned authenticated session. The SDK
+and cookie/web headers from your caller-owned authenticated session. Supply structured cookies in `AuthContext.Cookies` when requests should apply provider cookie updates between stages. The SDK
 does not import the reference CLI's private credential files automatically.
 
 ```go
@@ -80,7 +93,13 @@ Each call fetches fresh devices. Empty results are successful. Device/payment
 metadata and unknown JSON values are retained. Response headers, including
 Set-Cookie, are returned for caller-owned session updates. A shared client stores
 no credentials or cookie jar and supports concurrent requests for separate
-accounts. Set deadlines on `ctx`; automatic redirects are disabled.
+accounts. Each operation copies structured cookies into a temporary jar. Updates
+apply within that operation; subsequent calls use the cookies you supply again.
+`ResponseMetadata.CookieScopeURL` supplies the issuer origin and escaped path
+without query credentials for saving Set-Cookie updates. For a host-only update,
+set `AuthCookie.Domain` to that URL host and `HostOnly: true`; derive an omitted
+cookie path from the response request path. An explicit Cookie header takes
+precedence over structured cookies. Set deadlines on `ctx`; automatic redirects are disabled.
 
 Use `errors.As` with `*icloud.ClientError` to inspect `Kind`, `StatusCode`,
 `ResponseBody` and `ResponseHeaders`; `errors.Is` preserves original causes.
@@ -202,12 +221,13 @@ _ = download.Metadata // content response
 
 The SDK selects the provider's data URL before its package URL and preserves
 escaped paths and repeated provider query values. The content request reuses
-your supplied headers. Intermediate Set-Cookie updates are returned afterward;
-this stateless operation does not apply them through a session cookie jar.
+your supplied headers. Structured cookies apply intermediate Set-Cookie updates
+through an operation-local jar; explicit Cookie headers retain precedence.
+Both response metadata objects include the cookie issuer origin/path.
 If a later exchange fails, inspect `ClientError.PriorResponses()` for earlier
 response metadata as well as its current response headers and body.
-Seven synthetic paired scenarios verify download results and failures.
-Account-session cookie rotation remains part of the pending session migration.
+Thirteen synthetic paired scenarios verify download results, failures and cookie
+rotation/scoping. Account-session persistence remains caller-owned.
 
 ## Go Drive changes
 

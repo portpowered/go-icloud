@@ -14,9 +14,10 @@ import (
 
 // BytesResponse owns read/closed content and copied response headers.
 type BytesResponse struct {
-	Body    []byte
-	Status  int
-	Headers http.Header
+	CookieScopeURL string
+	Body           []byte
+	Status         int
+	Headers        http.Header
 }
 
 type responsePolicy uint8
@@ -49,14 +50,21 @@ func (client *Client) read(ctx context.Context, auth RequestContext,
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + suffix
 
-	return client.readPrepared(request, exactOK)
+	return client.readPrepared(request, exactOK, auth.Cookies)
 }
 
-func (client *Client) readPrepared(request *http.Request, policy responsePolicy) (*BytesResponse, error) {
+func (client *Client) readPrepared(request *http.Request, policy responsePolicy,
+	cookies *CookieState,
+) (*BytesResponse, error) {
+	cookies.apply(request)
+
 	response, err := client.httpClient.Do(request)
 	if err != nil {
 		return nil, failure(Transport, err, nil, nil)
 	}
+
+	response.Request = request
+	cookies.update(request.URL, response)
 
 	body, readErr := io.ReadAll(response.Body)
 	closeErr := response.Body.Close()
@@ -70,7 +78,8 @@ func (client *Client) readPrepared(request *http.Request, policy responsePolicy)
 		return nil, failure(Provider, nil, response, body)
 	}
 
-	result := &BytesResponse{Body: body, Status: response.StatusCode, Headers: response.Header.Clone()}
+	result := &BytesResponse{CookieScopeURL: cookieScopeURL(request), Body: body, Status: response.StatusCode,
+		Headers: response.Header.Clone()}
 	if responseProviderError(result) {
 		return nil, responseFailure(Provider, errProviderBody, result)
 	}
@@ -98,5 +107,17 @@ func responseProviderError(response *BytesResponse) bool {
 
 func responseFailure(stage Stage, cause error, response *BytesResponse) *ResponseError {
 	return &ResponseError{Stage: stage, Cause: cause, Body: response.Body,
-		Status: response.Status, Headers: response.Headers, Prior: nil}
+		Status: response.Status, Headers: response.Headers, Prior: nil, CookieScopeURL: response.CookieScopeURL}
+}
+
+func cookieScopeURL(request *http.Request) string {
+	if request == nil || request.URL == nil {
+		return ""
+	}
+
+	target := *request.URL
+	target.RawQuery, target.Fragment, target.RawFragment = "", "", ""
+	target.ForceQuery = false
+
+	return target.String()
 }

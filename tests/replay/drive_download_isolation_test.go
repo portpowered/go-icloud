@@ -12,17 +12,20 @@ import (
 )
 
 const (
-	driveDownloadTenantAlpha = "alpha"
-	driveDownloadTenantBeta  = "beta"
+	driveDownloadTenantAlpha  = "alpha"
+	driveDownloadTenantBeta   = "beta"
+	driveDownloadCookieDomain = "; Domain=.example.invalid"
 )
 
-func tenantDriveDownloadReplay(t *testing.T, tenant string) (icloud.AuthContext, *replay.HTTPTransport) {
+func tenantDriveDownloadReplay(t *testing.T, tenant string, structured bool,
+) (icloud.AuthContext, *replay.HTTPTransport) {
 	t.Helper()
 
 	scenario := readAccountScenario(t, "fixtures/synthetic/http/drive-download-data_token-binary.json")
 	scenario.Initial.Params[protocol.ClientIDName] = "client-" + tenant
 	scenario.Initial.Params[protocol.DSIDName] = "account-" + tenant
-	scenario.Initial.Headers[protocol.CookieName] = "session=" + tenant
+
+	initializeDriveDownloadCookies(&scenario.Initial, tenant, structured)
 
 	for index := range scenario.Exchanges {
 		exchange := &scenario.Exchanges[index]
@@ -32,8 +35,13 @@ func tenantDriveDownloadReplay(t *testing.T, tenant string) (icloud.AuthContext,
 			}
 		}
 
+		cookieValue := "session=" + tenant
+		if structured && index == 1 {
+			cookieValue = "session=token-" + tenant
+		}
+
 		exchange.Request.Headers = append(exchange.Request.Headers,
-			replay.Pair{strings.ToLower(protocol.CookieName), "session=" + tenant})
+			replay.Pair{strings.ToLower(protocol.CookieName), cookieValue})
 
 		stage := "token"
 		if index == 1 {
@@ -42,6 +50,9 @@ func tenantDriveDownloadReplay(t *testing.T, tenant string) (icloud.AuthContext,
 
 		exchange.Response.Headers = append(exchange.Response.Headers,
 			replay.Pair{accountCookieUpdateHeader, driveDownloadCookieUpdate(stage, tenant)})
+		if structured {
+			exchange.Response.Headers[len(exchange.Response.Headers)-1][1] += driveDownloadCookieDomain
+		}
 	}
 
 	encoded, err := json.Marshal(base64.StdEncoding.EncodeToString([]byte("content-" + tenant)))
@@ -68,8 +79,19 @@ func tenantDriveDownloadReplay(t *testing.T, tenant string) (icloud.AuthContext,
 func TestDriveDownloadSDKConcurrentIsolation(t *testing.T) {
 	t.Parallel()
 
-	alpha, alphaTransport := tenantDriveDownloadReplay(t, driveDownloadTenantAlpha)
-	beta, betaTransport := tenantDriveDownloadReplay(t, driveDownloadTenantBeta)
+	for name, structured := range map[string]bool{"explicit-header": false, "structured-cookies": true} {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			checkDriveDownloadIsolation(t, structured)
+		})
+	}
+}
+
+func checkDriveDownloadIsolation(t *testing.T, structured bool) {
+	t.Helper()
+
+	alpha, alphaTransport := tenantDriveDownloadReplay(t, driveDownloadTenantAlpha, structured)
+	beta, betaTransport := tenantDriveDownloadReplay(t, driveDownloadTenantBeta, structured)
 
 	client, err := icloud.New(icloud.WithHTTPTransport(accountRouter{alpha: alphaTransport, beta: betaTransport}))
 	if err != nil {
@@ -99,7 +121,7 @@ func TestDriveDownloadSDKConcurrentIsolation(t *testing.T) {
 					t.Fatal(downloadErr)
 				}
 
-				checkDriveDownloadTenant(t, result, tenant)
+				checkDriveDownloadTenant(t, result, tenant, structured)
 			}
 		})
 	}
@@ -109,7 +131,7 @@ func driveDownloadCookieUpdate(stage, tenant string) string {
 	return "session=" + stage + "-" + tenant + "; Path=/; Secure; HttpOnly"
 }
 
-func checkDriveDownloadTenant(t *testing.T, result *icloud.DownloadDriveFileResult, tenant string) {
+func checkDriveDownloadTenant(t *testing.T, result *icloud.DownloadDriveFileResult, tenant string, structured bool) {
 	t.Helper()
 
 	if string(result.Content) != "content-"+tenant ||
@@ -117,10 +139,28 @@ func checkDriveDownloadTenant(t *testing.T, result *icloud.DownloadDriveFileResu
 		t.Fatal("download crossed account contexts or lost intermediate updates")
 	}
 
+	tokenCookie := driveDownloadCookieUpdate("token", tenant)
+	contentCookie := driveDownloadCookieUpdate("content", tenant)
+
+	if structured {
+		tokenCookie += driveDownloadCookieDomain
+		contentCookie += driveDownloadCookieDomain
+	}
+
 	if result.TokenMetadata.Headers[1].Name != accountCookieUpdateHeader ||
 		result.Metadata.Headers[1].Name != accountCookieUpdateHeader ||
-		result.TokenMetadata.Headers[1].Value != driveDownloadCookieUpdate("token", tenant) ||
-		result.Metadata.Headers[1].Value != driveDownloadCookieUpdate("content", tenant) {
+		result.TokenMetadata.Headers[1].Value != tokenCookie ||
+		result.Metadata.Headers[1].Value != contentCookie {
 		t.Fatal("download metadata crossed stages or account contexts")
+	}
+}
+
+func initializeDriveDownloadCookies(initial *accountInitial, tenant string, structured bool) {
+	initial.Headers[protocol.CookieName] = "session=" + tenant
+
+	if structured {
+		delete(initial.Headers, protocol.CookieName)
+		initial.Cookies = []referenceCookie{{Name: "session", Value: tenant, Domain: ".example.invalid",
+			Path: "/", Secure: true, Expires: nil}}
 	}
 }

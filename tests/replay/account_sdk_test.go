@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/icloud"
@@ -68,6 +69,7 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 	}
 
 	auth := icloud.AuthContext{
+		Cookies:                 sdkAccountCookies(initial.Cookies),
 		DriveDocumentServiceURL: "",
 		AccountID:               initial.Params[protocol.DSIDName], ClientID: initial.Params[protocol.ClientIDName],
 		AccountServiceURL: initial.Origin, Headers: headers,
@@ -144,4 +146,22 @@ func sdkExpectedDeviceFailure(scenario accountScenario) icloud.ErrorKind {
 	}
 
 	return icloud.Unavailable
+}
+
+func sdkAccountCookies(cookies []referenceCookie) []icloud.AuthCookie {
+	result := make([]icloud.AuthCookie, 0, len(cookies))
+
+	for _, cookie := range cookies {
+		value := icloud.AuthCookie{Name: cookie.Name, Value: cookie.Value, Domain: cookie.Domain,
+			HostOnly: false, Path: cookie.Path, Secure: cookie.Secure, HTTPOnly: false, Expires: nil, MaxAge: 0, SameSite: nil}
+
+		if cookie.Expires != nil {
+			expiry := time.Unix(*cookie.Expires, 0)
+			value.Expires = &expiry
+		}
+
+		result = append(result, value)
+	}
+
+	return result
 }

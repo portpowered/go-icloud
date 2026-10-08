@@ -29,7 +29,8 @@ func projectDevices(response *webtransport.DevicesResponse) *GetAccountDevicesRe
 
 	return &GetAccountDevicesResult{
 		Devices: devices, PaymentMethods: payments, AdditionalMetadata: additional,
-		Metadata: ResponseMetadata{StatusCode: response.Status, Headers: responseHeaders(response.Headers)},
+		Metadata: ResponseMetadata{CookieScopeURL: response.CookieScopeURL, StatusCode: response.Status,
+			Headers: responseHeaders(response.Headers)},
 	}
 }
 
@@ -53,7 +54,8 @@ func responseHeaders(headers http.Header) []Header {
 }
 
 func publicMetadata(response *webtransport.BytesResponse) ResponseMetadata {
-	return ResponseMetadata{StatusCode: response.Status, Headers: responseHeaders(response.Headers)}
+	return ResponseMetadata{CookieScopeURL: response.CookieScopeURL, StatusCode: response.Status,
+		Headers: responseHeaders(response.Headers)}
 }
 
 func projectFamily(response *webtransport.FamilyResponse) *GetAccountFamilyResult {

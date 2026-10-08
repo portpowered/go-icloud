@@ -13,13 +13,14 @@ import (
 // ClientError is an inspectable failure with a safe display message.
 // Use errors.As to inspect it and errors.Is to inspect an underlying cause.
 type ClientError struct {
-	prior     []ResponseMetadata
-	operation string
-	kind      ErrorKind
-	status    int
-	body      []byte
-	headers   []Header
-	cause     error
+	cookieScopeURL string
+	prior          []ResponseMetadata
+	operation      string
+	kind           ErrorKind
+	status         int
+	body           []byte
+	headers        []Header
+	cause          error
 }
 
 // Error never prints credentials, raw response content or an underlying transport message.
@@ -49,7 +50,7 @@ func (failure *ClientError) ResponseHeaders() []Header {
 func (failure *ClientError) PriorResponses() []ResponseMetadata {
 	result := make([]ResponseMetadata, 0, len(failure.prior))
 	for _, metadata := range failure.prior {
-		result = append(result, ResponseMetadata{StatusCode: metadata.StatusCode,
+		result = append(result, ResponseMetadata{CookieScopeURL: metadata.CookieScopeURL, StatusCode: metadata.StatusCode,
 			Headers: append([]Header(nil), metadata.Headers...)})
 	}
 
@@ -60,8 +61,9 @@ func newClientError(operation string, kind ErrorKind, status int, body []byte,
 	headers []Header, cause error,
 ) *ClientError {
 	return &ClientError{
-		prior:     nil,
-		operation: operation, kind: kind, status: status,
+		prior:          nil,
+		cookieScopeURL: "",
+		operation:      operation, kind: kind, status: status,
 		body: append([]byte(nil), body...), headers: append([]Header(nil), headers...), cause: cause,
 	}
 }
@@ -90,6 +92,8 @@ func adaptFailure(operation string, err error) *ClientError {
 	}
 
 	result := newClientError(operation, kind, failure.Status, failure.Body, responseHeaders(failure.Headers), err)
+	result.cookieScopeURL = failure.CookieScopeURL
+
 	for _, prior := range failure.Prior {
 		result.prior = append(result.prior, publicMetadata(prior))
 	}
@@ -128,3 +132,7 @@ func providerKind(status int) ErrorKind {
 		return Provider
 	}
 }
+
+// CookieScopeURL returns the response request origin/path for applying Set-Cookie.
+// Query credentials are excluded; an empty value means no response arrived.
+func (failure *ClientError) CookieScopeURL() string { return failure.cookieScopeURL }

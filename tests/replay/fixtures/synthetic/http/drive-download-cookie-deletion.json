@@ -1,0 +1,136 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "drive",
+  "operation": "get_file",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "cookies": [
+      {
+        "name": "session",
+        "value": "old",
+        "domain": ".example.invalid",
+        "path": "/"
+      }
+    ]
+  },
+  "inputs": [
+    "synthetic-document"
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://documents.example.invalid",
+        "path": "/ws/com.apple.CloudDocs/download/by_id",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "document_id",
+            "synthetic-document"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "cookie",
+            "session=old"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ],
+          [
+            "Set-Cookie",
+            "session=removed; Domain=.example.invalid; Path=/; Max-Age=0"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkYXRhX3Rva2VuIjogeyJ1cmwiOiAiaHR0cHM6Ly9jb250ZW50LmV4YW1wbGUuaW52YWxpZC9zeW50aGV0aWMtZmlsZSJ9fQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://content.example.invalid",
+        "path": "/synthetic-file",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/octet-stream"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "AP8NCnN5bnRoZXRpYyBieXRlcw=="
+        }
+      }
+    }
+  ],
+  "result": {
+    "status": 200,
+    "headers": [
+      [
+        "Content-Type",
+        "application/octet-stream"
+      ]
+    ],
+    "body": "AP8NCnN5bnRoZXRpYyBieXRlcw=="
+  }
+}
