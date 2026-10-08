@@ -126,6 +126,22 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim upload hydration and account endpoint audit
+
+The reviewer independently replayed 16 Photos service-upload cases with 83
+pairs and 11 account photo/summary cases with 17 pairs. `make check` passed 48
+methods, including lint/build/race checks. Twelve added Photos probes rejected
+extra responses, unused/nonfinite/decreasing clocks and wrong event order;
+five account probes rejected region, result, error and consumption drift.
+Clock, UUID and timezone factories restored after success, expected failure
+and replay mismatch.
+
+Actual HTTP 429 produces the pinned session error before hydration retry handling.
+Account family-photo and summary routing match the pinned source. The reviewer
+identified stale hydration/count documentation; the fixture guide and migration
+checklist now reflect the new evidence. Verdict: **limited interim pass**. Full
+endpoint/schema/Go interoperability and final acceptance remain open.
+
 ### Interim Photos upload and shared-stream audit
 
 The reviewer independently checked 44 new cases with 112 pairs: actual upload

@@ -12,7 +12,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 203)
+        self.assertGreaterEqual(len(fixtures), 230)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -143,6 +143,28 @@ class SyntheticTests(unittest.TestCase):
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(scenario))
                 with self.assertRaisesRegex(AssertionError, "error payload mismatch"):
+                    replay_synthetic(path)
+
+    def test_service_upload_wait_trace_is_ordered_and_consumed(self):
+        for change in ["sleep", "surplus", "missing", "backwards", "boolean"]:
+            original = json.loads(
+                (FIXTURES / "photos-upload-service-backoff.json").read_text()
+            )
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                trace = original["entropy"]["photos_wait_trace"]
+                if change == "sleep":
+                    trace[2]["value"] = 2
+                elif change == "surplus":
+                    trace.append({"kind": "monotonic", "value": 2})
+                elif change == "missing":
+                    trace.pop()
+                elif change == "backwards":
+                    trace[0]["value"] = 1
+                else:
+                    trace[0]["value"] = False
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(original))
+                with self.assertRaises(AssertionError):
                     replay_synthetic(path)
 
 

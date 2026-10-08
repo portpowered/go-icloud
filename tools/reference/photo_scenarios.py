@@ -48,6 +48,8 @@ def execute_upload(service, scenario):
         if operation == "upload_pipeline":
             value = uploader.upload(str(path), **kwargs)
             return {"value": project(value), "is_duplicate": value.is_duplicate}
+        if operation == "service_upload":
+            return photo_result(service.upload(str(path), **kwargs))
         raise AssertionError("Unknown upload operation")
 
 
@@ -134,7 +136,7 @@ def photo_result(photo):
 
 def execute_photos(service, scenario):
     operation = scenario["operation"]
-    if operation.startswith("upload_"):
+    if operation.startswith("upload_") or operation == "service_upload":
         return execute_upload(service, scenario)
     if operation.startswith("stream_"):
         return execute_stream(service, scenario)

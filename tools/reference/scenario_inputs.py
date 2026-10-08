@@ -55,6 +55,27 @@ def synthetic_entropy(scenario):
     assert type(seconds) in {int, float} and math.isfinite(seconds)
     used = []
     random_used = []
+    wait_trace = entropy.get("photos_wait_trace")
+    wait_used = []
+    monotonic_used = []
+
+    def wait_event(kind):
+        assert len(wait_used) < len(wait_trace), "unexpected upload wait event"
+        event = wait_trace[len(wait_used)]
+        assert event["kind"] == kind, "upload wait event order mismatch"
+        value = event["value"]
+        assert type(value) in {int, float} and math.isfinite(value) and value >= 0
+        if kind == "monotonic":
+            assert not monotonic_used or value >= monotonic_used[-1]
+            monotonic_used.append(value)
+        wait_used.append(event)
+        return value
+
+    def monotonic():
+        return wait_event("monotonic")
+
+    def sleep(seconds):
+        assert wait_event("sleep") == seconds, "upload sleep duration mismatch"
 
     def next_uuid():
         assert len(used) < len(samples), "unexpected UUID generation"
@@ -78,10 +99,14 @@ def synthetic_entropy(scenario):
         patch("time.time", return_value=seconds),
         ExitStack() as stack,
     ):
-        if scenario.get("operation") == "upload_pipeline":
+        if scenario.get("operation") in {"upload_pipeline", "service_upload"}:
             stack.enter_context(
                 patch("pyicloud.services.photos_cloudkit.upload.uuid4", next_uuid)
             )
+        if wait_trace is not None:
+            assert isinstance(wait_trace, list) and wait_trace
+            stack.enter_context(patch("time.monotonic", monotonic))
+            stack.enter_context(patch("time.sleep", sleep))
         if "random_bytes" in entropy:
             stack.enter_context(patch("os.urandom", random_bytes))
         position = None
@@ -115,4 +140,7 @@ def synthetic_entropy(scenario):
             )
             assert local_zone is None or local_zone.call_count == 1, (
                 "upload timezone consumption mismatch"
+            )
+            assert wait_trace is None or len(wait_used) == len(wait_trace), (
+                "unconsumed upload wait trace"
             )

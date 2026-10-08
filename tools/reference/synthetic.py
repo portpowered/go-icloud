@@ -63,7 +63,27 @@ def execute(api, scenario, observations=None):
             }
         return result
     if scenario["service"] == "account":
-        service = AccountService(state["origin"], api.session, False, params)
+        service = AccountService(
+            state["origin"], api.session, state.get("china_mainland", False), params
+        )
+        if scenario["operation"] == "family_photos":
+            photos = []
+            for member in service.family:
+                response = member.get_photo()
+                try:
+                    photos.append(
+                        {
+                            "member_id": member.dsid,
+                            "status": response.status_code,
+                            "headers": list(map(list, response.headers.items())),
+                            "body": base64.b64encode(response.raw.read()).decode(
+                                "ascii"
+                            ),
+                        }
+                    )
+                finally:
+                    response.close()
+            return photos
         value = getattr(service, scenario["operation"])
         if scenario["operation"] == "family":
             return [member.full_name for member in value]
@@ -107,6 +127,12 @@ def execute(api, scenario, observations=None):
             params,
             None,
             state.get("shared_streams_origin"),
+            photos_upload_url=state.get("photos_upload_origin"),
+            **{
+                key: state[key]
+                for key in ["upload_hydration_timeout", "upload_hydration_interval"]
+                if key in state
+            },
         )
         operation = scenario["operation"]
         if operation == "indexing":
@@ -138,6 +164,7 @@ def execute(api, scenario, observations=None):
             "upload_status",
             "upload_bytes",
             "upload_pipeline",
+            "service_upload",
             "stream_albums",
             "stream_count",
             "stream_photos",

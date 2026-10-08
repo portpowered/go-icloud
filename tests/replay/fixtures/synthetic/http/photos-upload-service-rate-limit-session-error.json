@@ -1,0 +1,316 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "photos",
+  "operation": "service_upload",
+  "initial_state": {
+    "origin": "https://photos.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "photos_upload_origin": "https://uploads.example.invalid",
+    "upload_hydration_timeout": 2,
+    "upload_hydration_interval": 1
+  },
+  "inputs": [],
+  "keyword_inputs": {},
+  "file": {
+    "name": "synthetic.jpg",
+    "body": "AP94",
+    "modified_seconds": 1700000000
+  },
+  "entropy": {
+    "uuid4": [
+      "00000001-0000-4000-8000-000000000000"
+    ],
+    "unix_seconds": 1700000000,
+    "photos_local_timezone": [
+      "UTC",
+      0
+    ],
+    "photos_wait_trace": [
+      {
+        "kind": "monotonic",
+        "value": 0
+      }
+    ]
+  },
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (429): {\"errorCode\": \"RATE_LIMIT\", \"reason\": \"synthetic throttling\"}"
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/private/records/query",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "140"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUifSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUHJpbWFyeVN5bmMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9LCAicmVzdWx0c0xpbWl0IjogMX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyJ9"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://uploads.example.invalid",
+        "path": "/photosupload/createUploadUrl",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "82"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lTmFtZSI6ICJQcmltYXJ5U3luYyIsICJhc3NldHMiOiB7IjAwMDAwMDAxLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMCI6IDN9fQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ1cGxvYWRVcmxzIjogeyIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAiOiAiaHR0cHM6Ly9jb250ZW50LmV4YW1wbGUuaW52YWxpZC9zeW50aGV0aWMtdXBsb2FkP3Rva2VuPXN5bnRoZXRpYy10b2tlbiJ9fQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://content.example.invalid",
+        "path": "/synthetic-upload",
+        "query": [
+          [
+            "token",
+            "synthetic-token"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "3"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "AP94"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzaW5nbGVGaWxlIjogeyJyZWZlcmVuY2VDaGVja3N1bSI6ICJzeW50aGV0aWMtcmVmZXJlbmNlIiwgInNpemUiOiAzLCAiZmlsZUNoZWNrc3VtIjogInN5bnRoZXRpYy1jaGVja3N1bSIsICJ3cmFwcGluZ0tleSI6ICJzeW50aGV0aWMta2V5IiwgInJlY2VpcHQiOiAic3ludGhldGljLXJlY2VpcHQifX0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://uploads.example.invalid",
+        "path": "/photosupload/putAsset",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "387"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lTmFtZSI6ICJQcmltYXJ5U3luYyIsICJmaWxlcyI6IFt7ImZpbGVOYW1lIjogInN5bnRoZXRpYy5qcGciLCAibGFzdE1vZERhdGUiOiAxNzAwMDAwMDAwMDAwLCAidGltZVpvbmVPZmZzZXQiOiAwLCAic2luZ2xlRmlsZVVwbG9hZFJlcXVlc3QiOiB7InJlZmVyZW5jZUNoZWNrc3VtIjogInN5bnRoZXRpYy1yZWZlcmVuY2UiLCAic2l6ZSI6IDMsICJmaWxlQ2hlY2tzdW0iOiAic3ludGhldGljLWNoZWNrc3VtIiwgIndyYXBwaW5nS2V5IjogInN5bnRoZXRpYy1rZXkiLCAicmVjZWlwdCI6ICJzeW50aGV0aWMtcmVjZWlwdCJ9fV0sICJsb2NhbFRpbWVab25lSWQiOiAiVVRDIiwgImltcG9ydEdyb3VwIjogIjAwMDAwMDAxLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMCJ9"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "W3sidXBsb2FkSm9iSWQiOiAic3ludGhldGljLWpvYiIsICJjcGxNYXN0ZXIiOiAic3ludGhldGljLW1hc3Rlci0wIiwgImNwbEFzc2V0IjogInN5bnRoZXRpYy1hc3NldC0wIiwgInJlc3BvbnNlIjogeyJzdGF0dXMiOiAyMDAsICJpc1JldHJ5YWJsZSI6IGZhbHNlfX1d"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/private/records/lookup",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "2093"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtbWFzdGVyLTAifSwgeyJyZWNvcmROYW1lIjogInN5bnRoZXRpYy1hc3NldC0wIn1dLCAiem9uZUlEIjogeyJ6b25lTmFtZSI6ICJQcmltYXJ5U3luYyIsICJ6b25lVHlwZSI6ICJSRUdVTEFSX0NVU1RPTV9aT05FIn0sICJkZXNpcmVkS2V5cyI6IFsicmVzSlBFR0Z1bGxXaWR0aCIsICJyZXNKUEVHRnVsbEhlaWdodCIsICJyZXNKUEVHRnVsbEZpbGVUeXBlIiwgInJlc0pQRUdGdWxsRmluZ2VycHJpbnQiLCAicmVzSlBFR0Z1bGxSZXMiLCAicmVzSlBFR0xhcmdlV2lkdGgiLCAicmVzSlBFR0xhcmdlSGVpZ2h0IiwgInJlc0pQRUdMYXJnZUZpbGVUeXBlIiwgInJlc0pQRUdMYXJnZUZpbmdlcnByaW50IiwgInJlc0pQRUdMYXJnZVJlcyIsICJyZXNKUEVHTWVkV2lkdGgiLCAicmVzSlBFR01lZEhlaWdodCIsICJyZXNKUEVHTWVkRmlsZVR5cGUiLCAicmVzSlBFR01lZEZpbmdlcnByaW50IiwgInJlc0pQRUdNZWRSZXMiLCAicmVzSlBFR1RodW1iV2lkdGgiLCAicmVzSlBFR1RodW1iSGVpZ2h0IiwgInJlc0pQRUdUaHVtYkZpbGVUeXBlIiwgInJlc0pQRUdUaHVtYkZpbmdlcnByaW50IiwgInJlc0pQRUdUaHVtYlJlcyIsICJyZXNWaWRGdWxsV2lkdGgiLCAicmVzVmlkRnVsbEhlaWdodCIsICJyZXNWaWRGdWxsRmlsZVR5cGUiLCAicmVzVmlkRnVsbEZpbmdlcnByaW50IiwgInJlc1ZpZEZ1bGxSZXMiLCAicmVzVmlkTWVkV2lkdGgiLCAicmVzVmlkTWVkSGVpZ2h0IiwgInJlc1ZpZE1lZEZpbGVUeXBlIiwgInJlc1ZpZE1lZEZpbmdlcnByaW50IiwgInJlc1ZpZE1lZFJlcyIsICJyZXNWaWRTbWFsbFdpZHRoIiwgInJlc1ZpZFNtYWxsSGVpZ2h0IiwgInJlc1ZpZFNtYWxsRmlsZVR5cGUiLCAicmVzVmlkU21hbGxGaW5nZXJwcmludCIsICJyZXNWaWRTbWFsbFJlcyIsICJyZXNTaWRlY2FyV2lkdGgiLCAicmVzU2lkZWNhckhlaWdodCIsICJyZXNTaWRlY2FyRmlsZVR5cGUiLCAicmVzU2lkZWNhckZpbmdlcnByaW50IiwgInJlc1NpZGVjYXJSZXMiLCAiaXRlbVR5cGUiLCAiZGF0YUNsYXNzVHlwZSIsICJmaWxlbmFtZUVuYyIsICJvcmlnaW5hbE9yaWVudGF0aW9uIiwgInJlc09yaWdpbmFsV2lkdGgiLCAicmVzT3JpZ2luYWxIZWlnaHQiLCAicmVzT3JpZ2luYWxGaWxlVHlwZSIsICJyZXNPcmlnaW5hbEZpbmdlcnByaW50IiwgInJlc09yaWdpbmFsUmVzIiwgInJlc09yaWdpbmFsQWx0V2lkdGgiLCAicmVzT3JpZ2luYWxBbHRIZWlnaHQiLCAicmVzT3JpZ2luYWxBbHRGaWxlVHlwZSIsICJyZXNPcmlnaW5hbEFsdEZpbmdlcnByaW50IiwgInJlc09yaWdpbmFsQWx0UmVzIiwgInJlc09yaWdpbmFsVmlkQ29tcGxXaWR0aCIsICJyZXNPcmlnaW5hbFZpZENvbXBsSGVpZ2h0IiwgInJlc09yaWdpbmFsVmlkQ29tcGxGaWxlVHlwZSIsICJyZXNPcmlnaW5hbFZpZENvbXBsRmluZ2VycHJpbnQiLCAicmVzT3JpZ2luYWxWaWRDb21wbFJlcyIsICJpc0RlbGV0ZWQiLCAiaXNFeHB1bmdlZCIsICJkYXRlRXhwdW5nZWQiLCAicmVtYXBwZWRSZWYiLCAicmVjb3JkTmFtZSIsICJyZWNvcmRUeXBlIiwgInJlY29yZENoYW5nZVRhZyIsICJtYXN0ZXJSZWYiLCAiYWRqdXN0bWVudFJlbmRlclR5cGUiLCAiYXNzZXREYXRlIiwgImFkZGVkRGF0ZSIsICJpc0Zhdm9yaXRlIiwgImlzSGlkZGVuIiwgIm9yaWVudGF0aW9uIiwgImR1cmF0aW9uIiwgImFzc2V0U3VidHlwZSIsICJhc3NldFN1YnR5cGVWMiIsICJhc3NldEhEUlR5cGUiLCAiYnVyc3RGbGFncyIsICJidXJzdEZsYWdzRXh0IiwgImJ1cnN0SWQiLCAiY2FwdGlvbkVuYyIsICJsb2NhdGlvbkVuYyIsICJsb2NhdGlvblYyRW5jIiwgImxvY2F0aW9uTGF0aXR1ZGUiLCAibG9jYXRpb25Mb25naXR1ZGUiLCAiYWRqdXN0bWVudFR5cGUiLCAidGltZVpvbmVPZmZzZXQiLCAidmlkQ29tcGxEdXJWYWx1ZSIsICJ2aWRDb21wbER1clNjYWxlIiwgInZpZENvbXBsRGlzcFZhbHVlIiwgInZpZENvbXBsRGlzcFNjYWxlIiwgInZpZENvbXBsVmlzaWJpbGl0eVN0YXRlIiwgImN1c3RvbVJlbmRlcmVkVmFsdWUiLCAiY29udGFpbmVySWQiLCAiaXRlbUlkIiwgInBvc2l0aW9uIiwgImlzS2V5QXNzZXQiXX0="
+        }
+      },
+      "response": {
+        "status": 429,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJlcnJvckNvZGUiOiAiUkFURV9MSU1JVCIsICJyZWFzb24iOiAic3ludGhldGljIHRocm90dGxpbmcifQ=="
+        }
+      }
+    }
+  ]
+}

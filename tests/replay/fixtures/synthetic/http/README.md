@@ -89,8 +89,8 @@ The sample sizes and complete consumption are checked, and factories restored.
 The rejected asset-deletion case records a reference defect: a per-record error
 still returns true. It is implementation evidence, not an observed successful
 Apple write. The Go implementation must report the rejection, with that deliberate
-departure explicitly tested rather than silently copied. Full service upload
-hydration and complete shared-stream error coverage remain open.
+departure explicitly tested rather than silently copied. Complete shared-stream
+error coverage remains open.
 
 Upload endpoint cases now cover reservation, raw file transfer, registration and
 progress lookup with zero/one/three results, unknown jobs, binary/empty bytes,
@@ -115,6 +115,29 @@ Shared-stream cases use the actual modern service's legacy stream dependency.
 They cover zero/one/three albums, asset counts and asset pages; multi-page reads;
 existing/missing lookups; metadata and likes; and binary/empty downloads. Their
 origin, DSID and album-provided content location remain exact request inputs.
-These synthetic cases do not establish observed Apple stream behavior. Full
-service upload hydration, target-album membership and remaining error variants
-still need endpoint cases.
+These synthetic cases do not establish observed Apple stream behavior. Remaining
+endpoint error variants still need cases.
+
+The service-upload extension calls `PhotosService.upload` through the configured
+upload client and then actual CloudKit record lookup. Cases cover immediate and
+duplicate hydration, delayed indexing, bounded backoff, transient/persistent
+invalid JSON, incomplete/not-found records, timeouts, absent registration IDs,
+normalized registration rejection, target-album membership and missing albums.
+Timeouts return null after registration; they do not imply the file was absent
+from provider storage. HTTP 429 currently raises the session's public error before
+the CloudKit hydration retry handler sees it; this reference behavior is explicit.
+
+`photos_wait_trace` is an ordered list of `{ "kind": "monotonic" | "sleep",
+"value": seconds }` environment events. Monotonic samples are finite,
+nonnegative and nondecreasing; sleep durations must match exactly. No real wait
+is used. Unexpected calls, wrong order or unconsumed samples fail even on errors,
+and both time factories restore at teardown. This verifies retry decisions at
+the clock boundary, not live scheduling.
+
+Account endpoint additions cover family-photo requests with zero/one/three
+members, empty/binary streamed photo bodies and provider rejection. The result
+binds member ID, response status, headers and bytes; the response is closed after
+reading. Subscription summary cases call the actual property against its global
+and China gateway constants, binding empty results, invented plan projections
+and provider errors. These payloads describe reference behavior rather than an
+observed complete subscription schema.
