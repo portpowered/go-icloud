@@ -362,6 +362,26 @@ not silently approve them. Verdict: **limited interim pass** with no actionable
 flaw. Complete selected endpoint/schema/model gates, Go SDK interoperability,
 release and final migration acceptance remain open.
 
+### Interim Photos container and Reminders zone audit
+
+The independent reviewer passed all 40 additions and 145 paired exchanges.
+Source inspection confirmed the active shared batch-count route and the dormant
+Reminders database-change helper: no Reminders service, adapter or CLI operation
+calls or exposes it. The reviewer verified shared favorite mutation routing and
+its mandatory shared refresh against the pinned source.
+
+The reviewer found that Photos errors checked type/message without binding
+their optional photo/album resources. The runner now requires nullable portable
+projections. Independent probes that drop the actual exception's photo, inject
+an album, omit expectations or change resource fields all reject. Disposition:
+**error-resource finding resolved** (LIB-05).
+
+Independent `make check` passes 65 methods, lint, build and race-enabled Go tests.
+The occurrence audit reports 413 scenarios, 949 pairs, 74/75 active HTTP routes
+and no unmatched exchange. Physical security-key verification remains deferred.
+Verdict: **limited implementation pass**. Selected-endpoint functional/schema
+gates, Go SDK interoperability and final migration acceptance remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.

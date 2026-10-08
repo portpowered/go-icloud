@@ -133,6 +133,8 @@ def execute(api, scenario, observations=None):
 
         service = RemindersService(state["origin"], api.session, params)
         operation = scenario["operation"]
+        if operation == "zones":
+            return project(service._raw._client.zones_list())
         arguments = decode_input(scenario["inputs"])
         try:
             value = getattr(service, operation)(
@@ -170,6 +172,21 @@ def execute(api, scenario, observations=None):
             },
         )
         operation = scenario["operation"]
+        if operation in {"container_changes", "container_lookup"}:
+            scope = scenario.get("container_scope", "private")
+            assert scope in {"private", "shared"}, "Unknown Photos container scope"
+            client = (
+                service.private_client if scope == "private" else service._shared_client
+            )
+            kwargs = dict(scenario.get("keyword_inputs", {}))
+            if operation == "container_lookup":
+                from pyicloud.common.cloudkit import CKZoneIDReq
+
+                kwargs["zone_id"] = CKZoneIDReq(**kwargs["zone_id"])
+                return project(client.lookup(**kwargs))
+            return project(client.database_changes(**kwargs))
+        if "library" in scenario:
+            service = service.libraries[scenario["library"]]
         if operation == "indexing":
             return {
                 "state": service._root_library.indexing_state,
@@ -273,6 +290,27 @@ def replay_synthetic(path):
                     or scenario["error_payload"] != project(error.payload)
                 ):
                     raise AssertionError("Synthetic error payload mismatch") from error
+                if scenario["service"] == "photos":
+                    from photo_scenarios import album_result, photo_result
+                    from pyicloud.services.photos_cloudkit.models import (
+                        PhotosServiceException,
+                    )
+
+                    if isinstance(error, PhotosServiceException):
+                        resources = {
+                            "photo": photo_result(error.photo)
+                            if error.photo is not None
+                            else None,
+                            "album": album_result(error.album)
+                            if error.album is not None
+                            else None,
+                        }
+                        if "error_resources" not in scenario or (
+                            scenario["error_resources"] != resources
+                        ):
+                            raise AssertionError(
+                                "Synthetic Photos error resource mismatch"
+                            ) from error
                 if scenario.get("error_arguments") != observations.get("arguments"):
                     raise AssertionError(
                         "Synthetic error argument state mismatch"

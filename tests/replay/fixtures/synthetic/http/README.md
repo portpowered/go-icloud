@@ -275,3 +275,24 @@ and sends neither trust nor account-login requests. All HTTP and socket events
 share one consumed timeline. These establish synthetic pinned-reference login
 compatibility, not current live Apple behavior, physical device interaction or
 Go interoperability.
+
+Photos container scenarios select `container_scope` as `private` or `shared`
+and invoke the actual CloudKit client's `database_changes` or `lookup`. Lookup
+zone inputs are portable dictionaries converted to the reference request model.
+Shared-library scenarios select the actual discovered library through `library`;
+they bind discovery, shared batch counts, queries, pagination, changes and writes.
+Shared libraries expose a restricted smart-album set, so private custom-album
+zero/one/many behavior is not copied into that operation. Reminders `zones`
+invokes actual zone discovery, including zero/one/three results and provider errors.
+
+Every expected `PhotosServiceException` requires `error_resources` with nullable
+`photo` and `album` projections. Missing resources and changed resource fields
+fail replay even when error type and message agree (LIB-05). These projections
+contain ordinary JSON, without Python object snapshots.
+
+The pinned shared-library favorite operation sends its mutation through the
+private client with the shared zone and then refreshes through the shared client.
+Both exchanges are bound, including the refresh after a rejected record. This
+source quirk is synthetic reference evidence, not an observed Apple mutation.
+The Go implementation must keep the asset's selected container and zone rather
+than reproduce the private-client routing defect.

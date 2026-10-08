@@ -7,15 +7,17 @@ import time
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from scenario_inputs import synthetic_entropy
 from synthetic import FIXTURES, replay_synthetic
+from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 373)
+        self.assertGreaterEqual(len(fixtures), 413)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -93,6 +95,70 @@ class SyntheticTests(unittest.TestCase):
                 path.write_text(json.dumps(scenario))
                 with self.assertRaises(AssertionError):
                     replay_synthetic(path)
+
+    def test_cloudkit_scope_zone_and_payload_are_bound(self):
+        for change in ["scope", "library", "zone", "error_payload", "favorite_route"]:
+            names = {
+                "scope": "photos-container-private-changes-1",
+                "library": "photos-shared-library-assets-1",
+                "zone": "photos-container-shared-lookup-1",
+                "error_payload": "reminders-zones-schema-error",
+                "favorite_route": "photos-shared-library-favorite-true",
+            }
+            scenario = json.loads((FIXTURES / (names[change] + ".json")).read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "scope":
+                    scenario["container_scope"] = "shared"
+                elif change == "library":
+                    scenario["library"] = "root"
+                elif change == "zone":
+                    scenario["keyword_inputs"]["zone_id"]["ownerRecordName"] = "wrong"
+                elif change == "error_payload":
+                    scenario["error_payload"] = {"zones": []}
+                else:
+                    pair = next(
+                        pair
+                        for pair in scenario["exchanges"]
+                        if pair["request"]["path"].endswith("/records/modify")
+                    )
+                    pair["request"]["path"] = pair["request"]["path"].replace(
+                        "/private/", "/shared/"
+                    )
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_photos_error_resources_are_required_and_bound(self):
+        fixture = FIXTURES / "photos-shared-library-favorite-record-error.json"
+        for change in ["missing", "photo", "album"]:
+            scenario = json.loads(fixture.read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "missing":
+                    del scenario["error_resources"]
+                elif change == "photo":
+                    scenario["error_resources"]["photo"] = None
+                else:
+                    scenario["error_resources"]["album"] = {"id": "unexpected"}
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaisesRegex(AssertionError, "error resource mismatch"):
+                    replay_synthetic(path)
+
+        def remove_error_photo(*args, **kwargs):
+            from pyicloud.services.photos_cloudkit.models import PhotosServiceException
+
+            try:
+                return execute_scenario(*args, **kwargs)
+            except PhotosServiceException as error:
+                error.photo = None
+                raise
+
+        with (
+            patch("synthetic.execute", remove_error_photo),
+            self.assertRaisesRegex(AssertionError, "error resource mismatch"),
+        ):
+            replay_synthetic(fixture)
 
     def test_drive_refresh_and_transfer_results_are_bound(self):
         for fixture in ["drive-root-force-refresh", "drive-upload-position"]:

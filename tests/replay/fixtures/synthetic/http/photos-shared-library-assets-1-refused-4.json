@@ -6,7 +6,6 @@
     "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
   },
   "service": "photos",
-  "operation": "service_upload",
   "initial_state": {
     "origin": "https://photos.example.invalid",
     "params": {
@@ -15,22 +14,11 @@
     },
     "headers": {
       "Accept": "application/json"
-    },
-    "photos_upload_origin": "https://uploads.example.invalid"
+    }
   },
+  "operation": "album_photos",
   "inputs": [],
-  "keyword_inputs": {
-    "album": "Synthetic missing"
-  },
-  "file": {
-    "name": "synthetic.jpg",
-    "body": "AP94",
-    "modified_seconds": 1700000000
-  },
-  "error": {
-    "type": "PhotosServiceException",
-    "message": "No album matched 'Synthetic missing'"
-  },
+  "library": "shared:synthetic-shared-zone",
   "exchanges": [
     {
       "request": {
@@ -92,7 +80,7 @@
       "request": {
         "method": "POST",
         "origin": "https://photos.example.invalid",
-        "path": "/database/1/com.apple.photos.cloud/production/private/records/query",
+        "path": "/database/1/com.apple.photos.cloud/production/private/zones/list",
         "query": [
           [
             "clientId",
@@ -118,7 +106,7 @@
           ],
           [
             "content-length",
-            "125"
+            "2"
           ],
           [
             "content-type",
@@ -127,7 +115,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJDUExBbGJ1bUJ5UG9zaXRpb25MaXZlIn0sICJ6b25lSUQiOiB7InpvbmVOYW1lIjogIlByaW1hcnlTeW5jIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+          "value": "e30="
         }
       },
       "response": {
@@ -140,7 +128,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJyZWNvcmRzIjogW119"
+          "value": "eyJ6b25lcyI6IFtdfQ=="
         }
       }
     },
@@ -148,7 +136,7 @@
       "request": {
         "method": "POST",
         "origin": "https://photos.example.invalid",
-        "path": "/database/1/com.apple.photos.cloud/production/private/records/query",
+        "path": "/database/1/com.apple.photos.cloud/production/shared/zones/list",
         "query": [
           [
             "clientId",
@@ -174,7 +162,7 @@
           ],
           [
             "content-length",
-            "125"
+            "2"
           ],
           [
             "content-type",
@@ -183,7 +171,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJDUExBbGJ1bUJ5UG9zaXRpb25MaXZlIn0sICJ6b25lSUQiOiB7InpvbmVOYW1lIjogIlByaW1hcnlTeW5jIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+          "value": "e30="
         }
       },
       "response": {
@@ -196,13 +184,125 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJyZWNvcmRzIjogW119"
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAic3ludGhldGljLXNoYXJlZC16b25lIiwgIm93bmVyUmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtb3duZXIifSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc2hhcmVkLXN5bmMifV19"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/shared/records/query",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "153"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUifSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAic3ludGhldGljLXNoYXJlZC16b25lIiwgIm93bmVyUmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtb3duZXIifSwgInJlc3VsdHNMaW1pdCI6IDF9"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyJ9"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/shared/internal/records/query/batch",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "content-length",
+            "348"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJiYXRjaCI6IFt7InJlc3VsdHNMaW1pdCI6IDEsICJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJIeXBlcmlvbkluZGV4Q291bnRMb29rdXAiLCAiZmlsdGVyQnkiOiB7ImZpZWxkTmFtZSI6ICJpbmRleENvdW50SUQiLCAiY29tcGFyYXRvciI6ICJJTiIsICJmaWVsZFZhbHVlIjogeyJ0eXBlIjogIlNUUklOR19MSVNUIiwgInZhbHVlIjogWyJDUExBc3NldEJ5QXNzZXREYXRlV2l0aG91dEhpZGRlbk9yRGVsZXRlZCJdfX19LCAiem9uZVdpZGUiOiB0cnVlLCAiem9uZUlEIjogeyJ6b25lTmFtZSI6ICJzeW50aGV0aWMtc2hhcmVkLXpvbmUiLCAib3duZXJSZWNvcmROYW1lIjogInN5bnRoZXRpYy1vd25lciJ9fV19"
+        }
+      },
+      "response": {
+        "status": 503,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIHNoYXJlZCBQaG90b3MgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
         }
       }
     }
   ],
-  "error_resources": {
-    "photo": null,
-    "album": null
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic shared Photos refusal\", \"errorCode\": 503}"
   }
 }

@@ -6,7 +6,6 @@
     "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
   },
   "service": "photos",
-  "operation": "sync_cursor",
   "initial_state": {
     "origin": "https://photos.example.invalid",
     "params": {
@@ -17,7 +16,11 @@
       "Accept": "application/json"
     }
   },
-  "inputs": [],
+  "operation": "photo_get",
+  "inputs": [
+    "synthetic-asset-0"
+  ],
+  "library": "shared:synthetic-shared-zone",
   "exchanges": [
     {
       "request": {
@@ -71,7 +74,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XX0="
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyJ9"
         }
       }
     },
@@ -130,14 +133,66 @@
           "value": "eyJ6b25lcyI6IFtdfQ=="
         }
       }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/shared/zones/list",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "2"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      },
+      "response": {
+        "status": 503,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIHNoYXJlZCBQaG90b3MgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
+        }
+      }
     }
   ],
   "error": {
-    "type": "PhotosServiceException",
-    "message": "No sync token available for photo library"
-  },
-  "error_resources": {
-    "photo": null,
-    "album": null
+    "type": "KeyError",
+    "message": "'shared:synthetic-shared-zone'"
   }
 }

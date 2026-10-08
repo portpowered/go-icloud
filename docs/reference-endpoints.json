@@ -1318,25 +1318,6 @@
     {
       "service": "reminders",
       "transport": "http",
-      "method": "POST",
-      "path": "/database/1/com.apple.reminders/production/private/changes/database",
-      "authority_source": "ckdatabasews webservice",
-      "source_file": "common/cloudkit/client.py",
-      "source_functions": [
-        {
-          "name": "CloudKitContainerClient.database_changes",
-          "line": 457
-        }
-      ],
-      "known_payload_variants": [
-        "database-sync"
-      ],
-      "schema_binding": "pending",
-      "scenario_matrix": "pending"
-    },
-    {
-      "service": "reminders",
-      "transport": "http",
       "method": "GET",
       "path": "{provider-returned-url}",
       "authority_source": "provider asset URL",
@@ -1373,6 +1354,25 @@
       ],
       "known_payload_variants": [
         "HyperionIndexCountLookup"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/internal/records/query/batch",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "services/photos_cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "PhotosCloudKitClient.batch_count",
+          "line": 133
+        }
+      ],
+      "known_payload_variants": [
+        "shared-library-batch-count"
       ],
       "schema_binding": "pending",
       "scenario_matrix": "pending"
@@ -1552,5 +1552,38 @@
     "The configured pricing URL in AccountService has no sending operation; inventory its constant/model owner before public API sign-off.",
     "Bind all entries and known payload variants to canonical schemas and generated models; no binding is implemented yet.",
     "Require complete success/empty/one/many/pagination/error/transport/lifecycle matrices per applicable operation."
+  ],
+  "dormant_definitions": [
+    {
+      "endpoint": {
+        "service": "reminders",
+        "transport": "http",
+        "method": "POST",
+        "path": "/database/1/com.apple.reminders/production/private/changes/database",
+        "authority_source": "ckdatabasews webservice",
+        "source_file": "common/cloudkit/client.py",
+        "source_functions": [
+          {
+            "name": "CloudKitContainerClient.database_changes",
+            "line": 457
+          }
+        ],
+        "known_payload_variants": [
+          "database-sync"
+        ],
+        "schema_binding": "pending",
+        "scenario_matrix": "pending"
+      },
+      "reason": "The Reminders service and adapter neither expose nor call database_changes. The generic container helper is invoked only by PhotosCloudKitClient.database_changes in the pinned tree. The Reminders CLI reaches zones_list separately; it does not use database_changes. This is a dormant dependency capability, not an active Reminders endpoint.",
+      "source_audit": [
+        "services/reminders/__init__.py public exports",
+        "services/reminders/service.py high-level operations and adapter ownership",
+        "services/reminders/client.py adapter methods",
+        "tools/reference/icloud.py reminder-zones selection",
+        "common/cloudkit/client.py CloudKitContainerClient.database_changes",
+        "services/photos_cloudkit/client.py PhotosCloudKitClient.database_changes"
+      ],
+      "reactivation": "Any introduced Reminders database-change operation must restore its active endpoint entry, schemas and replay matrix before shipping."
+    }
   ]
 }

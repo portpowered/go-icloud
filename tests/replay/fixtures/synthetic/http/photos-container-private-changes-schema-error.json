@@ -6,7 +6,7 @@
     "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
   },
   "service": "photos",
-  "operation": "sync_cursor",
+  "operation": "container_changes",
   "initial_state": {
     "origin": "https://photos.example.invalid",
     "params": {
@@ -18,6 +18,20 @@
     }
   },
   "inputs": [],
+  "container_scope": "private",
+  "error": {
+    "type": "CloudKitApiError",
+    "message": "Database changes response validation failed"
+  },
+  "error_payload": {
+    "zones": [
+      {
+        "zoneID": {
+          "zoneName": 1
+        }
+      }
+    ]
+  },
   "exchanges": [
     {
       "request": {
@@ -71,7 +85,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XX0="
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyJ9"
         }
       }
     },
@@ -79,7 +93,7 @@
       "request": {
         "method": "POST",
         "origin": "https://photos.example.invalid",
-        "path": "/database/1/com.apple.photos.cloud/production/private/zones/list",
+        "path": "/database/1/com.apple.photos.cloud/production/private/changes/database",
         "query": [
           [
             "clientId",
@@ -127,17 +141,9 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJ6b25lcyI6IFtdfQ=="
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAxfX1dfQ=="
         }
       }
     }
-  ],
-  "error": {
-    "type": "PhotosServiceException",
-    "message": "No sync token available for photo library"
-  },
-  "error_resources": {
-    "photo": null,
-    "album": null
-  }
+  ]
 }

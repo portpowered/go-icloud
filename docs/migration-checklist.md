@@ -69,12 +69,13 @@ used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
 The Go [HTTP occurrence audit](reference-endpoint-coverage.md) maps the portable
-suite to 66/75 draft HTTP routes with no unmatched exchanges. It explicitly lists
-nine missing routes and its strict occurrence mode fails; diagnostic mode runs
+suite to 74/75 draft HTTP routes with no unmatched exchanges. Physical security-key
+verification is the sole missing occurrence and is deferred; strict mode fails
+on that gap. Diagnostic mode runs
 in CI. Occurrences do not replace functional matrices, actual send provenance,
 schema/model bindings or separate socket acceptance.
 
-The portable HTTP suite now has 373 scenarios and 804 paired exchanges after
+The portable HTTP suite now has 413 scenarios and 949 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
 entropy and exact proof matching; they also exercise refusal, trust-token reuse,
@@ -87,8 +88,8 @@ or account setup. Physical security-key interaction is deferred; live socket
 evidence, Go interoperability and final SDK/release gates remain open.
 Authentication socket replay adds 53 synthetic ordered duplex scenarios
 (283 events), separate from combined bridge transcripts. Combined replay now
-enters 572/905 functions and executes 3,165/5,385 body statements (58.77%) and
-959/2,076 branch exits. These measurements
+enters 574/905 functions and executes 3,188/5,385 body statements (59.20%) and
+968/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
 Drive now has 59 scenarios and 89 pairs, including navigation/cache/refresh,
 node-backed endpoints, empty downloads, offset uploads and provider refusal at
@@ -101,7 +102,16 @@ readiness/progress/retry bounds and provider refusal at command/token stages.
 Declared waits are consumed offline; received device/user/server state and
 exposed errors are bound. A source monitor-replacement race is documented for
 Go correction. Partial refreshes retain cached devices rather than infer removal
-without provider deletion evidence. Local checks pass 63 offline test methods.
+without provider deletion evidence. Local checks pass 65 offline test methods.
+The latest 40 scenarios add 145 pairs for private/shared Photos container changes,
+shared lookup/library behavior and Reminders zones, including provider refusal
+and provider payload errors. Photos exceptions bind optional photo and album
+resources. Source inspection excludes dormant Reminders database changes and
+includes the active shared batch-count route. Shared favorites use the private
+mutation client before a shared refresh in the pinned reference; Go must preserve
+the selected container and zone. These are synthetic cases, not observed writes.
+The preceding Find My milestone entered 572/905 functions and covered
+3,165/5,385 statements (58.77%) and 959/2,076 branch exits.
 The preceding Drive milestone entered 569/905 functions and covered
 3,145/5,385 statements (58.40%) and 949/2,076 branch exits.
 The preceding complete-login milestone entered 547/905 functions and covered
