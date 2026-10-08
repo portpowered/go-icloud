@@ -1,0 +1,9 @@
+package: accountapi
+generate:
+  models: true
+  client: true
+output: internal/accountapi/client.gen.go
+output-options:
+  nullable-type: true
+import-mapping:
+  ./account-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/account

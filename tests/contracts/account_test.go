@@ -20,6 +20,7 @@ import (
 
 const (
 	accountSchemaPath = "../../api/external/account.openapi.yaml"
+	accountModelsPath = "../../api/external/account-models.openapi.yaml"
 	generatorTool     = "github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0"
 	contractFileMode  = 0o600
 	binaryComponent   = "binary"
@@ -29,6 +30,7 @@ func accountSchema(t *testing.T) *openapi3.T {
 	t.Helper()
 
 	loader := openapi3.NewLoader()
+	loader.IsExternalRefsAllowed = true
 
 	document, err := loader.LoadFromFile(accountSchemaPath)
 	if err != nil {
@@ -360,25 +362,56 @@ func TestGeneratedNamedUnknownValuesPreservePresence(t *testing.T) {
 func TestAccountGenerationHasNoDrift(t *testing.T) {
 	t.Parallel()
 
-	output := filepath.Join(t.TempDir(), "models.go")
-	config := filepath.Join(t.TempDir(), "config.json")
-	settings := map[string]any{
-		"package": "account", "generate": map[string]bool{"models": true},
-		"output": output, "output-options": map[string]bool{"skip-prune": true, "nullable-type": true},
+	for _, artifact := range []generationArtifact{
+		{Schema: accountModelsPath, Config: "../../pkg/dependencymodels/account/config.yaml",
+			Output: "../../pkg/dependencymodels/account/models.gen.go"},
+		{Schema: accountSchemaPath, Config: "../../internal/accountapi/config.yaml",
+			Output: "../../internal/accountapi/client.gen.go"},
+	} {
+		t.Run(filepath.Base(artifact.Output), func(t *testing.T) {
+			t.Parallel()
+			verifyGeneration(t, artifact)
+		})
 	}
+}
 
-	data, err := json.Marshal(settings)
+type generationArtifact struct {
+	Schema string
+	Config string
+	Output string
+}
+
+func verifyGeneration(t *testing.T, artifact generationArtifact) {
+	t.Helper()
+
+	output := filepath.Join(t.TempDir(), "generated.go")
+	config := filepath.Join(t.TempDir(), "config.yaml")
+
+	settings, err := os.ReadFile(filepath.Clean(artifact.Config))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = os.WriteFile(config, data, contractFileMode)
+	quotedOutput, err := json.Marshal(filepath.ToSlash(output))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	//nolint:gosec // SCHEMA-16: fixed generator and schema; only test-owned temporary output paths vary.
-	command := exec.CommandContext(t.Context(), "go", "run", generatorTool, "-config", config, accountSchemaPath)
+	outputSetting := regexp.MustCompile(`(?m)^output:.*$`)
+	if len(outputSetting.FindAll(settings, -1)) != 1 {
+		t.Fatal("generator config needs exactly one output setting")
+	}
+
+	settings = outputSetting.ReplaceAll(settings, append([]byte("output: "), quotedOutput...))
+
+	//nolint:gosec // SCHEMA-16: config is a test-owned temporary path, not a caller-supplied path.
+	err = os.WriteFile(config, settings, contractFileMode)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	//nolint:gosec // SCHEMA-16: fixed generator and checked-in inputs; test-owned output paths vary.
+	command := exec.CommandContext(t.Context(), "go", "run", generatorTool, "-config", config, artifact.Schema)
 
 	log, err := command.CombinedOutput()
 	if err != nil {
@@ -390,7 +423,7 @@ func TestAccountGenerationHasNoDrift(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected, err := os.ReadFile("../../pkg/dependencymodels/account/models.gen.go")
+	expected, err := os.ReadFile(filepath.Clean(artifact.Output))
 	if err != nil || !bytes.Equal(actual, expected) {
 		t.Fatal("account generated artifacts drifted; run make generate-api")
 	}
