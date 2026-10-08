@@ -88,18 +88,16 @@ paths:
         '200':
           description: Play a sound on the selected device result.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
         '204':
           description: Successful command acknowledgement with no content.
         '2XX':
-          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          description: Successful command reply; bytes are retained even when advertised JSON is malformed. Provider error objects do not establish success.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
             '*/*':
               schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
-        default: {$ref: '#/components/responses/FindMyFailure'}
+        default: {$ref: '#/components/responses/FindMyCommandFailure'}
   /fmipservice/client/web/sendMessage:
     post:
       operationId: FindMySendMessage
@@ -126,18 +124,16 @@ paths:
         '200':
           description: Display a message on the selected device result.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
         '204':
           description: Successful command acknowledgement with no content.
         '2XX':
-          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          description: Successful command reply; bytes are retained even when advertised JSON is malformed. Provider error objects do not establish success.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
             '*/*':
               schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
-        default: {$ref: '#/components/responses/FindMyFailure'}
+        default: {$ref: '#/components/responses/FindMyCommandFailure'}
   /fmipservice/client/web/lostDevice:
     post:
       operationId: FindMyLostDevice
@@ -164,18 +160,16 @@ paths:
         '200':
           description: Enable lost mode on the selected device result.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
         '204':
           description: Successful command acknowledgement with no content.
         '2XX':
-          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          description: Successful command reply; bytes are retained even when advertised JSON is malformed. Provider error objects do not establish success.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
             '*/*':
               schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
-        default: {$ref: '#/components/responses/FindMyFailure'}
+        default: {$ref: '#/components/responses/FindMyCommandFailure'}
   /setup/ws/1/fmipWebAuthenticate:
     post:
       operationId: FindMyObtainEraseToken
@@ -227,18 +221,16 @@ paths:
         '200':
           description: Request remote erase of the selected device result.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
         '204':
           description: Successful command acknowledgement with no content.
         '2XX':
-          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          description: Successful command reply; bytes are retained even when advertised JSON is malformed. Provider error objects do not establish success.
           content:
-            application/json:
-              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
             '*/*':
               schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
-        default: {$ref: '#/components/responses/FindMyFailure'}
+        default: {$ref: '#/components/responses/FindMyCommandFailure'}
 components:
   parameters:
     FindMyClientID: {name: clientId, in: query, required: true, schema: {type: string, minLength: 1}}
@@ -253,6 +245,11 @@ components:
     FindMyAcceptEncoding: {name: Accept-Encoding, in: header, schema: {type: string}}
     FindMyConnection: {name: Connection, in: header, schema: {type: string}}
   responses:
+    FindMyCommandFailure:
+      description: Raw provider refusal bytes. The session classifies HTTP failures and recognized JSON error objects while retaining exact body evidence.
+      content:
+        '*/*':
+          schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
     FindMyFailure:
       description: Provider refusal; optional error fields and unknown metadata remain available.
       content:

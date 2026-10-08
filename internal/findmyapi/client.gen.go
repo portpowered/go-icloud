@@ -17,12 +17,7 @@ import (
 	externalRef0 "github.com/portpowered/go-icloud/pkg/dependencymodels/findmy"
 )
 
-// FindMyAcknowledgement Extensible command acknowledgement; physical completion is not inferred.
-//
-// Example: {}
-type FindMyAcknowledgement = externalRef0.FindMyAcknowledgement
-
-// FindMyCommandBytes Uninterpreted successful command body when the provider does not advertise JSON.
+// FindMyCommandBytes Raw command reply bytes regardless of the advertised media type. The reference accepts malformed JSON and non-JSON acknowledgements; provider error objects are still classified before success.
 type FindMyCommandBytes = externalRef0.FindMyCommandBytes
 
 // FindMyEraseRequest defines model for FindMyEraseRequest.
@@ -2081,27 +2076,6 @@ func (r FindMyInitializeResponse) ContentType() string {
 type FindMyLostDeviceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *FindMyAcknowledgement
-	// JSON2XX the response for an HTTP 2XX `application/json` response
-	JSON2XX *FindMyAcknowledgement
-	// JSONDefault the response for an HTTP default `application/json` response
-	JSONDefault *FindMyFailure
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r FindMyLostDeviceResponse) GetJSON200() *FindMyAcknowledgement {
-	return r.JSON200
-}
-
-// GetJSON2XX returns the response for an HTTP 2XX `application/json` response
-func (r FindMyLostDeviceResponse) GetJSON2XX() *FindMyAcknowledgement {
-	return r.JSON2XX
-}
-
-// GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r FindMyLostDeviceResponse) GetJSONDefault() *FindMyFailure {
-	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
@@ -2136,27 +2110,6 @@ func (r FindMyLostDeviceResponse) ContentType() string {
 type FindMyPlaySoundResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *FindMyAcknowledgement
-	// JSON2XX the response for an HTTP 2XX `application/json` response
-	JSON2XX *FindMyAcknowledgement
-	// JSONDefault the response for an HTTP default `application/json` response
-	JSONDefault *FindMyFailure
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r FindMyPlaySoundResponse) GetJSON200() *FindMyAcknowledgement {
-	return r.JSON200
-}
-
-// GetJSON2XX returns the response for an HTTP 2XX `application/json` response
-func (r FindMyPlaySoundResponse) GetJSON2XX() *FindMyAcknowledgement {
-	return r.JSON2XX
-}
-
-// GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r FindMyPlaySoundResponse) GetJSONDefault() *FindMyFailure {
-	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
@@ -2239,27 +2192,6 @@ func (r FindMyRefreshDevicesResponse) ContentType() string {
 type FindMyEraseDeviceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *FindMyAcknowledgement
-	// JSON2XX the response for an HTTP 2XX `application/json` response
-	JSON2XX *FindMyAcknowledgement
-	// JSONDefault the response for an HTTP default `application/json` response
-	JSONDefault *FindMyFailure
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r FindMyEraseDeviceResponse) GetJSON200() *FindMyAcknowledgement {
-	return r.JSON200
-}
-
-// GetJSON2XX returns the response for an HTTP 2XX `application/json` response
-func (r FindMyEraseDeviceResponse) GetJSON2XX() *FindMyAcknowledgement {
-	return r.JSON2XX
-}
-
-// GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r FindMyEraseDeviceResponse) GetJSONDefault() *FindMyFailure {
-	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
@@ -2294,27 +2226,6 @@ func (r FindMyEraseDeviceResponse) ContentType() string {
 type FindMySendMessageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *FindMyAcknowledgement
-	// JSON2XX the response for an HTTP 2XX `application/json` response
-	JSON2XX *FindMyAcknowledgement
-	// JSONDefault the response for an HTTP default `application/json` response
-	JSONDefault *FindMyFailure
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r FindMySendMessageResponse) GetJSON200() *FindMyAcknowledgement {
-	return r.JSON200
-}
-
-// GetJSON2XX returns the response for an HTTP 2XX `application/json` response
-func (r FindMySendMessageResponse) GetJSON2XX() *FindMyAcknowledgement {
-	return r.JSON2XX
-}
-
-// GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r FindMySendMessageResponse) GetJSONDefault() *FindMyFailure {
-	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
@@ -2650,36 +2561,6 @@ func ParseFindMyLostDeviceResponse(rsp *http.Response) (*FindMyLostDeviceRespons
 		HTTPResponse: rsp,
 	}
 
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case rsp.StatusCode == 204:
-		break // No content-type
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON2XX = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest FindMyFailure
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	case rsp.StatusCode/100 == 2:
-		// Content-type (*/*) unsupported
-
-	}
-
 	return response, nil
 }
 
@@ -2694,36 +2575,6 @@ func ParseFindMyPlaySoundResponse(rsp *http.Response) (*FindMyPlaySoundResponse,
 	response := &FindMyPlaySoundResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case rsp.StatusCode == 204:
-		break // No content-type
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON2XX = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest FindMyFailure
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	case rsp.StatusCode/100 == 2:
-		// Content-type (*/*) unsupported
-
 	}
 
 	return response, nil
@@ -2775,36 +2626,6 @@ func ParseFindMyEraseDeviceResponse(rsp *http.Response) (*FindMyEraseDeviceRespo
 		HTTPResponse: rsp,
 	}
 
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case rsp.StatusCode == 204:
-		break // No content-type
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON2XX = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest FindMyFailure
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	case rsp.StatusCode/100 == 2:
-		// Content-type (*/*) unsupported
-
-	}
-
 	return response, nil
 }
 
@@ -2819,36 +2640,6 @@ func ParseFindMySendMessageResponse(rsp *http.Response) (*FindMySendMessageRespo
 	response := &FindMySendMessageResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case rsp.StatusCode == 204:
-		break // No content-type
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
-		var dest FindMyAcknowledgement
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON2XX = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest FindMyFailure
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	case rsp.StatusCode/100 == 2:
-		// Content-type (*/*) unsupported
-
 	}
 
 	return response, nil

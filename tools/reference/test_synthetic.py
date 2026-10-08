@@ -16,6 +16,31 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_findmy_acknowledgement_errors_are_bound(self):
+        for change in ["reason", "code", "media", "body", "duplicate", "result"]:
+            name = (
+                "findmy-sound-ack-array-202.json"
+                if change == "result"
+                else "findmy-sound-ack-refused-200-json.json"
+            )
+            scenario = json.loads((FIXTURES / name).read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                response = scenario["exchanges"][-1]["response"]
+                if change in {"reason", "code"}:
+                    scenario["error_context"][change] = "wrong"
+                elif change == "media":
+                    response["headers"] = [["Content-Type", "application/octet-stream"]]
+                elif change == "body":
+                    response["body"]["value"] = base64.b64encode(b"{}").decode()
+                elif change == "duplicate":
+                    scenario["exchanges"].append(scenario["exchanges"][-1])
+                else:
+                    scenario["result"] = ["invented completion"]
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
         self.assertGreaterEqual(len(fixtures), 413)

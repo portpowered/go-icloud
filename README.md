@@ -52,7 +52,7 @@ has not been released. See
 reference revisions, recording limitations, and verification commands.
 Generated [Find My wire contracts](docs/findmy-wire-contracts.md) now cover the
 reference exchanges, and the [internal transport](docs/findmy-transport.md) replays
-all 86 pairs. The [public Find My session](docs/findmy-session.md) now executes all 47 current
+all 140 pairs. The [public Find My session](docs/findmy-session.md) now executes all 71 current
 portable scenarios, including device descriptions and timed background refresh.
 
 ## Supply session cookies

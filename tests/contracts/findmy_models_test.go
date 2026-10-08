@@ -1,11 +1,15 @@
 package contracts_test
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"io"
+	"net/http"
 	"path/filepath"
 	"testing"
 
+	"github.com/portpowered/go-icloud/internal/findmyapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/findmy"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
@@ -62,7 +66,7 @@ func TestPortableFindMyRepliesRoundTripThroughCanonicalModels(t *testing.T) {
 		}
 	}
 
-	if pairs != 86 || jsonReplies != 81 {
+	if pairs != 140 || jsonReplies != 127 {
 		t.Fatalf("Find My reply inventory changed: pairs=%d JSON=%d", pairs, jsonReplies)
 	}
 }
@@ -101,5 +105,91 @@ func findMyReplyTarget(operation string, status int) any {
 		return new(findmy.FindMyEraseTokenResponse)
 	default:
 		return new(findmy.FindMyAcknowledgement)
+	}
+}
+
+func TestGeneratedFindMyCommandParsersPreserveReplyBytes(t *testing.T) {
+	t.Parallel()
+	document := loadDriveDocument(t, findMySchemaPath)
+
+	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/findmy-*.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	commands := 0
+
+	for _, path := range paths {
+		for _, exchange := range accountExchanges(t, path) {
+			operation, err := bindFindMyOperation(document, exchange.Request)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			switch operation.OperationID {
+			case "FindMyPlaySound", "FindMySendMessage", "FindMyLostDevice", "FindMyEraseDevice":
+				body := findMyEntityBytes(t, exchange.Response.Body)
+				response := new(http.Response)
+				response.StatusCode = exchange.Response.Status
+
+				response.Header = make(http.Header)
+
+				for _, header := range exchange.Response.Headers {
+					response.Header.Add(header[0], header[1])
+				}
+
+				response.Body = io.NopCloser(bytes.NewReader(body))
+
+				parsed := parseFindMyCommandBody(t, operation.OperationID, response)
+				if !bytes.Equal(parsed, body) {
+					t.Fatal("generated command parser changed reply bytes")
+				}
+
+				commands++
+			}
+		}
+	}
+
+	if commands != 38 {
+		t.Fatalf("command parser inventory changed: %d", commands)
+	}
+}
+
+func parseFindMyCommandBody(t *testing.T, operation string, response *http.Response) []byte {
+	t.Helper()
+
+	switch operation {
+	case "FindMyPlaySound":
+		result, err := findmyapi.ParseFindMyPlaySoundResponse(response)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		return result.Body
+	case "FindMySendMessage":
+		result, err := findmyapi.ParseFindMySendMessageResponse(response)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		return result.Body
+	case "FindMyLostDevice":
+		result, err := findmyapi.ParseFindMyLostDeviceResponse(response)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		return result.Body
+	case "FindMyEraseDevice":
+		result, err := findmyapi.ParseFindMyEraseDeviceResponse(response)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		return result.Body
+	default:
+		t.Fatal("unknown generated command parser")
+
+		return nil
 	}
 }

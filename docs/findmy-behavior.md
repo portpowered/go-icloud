@@ -55,10 +55,10 @@ implementation-derived artifacts; synthetic does not mean a captured live call.
 
 ## Evidence and limits
 
-Current Find My inventory is 47 scenarios/86 pairs (37 session cases, seven
-descriptions and three timed loops); 81 JSON responses round-trip through
-canonical wire models. Global HTTP inventory is 466 scenarios/1046 pairs.
-Native Go auth/417 reauth, broader acknowledgement shapes, stopped-monitor
+Current Find My inventory is 71 scenarios/140 pairs (37 session cases, seven
+descriptions, three timed loops and 24 additional command reply cases); 127 JSON responses round-trip through
+canonical wire models. Global HTTP inventory is 490 scenarios/1100 pairs.
+Native Go auth/417 reauth, stopped-monitor
 implicit getter refresh branches and wall-clock boundary/skew behavior, remaining
 selected-service ports, full runtime/source/model gates, documentation publication
 and release remain open. Generic bad caller inputs and unrelated services remain
@@ -71,14 +71,14 @@ CI37833871353 also passed. These verified milestones do not establish full
 migration acceptance; final checks and exact-commit review remain required for
 this follow-up (GO-15).
 
-Final local checks pass: make lint/check, Go race/contracts/regeneration/consumer
+PR16 local checks passed: make lint/check, Go race/contracts/regeneration/consumer
 checks and 69 Python test methods, with the final cookie cases additionally
 re-probed through focused Source and Go checks. Handwritten replay coverage is
 1518/1805 statements (84.1%), unit 1085/1805 (60.1%) and combined 1608/1805 (89.1%).
 These are separate diagnostic measurements (LIB-07); cancellation paths can vary
 by a few statements. Live Go integration and full migration acceptance remain open.
 
-Fresh synthetic-only Source coverage over the final artifacts is 575/905 entered
+PR16 synthetic-only Source coverage over its final artifacts is 575/905 entered
 functions, 3149/5385 body statements (58.48%) and 964/2076 branch exits. Find My
 enters 35/39 functions, covers 148/171 body statements and 51/68 branch exits.
 The actual monitor now covers 8/8 body statements and 3/4 branch exits. Four
@@ -86,3 +86,35 @@ unentered functions are manager/device display __str__/__repr__ helpers. Remaini
 selected branches include forced reauth, stopped-monitor implicit getter refresh,
 integer selection and the timer boundary/skew path; generic bad caller inputs
 remain outside the requested focus. Counts do not establish full acceptance.
+
+## Additional command reply evidence
+
+Twenty-four Source/Go cases now cover all four selected command methods with
+binary 200, malformed JSON 200, JSON array 202, scalar text/json 200 and provider
+error objects under both accepted JSON media types at HTTP 200. Commands return
+raw acknowledgement bytes; this acknowledges the request, not physical completion.
+Provider payload errors return typed Provider errors with exact HTTP 200 context.
+They are sent once, including erase after its fresh token lookup. The schema
+models the opaque bytes and keeps an optional arbitrary-JSON parsed projection.
+Permanent Source controls reject changed failure reason/code, suppressed JSON
+classification, changed error body, duplicated traffic and invented completion.
+These are implementation-derived synthetic responses, not live Apple captures.
+
+Generated command response parsers also preserve raw Body bytes for all media
+and statuses. Their wildcard byte schemas prevent oapi-codegen from decoding
+advertised JSON into []byte or routing successful replies through a default
+JSON error parser. A contract test executes all 38 command reply artifacts
+through the four generated parsers and requires exact byte equality. The shared
+SDK raw reader still owns provider error classification and typed public errors;
+canonical valid-JSON projections remain separately checked. Generation drift
+checks bind this behavior to the checked-in schema (SCHEMA-10, SCHEMA-16).
+
+Final local make lint/check passes with all Go race/contracts/regeneration/
+consumer checks and 70 Python test methods. Handwritten replay coverage is
+1518/1805 (84.1%), unit 1085/1805 (60.1%) and combined 1608/1805 (89.1%).
+Fresh synthetic-only Source measurement remains 575/905 entered functions,
+3149/5385 body statements (58.48%) and 964/2076 branch exits. New functional
+command response cases exercise shared functions already reached by other
+scenarios; unchanged diagnostic counts do not imply omitted functional cases
+(LIB-07). Scoped independent working-tree review has no remaining blocker;
+exact-commit approval after CI and full migration acceptance remain open (GO-15).

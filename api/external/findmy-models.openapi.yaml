@@ -306,15 +306,15 @@ components:
         passcode: {type: string, x-order: 4}
       additionalProperties: false
     FindMyAcknowledgement:
-      type: object
-      description: Extensible command acknowledgement; physical completion is not inferred.
-      additionalProperties: {$ref: '#/components/schemas/FindMyUnknownJSON'}
+      description: Optional parsed view of a valid JSON command acknowledgement. Objects, arrays, scalars and null are preserved without inferring physical completion.
+      nullable: true
+      x-go-type: json.RawMessage
       example: {}
     FindMyCommandBytes:
       type: string
       format: binary
       x-go-type: '[]byte'
-      description: Uninterpreted successful command body when the provider does not advertise JSON.
+      description: Raw command reply bytes regardless of the advertised media type. The reference accepts malformed JSON and non-JSON acknowledgements; provider error objects are still classified before success.
     FindMyError:
       type: object
       properties:
