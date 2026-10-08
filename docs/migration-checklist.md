@@ -252,3 +252,10 @@ zone rejection, ten examples, drift/constant checks, consumer imports and limite
 asset URL-issuer controls pass focused checks. SDK/domain/protobuf orchestration
 and full runtime provenance remain open; wire checks do not increase semantic
 Go replay coverage.
+
+### Reminders document decoding
+
+- Pinned both active source `.proto` files and reproducible Go generation.
+- Ported zlib/gzip/raw current/legacy/bare decoding against 52 portable Source cases.
+- Preserved raw decoded bytes and typed failures; no live operation was performed.
+- Public domain mapping, CRDT writes and full service replay acceptance remain open.

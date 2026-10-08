@@ -1,0 +1,625 @@
+{
+  "format": "portos.reminders-text.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "cases": [
+    {
+      "name": "current-empty-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "CAASUAgAEAAaShIAGhAKBAgAEAAQABoECAAQACgBGhYKCAgAEP////8PEAAaCAgAEP////8PIhwKGgoQ1GvK5BuHZsGNde/jXJFFwxICCAASAggB"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-empty-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJytJMMlxSVwJfvUE+n2tIO9pe8fx0x0PSzExMEAxIwAhRkUpg=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-empty-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCuNgEArgYBBgkPISYpAS4GIBsYE8MK3BKCXGxQFk/QcCfqAonK0kwyXFJXAl+9QT6fa0g72l7x/HTHQ9LMTEwQDEjAD5HOpPVAAAAA=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-empty-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "GgISAA=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-empty-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJyTYhJiAAAAlgAv"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-empty-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCpNiEmIAAFrMkGUEAAAA"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-empty-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "EgA="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-empty-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJwTYgAAACYAEw=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-empty-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChNiAAAsYi05AgAAAA=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-ascii-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "CAASdQgAEAAabxIPU3ludGhldGljIHRpdGxlGhAKBAgAEAAQABoECAAQACgBGhAKBAgBEAAQDxoECAEQACgCGhYKCAgAEP////8PEAAaCAgAEP////8PIhwKGgoQ1GvK5BuHZsGNde/jXJFFwxICCA8SAggBKgIIDw=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-ascii-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWKMksyUmVEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDIvRwf"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-ascii-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCuNgECrlYBBgkMoX4g+uzCvJSC3JTFYoySzJSZUS4GIBSQElwbQGI1iEESjCLwWmNZikxLg4gHL/gYAfqA7OVpLhkuISuJJ96ol0e9rB3tL3j2Mmuh4WYuLgB2JGLSANAN1EoR55AAAA"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-ascii-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "GhESD1N5bnRoZXRpYyB0aXRsZQ=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-ascii-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJyTEhTiD67MK8lILclMVijJLMlJBQA1kgZK"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-ascii-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCpMSFOIPrswryUgtyUxWKMksyUkFAHuOed8TAAAA"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-ascii-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "Eg9TeW50aGV0aWMgdGl0bGU="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-ascii-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJwT4g+uzCvJSC3JTFYoySzJSQUAMnAGHw=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-ascii-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChPiD67MK8lILclMVijJLMlJBQAufDhjEQAAAA=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-unicode-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "CAAScggAEAAabBIMQ2Fmw6kg5p2x5LqsGhAKBAgAEAAQABoECAAQACgBGhAKBAgBEAAQBxoECAEQACgCGhYKCAgAEP////8PEAAaCAgAEP////8PIhwKGgoQ1GvK5BuHZsGNde/jXJFFwxICCAcSAggBKgIIBw=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-unicode-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJzjYBAq4mAQYJDKEeJxTkw7vFLh2dyNT3atkRLgYgGJA2XAtAYjWIQRKMIuBaY1mKTEuDiAcv+BgB+oDs5WkuGS4hK4kn3qiXR72sHe0vePYya6HhZi4mAHYkYtIA0AHRUdFQ=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-unicode-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCuNgECriYBBgkMoR4nFOTDu8UuHZ3I1Pdq2REuBiAYkDZcC0BiNYhBEowi4FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLiYAdiRi0gDQBtbxQSdgAAAA=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-unicode-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "Gg4SDENhZsOpIOadseS6rA=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-unicode-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJyT4hPicU5MO7xS4dncjU92rQEALG0HWw=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-unicode-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCpPiE+JxTkw7vFLh2dyNT3atAQCd13XcEAAAAA=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-unicode-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "EgxDYWbDqSDmnbHkuqw="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-unicode-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJwT4nFOTDu8UuHZ3I1Pdq0BACn5BzM="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-unicode-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChPicU5MO7xS4dncjU92rQEAyHmSHg4AAAA="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "Q2Fmw6kg5p2x5Lqs",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-astral-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "CAASdAgAEAAabhIOdGFzayDwn5CxIGRvbmUaEAoECAAQABAAGgQIABAAKAEaEAoECAEQABAMGgQIARAAKAIaFgoICAAQ/////w8QABoICAAQ/////w8iHAoaChDUa8rkG4dmwY117+NckUXDEgIIDBICCAEqAggM"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-astral-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJzjYBAq4WAQYJDKE+IrSSzOVvgwf8JGhZT8vFQpAS4WkAxQDkxrMIJFGIEiPFJgWoNJSoyLAyj3Hwj4gergbCUZLikugSvZp55It6cd7C19/zhmouthISYOHiBm1ALSAO1cHH8="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "current-astral-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCuNgECrhYBBgkMoT4itJLM5W+DB/wkaFlPy8VCkBLhaQDFAOTGswgkUYgSI8UmBag0lKjIsDKPcfCPiB6uBsJRkuKS6BK9mnnki3px3sLX3/OGai62EhJg4eIGbUAtIA27jiXXgAAAA="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-astral-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "GhASDnRhc2sg8J+QsSBkb25l"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-astral-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJyTEhDiK0kszlb4MH/CRoWU/LxUADWmBrQ="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "legacy-version-astral-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCpMSEOIrSSzOVvgwf8JGhZT8vFQAmnHiIRIAAAA="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-astral-raw",
+      "input": {
+        "encoding": "base64",
+        "value": "Eg50YXNrIPCfkLEgZG9uZQ=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-astral-zlib",
+      "input": {
+        "encoding": "base64",
+        "value": "eJwT4itJLM5W+DB/wkaFlPy8VAAywAaK"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "bare-string-astral-gzip",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChPiK0kszlb4MH/CRoWU/LxUAGj1NYEQAAAA"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGFzayDwn5CxIGRvbmU=",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "malformed-truncated-protobuf",
+      "input": {
+        "encoding": "base64",
+        "value": "Ev8="
+      },
+      "error": {
+        "type": "CRDTDecodeError",
+        "message": "Unable to decode CRDT document"
+      }
+    },
+    {
+      "name": "invalid-string-utf8",
+      "input": {
+        "encoding": "base64",
+        "value": "EgH/"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "/w==",
+        "source_type": "bytes"
+      }
+    },
+    {
+      "name": "failed-compression-falls-back",
+      "input": {
+        "encoding": "base64",
+        "value": "eJxicm9rZW4="
+      },
+      "error": {
+        "type": "CRDTDecodeError",
+        "message": "Unable to decode CRDT document"
+      }
+    },
+    {
+      "name": "first-version-malformed-second-ignored",
+      "input": {
+        "encoding": "base64",
+        "value": "EgQaAhL/EhIaEBIOc2Vjb25kIGlnbm9yZWQ="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "GhASDnNlY29uZCBpZ25vcmVk",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "gzip-truncated-trailer",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChNiKUmtKAEAKNyTEAYA"
+      },
+      "error": {
+        "type": "EOFError",
+        "message": "Compressed file ended before the end-of-stream marker was reached"
+      }
+    },
+    {
+      "name": "gzip-header-only",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCg=="
+      },
+      "error": {
+        "type": "EOFError",
+        "message": "Compressed file ended before the end-of-stream marker was reached"
+      }
+    },
+    {
+      "name": "gzip-corrupt-deflate",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCv////////////8="
+      },
+      "error": {
+        "type": "error",
+        "message": "Error -3 while decompressing data: invalid block type"
+      }
+    },
+    {
+      "name": "gzip-checksum-fallback",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChNiKUmtKAEAAAAAAAAAAAA="
+      },
+      "error": {
+        "type": "CRDTDecodeError",
+        "message": "Unable to decode CRDT document"
+      }
+    },
+    {
+      "name": "gzip-trailing-junk",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChNiKUmtKAEAKNyTEAYAAAB4"
+      },
+      "error": {
+        "type": "CRDTDecodeError",
+        "message": "Unable to decode CRDT document"
+      }
+    },
+    {
+      "name": "gzip-trailing-half-magic",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChNiKUmtKAEAKNyTEAYAAAAf"
+      },
+      "error": {
+        "type": "CRDTDecodeError",
+        "message": "Unable to decode CRDT document"
+      }
+    },
+    {
+      "name": "gzip-trailing-truncated-member",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChNiKUmtKAEAKNyTEAYAAAAfiw=="
+      },
+      "error": {
+        "type": "EOFError",
+        "message": "Compressed file ended before the end-of-stream marker was reached"
+      }
+    },
+    {
+      "name": "gzip-trailing-zero-padding",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACChNiKUmtKAEAKNyTEAYAAAAAAAAA"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "dGV4dA==",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "zlib-trailing-bytes",
+      "input": {
+        "encoding": "base64",
+        "value": "eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWKMksyUmVEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDIvRwfaWdub3JlZCB0cmFpbGVy"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "unknown-top-level-field",
+      "input": {
+        "encoding": "base64",
+        "value": "CAASdQgAEAAabxIPU3ludGhldGljIHRpdGxlGhAKBAgAEAAQABoECAAQACgBGhAKBAgBEAAQDxoECAEQACgCGhYKCAgAEP////8PEAAaCAgAEP////8PIhwKGgoQ1GvK5BuHZsGNde/jXJFFwxICCA8SAggBKgIID6AGAQ=="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "gzip-concatenated-members",
+      "input": {
+        "encoding": "base64",
+        "value": "H4sIAAAAAAACCuNgECrlYBBgkMoX4g+uzCvJSC3JTFYoySzJSZUS4GIBSQElwbQGI1iEESjCLwWmNZikxLg4gHL/gYAfqA7OVpLhkuISuJJ96ol0e9rB3tL3j2Mmuh4WYuLgB2JGLSANAN1EoR55AAAAH4sIAAAAAAACCuNgECrlYBBgkMoX4g+uzCvJSC3JTFYoySzJSZUS4GIBSQElwbQGI1iEESjCLwWmNZikxLg4gHL/gYAfqA7OVpLhkuISuJJ96ol0e9rB3tL3j2Mmuh4WYuLgB2JGLSANAN1EoR55AAAA"
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxl",
+        "source_type": "str"
+      }
+    },
+    {
+      "name": "reminders-create-basic-TitleDocument",
+      "input": {
+        "encoding": "base64",
+        "value": "eJzjYBCq4mAQYJAqERIJrswryUgtyUxWKMksyUlV+DB/RoOUABcLSB6oAkxrMIJFGIEiQlJgWoNJSoyLAyj3Hwj4gergbCUZLikugSvZp55It6cd7C19/zhmouthISYOISBm1ALSAAI7Hv4="
+      },
+      "result": {
+        "encoding": "base64",
+        "value": "U3ludGhldGljIHRpdGxlIPCfmIA=",
+        "source_type": "str"
+      }
+    }
+  ]
+}

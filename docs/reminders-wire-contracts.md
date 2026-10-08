@@ -71,6 +71,10 @@ rule was relaxed and no live operation was performed.
 
 ## Remaining work
 
+The internal [text protocol adapter](reminders-text-protocol.md) now decodes
+versioned CRDT title and notes bytes against a separate portable Source corpus.
+Public domain conversion and write encoding remain pending.
+
 This milestone is the wire layer, not Go SDK semantic parity. The public Reminders
 API must still port pagination, sync-token fallback, list membership precedence,
 record/domain mapping, CRDT/protobuf text, linked record writes, receipt/state

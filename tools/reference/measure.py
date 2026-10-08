@@ -200,6 +200,7 @@ def main():
     measurement.start()
     try:
         # Import after tracing starts, so constructor/import behavior is visible.
+        from reminders_text import replay_reminders_text
         from replay import replay
         from socket_replay import FIXTURES as SOCKET_FIXTURES
         from socket_replay import replay_socket
@@ -257,6 +258,21 @@ def main():
                     "evidence": "synthetic",
                 }
             )
+        measurement.switch_context("synthetic:document:reminders-text")
+        corpus = json.loads(
+            (
+                ROOT / "tests/replay/fixtures/synthetic/binary/reminders-text.json"
+            ).read_text(encoding="utf-8")
+        )
+        count = replay_reminders_text(corpus)
+        scenarios.append(
+            {
+                "name": "reminders-text",
+                "operation": "decode-text",
+                "documents": count,
+                "evidence": "synthetic",
+            }
+        )
     finally:
         measurement.stop()
         measurement.save()

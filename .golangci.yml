@@ -20,6 +20,8 @@ linters:
             - github.com/oapi-codegen/nullable
             # Generated request builders use the pinned OpenAPI runtime.
             - github.com/oapi-codegen/runtime
+            # Generated Reminders CRDT models and decoding use the pinned protobuf runtime.
+            - google.golang.org/protobuf
   exclusions:
     generated: strict
     rules:

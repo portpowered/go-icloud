@@ -966,3 +966,37 @@ consumer checks, 70 Python methods and the 490/1100 HTTP inventory. Handwritten
 replay coverage remains 1518/1805 (84.1%), unit 1085/1805 (60.1%) and combined
 1609/1805 (89.1%); cancellation-path scheduling accounts for small combined-run
 variation. Generated wire infrastructure is excluded from these SDK totals.
+
+PR18 received scoped exact-commit approval at
+`32e7a8c0e0ac133a3f6dd054336fed751e9a3046` after
+[CI 37844142246](https://github.com/portpowered/go-icloud/actions/runs/37844142246)
+passed and merged to `62b66c7a701b14b3d2878f5d75964a1cd2216799`. Its branch was
+deleted and [main CI 37844905067](https://github.com/portpowered/go-icloud/actions/runs/37844905067)
+passed. CI confirms 70 Python methods, 490/1100 HTTP inventory, replay 1518/1805,
+unit 1085/1805 and combined 1608/1805. Full migration acceptance remains open.
+
+### Interim Reminders text audit
+
+Pinned source-identical protobuf contracts now generate internal CRDT models.
+The Go decoder matches the 52-case portable Source corpus for decoded bytes and
+typed unreadable-document errors. Focused race and source/generation checks pass.
+This is decoding infrastructure; public domain replacement-character conversion,
+write encoding, service parity and the full migration gates remain open. Full
+local checks pass; exact-commit CI approval is pending. Independent scoped review
+found truncated-gzip and trailing-member classification gaps; both are fixed and
+bound by permanent Source/Go cases. Final focused race, provenance, Source and
+protobuf regeneration checks pass with no remaining code blocker.
+
+Source measurement at the 48-document revision enters 575/905 functions, covers
+3167/5385 body statements (58.81%) and 969/2076 branch exits. Its document context
+is separate from the unchanged 490/1100 HTTP inventory. The final four gzip-boundary
+cases bring the corpus to 52; focused Source/Go checks pass for all 52, while the
+recorded broad measurement is explicitly the preceding 48-document run.
+
+Final local make lint/check passes all linters, Go race/contracts/generation and
+72 Python methods. The final expanded unit/combined selection was separately
+verified with make sdk-coverage: replay 1586/1875 (84.6%), unit 1085/1875 (57.9%)
+and combined 1677/1875 (89.4%). Unit selects every internal package so the new
+decoder's 70 statements remain in its denominator at zero unit coverage; its
+68/70 replay-covered statements come from the portable document corpus. These
+library totals do not establish public Reminders service replay parity (LIB-07).
