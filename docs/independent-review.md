@@ -382,6 +382,22 @@ and no unmatched exchange. Physical security-key verification remains deferred.
 Verdict: **limited implementation pass**. Selected-endpoint functional/schema
 gates, Go SDK interoperability and final migration acceptance remain open.
 
+### Interim Go exact-entity replay transport audit
+
+The reviewer independently inspected `tests/replay/http.go` and its race-enabled
+tests. It found an unbound Go Close flag and request bodies left open on early
+rejection. The transport now rejects Close and closes request bodies on every
+exit before exposing an outcome; close errors suppress responses and remain
+sticky. Independent target/query/unexpected-request and Close probes verify both
+findings are resolved (LIB-05, GO-09).
+
+The reviewer found no further scoped flaw in immutable snapshots, ordered query
+and header matching, exact entities, sticky failures, response read/close
+consumption, mutex ordering or network isolation. It passed the focused race
+suite and documentation check. Verdict: **limited interim pass** for exact-base64
+HTTP transport replay. This is not Go SDK semantic replay; structural match rules,
+socket/auth timelines, production schemas and the client remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.
