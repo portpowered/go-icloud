@@ -45,7 +45,7 @@ listing/pagination have been exercised. The observed Reminders account returned
 `ZONE_NOT_FOUND` for the reference's requested zone; this is a recorded failure,
 not successful reminder-list coverage.
 The Go SDK implements the five account reads: devices, family, member photos,
-storage and plan summaries, plus Drive node and application-library reads. The other selected services and native Go
+storage and plan summaries, plus Drive node/application-library reads and folder/item mutations. The other selected services and native Go
 authentication are still being built; the SDK
 has not been released. See
 [capture development notes](docs/reference-capture.md) for evidence status,
@@ -178,5 +178,84 @@ _ = libraries.AdditionalMetadata // unknown envelope values
 
 Both methods return response metadata and the typed errors described above.
 Nine synthetic paired scenarios verify these two reads against the pinned
-reference. Drive navigation sessions, mutations and transfers remain in progress;
+reference. Drive navigation sessions and transfers remain in progress;
 see [Drive contracts](docs/drive-wire-contracts.md).
+
+## Go Drive changes
+
+Supply the Drive authentication context described above. For item changes, pass
+only the node identifier and its current version token from a fresh listing:
+
+```go
+selected := icloud.DriveNodeSelector{NodeID: nodeID, ETag: etag}
+created, err := client.CreateDriveFolder(ctx, icloud.CreateDriveFolderRequest{
+    Auth: auth, ParentID: parentID, Name: "New folder",
+})
+if err != nil {
+    return err
+}
+_ = created.Folders
+```
+
+```go
+renamed, err := client.RenameDriveNode(ctx, icloud.RenameDriveNodeRequest{
+    Auth: auth, Node: selected, Name: "New name.txt",
+})
+if err != nil {
+    return err
+}
+_ = renamed.Items
+```
+
+```go
+moved, err := client.MoveDriveNodes(ctx, icloud.MoveDriveNodesRequest{
+    Auth: auth, DestinationID: destinationID, Nodes: []icloud.DriveNodeSelector{selected},
+})
+if err != nil {
+    return err
+}
+_ = moved.Items // an empty selection is also valid
+```
+
+```go
+trashed, err := client.TrashDriveNode(ctx, icloud.TrashDriveNodeRequest{Auth: auth, Node: selected})
+if err != nil {
+    return err
+}
+_ = trashed.Items
+```
+
+Read a fresh trash entry and its version token before restoring or permanently
+deleting it. Ordinary deletion and permanent trash deletion are distinct calls:
+
+```go
+restored, err := client.RestoreDriveNode(ctx, icloud.RestoreDriveNodeRequest{Auth: auth, Node: trashEntry})
+if err != nil {
+    return err
+}
+_ = restored.Items
+```
+
+```go
+deleted, err := client.DeleteDriveNode(ctx, icloud.DeleteDriveNodeRequest{Auth: auth, Node: selected})
+if err != nil {
+    return err
+}
+_ = deleted.Items
+```
+
+```go
+permanent, err := client.PermanentlyDeleteDriveNode(ctx, icloud.PermanentlyDeleteDriveNodeRequest{
+    Auth: auth, Node: trashEntry,
+})
+if err != nil {
+    return err
+}
+_ = permanent.Items
+```
+
+Results acknowledge the provider request; background movement may still be
+processing. The SDK does not automatically retry these changes. Each result
+includes response metadata and unknown provider fields. A missing item/folder
+list remains distinct from an empty list. Sixteen synthetic paired scenarios
+verify these calls; no live account writes were performed for this port.

@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: iCloud client models
   version: 0.1.0
-  description: Caller-owned authentication context and public account and Drive read results, independent of provider response envelopes.
+  description: Caller-owned authentication context and public account results and Drive read/mutation results, independent of provider response envelopes.
 paths: {}
 components:
   schemas:
@@ -293,3 +293,97 @@ components:
         additionalMetadata: {type: object, additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
       example: {libraries: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+
+    DriveNodeSelector:
+      type: object
+      required: [nodeID, etag]
+      description: Provider identifier and version token for a selected node; obtain the etag from a fresh node read to protect against stale writes.
+      properties:
+        nodeID: {type: string, minLength: 1, x-go-name: NodeID, description: Provider Drive node identifier.}
+        etag: {type: string, x-go-name: ETag, description: Provider version token required by the mutation endpoint; an empty token remains an empty token.}
+    DriveItemChangeResult:
+      type: object
+      required: [additionalMetadata, metadata]
+      description: Provider acknowledgement and item metadata; this does not assert that background movement has completed.
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/DriveNode'}, description: Optional provider item records; absence differs from an empty list.}
+        additionalMetadata: {type: object, additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+    CreateDriveFolderRequest:
+      type: object
+      required: [auth, parentID, name]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        parentID: {type: string, minLength: 1, x-go-name: ParentID, description: Destination folder identifier.}
+        name: {type: string, description: Desired folder name.}
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}, parentID: 'FOLDER::synthetic::root', name: Synthetic}
+    CreateDriveFolderResult:
+      type: object
+      required: [additionalMetadata, metadata]
+      properties:
+        folders: {type: array, items: {$ref: '#/components/schemas/DriveNode'}, description: Optional created folder records; an empty list remains empty.}
+        additionalMetadata: {type: object, additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {folders: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    MoveDriveNodesRequest:
+      type: object
+      required: [auth, destinationID, nodes]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        destinationID: {type: string, minLength: 1, x-go-name: DestinationID, description: Destination folder identifier.}
+        nodes: {type: array, items: {$ref: '#/components/schemas/DriveNodeSelector'}, description: Nodes and version tokens; an empty move list is valid.}
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}, destinationID: 'FOLDER::synthetic::destination', nodes: []}
+    MoveDriveNodesResult:
+      allOf: [{$ref: '#/components/schemas/DriveItemChangeResult'}]
+      example: {items: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    RenameDriveNodeRequest:
+      type: object
+      required: [auth, node, name]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        node: {$ref: '#/components/schemas/DriveNodeSelector'}
+        name: {type: string, description: Desired node name.}
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}, node: {nodeID: 'FILE::synthetic::one', etag: synthetic-etag}, name: Synthetic}
+    RenameDriveNodeResult:
+      allOf: [{$ref: '#/components/schemas/DriveItemChangeResult'}]
+      example: {items: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    TrashDriveNodeRequest:
+      type: object
+      required: [auth, node]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        node: {$ref: '#/components/schemas/DriveNodeSelector'}
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}, node: {nodeID: 'FILE::synthetic::one', etag: synthetic-etag}}
+    TrashDriveNodeResult:
+      allOf: [{$ref: '#/components/schemas/DriveItemChangeResult'}]
+      example: {items: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    RestoreDriveNodeRequest:
+      type: object
+      required: [auth, node]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        node: {$ref: '#/components/schemas/DriveNodeSelector'}
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}, node: {nodeID: 'FILE::synthetic::one', etag: synthetic-etag}}
+    RestoreDriveNodeResult:
+      allOf: [{$ref: '#/components/schemas/DriveItemChangeResult'}]
+      example: {items: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    DeleteDriveNodeRequest:
+      type: object
+      required: [auth, node]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        node: {$ref: '#/components/schemas/DriveNodeSelector'}
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}, node: {nodeID: 'FILE::synthetic::one', etag: synthetic-etag}}
+    DeleteDriveNodeResult:
+      allOf: [{$ref: '#/components/schemas/DriveItemChangeResult'}]
+      example: {items: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    PermanentlyDeleteDriveNodeRequest:
+      type: object
+      required: [auth, node]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        node: {$ref: '#/components/schemas/DriveNodeSelector'}
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}, node: {nodeID: 'FILE::synthetic::one', etag: synthetic-etag}}
+    PermanentlyDeleteDriveNodeResult:
+      allOf: [{$ref: '#/components/schemas/DriveItemChangeResult'}]
+      example: {items: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}

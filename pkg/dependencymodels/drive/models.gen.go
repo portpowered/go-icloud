@@ -233,10 +233,11 @@ type DriveFolderCreation struct {
 
 // DriveItemChange defines model for DriveItemChange.
 type DriveItemChange struct {
+	Drivewsid string `json:"drivewsid"`
+	Etag      string `json:"etag"`
+
 	// ClientId Present for deletion and movement; omitted for permanent trash deletion and recovery.
-	ClientId  *string `json:"clientId,omitempty"`
-	Drivewsid string  `json:"drivewsid"`
-	Etag      string  `json:"etag"`
+	ClientId *string `json:"clientId,omitempty"`
 }
 
 // DriveItemChanges defines model for DriveItemChanges.
@@ -246,10 +247,11 @@ type DriveItemChanges struct {
 
 // DriveMoveItem defines model for DriveMoveItem.
 type DriveMoveItem struct {
-	// ClientId The node identifier used by the reference for movement.
-	ClientId  string `json:"clientId"`
 	Drivewsid string `json:"drivewsid"`
 	Etag      string `json:"etag"`
+
+	// ClientId The node identifier used by the reference for movement.
+	ClientId string `json:"clientId"`
 }
 
 // DriveMoveItems defines model for DriveMoveItems.

@@ -43,11 +43,9 @@ func (client *Client) GetDriveNode(ctx context.Context, auth RequestContext,
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	params := &driveapi.DriveRetrieveNodesParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid,
-		ClientBuildNumber: auth.Params.ClientBuildNumber, ClientMasteringNumber: auth.Params.ClientMasteringNumber,
-		Accept: nil, Cookie: nil, Origin: nil, Referer: nil, UserAgent: nil, AcceptEncoding: nil, Connection: nil}
+	params := driveRequestParameters(auth)
 
-	request, err := driveapi.NewDriveRetrieveNodesRequestWithBody(auth.Origin, params,
+	request, err := driveapi.NewDriveRetrieveNodesRequestWithBody(auth.Origin, &params,
 		protocol.DriveMediaApplicationJson, bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
@@ -68,11 +66,9 @@ func (client *Client) GetDriveNode(ctx context.Context, auth RequestContext,
 
 // ListDriveLibraries fetches fresh application-library records for this request's account.
 func (client *Client) ListDriveLibraries(ctx context.Context, auth RequestContext) (*DriveLibrariesResponse, error) {
-	params := &driveapi.DriveListAppLibrariesParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid,
-		ClientBuildNumber: auth.Params.ClientBuildNumber, ClientMasteringNumber: auth.Params.ClientMasteringNumber,
-		Accept: nil, Cookie: nil, Origin: nil, Referer: nil, UserAgent: nil, AcceptEncoding: nil, Connection: nil}
+	params := driveapi.DriveListAppLibrariesParams(driveRequestParameters(auth))
 
-	request, err := driveapi.NewDriveListAppLibrariesRequest(auth.Origin, params)
+	request, err := driveapi.NewDriveListAppLibrariesRequest(auth.Origin, &params)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -133,4 +129,10 @@ func decodeDriveLibraries(body []byte) (drive.DriveAppLibraries, error) {
 	}
 
 	return data, nil
+}
+
+func driveRequestParameters(auth RequestContext) driveapi.DriveRetrieveNodesParams {
+	return driveapi.DriveRetrieveNodesParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid,
+		ClientBuildNumber: auth.Params.ClientBuildNumber, ClientMasteringNumber: auth.Params.ClientMasteringNumber,
+		Accept: nil, Cookie: nil, Origin: nil, Referer: nil, UserAgent: nil, AcceptEncoding: nil, Connection: nil}
 }
