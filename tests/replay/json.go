@@ -156,6 +156,10 @@ func uniqueJSONObject(decoder *json.Decoder) error {
 }
 
 func validateRequestEntity(entity Entity) error {
+	if entity.Encoding != multipartEncoding && (entity.ContentTypePattern != "" || len(entity.Parts) != 0) {
+		return fmt.Errorf("%w: unexpected multipart fields", ErrFixture)
+	}
+
 	switch entity.Encoding {
 	case base64Encoding:
 		_, err := decodeEntity(entity)
@@ -164,24 +168,30 @@ func validateRequestEntity(entity Entity) error {
 	case patternEncoding:
 		return validateMatchers(entity)
 	case redactedEncoding:
-		if len(entity.Matchers) != 0 {
-			return fmt.Errorf("%w: redaction cannot include matchers", ErrFixture)
-		}
-
-		value, err := decodeJSON(entity.Value)
-		if err != nil {
-			return err
-		}
-
-		count, err := validateRedactions(value)
-		if err != nil || count == 0 {
-			return fmt.Errorf("%w: missing or invalid redaction declaration", ErrFixture)
-		}
-
-		return nil
+		return validateRedactedEntity(entity)
+	case multipartEncoding:
+		return validateMultipartEntity(entity)
 	default:
 		return fmt.Errorf("%w: unsupported request encoding", ErrFixture)
 	}
+}
+
+func validateRedactedEntity(entity Entity) error {
+	if len(entity.Matchers) != 0 {
+		return fmt.Errorf("%w: redaction cannot include matchers", ErrFixture)
+	}
+
+	value, err := decodeJSON(entity.Value)
+	if err != nil {
+		return err
+	}
+
+	count, err := validateRedactions(value)
+	if err != nil || count == 0 {
+		return fmt.Errorf("%w: missing or invalid redaction declaration", ErrFixture)
+	}
+
+	return nil
 }
 
 func validateMatchers(entity Entity) error {

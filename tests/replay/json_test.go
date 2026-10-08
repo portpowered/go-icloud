@@ -21,7 +21,7 @@ const (
 
 func patternEntity() replay.Entity {
 	return replay.Entity{
-		Encoding: "json-pattern", Value: json.RawMessage(patternBody),
+		Encoding: "json-pattern", Value: json.RawMessage(patternBody), ContentTypePattern: "", Parts: nil,
 		Matchers: []replay.JSONMatcher{{
 			Path:    []json.RawMessage{json.RawMessage(`"items"`), json.RawMessage(`0`), json.RawMessage(`"id"`)},
 			Pattern: "TempId-[a-z]{2}",
@@ -90,7 +90,9 @@ func TestJSONPatternBindsAllUndeclaredFieldsAndFullFormat(t *testing.T) {
 func TestJSONRedactionChecksNestedTypesAndCodeShape(t *testing.T) {
 	t.Parallel()
 
-	entity := replay.Entity{Encoding: "json-redacted", Value: json.RawMessage(redactedBody), Matchers: nil}
+	entity := replay.Entity{Encoding: "json-redacted", Value: json.RawMessage(redactedBody),
+		Matchers: nil, ContentTypePattern: "", Parts: nil,
+	}
 	valid := `{"Password":"invented","items":[{"verificationCode":"654321"}],"fixed":true}`
 
 	for _, body := range []string{
@@ -114,7 +116,9 @@ func TestJSONRedactionChecksNestedTypesAndCodeShape(t *testing.T) {
 func TestRedactedLengthIsVerifiedBeforeIgnoringRecordedSize(t *testing.T) {
 	t.Parallel()
 
-	entity := replay.Entity{Encoding: "json-redacted", Value: json.RawMessage(redactedBody), Matchers: nil}
+	entity := replay.Entity{Encoding: "json-redacted", Value: json.RawMessage(redactedBody),
+		Matchers: nil, ContentTypePattern: "", Parts: nil,
+	}
 	body := `{"Password":"invented","items":[{"verificationCode":"654321"}],"fixed":true}`
 
 	for _, length := range []string{"1", "999"} {

@@ -92,6 +92,7 @@ const (
 	changeMethod        = "method"
 	unexpectedRequest   = "unexpected"
 	contentLengthHeader = "content-length"
+	changeLength        = "length"
 	closeFailure        = "close_error"
 	extraQuery          = "extra_query"
 )
@@ -102,12 +103,16 @@ func sampleExchange() replay.Exchange {
 			Method: http.MethodPost, Origin: "https://example.invalid", Path: "/files/a%2Fb",
 			Query:   []replay.Pair{{"tag", "one"}, {"tag", "two"}, {"empty", ""}},
 			Headers: []replay.Pair{{"accept", "application/octet-stream"}, {contentLengthHeader, "3"}},
-			Body:    replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9B"`), Matchers: nil},
+			Body: replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9B"`),
+				Matchers: nil, ContentTypePattern: "", Parts: nil,
+			},
 		},
 		Response: &replay.Response{
 			Status:  http.StatusOK,
 			Headers: []replay.Pair{{"Set-Cookie", "first=one; Secure"}, {"Set-Cookie", "second=two; Secure"}},
-			Body:    replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9C"`), Matchers: nil},
+			Body: replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9C"`),
+				Matchers: nil, ContentTypePattern: "", Parts: nil,
+			},
 		},
 		Error: "",
 	}
@@ -182,7 +187,7 @@ func TestRequestMutationsStayRejected(t *testing.T) {
 	t.Parallel()
 
 	for _, change := range []string{changeMethod, changeOrigin, "escaped_path", "query_order", extraQuery,
-		"header", "extra_header", "body", "length", "header_length", "host", "userinfo", chunkedEncoding, "fragment",
+		"header", "extra_header", "body", changeLength, "header_length", "host", "userinfo", chunkedEncoding, "fragment",
 		"opaque", "force_query", "trailer", "unknown_length", "connection_close"} {
 		t.Run(change, func(t *testing.T) {
 			t.Parallel()
@@ -263,7 +268,7 @@ func mutateRequestEntity(request *http.Request, change string) {
 		request.Header.Set("Authorization", "invented")
 	case "body":
 		request.Body = io.NopCloser(strings.NewReader("bad"))
-	case "length":
+	case changeLength:
 		request.ContentLength++
 	case "header_length":
 		request.Header.Set("Content-Length", "003")

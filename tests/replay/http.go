@@ -30,11 +30,14 @@ var (
 // Pair preserves the order and repeated values of query parameters and headers.
 type Pair [2]string
 
-// Entity represents exact binary bytes or an explicit structural JSON request rule.
+// Entity represents exact bytes or a declared JSON or multipart request rule.
 type Entity struct {
 	Encoding string          `json:"encoding"`
-	Value    json.RawMessage `json:"value"`
+	Value    json.RawMessage `json:"value,omitempty"`
 	Matchers []JSONMatcher   `json:"matchers,omitempty"`
+	//nolint:tagliatelle // LIB-05: the portable artifact fixes this snake_case key.
+	ContentTypePattern string          `json:"content_type_pattern,omitempty"`
+	Parts              []MultipartPart `json:"parts,omitempty"`
 }
 
 // Request records the complete prepared request boundary, independently of an SDK.
@@ -81,7 +84,7 @@ type HTTPTransport struct {
 	bodies    []*responseBody
 }
 
-// NewHTTPTransport takes an immutable snapshot of exact-body exchanges.
+// NewHTTPTransport takes an immutable snapshot of declared paired exchanges.
 // Unsupported match rules fail before an operation can begin.
 func NewHTTPTransport(exchanges []Exchange) (*HTTPTransport, error) {
 	encoded, err := json.Marshal(exchanges)
@@ -115,6 +118,11 @@ func validateExchange(exchange Exchange) error {
 	}
 
 	err = validateRequestEntity(exchange.Request.Body)
+	if err != nil {
+		return err
+	}
+
+	err = validateMultipartHeaders(exchange.Request)
 	if err != nil {
 		return err
 	}
@@ -168,7 +176,8 @@ func knownFailure(class string) bool {
 }
 
 func decodeEntity(entity Entity) ([]byte, error) {
-	if entity.Encoding != base64Encoding || len(entity.Matchers) != 0 {
+	if entity.Encoding != base64Encoding || len(entity.Matchers) != 0 ||
+		entity.ContentTypePattern != "" || len(entity.Parts) != 0 {
 		return nil, fmt.Errorf("%w: unsupported entity encoding %q", ErrFixture, entity.Encoding)
 	}
 
@@ -288,7 +297,12 @@ func matchRequest(request *http.Request, expected Request) error {
 		return fmt.Errorf("%w: content length", ErrMismatch)
 	}
 
-	err = matchEntity(body, expected.Body)
+	if expected.Body.Encoding == multipartEncoding {
+		err = matchMultipart(body, request.Header, expected.Body)
+	} else {
+		err = matchEntity(body, expected.Body)
+	}
+
 	if err != nil {
 		return err
 	}
@@ -298,7 +312,7 @@ func matchRequest(request *http.Request, expected Request) error {
 		headers = withoutLength(headers)
 	}
 
-	return matchHeaders(request, headers, len(body), expected.Body.Encoding == redactedEncoding)
+	return matchHeaders(request, headers, len(body), expected.Body)
 }
 
 func withoutLength(headers []Pair) []Pair {
@@ -394,7 +408,7 @@ func orderedQuery(raw string) ([]Pair, error) {
 	return result, nil
 }
 
-func matchHeaders(request *http.Request, expected []Pair, length int, ignoreLength bool) error {
+func matchHeaders(request *http.Request, expected []Pair, length int, entity Entity) error {
 	actual := make(map[string][]string)
 	want := make(map[string][]string)
 
@@ -413,17 +427,29 @@ func matchHeaders(request *http.Request, expected []Pair, length int, ignoreLeng
 		actual["content-length"] = []string{strconv.FormatInt(request.ContentLength, 10)}
 	}
 
-	if lengths := actual["content-length"]; lengths != nil &&
-		(len(lengths) != 1 || lengths[0] != strconv.Itoa(length)) {
-		return fmt.Errorf("%w: header content length", ErrMismatch)
+	err := matchLengthHeader(actual["content-length"], length)
+	if err != nil {
+		return err
 	}
 
-	if ignoreLength {
+	if entity.Encoding == redactedEncoding {
 		delete(actual, "content-length")
+	}
+
+	if entity.Encoding == multipartEncoding {
+		actual["content-type"] = want["content-type"]
 	}
 
 	if !reflect.DeepEqual(actual, want) {
 		return fmt.Errorf("%w: headers", ErrMismatch)
+	}
+
+	return nil
+}
+
+func matchLengthHeader(lengths []string, length int) error {
+	if lengths != nil && (len(lengths) != 1 || lengths[0] != strconv.Itoa(length)) {
+		return fmt.Errorf("%w: header content length", ErrMismatch)
 	}
 
 	return nil

@@ -413,6 +413,21 @@ pass. Verdict: **limited interim pass** for JSON request rules (LIB-05).
 Constructor acceptance of 16 declarations is not SDK semantic replay; multipart,
 socket/auth timelines, projections, schemas and the client remain open.
 
+### Interim Go multipart rule audit
+
+The reviewer independently replayed all seven selected upload multipart pairs
+with a new 32-hex boundary. All pass. Its 28 additional probes for bare-LF
+framing, blank preamble/epilogue and extra part headers reject before a response
+is returned. It verified part order, exact headers/data, outer Content-Length
+and header matching, constructor snapshots and encoded/nested-part rejection.
+Only declared Content-Type variation is normalized after full matching.
+
+Independent race-enabled tests confirm all 413 portable scenarios/949 exchanges
+instantiate and seven upload pairs match Go's writer. Documentation accurately
+limits those counts to matcher interoperability. Verdict: **limited interim
+pass** (LIB-05). SDK semantic replay, socket/auth timelines, production schemas,
+the client and final migration acceptance remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.
