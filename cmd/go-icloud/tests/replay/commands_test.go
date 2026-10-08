@@ -288,7 +288,15 @@ func decode(t *testing.T, data []byte, result any) {
 func assertFailure(t *testing.T, raw map[string]json.RawMessage, failure *icloud.ClientError) {
 	t.Helper()
 
-	if failure.Kind() == icloud.NoDevices {
+	var sourceError map[string]string
+
+	decode(t, raw["error"], &sourceError)
+
+	if sourceError["type"] == "PyiCloudNoDevicesException" {
+		if failure.Kind() != icloud.NoDevices {
+			t.Fatal("CLI lost empty-discovery failure class")
+		}
+
 		if failure.StatusCode() != 0 || len(failure.ResponseBody()) != 0 {
 			t.Fatal("empty discovery changed")
 		}
