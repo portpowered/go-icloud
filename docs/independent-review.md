@@ -1000,3 +1000,14 @@ and combined 1677/1875 (89.4%). Unit selects every internal package so the new
 decoder's 70 statements remain in its denominator at zero unit coverage; its
 68/70 replay-covered statements come from the portable document corpus. These
 library totals do not establish public Reminders service replay parity (LIB-07).
+
+### Interim Go CLI read review
+
+Independent scoped review found a nested-module lint portability bug: a PATH
+linter name was incorrectly converted to a repository path. It is fixed, with a
+make dry-run confirming both modules preserve the PATH name. The review also
+requested exact failure status/body/class controls, an authorization failure and
+an explicitly disabled Find My monitor; all are now bound by the CLI tests or
+one-shot lifecycle configuration. This milestone does not claim complete CLI,
+live account, authentication or migration acceptance. Exact post-CI approval
+remains required before merge.

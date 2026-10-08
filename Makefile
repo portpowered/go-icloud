@@ -1,5 +1,6 @@
 GO ?= go
 GOLANGCI_LINT ?= $(if $(wildcard .tools/golangci-lint.exe),.tools/golangci-lint.exe,golangci-lint)
+CLI_GOLANGCI_LINT = $(if $(findstring /,$(subst \,/,$(GOLANGCI_LINT))),$(abspath $(GOLANGCI_LINT)),$(GOLANGCI_LINT))
 ifeq ($(OS),Windows_NT)
 PYTHON ?= $(CURDIR)/.venv/Scripts/python.exe
 else
@@ -7,23 +8,27 @@ PYTHON ?= .venv/bin/python
 endif
 
 .DEFAULT_GOAL := check
-.PHONY: check lint build test reference-coverage endpoint-coverage generate-api generate-proto sdk-coverage
+.PHONY: check lint build test reference-coverage endpoint-coverage generate-api generate-proto sdk-coverage cli-coverage
 
 # Selected iCloud SDK migration and reference-capture verification.
-check: lint build test endpoint-coverage sdk-coverage
+check: lint build test endpoint-coverage sdk-coverage cli-coverage
 
 lint:
 	$(GO) vet ./...
+	cd cmd/go-icloud && $(GO) vet ./...
 	$(GOLANGCI_LINT) run --timeout=5m ./...
+	cd cmd/go-icloud && "$(CLI_GOLANGCI_LINT)" run --config ../../.golangci.yml --timeout=5m ./...
 	"$(PYTHON)" -m ruff check tools/reference
 	"$(PYTHON)" -m ruff format --check tools/reference
 
 build:
 	$(GO) build ./...
+	cd cmd/go-icloud && $(GO) build ./...
 	"$(PYTHON)" tools/reference/icloud.py --help
 
 test:
 	$(GO) test -race ./...
+	cd cmd/go-icloud && $(GO) test -race ./...
 	"$(PYTHON)" -m unittest discover -s tools/reference -p "test_*.py" -v
 
 # Account-specific reference measurement; never use private captures in CI.
@@ -54,9 +59,18 @@ generate-proto:
 
 # LIB-07: measure replay, unit and combined separately, including internal transport.
 sdk-coverage:
-	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-replay.out' ./tests/replay
+	$(GO) test -race "-coverpkg=./pkg/icloud,./internal/..." "-coverprofile=coverage-replay.out" ./tests/replay
 	$(GO) run ./tools/coverage -profile coverage-replay.out -min 80
-	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-unit.out' ./pkg/icloud ./internal/...
+	$(GO) test -race "-coverpkg=./pkg/icloud,./internal/..." "-coverprofile=coverage-unit.out" ./pkg/icloud ./internal/...
 	$(GO) run ./tools/coverage -profile coverage-unit.out -min 0
-	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-combined.out' ./tests/replay ./pkg/icloud ./internal/...
+	$(GO) test -race "-coverpkg=./pkg/icloud,./internal/..." "-coverprofile=coverage-combined.out" ./tests/replay ./pkg/icloud ./internal/...
 	$(GO) run ./tools/coverage -profile coverage-combined.out -min 80
+
+# LIB-07: command package coverage is separate from SDK and the main entry point.
+cli-coverage:
+	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/command" "-coverprofile=coverage-replay.out" ./tests/replay
+	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/command" "-coverprofile=coverage-unit.out" ./internal/command
+	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/command" "-coverprofile=coverage-combined.out" ./tests/replay ./internal/command
+	$(GO) run ./tools/coverage -root cmd/go-icloud -profile coverage-replay.out -min 80
+	$(GO) run ./tools/coverage -root cmd/go-icloud -profile coverage-unit.out -min 0
+	$(GO) run ./tools/coverage -root cmd/go-icloud -profile coverage-combined.out -min 80

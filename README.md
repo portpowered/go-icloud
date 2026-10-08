@@ -70,6 +70,35 @@ Keep credentials in your private session store.
 
 ## Go account devices
 
+The separate Go CLI module is an initial read-only interface. It currently accepts
+an explicit private `icloud.AuthContext` JSON file; native login and automatic
+reuse of the Python reference login are still pending. It has not yet been
+verified with a live account.
+
+```powershell
+cd cmd/go-icloud
+go run . --help
+go run . --session C:/private/icloud-auth.json account-devices
+go run . --session C:/private/icloud-auth.json account-family
+go run . --session C:/private/icloud-auth.json account-storage
+go run . --session C:/private/icloud-auth.json account-plan
+go run . --session C:/private/icloud-auth.json drive-libraries
+go run . --session C:/private/icloud-auth.json --node YOUR_NODE_ID drive-node
+go run . --session C:/private/icloud-auth.json --family findmy
+```
+
+The JSON uses the public `AuthContext` field names, including `accountID`,
+`clientID`, service URLs, `headers`, and `cookies`. Keep this file private and out
+of Git. Commands print service results as JSON, omit response authentication
+metadata, and use a configurable `--timeout` (default one minute). Find My closes
+its session after returning the initial device list. Photos, Reminders and write
+operations are not yet CLI commands.
+
+CLI replay tests use the root canonical synthetic fixture tree and public SDK.
+Coverage for `internal/command` is measured separately from SDK coverage; the
+process entry point is outside that measurement. `make check` verifies both Go
+modules, including their pinned all-linter checks and race tests.
+
 Use `github.com/portpowered/go-icloud/pkg/icloud`. Authentication context belongs
 to each request. For now, supply the account origin, account/client identifiers
 and cookie/web headers from your caller-owned authenticated session. Supply structured cookies in `AuthContext.Cookies` when requests should apply provider cookie updates between stages. The SDK

@@ -33,6 +33,37 @@ jobs:
           version: v2.14.0
           only-new-issues: false
           args: --timeout=5m
+      - name: Lint CLI (all linters)
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.14.0
+          working-directory: cmd/go-icloud
+          only-new-issues: false
+          args: --config ../../.golangci.yml --timeout=5m
+      - name: Verify CLI and separate coverage
+        shell: pwsh
+        working-directory: cmd/go-icloud
+        run: |
+          go vet ./...
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go build ./...
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go test -race ./...
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go test -race '-coverpkg=./internal/command' '-coverprofile=coverage-replay.out' ./tests/replay
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go test -race '-coverpkg=./internal/command' '-coverprofile=coverage-unit.out' ./internal/command
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go test -race '-coverpkg=./internal/command' '-coverprofile=coverage-combined.out' ./tests/replay ./internal/command
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Push-Location ../..
+          go run ./tools/coverage -root cmd/go-icloud -profile coverage-replay.out -min 80
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go run ./tools/coverage -root cmd/go-icloud -profile coverage-unit.out -min 0
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go run ./tools/coverage -root cmd/go-icloud -profile coverage-combined.out -min 80
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Pop-Location
       - name: Verify reference tooling
         shell: pwsh
         run: |
@@ -69,5 +100,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sdk-coverage
-          path: coverage-*.out
+          path: |
+            coverage-*.out
+            cmd/go-icloud/coverage-*.out
           if-no-files-found: error
