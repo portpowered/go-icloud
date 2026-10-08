@@ -428,6 +428,19 @@ limits those counts to matcher interoperability. Verdict: **limited interim
 pass** (LIB-05). SDK semantic replay, socket/auth timelines, production schemas,
 the client and final migration acceptance remain open.
 
+### Interim account wire-contract audit
+
+The reviewer checked the five account routes against the pinned reference and
+independently passed race tests and fresh model generation. It found three
+gaps: fixture checks bypassed actual operation response bindings, named raw
+JSON values lost explicit nulls, and media usage omitted required `mediaKey`.
+Checks now use the operation's status/media schema with an explicit owner gate;
+generated nullable wrappers preserve null and absence; mediaKey is required.
+The reviewer independently verified all three fixes (SCHEMA-07, SCHEMA-11,
+SCHEMA-16). Verdict: **limited contract pass**. Exact-commit CI review remains
+required before merge. Public account operations, full source/schema gates and
+SDK migration acceptance remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.

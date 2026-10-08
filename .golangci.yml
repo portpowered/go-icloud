@@ -14,6 +14,10 @@ linters:
           allow:
             - $gostd
             - github.com/portpowered/go-icloud
+            # Account wire-contract verification uses this pinned schema validator.
+            - github.com/getkin/kin-openapi
+            # Generated nullable values preserve absent and explicit-null metadata.
+            - github.com/oapi-codegen/nullable
   exclusions:
     generated: strict
 

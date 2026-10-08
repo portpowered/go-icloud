@@ -7,7 +7,7 @@ PYTHON ?= .venv/bin/python
 endif
 
 .DEFAULT_GOAL := check
-.PHONY: check lint build test reference-coverage endpoint-coverage
+.PHONY: check lint build test reference-coverage endpoint-coverage generate-api
 
 # Reference capture bootstrap; no public Go iCloud client is implemented yet.
 check: lint build test endpoint-coverage
@@ -33,3 +33,7 @@ reference-coverage:
 # Diagnostic route occurrences; completeness/schema/socket gates remain open.
 endpoint-coverage:
 	$(GO) run ./tools/endpointcoverage -summary
+
+# Schema-owned account wire models; additional service contracts remain pending.
+generate-api:
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/account/config.yaml api/external/account.openapi.yaml
