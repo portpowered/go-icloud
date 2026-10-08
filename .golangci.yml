@@ -18,10 +18,16 @@ linters:
             - github.com/getkin/kin-openapi
             # Generated nullable values preserve absent and explicit-null metadata.
             - github.com/oapi-codegen/nullable
+            # Generated request builders use the pinned OpenAPI runtime.
+            - github.com/oapi-codegen/runtime
   exclusions:
     generated: strict
+    rules:
+      # GO-13: the generated sibling owns the package godoc; a second one fails godoclint.
+      - path: internal/accountapi/photo\.go
+        linters: [revive]
+        text: package-comments
 
 formatters:
   enable:
     - gofmt
-

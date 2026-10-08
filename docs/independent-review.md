@@ -437,9 +437,31 @@ JSON values lost explicit nulls, and media usage omitted required `mediaKey`.
 Checks now use the operation's status/media schema with an explicit owner gate;
 generated nullable wrappers preserve null and absence; mediaKey is required.
 The reviewer independently verified all three fixes (SCHEMA-07, SCHEMA-11,
-SCHEMA-16). Verdict: **limited contract pass**. Exact-commit CI review remains
-required before merge. Public account operations, full source/schema gates and
+SCHEMA-16). Verdict: **limited contract pass**. Exact-commit review approved
+`2054323d9e5a9cd2b74948693244946ce9d381e1` after
+[CI 37772542619](https://github.com/portpowered/go-icloud/actions/runs/37772542619)
+passed. The milestone merged in PR #1; main commit
+`81b84223ed26c2a0862459d3b9241528788f9122` also passed
+[CI 37773064544](https://github.com/portpowered/go-icloud/actions/runs/37773064544).
+Public account operations, full source/schema gates and
 SDK migration acceptance remain open.
+
+### Interim generated account-client interoperability audit
+
+The reviewer independently passed race tests for all 18 account scenarios and
+both config-based generation checks. It verified that requests derive from
+portable initial account state and returned family member IDs, not expected
+requests. The route schema references one shared canonical wire-model owner;
+generated clients import aliases instead of duplicating definitions.
+
+The binary member-photo adapter preserves status, headers and exact bytes while
+reading and closing the response. Read/close failures suppress output and retain
+both causes. The generated JSON-default parser limitation is documented.
+The reviewer approved the exact-file revive package-comment exception because
+the generated sibling owns the package godoc (GO-13, GO-15).
+Verdict: **limited interoperability pass**. Public SDK projections, session
+isolation, client error behavior and full migration acceptance remain open.
+Exact-commit CI review is required before merging this milestone.
 
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each

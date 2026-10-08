@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: iCloud account wire models
+  version: 0.1.0
+  description: Known account response values used by the selected account operations.
+paths: {}
+components:
+  schemas:
+    UnknownJSONValue:
+      description: Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+      x-go-type: json.RawMessage
+    NullableJSONValue:
+      description: An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+      nullable: true
+      x-go-type: json.RawMessage
+    AccountPlanSummary:
+      description: Opaque subscription JSON returned unchanged; plan-specific fields have not been observed or defined by the reference.
+      x-go-type: json.RawMessage
+    AccountDevicesResponse:
+      type: object
+      required: [devices]
+      properties:
+        devices:
+          type: array
+          items: {$ref: '#/components/schemas/AccountDevice'}
+        paymentMethods:
+          type: array
+          items: {$ref: '#/components/schemas/AccountPaymentMethod'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountDevice:
+      type: object
+      description: Known device metadata fields are optional; future provider fields are preserved.
+      properties:
+        name: {type: string}
+        modelDisplayName: {type: string}
+        model: {type: string}
+        osVersion: {type: string}
+        udid: {type: string}
+        serialNumber: {type: string}
+        imei: {type: string}
+        latestBackup: {type: string, description: Provider backup timestamp text; no timestamp format is inferred.}
+        modelLargePhotoURL1x: {type: string}
+        modelLargePhotoURL2x: {type: string}
+        modelSmallPhotoURL1x: {type: string}
+        modelSmallPhotoURL2x: {type: string}
+        paymentMethods: {type: array, items: {type: string}, description: Associated payment-method identifiers.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountPaymentMethod:
+      type: object
+      properties:
+        balanceStatus: {type: string}
+        id: {type: string}
+        isCarKey: {type: boolean}
+        lastFourDigits: {type: string}
+        suspensionReason: {type: string}
+        type: {type: string}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountFamilyResponse:
+      type: object
+      properties:
+        familyMembers:
+          type: array
+          items: {$ref: '#/components/schemas/AccountFamilyMember'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountFamilyMember:
+      type: object
+      properties:
+        lastName: {type: string, nullable: true}
+        dsid: {type: string, nullable: true}
+        originalInvitationEmail: {type: string, nullable: true}
+        fullName: {type: string, nullable: true}
+        appleIdForPurchases: {type: string, nullable: true}
+        appleId: {type: string, nullable: true}
+        firstName: {type: string, nullable: true}
+        ageClassification: {$ref: '#/components/schemas/NullableJSONValue'}
+        familyId: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasParentalPrivileges: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasScreenTimeEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasAskToBuyEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasSharePurchasesEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        shareMyLocationEnabledFamilyMembers: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasShareMyLocationEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        dsidForPurchases: {$ref: '#/components/schemas/NullableJSONValue'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountStorageResponse:
+      type: object
+      required: [storageUsageInfo]
+      properties:
+        storageUsageInfo: {$ref: '#/components/schemas/AccountStorageUsage'}
+        quotaStatus: {$ref: '#/components/schemas/AccountQuota'}
+        storageUsageByMedia:
+          type: array
+          items: {$ref: '#/components/schemas/AccountMediaUsage'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountStorageUsage:
+      type: object
+      required: [usedStorageInBytes, totalStorageInBytes]
+      properties:
+        usedStorageInBytes: {type: integer, format: int64, minimum: 0, description: Used storage in bytes.}
+        totalStorageInBytes: {type: integer, format: int64, minimum: 0, description: Total storage in bytes; used storage may exceed quota.}
+        compStorageInBytes: {type: integer, format: int64, minimum: 0, description: Provider comp storage in bytes.}
+        commerceStorageInBytes: {type: integer, format: int64, minimum: 0, description: Provider commerce storage in bytes.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountQuota:
+      type: object
+      properties:
+        overQuota: {type: boolean}
+        haveMaxQuotaTier: {type: boolean}
+        almost-full: {type: boolean}
+        paidQuota: {type: boolean}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountMediaUsage:
+      type: object
+      required: [mediaKey]
+      properties:
+        mediaKey: {type: string}
+        displayLabel: {type: string}
+        displayColor: {type: string, description: Provider display color text; no encoding is inferred.}
+        usageInBytes: {type: integer, format: int64, minimum: 0, description: Storage used by this media category in bytes.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountError:
+      type: object
+      properties:
+        reason: {type: string}
+        errorMessage: {type: string}
+        errorReason: {type: string}
+        error: {$ref: '#/components/schemas/NullableJSONValue'}
+        errorCode: {$ref: '#/components/schemas/NullableJSONValue'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
