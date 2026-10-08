@@ -7,10 +7,10 @@ PYTHON ?= .venv/bin/python
 endif
 
 .DEFAULT_GOAL := check
-.PHONY: check lint build test reference-coverage
+.PHONY: check lint build test reference-coverage endpoint-coverage
 
 # Reference capture bootstrap; no public Go iCloud client is implemented yet.
-check: lint build test
+check: lint build test endpoint-coverage
 
 lint:
 	$(GO) vet ./...
@@ -29,3 +29,7 @@ test:
 # Account-specific reference measurement; never use private captures in CI.
 reference-coverage:
 	"$(PYTHON)" tools/reference/measure.py
+
+# Diagnostic route occurrences; completeness/schema/socket gates remain open.
+endpoint-coverage:
+	$(GO) run ./tools/endpointcoverage -summary

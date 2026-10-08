@@ -68,6 +68,12 @@ duplicate exclusions fail. Authentication's keyring lookup and shared helpers
 used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
+The Go [HTTP occurrence audit](reference-endpoint-coverage.md) maps the portable
+suite to 66/75 draft HTTP routes with no unmatched exchanges. It explicitly lists
+nine missing routes and its strict occurrence mode fails; diagnostic mode runs
+in CI. Occurrences do not replace functional matrices, actual send provenance,
+schema/model bindings or separate socket acceptance.
+
 The portable HTTP suite now has 373 scenarios and 804 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client

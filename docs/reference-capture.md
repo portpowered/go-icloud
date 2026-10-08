@@ -80,6 +80,10 @@ reports; its scope and generated-code exclusions are explicit. The current
 [migration checklist](migration-checklist.md) records the uncovered baseline
 and [independent review](independent-review.md) findings. Passing replay does not
 mean all endpoints/functions have been exercised.
+Run `make endpoint-coverage` for the Go
+[portable HTTP occurrence audit](reference-endpoint-coverage.md). It lists
+missing and unmatched routes and has an optional failing strict mode; diagnostic
+success does not establish endpoint completeness.
 The draft [wire inventory](reference-endpoints.json) records known HTTP/socket
 boundaries and their pinned source definitions. Schema bindings, actual send
 provenance, payload variants, dependency edges, and complete scenario matrices

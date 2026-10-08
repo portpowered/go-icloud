@@ -346,6 +346,22 @@ Verdict: **limited interim pass** with no scoped blocker. Complete selected
 endpoint/schema gates, Go replay interoperability and migration/release acceptance
 remain open.
 
+### Interim Go endpoint occurrence audit
+
+The reviewer independently reconciled the Go report: 373 scenarios, 804 exchanges,
+66/75 HTTP routes, nine missing routes and no unmatched exchange. It passed
+negative controls for active pin/evidence, templates, ambiguity, temporal URL
+binding and strict gaps. Strict CLI failure, default working-directory behavior
+and explicit root selection were independently checked. Lint, race-enabled Go
+tests and full `make check` passed.
+
+The reviewer confirmed the documentation limits this to diagnostic HTTP
+occurrences, separately from private captured evidence, socket coverage and
+source/schema/functional acceptance. Default CI mode reports the gaps; it does
+not silently approve them. Verdict: **limited interim pass** with no actionable
+flaw. Complete selected endpoint/schema/model gates, Go SDK interoperability,
+release and final migration acceptance remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.
