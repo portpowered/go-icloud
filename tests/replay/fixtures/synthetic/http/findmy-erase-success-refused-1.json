@@ -6,7 +6,7 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "findmy",
-  "operation": "play_sound",
+  "operation": "erase_device",
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
@@ -23,7 +23,8 @@
     }
   },
   "inputs": [
-    "Synthetic alert"
+    "Synthetic text",
+    "1234"
   ],
   "exchanges": [
     {
@@ -77,18 +78,9 @@
     {
       "request": {
         "method": "POST",
-        "origin": "https://findmy.example.invalid",
-        "path": "/fmipservice/client/web/playSound",
-        "query": [
-          [
-            "clientId",
-            "synthetic-client"
-          ],
-          [
-            "dsid",
-            "synthetic-account"
-          ]
-        ],
+        "origin": "https://setup.example.invalid",
+        "path": "/setup/ws/1/fmipWebAuthenticate",
+        "query": [],
         "headers": [
           [
             "accept",
@@ -96,7 +88,7 @@
           ],
           [
             "content-length",
-            "95"
+            "37"
           ],
           [
             "content-type",
@@ -105,11 +97,11 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgImNsaWVudENvbnRleHQiOiB7ImZtbHkiOiB0cnVlfX0="
+          "value": "eyJkc1dlYkF1dGhUb2tlbiI6ICJzeW50aGV0aWMtdG9rZW4ifQ=="
         }
       },
       "response": {
-        "status": 200,
+        "status": 503,
         "headers": [
           [
             "Content-Type",
@@ -118,10 +110,30 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "e30="
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
         }
       }
     }
   ],
-  "result": null
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic Find My refusal\", \"errorCode\": 503}"
+  },
+  "error_context": {
+    "reason": null,
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
+      }
+    }
+  }
 }

@@ -53,6 +53,33 @@ zones, per-record errors, missing reminder lookups, query/fallback sync tokens,
 and incremental empty results. These are synthetic cases even when their
 operations overlap captured reads.
 
+Find My refresh cases call the actual manager's public refresh method, binding
+initialization versus refresh routes, locate flags, server-context forwarding,
+device updates and absent/empty/multiple response content. Family cases bind
+ready members, stalled progress, improving progress, retry bounds and provider
+refusal. `findmy_wait_trace` uses the same finite ordered wait contract described
+below; the real polling decisions run while sleep durations are consumed offline.
+Device command and erase cases include provider refusals at token and command
+boundaries. Errors bind exposed response context and, after an explicit refresh,
+the received cache in `error_findmy_state`.
+The historical `token_origin` input is a configured endpoint base, including
+`/setup/ws/1`, as supplied by the actual account facade. Older examples omitted
+that prefix; all erase-token expectations now use the source-matched full path.
+
+An empty or absent refresh payload retains previously known devices in the
+pinned implementation. Cache snapshots read received content without the
+device.data property's implicit refresh after a failed request. Thread scheduling
+state is not a portable result; the actual monitor is stopped and joined at
+teardown, and the suite checks that no new thread survives. Synthetic command
+acknowledgments do not establish physical action on an Apple device.
+
+The reference refresh can also skip monitor replacement while the old monitor
+is still exiting, leaving polling stopped after a successful refresh. An
+independent scheduling probe reproduced this race. The Go implementation must
+join a stopped owned monitor before starting its replacement, or expose refresh
+without implicit polling. Cached devices are retained for partial refresh
+payloads; a Go removal policy must use explicit provider deletion evidence.
+
 The Reminders endpoint extension covers create/update/soft-delete, record
 conflicts and missing records, completed/uncompleted queries with zero/one/three
 records and pagination, hydrated creation, lookups, and incremental changes.

@@ -6,7 +6,7 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "findmy",
-  "operation": "play_sound",
+  "operation": "refresh_flow",
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
@@ -23,7 +23,45 @@
     }
   },
   "inputs": [
-    "Synthetic alert"
+    {
+      "locate": false
+    }
+  ],
+  "result": [
+    {
+      "devices": [
+        {
+          "id": "synthetic-device-0",
+          "name": "Synthetic Device 0",
+          "lostModeCapable": true,
+          "features": {
+            "MSG": true,
+            "SND": true,
+            "LOC": true,
+            "WIP": true
+          }
+        }
+      ],
+      "user_info": null,
+      "server_context": null
+    },
+    {
+      "devices": [
+        {
+          "id": "synthetic-device-0",
+          "name": "Synthetic Device 0",
+          "lostModeCapable": true,
+          "features": {
+            "MSG": true,
+            "SND": true,
+            "LOC": true,
+            "WIP": true
+          }
+        }
+      ],
+      "user_info": null,
+      "server_context": null
+    }
   ],
   "exchanges": [
     {
@@ -70,7 +108,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgRGV2aWNlIDAiLCAibG9zdE1vZGVDYXBhYmxlIjogdHJ1ZSwgImZlYXR1cmVzIjogeyJNU0ciOiB0cnVlLCAiU05EIjogdHJ1ZSwgIkxPQyI6IHRydWUsICJXSVAiOiB0cnVlfX1dfQ=="
+          "value": "eyJjb250ZW50IjogW3siaWQiOiAic3ludGhldGljLWRldmljZS0wIiwgIm5hbWUiOiAiU3ludGhldGljIERldmljZSAwIiwgImxvc3RNb2RlQ2FwYWJsZSI6IHRydWUsICJmZWF0dXJlcyI6IHsiTVNHIjogdHJ1ZSwgIlNORCI6IHRydWUsICJMT0MiOiB0cnVlLCAiV0lQIjogdHJ1ZX19XX0="
         }
       }
     },
@@ -78,7 +116,7 @@
       "request": {
         "method": "POST",
         "origin": "https://findmy.example.invalid",
-        "path": "/fmipservice/client/web/playSound",
+        "path": "/fmipservice/client/web/initClient",
         "query": [
           [
             "clientId",
@@ -96,7 +134,7 @@
           ],
           [
             "content-length",
-            "95"
+            "177"
           ],
           [
             "content-type",
@@ -105,7 +143,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgImNsaWVudENvbnRleHQiOiB7ImZtbHkiOiB0cnVlfX0="
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
         }
       },
       "response": {
@@ -118,10 +156,9 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "e30="
+          "value": "eyJjb250ZW50IjogW3siaWQiOiAic3ludGhldGljLWRldmljZS0wIiwgIm5hbWUiOiAiU3ludGhldGljIERldmljZSAwIiwgImxvc3RNb2RlQ2FwYWJsZSI6IHRydWUsICJmZWF0dXJlcyI6IHsiTVNHIjogdHJ1ZSwgIlNORCI6IHRydWUsICJMT0MiOiB0cnVlLCAiV0lQIjogdHJ1ZX19XX0="
         }
       }
     }
-  ],
-  "result": null
+  ]
 }

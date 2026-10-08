@@ -33,10 +33,16 @@ def execute(api, scenario, observations=None):
             state["token_origin"],
             api.session,
             params,
-            with_family=False,
+            with_family=state.get("with_family", False),
             refresh_interval=86400,
+            family_poll_delay=state.get("family_poll_delay", 0.5),
+            family_poll_max_retries=state.get("family_poll_max_retries", 5),
         )
         api._devices = manager
+        if scenario["operation"] == "refresh_flow":
+            from findmy_scenarios import execute_refresh
+
+            return execute_refresh(manager, scenario, observations)
         if scenario["operation"] == "devices":
             return [device.data for device in manager.devices.values()]
         device = manager[scenario["device_id"]]
@@ -289,7 +295,13 @@ def replay_synthetic(path):
                     raise AssertionError(
                         "Synthetic drive node state mismatch"
                     ) from error
-                if scenario["service"] in {"auth", "drive"}:
+                if scenario["service"] == "findmy" and scenario.get(
+                    "error_findmy_state"
+                ) != observations.get("findmy_state"):
+                    raise AssertionError(
+                        "Synthetic Find My error state mismatch"
+                    ) from error
+                if scenario["service"] in {"auth", "drive", "findmy"}:
                     from auth_scenarios import auth_error_context
 
                     if scenario.get("error_context") != auth_error_context(error):

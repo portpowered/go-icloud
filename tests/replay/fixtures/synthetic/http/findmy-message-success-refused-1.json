@@ -6,7 +6,7 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "findmy",
-  "operation": "play_sound",
+  "operation": "display_message",
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
@@ -23,7 +23,11 @@
     }
   },
   "inputs": [
-    "Synthetic alert"
+    "Synthetic alert",
+    "Synthetic text",
+    true,
+    false,
+    true
   ],
   "exchanges": [
     {
@@ -78,7 +82,7 @@
       "request": {
         "method": "POST",
         "origin": "https://findmy.example.invalid",
-        "path": "/fmipservice/client/web/playSound",
+        "path": "/fmipservice/client/web/sendMessage",
         "query": [
           [
             "clientId",
@@ -96,7 +100,7 @@
           ],
           [
             "content-length",
-            "95"
+            "155"
           ],
           [
             "content-type",
@@ -105,11 +109,11 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgImNsaWVudENvbnRleHQiOiB7ImZtbHkiOiB0cnVlfX0="
+          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgInVzZXJUZXh0IjogdHJ1ZSwgInRleHQiOiAiU3ludGhldGljIHRleHQiLCAic291bmQiOiB0cnVlLCAidmlicmF0ZSI6IGZhbHNlLCAic3Ryb2JlIjogdHJ1ZX0="
         }
       },
       "response": {
-        "status": 200,
+        "status": 503,
         "headers": [
           [
             "Content-Type",
@@ -118,10 +122,30 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "e30="
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
         }
       }
     }
   ],
-  "result": null
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic Find My refusal\", \"errorCode\": 503}"
+  },
+  "error_context": {
+    "reason": null,
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
+      }
+    }
+  }
 }

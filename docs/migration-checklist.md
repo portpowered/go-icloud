@@ -68,7 +68,7 @@ duplicate exclusions fail. Authentication's keyring lookup and shared helpers
 used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
-The portable HTTP suite now has 355 scenarios and 767 paired exchanges after
+The portable HTTP suite now has 373 scenarios and 804 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
 entropy and exact proof matching; they also exercise refusal, trust-token reuse,
@@ -81,8 +81,8 @@ or account setup. Physical security-key interaction is deferred; live socket
 evidence, Go interoperability and final SDK/release gates remain open.
 Authentication socket replay adds 53 synthetic ordered duplex scenarios
 (283 events), separate from combined bridge transcripts. Combined replay now
-enters 569/905 functions and executes 3,145/5,385 body statements (58.40%) and
-949/2,076 branch exits. These measurements
+enters 572/905 functions and executes 3,165/5,385 body statements (58.77%) and
+959/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
 Drive now has 59 scenarios and 89 pairs, including navigation/cache/refresh,
 node-backed endpoints, empty downloads, offset uploads and provider refusal at
@@ -90,6 +90,14 @@ each transfer stage. Errors bind file position, token parameters, node state and
 exposed response context. Its pinned date parser mishandles negative offsets
 with nonzero minutes; the Go implementation must correct RFC 3339 conversion.
 These cases are synthetic reference behavior, not observed Apple writes.
+Find My has 30 scenarios and 55 pairs after adding explicit refresh, family
+readiness/progress/retry bounds and provider refusal at command/token stages.
+Declared waits are consumed offline; received device/user/server state and
+exposed errors are bound. A source monitor-replacement race is documented for
+Go correction. Partial refreshes retain cached devices rather than infer removal
+without provider deletion evidence. Local checks pass 63 offline test methods.
+The preceding Drive milestone entered 569/905 functions and covered
+3,145/5,385 statements (58.40%) and 949/2,076 branch exits.
 The preceding complete-login milestone entered 547/905 functions and covered
 3,079/5,385 statements (57.18%) and 917/2,076 branch exits.
 The preceding combined-bootstrap milestone entered 506/905 functions and

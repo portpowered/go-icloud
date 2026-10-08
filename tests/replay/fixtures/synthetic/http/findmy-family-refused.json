@@ -6,7 +6,7 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "findmy",
-  "operation": "play_sound",
+  "operation": "refresh_flow",
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
@@ -20,11 +20,41 @@
     },
     "session_data": {
       "session_token": "synthetic-token"
+    },
+    "with_family": true
+  },
+  "inputs": [],
+  "entropy": {
+    "uuid4": [],
+    "unix_seconds": 1700000000,
+    "findmy_wait_trace": [
+      {
+        "kind": "sleep",
+        "value": 0.5
+      }
+    ]
+  },
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic Find My refusal\", \"errorCode\": 503}"
+  },
+  "error_context": {
+    "reason": null,
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
+      }
     }
   },
-  "inputs": [
-    "Synthetic alert"
-  ],
   "exchanges": [
     {
       "request": {
@@ -48,7 +78,7 @@
           ],
           [
             "content-length",
-            "177"
+            "176"
           ],
           [
             "content-type",
@@ -57,7 +87,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiB0cnVlLCAidGltZXpvbmUiOiAiVVMvUGFjaWZpYyIsICJpbmFjdGl2ZVRpbWUiOiAwfX0="
         }
       },
       "response": {
@@ -70,7 +100,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgRGV2aWNlIDAiLCAibG9zdE1vZGVDYXBhYmxlIjogdHJ1ZSwgImZlYXR1cmVzIjogeyJNU0ciOiB0cnVlLCAiU05EIjogdHJ1ZSwgIkxPQyI6IHRydWUsICJXSVAiOiB0cnVlfX1dfQ=="
+          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgRGV2aWNlIDAiLCAibG9zdE1vZGVDYXBhYmxlIjogdHJ1ZSwgImZlYXR1cmVzIjogeyJNU0ciOiB0cnVlLCAiU05EIjogdHJ1ZSwgIkxPQyI6IHRydWUsICJXSVAiOiB0cnVlfX1dLCAidXNlckluZm8iOiB7Imhhc01lbWJlcnMiOiB0cnVlLCAibWVtYmVyc0luZm8iOiB7InN5bnRoZXRpYy1tZW1iZXItYSI6IHsiZGV2aWNlRmV0Y2hTdGF0dXMiOiAiTE9BRElORyJ9LCAic3ludGhldGljLW1lbWJlci1iIjogeyJkZXZpY2VGZXRjaFN0YXR1cyI6ICJMT0FESU5HIn19fX0="
         }
       }
     },
@@ -78,7 +108,7 @@
       "request": {
         "method": "POST",
         "origin": "https://findmy.example.invalid",
-        "path": "/fmipservice/client/web/playSound",
+        "path": "/fmipservice/client/web/refreshClient",
         "query": [
           [
             "clientId",
@@ -96,7 +126,7 @@
           ],
           [
             "content-length",
-            "95"
+            "293"
           ],
           [
             "content-type",
@@ -105,11 +135,11 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgImNsaWVudENvbnRleHQiOiB7ImZtbHkiOiB0cnVlfX0="
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiB0cnVlLCAidGltZXpvbmUiOiAiVVMvUGFjaWZpYyIsICJpbmFjdGl2ZVRpbWUiOiAwLCAic2hvdWxkTG9jYXRlIjogdHJ1ZSwgInNlbGVjdGVkRGV2aWNlIjogImFsbCJ9LCAic2VydmVyQ29udGV4dCI6IHsic3ludGhldGljIjogdHJ1ZX0sICJpc1VwZGF0aW5nQWxsTG9jYXRpb25zIjogdHJ1ZX0="
         }
       },
       "response": {
-        "status": 200,
+        "status": 503,
         "headers": [
           [
             "Content-Type",
@@ -118,10 +148,9 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "e30="
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
         }
       }
     }
-  ],
-  "result": null
+  ]
 }

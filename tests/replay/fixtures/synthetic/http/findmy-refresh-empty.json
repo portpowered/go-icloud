@@ -6,7 +6,7 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "findmy",
-  "operation": "play_sound",
+  "operation": "refresh_flow",
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
@@ -23,7 +23,49 @@
     }
   },
   "inputs": [
-    "Synthetic alert"
+    {
+      "locate": true
+    }
+  ],
+  "result": [
+    {
+      "devices": [
+        {
+          "id": "synthetic-device-0",
+          "name": "Synthetic Device 0",
+          "lostModeCapable": true,
+          "features": {
+            "MSG": true,
+            "SND": true,
+            "LOC": true,
+            "WIP": true
+          }
+        }
+      ],
+      "user_info": null,
+      "server_context": {
+        "synthetic": true
+      }
+    },
+    {
+      "devices": [
+        {
+          "id": "synthetic-device-0",
+          "name": "Synthetic Device 0",
+          "lostModeCapable": true,
+          "features": {
+            "MSG": true,
+            "SND": true,
+            "LOC": true,
+            "WIP": true
+          }
+        }
+      ],
+      "user_info": null,
+      "server_context": {
+        "synthetic": true
+      }
+    }
   ],
   "exchanges": [
     {
@@ -78,7 +120,7 @@
       "request": {
         "method": "POST",
         "origin": "https://findmy.example.invalid",
-        "path": "/fmipservice/client/web/playSound",
+        "path": "/fmipservice/client/web/refreshClient",
         "query": [
           [
             "clientId",
@@ -96,7 +138,7 @@
           ],
           [
             "content-length",
-            "95"
+            "294"
           ],
           [
             "content-type",
@@ -105,7 +147,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgImNsaWVudENvbnRleHQiOiB7ImZtbHkiOiB0cnVlfX0="
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMCwgInNob3VsZExvY2F0ZSI6IHRydWUsICJzZWxlY3RlZERldmljZSI6ICJhbGwifSwgInNlcnZlckNvbnRleHQiOiB7InN5bnRoZXRpYyI6IHRydWV9LCAiaXNVcGRhdGluZ0FsbExvY2F0aW9ucyI6IHRydWV9"
         }
       },
       "response": {
@@ -118,10 +160,9 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "e30="
+          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbXX0="
         }
       }
     }
-  ],
-  "result": null
+  ]
 }

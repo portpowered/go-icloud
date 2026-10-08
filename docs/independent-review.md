@@ -331,6 +331,21 @@ corrected and independently verified. Verdict: **limited interim pass** with
 no remaining blocker for this extension. Complete selected-endpoint/schema
 gates, Go interoperability and final migration acceptance remain open.
 
+### Interim Find My refresh audit
+
+The reviewer independently passed 18 additions with 37 paired exchanges and all
+30 corrected Find My scenarios with 55 pairs. Probes rejected missing waits,
+changed cache/error state, surplus responses and historical token-path prefixes;
+clock factories restored and no monitor thread survived. Independent `make check`
+passed all 63 methods. The full HTTP suite is 373 scenarios and 804 pairs.
+
+The reviewer checked `/setup/ws/1` erase-token routing against the actual account
+facade and independently reproduced retained-device behavior and the monitor
+replacement race. It verified their documentation and required Go correction.
+Verdict: **limited interim pass** with no scoped blocker. Complete selected
+endpoint/schema gates, Go replay interoperability and migration/release acceptance
+remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.

@@ -6,7 +6,7 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "findmy",
-  "operation": "play_sound",
+  "operation": "devices",
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
@@ -22,9 +22,7 @@
       "session_token": "synthetic-token"
     }
   },
-  "inputs": [
-    "Synthetic alert"
-  ],
+  "inputs": [],
   "exchanges": [
     {
       "request": {
@@ -61,7 +59,7 @@
         }
       },
       "response": {
-        "status": 200,
+        "status": 503,
         "headers": [
           [
             "Content-Type",
@@ -70,58 +68,30 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgRGV2aWNlIDAiLCAibG9zdE1vZGVDYXBhYmxlIjogdHJ1ZSwgImZlYXR1cmVzIjogeyJNU0ciOiB0cnVlLCAiU05EIjogdHJ1ZSwgIkxPQyI6IHRydWUsICJXSVAiOiB0cnVlfX1dfQ=="
-        }
-      }
-    },
-    {
-      "request": {
-        "method": "POST",
-        "origin": "https://findmy.example.invalid",
-        "path": "/fmipservice/client/web/playSound",
-        "query": [
-          [
-            "clientId",
-            "synthetic-client"
-          ],
-          [
-            "dsid",
-            "synthetic-account"
-          ]
-        ],
-        "headers": [
-          [
-            "accept",
-            "application/json"
-          ],
-          [
-            "content-length",
-            "95"
-          ],
-          [
-            "content-type",
-            "application/json"
-          ]
-        ],
-        "body": {
-          "encoding": "base64",
-          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgImNsaWVudENvbnRleHQiOiB7ImZtbHkiOiB0cnVlfX0="
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": [
-          [
-            "Content-Type",
-            "application/json"
-          ]
-        ],
-        "body": {
-          "encoding": "base64",
-          "value": "e30="
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
         }
       }
     }
   ],
-  "result": null
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic Find My refusal\", \"errorCode\": 503}"
+  },
+  "error_context": {
+    "reason": null,
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIEZpbmQgTXkgcmVmdXNhbCIsICJlcnJvckNvZGUiOiA1MDN9"
+      }
+    }
+  }
 }

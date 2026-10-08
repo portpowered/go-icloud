@@ -15,7 +15,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 355)
+        self.assertGreaterEqual(len(fixtures), 373)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -63,6 +63,32 @@ class SyntheticTests(unittest.TestCase):
                     scenario["exchanges"].append(scenario["exchanges"][-1])
                 else:
                     scenario["error_node_state"]["root"]["name"] = "wrong"
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_findmy_refresh_state_and_polling_are_bound(self):
+        for change in ["state", "context", "sleep", "extra", "response"]:
+            fixture = (
+                "findmy-refresh-refused"
+                if change in {"state", "context"}
+                else "findmy-family-progress"
+            )
+            scenario = json.loads((FIXTURES / (fixture + ".json")).read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "state":
+                    scenario["error_findmy_state"]["devices"][0]["name"] = "wrong"
+                elif change == "context":
+                    scenario["error_context"]["response"]["status"] = 200
+                elif change == "sleep":
+                    scenario["entropy"]["findmy_wait_trace"][0]["value"] = 1
+                elif change == "extra":
+                    scenario["entropy"]["findmy_wait_trace"].append(
+                        {"kind": "sleep", "value": 0.5}
+                    )
+                else:
+                    scenario["exchanges"].pop()
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(scenario))
                 with self.assertRaises(AssertionError):

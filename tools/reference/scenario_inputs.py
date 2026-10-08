@@ -46,10 +46,15 @@ def project(value):
 @contextmanager
 def replay_wait_clock(scenario, entropy):
     entropy = entropy or {}
-    assert not ("photos_wait_trace" in entropy and "auth_wait_trace" in entropy)
-    trace = entropy.get("photos_wait_trace", entropy.get("auth_wait_trace"))
+    traces = [
+        entropy[key]
+        for key in ["photos_wait_trace", "auth_wait_trace", "findmy_wait_trace"]
+        if key in entropy
+    ]
+    assert len(traces) <= 1
+    trace = traces[0] if traces else None
     guarded = (
-        scenario.get("service") == "auth"
+        scenario.get("service") in {"auth", "findmy"}
         or scenario.get("operation") == "service_upload"
     )
     if trace is None and not guarded:

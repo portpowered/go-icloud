@@ -10,7 +10,7 @@
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
-    "token_origin": "https://setup.example.invalid",
+    "token_origin": "https://setup.example.invalid/setup/ws/1",
     "params": {
       "clientId": "synthetic-client",
       "dsid": "synthetic-account"
@@ -79,7 +79,7 @@
       "request": {
         "method": "POST",
         "origin": "https://setup.example.invalid",
-        "path": "/fmipWebAuthenticate",
+        "path": "/setup/ws/1/fmipWebAuthenticate",
         "query": [],
         "headers": [
           [

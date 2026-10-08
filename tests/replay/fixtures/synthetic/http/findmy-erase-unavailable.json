@@ -10,7 +10,7 @@
   "device_id": "synthetic-device-0",
   "initial_state": {
     "origin": "https://findmy.example.invalid",
-    "token_origin": "https://setup.example.invalid",
+    "token_origin": "https://setup.example.invalid/setup/ws/1",
     "params": {
       "clientId": "synthetic-client",
       "dsid": "synthetic-account"
@@ -76,5 +76,10 @@
   "error": {
     "type": "PyiCloudServiceUnavailable",
     "message": "Erase is not available for this device"
+  },
+  "error_context": {
+    "reason": null,
+    "code": null,
+    "response": null
   }
 }
