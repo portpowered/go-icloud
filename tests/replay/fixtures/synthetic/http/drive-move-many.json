@@ -1,0 +1,106 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "drive",
+  "operation": "move_nodes_to_node",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [
+    [
+      {
+        "drivewsid": "FILE::synthetic::0",
+        "etag": "synthetic-etag"
+      },
+      {
+        "drivewsid": "FILE::synthetic::1",
+        "etag": "synthetic-etag"
+      },
+      {
+        "drivewsid": "FILE::synthetic::2",
+        "etag": "synthetic-etag"
+      }
+    ],
+    {
+      "drivewsid": "FOLDER::synthetic::destination"
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://drive.example.invalid",
+        "path": "/moveItems",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "360"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkZXN0aW5hdGlvbkRyaXZld3NJZCI6ICJGT0xERVI6OnN5bnRoZXRpYzo6ZGVzdGluYXRpb24iLCAiaXRlbXMiOiBbeyJkcml2ZXdzaWQiOiAiRklMRTo6c3ludGhldGljOjowIiwgImV0YWciOiAic3ludGhldGljLWV0YWciLCAiY2xpZW50SWQiOiAiRklMRTo6c3ludGhldGljOjowIn0sIHsiZHJpdmV3c2lkIjogIkZJTEU6OnN5bnRoZXRpYzo6MSIsICJldGFnIjogInN5bnRoZXRpYy1ldGFnIiwgImNsaWVudElkIjogIkZJTEU6OnN5bnRoZXRpYzo6MSJ9LCB7ImRyaXZld3NpZCI6ICJGSUxFOjpzeW50aGV0aWM6OjIiLCAiZXRhZyI6ICJzeW50aGV0aWMtZXRhZyIsICJjbGllbnRJZCI6ICJGSUxFOjpzeW50aGV0aWM6OjIifV19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJpdGVtcyI6IFt7ImRyaXZld3NpZCI6ICJGSUxFOjpzeW50aGV0aWM6OjAiLCAic3RhdHVzIjogIk9LIn0sIHsiZHJpdmV3c2lkIjogIkZJTEU6OnN5bnRoZXRpYzo6MSIsICJzdGF0dXMiOiAiT0sifSwgeyJkcml2ZXdzaWQiOiAiRklMRTo6c3ludGhldGljOjoyIiwgInN0YXR1cyI6ICJPSyJ9XX0="
+        }
+      }
+    }
+  ],
+  "result": {
+    "items": [
+      {
+        "drivewsid": "FILE::synthetic::0",
+        "status": "OK"
+      },
+      {
+        "drivewsid": "FILE::synthetic::1",
+        "status": "OK"
+      },
+      {
+        "drivewsid": "FILE::synthetic::2",
+        "status": "OK"
+      }
+    ]
+  }
+}

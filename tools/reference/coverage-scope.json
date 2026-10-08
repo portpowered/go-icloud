@@ -1,0 +1,46 @@
+{
+  "format": "portos.reference-coverage-scope.v1",
+  "services": ["photos", "findmy", "drive", "account", "reminders"],
+  "include": [
+    "base.py", "session.py", "cookie_jar.py", "srp_password.py",
+    "ssl_context.py", "utils.py", "endpoints.py", "exceptions.py",
+    "hsa2_bridge.py", "hsa2_bridge_prover.py",
+    "common/**/*.py", "services/base.py", "services/account.py",
+    "services/findmyiphone.py", "services/drive.py", "services/photos.py",
+    "services/photos_legacy.py", "services/photos_cloudkit/**/*.py",
+    "services/reminders/**/*.py"
+  ],
+  "exclude": [
+    {
+      "glob": "**/*_pb2.py",
+      "reason": "Generated protobuf code; report separately, not handwritten function coverage."
+    }
+  ],
+  "out_of_scope": [
+    {
+      "glob": "services/calendar.py",
+      "reason": "Calendar was explicitly excluded by the account owner."
+    },
+    {
+      "glob": "services/contacts.py",
+      "reason": "Contacts was explicitly excluded by the account owner."
+    },
+    {
+      "glob": "services/notes/**",
+      "reason": "Notes is not among the five requested services."
+    },
+    {
+      "glob": "services/hidemyemail.py",
+      "reason": "Hide My Email is not among the five requested services."
+    },
+    {
+      "glob": "services/invites/**",
+      "reason": "Invites is not among the five requested services."
+    },
+    {
+      "glob": "cli/**",
+      "reason": "Reference application CLI is not a provider endpoint implementation."
+    }
+  ],
+  "policy": "Uncovered included functions remain in the denominator. Unavailable account services and destructive operations require synthetic evidence; they are not coverage exclusions. New reference network edges and shared dependencies must be audited before sign-off."
+}

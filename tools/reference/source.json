@@ -1,0 +1,10 @@
+{
+  "historical": {
+    "url": "https://github.com/picklepete/pyicloud.git",
+    "commit": "622cd160d8a259db644c8b3f3c96f76795a12f74"
+  },
+  "live": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  }
+}

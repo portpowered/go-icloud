@@ -1,0 +1,13 @@
+.reference/
+.venv/
+.tools/
+__pycache__/
+.ruff_cache/
+*.pyc
+.env
+.env.*
+coverage.out
+*.test
+dist/
+private/
+site/

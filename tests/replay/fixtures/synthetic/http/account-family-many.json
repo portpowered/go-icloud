@@ -1,0 +1,69 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "account",
+  "operation": "family",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://drive.example.invalid",
+        "path": "/setup/web/family/getFamilyDetails",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJmYW1pbHlNZW1iZXJzIjogW3siZnVsbE5hbWUiOiAiU3ludGhldGljIE1lbWJlciAwIn0sIHsiZnVsbE5hbWUiOiAiU3ludGhldGljIE1lbWJlciAxIn0sIHsiZnVsbE5hbWUiOiAiU3ludGhldGljIE1lbWJlciAyIn1dfQ=="
+        }
+      }
+    }
+  ],
+  "result": [
+    "Synthetic Member 0",
+    "Synthetic Member 1",
+    "Synthetic Member 2"
+  ]
+}

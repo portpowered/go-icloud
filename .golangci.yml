@@ -1,0 +1,23 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: all
+  settings:
+    depguard:
+      rules:
+        Main:
+          # The example, HTTP client, and their tests intentionally import this module.
+          list-mode: strict
+          allow:
+            - $gostd
+            - github.com/portpowered/go-icloud
+  exclusions:
+    generated: strict
+
+formatters:
+  enable:
+    - gofmt
+
