@@ -82,7 +82,7 @@ verification infrastructure, not an SDK operation port. Explicit JSON pattern
 and credential-redaction rules now instantiate all 17 portable declarations;
 negative controls reject changed fixed fields, string formats, code types and
 ambiguous paths. Multipart rules now bind ordered headers/bytes, filenames and
-strict boundary framing. All 456 scenarios/1030 exchanges instantiate and fifteen
+strict boundary framing. All 466 scenarios/1046 exchanges instantiate and fifteen
 upload pairs match Go's writer. These are matcher checks, not SDK semantic parity.
 Socket/auth timelines, the remaining scenario projections and SDK operations
 remain open. No Python semantic replay is counted as passing Go SDK replay.
@@ -98,7 +98,7 @@ coverage is 1219/1457 statements (83.7%) replay, 780/1457 (53.5%) unit and
 1293/1457 (88.7%) combined; these figures do not
 represent the complete service port (LIB-07).
 
-The portable HTTP suite now has 456 scenarios and 1030 paired exchanges after
+The portable HTTP suite now has 466 scenarios and 1046 paired exchanges after
 adding Drive guards and upload/refresh behavior alongside selected
 authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
