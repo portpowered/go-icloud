@@ -56,7 +56,8 @@ func TestPublicSDKCompilesInIndependentConsumer(t *testing.T) {
 	command := exec.CommandContext(t.Context(), "go", "build", "-mod=mod", ".")
 	command.Dir = directory
 
-	command.Env = append(os.Environ(), "GOWORK=off", "GOPROXY=off")
+	// API-02: build only; normal module resolution is allowed on a clean consumer cache.
+	command.Env = append(os.Environ(), "GOWORK=off")
 
 	output, err := command.CombinedOutput()
 	if err != nil {
