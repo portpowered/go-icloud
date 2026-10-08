@@ -24,9 +24,9 @@ func (router accountRouter) RoundTrip(request *http.Request) (*http.Response, er
 	var transport *replay.HTTPTransport
 
 	switch request.Header.Get(protocol.CookieName) {
-	case "session=alpha":
+	case "session=alpha", "session=token-alpha":
 		transport = router.alpha
-	case "session=beta":
+	case "session=beta", "session=token-beta":
 		transport = router.beta
 	default:
 		return nil, errUnknownAccount

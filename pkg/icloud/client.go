@@ -3,6 +3,7 @@ package icloud
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/accountapi"
@@ -442,8 +443,13 @@ func accountRequestContext(auth AuthContext) (webtransport.RequestContext, error
 	params.ClientBuildNumber = copyString(auth.ClientBuildNumber)
 	params.ClientMasteringNumber = copyString(auth.ClientMasteringNumber)
 
+	cookies, err := webtransport.NewCookieState(authCookies(auth.Cookies))
+	if err != nil {
+		return boundary, fmt.Errorf("account cookie context: %w", err)
+	}
+
 	boundary = webtransport.RequestContext{Origin: auth.AccountServiceURL, Params: *params,
-		Headers: requestHeaders(auth.Headers)}
+		Headers: requestHeaders(auth.Headers), Cookies: cookies}
 
 	return boundary, nil
 }
@@ -470,7 +476,7 @@ func requestHeaders(headers []Header) http.Header {
 func driveRequestContext(auth AuthContext) (webtransport.RequestContext, error) {
 	boundary, err := accountRequestContext(auth)
 	if err != nil {
-		return boundary, err
+		return boundary, fmt.Errorf("account cookie context: %w", err)
 	}
 
 	boundary.Origin = auth.DriveServiceURL

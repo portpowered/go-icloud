@@ -25,7 +25,7 @@ regenerate from the checked-in configs and reject drift (SCHEMA-10, SCHEMA-16).
 
 The source is timlaing/pyicloud commit
 `e2e44ab875d47dab4475096021da60030f26c35e`, especially
-`pyicloud/services/drive.py`. All 67 portable Drive scenarios and 115 paired
+`pyicloud/services/drive.py`. All 73 portable Drive scenarios and 127 paired
 exchanges are labeled synthetic and implementation-derived. No new live writes,
 private captures, tokens or account values are published. The four model examples
 are invented (SCHEMA-08, SCHEMA-12).
@@ -111,7 +111,7 @@ paired rename tests repeat requests after separate Set-Cookie replies, retaining
 request identity, cookie and result isolation (API-03, API-13). The public
 consumer build exercises all fourteen current methods.
 
-`DownloadDriveFile` executes seven existing reference scenarios through the
+`DownloadDriveFile` executes thirteen reference scenarios through the
 generated document-token builder and an issuer-bound content adapter. It prefers
 data-token URLs, falls back to package URLs, preserves complete escaped paths
 and ordered provider queries, and owns both response bodies on success and
@@ -122,24 +122,26 @@ responses; the content contract and focused controls cover both. Successful
 results expose metadata for both stages; a second-stage failure retains copied
 preceding metadata in `ClientError.PriorResponses()` (API-14, LIB-05).
 
-The content request uses caller-supplied authentication headers. Token-response
-cookie updates are exposed afterward rather than applied through an intermediate
-cookie jar. This preserves the explicit-header boundary; complete reference
-session cookie-jar parity remains open. No account state is retained on the
+The content request uses caller-supplied authentication headers and an
+operation-local jar seeded from structured cookies. Token-response cookie updates
+apply before the content request; explicit Cookie headers retain precedence.
+CookieScopeURL metadata preserves the issuer origin/path for caller-owned
+persistence, and HostOnly preserves exact-host seed binding. Complete reference
+session persistence remains open. No account state is retained on the
 shared client (API-03, API-13). Focused controls cover token preference, missing
 and malformed token replies, escaped zones and paths, repeated provider query
 keys, binary bytes labeled JSON, cleanup at both stages, and preceding metadata
 copy ownership. The independent consumer compiles all fifteen current methods.
 
 Node navigation and refresh state, uploads and the complete
-source-to-schema runtime route gate remain open. Thirty-two read/mutation/download scenarios do not
-establish parity for all 67 Drive scenarios. The non-generated library coverage
+source-to-schema runtime route gate remain open. Thirty-eight read/mutation/download scenarios do not
+establish parity for all 73 Drive scenarios. The non-generated library coverage
 measurement includes the five account reads and ten Drive methods;
 schema validation alone is not SDK replay coverage (LIB-07).
-Replay measures 552/666 handwritten SDK/internal statements (82.9%); unit
-measures 578/666 (86.8%); combined measures 617/666 (92.6%). Live Go integration
+Replay measures 604/729 handwritten SDK/internal statements (82.9%); unit
+measures 608/729 (83.4%); combined measures 669/729 (91.8%). Live Go integration
 is still pending. `make lint` and `make check` pass. The portable reference
-inventory remains 437 HTTP scenarios/991 pairs and 67 Python test methods.
+inventory remains 443 HTTP scenarios/1003 pairs and 67 Python test methods.
 
 The transfer issuer checks currently cover observed fixture URL forms. Exact
 provider query binding, complete common-parameter/header validation, provider

@@ -11,6 +11,30 @@ import (
 	"github.com/oapi-codegen/nullable"
 )
 
+// Defines values for AuthCookieSameSite.
+const (
+	AuthCookieSameSiteDefault AuthCookieSameSite = "default"
+	AuthCookieSameSiteLax     AuthCookieSameSite = "lax"
+	AuthCookieSameSiteNone    AuthCookieSameSite = "none"
+	AuthCookieSameSiteStrict  AuthCookieSameSite = "strict"
+)
+
+// Valid indicates whether the value is a known member of the AuthCookieSameSite enum.
+func (e AuthCookieSameSite) Valid() bool {
+	switch e {
+	case AuthCookieSameSiteDefault:
+		return true
+	case AuthCookieSameSiteLax:
+		return true
+	case AuthCookieSameSiteNone:
+		return true
+	case AuthCookieSameSiteStrict:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ErrorKind.
 const (
 	Canceled        ErrorKind = "canceled"
@@ -187,6 +211,9 @@ type AuthContext struct {
 	// ClientMasteringNumber Optional mastering parameter from the authentication context; omission remains omission.
 	ClientMasteringNumber *string `json:"clientMasteringNumber,omitempty"`
 
+	// Cookies Caller-owned session cookies. A fresh operation-local jar scopes them by host, path and expiry; explicit Cookie headers keep precedence.
+	Cookies []AuthCookie `json:"cookies,omitempty"`
+
 	// DriveDocumentServiceURL HTTPS document-service origin from authenticated discovery; required by Drive transfers.
 	DriveDocumentServiceURL string `json:"driveDocumentServiceURL,omitempty"`
 
@@ -196,6 +223,44 @@ type AuthContext struct {
 	// Headers Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.
 	Headers []Header `json:"headers"`
 }
+
+// AuthCookie Caller-owned web cookie state; credential values may contain secrets.
+//
+// Example: {"domain":".example.invalid","name":"synthetic-session","path":"/","secure":true,"value":"synthetic-secret"}
+type AuthCookie struct {
+	// Domain Cookie domain; omission binds to the operation's first request host.
+	Domain string `json:"domain,omitempty"`
+
+	// Expires Absolute expiry; omission represents a session cookie.
+	Expires *time.Time `json:"expires,omitempty"`
+
+	// HostOnly Bind exactly to the supplied domain host when true; never send to its subdomains.
+	HostOnly bool `json:"hostOnly,omitempty"`
+
+	// HTTPOnly Preserve the cookie's HTTP-only attribute.
+	HTTPOnly bool `json:"httpOnly,omitempty"`
+
+	// MaxAge Expiry in seconds: zero means unspecified and a negative value removes the cookie.
+	MaxAge int `json:"maxAge,omitempty"`
+
+	// Name Cookie name.
+	Name string `json:"name"`
+
+	// Path Cookie path; omission uses the first request's default cookie path.
+	Path string `json:"path,omitempty"`
+
+	// SameSite Optional browser same-site attribute; native HTTP requests preserve this state without a browser navigation policy.
+	SameSite *AuthCookieSameSite `json:"sameSite,omitempty"`
+
+	// Secure Send this cookie only over HTTPS when true.
+	Secure bool `json:"secure,omitempty"`
+
+	// Value Secret cookie value.
+	Value string `json:"value"`
+}
+
+// AuthCookieSameSite Optional browser same-site attribute; native HTTP requests preserve this state without a browser navigation policy.
+type AuthCookieSameSite string
 
 // CreateDriveFolderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"name":"Synthetic","parentID":"FOLDER::synthetic::root"}
 type CreateDriveFolderRequest struct {
@@ -507,6 +572,9 @@ type RenameDriveNodeResult = DriveItemChangeResult
 
 // ResponseMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 type ResponseMetadata struct {
+	// CookieScopeURL Request HTTPS origin and escaped path without query credentials; use this URL to apply Set-Cookie host and default-path scope.
+	CookieScopeURL string `json:"cookieScopeURL,omitempty"`
+
 	// Headers Header entries sorted by name; repeated values retain order within each name.
 	Headers []Header `json:"headers"`
 

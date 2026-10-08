@@ -183,7 +183,8 @@ func checkSDKServiceFailure(t *testing.T, scenario accountScenario, result any, 
 	}
 
 	accountProviderFailure(t, scenario.Error, failure.StatusCode(), failure.ResponseBody())
-	checkSDKMetadata(t, icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders()},
+	checkSDKMetadata(t, icloud.ResponseMetadata{CookieScopeURL: failure.CookieScopeURL(), StatusCode: failure.StatusCode(),
+		Headers: failure.ResponseHeaders()},
 		scenario.Exchanges[len(scenario.Exchanges)-1].Response)
 
 	if strings.Contains(failure.Error(), "synthetic failure") {

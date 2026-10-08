@@ -30,7 +30,17 @@ type accountScenario struct {
 	Error     json.RawMessage   `json:"error"`
 }
 
+type referenceCookie struct {
+	Name    string `json:"name"`
+	Value   string `json:"value"`
+	Domain  string `json:"domain"`
+	Path    string `json:"path"`
+	Secure  bool   `json:"secure"`
+	Expires *int64 `json:"expires"`
+}
+
 type accountInitial struct {
+	Cookies []referenceCookie `json:"cookies"`
 	//nolint:tagliatelle // LIB-05: the portable fixture fixes this field spelling.
 	DocumentOrigin string            `json:"document_origin"`
 	Origin         string            `json:"origin"`

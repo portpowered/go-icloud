@@ -94,7 +94,8 @@ func assertDriveSDKFailure(t *testing.T, scenario driveReadScenario, err error) 
 	}
 
 	accountProviderFailure(t, scenario.Error, failure.StatusCode(), failure.ResponseBody())
-	checkSDKMetadata(t, icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders()},
+	checkSDKMetadata(t, icloud.ResponseMetadata{CookieScopeURL: failure.CookieScopeURL(), StatusCode: failure.StatusCode(),
+		Headers: failure.ResponseHeaders()},
 		scenario.Exchanges[0].Response)
 }
 

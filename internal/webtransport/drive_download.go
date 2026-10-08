@@ -53,7 +53,7 @@ func (client *Client) DownloadDriveFile(ctx context.Context, auth RequestContext
 		return nil, responseFailure(Decode, err, token)
 	}
 
-	content, err := client.readPrepared(request.WithContext(ctx), successfulContent)
+	content, err := client.readPrepared(request.WithContext(ctx), successfulContent, auth.Cookies)
 	if err != nil {
 		var responseError *ResponseError
 
