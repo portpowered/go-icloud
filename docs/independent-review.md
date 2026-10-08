@@ -71,8 +71,24 @@ accepted appended bytes inconsistent with Content-Length. It also identified a
 stale statement claiming fixtures contained no cookies, although upload cases
 have invented values. Fixes now reject preamble/epilogue, validate byte length
 before every replay send, add negative controls, and correct that statement.
-Disposition: **fixes implemented; independent retest pending**. Do not mark the
-replay finding resolved until the reviewer verifies the fix commit.
+Disposition: **both findings independently resolved** at
+`b002f65f8e520d687e2b7448208480e560b4ba00`. The reviewer reran its original
+appended-byte exploit and preamble/epilogue/blank-padding variants with corrected
+Content-Length. All were rejected before response delivery with the exchange
+index still zero. It also checked invalid framing lengths, the corrected
+credential statement, and passing `make lint`/`make check` (29 offline methods).
+Full migration findings remain open.
+
+### Exact-commit CI availability
+
+The [draft migration PR](https://github.com/portpowered/go-icloud/pull/1) is open.
+The [bootstrap CI run](https://github.com/portpowered/go-icloud/actions/runs/37740660821)
+for `b002f65f8e520d687e2b7448208480e560b4ba00` failed before starting any job
+steps. GitHub's check annotation reports an account payment/spending-limit
+restriction; the runner name is empty. This is not a failing code test or passing
+CI evidence. Local checks and independent retests do not substitute for the
+required CI. Account-owner action is needed before retrying; implementation work
+can continue. Do not mark standard 5 satisfied.
 
 ## Reviewer B — final audit pending
 
