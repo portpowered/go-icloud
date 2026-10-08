@@ -6,6 +6,12 @@ from unittest.mock import patch
 
 @contextmanager
 def forbid_network():
+    attempts = []
+
+    def denied(*args, **kwargs):
+        attempts.append(True)
+        raise AssertionError("Network access forbidden during replay")
+
     with ExitStack() as stack:
         for target in [
             "requests.adapters.HTTPAdapter.send",
@@ -16,9 +22,11 @@ def forbid_network():
             stack.enter_context(
                 patch(
                     target,
-                    side_effect=AssertionError(
-                        "Network access forbidden during replay"
-                    ),
+                    side_effect=denied,
                 )
             )
-        yield
+        try:
+            yield
+        finally:
+            if attempts:
+                raise AssertionError("Network access forbidden during replay")

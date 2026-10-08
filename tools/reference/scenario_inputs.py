@@ -1,8 +1,9 @@
 """Portable caller models and explicit synthetic entropy inputs."""
 
+import base64
 import math
 import uuid
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from datetime import datetime
 from unittest.mock import patch
 
@@ -53,6 +54,7 @@ def synthetic_entropy(scenario):
     seconds = entropy["unix_seconds"]
     assert type(seconds) in {int, float} and math.isfinite(seconds)
     used = []
+    random_used = []
 
     def next_uuid():
         assert len(used) < len(samples), "unexpected UUID generation"
@@ -63,11 +65,37 @@ def synthetic_entropy(scenario):
         used.append(value)
         return parsed
 
+    def random_bytes(size):
+        samples = entropy["random_bytes"]
+        assert len(random_used) < len(samples), "unexpected random-byte generation"
+        value = base64.b64decode(samples[len(random_used)], validate=True)
+        assert len(value) == size, "random-byte size mismatch"
+        random_used.append(value)
+        return value
+
     with (
         patch("uuid.uuid4", next_uuid),
         patch("time.time", return_value=seconds),
+        ExitStack() as stack,
     ):
+        if "random_bytes" in entropy:
+            stack.enter_context(patch("os.urandom", random_bytes))
+        position = None
+        if "photos_position_ms" in entropy:
+            assert entropy["photos_position_ms"] == int(seconds * 1000)
+            position = stack.enter_context(
+                patch(
+                    "pyicloud.services.photos_cloudkit.service._new_album_position",
+                    return_value=entropy["photos_position_ms"],
+                )
+            )
         try:
             yield
         finally:
             assert len(used) == len(samples), "unconsumed UUID samples"
+            assert len(random_used) == len(entropy.get("random_bytes", [])), (
+                "unconsumed random-byte samples"
+            )
+            assert position is None or position.call_count == 1, (
+                "album position clock consumption mismatch"
+            )

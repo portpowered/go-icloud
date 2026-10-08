@@ -15,7 +15,8 @@ scenarios.
 The reference runner creates the actual service and session, injects strict
 paired replay below request preparation, and forbids HTTP and socket fallback.
 Every request must match before its response is returned, and every exchange
-must be consumed. Semantic and wire negative controls are part of offline checks.
+must be consumed. Rejected traffic remains a failure even when reference code
+catches the immediate exception. Semantic and wire negative controls are part of offline checks.
 The JSON does not contain Python object snapshots; the Go runner must consume
 these same artifacts when its equivalent operations are implemented.
 
@@ -70,3 +71,23 @@ cached/discovered/missing sync tokens, private/shared zone discovery, incrementa
 zero/one/many updates, deletions, and unavailable shared streams. They do not
 yet cover the full album/asset/upload/shared-stream function matrix.
 Photo change timestamps also have an explicit millisecond-to-UTC semantic case.
+
+The Photos endpoint extension covers album discovery with zero/one/three custom
+albums, nested folders and pagination; asset counts and queries with zero/one/
+three records and a 50-record page followed by one record; existing/missing
+lookups; and empty, binary, unavailable, alternative, medium and Live Photo video
+downloads. Offline mutations cover album/folder creation, rename, deletion and
+membership, plus asset deletion and favorite updates with refresh and conflict.
+Asset projections bind metadata, resource versions and returned record fields.
+
+Creation declares ordered base64 `random_bytes` samples and a
+`photos_position_ms` clock value consistent with `unix_seconds`. Injection replaces
+the reference's byte entropy source and its clock-only album-position helper;
+the actual creation method still prepares the record and performs the request.
+The sample sizes and complete consumption are checked, and factories restored.
+
+The rejected asset-deletion case records a reference defect: a per-record error
+still returns true. It is implementation evidence, not an observed successful
+Apple write. The Go implementation must report the rejection, with that deliberate
+departure explicitly tested rather than silently copied. Uploads and complete
+shared-stream coverage remain open.

@@ -12,7 +12,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 128)
+        self.assertGreaterEqual(len(fixtures), 159)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -75,6 +75,32 @@ class SyntheticTests(unittest.TestCase):
                     original["entropy"]["uuid4"].pop()
                 else:
                     original["entropy"]["unix_seconds"] += 1
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(original))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_photos_caught_unexpected_refresh_fails(self):
+        original = json.loads(
+            (FIXTURES / "photos-favorite-record-error.json").read_text()
+        )
+        with TemporaryDirectory() as directory:
+            original["exchanges"] = original["exchanges"][:4]
+            path = Path(directory) / "scenario.json"
+            path.write_text(json.dumps(original))
+            with self.assertRaisesRegex(AssertionError, "caught by reference"):
+                replay_synthetic(path)
+
+    def test_photo_entropy_and_result_bindings(self):
+        for change in ["random_bytes", "position", "result"]:
+            original = json.loads((FIXTURES / "photos-create-album.json").read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "random_bytes":
+                    original["entropy"]["random_bytes"][0] = "AA=="
+                elif change == "position":
+                    original["entropy"]["photos_position_ms"] += 1
+                else:
+                    original["result"]["name"] = "Wrong name"
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(original))
                 with self.assertRaises(AssertionError):

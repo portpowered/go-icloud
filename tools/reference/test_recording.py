@@ -32,6 +32,23 @@ def prepared(url="https://example.invalid/items?q=one&q=two", **kwargs):
 
 
 class ReplayTests(unittest.TestCase):
+    def test_caught_rejection_cannot_recover_or_pass(self):
+        request = prepared(json={"item": "synthetic"})
+        adapter = ReplayAdapter([pair(request)])
+        with self.assertRaises(AssertionError):
+            adapter.send(prepared(json={"item": "wrong"}))
+        with self.assertRaisesRegex(AssertionError, "already rejected"):
+            adapter.send(request)
+        with self.assertRaisesRegex(AssertionError, "caught by reference"):
+            adapter.assert_consumed()
+        self.assertEqual(adapter.index, 0)
+        adapter = ReplayAdapter([pair(request)])
+        adapter.send(request)
+        with self.assertRaises(AssertionError):
+            adapter.send(request)
+        with self.assertRaisesRegex(AssertionError, "caught by reference"):
+            adapter.assert_consumed()
+
     def test_json_patterns_preserve_known_fields_and_validate_uuid_format(self):
         sample = {
             "id": "00000000-0000-4000-8000-000000000000",

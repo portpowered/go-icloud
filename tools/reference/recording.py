@@ -225,8 +225,18 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         super().__init__()
         self.exchanges = list(exchanges)
         self.index = 0
+        self.failed = False
 
     def send(self, request, **kwargs):
+        if self.failed:
+            raise AssertionError("Replay already rejected HTTP traffic")
+        try:
+            return self._send(request, **kwargs)
+        except AssertionError:
+            self.failed = True
+            raise
+
+    def _send(self, request, **kwargs):
         if self.index == len(self.exchanges):
             raise AssertionError("Unexpected or duplicate HTTP request")
         pair = self.exchanges[self.index]
@@ -277,6 +287,8 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         return response
 
     def assert_consumed(self):
+        if self.failed:
+            raise AssertionError("Rejected HTTP traffic was caught by reference code")
         if self.index != len(self.exchanges):
             raise AssertionError("Unconsumed HTTP exchanges")
 

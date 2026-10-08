@@ -115,6 +115,22 @@ def execute(api, scenario, observations=None):
             ]
         if operation == "shared_streams":
             return list(service.shared_streams)
+        if operation in {
+            "albums_snapshot",
+            "create_album",
+            "album_count",
+            "album_photos",
+            "album_rename",
+            "album_delete",
+            "album_add_photo",
+            "photo_get",
+            "photo_download",
+            "photo_favorite",
+            "photo_delete",
+        }:
+            from photo_scenarios import execute_photos
+
+            return execute_photos(service, scenario)
         value = getattr(service, operation)(
             *scenario["inputs"], **scenario.get("keyword_inputs", {})
         )

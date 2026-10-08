@@ -126,6 +126,26 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim Photos endpoint audit
+
+The independent reviewer passed `make check` with 43 methods and confirmed
+159 HTTP scenarios with 270 paired exchanges. Its extra probes rejected changed
+same-size entropy, surplus random samples, incorrect returned change tags,
+caught extra HTTP traffic after all pairs were consumed, and caught socket
+fallback. Entropy and clock factories restored after success, provider rejection
+and failed probes. The sticky guards close the swallowed-refresh-error bypass
+under LIB-05.
+
+The actual pinned Photos methods construct requests. The injected album-position
+helper contains only a timestamp calculation; portable projections bind metadata
+and record fields. The reviewer verified the documented asset-deletion defect:
+per-record rejection still returns true in the reference. The Go implementation
+must report that rejection through an explicit tested departure.
+
+Verdict: **limited interim pass**. Uploads, complete shared-stream coverage,
+canonical schemas/generated models, Go interoperability and all final acceptance
+criteria remain open.
+
 ### Interim Reminders endpoint audit
 
 The independent reviewer passed the Reminders extension across 128 HTTP

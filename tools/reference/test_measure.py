@@ -42,13 +42,19 @@ class MeasurementTests(unittest.TestCase):
             )
 
     def test_real_socket_connections_are_forbidden(self):
-        with forbid_network(), socket.socket() as connection:
-            with self.assertRaisesRegex(AssertionError, "Network access forbidden"):
-                connection.connect(("127.0.0.1", 1))
-            with self.assertRaises(AssertionError):
-                connection.connect_ex(("127.0.0.1", 1))
-            with self.assertRaises(AssertionError):
-                socket.create_connection(("127.0.0.1", 1))
+        for operation in ["connect", "connect_ex", "create_connection"]:
+            with (
+                self.subTest(operation=operation),
+                self.assertRaisesRegex(AssertionError, "Network access forbidden"),
+            ):
+                with forbid_network(), socket.socket() as connection:
+                    # Even a dependency that catches the immediate exception
+                    # cannot make the surrounding replay context pass.
+                    with self.assertRaises(AssertionError):
+                        if operation == "create_connection":
+                            socket.create_connection(("127.0.0.1", 1))
+                        else:
+                            getattr(connection, operation)(("127.0.0.1", 1))
 
     def test_named_exclusions_are_auditable_and_must_resolve(self):
         class Measurement:
