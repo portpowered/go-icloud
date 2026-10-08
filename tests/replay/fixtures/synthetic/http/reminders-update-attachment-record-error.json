@@ -1,0 +1,113 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "update_attachment",
+  "inputs": [
+    {
+      "$model": "URLAttachment",
+      "value": {
+        "id": "Attachment/synthetic-url",
+        "reminder_id": "Reminder/synthetic-item",
+        "url": "https://example.invalid/old",
+        "record_change_tag": "synthetic-old-tag"
+      }
+    }
+  ],
+  "keyword_inputs": {
+    "url": "https://example.invalid/new",
+    "uti": "public.url"
+  },
+  "observe_arguments": [
+    0
+  ],
+  "entropy": {
+    "uuid4": [],
+    "unix_seconds": 1700000000
+  },
+  "error": {
+    "type": "RemindersApiError",
+    "message": "Update attachment failed for 1 record(s): Reminder/synthetic-item: CONFLICT (synthetic conflict)"
+  },
+  "error_arguments": [
+    {
+      "id": "Attachment/synthetic-url",
+      "reminder_id": "Reminder/synthetic-item",
+      "url": "https://example.invalid/old",
+      "uti": "public.url",
+      "record_change_tag": "synthetic-old-tag"
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/modify",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "562"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJ1cGRhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIkF0dGFjaG1lbnQvc3ludGhldGljLXVybCIsICJyZWNvcmRUeXBlIjogIkF0dGFjaG1lbnQiLCAiZmllbGRzIjogeyJVUkwiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogImh0dHBzOi8vZXhhbXBsZS5pbnZhbGlkL25ldyIsICJpc0VuY3J5cHRlZCI6IHRydWV9LCAiVVRJIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJwdWJsaWMudXJsIn0sICJUeXBlIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJVUkwifSwgIlJlbWluZGVyIjogeyJ0eXBlIjogIlJFRkVSRU5DRSIsICJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSIsICJhY3Rpb24iOiAiVkFMSURBVEUifX19LCAicGx1Z2luRmllbGRzIjoge30sICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLW9sZC10YWcifX1dLCAiem9uZUlEIjogeyJ6b25lTmFtZSI6ICJSZW1pbmRlcnMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9fQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSIsICJzZXJ2ZXJFcnJvckNvZGUiOiAiQ09ORkxJQ1QiLCAicmVhc29uIjogInN5bnRoZXRpYyBjb25mbGljdCJ9XX0="
+        }
+      }
+    }
+  ]
+}

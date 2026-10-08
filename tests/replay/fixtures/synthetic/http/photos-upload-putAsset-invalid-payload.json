@@ -1,0 +1,139 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "photos",
+  "operation": "upload_register",
+  "initial_state": {
+    "origin": "https://photos.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "photos_upload_origin": "https://uploads.example.invalid"
+  },
+  "inputs": [],
+  "keyword_inputs": {
+    "zone_name": "PrimarySync",
+    "files": [],
+    "import_group": "synthetic-import",
+    "local_time_zone_id": "UTC"
+  },
+  "error": {
+    "type": "CloudKitApiError",
+    "message": "Photos putAsset returned an unexpected payload"
+  },
+  "error_payload": 17,
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/private/records/query",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "140"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUifSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUHJpbWFyeVN5bmMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9LCAicmVzdWx0c0xpbWl0IjogMX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyJ9"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://uploads.example.invalid",
+        "path": "/photosupload/putAsset",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "101"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lTmFtZSI6ICJQcmltYXJ5U3luYyIsICJmaWxlcyI6IFtdLCAibG9jYWxUaW1lWm9uZUlkIjogIlVUQyIsICJpbXBvcnRHcm91cCI6ICJzeW50aGV0aWMtaW1wb3J0In0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "MTc="
+        }
+      }
+    }
+  ]
+}

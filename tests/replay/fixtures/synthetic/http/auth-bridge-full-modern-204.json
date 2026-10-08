@@ -1,0 +1,1452 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "auth",
+  "initial_state": {
+    "account_name": "synthetic@example.invalid",
+    "headers": {
+      "Accept": "application/json",
+      "User-Agent": "synthetic-agent"
+    },
+    "params": {
+      "clientId": "synthetic-client"
+    },
+    "session_data": {},
+    "cookies": [],
+    "account_data": {},
+    "auth_data": {},
+    "requires_mfa": false,
+    "synthetic_password": "invented-password"
+  },
+  "inputs": [
+    {
+      "operation": "authenticate"
+    },
+    {
+      "operation": "validate_2fa_code",
+      "inputs": [
+        "123456"
+      ]
+    }
+  ],
+  "operation": "flow",
+  "keyword_inputs": {},
+  "bridge_network": {
+    "private_scalars": [
+      "1"
+    ],
+    "connections": [
+      {
+        "connection": {
+          "url": "wss://bridge.example.invalid/v2/{signed_bootstrap}",
+          "timeout": 30.0,
+          "origin": "https://idmsa.apple.com",
+          "user_agent": "synthetic-agent"
+        },
+        "bootstrap": {
+          "public_key": "BGsX0fLhLEJH+Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWT+NC4v4af5uO5+tKfA+eFivOM1drMV7Oy7ZAaDe/UfU=",
+          "nonce": "AAAAAYvP5WgAAAECAwQFBgc=",
+          "expiration_seconds": 86400
+        },
+        "events": [
+          {
+            "direction": "send",
+            "kind": "upgrade",
+            "lines": [
+              "GET /v2/{signed_bootstrap} HTTP/1.1",
+              "Host: bridge.example.invalid",
+              "Upgrade: websocket",
+              "Connection: Upgrade",
+              "Origin: https://idmsa.apple.com",
+              "User-Agent: synthetic-agent",
+              "Sec-WebSocket-Version: 13"
+            ]
+          },
+          {
+            "direction": "receive",
+            "kind": "upgrade",
+            "template": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {accept}\r\n\r\n"
+          },
+          {
+            "direction": "receive",
+            "kind": "bytes",
+            "data": "ghoKGAoUYzNsdWRHaGxkR2xqTFhSdmEyVnUQAA=="
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 2,
+            "payload": "GhEKD3N5bnRoZXRpYy10b3BpYw=="
+          },
+          {
+            "direction": "receive",
+            "kind": "bytes",
+            "data": "gn4A7xLsAQoU8wgVGtZoAB/XB5OYRYrQjiOu7+sQASLRAXsic2Vzc2lvblVVSUQiOiAiMDAwMDAwMDEtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwLTE3MDAwMDAwMDAiLCAibmV4dFN0ZXAiOiAiMiIsICJ0eG5pZCI6ICJzeW50aGV0aWMtbW9kZXJuIiwgInNhbHQiOiAiQUFFQ0F3UUZCZ2NJQ1FvTERBME9Edz09IiwgImlkbXNkYXRhIjogInN5bnRoZXRpYy1pZG1zIiwgImFrZGF0YSI6IHsic3ludGhldGljIjogdHJ1ZX19"
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 2,
+            "payload": "EhgKFPMIFRrWaAAf1weTmEWK0I4jru/rEAE="
+          },
+          {
+            "direction": "receive",
+            "kind": "bytes",
+            "data": "gn4BrxKsAwoU8wgVGtZoAB/XB5OYRYrQjiOu7+sQASKRA3sic2Vzc2lvblVVSUQiOiAiMDAwMDAwMDEtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwLTE3MDAwMDAwMDAiLCAibmV4dFN0ZXAiOiAiNCIsICJ0eG5pZCI6ICJzeW50aGV0aWMtbW9kZXJuIiwgInNhbHQiOiAiQUFFQ0F3UUZCZ2NJQ1FvTERBME9Edz09IiwgImlkbXNkYXRhIjogInN5bnRoZXRpYy1pZG1zIiwgImFrZGF0YSI6IHsic3ludGhldGljIjogdHJ1ZX0sICJkYXRhIjogIlFsQlVORlkwVUZrNWNWQkVWMFpTUjNCalZuVkhTek5XYzJVNWVqVlhSbEp1VFc1b05HaFZZMHRwYTFKS1dsVkRXbnBzY1RKUVJrZzRaRkZ1SzFRM09VODBOa3hPWnpWdlJYZFJNR2M1WkZOTGFXMXdOQzl6UFY5V1ZtRmFaVk1yVjBaaFFuQmFka1paWkdWallXNW9TbFYyTTFwTk5EWmFOa3QxYm1FdmRIcHpkWGxGUFE9PSJ9"
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 2,
+            "payload": "EhgKFPMIFRrWaAAf1weTmEWK0I4jru/rEAE="
+          },
+          {
+            "direction": "receive",
+            "kind": "bytes",
+            "data": "gn4BNBKxAgoU8wgVGtZoAB/XB5OYRYrQjiOu7+sQASKWAnsic2Vzc2lvblVVSUQiOiAiMDAwMDAwMDEtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwLTE3MDAwMDAwMDAiLCAibmV4dFN0ZXAiOiAiNiIsICJ0eG5pZCI6ICJzeW50aGV0aWMtbW9kZXJuIiwgInNhbHQiOiAiQUFFQ0F3UUZCZ2NJQ1FvTERBME9Edz09IiwgImlkbXNkYXRhIjogInN5bnRoZXRpYy1pZG1zIiwgImFrZGF0YSI6IHsic3ludGhldGljIjogdHJ1ZX0sICJlbmNyeXB0ZWRDb2RlIjogIkFBQUJBZ01FQlFZSENBa0tDN05NTllHMVA3bnhnREorTFNveXdOZDl5SWMrSXE0PSJ9"
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 2,
+            "payload": "EhgKFPMIFRrWaAAf1weTmEWK0I4jru/rEAE="
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 8,
+            "payload": ""
+          },
+          {
+            "direction": "close"
+          }
+        ],
+        "reference_socket_closed": true
+      }
+    ],
+    "timeline": [
+      {
+        "surface": "http",
+        "exchange": 0
+      },
+      {
+        "surface": "http",
+        "exchange": 1
+      },
+      {
+        "surface": "http",
+        "exchange": 2
+      },
+      {
+        "surface": "http",
+        "exchange": 3
+      },
+      {
+        "surface": "http",
+        "exchange": 4
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "connect"
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "wrap"
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "timeout"
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 0
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 1
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 2
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 3
+      },
+      {
+        "surface": "http",
+        "exchange": 5
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 4
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 5
+      },
+      {
+        "surface": "http",
+        "exchange": 6
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 6
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 7
+      },
+      {
+        "surface": "http",
+        "exchange": 7
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 8
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 9
+      },
+      {
+        "surface": "http",
+        "exchange": 8
+      },
+      {
+        "surface": "http",
+        "exchange": 9
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 10
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "close",
+        "event": 11
+      },
+      {
+        "surface": "http",
+        "exchange": 10
+      },
+      {
+        "surface": "http",
+        "exchange": 11
+      }
+    ],
+    "prover_random": [
+      {
+        "upper_hex": "0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551",
+        "value_hex": "0x2"
+      }
+    ]
+  },
+  "entropy": {
+    "uuid4": [
+      "00000001-0000-4000-8000-000000000000"
+    ],
+    "unix_seconds": 1700000000,
+    "random_bytes": [
+      "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==",
+      "AAECAwQFBgc=",
+      "AAECAwQFBgcICQoLDA0ODw==",
+      "AAECAw==",
+      "AAECAw==",
+      "AAECAw==",
+      "AAECAw==",
+      "AAECAw=="
+    ],
+    "auth_wait_trace": [
+      {
+        "kind": "monotonic",
+        "value": 0
+      },
+      {
+        "kind": "monotonic",
+        "value": 1
+      },
+      {
+        "kind": "monotonic",
+        "value": 2
+      },
+      {
+        "kind": "monotonic",
+        "value": 3
+      },
+      {
+        "kind": "monotonic",
+        "value": 4
+      },
+      {
+        "kind": "monotonic",
+        "value": 5
+      },
+      {
+        "kind": "monotonic",
+        "value": 6
+      },
+      {
+        "kind": "monotonic",
+        "value": 7
+      }
+    ]
+  },
+  "result": {
+    "value": [
+      null,
+      true
+    ],
+    "auth_state": {
+      "account": {
+        "dsInfo": {
+          "dsid": "synthetic-dsid",
+          "hsaVersion": 2,
+          "languageCode": "en_US"
+        },
+        "hsaTrustedBrowser": true,
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          }
+        }
+      },
+      "params": {
+        "clientBuildNumber": "2534Project66",
+        "clientMasteringNumber": "2534B22",
+        "clientId": "synthetic-client",
+        "dsid": "synthetic-dsid"
+      },
+      "session_data": {
+        "client_id": "synthetic-client",
+        "account_country": "USA",
+        "session_token": "synthetic-srp-token"
+      },
+      "challenge": {},
+      "requires_mfa": false,
+      "cookies": [
+        {
+          "name": "synthetic-auth-cookie",
+          "value": "synthetic-auth-value",
+          "domain": ".apple.com",
+          "path": "/",
+          "secure": true,
+          "expires": null,
+          "discard": true,
+          "attributes": {
+            "HttpOnly": null
+          }
+        }
+      ],
+      "webservices": {
+        "photos": {
+          "url": "https://photos.example.invalid"
+        },
+        "findme": {
+          "url": "https://findmy.example.invalid"
+        },
+        "drivews": {
+          "url": "https://drive.example.invalid"
+        }
+      },
+      "requires_2fa": false,
+      "requires_2sa": false,
+      "trusted_session": true,
+      "delivery_method": "unknown",
+      "code_requested": false,
+      "session_file_exists": true,
+      "cookie_file_exists": true
+    },
+    "arguments": [
+      {
+        "operation": "authenticate"
+      },
+      {
+        "operation": "validate_2fa_code",
+        "inputs": [
+          "123456"
+        ]
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/authorize/signin",
+        "query": [
+          [
+            "frame_id",
+            "synthetic-client"
+          ],
+          [
+            "skVersion",
+            "7"
+          ],
+          [
+            "iframeid",
+            "synthetic-client"
+          ],
+          [
+            "client_id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "response_type",
+            "code"
+          ],
+          [
+            "redirect_uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "response_mode",
+            "web_message"
+          ],
+          [
+            "state",
+            "synthetic-client"
+          ],
+          [
+            "authVersion",
+            "latest"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/signin/init",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json, text/javascript"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "content-length",
+            "429"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhIjogIlNFYVNlcHgvM3FiWjA4NXlySis3NEN5WHMydTJodWVpcml1QVdUZUdxSzlBQm16Zmg2T1k5Z2pHQ05FMVJpdUtmMmJGNGZkdkgxVkZoQ1RPNXJTYUlkTXp3NXE2R1ZhNS9IbXJWWFRFWm1oNWFUWGFWRXNxeHJmZVh5bTlCM1VkREtLSlRyRjZUamRnN1krZHpVWVByTzVMT3NKNEtmTWl5VFlSWUZITkdYanMzUndPQjNoL0Q2akQyT1N3YUt2WlMxZmlRR2hqNmVESGR4MmtlNlJTVllPYmkzb0gyMVBNaWJQSFFRMVVqS3BmSCtFbHVUOS9QQ09oNmJvYkYwbjkyak44eFNPNy9RWlVucHFLMXFIQ0x5bVFxMnBwVkpvWC83U0U4UUVza3JLR1ZIVGVGUC95bWpHYUxVWlFTcVBMeSt1S0JIMVNwNFRsZXRaMkMwOEtIQT09IiwgImFjY291bnROYW1lIjogInN5bnRoZXRpY0BleGFtcGxlLmludmFsaWQiLCAicHJvdG9jb2xzIjogWyJzMmsiLCAiczJrX2ZvIl19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzYWx0IjogIkFBRUNBd1FGQmdjSUNRb0xEQTBPRHc9PSIsICJiIjogImlkci83R084OTZlY05GQnlzWFJ3UDBiZzhndUE5VUM4UDMzYTUxUTZ1cGh1VXhSVGFjSHp1ZWkzRGVNeWdXN0RSWFI5ZEFyWnphWTQvelVrWnZvMmtXZUsrakk4Mi9VdmRKQkVONTdIcTZWdkpqaTh3SWNUY0NEY0lxNG1pa2Q4N1l3NTB4Rm91T3dPNUk4TnovRkVPRnIwaDhoK1dvSWtVb0VodmxBNUdwRU1oQUlEUEF2QmE2bWxheWdUNmV6ZjVSWjErWkJaYkdMTSs1cno0bHVENnpzYU5NNG5pYW1seTh3R2NCTDdDSE9XL1krdkhOdG1MZFltWlBNaTFKNkNLRnQ5ajFrKzZ5bWVML1NURmE0VEVKd2VwbkZwUVpSN1dOeVpGVldoZ3NwQkFEYnhmWFFQVDdiMFV6VXBDQVptNmhER0VGUGJrMG93a1NFeno5Y25QUT09IiwgImMiOiAic3ludGhldGljLWNoYWxsZW5nZSIsICJpdGVyYXRpb24iOiAxMDAwLCAicHJvdG9jb2wiOiAiczJrIn0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/signin/complete",
+        "query": [
+          [
+            "isRememberMeEnabled",
+            "true"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json, text/javascript"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "content-length",
+            "219"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhY2NvdW50TmFtZSI6ICJzeW50aGV0aWNAZXhhbXBsZS5pbnZhbGlkIiwgImMiOiAic3ludGhldGljLWNoYWxsZW5nZSIsICJtMSI6ICJQQk5OeFducEhJdjFtUTlCeUZHUjVCUnFYTTc5aGYwdUNhdTNvbEwxcS9RPSIsICJtMiI6ICJ4U3owZlEvZlhNUW5acm5OUzg4b0JNU0VHSE90c2ttSEVIbDdGQTFoR0FVPSIsICJyZW1lbWJlck1lIjogdHJ1ZSwgInRydXN0VG9rZW5zIjogW119"
+        }
+      },
+      "response": {
+        "status": 409,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ],
+          [
+            "X-Apple-Session-Token",
+            "synthetic-srp-token"
+          ],
+          [
+            "X-Apple-ID-Account-Country",
+            "USA"
+          ],
+          [
+            "Set-Cookie",
+            "synthetic-auth-cookie=synthetic-auth-value; Domain=.apple.com; Path=/; Secure; HttpOnly"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhdXRoVHlwZSI6ICJoc2EyIn0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "text/html"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhdXRoSW5pdGlhbFJvdXRlIjogImF1dGgvYnJpZGdlL3N0ZXAiLCAiaGFzVHJ1c3RlZERldmljZXMiOiB0cnVlLCAiYXV0aEZhY3RvcnMiOiBbInRydXN0ZWREZXZpY2UiXSwgImJyaWRnZUluaXRpYXRlRGF0YSI6IHsiYXBuc1RvcGljIjogInN5bnRoZXRpYy10b3BpYyIsICJ3ZWJTb2NrZXRVcmwiOiAid3NzOi8vYnJpZGdlLmV4YW1wbGUuaW52YWxpZCJ9LCAic291cmNlQXBwSWQiOiAic3ludGhldGljLWFwcCJ9"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/bridge/step/0",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-app-id",
+            "synthetic-app"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ],
+          [
+            "content-length",
+            "108"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXNzaW9uVVVJRCI6ICIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAtMTcwMDAwMDAwMCIsICJwdGtuIjogIjczNzk2ZTc0Njg2NTc0Njk2MzJkNzQ2ZjZiNjU2ZSJ9"
+        }
+      },
+      "response": {
+        "status": 204,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/bridge/step/2",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-app-id",
+            "synthetic-app"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ],
+          [
+            "content-length",
+            "287"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXNzaW9uVVVJRCI6ICIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAtMTcwMDAwMDAwMCIsICJkYXRhIjogIkJDejVXSXEzbEROV1I4aEVyQXUxU0YwRC93MzZUSGZzYXNRZUI3OEMySklHd2gwaVJUQldncVVScnNBeXcvR2tNQkJsNzBuVW5DWDlrejlVdFdRNkl3TT0iLCAicHRrbiI6ICI3Mzc5NmU3NDY4NjU3NDY5NjMyZDc0NmY2YjY1NmUiLCAibmV4dFN0ZXAiOiAyLCAiaWRtc2RhdGEiOiAic3ludGhldGljLWlkbXMiLCAiYWtkYXRhIjogIntcInN5bnRoZXRpY1wiOnRydWV9In0="
+        }
+      },
+      "response": {
+        "status": 204,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/bridge/step/4",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-app-id",
+            "synthetic-app"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ],
+          [
+            "content-length",
+            "243"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXNzaW9uVVVJRCI6ICIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAtMTcwMDAwMDAwMCIsICJkYXRhIjogIkpsK2NMRVBOekRXTDdtRThuL2NabzhwWXQvSmtCU01KRVBKcjRqaXJPODg9IiwgInB0a24iOiAiNzM3OTZlNzQ2ODY1NzQ2OTYzMmQ3NDZmNmI2NTZlIiwgIm5leHRTdGVwIjogNCwgImlkbXNkYXRhIjogInN5bnRoZXRpYy1pZG1zIiwgImFrZGF0YSI6ICJ7XCJzeW50aGV0aWNcIjp0cnVlfSJ9"
+        }
+      },
+      "response": {
+        "status": 204,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/bridge/code/validate",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-app-id",
+            "synthetic-app"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ],
+          [
+            "content-length",
+            "84"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXNzaW9uVVVJRCI6ICIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAtMTcwMDAwMDAwMCIsICJjb2RlIjogIjY1NDMyMSJ9"
+        }
+      },
+      "response": {
+        "status": 204,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/bridge/step/6",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-app-id",
+            "synthetic-app"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ],
+          [
+            "content-length",
+            "207"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXNzaW9uVVVJRCI6ICIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAtMTcwMDAwMDAwMCIsICJkYXRhIjogIlpHOXVaUT09IiwgInB0a24iOiAiNzM3OTZlNzQ2ODY1NzQ2OTYzMmQ3NDZmNmI2NTZlIiwgIm5leHRTdGVwIjogNiwgImlkbXNkYXRhIjogInN5bnRoZXRpYy1pZG1zIiwgImFrZGF0YSI6ICJ7XCJzeW50aGV0aWNcIjp0cnVlfSJ9"
+        }
+      },
+      "response": {
+        "status": 204,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/2sv/trust",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json, text/javascript"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://setup.icloud.com",
+        "path": "/setup/ws/1/accountLogin",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-length",
+            "112"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhY2NvdW50Q291bnRyeUNvZGUiOiAiVVNBIiwgImRzV2ViQXV0aFRva2VuIjogInN5bnRoZXRpYy1zcnAtdG9rZW4iLCAiZXh0ZW5kZWRfbG9naW4iOiB0cnVlLCAidHJ1c3RUb2tlbiI6ICIifQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn19fQ=="
+        }
+      }
+    }
+  ]
+}

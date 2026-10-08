@@ -1,0 +1,153 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "delete_attachment",
+  "inputs": [
+    {
+      "$model": "Reminder",
+      "value": {
+        "id": "Reminder/synthetic-item",
+        "list_id": "List/synthetic-list",
+        "title": "Synthetic title",
+        "desc": "Synthetic notes",
+        "record_change_tag": "synthetic-old-tag",
+        "attachment_ids": [
+          "synthetic-url",
+          "keep-url"
+        ]
+      }
+    },
+    {
+      "$model": "URLAttachment",
+      "value": {
+        "id": "Attachment/synthetic-url",
+        "reminder_id": "Reminder/synthetic-item",
+        "url": "https://example.invalid/old",
+        "record_change_tag": "synthetic-old-tag"
+      }
+    }
+  ],
+  "observe_arguments": [
+    0,
+    1
+  ],
+  "entropy": {
+    "uuid4": [
+      "00000001-0000-4000-8000-000000000000",
+      "00000002-0000-4000-8000-000000000000"
+    ],
+    "unix_seconds": 1700000000
+  },
+  "error": {
+    "type": "RemindersApiError",
+    "message": "Delete attachment failed for 1 record(s): Reminder/synthetic-item: CONFLICT (synthetic conflict)"
+  },
+  "error_arguments": [
+    {
+      "id": "Reminder/synthetic-item",
+      "list_id": "List/synthetic-list",
+      "title": "Synthetic title",
+      "desc": "Synthetic notes",
+      "completed": false,
+      "completed_date": null,
+      "due_date": null,
+      "start_date": null,
+      "priority": 0,
+      "flagged": false,
+      "all_day": false,
+      "deleted": false,
+      "time_zone": null,
+      "alarm_ids": [],
+      "hashtag_ids": [],
+      "attachment_ids": [
+        "synthetic-url",
+        "keep-url"
+      ],
+      "recurrence_rule_ids": [],
+      "parent_reminder_id": null,
+      "created": null,
+      "modified": null,
+      "record_change_tag": "synthetic-old-tag"
+    },
+    {
+      "id": "Attachment/synthetic-url",
+      "reminder_id": "Reminder/synthetic-item",
+      "url": "https://example.invalid/old",
+      "uti": "public.url",
+      "record_change_tag": "synthetic-old-tag"
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/modify",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "1063"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJ1cGRhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy1pdGVtIiwgInJlY29yZFR5cGUiOiAiUmVtaW5kZXIiLCAiZmllbGRzIjogeyJBdHRhY2htZW50SURzIjogeyJ0eXBlIjogIlNUUklOR19MSVNUIiwgInZhbHVlIjogWyJrZWVwLXVybCJdfSwgIlJlc29sdXRpb25Ub2tlbk1hcCI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAie1wibWFwXCI6e1wiYXR0YWNobWVudElEc1wiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn0sXCJsYXN0TW9kaWZpZWREYXRlXCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDAyLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifX19In0sICJMYXN0TW9kaWZpZWREYXRlIjogeyJ0eXBlIjogIlRJTUVTVEFNUCIsICJ2YWx1ZSI6IDE3MDAwMDAwMDAwMDB9fSwgInBsdWdpbkZpZWxkcyI6IHt9LCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy1vbGQtdGFnIn19LCB7Im9wZXJhdGlvblR5cGUiOiAidXBkYXRlIiwgInJlY29yZCI6IHsicmVjb3JkTmFtZSI6ICJBdHRhY2htZW50L3N5bnRoZXRpYy11cmwiLCAicmVjb3JkVHlwZSI6ICJBdHRhY2htZW50IiwgImZpZWxkcyI6IHsiRGVsZXRlZCI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDF9LCAiUmVtaW5kZXIiOiB7InR5cGUiOiAiUkVGRVJFTkNFIiwgInZhbHVlIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy1pdGVtIiwgImFjdGlvbiI6ICJWQUxJREFURSJ9fX0sICJwbHVnaW5GaWVsZHMiOiB7fSwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtb2xkLXRhZyJ9fV0sICJ6b25lSUQiOiB7InpvbmVOYW1lIjogIlJlbWluZGVycyIsICJ6b25lVHlwZSI6ICJSRUdVTEFSX0NVU1RPTV9aT05FIn0sICJhdG9taWMiOiB0cnVlfQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSIsICJzZXJ2ZXJFcnJvckNvZGUiOiAiQ09ORkxJQ1QiLCAicmVhc29uIjogInN5bnRoZXRpYyBjb25mbGljdCJ9XX0="
+        }
+      }
+    }
+  ]
+}

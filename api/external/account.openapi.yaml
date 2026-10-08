@@ -1,0 +1,337 @@
+openapi: 3.0.3
+info:
+  title: iCloud account wire API
+  version: 0.1.0
+  description: Account devices, family, storage and subscription requests used by the selected client operations.
+servers:
+  - url: https://setup.icloud.com
+    description: Account setup service; authenticated discovery may select a different origin.
+  - url: https://gatewayws.icloud.com
+    description: Global subscription gateway.
+  - url: https://gatewayws.icloud.com.cn
+    description: Mainland China subscription gateway.
+paths:
+  /setup/web/device/getDevices:
+    get:
+      operationId: ListAccountDevices
+      summary: List devices associated with an account
+      description: Returns account device metadata and associated payment-method metadata.
+      parameters:
+        - {$ref: '#/components/parameters/ClientID'}
+        - {$ref: '#/components/parameters/DSID'}
+        - {$ref: '#/components/parameters/ClientBuildNumber'}
+        - {$ref: '#/components/parameters/ClientMasteringNumber'}
+        - {$ref: '#/components/parameters/Accept'}
+        - {$ref: '#/components/parameters/Cookie'}
+        - {$ref: '#/components/parameters/Origin'}
+        - {$ref: '#/components/parameters/Referer'}
+        - {$ref: '#/components/parameters/UserAgent'}
+        - {$ref: '#/components/parameters/AcceptEncoding'}
+        - {$ref: '#/components/parameters/Connection'}
+      responses:
+        '200':
+          description: Associated account devices; an empty array is a successful result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountDevicesResponse'}
+              example: {devices: [{name: synthetic-device, modelDisplayName: Synthetic Model}]}
+        default: {$ref: '#/components/responses/AccountFailure'}
+  /setup/web/family/getFamilyDetails:
+    get:
+      operationId: ListAccountFamily
+      summary: List family members
+      description: Returns family member metadata; an omitted familyMembers field is treated as an empty list by the reference.
+      parameters:
+        - {$ref: '#/components/parameters/ClientID'}
+        - {$ref: '#/components/parameters/DSID'}
+        - {$ref: '#/components/parameters/ClientBuildNumber'}
+        - {$ref: '#/components/parameters/ClientMasteringNumber'}
+        - {$ref: '#/components/parameters/Accept'}
+        - {$ref: '#/components/parameters/Cookie'}
+        - {$ref: '#/components/parameters/Origin'}
+        - {$ref: '#/components/parameters/Referer'}
+        - {$ref: '#/components/parameters/UserAgent'}
+        - {$ref: '#/components/parameters/AcceptEncoding'}
+        - {$ref: '#/components/parameters/Connection'}
+      responses:
+        '200':
+          description: Family members and extensible account metadata.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountFamilyResponse'}
+              example: {familyMembers: [{fullName: Synthetic member, dsid: synthetic-member}]}
+        default: {$ref: '#/components/responses/AccountFailure'}
+  /setup/web/family/getMemberPhoto:
+    get:
+      operationId: GetFamilyMemberPhoto
+      summary: Download a family member photo
+      description: Returns exact content bytes, including an empty successful body, for the selected member identifier.
+      parameters:
+        - {$ref: '#/components/parameters/ClientID'}
+        - {$ref: '#/components/parameters/DSID'}
+        - {$ref: '#/components/parameters/ClientBuildNumber'}
+        - {$ref: '#/components/parameters/ClientMasteringNumber'}
+        - {$ref: '#/components/parameters/Accept'}
+        - {$ref: '#/components/parameters/Cookie'}
+        - {$ref: '#/components/parameters/Origin'}
+        - {$ref: '#/components/parameters/Referer'}
+        - {$ref: '#/components/parameters/UserAgent'}
+        - {$ref: '#/components/parameters/AcceptEncoding'}
+        - {$ref: '#/components/parameters/Connection'}
+        - name: memberId
+          in: query
+          required: true
+          description: Member DSID from the family response.
+          schema: {type: string, minLength: 1}
+      responses:
+        '200':
+          description: Member photo content; preserve returned media type and headers.
+          content:
+            '*/*':
+              schema: {type: string, format: binary}
+              example: ''
+        default: {$ref: '#/components/responses/AccountFailure'}
+  /setup/ws/1/storageUsageInfo:
+    post:
+      operationId: GetAccountStorage
+      summary: Read storage usage and quota information
+      description: Sends an empty entity and returns account usage, quota flags and media usage entries. Byte counts are nonnegative.
+      parameters:
+        - {$ref: '#/components/parameters/ClientID'}
+        - {$ref: '#/components/parameters/DSID'}
+        - {$ref: '#/components/parameters/ClientBuildNumber'}
+        - {$ref: '#/components/parameters/ClientMasteringNumber'}
+        - {$ref: '#/components/parameters/Accept'}
+        - {$ref: '#/components/parameters/Cookie'}
+        - {$ref: '#/components/parameters/Origin'}
+        - {$ref: '#/components/parameters/Referer'}
+        - {$ref: '#/components/parameters/UserAgent'}
+        - {$ref: '#/components/parameters/AcceptEncoding'}
+        - {$ref: '#/components/parameters/Connection'}
+      responses:
+        '200':
+          description: Storage usage envelope; media and quota metadata may be omitted.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountStorageResponse'}
+              example: {storageUsageInfo: {usedStorageInBytes: 15, totalStorageInBytes: 100}}
+        default: {$ref: '#/components/responses/AccountFailure'}
+  /acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary:
+    get:
+      operationId: GetAccountPlanSummary
+      summary: Read the account subscription summary
+      description: Uses the global or mainland China gateway. The reference preserves the JSON value without interpreting plan-specific fields.
+      parameters:
+        - name: dsid
+          in: path
+          required: true
+          description: Authenticated account identifier.
+          schema: {type: string, minLength: 1}
+        - {$ref: '#/components/parameters/ClientID'}
+        - {$ref: '#/components/parameters/DSID'}
+        - {$ref: '#/components/parameters/ClientBuildNumber'}
+        - {$ref: '#/components/parameters/ClientMasteringNumber'}
+        - {$ref: '#/components/parameters/Accept'}
+        - {$ref: '#/components/parameters/Cookie'}
+        - {$ref: '#/components/parameters/Origin'}
+        - {$ref: '#/components/parameters/Referer'}
+        - {$ref: '#/components/parameters/UserAgent'}
+        - {$ref: '#/components/parameters/AcceptEncoding'}
+        - {$ref: '#/components/parameters/Connection'}
+      responses:
+        '200':
+          description: Subscription JSON; the selected reference provides no concrete plan field contract.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountPlanSummary'}
+              example: {}
+        default: {$ref: '#/components/responses/AccountFailure'}
+components:
+  parameters:
+    ClientID:
+      name: clientId
+      in: query
+      required: true
+      description: Caller-owned client identifier reused by the authenticated account session.
+      schema: {type: string, minLength: 1}
+    DSID:
+      name: dsid
+      in: query
+      required: true
+      description: Authenticated account identifier supplied explicitly by the caller.
+      schema: {type: string, minLength: 1}
+    ClientBuildNumber:
+      name: clientBuildNumber
+      in: query
+      description: Build identifier from the caller-owned authentication session.
+      schema: {type: string, minLength: 1, default: 2534Project66}
+    ClientMasteringNumber:
+      name: clientMasteringNumber
+      in: query
+      description: Mastering identifier from the caller-owned authentication session.
+      schema: {type: string, minLength: 1, default: 2534B22}
+    Origin:
+      name: Origin
+      in: header
+      description: Origin header from the caller-owned web authentication context.
+      schema: {type: string}
+    Referer:
+      name: Referer
+      in: header
+      description: Referer header from the caller-owned web authentication context.
+      schema: {type: string}
+    UserAgent:
+      name: User-Agent
+      in: header
+      description: Caller-selected HTTP agent identification.
+      schema: {type: string}
+    AcceptEncoding:
+      name: Accept-Encoding
+      in: header
+      description: HTTP content-coding negotiation supplied by the caller or its transport.
+      schema: {type: string}
+    Connection:
+      name: Connection
+      in: header
+      description: HTTP connection policy header supplied by the caller or its transport.
+      schema: {type: string}
+    Accept:
+      name: Accept
+      in: header
+      required: true
+      description: Account service JSON negotiation; member-photo responses may contain binary content.
+      schema: {type: string, enum: [application/json, '*/*'], default: '*/*'}
+    Cookie:
+      name: Cookie
+      in: header
+      description: Serialized cookies from the caller-owned authenticated session.
+      schema: {type: string}
+  responses:
+    AccountFailure:
+      description: Provider failure; retain status, headers and raw body even when the body is not JSON.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/AccountError'}
+          example: {reason: synthetic failure}
+  schemas:
+    UnknownJSONValue:
+      description: Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+      x-go-type: json.RawMessage
+    NullableJSONValue:
+      description: An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+      nullable: true
+      x-go-type: json.RawMessage
+    AccountPlanSummary:
+      description: Opaque subscription JSON returned unchanged; plan-specific fields have not been observed or defined by the reference.
+      x-go-type: json.RawMessage
+    AccountDevicesResponse:
+      type: object
+      required: [devices]
+      properties:
+        devices:
+          type: array
+          items: {$ref: '#/components/schemas/AccountDevice'}
+        paymentMethods:
+          type: array
+          items: {$ref: '#/components/schemas/AccountPaymentMethod'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountDevice:
+      type: object
+      description: Known device metadata fields are optional; future provider fields are preserved.
+      properties:
+        name: {type: string}
+        modelDisplayName: {type: string}
+        model: {type: string}
+        osVersion: {type: string}
+        udid: {type: string}
+        serialNumber: {type: string}
+        imei: {type: string}
+        latestBackup: {type: string, description: Provider backup timestamp text; no timestamp format is inferred.}
+        modelLargePhotoURL1x: {type: string}
+        modelLargePhotoURL2x: {type: string}
+        modelSmallPhotoURL1x: {type: string}
+        modelSmallPhotoURL2x: {type: string}
+        paymentMethods: {type: array, items: {type: string}, description: Associated payment-method identifiers.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountPaymentMethod:
+      type: object
+      properties:
+        balanceStatus: {type: string}
+        id: {type: string}
+        isCarKey: {type: boolean}
+        lastFourDigits: {type: string}
+        suspensionReason: {type: string}
+        type: {type: string}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountFamilyResponse:
+      type: object
+      properties:
+        familyMembers:
+          type: array
+          items: {$ref: '#/components/schemas/AccountFamilyMember'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountFamilyMember:
+      type: object
+      properties:
+        lastName: {type: string, nullable: true}
+        dsid: {type: string, nullable: true}
+        originalInvitationEmail: {type: string, nullable: true}
+        fullName: {type: string, nullable: true}
+        appleIdForPurchases: {type: string, nullable: true}
+        appleId: {type: string, nullable: true}
+        firstName: {type: string, nullable: true}
+        ageClassification: {$ref: '#/components/schemas/NullableJSONValue'}
+        familyId: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasParentalPrivileges: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasScreenTimeEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasAskToBuyEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasSharePurchasesEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        shareMyLocationEnabledFamilyMembers: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasShareMyLocationEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        dsidForPurchases: {$ref: '#/components/schemas/NullableJSONValue'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountStorageResponse:
+      type: object
+      required: [storageUsageInfo]
+      properties:
+        storageUsageInfo: {$ref: '#/components/schemas/AccountStorageUsage'}
+        quotaStatus: {$ref: '#/components/schemas/AccountQuota'}
+        storageUsageByMedia:
+          type: array
+          items: {$ref: '#/components/schemas/AccountMediaUsage'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountStorageUsage:
+      type: object
+      required: [usedStorageInBytes, totalStorageInBytes]
+      properties:
+        usedStorageInBytes: {type: integer, format: int64, minimum: 0, description: Used storage in bytes.}
+        totalStorageInBytes: {type: integer, format: int64, minimum: 0, description: Total storage in bytes; used storage may exceed quota.}
+        compStorageInBytes: {type: integer, format: int64, minimum: 0, description: Provider comp storage in bytes.}
+        commerceStorageInBytes: {type: integer, format: int64, minimum: 0, description: Provider commerce storage in bytes.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountQuota:
+      type: object
+      properties:
+        overQuota: {type: boolean}
+        haveMaxQuotaTier: {type: boolean}
+        almost-full: {type: boolean}
+        paidQuota: {type: boolean}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountMediaUsage:
+      type: object
+      required: [mediaKey]
+      properties:
+        mediaKey: {type: string}
+        displayLabel: {type: string}
+        displayColor: {type: string, description: Provider display color text; no encoding is inferred.}
+        usageInBytes: {type: integer, format: int64, minimum: 0, description: Storage used by this media category in bytes.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    AccountError:
+      type: object
+      properties:
+        reason: {type: string}
+        errorMessage: {type: string}
+        errorReason: {type: string}
+        error: {$ref: '#/components/schemas/NullableJSONValue'}
+        errorCode: {$ref: '#/components/schemas/NullableJSONValue'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}

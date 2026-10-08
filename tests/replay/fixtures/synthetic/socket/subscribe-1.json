@@ -1,0 +1,60 @@
+{
+  "format": "portos.socket-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "operation": "subscribe-1",
+  "connection": {
+    "url": "wss://bridge.example.invalid/v2/synthetic?channel=1",
+    "timeout": 5,
+    "origin": "https://www.icloud.com",
+    "user_agent": "synthetic-agent"
+  },
+  "events": [
+    {
+      "direction": "send",
+      "kind": "upgrade",
+      "lines": [
+        "GET /v2/synthetic?channel=1 HTTP/1.1",
+        "Host: bridge.example.invalid",
+        "Upgrade: websocket",
+        "Connection: Upgrade",
+        "Origin: https://www.icloud.com",
+        "User-Agent: synthetic-agent",
+        "Sec-WebSocket-Version: 13"
+      ]
+    },
+    {
+      "direction": "receive",
+      "kind": "upgrade",
+      "template": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {accept}\r\n\r\n"
+    },
+    {
+      "direction": "send",
+      "kind": "frame",
+      "opcode": 2,
+      "payload": "GhEKD3N5bnRoZXRpYy50b3BpYw=="
+    },
+    {
+      "direction": "send",
+      "kind": "frame",
+      "opcode": 8,
+      "payload": ""
+    },
+    {
+      "direction": "close"
+    }
+  ],
+  "actions": [
+    {
+      "operation": "subscribe",
+      "topics": [
+        "synthetic.topic"
+      ]
+    }
+  ],
+  "results": [],
+  "reference_socket_closed": true
+}

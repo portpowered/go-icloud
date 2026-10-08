@@ -1,0 +1,118 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "update_recurrence_rule",
+  "inputs": [
+    {
+      "$model": "RecurrenceRule",
+      "value": {
+        "id": "RecurrenceRule/synthetic-rule",
+        "reminder_id": "Reminder/synthetic-item",
+        "frequency": 1,
+        "interval": 1,
+        "record_change_tag": "synthetic-old-tag"
+      }
+    }
+  ],
+  "keyword_inputs": {
+    "frequency": 3,
+    "interval": 2,
+    "occurrence_count": 4,
+    "first_day_of_week": 2
+  },
+  "observe_arguments": [
+    0
+  ],
+  "entropy": {
+    "uuid4": [],
+    "unix_seconds": 1700000000
+  },
+  "error": {
+    "type": "RemindersApiError",
+    "message": "Update recurrence rule failed for 1 record(s): Reminder/synthetic-item: CONFLICT (synthetic conflict)"
+  },
+  "error_arguments": [
+    {
+      "id": "RecurrenceRule/synthetic-rule",
+      "reminder_id": "Reminder/synthetic-item",
+      "frequency": 1,
+      "interval": 1,
+      "occurrence_count": 0,
+      "first_day_of_week": 0,
+      "record_change_tag": "synthetic-old-tag"
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/modify",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "578"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJ1cGRhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIlJlY3VycmVuY2VSdWxlL3N5bnRoZXRpYy1ydWxlIiwgInJlY29yZFR5cGUiOiAiUmVjdXJyZW5jZVJ1bGUiLCAiZmllbGRzIjogeyJGcmVxdWVuY3kiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAzfSwgIkludGVydmFsIjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMn0sICJPY2N1cnJlbmNlQ291bnQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiA0fSwgIkZpcnN0RGF5T2ZUaGVXZWVrIjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMn0sICJSZW1pbmRlciI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiUmVtaW5kZXIvc3ludGhldGljLWl0ZW0iLCAiYWN0aW9uIjogIlZBTElEQVRFIn19fSwgInBsdWdpbkZpZWxkcyI6IHt9LCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy1vbGQtdGFnIn19XSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSIsICJzZXJ2ZXJFcnJvckNvZGUiOiAiQ09ORkxJQ1QiLCAicmVhc29uIjogInN5bnRoZXRpYyBjb25mbGljdCJ9XX0="
+        }
+      }
+    }
+  ]
+}

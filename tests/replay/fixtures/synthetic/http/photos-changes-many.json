@@ -1,0 +1,161 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "photos",
+  "operation": "iter_changes",
+  "initial_state": {
+    "origin": "https://photos.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/private/records/query",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "140"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUifSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUHJpbWFyeVN5bmMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9LCAicmVzdWx0c0xpbWl0IjogMX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XX0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/private/changes/zone",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "135"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUHJpbWFyeVN5bmMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9LCAic3luY1Rva2VuIjogInN5bnRoZXRpYy1vbGQiLCAicmV2ZXJzZSI6IGZhbHNlfV19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUHJpbWFyeVN5bmMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9LCAic3luY1Rva2VuIjogInN5bnRoZXRpYy1uZXciLCAibW9yZUNvbWluZyI6IGZhbHNlLCAicmVjb3JkcyI6IFt7InJlY29yZE5hbWUiOiAic3ludGhldGljLWFzc2V0LTAiLCAicmVjb3JkVHlwZSI6ICJDUExBc3NldCIsICJmaWVsZHMiOiB7fX0sIHsicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtYXNzZXQtMSIsICJyZWNvcmRUeXBlIjogIkNQTEFzc2V0IiwgImZpZWxkcyI6IHt9fSwgeyJyZWNvcmROYW1lIjogInN5bnRoZXRpYy1hc3NldC0yIiwgInJlY29yZFR5cGUiOiAiQ1BMQXNzZXQiLCAiZmllbGRzIjoge319XX1dfQ=="
+        }
+      }
+    }
+  ],
+  "keyword_inputs": {
+    "since": "synthetic-old"
+  },
+  "result": [
+    {
+      "kind": "updated",
+      "record_name": "synthetic-asset-0",
+      "record_type": "CPLAsset",
+      "deleted": false,
+      "modified": null
+    },
+    {
+      "kind": "updated",
+      "record_name": "synthetic-asset-1",
+      "record_type": "CPLAsset",
+      "deleted": false,
+      "modified": null
+    },
+    {
+      "kind": "updated",
+      "record_name": "synthetic-asset-2",
+      "record_type": "CPLAsset",
+      "deleted": false,
+      "modified": null
+    }
+  ]
+}

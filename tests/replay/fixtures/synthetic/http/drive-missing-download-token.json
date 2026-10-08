@@ -70,5 +70,20 @@
   "error": {
     "type": "KeyError",
     "message": "\"'data_token' nor 'package_token'\""
+  },
+  "error_arguments": [
+    "synthetic-document"
+  ],
+  "error_drive_state": {
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "file_position": null
+  },
+  "error_context": {
+    "reason": null,
+    "code": null,
+    "response": null
   }
 }

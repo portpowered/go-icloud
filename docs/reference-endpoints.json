@@ -1,0 +1,1589 @@
+{
+  "format": "portos.reference-wire-inventory.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "state": "draft; not a complete endpoint/provenance gate",
+  "scope": [
+    "auth",
+    "account",
+    "drive",
+    "findmy",
+    "photos",
+    "reminders"
+  ],
+  "entries": [
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/validate",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._validate_token",
+          "line": 806
+        }
+      ],
+      "known_payload_variants": [
+        "null-token-validation"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/accountLogin",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._authenticate_with_token",
+          "line": 739
+        },
+        {
+          "name": "PyiCloudService._authenticate_with_credentials_service",
+          "line": 785
+        }
+      ],
+      "known_payload_variants": [
+        "token-session-exchange"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/logout",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService.logout",
+          "line": 545
+        }
+      ],
+      "known_payload_variants": [
+        "browser-logout"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "GET",
+      "path": "/setup/ws/1/getTerms",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._handle_accept_terms",
+          "line": 435
+        }
+      ],
+      "known_payload_variants": [
+        "terms-fetch"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "GET",
+      "path": "/setup/ws/1/repairDone",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._handle_accept_terms",
+          "line": 435
+        }
+      ],
+      "known_payload_variants": [
+        "terms-acceptance"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "GET",
+      "path": "/setup/ws/1/listDevices",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService.trusted_devices",
+          "line": 884
+        }
+      ],
+      "known_payload_variants": [
+        "trusted-device-list"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/sendVerificationCode",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService.send_verification_code",
+          "line": 891
+        }
+      ],
+      "known_payload_variants": [
+        "legacy-verification-send"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/validateVerificationCode",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService.validate_verification_code",
+          "line": 900
+        }
+      ],
+      "known_payload_variants": [
+        "legacy-code-validation"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/requestWebAccessState",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._check_pcs_consent",
+          "line": 1221
+        }
+      ],
+      "known_payload_variants": [
+        "access-state"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/requestPCS",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._send_pcs_request",
+          "line": 1230
+        }
+      ],
+      "known_payload_variants": [
+        "PCS-service-consent"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/enableDeviceConsentForPCS",
+      "authority_source": "configured setup endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._request_pcs_for_service",
+          "line": 1248
+        }
+      ],
+      "known_payload_variants": [
+        "device-consent"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "GET",
+      "path": "/appleauth/auth",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._get_mfa_auth_options",
+          "line": 921
+        }
+      ],
+      "known_payload_variants": [
+        "HTML-boot-args",
+        "JSON-WebAuthn-options"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "GET",
+      "path": "/appleauth/auth/authorize/signin",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._srp_authentication",
+          "line": 605
+        }
+      ],
+      "known_payload_variants": [
+        "OAuth-session"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/appleauth/auth/signin/init",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._srp_authentication",
+          "line": 605
+        }
+      ],
+      "known_payload_variants": [
+        "SRP-init"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/appleauth/auth/signin/complete",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._srp_authentication",
+          "line": 605
+        }
+      ],
+      "known_payload_variants": [
+        "SRP-proof"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "PUT",
+      "path": "/appleauth/auth/verify/phone",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._request_sms_2fa_code",
+          "line": 1025
+        }
+      ],
+      "known_payload_variants": [
+        "SMS-challenge"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/appleauth/auth/verify/security/key",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._submit_webauthn_assertion_response",
+          "line": 1077
+        }
+      ],
+      "known_payload_variants": [
+        "WebAuthn-assertion"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/appleauth/auth/verify/trusteddevice/securitycode",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService.validate_2fa_code",
+          "line": 1299
+        }
+      ],
+      "known_payload_variants": [
+        "trusted-device-code"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/appleauth/auth/verify/phone/securitycode",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService._validate_sms_code",
+          "line": 1379
+        }
+      ],
+      "known_payload_variants": [
+        "SMS-code"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "GET",
+      "path": "/appleauth/auth/2sv/trust",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "base.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudService.trust_session",
+          "line": 1400
+        }
+      ],
+      "known_payload_variants": [
+        "browser-trust"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/appleauth/auth/bridge/step/{step}",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "hsa2_bridge.py",
+      "source_functions": [
+        {
+          "name": "TrustedDeviceBridgeBootstrapper._post_bridge_step",
+          "line": 1634
+        }
+      ],
+      "known_payload_variants": [
+        "encrypted-bridge-payload"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "http",
+      "method": "POST",
+      "path": "/appleauth/auth/bridge/code/validate",
+      "authority_source": "configured idmsa endpoint",
+      "source_file": "hsa2_bridge.py",
+      "source_functions": [
+        {
+          "name": "TrustedDeviceBridgeBootstrapper._post_bridge_code_validate",
+          "line": 1700
+        }
+      ],
+      "known_payload_variants": [
+        "encrypted-bridge-payload"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "account",
+      "transport": "http",
+      "method": "GET",
+      "path": "/setup/web/device/getDevices",
+      "authority_source": "account webservice or gatewayws.icloud.com[.cn]",
+      "source_file": "services/account.py",
+      "source_functions": [
+        {
+          "name": "AccountService.devices",
+          "line": 54
+        }
+      ],
+      "known_payload_variants": [
+        "account-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "account",
+      "transport": "http",
+      "method": "GET",
+      "path": "/setup/web/family/getFamilyDetails",
+      "authority_source": "account webservice or gatewayws.icloud.com[.cn]",
+      "source_file": "services/account.py",
+      "source_functions": [
+        {
+          "name": "AccountService.family",
+          "line": 66
+        }
+      ],
+      "known_payload_variants": [
+        "account-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "account",
+      "transport": "http",
+      "method": "GET",
+      "path": "/setup/web/family/getMemberPhoto",
+      "authority_source": "account webservice or gatewayws.icloud.com[.cn]",
+      "source_file": "services/account.py",
+      "source_functions": [
+        {
+          "name": "FamilyMember.get_photo",
+          "line": 224
+        }
+      ],
+      "known_payload_variants": [
+        "account-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "account",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/storageUsageInfo",
+      "authority_source": "account webservice or gatewayws.icloud.com[.cn]",
+      "source_file": "services/account.py",
+      "source_functions": [
+        {
+          "name": "AccountService.storage",
+          "line": 87
+        }
+      ],
+      "known_payload_variants": [
+        "account-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "account",
+      "transport": "http",
+      "method": "GET",
+      "path": "/acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary",
+      "authority_source": "account webservice or gatewayws.icloud.com[.cn]",
+      "source_file": "services/account.py",
+      "source_functions": [
+        {
+          "name": "AccountService.summary_plan",
+          "line": 98
+        }
+      ],
+      "known_payload_variants": [
+        "account-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/retrieveItemDetailsInFolders",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.get_node_data",
+          "line": 56
+        }
+      ],
+      "known_payload_variants": [
+        "folder-details",
+        "shared-folder-details"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "GET",
+      "path": "/retrieveAppLibraries",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.get_app_data",
+          "line": 96
+        }
+      ],
+      "known_payload_variants": [
+        "app-libraries"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/createFolders",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.create_folders",
+          "line": 211
+        }
+      ],
+      "known_payload_variants": [
+        "folder-create"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/deleteItems",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.delete_items",
+          "line": 232
+        },
+        {
+          "name": "DriveService.delete_forever_from_trash",
+          "line": 334
+        }
+      ],
+      "known_payload_variants": [
+        "delete",
+        "permanent-delete"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/renameItems",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.rename_items",
+          "line": 250
+        }
+      ],
+      "known_payload_variants": [
+        "rename"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/moveItems",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.move_nodes_to_node",
+          "line": 268
+        }
+      ],
+      "known_payload_variants": [
+        "move"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/moveItemsToTrash",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.move_items_to_trash",
+          "line": 296
+        }
+      ],
+      "known_payload_variants": [
+        "trash"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/putBackItemsFromTrash",
+      "authority_source": "drivews webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.recover_items_from_trash",
+          "line": 317
+        }
+      ],
+      "known_payload_variants": [
+        "restore"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "GET",
+      "path": "/ws/{zone}/download/by_id",
+      "authority_source": "docws webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.get_file",
+          "line": 76
+        }
+      ],
+      "known_payload_variants": [
+        "data-token",
+        "package-token"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/ws/{zone}/upload/web",
+      "authority_source": "docws webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService._get_upload_contentws_url",
+          "line": 105
+        }
+      ],
+      "known_payload_variants": [
+        "upload-reservation"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "/ws/{zone}/update/documents",
+      "authority_source": "docws webservice",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService._update_contentws",
+          "line": 139
+        }
+      ],
+      "known_payload_variants": [
+        "zero-size-file",
+        "file-with-receipt"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "GET",
+      "path": "{provider-returned-url}",
+      "authority_source": "provider data_token/package_token URL",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.get_file",
+          "line": 76
+        }
+      ],
+      "known_payload_variants": [
+        "binary-download"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "drive",
+      "transport": "http",
+      "method": "POST",
+      "path": "{provider-returned-url}",
+      "authority_source": "provider upload URL",
+      "source_file": "services/drive.py",
+      "source_functions": [
+        {
+          "name": "DriveService.send_file",
+          "line": 185
+        }
+      ],
+      "known_payload_variants": [
+        "multipart-file"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "findmy",
+      "transport": "http",
+      "method": "POST",
+      "path": "/fmipservice/client/web/initClient",
+      "authority_source": "findme webservice",
+      "source_file": "services/findmyiphone.py",
+      "source_functions": [
+        {
+          "name": "FindMyiPhoneServiceManager._refresh_client",
+          "line": 178
+        }
+      ],
+      "known_payload_variants": [
+        "initClient"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "findmy",
+      "transport": "http",
+      "method": "POST",
+      "path": "/fmipservice/client/web/refreshClient",
+      "authority_source": "findme webservice",
+      "source_file": "services/findmyiphone.py",
+      "source_functions": [
+        {
+          "name": "FindMyiPhoneServiceManager._refresh_client",
+          "line": 178
+        }
+      ],
+      "known_payload_variants": [
+        "refreshClient"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "findmy",
+      "transport": "http",
+      "method": "POST",
+      "path": "/fmipservice/client/web/playSound",
+      "authority_source": "findme webservice",
+      "source_file": "services/findmyiphone.py",
+      "source_functions": [
+        {
+          "name": "AppleDevice.play_sound",
+          "line": 350
+        }
+      ],
+      "known_payload_variants": [
+        "playSound"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "findmy",
+      "transport": "http",
+      "method": "POST",
+      "path": "/fmipservice/client/web/sendMessage",
+      "authority_source": "findme webservice",
+      "source_file": "services/findmyiphone.py",
+      "source_functions": [
+        {
+          "name": "AppleDevice.display_message",
+          "line": 365
+        }
+      ],
+      "known_payload_variants": [
+        "sendMessage"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "findmy",
+      "transport": "http",
+      "method": "POST",
+      "path": "/fmipservice/client/web/lostDevice",
+      "authority_source": "findme webservice",
+      "source_file": "services/findmyiphone.py",
+      "source_functions": [
+        {
+          "name": "AppleDevice.lost_device",
+          "line": 394
+        }
+      ],
+      "known_payload_variants": [
+        "lostDevice"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "findmy",
+      "transport": "http",
+      "method": "POST",
+      "path": "/fmipservice/client/web/remoteWipeWithUserAuth",
+      "authority_source": "findme webservice",
+      "source_file": "services/findmyiphone.py",
+      "source_functions": [
+        {
+          "name": "AppleDevice.erase_device",
+          "line": 434
+        }
+      ],
+      "known_payload_variants": [
+        "remoteWipeWithUserAuth"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "findmy",
+      "transport": "http",
+      "method": "POST",
+      "path": "/setup/ws/1/fmipWebAuthenticate",
+      "authority_source": "setup endpoint",
+      "source_file": "services/findmyiphone.py",
+      "source_functions": [
+        {
+          "name": "AppleDevice._get_erase_token",
+          "line": 423
+        }
+      ],
+      "known_payload_variants": [
+        "erase-token-exchange"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/private/records/query",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.query",
+          "line": 321
+        },
+        {
+          "name": "CloudKitContainerClient.query_sync_token",
+          "line": 488
+        }
+      ],
+      "known_payload_variants": [
+        "named-record-queries",
+        "continuation",
+        "sync-token"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/private/records/lookup",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.lookup",
+          "line": 353
+        }
+      ],
+      "known_payload_variants": [
+        "record-lookup"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/private/records/modify",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.modify",
+          "line": 424
+        }
+      ],
+      "known_payload_variants": [
+        "create",
+        "update",
+        "delete",
+        "force-update",
+        "force-delete"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/private/changes/zone",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.changes",
+          "line": 404
+        },
+        {
+          "name": "CloudKitContainerClient.iter_changes",
+          "line": 375
+        }
+      ],
+      "known_payload_variants": [
+        "snapshot",
+        "incremental",
+        "continuation"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/private/zones/list",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.zones_list",
+          "line": 446
+        }
+      ],
+      "known_payload_variants": [
+        "zone-discovery"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/private/changes/database",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.database_changes",
+          "line": 457
+        }
+      ],
+      "known_payload_variants": [
+        "database-sync"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/records/query",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.query",
+          "line": 321
+        },
+        {
+          "name": "CloudKitContainerClient.query_sync_token",
+          "line": 488
+        }
+      ],
+      "known_payload_variants": [
+        "named-record-queries",
+        "continuation",
+        "sync-token"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/records/lookup",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.lookup",
+          "line": 353
+        }
+      ],
+      "known_payload_variants": [
+        "record-lookup"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/records/modify",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.modify",
+          "line": 424
+        }
+      ],
+      "known_payload_variants": [
+        "create",
+        "update",
+        "delete",
+        "force-update",
+        "force-delete"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/changes/zone",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.changes",
+          "line": 404
+        },
+        {
+          "name": "CloudKitContainerClient.iter_changes",
+          "line": 375
+        }
+      ],
+      "known_payload_variants": [
+        "snapshot",
+        "incremental",
+        "continuation"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/zones/list",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.zones_list",
+          "line": 446
+        }
+      ],
+      "known_payload_variants": [
+        "zone-discovery"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/changes/database",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.database_changes",
+          "line": 457
+        }
+      ],
+      "known_payload_variants": [
+        "database-sync"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "GET",
+      "path": "{provider-returned-url}",
+      "authority_source": "provider asset URL",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "_CloudKitHTTP.get_bytes",
+          "line": 197
+        },
+        {
+          "name": "_CloudKitHTTP.get_stream",
+          "line": 231
+        }
+      ],
+      "known_payload_variants": [
+        "binary-asset",
+        "streaming-asset"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "reminders",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.reminders/production/private/records/query",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.query",
+          "line": 321
+        },
+        {
+          "name": "CloudKitContainerClient.query_sync_token",
+          "line": 488
+        }
+      ],
+      "known_payload_variants": [
+        "named-record-queries",
+        "continuation",
+        "sync-token"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "reminders",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.reminders/production/private/records/lookup",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.lookup",
+          "line": 353
+        }
+      ],
+      "known_payload_variants": [
+        "record-lookup"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "reminders",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.reminders/production/private/records/modify",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.modify",
+          "line": 424
+        }
+      ],
+      "known_payload_variants": [
+        "create",
+        "update",
+        "delete",
+        "force-update",
+        "force-delete"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "reminders",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.reminders/production/private/changes/zone",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.changes",
+          "line": 404
+        },
+        {
+          "name": "CloudKitContainerClient.iter_changes",
+          "line": 375
+        }
+      ],
+      "known_payload_variants": [
+        "snapshot",
+        "incremental",
+        "continuation"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "reminders",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.reminders/production/private/zones/list",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "CloudKitContainerClient.zones_list",
+          "line": 446
+        }
+      ],
+      "known_payload_variants": [
+        "zone-discovery"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "reminders",
+      "transport": "http",
+      "method": "GET",
+      "path": "{provider-returned-url}",
+      "authority_source": "provider asset URL",
+      "source_file": "common/cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "_CloudKitHTTP.get_bytes",
+          "line": 197
+        },
+        {
+          "name": "_CloudKitHTTP.get_stream",
+          "line": 231
+        }
+      ],
+      "known_payload_variants": [
+        "binary-asset",
+        "streaming-asset"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/private/internal/records/query/batch",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "services/photos_cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "PhotosCloudKitClient.batch_count",
+          "line": 133
+        }
+      ],
+      "known_payload_variants": [
+        "HyperionIndexCountLookup"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/database/1/com.apple.photos.cloud/production/shared/internal/records/query/batch",
+      "authority_source": "ckdatabasews webservice",
+      "source_file": "services/photos_cloudkit/client.py",
+      "source_functions": [
+        {
+          "name": "PhotosCloudKitClient.batch_count",
+          "line": 133
+        }
+      ],
+      "known_payload_variants": [
+        "shared-library-batch-count"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/photosupload/createUploadUrl",
+      "authority_source": "photosupload webservice",
+      "source_file": "services/photos_cloudkit/upload.py",
+      "source_functions": [
+        {
+          "name": "PhotosUploader.create_upload_url",
+          "line": 127
+        }
+      ],
+      "known_payload_variants": [
+        "reservation"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/photosupload/putAsset",
+      "authority_source": "photosupload webservice",
+      "source_file": "services/photos_cloudkit/upload.py",
+      "source_functions": [
+        {
+          "name": "PhotosUploader.put_asset",
+          "line": 175
+        }
+      ],
+      "known_payload_variants": [
+        "asset-registration",
+        "duplicate"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/photosupload/uploadStatus",
+      "authority_source": "photosupload webservice",
+      "source_file": "services/photos_cloudkit/upload.py",
+      "source_functions": [
+        {
+          "name": "PhotosUploader.upload_status",
+          "line": 208
+        }
+      ],
+      "known_payload_variants": [
+        "job-status"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "{provider-returned-url}",
+      "authority_source": "provider reserved upload URL",
+      "source_file": "services/photos_cloudkit/upload.py",
+      "source_functions": [
+        {
+          "name": "PhotosUploader.send_bytes",
+          "line": 150
+        }
+      ],
+      "known_payload_variants": [
+        "raw-file-upload"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "/{dsid}/sharedstreams/webgetalbumslist",
+      "authority_source": "sharedstreams webservice or provider album location",
+      "source_file": "services/photos_legacy.py",
+      "source_functions": [
+        {
+          "name": "PhotoStreamLibrary._get_albums",
+          "line": 647
+        }
+      ],
+      "known_payload_variants": [
+        "shared-stream-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "{album-location}/webgetassets",
+      "authority_source": "sharedstreams webservice or provider album location",
+      "source_file": "services/photos_legacy.py",
+      "source_functions": [
+        {
+          "name": "SharedPhotoStreamAlbum._get_url",
+          "line": 1621
+        }
+      ],
+      "known_payload_variants": [
+        "shared-stream-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "photos",
+      "transport": "http",
+      "method": "POST",
+      "path": "{album-location}/webgetassetcount",
+      "authority_source": "sharedstreams webservice or provider album location",
+      "source_file": "services/photos_legacy.py",
+      "source_functions": [
+        {
+          "name": "SharedPhotoStreamAlbum._get_len",
+          "line": 1624
+        }
+      ],
+      "known_payload_variants": [
+        "shared-stream-read"
+      ],
+      "schema_binding": "pending",
+      "scenario_matrix": "pending"
+    },
+    {
+      "service": "auth",
+      "transport": "tls-websocket",
+      "method": "GET upgrade then bidirectional frames",
+      "path": "/v2/{connection_path}",
+      "authority_source": "bridge boot-args websocket host",
+      "source_file": "hsa2_bridge.py",
+      "source_functions": [
+        {
+          "name": "_RawWebSocketClient._open",
+          "line": 879
+        },
+        {
+          "name": "_RawWebSocketClient._send_frame",
+          "line": 966
+        },
+        {
+          "name": "_RawWebSocketClient.read_message",
+          "line": 991
+        }
+      ],
+      "known_payload_variants": [
+        "HTTP upgrade",
+        "masked WebSocket binary",
+        "push notification",
+        "prover",
+        "ping/pong",
+        "close"
+      ],
+      "schema_binding": "pending external protocol and pinned protobuf audit",
+      "scenario_matrix": "pending"
+    }
+  ],
+  "remaining_audit": [
+    "Resolve every actual send callsite and method/path/authority transformation against these source definitions; definition presence is not wire provenance proof.",
+    "Audit indirect callbacks, socket aliases, TLS/framing and active dependency network calls.",
+    "Audit Photos shared-stream and upload variants and any library-owned nested payloads.",
+    "Audit legacy private Photos reachability before exclusion; legacy functions remain in the coverage denominator.",
+    "The configured pricing URL in AccountService has no sending operation; inventory its constant/model owner before public API sign-off.",
+    "Bind all entries and known payload variants to canonical schemas and generated models; no binding is implemented yet.",
+    "Require complete success/empty/one/many/pagination/error/transport/lifecycle matrices per applicable operation."
+  ],
+  "dormant_definitions": [
+    {
+      "endpoint": {
+        "service": "reminders",
+        "transport": "http",
+        "method": "POST",
+        "path": "/database/1/com.apple.reminders/production/private/changes/database",
+        "authority_source": "ckdatabasews webservice",
+        "source_file": "common/cloudkit/client.py",
+        "source_functions": [
+          {
+            "name": "CloudKitContainerClient.database_changes",
+            "line": 457
+          }
+        ],
+        "known_payload_variants": [
+          "database-sync"
+        ],
+        "schema_binding": "pending",
+        "scenario_matrix": "pending"
+      },
+      "reason": "The Reminders service and adapter neither expose nor call database_changes. The generic container helper is invoked only by PhotosCloudKitClient.database_changes in the pinned tree. The Reminders CLI reaches zones_list separately; it does not use database_changes. This is a dormant dependency capability, not an active Reminders endpoint.",
+      "source_audit": [
+        "services/reminders/__init__.py public exports",
+        "services/reminders/service.py high-level operations and adapter ownership",
+        "services/reminders/client.py adapter methods",
+        "tools/reference/icloud.py reminder-zones selection",
+        "common/cloudkit/client.py CloudKitContainerClient.database_changes",
+        "services/photos_cloudkit/client.py PhotosCloudKitClient.database_changes"
+      ],
+      "reactivation": "Any introduced Reminders database-change operation must restore its active endpoint entry, schemas and replay matrix before shipping."
+    }
+  ]
+}

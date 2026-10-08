@@ -1,0 +1,226 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "drive",
+  "operation": "send_file",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "cookies": [
+      {
+        "name": "X-APPLE-WEBAUTH-VALIDATE",
+        "value": "t=synthetic-upload:other=synthetic",
+        "domain": ".example.invalid",
+        "path": "/"
+      }
+    ]
+  },
+  "inputs": [
+    "FOLDER::synthetic::root",
+    {
+      "name": "synthetic.unspecified-extension",
+      "body": "AHN5bnRoZXRpYyB1cGxvYWT/"
+    },
+    "synthetic.zone"
+  ],
+  "keyword_inputs": {
+    "mtime": 1690000000,
+    "ctime": 1680000000
+  },
+  "entropy": {
+    "uuid4": [],
+    "unix_seconds": 1700000000
+  },
+  "observe_transfer": true,
+  "result": {
+    "value": null,
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account",
+      "token": "synthetic-upload"
+    },
+    "file_position": 18
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://documents.example.invalid",
+        "path": "/ws/synthetic.zone/upload/web",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "token",
+            "synthetic-upload"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-VALIDATE=t=synthetic-upload:other=synthetic"
+          ],
+          [
+            "content-length",
+            "95"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJmaWxlbmFtZSI6ICJzeW50aGV0aWMudW5zcGVjaWZpZWQtZXh0ZW5zaW9uIiwgInR5cGUiOiAiRklMRSIsICJjb250ZW50X3R5cGUiOiAiIiwgInNpemUiOiAxOH0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "W3siZG9jdW1lbnRfaWQiOiAic3ludGhldGljLWRvY3VtZW50IiwgInVybCI6ICJodHRwczovL2NvbnRlbnQuZXhhbXBsZS5pbnZhbGlkL3N5bnRoZXRpYy11cGxvYWQifV0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://content.example.invalid",
+        "path": "/synthetic-upload",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-VALIDATE=t=synthetic-upload:other=synthetic"
+          ],
+          [
+            "content-length",
+            "212"
+          ],
+          [
+            "content-type",
+            "multipart/form-data; boundary=97d16d994f146fb2762daaf33a365c13"
+          ]
+        ],
+        "body": {
+          "encoding": "multipart",
+          "content_type_pattern": "multipart/form-data; boundary=[0-9a-f]{32}",
+          "parts": [
+            {
+              "headers": [
+                [
+                  "content-disposition",
+                  "form-data; name=\"synthetic.unspecified-extension\"; filename=\"synthetic.unspecified-extension\""
+                ]
+              ],
+              "body": {
+                "encoding": "base64",
+                "value": "AHN5bnRoZXRpYyB1cGxvYWT/"
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzaW5nbGVGaWxlIjogeyJmaWxlQ2hlY2tzdW0iOiAic3ludGhldGljLWNoZWNrc3VtIiwgIndyYXBwaW5nS2V5IjogInN5bnRoZXRpYy13cmFwIiwgInJlZmVyZW5jZUNoZWNrc3VtIjogInN5bnRoZXRpYy1yZWZlcmVuY2UiLCAic2l6ZSI6IDE4LCAicmVjZWlwdCI6ICJzeW50aGV0aWMtcmVjZWlwdCJ9fQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://documents.example.invalid",
+        "path": "/ws/synthetic.zone/update/documents",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "token",
+            "synthetic-upload"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-VALIDATE=t=synthetic-upload:other=synthetic"
+          ],
+          [
+            "content-length",
+            "513"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkYXRhIjogeyJzaWduYXR1cmUiOiAic3ludGhldGljLWNoZWNrc3VtIiwgIndyYXBwaW5nX2tleSI6ICJzeW50aGV0aWMtd3JhcCIsICJyZWZlcmVuY2Vfc2lnbmF0dXJlIjogInN5bnRoZXRpYy1yZWZlcmVuY2UiLCAic2l6ZSI6IDE4LCAicmVjZWlwdCI6ICJzeW50aGV0aWMtcmVjZWlwdCJ9LCAiY29tbWFuZCI6ICJhZGRfZmlsZSIsICJjcmVhdGVfc2hvcnRfZ3VpZCI6IHRydWUsICJkb2N1bWVudF9pZCI6ICJzeW50aGV0aWMtZG9jdW1lbnQiLCAicGF0aCI6IHsic3RhcnRpbmdfZG9jdW1lbnRfaWQiOiAiRk9MREVSOjpzeW50aGV0aWM6OnJvb3QiLCAicGF0aCI6ICJzeW50aGV0aWMudW5zcGVjaWZpZWQtZXh0ZW5zaW9uIn0sICJhbGxvd19jb25mbGljdCI6IHRydWUsICJmaWxlX2ZsYWdzIjogeyJpc193cml0YWJsZSI6IHRydWUsICJpc19leGVjdXRhYmxlIjogZmFsc2UsICJpc19oaWRkZW4iOiBmYWxzZX0sICJtdGltZSI6IDE2OTAwMDAwMDAwMDAsICJidGltZSI6IDE2ODAwMDAwMDAwMDB9"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkb2N1bWVudHMiOiBbeyJkb2N1bWVudF9pZCI6ICJzeW50aGV0aWMtZG9jdW1lbnQiLCAic3RhdHVzIjogIk9LIn1dfQ=="
+        }
+      }
+    }
+  ]
+}

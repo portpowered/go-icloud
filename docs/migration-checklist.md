@@ -58,6 +58,103 @@ See [independent review](independent-review.md) for findings and verification.
 
 ## Current coverage baseline
 
+The owner clarified that endpoint behavior for the selected five services and
+required authentication is the priority. Further generic malformed-input and
+unrelated utility tests are deferred. The coverage scope now excludes ten named
+functions: five excluded service facades, four reference-CLI password/keyring
+helpers, and the calendar-only case-conversion helper. Each exclusion resolves
+against the pinned source and is listed with its definition line; unknown or
+duplicate exclusions fail. Authentication's keyring lookup and shared helpers
+used by selected endpoints remain included. The remaining scope is conservative
+diagnostic coverage, not proof that every included utility needs endpoint replay.
+
+The Go [HTTP occurrence audit](reference-endpoint-coverage.md) maps the portable
+suite to 74/75 draft HTTP routes with no unmatched exchanges. Physical security-key
+verification is the sole missing occurrence and is deferred; strict mode fails
+on that gap. Diagnostic mode runs
+in CI. Occurrences do not replace functional matrices, actual send provenance,
+schema/model bindings or separate socket acceptance.
+
+The first [Go paired transport](../tests/replay/README.md) now consumes exact-body
+portable exchanges through `http.RoundTripper`, including sticky mismatches,
+ordered queries, framing, repeated response headers and body ownership. This is
+verification infrastructure, not an SDK operation port. Explicit JSON pattern
+and credential-redaction rules now instantiate all 16 portable declarations;
+negative controls reject changed fixed fields, string formats, code types and
+ambiguous paths. Multipart rules now bind ordered headers/bytes, filenames and
+strict boundary framing. All 413 scenarios/949 exchanges instantiate and seven
+upload pairs match Go's writer. These are matcher checks, not SDK semantic parity.
+Socket/auth timelines, scenario projections and the Go client
+remain open. No Python semantic replay is counted as passing Go SDK replay.
+
+The portable HTTP suite now has 413 scenarios and 949 paired exchanges after
+adding selected authentication setup, verification, consent, logout and SRP
+sign-in behavior. SRP cases run both password protocols with declared client
+entropy and exact proof matching; they also exercise refusal, trust-token reuse,
+paused MFA token login and SMS challenge setup. Thirty combined bridge cases
+contain 116 HTTP pairs and 297 socket events, with shared consumed timelines,
+actual bootstrap signing/framing and modern SPAKE2/AES-GCM verification, nonce
+retry, prompt setup, SMS fallback and legacy code verification. Three cases
+exercise complete SRP-to-bridge login, including modern rejection without trust
+or account setup. Physical security-key interaction is deferred; live socket
+evidence, Go interoperability and final SDK/release gates remain open.
+Authentication socket replay adds 53 synthetic ordered duplex scenarios
+(283 events), separate from combined bridge transcripts. Combined replay now
+enters 574/905 functions and executes 3,188/5,385 body statements (59.20%) and
+968/2,076 branch exits. These measurements
+remain diagnostic; they are not a complete endpoint acceptance gate.
+Drive now has 59 scenarios and 89 pairs, including navigation/cache/refresh,
+node-backed endpoints, empty downloads, offset uploads and provider refusal at
+each transfer stage. Errors bind file position, token parameters, node state and
+exposed response context. Its pinned date parser mishandles negative offsets
+with nonzero minutes; the Go implementation must correct RFC 3339 conversion.
+These cases are synthetic reference behavior, not observed Apple writes.
+Find My has 30 scenarios and 55 pairs after adding explicit refresh, family
+readiness/progress/retry bounds and provider refusal at command/token stages.
+Declared waits are consumed offline; received device/user/server state and
+exposed errors are bound. A source monitor-replacement race is documented for
+Go correction. Partial refreshes retain cached devices rather than infer removal
+without provider deletion evidence. Local checks pass 65 offline test methods.
+The latest 40 scenarios add 145 pairs for private/shared Photos container changes,
+shared lookup/library behavior and Reminders zones, including provider refusal
+and provider payload errors. Photos exceptions bind optional photo and album
+resources. Source inspection excludes dormant Reminders database changes and
+includes the active shared batch-count route. Shared favorites use the private
+mutation client before a shared refresh in the pinned reference; Go must preserve
+the selected container and zone. These are synthetic cases, not observed writes.
+The preceding Find My milestone entered 572/905 functions and covered
+3,165/5,385 statements (58.77%) and 959/2,076 branch exits.
+The preceding Drive milestone entered 569/905 functions and covered
+3,145/5,385 statements (58.40%) and 949/2,076 branch exits.
+The preceding complete-login milestone entered 547/905 functions and covered
+3,079/5,385 statements (57.18%) and 917/2,076 branch exits.
+The preceding combined-bootstrap milestone entered 506/905 functions and
+covered 2,842/5,385 statements (52.78%) and 851/2,076 branch exits.
+The preceding SRP milestone entered 488/905 functions and covered
+2,718/5,385 statements (50.47%) and 822/2,076 branch exits.
+The preceding authentication session milestone entered 481/905 functions and
+covered 2,615/5,385 statements (48.56%) and 794/2,076 branch exits.
+The preceding hydration/account milestone entered 445/905 functions and covered
+2,320/5,385 statements (43.08%) and 697/2,076 branch exits.
+The preceding upload/shared-stream milestone entered 433/905 functions and
+covered 2,249/5,385 statements (41.76%) and 670/2,076 branch exits.
+The preceding Photos album/asset milestone entered 376/905 functions and covered
+1,995/5,385 statements (37.05%) and 597/2,076 branch exits.
+The preceding Reminders milestone entered 331/905 functions and covered
+1,792/5,385 statements (33.28%) and 519/2,076 branch exits.
+The earlier bridge-message suite entered 252/905 functions and covered
+1,290/5,385 statements (23.96%).
+Before the scope correction, the same replay covered 1,290/5,436 statements
+(23.73%); the scope correction removed 51 unrelated statements, not missing
+endpoint cases.
+The socket cases execute the actual pinned raw client at an injected plaintext
+TCP/TLS boundary;
+they exercise push-token, subscription, acknowledgment and push decoding, but
+do not establish full bridge login or complete protobuf/cryptographic coverage.
+Failed-upgrade cases show no explicit socket-close call; Go must close on failure.
+See the [socket transcript contract](../tests/replay/fixtures/synthetic/socket/README.md).
+Historical measurements below are retained as progress receipts.
+
 The reference coverage command uses pinned coverage.py with statement/branch
 measurement, per-scenario contexts, and an AST inventory of function bodies.
 It does not count a function definition being imported as a function call.
@@ -78,7 +175,23 @@ and 95 exchanges; this receipt is not the functional coverage denominator.
 
 The first portable synthetic suite adds 23 scenarios and 23 paired exchanges
 for Drive and account, with service constructors and semantic error checks.
-Combined replay currently enters 176/915 functions and executes 804/5,436
+At that initial milestone, combined replay entered 176/915 functions and executed 804/5,436
 function-body statements (14.79%). The report also gives captured and synthetic
 coverage separately; overlapping statements are counted once in combined
 coverage. This remains an early baseline, far from functional completeness.
+
+Subsequent Find My and Reminders cases bring the portable suite to 45 scenarios
+and 53 paired exchanges. Combined coverage enters 202/915 functions and executes
+909/5,436 function-body statements (16.72%), with 231/2,094 branch exits covered.
+Offline checks include 24 test methods and assert monitor cleanup and error
+meaning. The independent interim review covers the earlier committed 23 cases;
+later additions still need review.
+
+The subsequent portable suite reached 65 scenarios and 90 exchanges after adding Drive
+transfers and Photos initialization/synchronization. Combined replay enters
+221/915 functions and executes 1,005/5,436 body statements (18.49%) and 267/2,094
+branch exits. There are 29 offline test methods, including UUID and multipart
+negative controls. The draft [wire inventory](reference-endpoints.json) lists
+76 HTTP/socket boundaries with resolved pinned source definitions. It still
+requires actual send-site/route/payload/dependency audit and schema bindings;
+it is not a complete endpoint gate or proof of endpoint coverage.

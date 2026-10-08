@@ -1,0 +1,138 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "create_url_attachment",
+  "inputs": [
+    {
+      "$model": "Reminder",
+      "value": {
+        "id": "Reminder/synthetic-item",
+        "list_id": "List/synthetic-list",
+        "title": "Synthetic title",
+        "desc": "Synthetic notes",
+        "record_change_tag": "synthetic-old-tag"
+      }
+    },
+    "https://example.invalid/new"
+  ],
+  "observe_arguments": [
+    0
+  ],
+  "entropy": {
+    "uuid4": [
+      "00000001-0000-4000-8000-000000000000",
+      "00000002-0000-4000-8000-000000000000",
+      "00000003-0000-4000-8000-000000000000"
+    ],
+    "unix_seconds": 1700000000
+  },
+  "result": {
+    "value": {
+      "id": "Attachment/00000001-0000-4000-8000-000000000000",
+      "reminder_id": "Reminder/synthetic-item",
+      "url": "https://example.invalid/new",
+      "uti": "public.url",
+      "record_change_tag": "synthetic-new-tag"
+    },
+    "arguments": [
+      {
+        "id": "Reminder/synthetic-item",
+        "list_id": "List/synthetic-list",
+        "title": "Synthetic title",
+        "desc": "Synthetic notes",
+        "completed": false,
+        "completed_date": null,
+        "due_date": null,
+        "start_date": null,
+        "priority": 0,
+        "flagged": false,
+        "all_day": false,
+        "deleted": false,
+        "time_zone": null,
+        "alarm_ids": [],
+        "hashtag_ids": [],
+        "attachment_ids": [
+          "00000001-0000-4000-8000-000000000000"
+        ],
+        "recurrence_rule_ids": [],
+        "parent_reminder_id": null,
+        "created": null,
+        "modified": null,
+        "record_change_tag": "synthetic-new-tag"
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/modify",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "1352"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJ1cGRhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy1pdGVtIiwgInJlY29yZFR5cGUiOiAiUmVtaW5kZXIiLCAiZmllbGRzIjogeyJBdHRhY2htZW50SURzIjogeyJ0eXBlIjogIlNUUklOR19MSVNUIiwgInZhbHVlIjogWyIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAiXX0sICJSZXNvbHV0aW9uVG9rZW5NYXAiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIntcIm1hcFwiOntcImF0dGFjaG1lbnRJRHNcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDItMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwibGFzdE1vZGlmaWVkRGF0ZVwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwMy0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn19fSJ9LCAiTGFzdE1vZGlmaWVkRGF0ZSI6IHsidHlwZSI6ICJUSU1FU1RBTVAiLCAidmFsdWUiOiAxNzAwMDAwMDAwMDAwfX0sICJwbHVnaW5GaWVsZHMiOiB7fSwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtb2xkLXRhZyJ9fSwgeyJvcGVyYXRpb25UeXBlIjogImNyZWF0ZSIsICJyZWNvcmQiOiB7InJlY29yZE5hbWUiOiAiQXR0YWNobWVudC8wMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAiLCAicmVjb3JkVHlwZSI6ICJBdHRhY2htZW50IiwgImZpZWxkcyI6IHsiVHlwZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiVVJMIn0sICJSZW1pbmRlciI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiUmVtaW5kZXIvc3ludGhldGljLWl0ZW0iLCAiYWN0aW9uIjogIlZBTElEQVRFIn19LCAiVVJMIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJodHRwczovL2V4YW1wbGUuaW52YWxpZC9uZXciLCAiaXNFbmNyeXB0ZWQiOiB0cnVlfSwgIlVUSSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAicHVibGljLnVybCJ9LCAiSW1wb3J0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAwfSwgIkRlbGV0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAwfX0sICJwbHVnaW5GaWVsZHMiOiB7fSwgInBhcmVudCI6IHsicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSJ9fX1dLCAiem9uZUlEIjogeyJ6b25lTmFtZSI6ICJSZW1pbmRlcnMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9LCAiYXRvbWljIjogdHJ1ZX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSIsICJyZWNvcmRUeXBlIjogIlJlbWluZGVyIiwgImZpZWxkcyI6IHt9LCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy1uZXctdGFnIn0sIHsicmVjb3JkTmFtZSI6ICJBdHRhY2htZW50LzAwMDAwMDAxLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMCIsICJyZWNvcmRUeXBlIjogIkF0dGFjaG1lbnQiLCAiZmllbGRzIjoge30sICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLW5ldy10YWcifV19"
+        }
+      }
+    }
+  ]
+}

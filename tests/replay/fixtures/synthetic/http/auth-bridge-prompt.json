@@ -1,0 +1,453 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "auth",
+  "initial_state": {
+    "account_name": "synthetic@example.invalid",
+    "headers": {
+      "Accept": "application/json",
+      "User-Agent": "synthetic-agent"
+    },
+    "params": {
+      "clientId": "synthetic-client"
+    },
+    "session_data": {
+      "session_token": "synthetic-token",
+      "trust_token": "synthetic-trust",
+      "account_country": "USA"
+    },
+    "cookies": [
+      {
+        "name": "X-APPLE-WEBAUTH-TOKEN",
+        "value": "synthetic-cookie",
+        "domain": ".icloud.com",
+        "path": "/"
+      }
+    ],
+    "account_data": {
+      "dsInfo": {
+        "dsid": "synthetic-dsid",
+        "hsaVersion": 2,
+        "languageCode": "en_US"
+      },
+      "hsaTrustedBrowser": false,
+      "webservices": {
+        "photos": {
+          "url": "https://photos.example.invalid"
+        },
+        "findme": {
+          "url": "https://findmy.example.invalid"
+        },
+        "drivews": {
+          "url": "https://drive.example.invalid"
+        }
+      },
+      "hsaChallengeRequired": true
+    },
+    "auth_data": {
+      "authInitialRoute": "auth/bridge/step",
+      "hasTrustedDevices": true,
+      "authFactors": [
+        "trustedDevice"
+      ],
+      "bridgeInitiateData": {
+        "apnsTopic": "synthetic-topic",
+        "webSocketUrl": "wss://bridge.example.invalid"
+      },
+      "sourceAppId": "synthetic-app"
+    },
+    "requires_mfa": true
+  },
+  "inputs": [],
+  "operation": "request_2fa_code",
+  "keyword_inputs": {},
+  "bridge_network": {
+    "private_scalars": [
+      "1"
+    ],
+    "connections": [
+      {
+        "connection": {
+          "url": "wss://bridge.example.invalid/v2/{signed_bootstrap}",
+          "timeout": 30.0,
+          "origin": "https://idmsa.apple.com",
+          "user_agent": "synthetic-agent"
+        },
+        "bootstrap": {
+          "public_key": "BGsX0fLhLEJH+Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWT+NC4v4af5uO5+tKfA+eFivOM1drMV7Oy7ZAaDe/UfU=",
+          "nonce": "AAAAAYvP5WgAAAECAwQFBgc=",
+          "expiration_seconds": 86400
+        },
+        "events": [
+          {
+            "direction": "send",
+            "kind": "upgrade",
+            "lines": [
+              "GET /v2/{signed_bootstrap} HTTP/1.1",
+              "Host: bridge.example.invalid",
+              "Upgrade: websocket",
+              "Connection: Upgrade",
+              "Origin: https://idmsa.apple.com",
+              "User-Agent: synthetic-agent",
+              "Sec-WebSocket-Version: 13"
+            ]
+          },
+          {
+            "direction": "receive",
+            "kind": "upgrade",
+            "template": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {accept}\r\n\r\n"
+          },
+          {
+            "direction": "receive",
+            "kind": "bytes",
+            "data": "ghoKGAoUYzNsdWRHaGxkR2xqTFhSdmEyVnUQAA=="
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 2,
+            "payload": "GhEKD3N5bnRoZXRpYy10b3BpYw=="
+          },
+          {
+            "direction": "receive",
+            "kind": "bytes",
+            "data": "gn4A6hLnAQoU8wgVGtZoAB/XB5OYRYrQjiOu7+sQASLMAXsic2Vzc2lvblVVSUQiOiAiMDAwMDAwMDEtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwLTE3MDAwMDAwMDAiLCAibmV4dFN0ZXAiOiAiMiIsICJ0eG5pZCI6ICJzeW50aGV0aWNfVyIsICJzYWx0IjogIkFBRUNBd1FGQmdjSUNRb0xEQTBPRHc9PSIsICJpZG1zZGF0YSI6ICJzeW50aGV0aWMtaWRtcyIsICJha2RhdGEiOiB7InN5bnRoZXRpYyI6IHRydWV9fQ=="
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 2,
+            "payload": "EhgKFPMIFRrWaAAf1weTmEWK0I4jru/rEAE="
+          },
+          {
+            "direction": "send",
+            "kind": "frame",
+            "opcode": 8,
+            "payload": ""
+          },
+          {
+            "direction": "close"
+          }
+        ],
+        "reference_socket_closed": true
+      }
+    ],
+    "timeline": [
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "connect"
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "wrap"
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "timeout"
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 0
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 1
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 2
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 3
+      },
+      {
+        "surface": "http",
+        "exchange": 0
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "receive",
+        "event": 4
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 5
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "send",
+        "event": 6
+      },
+      {
+        "surface": "socket",
+        "connection": 0,
+        "operation": "close",
+        "event": 7
+      }
+    ]
+  },
+  "entropy": {
+    "uuid4": [
+      "00000001-0000-4000-8000-000000000000"
+    ],
+    "unix_seconds": 1700000000,
+    "random_bytes": [
+      "AAECAwQFBgc=",
+      "AAECAwQFBgcICQoLDA0ODw==",
+      "AAECAw==",
+      "AAECAw==",
+      "AAECAw=="
+    ],
+    "auth_wait_trace": [
+      {
+        "kind": "monotonic",
+        "value": 0
+      },
+      {
+        "kind": "monotonic",
+        "value": 1
+      },
+      {
+        "kind": "monotonic",
+        "value": 2
+      },
+      {
+        "kind": "monotonic",
+        "value": 3
+      }
+    ]
+  },
+  "result": {
+    "value": true,
+    "auth_state": {
+      "account": {
+        "dsInfo": {
+          "dsid": "synthetic-dsid",
+          "hsaVersion": 2,
+          "languageCode": "en_US"
+        },
+        "hsaTrustedBrowser": false,
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          }
+        },
+        "hsaChallengeRequired": true
+      },
+      "params": {
+        "clientBuildNumber": "2534Project66",
+        "clientMasteringNumber": "2534B22",
+        "clientId": "synthetic-client",
+        "dsid": "synthetic-dsid"
+      },
+      "session_data": {
+        "client_id": "synthetic-client",
+        "session_token": "synthetic-token",
+        "trust_token": "synthetic-trust",
+        "account_country": "USA"
+      },
+      "challenge": {
+        "authInitialRoute": "auth/bridge/step",
+        "hasTrustedDevices": true,
+        "authFactors": [
+          "trustedDevice"
+        ],
+        "bridgeInitiateData": {
+          "apnsTopic": "synthetic-topic",
+          "webSocketUrl": "wss://bridge.example.invalid"
+        },
+        "sourceAppId": "synthetic-app"
+      },
+      "requires_mfa": true,
+      "cookies": [
+        {
+          "name": "X-APPLE-WEBAUTH-TOKEN",
+          "value": "synthetic-cookie",
+          "domain": ".icloud.com",
+          "path": "/",
+          "secure": false,
+          "expires": null,
+          "discard": true,
+          "attributes": {
+            "HttpOnly": null
+          }
+        }
+      ],
+      "webservices": {
+        "photos": {
+          "url": "https://photos.example.invalid"
+        },
+        "findme": {
+          "url": "https://findmy.example.invalid"
+        },
+        "drivews": {
+          "url": "https://drive.example.invalid"
+        }
+      },
+      "requires_2fa": true,
+      "requires_2sa": true,
+      "trusted_session": false,
+      "delivery_method": "trusted_device",
+      "code_requested": true,
+      "session_file_exists": true,
+      "cookie_file_exists": true,
+      "bridge": {
+        "push_token": "73796e7468657469632d746f6b656e",
+        "session_uuid": "00000001-0000-4000-8000-000000000000-1700000000",
+        "topic": "synthetic-topic",
+        "topics_by_hash": {
+          "f308151ad668001fd7079398458ad08e23aeefeb": "synthetic-topic"
+        },
+        "source_app_id": "synthetic-app",
+        "next_step": "2",
+        "rui_url_key": null,
+        "push_payload": {
+          "sessionUUID": "00000001-0000-4000-8000-000000000000-1700000000",
+          "nextStep": "2",
+          "txnid": "synthetic_W",
+          "salt": "AAECAwQFBgcICQoLDA0ODw==",
+          "idmsdata": "synthetic-idms",
+          "akdata": {
+            "synthetic": true
+          }
+        },
+        "txnid": "synthetic_W",
+        "salt": "AAECAwQFBgcICQoLDA0ODw==",
+        "mid": null,
+        "idmsdata": "synthetic-idms",
+        "akdata": {
+          "synthetic": true
+        },
+        "data": null,
+        "encrypted_code": null,
+        "error_code": null,
+        "connection": {
+          "public_key": "BGsX0fLhLEJH+Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWT+NC4v4af5uO5+tKfA+eFivOM1drMV7Oy7ZAaDe/UfU=",
+          "nonce": "AAAAAYvP5WgAAAECAwQFBgc=",
+          "expiration_seconds": 86400
+        },
+        "websocket_active": true
+      }
+    },
+    "arguments": []
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/bridge/step/0",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "user-agent",
+            "synthetic-agent"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-app-id",
+            "synthetic-app"
+          ],
+          [
+            "content-length",
+            "108"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXNzaW9uVVVJRCI6ICIwMDAwMDAwMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDAtMTcwMDAwMDAwMCIsICJwdGtuIjogIjczNzk2ZTc0Njg2NTc0Njk2MzJkNzQ2ZjZiNjU2ZSJ9"
+        }
+      },
+      "response": {
+        "status": 204,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    }
+  ]
+}

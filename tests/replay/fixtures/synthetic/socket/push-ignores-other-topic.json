@@ -1,0 +1,116 @@
+{
+  "format": "portos.socket-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "operation": "push-ignores-other-topic",
+  "connection": {
+    "url": "wss://bridge.example.invalid/v2/synthetic?channel=1",
+    "timeout": 5,
+    "origin": "https://www.icloud.com",
+    "user_agent": "synthetic-agent"
+  },
+  "events": [
+    {
+      "direction": "send",
+      "kind": "upgrade",
+      "lines": [
+        "GET /v2/synthetic?channel=1 HTTP/1.1",
+        "Host: bridge.example.invalid",
+        "Upgrade: websocket",
+        "Connection: Upgrade",
+        "Origin: https://www.icloud.com",
+        "User-Agent: synthetic-agent",
+        "Sec-WebSocket-Version: 13"
+      ]
+    },
+    {
+      "direction": "receive",
+      "kind": "upgrade",
+      "template": "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {accept}\r\n\r\n"
+    },
+    {
+      "direction": "receive",
+      "kind": "bytes",
+      "data": "giMSIQoLb3RoZXIudG9waWMQCSIQeyJpZ25vcmVkIjp0cnVlfQ=="
+    },
+    {
+      "direction": "send",
+      "kind": "frame",
+      "opcode": 2,
+      "payload": "Eg8KC290aGVyLnRvcGljEAk="
+    },
+    {
+      "direction": "receive",
+      "kind": "bytes",
+      "data": "gn4A0hLPAQoU4FYKQ90klvxnIaE8LMx+EENuHUEQCSK0AXsic2Vzc2lvblVVSUQiOiJzeW50aGV0aWMtc2Vzc2lvbiIsIm5leHRTdGVwIjoyLCJzYWx0Ijoic3ludGhldGljLXNhbHQiLCJ0eG5pZCI6InN5bnRoZXRpYy10cmFuc2FjdGlvbiIsImlkbXNkYXRhIjoic3ludGhldGljLWlkbXMiLCJha2RhdGEiOnsibmVzdGVkIjpbMSwyXX0sInVua25vd24iOiJwcmVzZXJ2ZWQifQ=="
+    },
+    {
+      "direction": "send",
+      "kind": "frame",
+      "opcode": 2,
+      "payload": "EhgKFOBWCkPdJJb8ZyGhPCzMfhBDbh1BEAk="
+    },
+    {
+      "direction": "send",
+      "kind": "frame",
+      "opcode": 8,
+      "payload": ""
+    },
+    {
+      "direction": "close"
+    }
+  ],
+  "actions": [
+    {
+      "operation": "wait_push",
+      "timeout": 5,
+      "topic": "synthetic.topic",
+      "topics_by_hash": {
+        "e0560a43dd2496fc6721a13c2ccc7e10436e1d41": "synthetic.topic"
+      },
+      "monotonic_ticks": [
+        0,
+        1,
+        1
+      ]
+    }
+  ],
+  "results": [
+    {
+      "payload": {
+        "sessionUUID": "synthetic-session",
+        "nextStep": 2,
+        "salt": "synthetic-salt",
+        "txnid": "synthetic-transaction",
+        "idmsdata": "synthetic-idms",
+        "akdata": {
+          "nested": [
+            1,
+            2
+          ]
+        },
+        "unknown": "preserved"
+      },
+      "session_uuid": "synthetic-session",
+      "next_step": "2",
+      "rui_url_key": null,
+      "txnid": "synthetic-transaction",
+      "salt": "synthetic-salt",
+      "mid": null,
+      "idmsdata": "synthetic-idms",
+      "akdata": {
+        "nested": [
+          1,
+          2
+        ]
+      },
+      "data": null,
+      "encrypted_code": null,
+      "error_code": null
+    }
+  ],
+  "reference_socket_closed": true
+}
