@@ -138,22 +138,25 @@ copied snapshots and close/current/queued work have race controls. Native
 authentication persistence and the full source/schema runtime gate remain open;
 schema-only contract checks
 do not increase the SDK coverage numerator.
-Find My has 37 scenarios and 70 pairs after adding explicit refresh, family
+Find My has 47 scenarios and 86 pairs after adding explicit refresh, family
 readiness/progress/retry bounds and provider refusal at command/token stages.
 The [Find My wire contracts](findmy-wire-contracts.md) bind these exchanges to
 seven operations, validate payloads/query parameters and round-trip each JSON reply
 through generated canonical models. Regeneration and protocol-constant drift
-checks pass. The [internal transport driver](findmy-transport.md) also executes all 70 pairs,
+checks pass. The [internal transport driver](findmy-transport.md) also executes all 86 pairs,
 including a Source-verified reverse-order refresh context. The
-[public Find My session](findmy-session.md) executes all 37/37 scenarios through
-70 paired exchanges with full functional snapshots, command acknowledgements,
+[public Find My session](findmy-session.md) executes all 47/47 scenarios through
+86 paired exchanges with full functional snapshots, command acknowledgements,
 capability/token guards and bounded family waits. Independent race controls cover
 owned monitoring, close, callback reentrancy, copied state and concurrent account
-cookie rotation. Native authentication and forced-reauth remain pending.
+cookie rotation. Seven new device-description scenarios exercise selected Source
+getters and Go cached projections; three timed-loop cases bind Source and Go
+monitor recovery, partial replies and cookie rotation after repeated failures.
+Native authentication and forced-reauth remain pending.
 Declared waits are consumed offline; received device/user/server state and
 exposed errors are bound. A source monitor-replacement race is documented for
 Go correction. Partial refreshes retain cached devices rather than infer removal
-without provider deletion evidence. Local checks now include 67 offline test methods.
+without provider deletion evidence. Local checks now include 69 offline test methods.
 The latest 40 scenarios add 145 pairs for private/shared Photos container changes,
 shared lookup/library behavior and Reminders zones, including provider refusal
 and provider payload errors. Photos exceptions bind optional photo and album

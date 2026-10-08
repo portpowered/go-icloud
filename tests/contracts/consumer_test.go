@@ -152,6 +152,12 @@ func FindMy(ctx context.Context, auth icloud.AuthContext, deviceID string) error
  _ = session.MonitorDone()
  _, err = session.Snapshot()
  if err != nil { return err }
+ description, err := session.DescribeDevice(icloud.FindMyDeviceDescriptionRequest{
+  DeviceID: deviceID, AdditionalStatus: []string{"future"},
+ })
+ if err != nil { return err }
+ _ = description.Capabilities.Location
+ _ = description.Status.BatteryLevel
  _, err = session.Refresh(ctx, icloud.RefreshFindMyRequest{Locate: true})
  if err != nil { return err }
  _, err = session.PlaySound(ctx, icloud.FindMySoundRequest{DeviceID: deviceID})

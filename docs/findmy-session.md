@@ -1,5 +1,9 @@
 # Find My public session
 
+The [device-description and timed-loop follow-up](findmy-behavior.md) expands
+the current SDK inventory to 47 scenarios and 86 pairs. Verification figures
+below record the preceding PR15 session milestone.
+
 The public session implements discovery/refresh and sound, message, lost-mode,
 and erase requests using generated independent public models. Account credentials,
 cookies, device records and provider continuation state belong to each session;

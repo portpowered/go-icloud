@@ -517,6 +517,17 @@ type DriveUploadRequest struct {
 // ErrorKind Inspectable client failure class; errors preserve their cause separately from their safe display message.
 type ErrorKind string
 
+// FindMyCapabilities Provider-advertised capabilities; location also requires a non-null location value.
+//
+// Example: {"erase":false,"location":false,"lostMode":true,"messaging":true,"sound":true}
+type FindMyCapabilities struct {
+	Erase     bool `json:"erase"`
+	Location  bool `json:"location"`
+	LostMode  bool `json:"lostMode"`
+	Messaging bool `json:"messaging"`
+	Sound     bool `json:"sound"`
+}
+
 // FindMyCommandResult Command acknowledgement evidence; does not establish physical completion.
 //
 // Example: {"acknowledgement":"","responses":[{"headers":[],"statusCode":204}]}
@@ -604,6 +615,57 @@ type FindMyDevice struct {
 	// WipedTimestamp An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
 	WipedTimestamp       nullable.Nullable[NullableJSONValue] `json:"wipedTimestamp,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue          `json:"-"`
+}
+
+// FindMyDeviceDescription Copied cached device data and reference-compatible metadata, status and capabilities.
+//
+// Example: {"capabilities":{"erase":false,"location":false,"lostMode":false,"messaging":false,"sound":false},"device":{"id":"synthetic-device"},"deviceType":"","location":null,"model":"","modelName":"","name":"","status":{"batteryLevel":null,"deviceDisplayName":null,"deviceStatus":null,"name":null}}
+type FindMyDeviceDescription struct {
+	// Capabilities Provider-advertised capabilities; location also requires a non-null location value.
+	//
+	// Example: {"erase":false,"location":false,"lostMode":true,"messaging":true,"sound":true}
+	Capabilities FindMyCapabilities `json:"capabilities"`
+	Device       FindMyDevice       `json:"device"`
+
+	// DeviceType Provider deviceClass; missing metadata defaults to an empty string.
+	DeviceType string                            `json:"deviceType"`
+	Location   nullable.Nullable[FindMyLocation] `json:"location"`
+
+	// Model Provider deviceModel; missing metadata defaults to an empty string.
+	Model string `json:"model"`
+
+	// ModelName Provider deviceDisplayName; missing metadata defaults to an empty string.
+	ModelName string `json:"modelName"`
+
+	// Name Device name; missing metadata defaults to an empty string.
+	Name string `json:"name"`
+
+	// Status Reference status subset plus requested additional fields; absent fields are explicit null.
+	//
+	// Example: {"batteryLevel":null,"deviceDisplayName":null,"deviceStatus":null,"future":[null,true],"name":null}
+	Status FindMyDeviceStatus `json:"status"`
+}
+
+// FindMyDeviceDescriptionRequest Select a cached device and optional extra provider status fields; performs no request.
+//
+// Example: {"additionalStatus":["future"],"deviceID":"synthetic-device"}
+type FindMyDeviceDescriptionRequest struct {
+	// AdditionalStatus Additional provider field names; unknown or absent fields project to null.
+	AdditionalStatus []string `json:"additionalStatus,omitempty"`
+	DeviceID         string   `json:"deviceID"`
+}
+
+// FindMyDeviceStatus Reference status subset plus requested additional fields; absent fields are explicit null.
+//
+// Example: {"batteryLevel":null,"deviceDisplayName":null,"deviceStatus":null,"future":[null,true],"name":null}
+type FindMyDeviceStatus struct {
+	BatteryLevel      nullable.Nullable[float64] `json:"batteryLevel"`
+	DeviceDisplayName nullable.Nullable[string]  `json:"deviceDisplayName"`
+
+	// DeviceStatus Open provider status code.
+	DeviceStatus         nullable.Nullable[string]   `json:"deviceStatus"`
+	Name                 nullable.Nullable[string]   `json:"name"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
 // FindMyEraseRequest Example: {"deviceID":"synthetic-device"}
@@ -3302,6 +3364,111 @@ func (a FindMyDevice) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'wipedTimestamp': %w", err)
 		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for FindMyDeviceStatus. Returns the specified
+// element and whether it was found
+func (a FindMyDeviceStatus) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for FindMyDeviceStatus
+func (a *FindMyDeviceStatus) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for FindMyDeviceStatus to handle AdditionalProperties
+func (a *FindMyDeviceStatus) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["batteryLevel"]; found {
+		err = json.Unmarshal(raw, &a.BatteryLevel)
+		if err != nil {
+			return fmt.Errorf("error reading 'batteryLevel': %w", err)
+		}
+		delete(object, "batteryLevel")
+	}
+
+	if raw, found := object["deviceDisplayName"]; found {
+		err = json.Unmarshal(raw, &a.DeviceDisplayName)
+		if err != nil {
+			return fmt.Errorf("error reading 'deviceDisplayName': %w", err)
+		}
+		delete(object, "deviceDisplayName")
+	}
+
+	if raw, found := object["deviceStatus"]; found {
+		err = json.Unmarshal(raw, &a.DeviceStatus)
+		if err != nil {
+			return fmt.Errorf("error reading 'deviceStatus': %w", err)
+		}
+		delete(object, "deviceStatus")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for FindMyDeviceStatus to handle AdditionalProperties
+func (a FindMyDeviceStatus) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["batteryLevel"], err = json.Marshal(a.BatteryLevel)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'batteryLevel': %w", err)
+	}
+
+	object["deviceDisplayName"], err = json.Marshal(a.DeviceDisplayName)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'deviceDisplayName': %w", err)
+	}
+
+	object["deviceStatus"], err = json.Marshal(a.DeviceStatus)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'deviceStatus': %w", err)
+	}
+
+	object["name"], err = json.Marshal(a.Name)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'name': %w", err)
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

@@ -31,7 +31,11 @@ type findMySDKInitial struct {
 
 type findMySDKEntropy struct {
 	//nolint:tagliatelle // LIB-05: portable scenario spelling.
+	UnixSeconds float64 `json:"unix_seconds"`
+	//nolint:tagliatelle // LIB-05: portable scenario spelling.
 	Waits []findMySDKWait `json:"findmy_wait_trace"`
+	//nolint:tagliatelle // LIB-05: portable scenario spelling.
+	Monitor []findMyMonitorWait `json:"findmy_monitor_trace"`
 }
 
 type findMySDKWait struct {
@@ -109,7 +113,7 @@ func TestFindMySDKPortableScenarios(t *testing.T) {
 		})
 	}
 
-	if len(paths) != 37 || pairs != 70 {
+	if len(paths) != 47 || pairs != 86 {
 		t.Fatal("Find My SDK scenario inventory changed")
 	}
 }
@@ -134,6 +138,12 @@ func readFindMySDKScenario(t *testing.T, path string) findMySDKScenario {
 
 func runFindMySDK(t *testing.T, scenario findMySDKScenario) {
 	t.Helper()
+
+	if scenario.Operation == "monitor_flow" {
+		runFindMyMonitorSDK(t, scenario)
+
+		return
+	}
 
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {
@@ -211,6 +221,10 @@ func callFindMySDK(t *testing.T, scenario findMySDKScenario, session *icloud.Fin
 
 	if scenario.Operation == replayDevicesOperation {
 		return findMySDKSnapshot(t, session).Devices, nil
+	}
+
+	if scenario.Operation == "device_description" {
+		return callFindMyDescription(t, scenario, session)
 	}
 
 	if scenario.Operation == "refresh_flow" {
@@ -418,4 +432,24 @@ func checkFindMySDKOutcome(t *testing.T, scenario findMySDKScenario, session *ic
 	}
 
 	return cursor
+}
+
+func callFindMyDescription(t *testing.T, scenario findMySDKScenario, session *icloud.FindMySession) (any, error) {
+	t.Helper()
+
+	var request icloud.FindMyDeviceDescriptionRequest
+
+	err := json.Unmarshal(scenario.Inputs[0], &request)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	request.DeviceID = scenario.DeviceID
+
+	value, err := session.DescribeDevice(request)
+	if err != nil {
+		return nil, fmt.Errorf("describe Find My scenario: %w", err)
+	}
+
+	return value, nil
 }

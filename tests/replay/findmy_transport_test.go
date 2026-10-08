@@ -78,7 +78,7 @@ func TestFindMyTransportPortableExchanges(t *testing.T) {
 		})
 	}
 
-	if len(paths) != 37 || pairs != 70 {
+	if len(paths) != 47 || pairs != 86 {
 		t.Fatal("Find My transport inventory changed")
 	}
 }
@@ -118,6 +118,14 @@ func findMyInitialTransportState(t *testing.T, initial findMyTransportInitial) f
 	}
 
 	params.Origin = initial.Origin
+	// This caller-owned stream jar binds received cookies across transport-only calls.
+	// The public SDK separately verifies explicit session credential persistence.
+	cookies, err := webtransport.NewCookieState(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	params.Cookies = cookies
 
 	target, err := url.Parse(initial.TokenOrigin)
 	if err != nil {
