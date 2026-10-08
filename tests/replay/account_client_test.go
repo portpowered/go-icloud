@@ -172,7 +172,7 @@ func accountOperation(t *testing.T, client *accountapi.ClientWithResponses, scen
 	t.Helper()
 
 	switch scenario.Operation {
-	case "devices":
+	case replayDevicesOperation:
 		return accountDevicesOperation(t, client, scenario)
 	case accountFamilyOperationName, "family_photos":
 		return accountFamilyOperation(t, client, scenario)

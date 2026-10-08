@@ -71,12 +71,9 @@ automatic retries of uncertain commands (API-11, API-14).
 
 ## Remaining acceptance
 
-The Find My public SDK and explicit session lifecycle are still pending. None of
-these schema/model checks count as Go SDK semantic replay. The existing Source
-scenarios cover refresh, family readiness/progress/retry bounds and command/token
-refusals, but their full public Go projections and monitor ownership must be
-ported. Transport checks now execute every paired exchange, including the ordered
-opaque-context regression, but do not count as public SDK semantic replay. The full
-source/model/runtime binding gate, live Go integration, native
-Go authentication and release acceptance remain open. Synthetic commands are
-offline only; live authorization currently covers reads.
+The [public Find My session](findmy-session.md) now executes all 37 current
+portable scenarios and 70 pairs through the SDK with semantic projection checks.
+The schema/model checks remain a separate layer. Selected Source status/location
+and timed monitor behavior, the full source/model/runtime binding gate, live Go
+integration, native Go authentication/forced reauth and release acceptance remain
+open. Synthetic commands are offline only; live authorization covers reads.

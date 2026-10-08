@@ -9,28 +9,7 @@ import (
 )
 
 func (session *DriveSession) bindInitialCookies() {
-	target, err := url.Parse(session.auth.DriveServiceURL)
-	if err != nil {
-		return
-	}
-
-	for index := range session.auth.Cookies {
-		cookie := &session.auth.Cookies[index]
-		if cookie.Domain == "" {
-			cookie.Domain, cookie.HostOnly = target.Hostname(), true
-		}
-
-		cookie.Domain = strings.ToLower(cookie.Domain)
-
-		if cookie.Path == "" {
-			cookie.Path = "/"
-		}
-
-		if cookie.MaxAge > 0 {
-			expires := time.Now().Add(time.Duration(cookie.MaxAge) * time.Second)
-			cookie.Expires, cookie.MaxAge = &expires, 0
-		}
-	}
+	session.auth = bindSessionCookies(session.auth, session.auth.DriveServiceURL)
 }
 
 func (session *DriveSession) setToken(token string) {
@@ -135,30 +114,7 @@ func (session *DriveSession) storeCookie(cookie AuthCookie) {
 	session.mu.Lock()
 	defer session.mu.Unlock()
 
-	values := make([]AuthCookie, 0, len(session.auth.Cookies)+1)
-	keep := cookie.MaxAge >= 0 && (cookie.Expires == nil || cookie.Expires.After(time.Now()))
-	replaced := false
-
-	for _, current := range session.auth.Cookies {
-		if current.Name == cookie.Name && strings.ToLower(strings.TrimPrefix(current.Domain, ".")) == cookie.Domain &&
-			current.Path == cookie.Path {
-			if keep {
-				values = append(values, cookie)
-			}
-
-			replaced = true
-
-			continue
-		}
-
-		values = append(values, current)
-	}
-
-	if keep && !replaced {
-		values = append(values, cookie)
-	}
-
-	session.auth.Cookies = values
+	session.auth.Cookies = mergeSessionCookie(session.auth.Cookies, cookie)
 }
 
 func driveCookieSameSite(mode http.SameSite) *AuthCookieSameSite {

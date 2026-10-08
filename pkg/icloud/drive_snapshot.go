@@ -28,6 +28,7 @@ func copyDriveData(input DriveNode) (DriveNode, error) {
 
 func cloneDriveAuth(auth AuthContext) AuthContext {
 	auth.Headers = append([]Header(nil), auth.Headers...)
+	auth.SessionToken = copyString(auth.SessionToken)
 	auth.ClientBuildNumber = copyString(auth.ClientBuildNumber)
 	auth.ClientMasteringNumber = copyString(auth.ClientMasteringNumber)
 	auth.ChinaMainland = cloneDrivePointer(auth.ChinaMainland)

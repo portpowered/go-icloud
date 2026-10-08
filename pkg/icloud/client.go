@@ -18,6 +18,10 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// OpenFindMySession discovers devices and binds cache, polling and commands to one account.
+	OpenFindMySession(ctx context.Context, request OpenFindMySessionRequest,
+		options ...FindMyOption,
+	) (*FindMySession, error)
 	// OpenDriveSession binds a cache and credential lifecycle to one copied account context.
 	OpenDriveSession(ctx context.Context, request OpenDriveSessionRequest) (*DriveSession, error)
 	// UploadDriveFile prepares, transfers and registers caller-owned seekable content.

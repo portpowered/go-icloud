@@ -52,7 +52,8 @@ has not been released. See
 reference revisions, recording limitations, and verification commands.
 Generated [Find My wire contracts](docs/findmy-wire-contracts.md) now cover the
 reference exchanges, and the [internal transport](docs/findmy-transport.md) replays
-all 70 pairs. Public Find My SDK operations remain in development.
+all 70 pairs. The [public Find My session](docs/findmy-session.md) now executes all 37 current
+portable scenarios through these 70 pairs.
 
 ## Supply session cookies
 
@@ -422,3 +423,57 @@ processing. The SDK does not automatically retry these changes. Each result
 includes response metadata and unknown provider fields. A missing item/folder
 list remains distinct from an empty list. Sixteen synthetic paired scenarios
 verify these calls; no live account writes were performed for this port.
+
+## Find My sessions
+
+Supply `AuthContext.FindMyServiceURL` from authenticated service discovery,
+account/client IDs, and caller-owned cookies. Remote erase additionally needs
+`SetupServiceURL` and the secret `SessionToken`. Authentication precedes service
+operations; the native Go login flow remains in development.
+
+`OpenFindMySession` discovers devices, optionally includes family devices,
+and owns one background refresh loop. Keep its opening context alive until
+finished and defer `Close`. Set `WithFindMyMonitorInterval(0)` for manual refresh.
+The default interval is five minutes; `WithFindMyFamilyPolling` changes the
+500-millisecond wait and five-retry readiness limit.
+
+```go
+session, err := client.OpenFindMySession(ctx, icloud.OpenFindMySessionRequest{
+    Auth: auth, IncludeFamily: true,
+}, icloud.WithFindMyMonitorInterval(0))
+if err != nil { return err }
+defer session.Close()
+
+cached, err := session.Snapshot() // Copied cache; no request.
+if err != nil { return err }
+updated, err := session.Refresh(ctx, icloud.RefreshFindMyRequest{Locate: true})
+if err != nil { return err }
+_ = cached
+_ = updated
+```
+
+`PlaySound`, `SendMessage`, `MarkLost`, and `Erase` accept a discovered device ID
+and check its advertised capabilities. Invoke only the action you intend:
+
+```go
+sound, err := session.PlaySound(ctx, icloud.FindMySoundRequest{DeviceID: deviceID})
+message, err := session.SendMessage(ctx, icloud.FindMyMessageRequest{
+    DeviceID: deviceID, Text: &text, Sound: true,
+})
+lost, err := session.MarkLost(ctx, icloud.FindMyLostRequest{
+    DeviceID: deviceID, PhoneNumber: contactNumber, Text: &text,
+})
+erased, err := session.Erase(ctx, icloud.FindMyEraseRequest{DeviceID: deviceID})
+```
+
+Check each call's error before proceeding. Command results contain response
+metadata and acknowledgement bytes; they do not establish completed device
+behavior. Commands are sent once. These command examples and replays are
+synthetic; live exploration has performed reads only.
+
+`Authentication()` returns copied session cookies and credentials for caller
+storage. `LastResponses()` returns copied HTTP evidence, `LastError()` reports
+the latest refresh/command/monitor failure, and `MonitorDone()` signals monitor
+termination. `Close()` cancels active requests, queued calls, and waits;
+`Snapshot()` remains available afterward. See the [session guide](docs/findmy-session.md)
+for failure, scheduling, and remaining coverage limits.

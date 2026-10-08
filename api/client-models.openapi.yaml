@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: iCloud client models
   version: 0.1.0
-  description: Caller-owned authentication context and public account results and Drive read/mutation results, independent of provider response envelopes.
+  description: Caller-owned authentication context and public account, Drive, and Find My results, independent of provider response envelopes.
 paths: {}
 components:
   schemas:
@@ -58,6 +58,9 @@ components:
         accountID: {type: string, minLength: 1, x-go-name: AccountID, description: Authenticated account identifier returned by login.}
         clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
         accountServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: AccountServiceURL, description: HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.}
+        findMyServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: FindMyServiceURL, description: HTTPS Find My origin from authenticated discovery.}
+        setupServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: SetupServiceURL, description: HTTPS setup origin from authentication; required for remote erase token lookup.}
+        sessionToken: {type: string, description: Secret authenticated web session token; missing tokens remain distinguishable from empty tokens.}
         driveServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: DriveServiceURL, description: HTTPS Drive origin from authenticated discovery; required by Drive operations.}
         driveDocumentServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: DriveDocumentServiceURL, description: HTTPS document-service origin from authenticated discovery; required by Drive transfers.}
         driveToken: {type: string, x-go-type-skip-optional-pointer: true, description: Secret Drive query token returned by an upload; retained only by an explicit Drive session or supplied by the caller.}
@@ -118,7 +121,7 @@ components:
     ErrorKind:
       type: string
       description: Inspectable client failure class; errors preserve their cause separately from their safe display message.
-      enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response, closed, not-directory, not-in-trash]
+      enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response, closed, not-directory, not-in-trash, no-devices]
 
     NullableJSONValue:
       description: An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
@@ -545,3 +548,239 @@ components:
         preparationMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
         transferMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
         registrationMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
+
+    FindMyDevice:
+      type: object
+      required: [id]
+      properties:
+        id: {type: string, minLength: 1}
+        name: {type: string}
+        deviceModel: {type: string}
+        deviceDisplayName: {type: string}
+        deviceClass: {type: string}
+        modelDisplayName: {type: string}
+        rawDeviceModel: {type: string}
+        deviceColor: {type: string, nullable: true}
+        baUUID: {type: string}
+        prsId: {type: string, nullable: true}
+        deviceStatus: {type: string, description: Open provider status code.}
+        batteryLevel: {type: number, format: double, description: Provider battery level; no bound is inferred from a single sample.}
+        batteryStatus: {type: string}
+        lostModeCapable: {type: boolean}
+        features: {$ref: '#/components/schemas/FindMyFeatures'}
+        location: {$ref: '#/components/schemas/FindMyLocation'}
+        msg: {$ref: '#/components/schemas/FindMyCommandState'}
+        mesg: {$ref: '#/components/schemas/FindMyCommandState'}
+        snd: {$ref: '#/components/schemas/FindMyCommandState'}
+        remoteLock: {$ref: '#/components/schemas/FindMyCommandState'}
+        lostDevice: {$ref: '#/components/schemas/FindMyLostState'}
+        lockedTimestamp: {$ref: '#/components/schemas/NullableJSONValue'}
+        wipedTimestamp: {$ref: '#/components/schemas/NullableJSONValue'}
+        remoteWipe: {$ref: '#/components/schemas/NullableJSONValue'}
+        trackingInfo: {$ref: '#/components/schemas/NullableJSONValue'}
+        lostTimestamp: {type: string}
+        maxMsgChar: {type: integer}
+        passcodeLength: {type: integer}
+        activationLocked: {type: boolean}
+        canWipeAfterLock: {type: boolean}
+        darkWake: {type: boolean}
+        fmlyShare: {type: boolean}
+        isLocating: {type: boolean}
+        isMac: {type: boolean}
+        locFoundEnabled: {type: boolean}
+        locationCapable: {type: boolean}
+        locationEnabled: {type: boolean}
+        lostModeEnabled: {type: boolean}
+        lowPowerMode: {type: boolean}
+        thisDevice: {type: boolean}
+        wipeInProgress: {type: boolean}
+        audioChannels: {type: array, items: {$ref: '#/components/schemas/UnknownJSONValue'}}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    FindMyFeatures:
+      type: object
+      description: Open device feature flags; absent flags do not establish capability.
+      properties:
+        MSG: {type: boolean, description: Messaging support.}
+        SND: {type: boolean, description: Sound support.}
+        LOC: {type: boolean, description: Location support.}
+        WIP: {type: boolean, description: Remote erase support.}
+        BTR: {type: boolean}
+        LLC: {type: boolean}
+        CLK: {type: boolean}
+        TEU: {type: boolean}
+        CLT: {type: boolean}
+        SVP: {type: boolean}
+        SPN: {type: boolean}
+        XRM: {type: boolean}
+        CWP: {type: boolean}
+        LMG: {type: boolean}
+        LKL: {type: boolean}
+        LST: {type: boolean}
+        LKM: {type: boolean}
+        WMG: {type: boolean}
+        PSS: {type: boolean}
+        PIN: {type: boolean}
+        LCK: {type: boolean}
+        REM: {type: boolean}
+        MCS: {type: boolean}
+        KEY: {type: boolean}
+        KPD: {type: boolean}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    FindMyLocation:
+      type: object
+      nullable: true
+      properties:
+        latitude: {type: number, format: double, minimum: -90, maximum: 90, description: Latitude in degrees.}
+        longitude: {type: number, format: double, minimum: -180, maximum: 180, description: Longitude in degrees.}
+        altitude: {type: number, format: double}
+        floorLevel: {type: integer}
+        horizontalAccuracy: {type: number, format: double}
+        verticalAccuracy: {type: number, format: double}
+        timeStamp: {type: integer, format: int64, description: Provider location timestamp in milliseconds since the Unix epoch.}
+        positionType: {type: string}
+        locationType: {type: string}
+        isOld: {type: boolean}
+        isInaccurate: {type: boolean}
+        locationFinished: {type: boolean}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    FindMyCommandState:
+      type: object
+      nullable: true
+      description: Provider command state; acknowledgement does not establish physical completion.
+      properties:
+        createTimestamp: {type: integer, format: int64}
+        statusCode: {type: string}
+        strobe: {type: boolean}
+        userText: {type: boolean}
+        playSound: {type: boolean}
+        vibrate: {type: boolean}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    FindMyLostState:
+      type: object
+      nullable: true
+      properties:
+        stopLostMode: {type: boolean}
+        emailUpdates: {type: boolean}
+        userText: {type: boolean}
+        sound: {type: boolean}
+        ownerNbr: {type: string}
+        text: {type: string}
+        createTimestamp: {type: integer, format: int64}
+        statusCode: {type: string}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    FindMyMember:
+      type: object
+      properties:
+        deviceFetchStatus: {type: string, x-extensible-enum: [LOADING, READY, DONE], description: Open family device fetch status; LOADING members may require bounded polling.}
+        firstName: {type: string}
+        lastName: {type: string}
+        appleId: {type: string}
+        accountFormatter: {type: integer}
+        useAuthWidget: {type: boolean}
+        isHSA: {type: boolean}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    FindMyUserInfo:
+      type: object
+      nullable: true
+      properties:
+        hasMembers: {type: boolean}
+        firstName: {type: string}
+        lastName: {type: string}
+        accountFormatter: {type: integer}
+        membersInfo: {type: object, additionalProperties: {$ref: '#/components/schemas/FindMyMember'}}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    FindMyServerContext:
+      type: object
+      nullable: true
+      description: Provider-issued opaque refresh context; the reference clears theftLoss before reuse.
+      properties:
+        theftLoss: {$ref: '#/components/schemas/NullableJSONValue'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    OpenFindMySessionRequest:
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, headers: [], findMyServiceURL: 'https://findmy.example.invalid'}, includeFamily: false}
+      type: object
+      required: [auth, includeFamily]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        includeFamily: {type: boolean, description: Include family devices and bounded readiness polling.}
+    RefreshFindMyRequest:
+      example: {locate: true}
+      type: object
+      required: [locate]
+      properties:
+        locate: {type: boolean, description: Request fresh locations when a provider refresh context exists.}
+    FindMySnapshot:
+      example: {devices: [{id: synthetic-device, name: Synthetic Device}], userInfo: null, serverContext: null}
+      type: object
+      required: [devices, userInfo, serverContext]
+      description: Copied account-bound cache; absent or empty partial refreshes retain existing devices.
+      properties:
+        devices: {type: array, items: {$ref: '#/components/schemas/FindMyDevice'}}
+        userInfo: {$ref: '#/components/schemas/FindMyUserInfo'}
+        serverContext:
+          allOf: [{$ref: '#/components/schemas/FindMyServerContext'}]
+          nullable: true
+          x-go-type: json.RawMessage
+          description: Copied opaque provider continuation state with theftLoss cleared; never share across accounts.
+    FindMySoundRequest:
+      example: {deviceID: synthetic-device}
+      type: object
+      required: [deviceID]
+      properties:
+        deviceID: {type: string, x-go-name: DeviceID, description: Identifier returned by this session's device discovery.}
+        subject: {type: string, description: Alert subject; omission uses Find My iPhone Alert.}
+    FindMyMessageRequest:
+      example: {deviceID: synthetic-device, sound: false, vibrate: false, strobe: false}
+      type: object
+      required: [deviceID, sound, vibrate, strobe]
+      properties:
+        deviceID: {type: string, x-go-name: DeviceID}
+        subject: {type: string, description: Omission uses Find My iPhone Alert.}
+        text: {type: string, description: Omission uses This is a note.}
+        sound: {type: boolean}
+        vibrate: {type: boolean}
+        strobe: {type: boolean}
+    FindMyLostRequest:
+      example: {deviceID: synthetic-device, phoneNumber: '+15555550100'}
+      type: object
+      required: [deviceID, phoneNumber]
+      properties:
+        deviceID: {type: string, x-go-name: DeviceID}
+        phoneNumber: {type: string, description: Contact number supplied for the lost-device message.}
+        text: {type: string, description: Omission uses the reference's lost-device message.}
+        passcode: {type: string, x-go-type-skip-optional-pointer: true, description: New passcode if required by the selected device; omission sends an empty passcode.}
+    FindMyEraseRequest:
+      example: {deviceID: synthetic-device}
+      type: object
+      required: [deviceID]
+      properties:
+        deviceID: {type: string, x-go-name: DeviceID}
+        text: {type: string, description: Omission uses the reference's lost-device message.}
+        passcode: {type: string, x-go-type-skip-optional-pointer: true}
+    FindMyCommandResult:
+      example: {responses: [{statusCode: 204, headers: []}], acknowledgement: ''}
+      type: object
+      required: [responses, acknowledgement]
+      description: Command acknowledgement evidence; does not establish physical completion.
+      properties:
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+        acknowledgement: {type: string, format: byte, x-go-type: '[]byte', description: Uninterpreted successful command bytes.}
+    FindMyWaitKind:
+      type: string
+      enum: [family-poll, monitor]
+      x-enum-varnames: [FindMyFamilyPollWait, FindMyMonitorWait]
+    FindMyWaitRequest:
+      example: {kind: family-poll, delay: 500000000}
+      type: object
+      required: [kind, delay]
+      properties:
+        kind: {$ref: '#/components/schemas/FindMyWaitKind'}
+        delay: {type: integer, format: int64, minimum: 0, x-go-type: time.Duration, description: Delay in nanoseconds; Go callers use time.Duration.}

@@ -322,3 +322,16 @@ components:
         error: {$ref: '#/components/schemas/FindMyNullableJSON'}
         errorCode: {$ref: '#/components/schemas/FindMyNullableJSON'}
       additionalProperties: {$ref: '#/components/schemas/FindMyUnknownJSON'}
+
+    FindMyDefaultSubject:
+      type: string
+      enum: ['Find My iPhone Alert']
+    FindMyDefaultMessage:
+      type: string
+      enum: ['This is a note']
+    FindMyDefaultLostMessage:
+      type: string
+      enum: ['This device has been lost. Please call me.']
+    FindMyKnownFetchStatus:
+      type: string
+      enum: [LOADING, READY, DONE]
