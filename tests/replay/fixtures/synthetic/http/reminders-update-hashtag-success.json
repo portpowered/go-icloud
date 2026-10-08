@@ -1,0 +1,109 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "update_hashtag",
+  "inputs": [
+    {
+      "$model": "Hashtag",
+      "value": {
+        "id": "Hashtag/synthetic-tag",
+        "reminder_id": "Reminder/synthetic-item",
+        "name": "synthetic tag",
+        "record_change_tag": "synthetic-old-tag"
+      }
+    },
+    "Renamed tag"
+  ],
+  "observe_arguments": [
+    0
+  ],
+  "entropy": {
+    "uuid4": [],
+    "unix_seconds": 1700000000
+  },
+  "result": {
+    "value": null,
+    "arguments": [
+      {
+        "id": "Hashtag/synthetic-tag",
+        "name": "Renamed tag",
+        "reminder_id": "Reminder/synthetic-item",
+        "created": null,
+        "record_change_tag": "synthetic-new-tag"
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/modify",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "440"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJ1cGRhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIkhhc2h0YWcvc3ludGhldGljLXRhZyIsICJyZWNvcmRUeXBlIjogIkhhc2h0YWciLCAiZmllbGRzIjogeyJOYW1lIjogeyJ0eXBlIjogIkVOQ1JZUFRFRF9CWVRFUyIsICJ2YWx1ZSI6ICJVbVZ1WVcxbFpDQjBZV2M9In0sICJSZW1pbmRlciI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiUmVtaW5kZXIvc3ludGhldGljLWl0ZW0iLCAiYWN0aW9uIjogIlZBTElEQVRFIn19fSwgInBsdWdpbkZpZWxkcyI6IHt9LCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy1vbGQtdGFnIn19XSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJIYXNodGFnL3N5bnRoZXRpYy10YWciLCAicmVjb3JkVHlwZSI6ICJIYXNodGFnIiwgImZpZWxkcyI6IHt9LCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy1uZXctdGFnIn1dfQ=="
+        }
+      }
+    }
+  ]
+}

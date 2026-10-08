@@ -10,11 +10,12 @@ from tempfile import TemporaryDirectory
 from icloud import ROOT, SOURCE, close_reference, verify_reference
 from network_guard import forbid_network
 from recording import ReplayAdapter
+from scenario_inputs import decode_input, project, synthetic_entropy
 
 FIXTURES = ROOT / "tests" / "replay" / "fixtures" / "synthetic" / "http"
 
 
-def execute(api, scenario):
+def execute(api, scenario, observations=None):
     from pyicloud.services.account import AccountService
     from pyicloud.services.drive import DriveNode, DriveService
 
@@ -77,14 +78,26 @@ def execute(api, scenario):
 
         service = RemindersService(state["origin"], api.session, params)
         operation = scenario["operation"]
-        value = getattr(service, operation)(
-            *scenario["inputs"], **scenario.get("keyword_inputs", {})
-        )
+        arguments = decode_input(scenario["inputs"])
+        try:
+            value = getattr(service, operation)(
+                *arguments, **decode_input(scenario.get("keyword_inputs", {}))
+            )
+        finally:
+            if observations is not None and "observe_arguments" in scenario:
+                observations["arguments"] = [
+                    project(arguments[index]) for index in scenario["observe_arguments"]
+                ]
+        if "observe_arguments" in scenario:
+            return {
+                "value": project(value),
+                "arguments": [
+                    project(arguments[index]) for index in scenario["observe_arguments"]
+                ],
+            }
         if operation in {"lists", "iter_changes", "reminders"}:
             return [item.model_dump(mode="json") for item in value]
-        if hasattr(value, "model_dump"):
-            return value.model_dump(mode="json")
-        return value
+        return project(value)
     if scenario["service"] == "photos":
         from pyicloud.services.photos import PhotosService
 
@@ -143,14 +156,20 @@ def replay_synthetic(path):
         api.session.mount("https://", adapter)
         api.session.mount("http://", adapter)
         try:
+            observations = {}
             try:
-                result = execute(api, scenario)
+                with synthetic_entropy(scenario):
+                    result = execute(api, scenario, observations)
             except AssertionError:
                 raise
             except Exception as error:
                 expected = scenario.get("error")
                 if expected != {"type": type(error).__name__, "message": str(error)}:
                     raise AssertionError("Synthetic semantic error mismatch") from error
+                if scenario.get("error_arguments") != observations.get("arguments"):
+                    raise AssertionError(
+                        "Synthetic error argument state mismatch"
+                    ) from error
             else:
                 if (
                     "error" in scenario

@@ -1,0 +1,122 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "update_attachment",
+  "inputs": [
+    {
+      "$model": "ImageAttachment",
+      "value": {
+        "id": "Attachment/synthetic-image",
+        "reminder_id": "Reminder/synthetic-item",
+        "filename": "old.jpg",
+        "width": 100,
+        "height": 100,
+        "file_size": 123,
+        "record_change_tag": "synthetic-old-tag"
+      }
+    }
+  ],
+  "keyword_inputs": {
+    "filename": "new.jpg",
+    "file_size": 456,
+    "width": 200,
+    "height": 300,
+    "uti": "public.jpeg"
+  },
+  "observe_arguments": [
+    0
+  ],
+  "entropy": {
+    "uuid4": [],
+    "unix_seconds": 1700000000
+  },
+  "result": {
+    "value": null,
+    "arguments": [
+      {
+        "id": "Attachment/synthetic-image",
+        "reminder_id": "Reminder/synthetic-item",
+        "file_asset_url": "",
+        "filename": "new.jpg",
+        "file_size": 456,
+        "width": 200,
+        "height": 300,
+        "uti": "public.jpeg",
+        "record_change_tag": "synthetic-new-tag"
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/modify",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "661"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJ1cGRhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIkF0dGFjaG1lbnQvc3ludGhldGljLWltYWdlIiwgInJlY29yZFR5cGUiOiAiQXR0YWNobWVudCIsICJmaWVsZHMiOiB7IlVUSSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAicHVibGljLmpwZWcifSwgIkZpbGVOYW1lIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJuZXcuanBnIn0sICJGaWxlU2l6ZSI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDQ1Nn0sICJXaWR0aCI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDIwMH0sICJIZWlnaHQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAzMDB9LCAiVHlwZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiSW1hZ2UifSwgIlJlbWluZGVyIjogeyJ0eXBlIjogIlJFRkVSRU5DRSIsICJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSIsICJhY3Rpb24iOiAiVkFMSURBVEUifX19LCAicGx1Z2luRmllbGRzIjoge30sICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLW9sZC10YWcifX1dLCAiem9uZUlEIjogeyJ6b25lTmFtZSI6ICJSZW1pbmRlcnMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9fQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJBdHRhY2htZW50L3N5bnRoZXRpYy1pbWFnZSIsICJyZWNvcmRUeXBlIjogIkF0dGFjaG1lbnQiLCAiZmllbGRzIjoge30sICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLW5ldy10YWcifV19"
+        }
+      }
+    }
+  ]
+}

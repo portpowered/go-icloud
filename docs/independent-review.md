@@ -126,6 +126,23 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim Reminders endpoint audit
+
+The independent reviewer passed the Reminders extension across 128 HTTP
+scenarios and 159 paired exchanges. It independently ran all four synthetic
+test methods and `make lint`. Extra probes rejected changed caller titles,
+incorrect error-state tags, surplus UUID samples on provider rejection, and
+unconsumed exchanges. It verified clock/UUID restoration after successes,
+provider errors, and rejected probes. Local `make check` also passed 40 methods.
+
+The reviewer confirmed that JSON model/datetime descriptors are portable caller
+inputs and that actual pinned methods emit CRDT/protobuf and linked-record
+requests. Success and rejection projections check caller-visible model state.
+The HTTP fixture guide now documents the expanded cases and entropy contract.
+Verdict: **limited interim pass**. Observed Apple writes, canonical schema
+bindings, Go interoperability, complete endpoint coverage and final migration
+acceptance remain open.
+
 ### Interim bridge-message and deadline audit
 
 The reviewer independently passed the extension through selected subscription,

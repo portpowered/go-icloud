@@ -68,9 +68,14 @@ duplicate exclusions fail. Authentication's keyring lookup and shared helpers
 used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
-Authentication socket replay adds 53 synthetic ordered duplex scenarios (283
-events) to the 65 HTTP scenarios. Combined replay now enters 252/905 functions
-and executes 1,290/5,385 body statements (23.96%) and 387/2,076 branch exits.
+The portable HTTP suite now has 128 scenarios and 159 paired exchanges after
+adding Reminders core/linked mutation, query, lookup, changes and asset-backed
+membership cases. Authentication socket replay adds 53 synthetic ordered duplex
+scenarios (283 events). Combined replay now enters 331/905 functions and executes
+1,792/5,385 body statements (33.28%) and 519/2,076 branch exits. These measurements
+remain diagnostic; they are not a complete endpoint acceptance gate.
+The earlier bridge-message suite entered 252/905 functions and covered
+1,290/5,385 statements (23.96%).
 Before the scope correction, the same replay covered 1,290/5,436 statements
 (23.73%); the scope correction removed 51 unrelated statements, not missing
 endpoint cases.
