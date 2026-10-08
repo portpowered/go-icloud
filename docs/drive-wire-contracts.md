@@ -12,8 +12,9 @@ response. The path template is a contract for provider-issued URLs, not permissi
 to forward to arbitrary hosts. The contract tests reject transfers with no issuer,
 changed origins or paths, the wrong method, and an unrelated preceding route.
 They prefer `data_token.url` over `package_token.url`, as the reference does.
-The future SDK adapter must preserve complete escaped paths and provider queries;
-the current fixtures have no provider query on their transfer URLs.
+The download SDK adapter preserves complete escaped paths and provider queries.
+Its focused controls cover repeated provider keys and escaped path segments;
+the original portable fixtures have no provider query on their transfer URLs.
 
 Canonical models live in `api/external/drive-models.openapi.yaml` and generate
 `pkg/dependencymodels/drive`. The internal route and content clients import those
@@ -110,19 +111,39 @@ paired rename tests repeat requests after separate Set-Cookie replies, retaining
 request identity, cookie and result isolation (API-03, API-13). The public
 consumer build exercises all fourteen current methods.
 
-Node navigation and refresh state, transfers and the complete
-source-to-schema runtime route gate remain open. Twenty-five read/mutation scenarios do not
+`DownloadDriveFile` executes seven existing reference scenarios through the
+generated document-token builder and an issuer-bound content adapter. It prefers
+data-token URLs, falls back to package URLs, preserves complete escaped paths
+and ordered provider queries, and owns both response bodies on success and
+failure. A binary file remains binary when its media label says JSON, while
+reference-style JSON provider refusals still produce a typed error. Content
+responses retain their actual 2xx status, including empty 204 and partial 206
+responses; the content contract and focused controls cover both. Successful
+results expose metadata for both stages; a second-stage failure retains copied
+preceding metadata in `ClientError.PriorResponses()` (API-14, LIB-05).
+
+The content request uses caller-supplied authentication headers. Token-response
+cookie updates are exposed afterward rather than applied through an intermediate
+cookie jar. This preserves the explicit-header boundary; complete reference
+session cookie-jar parity remains open. No account state is retained on the
+shared client (API-03, API-13). Focused controls cover token preference, missing
+and malformed token replies, escaped zones and paths, repeated provider query
+keys, binary bytes labeled JSON, cleanup at both stages, and preceding metadata
+copy ownership. The independent consumer compiles all fifteen current methods.
+
+Node navigation and refresh state, uploads and the complete
+source-to-schema runtime route gate remain open. Thirty-two read/mutation/download scenarios do not
 establish parity for all 67 Drive scenarios. The non-generated library coverage
-measurement includes the five account reads and nine Drive methods;
+measurement includes the five account reads and ten Drive methods;
 schema validation alone is not SDK replay coverage (LIB-07).
-Replay measures 500/605 handwritten SDK/internal statements (82.6%); unit
-measures 520/605 (86.0%); combined measures 559/605 (92.4%). Live Go integration
-is still pending. `make lint` and `make check` pass, including the 67 reference
-test methods and all 437 portable HTTP scenarios/991 pairs.
+Replay measures 552/666 handwritten SDK/internal statements (82.9%); unit
+measures 578/666 (86.8%); combined measures 617/666 (92.6%). Live Go integration
+is still pending. `make lint` and `make check` pass. The portable reference
+inventory remains 437 HTTP scenarios/991 pairs and 67 Python test methods.
 
 The transfer issuer checks currently cover observed fixture URL forms. Exact
 provider query binding, complete common-parameter/header validation, provider
 failure media variants and a full source field inventory remain part of final
 schema acceptance. The generic generated content client cannot alone prove
-multi-segment path preservation or binary responses labeled JSON; the SDK needs
-explicit adapters and paired replay before those behaviors can be accepted.
+multi-segment path preservation or binary responses labeled JSON. The download
+SDK adapter now verifies those behaviors; the upload adapter remains open.

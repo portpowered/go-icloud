@@ -19,12 +19,13 @@ import (
 )
 
 const (
-	driveSchemaPath        = "../../api/external/drive.openapi.yaml"
-	driveContentSchemaPath = "../../api/external/drive-content.openapi.yaml"
-	driveModelsPath        = "../../api/external/drive-models.openapi.yaml"
-	driveContentPath       = "/{contentPath}"
-	mutationMethod         = "method"
-	mutationPath           = "path"
+	driveSchemaPath             = "../../api/external/drive.openapi.yaml"
+	driveContentSchemaPath      = "../../api/external/drive-content.openapi.yaml"
+	driveModelsPath             = "../../api/external/drive-models.openapi.yaml"
+	driveContentPath            = "/{contentPath}"
+	driveContractBinaryEncoding = "base64"
+	mutationMethod              = "method"
+	mutationPath                = "path"
 )
 
 var errDriveBinding = errors.New("drive exchange has no verified contract binding")
@@ -264,18 +265,14 @@ func validateDriveResponse(t *testing.T, operation *openapi3.Operation, response
 		t.Fatal("Drive exchange lost its response")
 	}
 
-	declared := operation.Responses.Value(strconv.Itoa(response.Status))
-	if declared == nil {
-		declared = operation.Responses.Value("default")
-	}
-
+	declared := driveResponseContract(operation, response.Status)
 	if declared == nil {
 		t.Fatal("Drive status has no response contract")
 	}
 
-	media := declared.Value.Content[driveHeaderMedia(t, response.Headers)]
+	media := declared.Value.Content["*/*"]
 	if media == nil {
-		media = declared.Value.Content["*/*"]
+		media = declared.Value.Content[driveHeaderMedia(t, response.Headers)]
 	}
 
 	if media == nil || media.Schema == nil {
@@ -294,6 +291,31 @@ func validateDriveResponse(t *testing.T, operation *openapi3.Operation, response
 	err = media.Schema.Value.VisitJSON(value)
 	if err != nil {
 		t.Fatalf("%s response: %v", operation.OperationID, err)
+	}
+}
+
+func driveResponseContract(operation *openapi3.Operation, status int) *openapi3.ResponseRef {
+	declared := operation.Responses.Value(strconv.Itoa(status))
+	if declared == nil && status >= http.StatusOK && status < http.StatusMultipleChoices {
+		declared = operation.Responses.Value("2XX")
+	}
+
+	if declared == nil {
+		declared = operation.Responses.Value("default")
+	}
+
+	return declared
+}
+
+func TestDriveContentContractsAllowSuccessfulStatuses(t *testing.T) {
+	t.Parallel()
+
+	operation := loadDriveDocument(t, driveContentSchemaPath).Paths.Value(driveContentPath).Get
+
+	for _, status := range []int{http.StatusNoContent, http.StatusPartialContent} {
+		response := replay.Response{Status: status, Headers: nil, Body: replay.Entity{Encoding: driveContractBinaryEncoding,
+			Value: json.RawMessage(`""`), Matchers: nil, ContentTypePattern: "", Parts: nil}}
+		validateDriveResponse(t, operation, &response)
 	}
 }
 

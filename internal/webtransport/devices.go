@@ -35,6 +35,7 @@ const (
 
 // ResponseError preserves exact response evidence and the original failure cause.
 type ResponseError struct {
+	Prior   []*BytesResponse
 	Stage   Stage
 	Status  int
 	Body    []byte
@@ -97,7 +98,7 @@ func (client *Client) GetDevices(ctx context.Context, auth RequestContext) (*Dev
 }
 
 func failure(stage Stage, cause error, response *http.Response, body []byte) *ResponseError {
-	result := &ResponseError{Stage: stage, Cause: cause, Body: body, Status: 0, Headers: nil}
+	result := &ResponseError{Stage: stage, Cause: cause, Body: body, Status: 0, Headers: nil, Prior: nil}
 	if response != nil {
 		result.Status = response.StatusCode
 		result.Headers = response.Header.Clone()

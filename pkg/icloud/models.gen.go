@@ -187,6 +187,9 @@ type AuthContext struct {
 	// ClientMasteringNumber Optional mastering parameter from the authentication context; omission remains omission.
 	ClientMasteringNumber *string `json:"clientMasteringNumber,omitempty"`
 
+	// DriveDocumentServiceURL HTTPS document-service origin from authenticated discovery; required by Drive transfers.
+	DriveDocumentServiceURL string `json:"driveDocumentServiceURL,omitempty"`
+
 	// DriveServiceURL HTTPS Drive origin from authenticated discovery; required by Drive operations.
 	DriveServiceURL string `json:"driveServiceURL,omitempty"`
 
@@ -228,6 +231,34 @@ type DeleteDriveNodeRequest struct {
 
 // DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DownloadDriveFileRequest Download a document using its node-provided document identifier and zone.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveDocumentServiceURL":"https://documents.example.invalid","headers":[]},"documentID":"synthetic-document"}
+type DownloadDriveFileRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// DocumentID Document identifier from node metadata; this differs from the Drive node identifier.
+	DocumentID string `json:"documentID"`
+
+	// Zone Node document zone; omission uses the reference private document zone.
+	Zone *string `json:"zone,omitempty"`
+}
+
+// DownloadDriveFileResult Exact downloaded bytes and metadata from both HTTP exchanges; authentication updates remain caller-owned.
+//
+// Example: {"content":"","metadata":{"headers":[],"statusCode":200},"tokenMetadata":{"headers":[],"statusCode":200}}
+type DownloadDriveFileResult struct {
+	// Content Exact file bytes, including empty content; a JSON media label does not change binary decoding.
+	Content []byte `json:"content"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+
+	// TokenMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	TokenMetadata ResponseMetadata `json:"tokenMetadata"`
+}
 
 // DriveItemChangeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DriveItemChangeResult struct {

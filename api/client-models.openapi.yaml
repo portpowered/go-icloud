@@ -59,6 +59,7 @@ components:
         clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
         accountServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: AccountServiceURL, description: HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.}
         driveServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: DriveServiceURL, description: HTTPS Drive origin from authenticated discovery; required by Drive operations.}
+        driveDocumentServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: DriveDocumentServiceURL, description: HTTPS document-service origin from authenticated discovery; required by Drive transfers.}
         chinaMainland: {type: boolean, default: false, description: Authenticated account region; true selects the mainland China subscription gateway.}
         clientBuildNumber: {type: string, description: Optional build parameter from the authentication context; omission remains omission.}
         clientMasteringNumber: {type: string, description: Optional mastering parameter from the authentication context; omission remains omission.}
@@ -387,3 +388,23 @@ components:
     PermanentlyDeleteDriveNodeResult:
       allOf: [{$ref: '#/components/schemas/DriveItemChangeResult'}]
       example: {items: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    DownloadDriveFileRequest:
+      type: object
+      required: [auth, documentID]
+      description: Download a document using its node-provided document identifier and zone.
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        documentID: {type: string, minLength: 1, x-go-name: DocumentID, description: Document identifier from node metadata; this differs from the Drive node identifier.}
+        zone: {type: string, minLength: 1, description: Node document zone; omission uses the reference private document zone.}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, driveDocumentServiceURL: 'https://documents.example.invalid', headers: []}
+        documentID: synthetic-document
+    DownloadDriveFileResult:
+      type: object
+      required: [content, tokenMetadata, metadata]
+      description: Exact downloaded bytes and metadata from both HTTP exchanges; authentication updates remain caller-owned.
+      properties:
+        content: {type: string, format: byte, description: 'Exact file bytes, including empty content; a JSON media label does not change binary decoding.'}
+        tokenMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {content: '', tokenMetadata: {statusCode: 200, headers: []}, metadata: {statusCode: 200, headers: []}}

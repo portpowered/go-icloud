@@ -13,6 +13,7 @@ import (
 // ClientError is an inspectable failure with a safe display message.
 // Use errors.As to inspect it and errors.Is to inspect an underlying cause.
 type ClientError struct {
+	prior     []ResponseMetadata
 	operation string
 	kind      ErrorKind
 	status    int
@@ -43,10 +44,23 @@ func (failure *ClientError) ResponseHeaders() []Header {
 	return append([]Header(nil), failure.headers...)
 }
 
+// PriorResponses returns copied metadata from earlier completed exchanges in a failed operation.
+// Authentication updates from these responses remain available even if a later request fails.
+func (failure *ClientError) PriorResponses() []ResponseMetadata {
+	result := make([]ResponseMetadata, 0, len(failure.prior))
+	for _, metadata := range failure.prior {
+		result = append(result, ResponseMetadata{StatusCode: metadata.StatusCode,
+			Headers: append([]Header(nil), metadata.Headers...)})
+	}
+
+	return result
+}
+
 func newClientError(operation string, kind ErrorKind, status int, body []byte,
 	headers []Header, cause error,
 ) *ClientError {
 	return &ClientError{
+		prior:     nil,
 		operation: operation, kind: kind, status: status,
 		body: append([]byte(nil), body...), headers: append([]Header(nil), headers...), cause: cause,
 	}
@@ -75,7 +89,12 @@ func adaptFailure(operation string, err error) *ClientError {
 		kind = Timeout
 	}
 
-	return newClientError(operation, kind, failure.Status, failure.Body, responseHeaders(failure.Headers), err)
+	result := newClientError(operation, kind, failure.Status, failure.Body, responseHeaders(failure.Headers), err)
+	for _, prior := range failure.Prior {
+		result.prior = append(result.prior, publicMetadata(prior))
+	}
+
+	return result
 }
 
 func transportKind(failure *webtransport.ResponseError) ErrorKind {
