@@ -82,7 +82,7 @@ verification infrastructure, not an SDK operation port. Explicit JSON pattern
 and credential-redaction rules now instantiate all 17 portable declarations;
 negative controls reject changed fixed fields, string formats, code types and
 ambiguous paths. Multipart rules now bind ordered headers/bytes, filenames and
-strict boundary framing. All 449 scenarios/1015 exchanges instantiate and fifteen
+strict boundary framing. All 455 scenarios/1028 exchanges instantiate and fifteen
 upload pairs match Go's writer. These are matcher checks, not SDK semantic parity.
 Socket/auth timelines, the remaining scenario projections and SDK operations
 remain open. No Python semantic replay is counted as passing Go SDK replay.
@@ -94,11 +94,11 @@ Two-account replay checks concurrency and repeated fresh requests without shared
 cookies. An independent consumer module compiles. The account milestone measured
 81.6% replay, 82.5% unit and 92.2% combined. With eleven Drive service methods
 and the session/entry lifecycle, current handwritten SDK and internal transport
-coverage is 1125/1351 statements (83.3%) replay, 695/1351 (51.4%) unit and
-1191/1351 (88.2%) combined; these figures do not
+coverage is 1125/1351 statements (83.3%) replay, 696/1351 (51.5%) unit and
+1193/1351 (88.3%) combined; these figures do not
 represent the complete service port (LIB-07).
 
-The portable HTTP suite now has 449 scenarios and 1015 paired exchanges after
+The portable HTTP suite now has 455 scenarios and 1028 paired exchanges after
 adding Drive guards and upload/refresh behavior alongside selected
 authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
@@ -138,8 +138,13 @@ copied snapshots and close/current/queued work have race controls. Native
 authentication persistence and the full source/schema runtime gate remain open;
 schema-only contract checks
 do not increase the SDK coverage numerator.
-Find My has 30 scenarios and 55 pairs after adding explicit refresh, family
+Find My has 36 scenarios and 68 pairs after adding explicit refresh, family
 readiness/progress/retry bounds and provider refusal at command/token stages.
+The [Find My wire contracts](findmy-wire-contracts.md) bind these exchanges to
+seven operations, validate payloads/query parameters and round-trip each JSON reply
+through generated canonical models. Regeneration and protocol-constant drift
+checks pass. These are contract checks; Find My SDK semantic replay remains
+0/36 until public methods and the explicit lifecycle execute the scenarios.
 Declared waits are consumed offline; received device/user/server state and
 exposed errors are bound. A source monitor-replacement race is documented for
 Go correction. Partial refreshes retain cached devices rather than infer removal

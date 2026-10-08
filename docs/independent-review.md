@@ -731,6 +731,46 @@ blocker. `make lint` and `make check` pass, including all 67 Python tests and th
 statements (83.3%), 695/1351 unit (51.4%) and 1191/1351 combined (88.2%). The
 Source diagnostic measures 576/905 entered functions, 3195/5385 body statements
 and 973/2076 branch exits. Live Go integration remains pending (LIB-07).
-Verdict: **limited working-tree pass**. The reviewer approved the final docs and
+Verdict: **limited exact-commit pass**. The reviewer approved the final docs and
 independently matched the coverage profiles and inventory to this receipt.
-Exact-SHA review after CI is pending; the full migration criteria remain open.
+Exact SHA `bd5cfc376cf8644ba038604405036a86f0daed0f` was approved after
+[CI 37820415070](https://github.com/portpowered/go-icloud/actions/runs/37820415070)
+passed. CI's unit measurement is 51.5%, versus local 51.4%, a one-statement
+execution variation. PR #12 merged as `d4fb128df3d4e55fb45bc90a20b8a66ce4f915eb`;
+main passed [CI 37821166996](https://github.com/portpowered/go-icloud/actions/runs/37821166996).
+The full migration criteria remain open.
+
+### Interim Find My wire-contract audit
+
+Seven operation contracts now bind all 36 portable Find My scenarios and 68
+exchanges. Canonical generated models round-trip all 63 JSON responses; separate
+initialization/refresh models, query controls and protocol-constant generation
+bind the recorded shapes. Four invented schema examples validate. Drift,
+unknown-field/null-presence and fixed-protocol constraint checks pass.
+
+The independent reviewer found unformatted schema numbers generated 32-bit
+floats and reduced coordinate/battery precision. Explicit double formats and
+nontrivial decimal regressions address the finding (SCHEMA-04, SCHEMA-10).
+The reviewer independently re-probed the precision fix. A second finding was
+that non-200 command acknowledgements incorrectly bound to JSON errors. Four
+new empty 204 command cases and one binary 201 case pass actual pinned Source
+replay, with successful 204/2XX response contracts; the reviewer independently
+re-probed all five. A further ownership finding required explicit response media
+to precede wildcard fallback. A sixth Source case exercises JSON 201 metadata;
+201/202 JSON ownership controls reject non-object acknowledgements while existing
+Drive wildcard-only binary cases still pass. The reviewer independently re-probed
+all three fixes and passed scoped race checks. Verdict: **limited working-tree
+pass**. Exact-SHA approval after CI remains pending. These are schema/model checks,
+not Find My SDK semantic replay; public operations, monitor lifecycle, complete
+runtime/source gates and release remain open. No live device command was sent.
+
+`make lint` and `make check` pass for this final tree, including all 67 Python
+tests, Go race/contracts/drift/consumer checks and the 80% replay/combined gates.
+Current handwritten coverage is 1125/1351 replay statements (83.3%), 696/1351
+unit (51.5%) and 1193/1351 combined (88.3%). Cancellation paths produce small
+run-to-run statement variations; these are diagnostic measurements, not changes
+to the supported operation inventory (LIB-07). The global HTTP inventory is
+455 scenarios/1028 pairs; Find My SDK semantic replay remains 0/36.
+Fresh Source coverage over the final inventory remains 576/905 entered functions,
+3195/5385 body statements and 973/2076 branch exits. These diagnostic Source
+figures do not establish SDK parity or full migration acceptance.

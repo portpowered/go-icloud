@@ -83,13 +83,13 @@ func TestDriveTemporaryFolderIDsRequireUUIDv4(t *testing.T) {
 		"FOLDER::UNKNOWN_ZONE::TempId-00000000-0000-4000-0000-000000000000",
 		"FOLDER::UNKNOWN_ZONE::TempId-AAAAAAAA-0000-4000-8000-000000000000",
 	} {
-		value := map[string]any{"clientId": identifier, "name": "synthetic"}
+		value := map[string]any{contractClientIDKey: identifier, "name": "synthetic"}
 		if schema.VisitJSON(value) == nil {
 			t.Fatalf("non-reference temporary identifier accepted: %s", identifier)
 		}
 	}
 
-	value := map[string]any{"clientId": "FOLDER::UNKNOWN_ZONE::TempId-aaaaaaaa-0000-4000-8000-000000000000",
+	value := map[string]any{contractClientIDKey: "FOLDER::UNKNOWN_ZONE::TempId-aaaaaaaa-0000-4000-8000-000000000000",
 		"name": "synthetic"}
 
 	err := schema.VisitJSON(value)

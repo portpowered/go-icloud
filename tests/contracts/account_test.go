@@ -258,7 +258,7 @@ func accountMediaType(t *testing.T, response *replay.Response) string {
 func accountJSONBody(t *testing.T, entity replay.Entity) any {
 	t.Helper()
 
-	if entity.Encoding != "base64" {
+	if entity.Encoding != driveContractBinaryEncoding {
 		t.Fatalf("unsupported account response encoding: %s", entity.Encoding)
 	}
 
