@@ -86,13 +86,14 @@ func prepareCloseProbe(t *testing.T, transport *replay.HTTPTransport, change str
 }
 
 const (
-	testBase64Encoding = "base64"
-	changeOrigin       = "origin"
-	chunkedEncoding    = "chunked"
-	changeMethod       = "method"
-	unexpectedRequest  = "unexpected"
-	closeFailure       = "close_error"
-	extraQuery         = "extra_query"
+	testBase64Encoding  = "base64"
+	changeOrigin        = "origin"
+	chunkedEncoding     = "chunked"
+	changeMethod        = "method"
+	unexpectedRequest   = "unexpected"
+	contentLengthHeader = "content-length"
+	closeFailure        = "close_error"
+	extraQuery          = "extra_query"
 )
 
 func sampleExchange() replay.Exchange {
@@ -100,13 +101,13 @@ func sampleExchange() replay.Exchange {
 		Request: replay.Request{
 			Method: http.MethodPost, Origin: "https://example.invalid", Path: "/files/a%2Fb",
 			Query:   []replay.Pair{{"tag", "one"}, {"tag", "two"}, {"empty", ""}},
-			Headers: []replay.Pair{{"accept", "application/octet-stream"}, {"content-length", "3"}},
-			Body:    replay.Entity{Encoding: testBase64Encoding, Value: "AP9B"},
+			Headers: []replay.Pair{{"accept", "application/octet-stream"}, {contentLengthHeader, "3"}},
+			Body:    replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9B"`), Matchers: nil},
 		},
 		Response: &replay.Response{
 			Status:  http.StatusOK,
 			Headers: []replay.Pair{{"Set-Cookie", "first=one; Secure"}, {"Set-Cookie", "second=two; Secure"}},
-			Body:    replay.Entity{Encoding: testBase64Encoding, Value: "AP9C"},
+			Body:    replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9C"`), Matchers: nil},
 		},
 		Error: "",
 	}
@@ -367,7 +368,7 @@ func mutateExchange(exchange *replay.Exchange, change string) {
 	case "encoding":
 		exchange.Request.Body.Encoding = "json-pattern"
 	case "base64":
-		exchange.Response.Body.Value = "!"
+		exchange.Response.Body.Value = json.RawMessage(`"!"`)
 	case "outcome":
 		exchange.Error = "Timeout"
 	case "no_outcome":
@@ -471,7 +472,14 @@ func TestPortableAccountExchangeUsesGoHTTPClient(t *testing.T) {
 
 	got := consumeResponse(t, response)
 
-	want, err := base64.StdEncoding.DecodeString(fixture.Exchanges[0].Response.Body.Value)
+	var encoded string
+
+	err = json.Unmarshal(fixture.Exchanges[0].Response.Body.Value, &encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	want, err := base64.StdEncoding.DecodeString(encoded)
 	if err != nil || !reflect.DeepEqual(got, want) {
 		t.Fatal("portable fixture response bytes changed")
 	}

@@ -398,6 +398,21 @@ suite and documentation check. Verdict: **limited interim pass** for exact-base6
 HTTP transport replay. This is not Go SDK semantic replay; structural match rules,
 socket/auth timelines, production schemas and the client remain open.
 
+### Interim Go JSON rule audit
+
+The reviewer independently checked the 14 credential-redaction and two JSON
+pattern declarations against the pinned reference. It confirmed nonempty string
+passwords, six ASCII digit codes, exact fixed structure and large-number
+preservation. It found that escaped equivalent paths bypassed raw duplicate
+checks and let one replacement hide a later format violation.
+
+Paths now use canonical typed identities, equivalent duplicates reject and all
+patterns check original request values before replacements. The original bypass
+independently fails construction. Focused race tests and documentation checks
+pass. Verdict: **limited interim pass** for JSON request rules (LIB-05).
+Constructor acceptance of 16 declarations is not SDK semantic replay; multipart,
+socket/auth timelines, projections, schemas and the client remain open.
+
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
 fixed finding remain to be recorded. Every unresolved finding prevents sign-off.

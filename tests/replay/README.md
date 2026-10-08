@@ -2,7 +2,7 @@
 
 `HTTPTransport` consumes ordered portable `Exchange` values without a network
 fallback. It snapshots its input, matches the method, authority, escaped path,
-ordered repeated query values, headers and exact base64 entity before returning
+ordered repeated query values, headers and the declared entity rule before returning
 the paired status, repeated response headers and bytes. A rejected request stays
 rejected even if a caller catches its error. Request bodies close on every exit;
 response bodies must be read and closed before `AssertConsumed` succeeds.
@@ -13,7 +13,18 @@ actual entity size. Opaque URLs, URL credentials/fragments, host overrides,
 unknown lengths, forced queries, trailers, chunked framing and the Close flag
 reject because they are not represented by these exact-body exchanges (LIB-05).
 
-This is the first transport port. JSON-pattern/redacted and multipart matching,
+JSON-pattern rules match strings at explicit object/array paths using a full
+regular expression. Equivalent paths reject, and every pattern checks the
+original request before any sample replacement. All other fields and array
+contents remain exact. Redacted JSON accepts nonempty string passwords and
+six ASCII digit codes only at the named credential fields; other fields remain
+exact. Actual Content-Length still binds bytes before the recorded redacted
+length is omitted. JSON number spelling is retained without float64 conversion;
+duplicate keys, trailing values, invalid UTF-8 and unknown rule fields reject.
+These duplicate/ambiguous-rule checks deliberately strengthen reference replay.
+
+All 16 existing JSON rule declarations instantiate in Go; this proves fixture
+decoding and rule validity, not SDK operation semantics. Multipart matching,
 auth/socket timelines, account/session projections, source-pin scenario loading
 and the complete Go SDK scenario drivers remain to be ported. Unsupported entity
 encodings fail construction; no approximate match or fallback is provided.

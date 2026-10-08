@@ -78,8 +78,10 @@ schema/model bindings or separate socket acceptance.
 The first [Go paired transport](../tests/replay/README.md) now consumes exact-body
 portable exchanges through `http.RoundTripper`, including sticky mismatches,
 ordered queries, framing, repeated response headers and body ownership. This is
-verification infrastructure, not an SDK operation port. Structural JSON and
-multipart rules, socket/auth timelines, scenario projections and the Go client
+verification infrastructure, not an SDK operation port. Explicit JSON pattern
+and credential-redaction rules now instantiate all 16 portable declarations;
+negative controls reject changed fixed fields, string formats, code types and
+ambiguous paths. Multipart rules, socket/auth timelines, scenario projections and the Go client
 remain open. No Python semantic replay is counted as passing Go SDK replay.
 
 The portable HTTP suite now has 413 scenarios and 949 paired exchanges after
