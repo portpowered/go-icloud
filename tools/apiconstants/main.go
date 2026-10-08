@@ -1,4 +1,4 @@
-// Command apiconstants generates account and Drive protocol constants from canonical schemas.
+// Command apiconstants generates protocol constants from canonical service schemas.
 package main
 
 import (
@@ -34,45 +34,53 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = generateDriveConstants()
+	err = generateExternalConstants("Drive")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	err = generateExternalConstants("FindMy")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func generateDriveConstants() error {
+func generateExternalConstants(prefix string) error {
 	loader := openapi3.NewLoader()
 	loader.IsExternalRefsAllowed = true
 
-	document, err := loader.LoadFromFile("api/external/drive.openapi.yaml")
+	name := strings.ToLower(prefix)
+
+	document, err := loader.LoadFromFile("api/external/" + name + ".openapi.yaml")
 	if err != nil {
-		return fmt.Errorf("load Drive schema: %w", err)
+		return fmt.Errorf("load %s schema: %w", prefix, err)
 	}
 
 	err = document.Validate(context.Background())
 	if err != nil {
-		return fmt.Errorf("validate Drive schema: %w", err)
+		return fmt.Errorf("validate %s schema: %w", prefix, err)
 	}
 
-	models, err := loader.LoadFromFile("api/external/drive-models.openapi.yaml")
+	models, err := loader.LoadFromFile("api/external/" + name + "-models.openapi.yaml")
 	if err != nil {
-		return fmt.Errorf("load Drive models: %w", err)
+		return fmt.Errorf("load %s models: %w", prefix, err)
 	}
 
-	values, err := driveConstants(document, models)
-	if err != nil {
-		return err
-	}
-
-	formatted, err := renderConstants(values, "Drive")
+	values, err := externalConstants(document, models)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile("internal/protocol/drive.gen.go", formatted, protocolFileMode)
+	formatted, err := renderConstants(values, prefix)
 	if err != nil {
-		return fmt.Errorf("write Drive protocol constants: %w", err)
+		return err
+	}
+
+	err = os.WriteFile("internal/protocol/"+name+".gen.go", formatted, protocolFileMode)
+	if err != nil {
+		return fmt.Errorf("write %s protocol constants: %w", prefix, err)
 	}
 
 	return nil
@@ -194,7 +202,7 @@ func prefixMatchesPattern(prefix, pattern string) bool {
 	return err == nil && compiled.MatchString(prefix+prefixProbeUUID)
 }
 
-func driveConstants(routes, models *openapi3.T) (map[string]string, error) {
+func externalConstants(routes, models *openapi3.T) (map[string]string, error) {
 	// The models document owns property names; the route document owns operations and media.
 	routeCopy := *routes
 	components := *routes.Components

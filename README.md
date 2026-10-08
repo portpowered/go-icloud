@@ -50,6 +50,8 @@ authentication are still being built; the SDK
 has not been released. See
 [capture development notes](docs/reference-capture.md) for evidence status,
 reference revisions, recording limitations, and verification commands.
+Generated [Find My wire contracts](docs/findmy-wire-contracts.md) now cover the
+existing reference exchanges; public Find My SDK operations remain in development.
 
 ## Supply session cookies
 

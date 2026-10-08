@@ -97,7 +97,7 @@ func TestDriveProtocolConstantsHaveNoDrift(t *testing.T) {
 
 	document := driveConstantsDocument(t)
 
-	values, err := driveConstants(document, driveModelsDocument(t))
+	values, err := externalConstants(document, driveModelsDocument(t))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -122,7 +122,7 @@ func TestDriveProtocolConstantsFollowSchemaAndRejectCollisions(t *testing.T) {
 	node.Properties["futureItems"] = node.Properties["items"]
 	delete(node.Properties, "items")
 
-	values, err := driveConstants(document, models)
+	values, err := externalConstants(document, models)
 	if err != nil || values["DriveAppLibrariesFutureItems"] != "futureItems" {
 		t.Fatal("Drive constants did not follow the schema property")
 	}
@@ -137,7 +137,7 @@ func TestDriveProtocolConstantsFollowSchemaAndRejectCollisions(t *testing.T) {
 		}
 	}
 
-	_, err = driveConstants(document, models)
+	_, err = externalConstants(document, models)
 	if !errors.Is(err, errConstant) {
 		t.Fatal("ambiguous Drive operation/model constant was accepted")
 	}
@@ -182,7 +182,7 @@ func TestDrivePrefixConstantsRejectTruncationAndInvalidDeclarations(t *testing.T
 			field := models.Components.Schemas["DriveFolderCreation"].Value.Properties["clientId"].Value
 			field.Extensions["x-protocol-prefix"] = value
 
-			_, err := driveConstants(driveConstantsDocument(t), models)
+			_, err := externalConstants(driveConstantsDocument(t), models)
 			if !errors.Is(err, errConstant) {
 				t.Fatal("invalid or truncated identifier prefix was emitted")
 			}
@@ -198,14 +198,14 @@ func TestDrivePrefixConstantsFollowCompletePatternAndExtension(t *testing.T) {
 	field.Pattern = strings.ReplaceAll(field.Pattern, "UNKNOWN_ZONE", "SYNTHETIC_ZONE")
 	field.Extensions["x-protocol-prefix"] = "FOLDER::SYNTHETIC_ZONE::TempId-"
 
-	values, err := driveConstants(driveConstantsDocument(t), models)
+	values, err := externalConstants(driveConstantsDocument(t), models)
 	if err != nil || values["DriveFolderCreationClientIdPrefix"] != "FOLDER::SYNTHETIC_ZONE::TempId-" {
 		t.Fatal("prefix did not follow the canonical model declaration")
 	}
 
 	field.Pattern = strings.TrimPrefix(field.Pattern, "^")
 
-	_, err = driveConstants(driveConstantsDocument(t), models)
+	_, err = externalConstants(driveConstantsDocument(t), models)
 	if !errors.Is(err, errConstant) {
 		t.Fatal("unanchored temporary identifier prefix was emitted")
 	}
@@ -219,7 +219,7 @@ func TestDriveRequestMediaConstantsFollowSchema(t *testing.T) {
 	content["application/x-synthetic"] = content["plain/text"]
 	delete(content, "plain/text")
 
-	values, err := driveConstants(document, driveModelsDocument(t))
+	values, err := externalConstants(document, driveModelsDocument(t))
 	if err != nil || values["MediaApplicationXSynthetic"] != "application/x-synthetic" {
 		t.Fatal("request media type did not follow the route declaration")
 	}
@@ -240,7 +240,7 @@ func TestDriveScalarConstantsFollowSchema(t *testing.T) {
 	field.Pattern = `^synthetic; name="[^"]*"; filename="[^"]*"$`
 	field.Extensions["x-protocol-template"] = `synthetic; name="%s"; filename="%s"`
 
-	values, err := driveConstants(driveConstantsDocument(t), models)
+	values, err := externalConstants(driveConstantsDocument(t), models)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -262,7 +262,7 @@ func TestDriveScalarConstantsRejectInvalidFormats(t *testing.T) {
 			models := driveModelsDocument(t)
 			models.Components.Schemas["DriveUploadContentDisposition"].Value.Extensions["x-protocol-template"] = value
 
-			_, err := driveConstants(driveConstantsDocument(t), models)
+			_, err := externalConstants(driveConstantsDocument(t), models)
 			if !errors.Is(err, errConstant) {
 				t.Fatal("invalid protocol template was emitted")
 			}
@@ -272,7 +272,7 @@ func TestDriveScalarConstantsRejectInvalidFormats(t *testing.T) {
 	models := driveModelsDocument(t)
 	models.Components.Schemas["DriveUploadTokenCookieValue"].Value.Pattern = "["
 
-	_, err := driveConstants(driveConstantsDocument(t), models)
+	_, err := externalConstants(driveConstantsDocument(t), models)
 	if !errors.Is(err, errConstant) {
 		t.Fatal("invalid cookie pattern was emitted")
 	}

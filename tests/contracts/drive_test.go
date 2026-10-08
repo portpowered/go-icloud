@@ -28,7 +28,10 @@ const (
 	mutationPath                = "path"
 )
 
-var errDriveBinding = errors.New("drive exchange has no verified contract binding")
+var (
+	errDriveBinding  = errors.New("drive exchange has no verified contract binding")
+	errContractMedia = errors.New("response has no media contract")
+)
 
 type driveDocuments struct {
 	Routes  *openapi3.T
@@ -271,9 +274,9 @@ func validateDriveResponse(t *testing.T, operation *openapi3.Operation, response
 		t.Fatal("Drive status has no response contract")
 	}
 
-	media := declared.Value.Content["*/*"]
-	if media == nil {
-		media = declared.Value.Content[driveHeaderMedia(t, response.Headers)]
+	media, err := contractResponseMedia(declared.Value.Content, response.Headers)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	if media == nil || media.Schema == nil {
@@ -293,6 +296,31 @@ func validateDriveResponse(t *testing.T, operation *openapi3.Operation, response
 	if err != nil {
 		t.Fatalf("%s response: %v", operation.OperationID, err)
 	}
+}
+
+func contractResponseMedia(content openapi3.Content, headers []replay.Pair) (*openapi3.MediaType, error) {
+	for _, header := range headers {
+		if !strings.EqualFold(header[0], "Content-Type") {
+			continue
+		}
+
+		value, _, err := mime.ParseMediaType(header[1])
+		if err != nil {
+			return nil, fmt.Errorf("response media type: %w", err)
+		}
+
+		if media := content[value]; media != nil {
+			return media, nil
+		}
+
+		break
+	}
+
+	if fallback := content["*/*"]; fallback != nil {
+		return fallback, nil
+	}
+
+	return nil, errContractMedia
 }
 
 func driveResponseContract(operation *openapi3.Operation, status int) *openapi3.ResponseRef {
@@ -342,7 +370,7 @@ func driveHeaderMedia(t *testing.T, headers []replay.Pair) string {
 func driveJSONValue(entity replay.Entity) (any, error) {
 	body := []byte(entity.Value)
 
-	if entity.Encoding == "base64" {
+	if entity.Encoding == driveContractBinaryEncoding {
 		var encoded string
 
 		err := json.Unmarshal(entity.Value, &encoded)

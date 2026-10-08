@@ -1,0 +1,273 @@
+openapi: 3.0.3
+info:
+  title: iCloud Find My wire API
+  version: 0.1.0
+  description: Device discovery and command operations using authenticated caller-supplied service origins. Token lookup uses the setup origin.
+paths:
+  /fmipservice/client/web/initClient:
+    post:
+      operationId: FindMyInitialize
+      summary: Initialize device discovery
+      description: Initialize device discovery. Command acknowledgement does not establish physical completion.
+      parameters:
+        - {$ref: '#/components/parameters/FindMyClientID'}
+        - {$ref: '#/components/parameters/FindMyDSID'}
+        - {$ref: '#/components/parameters/FindMyBuildNumber'}
+        - {$ref: '#/components/parameters/FindMyMasteringNumber'}
+        - {$ref: '#/components/parameters/FindMyAccept'}
+        - {$ref: '#/components/parameters/FindMyCookie'}
+        - {$ref: '#/components/parameters/FindMyOrigin'}
+        - {$ref: '#/components/parameters/FindMyReferer'}
+        - {$ref: '#/components/parameters/FindMyUserAgent'}
+        - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
+        - {$ref: '#/components/parameters/FindMyConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FindMyInitializeRequest'}
+      responses:
+        '200':
+          description: Initialize device discovery result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyRefreshResponse'}
+        default: {$ref: '#/components/responses/FindMyFailure'}
+  /fmipservice/client/web/refreshClient:
+    post:
+      operationId: FindMyRefreshDevices
+      summary: Refresh devices and locations
+      description: Refresh devices and locations. Command acknowledgement does not establish physical completion.
+      parameters:
+        - {$ref: '#/components/parameters/FindMyClientID'}
+        - {$ref: '#/components/parameters/FindMyDSID'}
+        - {$ref: '#/components/parameters/FindMyBuildNumber'}
+        - {$ref: '#/components/parameters/FindMyMasteringNumber'}
+        - {$ref: '#/components/parameters/FindMyAccept'}
+        - {$ref: '#/components/parameters/FindMyCookie'}
+        - {$ref: '#/components/parameters/FindMyOrigin'}
+        - {$ref: '#/components/parameters/FindMyReferer'}
+        - {$ref: '#/components/parameters/FindMyUserAgent'}
+        - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
+        - {$ref: '#/components/parameters/FindMyConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FindMyRefreshRequest'}
+      responses:
+        '200':
+          description: Refresh devices and locations result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyRefreshResponse'}
+        default: {$ref: '#/components/responses/FindMyFailure'}
+  /fmipservice/client/web/playSound:
+    post:
+      operationId: FindMyPlaySound
+      summary: Play a sound on the selected device
+      description: Play a sound on the selected device. Command acknowledgement does not establish physical completion.
+      parameters:
+        - {$ref: '#/components/parameters/FindMyClientID'}
+        - {$ref: '#/components/parameters/FindMyDSID'}
+        - {$ref: '#/components/parameters/FindMyBuildNumber'}
+        - {$ref: '#/components/parameters/FindMyMasteringNumber'}
+        - {$ref: '#/components/parameters/FindMyAccept'}
+        - {$ref: '#/components/parameters/FindMyCookie'}
+        - {$ref: '#/components/parameters/FindMyOrigin'}
+        - {$ref: '#/components/parameters/FindMyReferer'}
+        - {$ref: '#/components/parameters/FindMyUserAgent'}
+        - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
+        - {$ref: '#/components/parameters/FindMyConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FindMySoundRequest'}
+      responses:
+        '200':
+          description: Play a sound on the selected device result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+        '204':
+          description: Successful command acknowledgement with no content.
+        '2XX':
+          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
+        default: {$ref: '#/components/responses/FindMyFailure'}
+  /fmipservice/client/web/sendMessage:
+    post:
+      operationId: FindMySendMessage
+      summary: Display a message on the selected device
+      description: Display a message on the selected device. Command acknowledgement does not establish physical completion.
+      parameters:
+        - {$ref: '#/components/parameters/FindMyClientID'}
+        - {$ref: '#/components/parameters/FindMyDSID'}
+        - {$ref: '#/components/parameters/FindMyBuildNumber'}
+        - {$ref: '#/components/parameters/FindMyMasteringNumber'}
+        - {$ref: '#/components/parameters/FindMyAccept'}
+        - {$ref: '#/components/parameters/FindMyCookie'}
+        - {$ref: '#/components/parameters/FindMyOrigin'}
+        - {$ref: '#/components/parameters/FindMyReferer'}
+        - {$ref: '#/components/parameters/FindMyUserAgent'}
+        - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
+        - {$ref: '#/components/parameters/FindMyConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FindMyMessageRequest'}
+      responses:
+        '200':
+          description: Display a message on the selected device result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+        '204':
+          description: Successful command acknowledgement with no content.
+        '2XX':
+          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
+        default: {$ref: '#/components/responses/FindMyFailure'}
+  /fmipservice/client/web/lostDevice:
+    post:
+      operationId: FindMyLostDevice
+      summary: Enable lost mode on the selected device
+      description: Enable lost mode on the selected device. Command acknowledgement does not establish physical completion.
+      parameters:
+        - {$ref: '#/components/parameters/FindMyClientID'}
+        - {$ref: '#/components/parameters/FindMyDSID'}
+        - {$ref: '#/components/parameters/FindMyBuildNumber'}
+        - {$ref: '#/components/parameters/FindMyMasteringNumber'}
+        - {$ref: '#/components/parameters/FindMyAccept'}
+        - {$ref: '#/components/parameters/FindMyCookie'}
+        - {$ref: '#/components/parameters/FindMyOrigin'}
+        - {$ref: '#/components/parameters/FindMyReferer'}
+        - {$ref: '#/components/parameters/FindMyUserAgent'}
+        - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
+        - {$ref: '#/components/parameters/FindMyConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FindMyLostRequest'}
+      responses:
+        '200':
+          description: Enable lost mode on the selected device result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+        '204':
+          description: Successful command acknowledgement with no content.
+        '2XX':
+          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
+        default: {$ref: '#/components/responses/FindMyFailure'}
+  /setup/ws/1/fmipWebAuthenticate:
+    post:
+      operationId: FindMyObtainEraseToken
+      summary: Obtain authorization for a remote erase
+      description: Obtain authorization for a remote erase. Command acknowledgement does not establish physical completion.
+      parameters:
+        - {$ref: '#/components/parameters/FindMyAccept'}
+        - {$ref: '#/components/parameters/FindMyCookie'}
+        - {$ref: '#/components/parameters/FindMyOrigin'}
+        - {$ref: '#/components/parameters/FindMyReferer'}
+        - {$ref: '#/components/parameters/FindMyUserAgent'}
+        - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
+        - {$ref: '#/components/parameters/FindMyConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FindMyEraseTokenRequest'}
+      responses:
+        '200':
+          description: Obtain authorization for a remote erase result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyEraseTokenResponse'}
+        default: {$ref: '#/components/responses/FindMyFailure'}
+  /fmipservice/client/web/remoteWipeWithUserAuth:
+    post:
+      operationId: FindMyEraseDevice
+      summary: Request remote erase of the selected device
+      description: Request remote erase of the selected device. Command acknowledgement does not establish physical completion.
+      parameters:
+        - {$ref: '#/components/parameters/FindMyClientID'}
+        - {$ref: '#/components/parameters/FindMyDSID'}
+        - {$ref: '#/components/parameters/FindMyBuildNumber'}
+        - {$ref: '#/components/parameters/FindMyMasteringNumber'}
+        - {$ref: '#/components/parameters/FindMyAccept'}
+        - {$ref: '#/components/parameters/FindMyCookie'}
+        - {$ref: '#/components/parameters/FindMyOrigin'}
+        - {$ref: '#/components/parameters/FindMyReferer'}
+        - {$ref: '#/components/parameters/FindMyUserAgent'}
+        - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
+        - {$ref: '#/components/parameters/FindMyConnection'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FindMyEraseRequest'}
+      responses:
+        '200':
+          description: Request remote erase of the selected device result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+        '204':
+          description: Successful command acknowledgement with no content.
+        '2XX':
+          description: Successful command acknowledgement; non-JSON bytes are uninterpreted.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FindMyAcknowledgement'}
+            '*/*':
+              schema: {$ref: '#/components/schemas/FindMyCommandBytes'}
+        default: {$ref: '#/components/responses/FindMyFailure'}
+components:
+  parameters:
+    FindMyClientID: {name: clientId, in: query, required: true, schema: {type: string, minLength: 1}}
+    FindMyDSID: {name: dsid, in: query, required: true, schema: {type: string, minLength: 1}}
+    FindMyBuildNumber: {name: clientBuildNumber, in: query, schema: {type: string}}
+    FindMyMasteringNumber: {name: clientMasteringNumber, in: query, schema: {type: string}}
+    FindMyAccept: {name: Accept, in: header, schema: {type: string}}
+    FindMyCookie: {name: Cookie, in: header, schema: {type: string}}
+    FindMyOrigin: {name: Origin, in: header, schema: {type: string, format: uri}}
+    FindMyReferer: {name: Referer, in: header, schema: {type: string, format: uri}}
+    FindMyUserAgent: {name: User-Agent, in: header, schema: {type: string}}
+    FindMyAcceptEncoding: {name: Accept-Encoding, in: header, schema: {type: string}}
+    FindMyConnection: {name: Connection, in: header, schema: {type: string}}
+  responses:
+    FindMyFailure:
+      description: Provider refusal; optional error fields and unknown metadata remain available.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/FindMyError'}
+  schemas:
+    FindMyInitializeRequest: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyInitializeRequest'}
+    FindMyRefreshRequest: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyRefreshRequest'}
+    FindMyRefreshResponse: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyRefreshResponse'}
+    FindMySoundRequest: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMySoundRequest'}
+    FindMyMessageRequest: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyMessageRequest'}
+    FindMyLostRequest: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyLostRequest'}
+    FindMyEraseTokenRequest: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyEraseTokenRequest'}
+    FindMyEraseTokenResponse: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyEraseTokenResponse'}
+    FindMyEraseRequest: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyEraseRequest'}
+    FindMyAcknowledgement: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyAcknowledgement'}
+    FindMyError: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyError'}
+    FindMyCommandBytes: {$ref: './findmy-models.openapi.yaml#/components/schemas/FindMyCommandBytes'}

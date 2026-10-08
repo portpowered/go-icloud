@@ -143,9 +143,9 @@ The non-generated library coverage includes account reads, Drive service methods
 and the explicit session and entry lifecycle;
 schema validation alone is not SDK replay coverage (LIB-07).
 Replay measures 1125/1351 handwritten SDK/internal statements (83.3%); unit
-measures 695/1351 (51.4%); combined measures 1191/1351 (88.2%). Live Go integration
+measures 696/1351 (51.5%); combined measures 1193/1351 (88.3%). Live Go integration
 is still pending. `make lint` and `make check` pass. The portable reference
-inventory remains 449 HTTP scenarios/1015 pairs and 67 Python test methods.
+inventory remains 455 HTTP scenarios/1028 pairs and 67 Python test methods.
 
 The transfer issuer checks currently cover observed fixture URL forms. Exact
 provider query binding, complete common-parameter/header validation, provider
