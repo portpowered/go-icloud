@@ -89,5 +89,32 @@ The sample sizes and complete consumption are checked, and factories restored.
 The rejected asset-deletion case records a reference defect: a per-record error
 still returns true. It is implementation evidence, not an observed successful
 Apple write. The Go implementation must report the rejection, with that deliberate
-departure explicitly tested rather than silently copied. Uploads and complete
-shared-stream coverage remain open.
+departure explicitly tested rather than silently copied. Full service upload
+hydration and complete shared-stream error coverage remain open.
+
+Upload endpoint cases now cover reservation, raw file transfer, registration and
+progress lookup with zero/one/three results, unknown jobs, binary/empty bytes,
+HTTP errors, invalid JSON and unexpected provider payloads. The actual uploader
+pipeline covers successful registration, existing-asset duplicates, provider
+rejection, missing reservation and zero/multiple registration results. Temporary
+file inputs declare basename, base64 entity bytes and modification seconds.
+Finite UUID samples also bind the uploader's imported UUID factory; the explicit
+`photos_local_timezone` environment sample binds zone and offset through its
+clock/environment-only helper. Actual request and upload workflow methods run.
+CloudKit failures require `error_payload` as well as type/message. The field
+preserves provider JSON or invalid-response text exposed through the exception;
+missing or changed payloads fail replay.
+
+The HTTP recorder snapshots seekable binary file bodies from their current
+position, restoring the position before forwarding live traffic. Replay validates
+the complete entity and Content-Length. This is HTTP entity matching at the
+adapter seam; it does not record TCP chunk framing. Streamed responses retain
+read/close behavior and duplicate response headers for cookie processing.
+
+Shared-stream cases use the actual modern service's legacy stream dependency.
+They cover zero/one/three albums, asset counts and asset pages; multi-page reads;
+existing/missing lookups; metadata and likes; and binary/empty downloads. Their
+origin, DSID and album-provided content location remain exact request inputs.
+These synthetic cases do not establish observed Apple stream behavior. Full
+service upload hydration, target-album membership and remaining error variants
+still need endpoint cases.

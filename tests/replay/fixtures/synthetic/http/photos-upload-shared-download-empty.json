@@ -1,0 +1,229 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "photos",
+  "operation": "stream_download",
+  "initial_state": {
+    "origin": "https://photos.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "photos_upload_origin": "https://uploads.example.invalid",
+    "shared_streams_origin": "https://shared.example.invalid"
+  },
+  "inputs": [
+    "synthetic-asset-0"
+  ],
+  "keyword_inputs": {},
+  "album": "synthetic-stream-0",
+  "result": "",
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://photos.example.invalid",
+        "path": "/database/1/com.apple.photos.cloud/production/private/records/query",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "140"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUifSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUHJpbWFyeVN5bmMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9LCAicmVzdWx0c0xpbWl0IjogMX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtaW5kZXgiLCAicmVjb3JkVHlwZSI6ICJDaGVja0luZGV4aW5nU3RhdGUiLCAiZmllbGRzIjogeyJzdGF0ZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRklOSVNIRUQifX19XSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyJ9"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://shared.example.invalid",
+        "path": "/synthetic-account/sharedstreams/webgetalbumslist",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhbGJ1bXMiOiBbeyJhbGJ1bWd1aWQiOiAic3ludGhldGljLXN0cmVhbS0wIiwgImFsYnVtbG9jYXRpb24iOiAiaHR0cHM6Ly9zdHJlYW0tY29udGVudC5leGFtcGxlLmludmFsaWQvc3ludGhldGljLyIsICJhbGJ1bWN0YWciOiAic3ludGhldGljLXN0cmVhbS10YWciLCAib3duZXJkc2lkIjogInN5bnRoZXRpYy1vd25lciIsICJzaGFyaW5ndHlwZSI6ICJvd25lZCIsICJpc3dlYnVwbG9hZHN1cHBvcnRlZCI6IGZhbHNlLCAiYXR0cmlidXRlcyI6IHsibmFtZSI6ICJTeW50aGV0aWMgc3RyZWFtIDAiLCAiY3JlYXRpb25EYXRlIjogIjE3MDAwMDAwMDAwMDAiLCAiYWxsb3djb250cmlidXRpb25zIjogZmFsc2UsICJpc3B1YmxpYyI6IGZhbHNlfX1dfQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://stream-content.example.invalid",
+        "path": "/synthetic/webgetassets",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "remapEnums",
+            "True"
+          ],
+          [
+            "getCurrentSyncToken",
+            "True"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "content-length",
+            "103"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhbGJ1bWd1aWQiOiAic3ludGhldGljLXN0cmVhbS0wIiwgImFsYnVtY3RhZyI6ICJzeW50aGV0aWMtc3RyZWFtLXRhZyIsICJsaW1pdCI6ICIyMDAiLCAib2Zmc2V0IjogIjAifQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtbWFzdGVyLTAiLCAicmVjb3JkVHlwZSI6ICJDUExNYXN0ZXIiLCAiZmllbGRzIjogeyJmaWxlbmFtZUVuYyI6IHsidmFsdWUiOiAiYzNsdWRHaGxkR2xqTFRBdWFuQm4ifSwgIml0ZW1UeXBlIjogeyJ2YWx1ZSI6ICJwdWJsaWMuanBlZyJ9LCAicmVzT3JpZ2luYWxGaWxlVHlwZSI6IHsidmFsdWUiOiAicHVibGljLmpwZWcifSwgInJlc09yaWdpbmFsV2lkdGgiOiB7InZhbHVlIjogNjQwfSwgInJlc09yaWdpbmFsSGVpZ2h0IjogeyJ2YWx1ZSI6IDQ4MH0sICJyZXNPcmlnaW5hbEZpbGVTaXplIjogeyJ2YWx1ZSI6IDN9LCAib3JpZ2luYWxDcmVhdGlvbkRhdGUiOiB7InZhbHVlIjogMTcwMDAwMDAwMDAwMH0sICJyZXNPcmlnaW5hbFJlcyI6IHsidmFsdWUiOiB7ImRvd25sb2FkVVJMIjogImh0dHBzOi8vYXNzZXRzLmV4YW1wbGUuaW52YWxpZC9zaGFyZWQtMCIsICJzaXplIjogM319fX0sIHsicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtYXNzZXQtMCIsICJyZWNvcmRUeXBlIjogIkNQTEFzc2V0IiwgImZpZWxkcyI6IHsibWFzdGVyUmVmIjogeyJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtbWFzdGVyLTAifX0sICJhZGRlZERhdGUiOiB7InZhbHVlIjogMTcwMDAwMDAwMTAwMH19LCAicGx1Z2luRmllbGRzIjogeyJsaWtlQ291bnQiOiB7InZhbHVlIjogMH0sICJsaWtlZEJ5Q2FsbGVyIjogeyJ2YWx1ZSI6IGZhbHNlfX19XX0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://assets.example.invalid",
+        "path": "/shared-0",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      }
+    }
+  ]
+}

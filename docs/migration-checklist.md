@@ -68,12 +68,14 @@ duplicate exclusions fail. Authentication's keyring lookup and shared helpers
 used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
-The portable HTTP suite now has 159 scenarios and 270 paired exchanges after
-adding Photos album/asset queries, pagination, downloads and offline mutations.
+The portable HTTP suite now has 203 scenarios and 382 paired exchanges after
+adding Photos upload reservation/bytes/registration/status and shared streams.
 Authentication socket replay adds 53 synthetic ordered duplex scenarios
-(283 events). Combined replay now enters 376/905 functions and executes
-1,995/5,385 body statements (37.05%) and 597/2,076 branch exits. These measurements
+(283 events). Combined replay now enters 433/905 functions and executes
+2,249/5,385 body statements (41.76%) and 670/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
+The preceding Photos album/asset milestone entered 376/905 functions and covered
+1,995/5,385 statements (37.05%) and 597/2,076 branch exits.
 The preceding Reminders milestone entered 331/905 functions and covered
 1,792/5,385 statements (33.28%) and 519/2,076 branch exits.
 The earlier bridge-message suite entered 252/905 functions and covered

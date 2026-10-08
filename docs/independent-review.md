@@ -126,6 +126,27 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim Photos upload and shared-stream audit
+
+The reviewer independently checked 44 new cases with 112 pairs: actual upload
+reservation, file transfer, registration/progress and pipeline behavior, plus
+shared-stream albums/counts/assets/lookups/downloads. File snapshots preserve
+position and bind remaining entity bytes; streamed responses support raw reads
+and closure. Clock, timezone and imported UUID factories restore after replay.
+These are synthetic HTTP entity cases, not live writes or TCP chunk transcripts.
+
+The reviewer found that a caught CloudKit exception's caller-visible payload
+could change while type/message still passed. Upload fixtures now require exact
+`error_payload` projections. The reviewer reran its original execute-wrapper
+exploit and verified all 12 CloudKit failure cases reject changed or missing
+payloads. Actual HTTP errors retain their reference exception classification.
+Unsupported stream errors also remain sticky across attempted recovery.
+Disposition: **payload finding independently resolved** under LIB-05.
+
+Both local checks and the independent `make check` pass 47 methods. Verdict:
+**limited interim pass**. Service upload hydration/target-album membership,
+remaining endpoint variants, Go interoperability and full acceptance remain open.
+
 ### Interim Photos endpoint audit
 
 The independent reviewer passed `make check` with 43 methods and confirmed

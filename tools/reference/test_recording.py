@@ -32,6 +32,35 @@ def prepared(url="https://example.invalid/items?q=one&q=two", **kwargs):
 
 
 class ReplayTests(unittest.TestCase):
+    def test_file_entity_bytes_and_position_are_bound(self):
+        stream = io.BytesIO(b"prefix\x00\xffx")
+        stream.seek(6)
+        request = prepared(data=stream)
+        expected = pair(request)
+        self.assertEqual(stream.tell(), 6)
+        self.assertEqual(expected["request"]["body"]["value"], "AP94")
+        adapter = ReplayAdapter([expected])
+        adapter.send(request)
+        adapter.assert_consumed()
+        self.assertEqual(stream.tell(), 6)
+        stream.seek(6)
+        stream.write(b"bad")
+        stream.seek(6)
+        adapter = ReplayAdapter([expected])
+        with self.assertRaisesRegex(AssertionError, "mismatch"):
+            adapter.send(request)
+        self.assertEqual(stream.tell(), 6)
+        self.assertEqual(adapter.index, 0)
+
+    def test_raw_stream_body_can_be_read_and_closed(self):
+        request = prepared()
+        adapter = ReplayAdapter([pair(request, body=b"\x00\xffx")])
+        response = adapter.send(request)
+        self.assertEqual(response.raw.read(), b"\x00\xffx")
+        self.assertEqual(response.raw.read(), b"")
+        response.close()
+        adapter.assert_consumed()
+
     def test_caught_rejection_cannot_recover_or_pass(self):
         request = prepared(json={"item": "synthetic"})
         adapter = ReplayAdapter([pair(request)])

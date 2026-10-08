@@ -12,7 +12,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 159)
+        self.assertGreaterEqual(len(fixtures), 203)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -104,6 +104,45 @@ class SyntheticTests(unittest.TestCase):
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(original))
                 with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_upload_file_and_clock_inputs_are_bound(self):
+        for change in ["bytes", "mtime", "timezone", "uuid", "status"]:
+            original = json.loads(
+                (FIXTURES / "photos-upload-pipeline-success.json").read_text()
+            )
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "bytes":
+                    original["file"]["body"] = "YmFk"
+                elif change == "mtime":
+                    original["file"]["modified_seconds"] += 1
+                elif change == "timezone":
+                    original["entropy"]["photos_local_timezone"] = ["UTC", 60]
+                elif change == "uuid":
+                    original["entropy"]["uuid4"][0] = (
+                        "00000002-0000-4000-8000-000000000000"
+                    )
+                else:
+                    original["result"]["value"]["response"]["status"] = 500
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(original))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_upload_error_payload_is_required_and_bound(self):
+        original = json.loads(
+            (FIXTURES / "photos-upload-pipeline-rejected.json").read_text()
+        )
+        for change in ["removed", "changed"]:
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                scenario = json.loads(json.dumps(original))
+                if change == "removed":
+                    del scenario["error_payload"]
+                else:
+                    scenario["error_payload"] = {"unrelated": True}
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaisesRegex(AssertionError, "error payload mismatch"):
                     replay_synthetic(path)
 
 

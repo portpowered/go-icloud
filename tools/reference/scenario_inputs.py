@@ -78,9 +78,23 @@ def synthetic_entropy(scenario):
         patch("time.time", return_value=seconds),
         ExitStack() as stack,
     ):
+        if scenario.get("operation") == "upload_pipeline":
+            stack.enter_context(
+                patch("pyicloud.services.photos_cloudkit.upload.uuid4", next_uuid)
+            )
         if "random_bytes" in entropy:
             stack.enter_context(patch("os.urandom", random_bytes))
         position = None
+        local_zone = None
+        if "photos_local_timezone" in entropy:
+            zone, offset = entropy["photos_local_timezone"]
+            assert isinstance(zone, str) and type(offset) is int
+            local_zone = stack.enter_context(
+                patch(
+                    "pyicloud.services.photos_cloudkit.upload._local_time_zone",
+                    return_value=(zone, offset),
+                )
+            )
         if "photos_position_ms" in entropy:
             assert entropy["photos_position_ms"] == int(seconds * 1000)
             position = stack.enter_context(
@@ -98,4 +112,7 @@ def synthetic_entropy(scenario):
             )
             assert position is None or position.call_count == 1, (
                 "album position clock consumption mismatch"
+            )
+            assert local_zone is None or local_zone.call_count == 1, (
+                "upload timezone consumption mismatch"
             )

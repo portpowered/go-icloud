@@ -43,10 +43,18 @@ def redact_inputs(value):
 def body_record(body, *, request=False):
     if body is None:
         return {"encoding": "base64", "value": ""}
+    if hasattr(body, "read") and hasattr(body, "seek") and hasattr(body, "tell"):
+        request_body = body
+        position = request_body.tell()
+        try:
+            body = request_body.read()
+        finally:
+            # A capture observes bytes without consuming the provider's stream.
+            request_body.seek(position)
     if isinstance(body, str):
         body = body.encode("utf-8")
     if not isinstance(body, bytes):
-        raise ValueError("Streaming request bodies are not supported by this recorder")
+        raise ValueError("Body must be bytes or a seekable binary stream")
     if request:
         try:
             value = json.loads(body)
@@ -235,6 +243,9 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         except AssertionError:
             self.failed = True
             raise
+        except (ValueError, KeyError, IndexError, TypeError) as error:
+            self.failed = True
+            raise AssertionError("Invalid request or fixture match rule") from error
 
     def _send(self, request, **kwargs):
         if self.index == len(self.exchanges):
@@ -242,14 +253,8 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         pair = self.exchanges[self.index]
         length = request.headers.get("Content-Length")
         if length is not None:
-            body = request.body or b""
-            if isinstance(body, str):
-                body = body.encode("utf-8")
-            if (
-                not isinstance(body, bytes)
-                or not re.fullmatch("[0-9]+", length)
-                or int(length) != len(body)
-            ):
+            body = base64.b64decode(body_record(request.body)["value"], validate=True)
+            if not re.fullmatch("[0-9]+", length) or int(length) != len(body):
                 raise AssertionError("Request Content-Length does not match body bytes")
         try:
             matched = matches_request(request_record(request), pair["request"])
@@ -277,12 +282,15 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         message = Message()
         for key, value in wire["headers"]:
             message[key] = value
+        raw_body = io.BytesIO(response.content)
         response.raw = HTTPResponse(
-            body=io.BytesIO(response.content),
+            body=raw_body,
             headers=HTTPHeaderDict(wire["headers"]),
             preload_content=False,
         )
-        response.raw._original_response = SimpleNamespace(msg=message)
+        response.raw._original_response = SimpleNamespace(
+            msg=message, isclosed=lambda: raw_body.closed, close=raw_body.close
+        )
         requests.cookies.extract_cookies_to_jar(response.cookies, request, response.raw)
         return response
 

@@ -101,7 +101,13 @@ def execute(api, scenario, observations=None):
     if scenario["service"] == "photos":
         from pyicloud.services.photos import PhotosService
 
-        service = PhotosService(state["origin"], api.session, params, None, None)
+        service = PhotosService(
+            state["origin"],
+            api.session,
+            params,
+            None,
+            state.get("shared_streams_origin"),
+        )
         operation = scenario["operation"]
         if operation == "indexing":
             return {
@@ -127,6 +133,16 @@ def execute(api, scenario, observations=None):
             "photo_download",
             "photo_favorite",
             "photo_delete",
+            "upload_reserve",
+            "upload_register",
+            "upload_status",
+            "upload_bytes",
+            "upload_pipeline",
+            "stream_albums",
+            "stream_count",
+            "stream_photos",
+            "stream_get",
+            "stream_download",
         }:
             from photo_scenarios import execute_photos
 
@@ -179,9 +195,16 @@ def replay_synthetic(path):
             except AssertionError:
                 raise
             except Exception as error:
+                from pyicloud.common.cloudkit.client import CloudKitApiError
+
                 expected = scenario.get("error")
                 if expected != {"type": type(error).__name__, "message": str(error)}:
                     raise AssertionError("Synthetic semantic error mismatch") from error
+                if isinstance(error, CloudKitApiError) and (
+                    "error_payload" not in scenario
+                    or scenario["error_payload"] != project(error.payload)
+                ):
+                    raise AssertionError("Synthetic error payload mismatch") from error
                 if scenario.get("error_arguments") != observations.get("arguments"):
                     raise AssertionError(
                         "Synthetic error argument state mismatch"
