@@ -108,8 +108,9 @@ func sampleExchange() replay.Exchange {
 			},
 		},
 		Response: &replay.Response{
-			Status:  http.StatusOK,
-			Headers: []replay.Pair{{"Set-Cookie", "first=one; Secure"}, {"Set-Cookie", "second=two; Secure"}},
+			BodyRepresentation: "",
+			Status:             http.StatusOK,
+			Headers:            []replay.Pair{{"Set-Cookie", "first=one; Secure"}, {"Set-Cookie", "second=two; Secure"}},
 			Body: replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9C"`),
 				Matchers: nil, ContentTypePattern: "", Parts: nil,
 			},
@@ -353,7 +354,8 @@ func TestExpectedTransportFailureConsumesItsExchange(t *testing.T) {
 func TestMalformedOrUnsupportedOutcomesFailBeforeReplay(t *testing.T) {
 	t.Parallel()
 
-	for _, change := range []string{"encoding", "base64", "outcome", "no_outcome", "failure", "status", changeOrigin} {
+	changes := []string{"encoding", "base64", "outcome", "no_outcome", "failure", "status", changeOrigin, "representation"}
+	for _, change := range changes {
 		t.Run(change, func(t *testing.T) {
 			t.Parallel()
 
@@ -383,6 +385,8 @@ func mutateExchange(exchange *replay.Exchange, change string) {
 		exchange.Error = "UnknownFailure"
 	case "status":
 		exchange.Response.Status = 0
+	case "representation":
+		exchange.Response.BodyRepresentation = "unknown"
 	case changeOrigin:
 		exchange.Request.Origin += "/path"
 	}

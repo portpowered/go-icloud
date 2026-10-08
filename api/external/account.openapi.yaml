@@ -148,6 +148,9 @@ paths:
         default: {$ref: '#/components/responses/AccountFailure'}
 components:
   headers:
+    Content-Encoding:
+      description: HTTP content codings applied to the response entity, in application order.
+      schema: {type: string}
     Content-Type:
       description: HTTP media type reported by an account response.
       schema: {type: string}
