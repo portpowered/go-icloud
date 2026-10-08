@@ -25,6 +25,12 @@ type findMyTransportScenario struct {
 	Inputs    []json.RawMessage      `json:"inputs"`
 	//nolint:tagliatelle // LIB-05: portable scenario field spelling.
 	DeviceID string `json:"device_id"`
+	//nolint:tagliatelle // LIB-05: portable provider-error response evidence.
+	ErrorContext *findMyTransportErrorContext `json:"error_context"`
+}
+
+type findMyTransportErrorContext struct {
+	Response *replay.Response `json:"response"`
 }
 
 type findMyTransportInitial struct {
@@ -78,7 +84,7 @@ func TestFindMyTransportPortableExchanges(t *testing.T) {
 		})
 	}
 
-	if len(paths) != 47 || pairs != 86 {
+	if len(paths) != 71 || pairs != 140 {
 		t.Fatal("Find My transport inventory changed")
 	}
 }
@@ -96,7 +102,9 @@ func runFindMyTransport(t *testing.T, scenario findMyTransportScenario, initial 
 
 	for _, exchange := range scenario.Exchanges {
 		response, callErr := callFindMyTransport(t, client, &state, scenario, exchange.Request.Path)
-		assertFindMyTransportResponse(t, exchange, response, callErr)
+		providerFailure := scenario.ErrorContext != nil &&
+			reflect.DeepEqual(exchange.Response, scenario.ErrorContext.Response)
+		assertFindMyTransportResponse(t, exchange, response, callErr, providerFailure)
 	}
 
 	err = transport.AssertConsumed()
@@ -318,7 +326,7 @@ func assertFindMyDecoded(t *testing.T, value any, body []byte) {
 }
 
 func assertFindMyTransportResponse(t *testing.T, exchange replay.Exchange,
-	response *webtransport.BytesResponse, err error,
+	response *webtransport.BytesResponse, err error, providerFailure bool,
 ) {
 	t.Helper()
 
@@ -327,7 +335,7 @@ func assertFindMyTransportResponse(t *testing.T, exchange replay.Exchange,
 		t.Fatal("Find My transport outcome is missing")
 	}
 
-	if expected.Status >= http.StatusBadRequest {
+	if expected.Status >= http.StatusBadRequest || providerFailure {
 		response = findMyFailureResponse(t, err)
 	} else if err != nil {
 		t.Fatal(err)

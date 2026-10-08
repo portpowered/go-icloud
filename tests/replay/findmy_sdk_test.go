@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -56,6 +57,8 @@ type findMySDKScenario struct {
 	//nolint:tagliatelle // LIB-05: portable scenario spelling.
 	ErrorState json.RawMessage  `json:"error_findmy_state"`
 	Entropy    findMySDKEntropy `json:"entropy"`
+	//nolint:tagliatelle // LIB-05: portable provider-error response evidence.
+	ErrorContext *findMyTransportErrorContext `json:"error_context"`
 }
 
 type findMySDKState struct {
@@ -113,7 +116,7 @@ func TestFindMySDKPortableScenarios(t *testing.T) {
 		})
 	}
 
-	if len(paths) != 47 || pairs != 86 {
+	if len(paths) != 71 || pairs != 140 {
 		t.Fatal("Find My SDK scenario inventory changed")
 	}
 }
@@ -270,7 +273,7 @@ func callFindMySDKCommand(t *testing.T, scenario findMySDKScenario,
 	t.Helper()
 
 	inputs := findMyTransportScenario{Initial: scenario.Initial.findMyTransportInitial,
-		Exchanges: nil, Inputs: scenario.Inputs, DeviceID: scenario.DeviceID}
+		Exchanges: nil, Inputs: scenario.Inputs, DeviceID: scenario.DeviceID, ErrorContext: scenario.ErrorContext}
 
 	var (
 		result *icloud.FindMyCommandResult
@@ -376,11 +379,7 @@ func checkFindMySDKError(t *testing.T, scenario findMySDKScenario, cursor int, e
 		t.Fatal(decodeErr)
 	}
 
-	if expected.Type == "PyiCloudNoDevicesException" {
-		if failure.Kind() != icloud.NoDevices {
-			t.Fatal("Find My zero-device failure changed")
-		}
-	} else if failure.Kind() != icloud.Unavailable {
+	if failure.Kind() != findMySDKFailureKind(scenario, expected.Type) {
 		t.Fatalf("Find My refusal classification changed: %v", err)
 	}
 
@@ -452,4 +451,17 @@ func callFindMyDescription(t *testing.T, scenario findMySDKScenario, session *ic
 	}
 
 	return value, nil
+}
+
+func findMySDKFailureKind(scenario findMySDKScenario, sourceType string) icloud.ErrorKind {
+	if sourceType == "PyiCloudNoDevicesException" {
+		return icloud.NoDevices
+	}
+
+	if scenario.ErrorContext != nil && scenario.ErrorContext.Response != nil &&
+		scenario.ErrorContext.Response.Status == http.StatusOK {
+		return icloud.Provider
+	}
+
+	return icloud.Unavailable
 }

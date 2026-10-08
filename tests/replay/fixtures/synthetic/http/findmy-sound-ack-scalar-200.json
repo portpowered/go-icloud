@@ -1,0 +1,127 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "findmy",
+  "operation": "play_sound",
+  "device_id": "synthetic-device-0",
+  "initial_state": {
+    "origin": "https://findmy.example.invalid",
+    "token_origin": "https://setup.example.invalid/setup/ws/1",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_data": {
+      "session_token": "synthetic-token"
+    }
+  },
+  "inputs": [
+    "Synthetic alert"
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.example.invalid",
+        "path": "/fmipservice/client/web/initClient",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "177"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgRGV2aWNlIDAiLCAibG9zdE1vZGVDYXBhYmxlIjogdHJ1ZSwgImZlYXR1cmVzIjogeyJNU0ciOiB0cnVlLCAiU05EIjogdHJ1ZSwgIkxPQyI6IHRydWUsICJXSVAiOiB0cnVlfX1dfQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.example.invalid",
+        "path": "/fmipservice/client/web/playSound",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "95"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgImNsaWVudENvbnRleHQiOiB7ImZtbHkiOiB0cnVlfX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "text/json; charset=utf-8"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "OTAwNzE5OTI1NDc0MDk5Mw=="
+        }
+      }
+    }
+  ],
+  "result": null
+}

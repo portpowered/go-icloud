@@ -896,3 +896,43 @@ unentered functions are manager/device display __str__/__repr__ helpers. Remaini
 selected branches include forced reauth, stopped-monitor implicit getter refresh,
 integer selection and the timer boundary/skew path; generic bad caller inputs
 remain outside the requested focus. Counts do not establish full acceptance.
+
+
+PR16 received scoped exact-commit approval at
+`6569dab93885ffb8cf1c909ae661288166e05b1d` after
+[CI 37837393377](https://github.com/portpowered/go-icloud/actions/runs/37837393377)
+passed, then merged to `3699c7b23d94ac519d442e01a289c4be390df326`. Its branch was
+deleted and [main CI 37838160584](https://github.com/portpowered/go-icloud/actions/runs/37838160584)
+passed. CI measured replay 1518/1805, unit 1084/1805 and combined 1607/1805;
+cancellation-path differences from local counts were anticipated. This scoped
+milestone does not establish full migration acceptance.
+
+### Interim command reply shape audit
+
+Twenty-four paired Source/Go command cases bring Find My to 71 scenarios/140
+exchanges and global HTTP to 490/1100. The previous object-only acknowledgement
+schema was stronger than Source behavior: commands accept binary bodies,
+malformed advertised JSON, arrays and scalars. Response bodies now have an opaque
+byte contract, with a canonical raw-JSON parsed view for valid JSON. Provider
+errors at HTTP 200 remain errors for both application/json and text/json;
+Go replay binds typed Provider classification and exact response evidence.
+No matching rule was relaxed and no live device command was sent. Final local checks and scoped review receipts follow below.
+
+Generated command response parsers also preserve raw Body bytes for all media
+and statuses. Their wildcard byte schemas prevent oapi-codegen from decoding
+advertised JSON into []byte or routing successful replies through a default
+JSON error parser. A contract test executes all 38 command reply artifacts
+through the four generated parsers and requires exact byte equality. The shared
+SDK raw reader still owns provider error classification and typed public errors;
+canonical valid-JSON projections remain separately checked. Generation drift
+checks bind this behavior to the checked-in schema (SCHEMA-10, SCHEMA-16).
+
+Final local make lint/check passes with all Go race/contracts/regeneration/
+consumer checks and 70 Python test methods. Handwritten replay coverage is
+1518/1805 (84.1%), unit 1085/1805 (60.1%) and combined 1608/1805 (89.1%).
+Fresh synthetic-only Source measurement remains 575/905 entered functions,
+3149/5385 body statements (58.48%) and 964/2076 branch exits. New functional
+command response cases exercise shared functions already reached by other
+scenarios; unchanged diagnostic counts do not imply omitted functional cases
+(LIB-07). Scoped independent working-tree review has no remaining blocker;
+exact-commit approval after CI and full migration acceptance remain open (GO-15).

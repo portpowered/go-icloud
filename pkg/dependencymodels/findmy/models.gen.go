@@ -319,10 +319,10 @@ func (e FindMyTimezone) Valid() bool {
 // FindMyAPIVersion defines model for FindMyAPIVersion.
 type FindMyAPIVersion string
 
-// FindMyAcknowledgement Extensible command acknowledgement; physical completion is not inferred.
+// FindMyAcknowledgement Optional parsed view of a valid JSON command acknowledgement. Objects, arrays, scalars and null are preserved without inferring physical completion.
 //
 // Example: {}
-type FindMyAcknowledgement map[string]FindMyUnknownJSON
+type FindMyAcknowledgement = json.RawMessage
 
 // FindMyAllDevices defines model for FindMyAllDevices.
 type FindMyAllDevices string
@@ -357,7 +357,7 @@ type FindMyClientContextInactiveTime int
 // FindMyClientContextShouldLocate defines model for FindMyClientContext.ShouldLocate.
 type FindMyClientContextShouldLocate bool
 
-// FindMyCommandBytes Uninterpreted successful command body when the provider does not advertise JSON.
+// FindMyCommandBytes Raw command reply bytes regardless of the advertised media type. The reference accepts malformed JSON and non-JSON acknowledgements; provider error objects are still classified before success.
 type FindMyCommandBytes = []byte
 
 // FindMyCommandState Provider command state; acknowledgement does not establish physical completion.

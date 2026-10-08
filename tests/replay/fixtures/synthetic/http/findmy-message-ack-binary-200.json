@@ -1,0 +1,131 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "findmy",
+  "operation": "display_message",
+  "device_id": "synthetic-device-0",
+  "initial_state": {
+    "origin": "https://findmy.example.invalid",
+    "token_origin": "https://setup.example.invalid/setup/ws/1",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_data": {
+      "session_token": "synthetic-token"
+    }
+  },
+  "inputs": [
+    "Synthetic alert",
+    "Synthetic text",
+    true,
+    false,
+    true
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.example.invalid",
+        "path": "/fmipservice/client/web/initClient",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "177"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgRGV2aWNlIDAiLCAibG9zdE1vZGVDYXBhYmxlIjogdHJ1ZSwgImZlYXR1cmVzIjogeyJNU0ciOiB0cnVlLCAiU05EIjogdHJ1ZSwgIkxPQyI6IHRydWUsICJXSVAiOiB0cnVlfX1dfQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.example.invalid",
+        "path": "/fmipservice/client/web/sendMessage",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "155"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkZXZpY2UiOiAic3ludGhldGljLWRldmljZS0wIiwgInN1YmplY3QiOiAiU3ludGhldGljIGFsZXJ0IiwgInVzZXJUZXh0IjogdHJ1ZSwgInRleHQiOiAiU3ludGhldGljIHRleHQiLCAic291bmQiOiB0cnVlLCAidmlicmF0ZSI6IGZhbHNlLCAic3Ryb2JlIjogdHJ1ZX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/octet-stream"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "AP8R"
+        }
+      }
+    }
+  ],
+  "result": null
+}

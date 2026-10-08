@@ -47,33 +47,52 @@ func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 47 || pairs != 86 || len(operations) != 7 {
+	if len(paths) != 71 || pairs != 140 || len(operations) != 7 {
 		t.Fatalf("Find My inventory changed: scenarios=%d pairs=%d operations=%d", len(paths), pairs, len(operations))
 	}
 }
 
-func TestFindMySuccessfulJSONCommandsOwnTheirMediaContract(t *testing.T) {
+func TestFindMyCommandsPreserveOpaqueReplyContracts(t *testing.T) {
 	t.Parallel()
 
-	operation := loadDriveDocument(t, findMySchemaPath).Paths.Value("/fmipservice/client/web/playSound").Post
-	for _, status := range []int{http.StatusCreated, http.StatusAccepted} {
-		response := driveResponseContract(operation, status)
+	document := loadDriveDocument(t, findMySchemaPath)
+	for _, path := range []string{
+		"/fmipservice/client/web/playSound", "/fmipservice/client/web/sendMessage",
+		"/fmipservice/client/web/lostDevice", "/fmipservice/client/web/remoteWipeWithUserAuth",
+	} {
+		operation := document.Paths.Value(path).Post
+		for _, status := range []int{http.StatusOK, http.StatusCreated, http.StatusAccepted} {
+			response := driveResponseContract(operation, status)
+			for _, contentType := range []string{"application/json; charset=utf-8", "text/json", "application/octet-stream"} {
+				media, err := contractResponseMedia(response.Value.Content,
+					[]replay.Pair{{"Content-Type", contentType}})
+				if err != nil {
+					t.Fatal(err)
+				}
 
-		media, err := contractResponseMedia(response.Value.Content,
-			[]replay.Pair{{"Content-Type", "application/json; charset=utf-8"}})
+				if media.Schema.Value.Format != binaryComponent {
+					t.Fatal("opaque command reply lost its byte contract")
+				}
+			}
+		}
+	}
+
+	parsed := document.Components.Schemas["FindMyAcknowledgement"].Value
+
+	err := parsed.VisitJSON(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, input := range []string{`{}`, `[null,false,9007199254740993]`, `"accepted"`, `9007199254740993`} {
+		var value any
+
+		err := json.Unmarshal([]byte(input), &value)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if media.Schema.Value.Format == binaryComponent || !media.Schema.Value.Type.Is("object") {
-			t.Fatal("JSON acknowledgement bypassed its explicit schema")
-		}
-
-		if media.Schema.Value.VisitJSON([]any{"invalid acknowledgement"}) == nil {
-			t.Fatal("non-object JSON acknowledgement accepted")
-		}
-
-		err = media.Schema.Value.VisitJSON(map[string]any{"future": true})
+		err = parsed.VisitJSON(value)
 		if err != nil {
 			t.Fatal(err)
 		}
