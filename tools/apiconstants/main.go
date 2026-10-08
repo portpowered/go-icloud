@@ -34,20 +34,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = generateExternalConstants("Drive")
+	err = generateExternalConstants("Drive", "drive")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	err = generateExternalConstants("FindMy")
+	err = generateExternalConstants("FindMy", "findmy")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	err = generateExternalConstants("Reminders", "cloudkit")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func generateExternalConstants(prefix string) error {
+func generateExternalConstants(prefix, modelsName string) error {
 	loader := openapi3.NewLoader()
 	loader.IsExternalRefsAllowed = true
 
@@ -63,7 +69,7 @@ func generateExternalConstants(prefix string) error {
 		return fmt.Errorf("validate %s schema: %w", prefix, err)
 	}
 
-	models, err := loader.LoadFromFile("api/external/" + name + "-models.openapi.yaml")
+	models, err := loader.LoadFromFile("api/external/" + modelsName + "-models.openapi.yaml")
 	if err != nil {
 		return fmt.Errorf("load %s models: %w", prefix, err)
 	}

@@ -1,0 +1,2461 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iCloud CloudKit wire models",
+    "version": "0.1.0",
+    "description": "Canonical request and response contracts for active CloudKit-backed services. Application projections and decoded document semantics remain separate."
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "CKLookupDescriptor": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Specifies a record to fetch by name.",
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "recordName"
+        ],
+        "type": "object"
+      },
+      "CKZoneIDReq": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Zone identifier for requests (without redundant fields).",
+        "properties": {
+          "zoneName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "zoneType": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "ownerRecordName": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "zoneName"
+        ],
+        "type": "object"
+      },
+      "CKLookupRequest": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Payload for fetching specific records by their names.",
+        "properties": {
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/CKLookupDescriptor"
+            },
+            "type": "array",
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "desiredKeys": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "records",
+          "zoneID"
+        ],
+        "type": "object",
+        "example": {
+          "records": [
+            {
+              "recordName": "Reminder/synthetic-item"
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "CKErrorItem": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Error item possibly present inside `records[]` when a per-record operation fails.\nAdditional server-provided properties will be preserved via CKModel(extra=\"allow\").",
+        "properties": {
+          "serverErrorCode": {
+            "type": "string",
+            "x-order": 1
+          },
+          "reason": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "recordName": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "serverErrorCode"
+        ],
+        "type": "object"
+      },
+      "CKTombstoneRecord": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "A 'tombstone' entry returned by CloudKit to indicate a deleted record.\nTombstones intentionally omit `recordType` and `fields` \u2014 they only assert\nthat a record with `recordName` existed but has since been deleted.\nAdditional server-provided properties will be preserved via CKModel(extra=\"allow\").",
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "deleted": {
+            "type": "boolean",
+            "x-order": 2,
+            "enum": [
+              true
+            ]
+          },
+          "zoneID": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKZoneID"
+              }
+            ]
+          }
+        },
+        "required": [
+          "recordName",
+          "deleted"
+        ],
+        "type": "object"
+      },
+      "CKZoneID": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Identifies a CloudKit zone by name, owner, and optional type.",
+        "properties": {
+          "zoneName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "ownerRecordName": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "zoneType": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "zoneName"
+        ],
+        "type": "object"
+      },
+      "CKLookupResponse": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Response containing records fetched by lookup request.",
+        "properties": {
+          "records": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/CKRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKTombstoneRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKErrorItem"
+                }
+              ]
+            },
+            "type": "array",
+            "x-order": 1
+          },
+          "syncToken": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "records"
+        ],
+        "type": "object",
+        "example": {
+          "records": [
+            {
+              "recordName": "Reminder/synthetic-item",
+              "recordType": "Reminder",
+              "recordChangeTag": "synthetic-tag",
+              "fields": {
+                "List": {
+                  "type": "REFERENCE",
+                  "value": {
+                    "recordName": "List/synthetic-list",
+                    "action": "VALIDATE"
+                  }
+                },
+                "Completed": {
+                  "type": "INT64",
+                  "value": 0
+                },
+                "Priority": {
+                  "type": "INT64",
+                  "value": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CKModifyOperation": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Single record operation in a modify request (create/update/delete).",
+        "properties": {
+          "operationType": {
+            "enum": [
+              "create",
+              "update",
+              "forceUpdate",
+              "replace",
+              "forceReplace",
+              "delete",
+              "forceDelete"
+            ],
+            "type": "string",
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/CKWriteRecord",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "type": "object"
+      },
+      "CKWriteParent": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Write-side parent reference embedded under a record.",
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "recordName"
+        ],
+        "type": "object"
+      },
+      "CKWriteRecord": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "CloudKit record shape used in modify requests.\n\nKeep this narrower than CKRecord: only request-side fields that are\nactually serialized on writes belong here.",
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "x-order": 2
+          },
+          "fields": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CKUnknownJSON"
+            },
+            "type": "object",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "default": null,
+            "x-order": 5,
+            "nullable": true,
+            "type": "string"
+          },
+          "parent": {
+            "default": null,
+            "x-order": 6,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKWriteParent"
+              }
+            ]
+          },
+          "zoneID": {
+            "default": null,
+            "x-order": 7,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKZoneID"
+              }
+            ]
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType"
+        ],
+        "type": "object"
+      },
+      "JsonValue": {
+        "description": "Arbitrary extensible CloudKit JSON preserved without numeric coercion.",
+        "anyOf": [
+          {
+            "type": "object",
+            "nullable": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CKUnknownJSON"
+            }
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ],
+        "x-go-type": "json.RawMessage"
+      },
+      "CKModifyRequest": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Payload for modifying records in a zone.",
+        "properties": {
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/CKModifyOperation"
+            },
+            "type": "array",
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "atomic": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "operations",
+          "zoneID"
+        ],
+        "type": "object",
+        "example": {
+          "operations": [
+            {
+              "operationType": "create",
+              "record": {
+                "recordName": "Reminder/00000001-0000-4000-8000-000000000000",
+                "recordType": "Reminder",
+                "fields": {
+                  "AllDay": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Completed": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "CompletionDate": {
+                    "type": "TIMESTAMP"
+                  },
+                  "CreationDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  },
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Flagged": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Imported": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  },
+                  "List": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "List/synthetic-list",
+                      "action": "VALIDATE"
+                    }
+                  },
+                  "NotesDocument": {
+                    "type": "STRING",
+                    "value": "eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJytJMMlxSVwJfvUE+n2tIO9pe8fx0x0PSzExMEAxIwAhRkUpg=="
+                  },
+                  "Priority": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"icsDisplayOrder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"creationDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"list\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000C-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000D-0000-4000-8000-000000000000\"},\"recurrenceRuleIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000E-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000F-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000010-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "TitleDocument": {
+                    "type": "STRING",
+                    "value": "eJzjYBCq4mAQYJAqERIJrswryUgtyUxWKMksyUlV+DB/RoOUABcLSB6oAkxrMIJFGIEiQlJgWoNJSoyLAyj3Hwj4gergbCUZLikugSvZp55It6cd7C19/zhmouthISYOISBm1ALSAAI7Hv4="
+                  }
+                },
+                "pluginFields": {},
+                "parent": {
+                  "recordName": "List/synthetic-list"
+                }
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "CKModifyResponse": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Response containing records after modification operations.",
+        "properties": {
+          "records": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/CKRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKTombstoneRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKErrorItem"
+                }
+              ]
+            },
+            "type": "array",
+            "x-order": 1
+          },
+          "syncToken": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "example": {
+          "records": [
+            {
+              "recordName": "Reminder/00000001-0000-4000-8000-000000000000",
+              "recordType": "Reminder",
+              "fields": {},
+              "recordChangeTag": "synthetic-new-tag"
+            }
+          ]
+        }
+      },
+      "CKComparator": {
+        "description": "CloudKit query filter comparison operators.",
+        "enum": [
+          "EQUALS",
+          "IN",
+          "CONTAINS_ANY",
+          "LESS_THAN",
+          "LESS_THAN_OR_EQUALS",
+          "GREATER_THAN",
+          "GREATER_THAN_OR_EQUALS",
+          "BEGINS_WITH"
+        ],
+        "type": "string"
+      },
+      "CKFVInt64": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Integer literal value in a query filter.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "INT64"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "x-order": 2,
+            "format": "int64"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKFVReference": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Record reference value in a query filter.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "REFERENCE"
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/CKReference",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKFVReferenceList": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "List of record references in a query filter.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "REFERENCE_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "$ref": "#/components/schemas/CKReference"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKFVString": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "String literal value in a query filter.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "STRING"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKFVStringList": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "List of string values in a query filter.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "STRING_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKQueryFilterBy": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Filter clause. Examples:\n\nSTRING equality:\n  {\"comparator\": \"EQUALS\",\n   \"fieldName\": \"indexName\",\n   \"fieldValue\": {\"value\": \"recents\", \"type\": \"STRING\"}}\n\nREFERENCE equality:\n  {\"comparator\": \"EQUALS\",\n   \"fieldName\": \"reference\",\n   \"fieldValue\": {\"value\": {\"recordName\": \"...\", \"action\": \"VALIDATE\"},\n                  \"type\": \"REFERENCE\"}}",
+        "properties": {
+          "comparator": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CKComparator"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "x-order": 1
+          },
+          "fieldName": {
+            "type": "string",
+            "x-order": 2
+          },
+          "fieldValue": {
+            "discriminator": {
+              "mapping": {
+                "INT64": "#/components/schemas/CKFVInt64",
+                "REFERENCE": "#/components/schemas/CKFVReference",
+                "REFERENCE_LIST": "#/components/schemas/CKFVReferenceList",
+                "STRING": "#/components/schemas/CKFVString",
+                "STRING_LIST": "#/components/schemas/CKFVStringList"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CKFVString"
+              },
+              {
+                "$ref": "#/components/schemas/CKFVInt64"
+              },
+              {
+                "$ref": "#/components/schemas/CKFVStringList"
+              },
+              {
+                "$ref": "#/components/schemas/CKFVReference"
+              },
+              {
+                "$ref": "#/components/schemas/CKFVReferenceList"
+              }
+            ],
+            "x-order": 3
+          }
+        },
+        "required": [
+          "comparator",
+          "fieldName",
+          "fieldValue"
+        ],
+        "type": "object"
+      },
+      "CKQueryObject": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "The 'query' object inside the request.\n\nrecordType can be an app-defined pseudo type like \"SearchIndexes\" or \"pinned\"\nor a real record type.",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "x-order": 1
+          },
+          "filterBy": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CKQueryFilterBy"
+            },
+            "type": "array"
+          },
+          "sortBy": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CKQuerySortBy"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "recordType"
+        ],
+        "type": "object"
+      },
+      "CKQuerySortBy": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Sort directive. Example:\n  {\"fieldName\": \"modTime\", \"ascending\": false}",
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "ascending": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "fieldName"
+        ],
+        "type": "object"
+      },
+      "CKReference": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Value inside REFERENCE / REFERENCE_LIST typed fields (both request & response).",
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "action": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "zoneID": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKZoneID"
+              }
+            ]
+          }
+        },
+        "required": [
+          "recordName"
+        ],
+        "type": "object"
+      },
+      "CKQueryRequest": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Top-level /records/query request payload.\n\n``zoneID`` is optional because CloudKit also accepts a ``zoneWide``-style\nquery (no specific zone, scans all zones in the database) used by the\nInvites service to enumerate per-event zones in one round trip.",
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/CKQueryObject",
+            "x-order": 1
+          },
+          "zoneID": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKZoneIDReq"
+              }
+            ]
+          },
+          "desiredKeys": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "resultsLimit": {
+            "default": null,
+            "x-order": 4,
+            "nullable": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          "continuationMarker": {
+            "default": null,
+            "x-order": 5,
+            "nullable": true,
+            "type": "string"
+          },
+          "zoneWide": {
+            "default": null,
+            "x-order": 6,
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object",
+        "example": {
+          "query": {
+            "recordType": "reminderList",
+            "filterBy": [
+              {
+                "comparator": "EQUALS",
+                "fieldName": "List",
+                "fieldValue": {
+                  "type": "REFERENCE",
+                  "value": {
+                    "recordName": "List/synthetic-list",
+                    "action": "VALIDATE"
+                  }
+                }
+              },
+              {
+                "comparator": "EQUALS",
+                "fieldName": "includeCompleted",
+                "fieldValue": {
+                  "type": "INT64",
+                  "value": 1
+                }
+              },
+              {
+                "comparator": "EQUALS",
+                "fieldName": "LookupValidatingReference",
+                "fieldValue": {
+                  "type": "INT64",
+                  "value": 1
+                }
+              }
+            ]
+          },
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          },
+          "resultsLimit": 2
+        }
+      },
+      "CKQueryResponse": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Top-level response from /records/query:\n- records: list of CKRecord\n- continuationMarker: optional paging token (present if more results exist)",
+        "properties": {
+          "records": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/CKRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKTombstoneRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKErrorItem"
+                }
+              ]
+            },
+            "type": "array",
+            "x-order": 1
+          },
+          "continuationMarker": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "syncToken": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "example": {
+          "records": [
+            {
+              "recordName": "Reminder/synthetic-0",
+              "recordType": "Reminder",
+              "recordChangeTag": "synthetic-tag",
+              "fields": {
+                "List": {
+                  "type": "REFERENCE",
+                  "value": {
+                    "recordName": "List/synthetic-list",
+                    "action": "VALIDATE"
+                  }
+                },
+                "Completed": {
+                  "type": "INT64",
+                  "value": 1
+                },
+                "Priority": {
+                  "type": "INT64",
+                  "value": 0
+                }
+              }
+            },
+            {
+              "recordName": "Reminder/synthetic-1",
+              "recordType": "Reminder",
+              "recordChangeTag": "synthetic-tag",
+              "fields": {
+                "List": {
+                  "type": "REFERENCE",
+                  "value": {
+                    "recordName": "List/synthetic-list",
+                    "action": "VALIDATE"
+                  }
+                },
+                "Completed": {
+                  "type": "INT64",
+                  "value": 1
+                },
+                "Priority": {
+                  "type": "INT64",
+                  "value": 1
+                }
+              }
+            },
+            {
+              "recordName": "Reminder/synthetic-2",
+              "recordType": "Reminder",
+              "recordChangeTag": "synthetic-tag",
+              "fields": {
+                "List": {
+                  "type": "REFERENCE",
+                  "value": {
+                    "recordName": "List/synthetic-list",
+                    "action": "VALIDATE"
+                  }
+                },
+                "Completed": {
+                  "type": "INT64",
+                  "value": 1
+                },
+                "Priority": {
+                  "type": "INT64",
+                  "value": 2
+                }
+              }
+            }
+          ]
+        }
+      },
+      "CKZoneChangesZoneReq": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "One zone request entry for /changes/zone.\n\nObserved keys:\n  - zoneID: includes zoneName (e.g., \"Notes\" or \"Reminders\"), sometimes\n    zoneType and ownerRecordName (for shared)\n  - desiredKeys: list of field names to project (duplicates allowed, order\n    preserved)\n  - desiredRecordTypes: list of record types to include\n  - syncToken: optional paging token (base64-like string)\n  - reverse: optional bool",
+        "properties": {
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneID",
+            "x-order": 1
+          },
+          "desiredKeys": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "desiredRecordTypes": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "syncToken": {
+            "default": null,
+            "x-order": 4,
+            "nullable": true,
+            "type": "string"
+          },
+          "reverse": {
+            "default": null,
+            "x-order": 5,
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "zoneID"
+        ],
+        "type": "object"
+      },
+      "CKZoneChangesRequest": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Payload for fetching zone changes since a specific sync token.",
+        "properties": {
+          "zones": {
+            "items": {
+              "$ref": "#/components/schemas/CKZoneChangesZoneReq"
+            },
+            "type": "array",
+            "x-order": 1
+          },
+          "resultsLimit": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "zones"
+        ],
+        "type": "object",
+        "example": {
+          "zones": [
+            {
+              "zoneID": {
+                "zoneName": "Reminders",
+                "zoneType": "REGULAR_CUSTOM_ZONE"
+              },
+              "desiredRecordTypes": [
+                "List"
+              ]
+            }
+          ]
+        }
+      },
+      "CKZoneChangesZone": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "One zone entry inside the /changes/zone response.\n\nObserved shape:\n  - Always has: records[], zoneID, syncToken\n  - moreComing is present but sometimes null (treat as Optional[bool])",
+        "properties": {
+          "records": {
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/CKRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKTombstoneRecord"
+                },
+                {
+                  "$ref": "#/components/schemas/CKErrorItem"
+                }
+              ]
+            },
+            "type": "array",
+            "x-order": 1
+          },
+          "moreComing": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "syncToken": {
+            "type": "string",
+            "x-order": 3
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneID",
+            "x-order": 4
+          }
+        },
+        "required": [
+          "syncToken",
+          "zoneID"
+        ],
+        "type": "object"
+      },
+      "CKZoneChangesResponse": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Top-level envelope for /private/changes/zone (and /shared/changes/zone) responses.",
+        "properties": {
+          "zones": {
+            "items": {
+              "$ref": "#/components/schemas/CKZoneChangesZone"
+            },
+            "type": "array",
+            "x-order": 1
+          }
+        },
+        "type": "object",
+        "example": {
+          "zones": [
+            {
+              "zoneID": {
+                "zoneName": "Reminders",
+                "zoneType": "REGULAR_CUSTOM_ZONE"
+              },
+              "syncToken": "synthetic-sync",
+              "moreComing": false,
+              "records": [
+                {
+                  "recordName": "List/synthetic-0",
+                  "recordType": "List",
+                  "fields": {
+                    "Name": {
+                      "type": "STRING",
+                      "value": "List 0"
+                    },
+                    "Color": {
+                      "type": "STRING",
+                      "value": "blue"
+                    },
+                    "Count": {
+                      "type": "INT64",
+                      "value": 0
+                    }
+                  },
+                  "recordChangeTag": "synthetic-tag"
+                },
+                {
+                  "recordName": "List/synthetic-1",
+                  "recordType": "List",
+                  "fields": {
+                    "Name": {
+                      "type": "STRING",
+                      "value": "List 1"
+                    },
+                    "Color": {
+                      "type": "STRING",
+                      "value": "blue"
+                    },
+                    "Count": {
+                      "type": "INT64",
+                      "value": 1
+                    }
+                  },
+                  "recordChangeTag": "synthetic-tag"
+                },
+                {
+                  "recordName": "List/synthetic-2",
+                  "recordType": "List",
+                  "fields": {
+                    "Name": {
+                      "type": "STRING",
+                      "value": "List 2"
+                    },
+                    "Color": {
+                      "type": "STRING",
+                      "value": "blue"
+                    },
+                    "Count": {
+                      "type": "INT64",
+                      "value": 2
+                    }
+                  },
+                  "recordChangeTag": "synthetic-tag"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "CKZoneListZone": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "One zone entry returned by /zones/list.\n\nPhotos uses this as the primary source of truth for available private/shared\nlibraries, so keep the model permissive while typing the fields we depend on.",
+        "properties": {
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneID",
+            "x-order": 1
+          },
+          "syncToken": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "deleted": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "zoneID"
+        ],
+        "type": "object"
+      },
+      "CKZoneListResponse": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Top-level envelope for /zones/list.",
+        "properties": {
+          "zones": {
+            "items": {
+              "$ref": "#/components/schemas/CKZoneListZone"
+            },
+            "type": "array",
+            "x-order": 1
+          }
+        },
+        "type": "object",
+        "example": {
+          "zones": [
+            {
+              "zoneID": {
+                "zoneName": "synthetic-reminders-0"
+              },
+              "syncToken": "synthetic-sync-0",
+              "deleted": false
+            }
+          ]
+        }
+      },
+      "CKAssetField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Asset field wrapper for inline asset data.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "ASSET"
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/CKAssetToken",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKAssetIDField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Asset ID field wrapper referencing an asset by token.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "ASSETID"
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/CKAssetToken",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKAssetIDListField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "List of asset ID tokens field wrapper.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "ASSETID_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "$ref": "#/components/schemas/CKAssetToken"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKAssetToken": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Asset token with download URL, checksums, and wrapping key.",
+        "properties": {
+          "fileChecksum": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "type": "string"
+          },
+          "referenceChecksum": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "wrappingKey": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          },
+          "downloadURL": {
+            "default": null,
+            "x-order": 4,
+            "nullable": true,
+            "type": "string"
+          },
+          "downloadedData": {
+            "default": null,
+            "x-order": 5,
+            "nullable": true,
+            "format": "byte",
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "size": {
+            "default": null,
+            "x-order": 6,
+            "nullable": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "type": "object"
+      },
+      "CKAuditInfo": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Appears as `created` / `modified` at the record level (response).",
+        "properties": {
+          "timestamp": {
+            "description": "milliseconds since Unix epoch",
+            "type": "integer",
+            "x-order": 1,
+            "format": "int64"
+          },
+          "userRecordName": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "deviceID": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "timestamp"
+        ],
+        "type": "object"
+      },
+      "CKBytesField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Raw binary field wrapper as base64-encoded bytes.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "BYTES"
+            ]
+          },
+          "value": {
+            "format": "byte",
+            "type": "string",
+            "x-order": 2,
+            "x-go-type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKChainProtectionInfo": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "End-to-end encryption chain protection metadata.",
+        "properties": {
+          "bytes": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "format": "byte",
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "pcsChangeTag": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CKDoubleField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Floating-point field wrapper, optionally encrypted (e.g. for location data).",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "DOUBLE"
+            ]
+          },
+          "value": {
+            "type": "number",
+            "x-order": 2,
+            "format": "double"
+          },
+          "isEncrypted": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKDoubleListField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "List of floating-point values field wrapper.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "DOUBLE_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "type": "number",
+              "format": "double"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKEncryptedBytesField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Base64-encoded encrypted binary field wrapper.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "ENCRYPTED_BYTES"
+            ]
+          },
+          "value": {
+            "format": "byte",
+            "type": "string",
+            "x-order": 2,
+            "x-go-type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKFieldOpen": {
+        "anyOf": [
+          {
+            "discriminator": {
+              "mapping": {
+                "ASSET": "#/components/schemas/CKAssetField",
+                "ASSETID": "#/components/schemas/CKAssetIDField",
+                "ASSETID_LIST": "#/components/schemas/CKAssetIDListField",
+                "BYTES": "#/components/schemas/CKBytesField",
+                "DOUBLE": "#/components/schemas/CKDoubleField",
+                "DOUBLE_LIST": "#/components/schemas/CKDoubleListField",
+                "ENCRYPTED_BYTES": "#/components/schemas/CKEncryptedBytesField",
+                "INT64": "#/components/schemas/CKInt64Field",
+                "INT64_LIST": "#/components/schemas/CKInt64ListField",
+                "REFERENCE": "#/components/schemas/CKReferenceField",
+                "REFERENCE_LIST": "#/components/schemas/CKReferenceListField",
+                "STRING": "#/components/schemas/CKStringField",
+                "STRING_LIST": "#/components/schemas/CKStringListField",
+                "TIMESTAMP": "#/components/schemas/CKTimestampField",
+                "UNKNOWN_LIST": "#/components/schemas/CKUnknownListField"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CKTimestampField"
+              },
+              {
+                "$ref": "#/components/schemas/CKInt64Field"
+              },
+              {
+                "$ref": "#/components/schemas/CKEncryptedBytesField"
+              },
+              {
+                "$ref": "#/components/schemas/CKReferenceField"
+              },
+              {
+                "$ref": "#/components/schemas/CKReferenceListField"
+              },
+              {
+                "$ref": "#/components/schemas/CKStringField"
+              },
+              {
+                "$ref": "#/components/schemas/CKStringListField"
+              },
+              {
+                "$ref": "#/components/schemas/CKAssetIDField"
+              },
+              {
+                "$ref": "#/components/schemas/CKAssetField"
+              },
+              {
+                "$ref": "#/components/schemas/CKDoubleField"
+              },
+              {
+                "$ref": "#/components/schemas/CKBytesField"
+              },
+              {
+                "$ref": "#/components/schemas/CKDoubleListField"
+              },
+              {
+                "$ref": "#/components/schemas/CKInt64ListField"
+              },
+              {
+                "$ref": "#/components/schemas/CKAssetIDListField"
+              },
+              {
+                "$ref": "#/components/schemas/CKUnknownListField"
+              }
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/CKPassthroughField"
+          }
+        ],
+        "description": "Public API for field wrappers:\n  - `.value` (preferred): the decoded inner `value` of the CK wrapper\n  - `.type_tag`: the CloudKit `type` string (e.g., \"TIMESTAMP\", \"INT64_LIST\")\n  - `.unwrap()`: return the inner typed wrapper instance (e.g., `CKTimestampField`)\n\nImplementation detail: `.root` is internal \u2014 avoid relying on it outside this class."
+      },
+      "CKInt64Field": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "64-bit signed integer field wrapper.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "INT64"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "x-order": 2,
+            "format": "int64"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKInt64ListField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "List of 64-bit integer values field wrapper.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "INT64_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKLookupInfo": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Contact information for user lookup (email or phone).",
+        "properties": {
+          "emailAddress": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "type": "string"
+          },
+          "phoneNumber": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CKNameComponents": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "User's name split into given and family names.",
+        "properties": {
+          "givenName": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "type": "string"
+          },
+          "familyName": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CKPCSInfo": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Top-level PCS envelope used by shared-record metadata.",
+        "properties": {
+          "bytes": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "format": "byte",
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "pcsChangeTag": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CKParent": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "References a parent record in a record hierarchy.",
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "recordName"
+        ],
+        "type": "object"
+      },
+      "CKParticipant": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Person sharing a record with permissions, status, and protection info.",
+        "properties": {
+          "participantId": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "type": "string"
+          },
+          "userIdentity": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKUserIdentity"
+              }
+            ]
+          },
+          "type": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          },
+          "acceptanceStatus": {
+            "default": null,
+            "x-order": 4,
+            "nullable": true,
+            "type": "string"
+          },
+          "permission": {
+            "default": null,
+            "x-order": 5,
+            "nullable": true,
+            "type": "string"
+          },
+          "customRole": {
+            "default": null,
+            "x-order": 6,
+            "nullable": true,
+            "type": "string"
+          },
+          "isApprovedRequester": {
+            "default": null,
+            "x-order": 7,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "orgUser": {
+            "default": null,
+            "x-order": 8,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "publicKeyVersion": {
+            "default": null,
+            "x-order": 9,
+            "nullable": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          "outOfNetworkPrivateKey": {
+            "default": null,
+            "x-order": 10,
+            "nullable": true,
+            "type": "string"
+          },
+          "outOfNetworkKeyType": {
+            "default": null,
+            "x-order": 11,
+            "nullable": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          "protectionInfo": {
+            "default": null,
+            "x-order": 12,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKParticipantProtectionInfo"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "CKParticipantProtectionInfo": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Participant-scoped protectionInfo envelope.",
+        "properties": {
+          "bytes": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "format": "byte",
+            "type": "string",
+            "x-go-type": "string"
+          },
+          "pcsChangeTag": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CKPassthroughField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Generic field wrapper for unknown or future CloudKit field types.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/JsonValue",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKReferenceField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Reference to another CloudKit record.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "REFERENCE"
+            ]
+          },
+          "value": {
+            "x-order": 2,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKReference"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKReferenceListField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "List of references to other CloudKit records.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "REFERENCE_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "$ref": "#/components/schemas/CKReference"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKShare": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Minimal share reference as seen embedded under a record's top-level `share` key.\nObserved nested payloads only surfaced `recordName` and `zoneID` here.\nKeep this coarse for now; we can expand with shortGUID/shortTokenHash, etc.,\nif they appear nested here in future payloads.",
+        "properties": {
+          "recordName": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "type": "string"
+          },
+          "zoneID": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKZoneID"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "CKStableUrl": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Secure URL and access credentials for sharing a record.",
+        "properties": {
+          "routingKey": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "type": "string"
+          },
+          "shortTokenHash": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "protectedFullToken": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "string"
+          },
+          "encryptedPublicSharingKey": {
+            "default": null,
+            "x-order": 4,
+            "nullable": true,
+            "type": "string"
+          },
+          "displayedHostname": {
+            "default": null,
+            "x-order": 5,
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CKStringField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "String value field wrapper, optionally encrypted.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "STRING"
+            ]
+          },
+          "value": {
+            "x-order": 2,
+            "nullable": true,
+            "type": "string"
+          },
+          "isEncrypted": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKStringListField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "List of string values field wrapper.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "STRING_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKTimestampField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Milliseconds-since-epoch timestamp field wrapper.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "TIMESTAMP"
+            ]
+          },
+          "value": {
+            "description": "milliseconds since Unix epoch or null sentinel",
+            "x-order": 2,
+            "nullable": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKUnknownListField": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Fallback list field wrapper for unexpected CloudKit types.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "x-order": 1,
+            "enum": [
+              "UNKNOWN_LIST"
+            ]
+          },
+          "value": {
+            "items": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "array",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object"
+      },
+      "CKUserIdentity": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "description": "Complete user identity with name and contact information.",
+        "properties": {
+          "userRecordName": {
+            "default": null,
+            "x-order": 1,
+            "nullable": true,
+            "type": "string"
+          },
+          "nameComponents": {
+            "default": null,
+            "x-order": 2,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKNameComponents"
+              }
+            ]
+          },
+          "lookupInfo": {
+            "default": null,
+            "x-order": 3,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKLookupInfo"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "CKRecord": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        },
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "x-order": 2
+          },
+          "fields": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CKFieldOpen"
+            },
+            "type": "object",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JsonValue"
+            },
+            "type": "object",
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "default": null,
+            "x-order": 5,
+            "nullable": true,
+            "type": "string"
+          },
+          "created": {
+            "default": null,
+            "x-order": 6,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKAuditInfo"
+              }
+            ]
+          },
+          "modified": {
+            "default": null,
+            "x-order": 7,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKAuditInfo"
+              }
+            ]
+          },
+          "deleted": {
+            "default": null,
+            "x-order": 8,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "zoneID": {
+            "default": null,
+            "x-order": 9,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKZoneID"
+              }
+            ]
+          },
+          "parent": {
+            "default": null,
+            "x-order": 10,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKParent"
+              }
+            ]
+          },
+          "displayedHostname": {
+            "default": null,
+            "x-order": 11,
+            "nullable": true,
+            "type": "string"
+          },
+          "stableUrl": {
+            "default": null,
+            "x-order": 12,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKStableUrl"
+              }
+            ]
+          },
+          "shortGUID": {
+            "default": null,
+            "x-order": 13,
+            "nullable": true,
+            "type": "string"
+          },
+          "share": {
+            "default": null,
+            "x-order": 14,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKShare"
+              }
+            ]
+          },
+          "publicPermission": {
+            "default": null,
+            "x-order": 15,
+            "nullable": true,
+            "type": "string"
+          },
+          "participants": {
+            "default": null,
+            "x-order": 16,
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CKParticipant"
+            },
+            "type": "array"
+          },
+          "requesters": {
+            "default": null,
+            "x-order": 17,
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CKParticipant"
+            },
+            "type": "array"
+          },
+          "blocked": {
+            "default": null,
+            "x-order": 18,
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CKParticipant"
+            },
+            "type": "array"
+          },
+          "denyAccessRequests": {
+            "default": null,
+            "x-order": 19,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "owner": {
+            "default": null,
+            "x-order": 20,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKParticipant"
+              }
+            ]
+          },
+          "currentUserParticipant": {
+            "default": null,
+            "x-order": 21,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKParticipant"
+              }
+            ]
+          },
+          "invitedPCS": {
+            "default": null,
+            "x-order": 22,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKPCSInfo"
+              }
+            ]
+          },
+          "selfAddedPCS": {
+            "default": null,
+            "x-order": 23,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKPCSInfo"
+              }
+            ]
+          },
+          "shortTokenHash": {
+            "default": null,
+            "x-order": 24,
+            "nullable": true,
+            "type": "string"
+          },
+          "chainProtectionInfo": {
+            "default": null,
+            "x-order": 25,
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKChainProtectionInfo"
+              }
+            ]
+          },
+          "chainParentKey": {
+            "default": null,
+            "x-order": 26,
+            "nullable": true,
+            "type": "string"
+          },
+          "chainPrivateKey": {
+            "default": null,
+            "x-order": 27,
+            "nullable": true,
+            "type": "string"
+          },
+          "expirationTime": {
+            "default": null,
+            "x-order": 28,
+            "nullable": true,
+            "description": "seconds since Unix epoch",
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType"
+        ],
+        "type": "object"
+      },
+      "CKUnknownJSON": {
+        "description": "Arbitrary extensible CloudKit JSON preserved without numeric coercion.",
+        "anyOf": [
+          {
+            "type": "object",
+            "nullable": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CKUnknownJSON"
+            }
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ],
+        "x-go-type": "json.RawMessage"
+      },
+      "CKEmptyRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Empty payload for zone discovery.",
+        "example": {}
+      },
+      "CKAssetBytes": {
+        "type": "string",
+        "format": "binary",
+        "x-go-type": "[]byte",
+        "description": "Exact downloaded asset bytes, retained before decoding list membership."
+      }
+    }
+  }
+}

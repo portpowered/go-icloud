@@ -1,0 +1,816 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iCloud Reminders wire operations",
+    "version": "0.1.0",
+    "description": "Active CloudKit record, zone and provider-issued asset operations for the selected Reminders service."
+  },
+  "paths": {
+    "/database/1/com.apple.reminders/production/private/records/lookup": {
+      "post": {
+        "operationId": "RemindersLookupRecords",
+        "summary": "Fetch named reminder records",
+        "description": "Fetch named reminder records. Per-record errors and provider metadata remain available for service-level interpretation.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemindersClientId"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersDsid"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAccept"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersContentType"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersCookie"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersReferer"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersConnection"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKLookupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/RemindersFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.reminders/production/private/records/query": {
+      "post": {
+        "operationId": "RemindersQueryRecords",
+        "summary": "Query reminder records and continuation pages",
+        "description": "Query reminder records and continuation pages. Per-record errors and provider metadata remain available for service-level interpretation.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemindersClientId"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersDsid"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAccept"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersContentType"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersCookie"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersReferer"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersConnection"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/RemindersFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.reminders/production/private/records/modify": {
+      "post": {
+        "operationId": "RemindersModifyRecords",
+        "summary": "Create, update or delete reminder records",
+        "description": "Create, update or delete reminder records. Per-record errors and provider metadata remain available for service-level interpretation.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemindersClientId"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersDsid"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAccept"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersContentType"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersCookie"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersReferer"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersConnection"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKModifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/RemindersFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.reminders/production/private/changes/zone": {
+      "post": {
+        "operationId": "RemindersZoneChanges",
+        "summary": "Fetch changed reminder records for a zone",
+        "description": "Fetch changed reminder records for a zone. Per-record errors and provider metadata remain available for service-level interpretation.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemindersClientId"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersDsid"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAccept"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersContentType"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersCookie"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersReferer"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersConnection"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKZoneChangesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/RemindersFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.reminders/production/private/zones/list": {
+      "post": {
+        "operationId": "RemindersListZones",
+        "summary": "Discover available reminder zones",
+        "description": "Discover available reminder zones. Per-record errors and provider metadata remain available for service-level interpretation.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemindersClientId"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersDsid"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAccept"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersContentType"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersCookie"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersReferer"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersConnection"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKEmptyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/RemindersFailure"
+          }
+        }
+      }
+    },
+    "/{assetPath}": {
+      "parameters": [
+        {
+          "name": "assetPath",
+          "in": "path",
+          "required": true,
+          "description": "Escaped provider-issued asset path, possibly multiple segments. Preserve the exact preceding asset URL including its query; do not append account query parameters.",
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ],
+      "get": {
+        "operationId": "RemindersDownloadAsset",
+        "summary": "Download provider-issued reminder membership asset bytes",
+        "description": "Use the asset URL received in a record. Bind the origin/path/query to that record before requesting; this template does not authorize arbitrary destinations.",
+        "responses": {
+          "200": {
+            "description": "Exact asset bytes before list membership decoding.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKAssetBytes"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Exact successful asset bytes.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKAssetBytes"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/RemindersFailure"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "RemindersClientId": {
+        "name": "clientId",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "RemindersDsid": {
+        "name": "dsid",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "RemindersRemapEnums": {
+        "name": "remapEnums",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "default": "true"
+        },
+        "description": "Reminders CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it."
+      },
+      "RemindersGetCurrentSyncToken": {
+        "name": "getCurrentSyncToken",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "default": "true"
+        },
+        "description": "Reminders CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it."
+      },
+      "RemindersAccept": {
+        "name": "Accept",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersCookie": {
+        "name": "Cookie",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersOrigin": {
+        "name": "Origin",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersReferer": {
+        "name": "Referer",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersUserAgent": {
+        "name": "User-Agent",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersAcceptEncoding": {
+        "name": "Accept-Encoding",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersConnection": {
+        "name": "Connection",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "RemindersFailure": {
+        "description": "Provider failure, retaining status, headers and exact response bytes for typed SDK interpretation.",
+        "content": {
+          "*/*": {
+            "schema": {
+              "$ref": "#/components/schemas/CKAssetBytes"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CKLookupDescriptor": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupDescriptor"
+      },
+      "CKZoneIDReq": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneIDReq"
+      },
+      "CKLookupRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupRequest"
+      },
+      "CKErrorItem": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKErrorItem"
+      },
+      "CKTombstoneRecord": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKTombstoneRecord"
+      },
+      "CKZoneID": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneID"
+      },
+      "CKLookupResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupResponse"
+      },
+      "CKModifyOperation": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKModifyOperation"
+      },
+      "CKWriteParent": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKWriteParent"
+      },
+      "CKWriteRecord": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKWriteRecord"
+      },
+      "JsonValue": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+      },
+      "CKModifyRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKModifyRequest"
+      },
+      "CKModifyResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKModifyResponse"
+      },
+      "CKComparator": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKComparator"
+      },
+      "CKFVInt64": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVInt64"
+      },
+      "CKFVReference": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVReference"
+      },
+      "CKFVReferenceList": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVReferenceList"
+      },
+      "CKFVString": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVString"
+      },
+      "CKFVStringList": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVStringList"
+      },
+      "CKQueryFilterBy": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryFilterBy"
+      },
+      "CKQueryObject": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryObject"
+      },
+      "CKQuerySortBy": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQuerySortBy"
+      },
+      "CKReference": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKReference"
+      },
+      "CKQueryRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryRequest"
+      },
+      "CKQueryResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryResponse"
+      },
+      "CKZoneChangesZoneReq": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesZoneReq"
+      },
+      "CKZoneChangesRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesRequest"
+      },
+      "CKZoneChangesZone": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesZone"
+      },
+      "CKZoneChangesResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesResponse"
+      },
+      "CKZoneListZone": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneListZone"
+      },
+      "CKZoneListResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneListResponse"
+      },
+      "CKAssetField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetField"
+      },
+      "CKAssetIDField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetIDField"
+      },
+      "CKAssetIDListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetIDListField"
+      },
+      "CKAssetToken": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetToken"
+      },
+      "CKAuditInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAuditInfo"
+      },
+      "CKBytesField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKBytesField"
+      },
+      "CKChainProtectionInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKChainProtectionInfo"
+      },
+      "CKDoubleField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKDoubleField"
+      },
+      "CKDoubleListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKDoubleListField"
+      },
+      "CKEncryptedBytesField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKEncryptedBytesField"
+      },
+      "CKFieldOpen": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFieldOpen"
+      },
+      "CKInt64Field": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKInt64Field"
+      },
+      "CKInt64ListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKInt64ListField"
+      },
+      "CKLookupInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupInfo"
+      },
+      "CKNameComponents": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKNameComponents"
+      },
+      "CKPCSInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKPCSInfo"
+      },
+      "CKParent": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKParent"
+      },
+      "CKParticipant": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKParticipant"
+      },
+      "CKParticipantProtectionInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKParticipantProtectionInfo"
+      },
+      "CKPassthroughField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKPassthroughField"
+      },
+      "CKReferenceField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKReferenceField"
+      },
+      "CKReferenceListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKReferenceListField"
+      },
+      "CKShare": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKShare"
+      },
+      "CKStableUrl": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKStableUrl"
+      },
+      "CKStringField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKStringField"
+      },
+      "CKStringListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKStringListField"
+      },
+      "CKTimestampField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKTimestampField"
+      },
+      "CKUnknownListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownListField"
+      },
+      "CKUserIdentity": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUserIdentity"
+      },
+      "CKRecord": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKRecord"
+      },
+      "CKUnknownJSON": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+      },
+      "CKEmptyRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKEmptyRequest"
+      },
+      "CKAssetBytes": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetBytes"
+      }
+    }
+  }
+}

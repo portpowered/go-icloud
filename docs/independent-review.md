@@ -936,3 +936,33 @@ command response cases exercise shared functions already reached by other
 scenarios; unchanged diagnostic counts do not imply omitted functional cases
 (LIB-07). Scoped independent working-tree review has no remaining blocker;
 exact-commit approval after CI and full migration acceptance remain open (GO-15).
+
+
+PR17 received scoped exact-commit approval at
+`bd13f6b16a552e62e8de9bc4625ad8d49dfbc3d2` after
+[CI 37839895612](https://github.com/portpowered/go-icloud/actions/runs/37839895612)
+passed and merged to `ac392ec7290d31732d6dcc92eb4f06ab4a45b58b`. Its branch was
+deleted and [main CI 37840793611](https://github.com/portpowered/go-icloud/actions/runs/37840793611)
+passed. CI confirms 70 Python methods, 490/1100 HTTP inventory, replay 1518/1805,
+unit 1085/1805 and combined 1607/1805. Scoped approval does not establish final
+migration acceptance.
+
+### Interim Reminders canonical wire audit
+
+Shared CloudKit models and six active Reminders operations now bind all 78 existing
+scenarios/86 exchanges. Source automatic schema export omits normal records due
+to its custom field dictionary; the canonical models explicitly restore all 28
+CKRecord fields and normal record union members. Generated roundtrip, schema,
+negative and drift checks pass. Asset URL-issuer evidence is deliberately limited:
+it does not prove membership precedence or full service/runtime semantics.
+Independent source inspection confirms the record field inventory. Final scoped
+working-tree review found no remaining blocker after focused race checks and
+review of the normal-record removal controls, null preservation, boolean query
+overrides, media contracts and documentation limits. Exact-SHA approval after CI
+remains required. No Go Reminders SDK port or coverage numerator is claimed.
+
+Final local make lint/check passes: all linters, Go race/contracts/generation/
+consumer checks, 70 Python methods and the 490/1100 HTTP inventory. Handwritten
+replay coverage remains 1518/1805 (84.1%), unit 1085/1805 (60.1%) and combined
+1609/1805 (89.1%); cancellation-path scheduling accounts for small combined-run
+variation. Generated wire infrastructure is excluded from these SDK totals.
