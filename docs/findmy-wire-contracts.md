@@ -17,8 +17,8 @@ generator checks reject drift and ambiguous operation/model constants
 
 The source is timlaing/pyicloud commit
 `e2e44ab875d47dab4475096021da60030f26c35e`, particularly
-`pyicloud/services/findmyiphone.py`. Thirty-six implementation-derived synthetic
-scenarios contain 68 paired exchanges. Contract checks bind every exchange to
+`pyicloud/services/findmyiphone.py`. Thirty-seven implementation-derived synthetic
+scenarios contain 70 paired exchanges. Contract checks bind every exchange to
 one of the seven routes and validate request and response payloads, media and
 required account query values. Controls reject unknown routes/methods, missing,
 unknown or repeated query values, and account parameters on token lookup.
@@ -31,7 +31,7 @@ traffic and not additional portable SDK replays. The four schema examples are
 invented. No private capture, account data, credential or live device command is
 published or performed (SCHEMA-08, SCHEMA-12).
 
-All 63 JSON replies round-trip through their canonical generated models.
+All 65 JSON replies round-trip through their canonical generated models.
 Four empty 204 command acknowledgements and one binary 201 acknowledgement
 remain uninterpreted. A sixth case exercises a JSON 201 acknowledgement with
 unknown metadata; all six new cases execute the actual pinned Source.
@@ -52,8 +52,8 @@ selected family flag. It omits provider server context and location-update flags
 Refresh includes provider context; location updates add `shouldLocate`,
 `selectedDevice` and `isUpdatingAllLocations`. Separate initialization and refresh
 models prevent a setup request from silently accepting refresh state. Schema
-field order follows the pinned request encoding. Source-style JSON encoding and
-complete cross-field runtime behavior still require the SDK adapter.
+field order follows the pinned request encoding. The [internal transport](findmy-transport.md) applies Source-style JSON encoding
+and location controls. Full session orchestration still requires the SDK adapter.
 
 Refresh content is optional. Missing or empty content is distinct from a claim
 that cached devices were removed. Family members use an open fetch-status string;
@@ -75,6 +75,8 @@ The Find My public SDK and explicit session lifecycle are still pending. None of
 these schema/model checks count as Go SDK semantic replay. The existing Source
 scenarios cover refresh, family readiness/progress/retry bounds and command/token
 refusals, but their full public Go projections and monitor ownership must be
-ported. The full source/model/runtime binding gate, live Go integration, native
+ported. Transport checks now execute every paired exchange, including the ordered
+opaque-context regression, but do not count as public SDK semantic replay. The full
+source/model/runtime binding gate, live Go integration, native
 Go authentication and release acceptance remain open. Synthetic commands are
 offline only; live authorization currently covers reads.

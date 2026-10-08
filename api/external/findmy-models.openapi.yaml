@@ -55,12 +55,18 @@ components:
       properties:
         theftLoss: {$ref: '#/components/schemas/FindMyNullableJSON'}
       additionalProperties: {$ref: '#/components/schemas/FindMyUnknownJSON'}
+    FindMyRefreshContext:
+      description: Provider context retained as raw JSON so refresh requests preserve its object member order; theftLoss is cleared before reuse.
+      allOf:
+        - {$ref: '#/components/schemas/FindMyServerContext'}
+      nullable: true
+      x-go-type: json.RawMessage
     FindMyRefreshRequest:
       type: object
       required: [clientContext, serverContext]
       properties:
         clientContext: {$ref: '#/components/schemas/FindMyClientContext', x-order: 1}
-        serverContext: {$ref: '#/components/schemas/FindMyServerContext', x-order: 2}
+        serverContext: {$ref: '#/components/schemas/FindMyRefreshContext', x-order: 2}
         isUpdatingAllLocations: {type: boolean, enum: [true], x-order: 3}
       additionalProperties: false
       example:

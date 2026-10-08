@@ -26,11 +26,11 @@ These duplicate/ambiguous-rule checks deliberately strengthen reference replay.
 Multipart rules bind a full Content-Type pattern, its boundary and ordered parts.
 Part header values, filenames and unencoded binary bytes remain exact; framing
 requires CRLF delimiters with no preamble, epilogue or premature boundary.
-Nested and transfer-encoded parts are explicitly unsupported; the thirteen selected
+Nested and transfer-encoded parts are explicitly unsupported; the fifteen selected
 upload artifacts use unencoded parts. Only the declared Content-Type variation
 is normalized; actual lengths and other request headers remain bound.
 
-All 437 portable HTTP scenarios (991 exchanges) now instantiate in Go; all thirteen
+All 456 portable HTTP scenarios (1030 exchanges) now instantiate in Go; all fifteen
 multipart upload pairs match Go's writer with a different declared boundary.
 These tests prove fixture decoding and matcher interoperability, not SDK
 operation semantics. Auth/socket timelines, account/session projections, source-pin scenario loading
@@ -47,3 +47,11 @@ remain open.
 The types here describe verification artifacts, not provider production wire
 models. Production schemas and generated models remain a separate requirement.
 Run `go test -race ./tests/replay/...`; `make check` and CI also run these tests.
+
+Find My transport replay executes 37 scenario streams/70 paired exchanges using
+generated route builders, scenario command inputs and preceding received context.
+Read/token projections and exact response metadata/bytes are checked. A strict
+Source-derived reverse-order context case preserves provider member order while
+clearing theftLoss. These checks follow fixture route sequencing and do not prove
+SDK cache, polling, capability guards or monitor behavior; Find My public SDK
+semantic replay remains 0/37. See [transport evidence](../../docs/findmy-transport.md).

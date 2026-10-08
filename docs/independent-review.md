@@ -759,8 +759,11 @@ re-probed all five. A further ownership finding required explicit response media
 to precede wildcard fallback. A sixth Source case exercises JSON 201 metadata;
 201/202 JSON ownership controls reject non-object acknowledgements while existing
 Drive wildcard-only binary cases still pass. The reviewer independently re-probed
-all three fixes and passed scoped race checks. Verdict: **limited working-tree
-pass**. Exact-SHA approval after CI remains pending. These are schema/model checks,
+all three fixes and passed scoped race checks. Verdict: **limited exact-commit
+pass**. The reviewer approved `21a9b50bea4e65fe5e28d5dc534613760bd4db5c` after
+[CI 37824395168](https://github.com/portpowered/go-icloud/actions/runs/37824395168)
+passed. PR #13 merged as `055eeb574b6597d5184d14eeb37c2c360d650def`; main passed
+[CI 37825768538](https://github.com/portpowered/go-icloud/actions/runs/37825768538). These are schema/model checks,
 not Find My SDK semantic replay; public operations, monitor lifecycle, complete
 runtime/source gates and release remain open. No live device command was sent.
 
@@ -774,3 +777,29 @@ to the supported operation inventory (LIB-07). The global HTTP inventory is
 Fresh Source coverage over the final inventory remains 576/905 entered functions,
 3195/5385 body statements and 973/2076 branch exits. These diagnostic Source
 figures do not establish SDK parity or full migration acceptance.
+
+### Interim Find My transport audit
+
+Seven internal transport operations now execute 37 portable Find My scenario
+streams/70 paired exchanges. Exact responses and typed discovery/token projections
+are bound. The driver follows recorded route sequencing; it does not claim
+production session orchestration or public SDK semantics. SDK parity remains
+0/37; cache, family polling, capability/missing-token guards and monitor ownership
+remain required work. Global HTTP inventory is 456 scenarios/1030 pairs.
+
+The independent reviewer found sorted opaque refresh-context keys broke strict
+Source wire matching. Schema-owned ordered raw context, a top-level theftLoss
+rewrite and a new Source/Go reverse-order regression address the finding. Context
+input ownership, response-byte independence and nested unknown JSON have controls.
+No matcher was relaxed or live command performed. Independent Source replay and
+scoped race/drift checks re-probed the fix and found no further scoped code blocker.
+
+Final `make lint` and `make check` passed, including all 67 Python tests, Go race,
+contracts/drift/consumer checks and the replay/combined coverage gates. Handwritten
+coverage is 1219/1457 replay statements (83.7%), 780/1457 unit (53.5%) and
+1293/1457 combined (88.7%); cancellation paths retain small run variations (LIB-07).
+Fresh Source measurement over 456 HTTP scenarios and the other socket/combined
+scenarios remains 576/905 entered functions, 3195/5385 body statements and
+973/2076 branch exits. Live Go integration remains pending. Final documentation
+and exact-commit approval after CI remain pending; full migration/release
+acceptance remains open.
