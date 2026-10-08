@@ -70,6 +70,7 @@ type coverageNumberResult struct {
 }
 
 func main() {
+	root := flag.String("root", ".", "Go module root")
 	profile := flag.String("profile", "coverage.out", "Go coverage profile")
 	minimum := flag.Float64("min", defaultMinimumCoverage, "minimum statement coverage percent")
 	percentOnly := flag.Bool("percent-only", false, "print only the percentage")
@@ -77,7 +78,7 @@ func main() {
 
 	flag.Parse()
 
-	err := report(".", *profile, *minimum, *percentOnly, *filteredProfile)
+	err := report(*root, *profile, *minimum, *percentOnly, *filteredProfile)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

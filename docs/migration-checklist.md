@@ -259,3 +259,12 @@ Go replay coverage.
 - Ported zlib/gzip/raw current/legacy/bare decoding against 52 portable Source cases.
 - Preserved raw decoded bytes and typed failures; no live operation was performed.
 - Public domain mapping, CRDT writes and full service replay acceptance remain open.
+
+### Initial Go CLI read milestone
+
+The separate CLI module consumes the publicly resolved SDK version for main
+8104b8ee8340. Seven Account/Drive/Find My read commands accept a private explicit
+AuthContext file. Canonical paired synthetic replays bind requests and projected
+results, with an additional explicitly synthetic 401 control. Native login,
+reference-session import, Photos/Reminders commands, writes, consumer installation,
+CLI module release and live verification remain open. Item 16 is not complete.
