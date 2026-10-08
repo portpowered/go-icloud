@@ -82,19 +82,20 @@ verification infrastructure, not an SDK operation port. Explicit JSON pattern
 and credential-redaction rules now instantiate all 16 portable declarations;
 negative controls reject changed fixed fields, string formats, code types and
 ambiguous paths. Multipart rules now bind ordered headers/bytes, filenames and
-strict boundary framing. All 421 scenarios/957 exchanges instantiate and seven
+strict boundary framing. All 429 scenarios/965 exchanges instantiate and seven
 upload pairs match Go's writer. These are matcher checks, not SDK semantic parity.
 Socket/auth timelines, the remaining scenario projections and SDK operations
 remain open. No Python semantic replay is counted as passing Go SDK replay.
 
-The first public SDK operation, `GetAccountDevices`, now runs eleven portable
-synthetic scenarios with separate generated public projections and typed errors.
+The public SDK now implements the five account reads, with all 34 portable
+account scenarios/40 exchanges executed through public methods and independent
+schema-generated projections. Family/photo flows derive IDs from public results.
 Two-account replay checks concurrency and repeated fresh requests without shared
 cookies. An independent consumer module compiles. Current handwritten SDK and
-internal transport coverage is 80.2% replay, 88.2% unit and 91.4% combined;
+internal transport coverage is 81.6% replay, 82.5% unit and 92.2% combined;
 these figures do not represent the complete service port (LIB-07).
 
-The portable HTTP suite now has 421 scenarios and 957 paired exchanges after
+The portable HTTP suite now has 429 scenarios and 965 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
 entropy and exact proof matching; they also exercise refusal, trust-token reuse,

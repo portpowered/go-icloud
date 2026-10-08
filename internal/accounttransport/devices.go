@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"math"
 	"net/http"
 	"net/url"
@@ -79,55 +78,22 @@ func New(transport http.RoundTripper) *Client {
 
 // GetDevices fetches a fresh device response using the supplied account context.
 func (client *Client) GetDevices(ctx context.Context, auth RequestContext) (*DevicesResponse, error) {
-	err := validateOrigin(auth.Origin)
-	if err != nil {
-		return nil, failure(Configuration, err, nil, nil)
-	}
-
 	request, err := accountapi.NewListAccountDevicesRequest(auth.Origin, &auth.Params)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	request = request.WithContext(ctx)
-
-	request.Header = auth.Headers.Clone()
-	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
-	}
-
-	request.URL.RawQuery = orderedAccountQuery(auth.Params)
-
-	response, err := client.httpClient.Do(request)
+	response, err := client.read(ctx, auth, request, "")
 	if err != nil {
-		return nil, failure(Transport, err, nil, nil)
+		return nil, err
 	}
 
-	body, readErr := io.ReadAll(response.Body)
-	closeErr := response.Body.Close()
-
-	err = errors.Join(readErr, closeErr)
+	data, err := decodeDevices(response.Body)
 	if err != nil {
-		return nil, failure(Transport, err, response, body)
+		return nil, responseFailure(Decode, err, response)
 	}
 
-	if response.StatusCode != http.StatusOK {
-		return nil, failure(Provider, nil, response, body)
-	}
-
-	mediaType, _, _ := strings.Cut(response.Header.Get(protocol.HTTPContentTypeName), ";")
-	parseProvider := mediaType == protocol.MediaApplicationJson || mediaType == protocol.MediaTextJson
-
-	data, err := decodeDevices(body, parseProvider)
-	if err != nil {
-		if errors.Is(err, errProviderBody) {
-			return nil, failure(Provider, err, response, body)
-		}
-
-		return nil, failure(Decode, err, response, body)
-	}
-
-	return &DevicesResponse{Data: data, Status: response.StatusCode, Headers: response.Header.Clone()}, nil
+	return &DevicesResponse{Data: data, Status: response.Status, Headers: response.Headers}, nil
 }
 
 func failure(stage Stage, cause error, response *http.Response, body []byte) *ResponseError {
@@ -173,7 +139,7 @@ func queryPart(name, value string) string {
 	return url.QueryEscape(name) + "=" + url.QueryEscape(value)
 }
 
-func decodeDevices(body []byte, parseProvider bool) (account.AccountDevicesResponse, error) {
+func decodeDevices(body []byte) (account.AccountDevicesResponse, error) {
 	var data account.AccountDevicesResponse
 
 	var fields map[string]json.RawMessage
@@ -181,10 +147,6 @@ func decodeDevices(body []byte, parseProvider bool) (account.AccountDevicesRespo
 	err := json.Unmarshal(body, &fields)
 	if err != nil {
 		return data, fmt.Errorf("decode account envelope: %w", err)
-	}
-
-	if parseProvider && providerError(fields) {
-		return data, errProviderBody
 	}
 
 	devices, exists := fields[protocol.AccountDevicesResponseDevices]

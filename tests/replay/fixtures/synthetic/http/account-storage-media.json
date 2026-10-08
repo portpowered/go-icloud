@@ -1,0 +1,72 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "account",
+  "operation": "storage",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://drive.example.invalid",
+        "path": "/setup/ws/1/storageUsageInfo",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "0"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzdG9yYWdlVXNhZ2VJbmZvIjogeyJ1c2VkU3RvcmFnZUluQnl0ZXMiOiAxMTAsICJ0b3RhbFN0b3JhZ2VJbkJ5dGVzIjogMTAwLCAiY29tcFN0b3JhZ2VJbkJ5dGVzIjogNSwgImNvbW1lcmNlU3RvcmFnZUluQnl0ZXMiOiA5NSwgImZ1dHVyZSI6IG51bGx9LCAicXVvdGFTdGF0dXMiOiB7Im92ZXJRdW90YSI6IHRydWUsICJoYXZlTWF4UXVvdGFUaWVyIjogZmFsc2UsICJhbG1vc3QtZnVsbCI6IHRydWUsICJwYWlkUXVvdGEiOiB0cnVlLCAiZnV0dXJlIjogOTAwNzE5OTI1NDc0MDk5M30sICJzdG9yYWdlVXNhZ2VCeU1lZGlhIjogW3sibWVkaWFLZXkiOiAicGhvdG9zIiwgImRpc3BsYXlMYWJlbCI6ICJTeW50aGV0aWMgUGhvdG9zIiwgImRpc3BsYXlDb2xvciI6ICJzeW50aGV0aWMtY29sb3IiLCAidXNhZ2VJbkJ5dGVzIjogMTAwLCAiZnV0dXJlIjogbnVsbH0sIHsibWVkaWFLZXkiOiAiZHJpdmUiLCAiZGlzcGxheUxhYmVsIjogIlN5bnRoZXRpYyBEcml2ZSIsICJ1c2FnZUluQnl0ZXMiOiAxMH1dLCAiZnV0dXJlQWNjb3VudCI6IFs5MDA3MTk5MjU0NzQwOTkzLCBudWxsXX0="
+        }
+      }
+    }
+  ],
+  "result": {
+    "used_bytes": 110,
+    "total_bytes": 100
+  }
+}

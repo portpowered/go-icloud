@@ -23,7 +23,7 @@ func deviceRequest() icloud.GetAccountDevicesRequest {
 	return icloud.GetAccountDevicesRequest{Auth: icloud.AuthContext{
 		AccountID: "synthetic-account", ClientID: "synthetic-client",
 		AccountServiceURL: "https://account.example.invalid", Headers: make([]icloud.Header, 0),
-		ClientBuildNumber: nil, ClientMasteringNumber: nil,
+		ClientBuildNumber: nil, ClientMasteringNumber: nil, ChinaMainland: nil,
 	}}
 }
 
@@ -161,7 +161,8 @@ func TestDeviceUnknownMetadataAndPayments(t *testing.T) {
 
 	if string(response.Devices[0].AdditionalProperties["future"]) != `{"big":9007199254740993,"nil":null}` ||
 		string(response.AdditionalMetadata["futureAccount"]) != `[true,null,9007199254740993]` ||
-		len(response.PaymentMethods) != 1 || string(response.PaymentMethods[0].AdditionalProperties["future"]) != "null" {
+		len(response.PaymentMethods) != 1 ||
+		string(response.PaymentMethods[0].AdditionalProperties["future"]) != testJSONNull {
 		t.Fatal("SDK metadata lost precision, null or payment details")
 	}
 }
@@ -193,7 +194,7 @@ func TestDeviceProviderErrorsInSuccessfulHTTPResponses(t *testing.T) {
 func TestDeviceFalsyProviderFieldsRemainMetadata(t *testing.T) {
 	t.Parallel()
 
-	for _, raw := range []string{`false`, `null`, `""`, `0`, `[]`, `{}`} {
+	for _, raw := range []string{`false`, testJSONNull, `""`, `0`, `[]`, `{}`} {
 		t.Run(raw, func(t *testing.T) {
 			t.Parallel()
 

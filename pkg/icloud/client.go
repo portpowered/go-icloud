@@ -7,6 +7,7 @@ import (
 
 	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/internal/accounttransport"
+	"github.com/portpowered/go-icloud/internal/protocol"
 )
 
 // Client provides the currently implemented iCloud operations.
@@ -14,12 +15,21 @@ import (
 type Client interface {
 	// GetAccountDevices returns fresh devices and payment-method metadata.
 	GetAccountDevices(ctx context.Context, request GetAccountDevicesRequest) (*GetAccountDevicesResult, error)
+	// GetAccountFamily returns fresh family records.
+	GetAccountFamily(ctx context.Context, request GetAccountFamilyRequest) (*GetAccountFamilyResult, error)
+	// GetAccountMemberPhoto returns exact photo bytes for a member DSID.
+	GetAccountMemberPhoto(ctx context.Context, request GetAccountMemberPhotoRequest) (*GetAccountMemberPhotoResult, error)
+	// GetAccountStorage returns fresh usage, quota and media metadata.
+	GetAccountStorage(ctx context.Context, request GetAccountStorageRequest) (*GetAccountStorageResult, error)
+	// GetAccountPlanSummary returns opaque JSON from the account's regional gateway.
+	GetAccountPlanSummary(ctx context.Context, request GetAccountPlanSummaryRequest) (*GetAccountPlanSummaryResult, error)
 }
 
 var (
 	errTransportConfig = errors.New("HTTP transport must be nonnil and configured once")
 	errNilOption       = errors.New("nil client option")
 	errAuthIdentifiers = errors.New("account and client identifiers are required")
+	errMemberID        = errors.New("family member identifier is required")
 )
 
 type configuration struct {
@@ -73,20 +83,9 @@ func (sdk *SDK) GetAccountDevices(ctx context.Context,
 ) (*GetAccountDevicesResult, error) {
 	const operation = "GetAccountDevices"
 
-	if request.Auth.AccountID == "" || request.Auth.ClientID == "" {
-		return nil, newClientError(operation, Configuration, 0, nil, nil,
-			errAuthIdentifiers)
-	}
-
-	params := new(accountapi.ListAccountDevicesParams)
-	params.ClientId = request.Auth.ClientID
-	params.Dsid = request.Auth.AccountID
-	params.Accept = accountapi.ListAccountDevicesParamsAccept(accountapi.AcceptAsterisk)
-	params.ClientBuildNumber = copyString(request.Auth.ClientBuildNumber)
-	params.ClientMasteringNumber = copyString(request.Auth.ClientMasteringNumber)
-
-	boundary := accounttransport.RequestContext{
-		Origin: request.Auth.AccountServiceURL, Params: *params, Headers: requestHeaders(request.Auth.Headers),
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
 
 	response, err := sdk.account.GetDevices(ctx, boundary)
@@ -95,6 +94,111 @@ func (sdk *SDK) GetAccountDevices(ctx context.Context,
 	}
 
 	return projectDevices(response), nil
+}
+
+// GetAccountFamily fetches fresh members using caller-owned account authentication.
+func (sdk *SDK) GetAccountFamily(ctx context.Context,
+	request GetAccountFamilyRequest,
+) (*GetAccountFamilyResult, error) {
+	const operation = "GetAccountFamily"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.account.GetFamily(ctx, boundary)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectFamily(response), nil
+}
+
+// GetAccountMemberPhoto fetches the photo for the DSID returned by GetAccountFamily.
+func (sdk *SDK) GetAccountMemberPhoto(ctx context.Context,
+	request GetAccountMemberPhotoRequest,
+) (*GetAccountMemberPhotoResult, error) {
+	const operation = "GetAccountMemberPhoto"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	if request.MemberID == "" {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, errMemberID)
+	}
+
+	response, err := sdk.account.GetMemberPhoto(ctx, boundary, request.MemberID)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return &GetAccountMemberPhotoResult{Content: response.Body, Metadata: publicMetadata(response)}, nil
+}
+
+// GetAccountStorage fetches absolute byte counts and available quota/media metadata.
+func (sdk *SDK) GetAccountStorage(ctx context.Context,
+	request GetAccountStorageRequest,
+) (*GetAccountStorageResult, error) {
+	const operation = "GetAccountStorage"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.account.GetStorage(ctx, boundary)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectStorage(response), nil
+}
+
+// GetAccountPlanSummary fetches opaque subscription JSON from the authenticated account region.
+func (sdk *SDK) GetAccountPlanSummary(ctx context.Context,
+	request GetAccountPlanSummaryRequest,
+) (*GetAccountPlanSummaryResult, error) {
+	const operation = "GetAccountPlanSummary"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	boundary.Origin = protocol.AccountServer1
+	if request.Auth.ChinaMainland != nil && *request.Auth.ChinaMainland {
+		boundary.Origin = protocol.AccountServer2
+	}
+
+	response, err := sdk.account.GetPlanSummary(ctx, boundary)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return &GetAccountPlanSummaryResult{Summary: response.Body, Metadata: publicMetadata(response)}, nil
+}
+
+func accountRequestContext(auth AuthContext) (accounttransport.RequestContext, error) {
+	var boundary accounttransport.RequestContext
+
+	if auth.AccountID == "" || auth.ClientID == "" {
+		return boundary, errAuthIdentifiers
+	}
+
+	params := new(accountapi.ListAccountDevicesParams)
+	params.ClientId = auth.ClientID
+	params.Dsid = auth.AccountID
+	params.Accept = accountapi.ListAccountDevicesParamsAccept(accountapi.AcceptAsterisk)
+	params.ClientBuildNumber = copyString(auth.ClientBuildNumber)
+	params.ClientMasteringNumber = copyString(auth.ClientMasteringNumber)
+
+	boundary = accounttransport.RequestContext{Origin: auth.AccountServiceURL, Params: *params,
+		Headers: requestHeaders(auth.Headers)}
+
+	return boundary, nil
 }
 
 func copyString(value *string) *string {

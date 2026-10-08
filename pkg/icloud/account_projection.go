@@ -51,3 +51,51 @@ func responseHeaders(headers http.Header) []Header {
 
 	return result
 }
+
+func publicMetadata(response *accounttransport.BytesResponse) ResponseMetadata {
+	return ResponseMetadata{StatusCode: response.Status, Headers: responseHeaders(response.Headers)}
+}
+
+func projectFamily(response *accounttransport.FamilyResponse) *GetAccountFamilyResult {
+	members := make([]AccountFamilyMember, 0)
+
+	if response.Data.FamilyMembers != nil {
+		for _, member := range *response.Data.FamilyMembers {
+			members = append(members, AccountFamilyMember(member))
+		}
+	}
+
+	return &GetAccountFamilyResult{Members: members,
+		AdditionalMetadata: copyAccountMetadata(response.Data.AdditionalProperties),
+		Metadata:           publicMetadata(response.Metadata)}
+}
+
+func projectStorage(response *accounttransport.StorageResponse) *GetAccountStorageResult {
+	media := make([]AccountMediaUsage, 0)
+
+	if response.Data.StorageUsageByMedia != nil {
+		for _, usage := range *response.Data.StorageUsageByMedia {
+			media = append(media, AccountMediaUsage(usage))
+		}
+	}
+
+	var quota *AccountQuota
+
+	if response.Data.QuotaStatus != nil {
+		projected := AccountQuota(*response.Data.QuotaStatus)
+		quota = &projected
+	}
+
+	return &GetAccountStorageResult{Usage: AccountStorageUsage(response.Data.StorageUsageInfo), Quota: quota, Media: media,
+		AdditionalMetadata: copyAccountMetadata(response.Data.AdditionalProperties),
+		Metadata:           publicMetadata(response.Metadata)}
+}
+
+func copyAccountMetadata(fields map[string]json.RawMessage) AccountMetadata {
+	result := make(AccountMetadata)
+	for name, value := range fields {
+		result[name] = append(json.RawMessage(nil), value...)
+	}
+
+	return result
+}

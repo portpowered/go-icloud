@@ -16,7 +16,10 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
-const accountFamilyOperationName = "family"
+const (
+	accountFamilyOperationName = "family"
+	accountPlanOperationName   = "summary_plan"
+)
 
 type accountScenario struct {
 	Operation string `json:"operation"`
@@ -43,7 +46,7 @@ func TestGeneratedAccountClientPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 26 {
+	if len(paths) != 34 {
 		t.Fatal("account scenario inventory changed")
 	}
 
@@ -107,7 +110,7 @@ func runGeneratedAccount(t *testing.T, scenario accountScenario) {
 	doer.Transport = transport
 
 	origin := scenario.Initial.Origin
-	if scenario.Operation == "summary_plan" {
+	if scenario.Operation == accountPlanOperationName {
 		origin = "https://gatewayws.icloud.com"
 		if scenario.Initial.China {
 			origin += ".cn"
@@ -163,7 +166,7 @@ func accountOperation(t *testing.T, client *accountapi.ClientWithResponses, scen
 		return accountFamilyOperation(t, client, scenario)
 	case "storage":
 		return accountStorageOperation(t, client, scenario)
-	case "summary_plan":
+	case accountPlanOperationName:
 		return accountPlanOperation(t, client, scenario)
 	default:
 		t.Fatalf("unimplemented account operation: %s", scenario.Operation)
@@ -177,9 +180,27 @@ func accountFamilyOperation(t *testing.T, client *accountapi.ClientWithResponses
 
 	response, err := client.ListAccountFamilyWithResponse(t.Context(),
 		accountParameters[accountapi.ListAccountFamilyParams](t, scenario.Initial))
-	if err != nil || response == nil || response.JSON200 == nil {
+	if err != nil || response == nil {
 		t.Fatalf("account family: %v", err)
 	}
+
+	if scenario.Operation == accountFamilyOperationName && len(scenario.Error) != 0 {
+		accountProviderFailure(t, scenario.Error, response.StatusCode(), response.Body)
+
+		return nil
+	}
+
+	if response.JSON200 == nil {
+		t.Fatal("account family has no decoded success")
+	}
+
+	return projectGeneratedFamily(t, client, scenario, response)
+}
+
+func projectGeneratedFamily(t *testing.T, client *accountapi.ClientWithResponses,
+	scenario accountScenario, response *accountapi.ListAccountFamilyResponse,
+) any {
+	t.Helper()
 
 	names := make([]string, 0)
 	photos := make([]*accountPhotoResult, 0)
@@ -283,8 +304,18 @@ func accountStorageOperation(t *testing.T, client *accountapi.ClientWithResponse
 
 	response, err := client.GetAccountStorageWithResponse(t.Context(),
 		accountParameters[accountapi.GetAccountStorageParams](t, scenario.Initial))
-	if err != nil || response == nil || response.JSON200 == nil {
+	if err != nil || response == nil {
 		t.Fatalf("account storage: %v", err)
+	}
+
+	if len(scenario.Error) != 0 {
+		accountProviderFailure(t, scenario.Error, response.StatusCode(), response.Body)
+
+		return nil
+	}
+
+	if response.JSON200 == nil {
+		t.Fatal("account storage has no decoded success")
 	}
 
 	return map[string]int64{
