@@ -30,14 +30,18 @@ Nested and transfer-encoded parts are explicitly unsupported; the seven selected
 upload artifacts use unencoded parts. Only the declared Content-Type variation
 is normalized; actual lengths and other request headers remain bound.
 
-All 413 portable HTTP scenarios (949 exchanges) now instantiate in Go; all seven
+All 421 portable HTTP scenarios (957 exchanges) now instantiate in Go; all seven
 multipart upload pairs match Go's writer with a different declared boundary.
 These tests prove fixture decoding and matcher interoperability, not SDK
 operation semantics. Auth/socket timelines, account/session projections, source-pin scenario loading
 and the complete Go SDK scenario drivers remain to be ported. Unsupported entity
 encodings fail construction; no approximate match or fallback is provided.
-The account fixture test verifies HTTP-client/portable-exchange interoperability,
-not an implemented account SDK operation or semantic compatibility.
+The generated account-client test runs 26 scenarios/32 exchanges. The separate
+public `GetAccountDevices` SDK driver runs eleven of these scenarios and binds
+results or typed errors plus exact response evidence. Concurrent two-account
+replays verify request isolation, repeated fresh reads and caller-owned cookies.
+The other account operations remain generated-client interoperability tests;
+the full selected-service SDK port is still open.
 
 The types here describe verification artifacts, not provider production wire
 models. Production schemas and generated models remain a separate requirement.

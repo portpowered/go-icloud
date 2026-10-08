@@ -30,7 +30,7 @@ var (
 	errInvalidExecutionCount    = errors.New("invalid execution count")
 	errConflictingStatementNums = errors.New("coverage block has conflicting statement counts")
 	errMissingCoverageMode      = errors.New("coverage profile has no mode header")
-	errNoProductionStatements   = errors.New("coverage profile has no non-generated pkg statements")
+	errNoProductionStatements   = errors.New("coverage profile has no non-generated library statements")
 	errCoverageBelowMinimum     = errors.New("coverage is below the minimum")
 	errMissingModuleDirective   = errors.New("module directive not found")
 )
@@ -71,8 +71,8 @@ type coverageNumberResult struct {
 
 func main() {
 	profile := flag.String("profile", "coverage.out", "Go coverage profile")
-	minimum := flag.Float64("min", defaultMinimumCoverage, "minimum combined statement coverage percent")
-	percentOnly := flag.Bool("percent-only", false, "print only the combined percentage")
+	minimum := flag.Float64("min", defaultMinimumCoverage, "minimum statement coverage percent")
+	percentOnly := flag.Bool("percent-only", false, "print only the percentage")
 	filteredProfile := flag.String("filtered-profile", "", "write a profile without generated files")
 
 	flag.Parse()
@@ -251,7 +251,8 @@ func coverageSource(location, module string) (string, bool, error) {
 
 	source := strings.TrimPrefix(strings.ReplaceAll(location[:colon], "\\", "/"), module+"/")
 
-	if !strings.HasPrefix(source, "pkg/") || strings.HasPrefix(source, "pkg/testing/") {
+	library := strings.HasPrefix(source, "pkg/") || strings.HasPrefix(source, "internal/")
+	if !library || strings.HasPrefix(source, "pkg/testing/") || strings.HasPrefix(source, "internal/testing/") {
 		return source, false, nil
 	}
 
@@ -355,7 +356,7 @@ func printCoverageReport(byPackage map[string]totals, minimum float64, percentOn
 		}
 	} else {
 		writeErr := writeCoverageLine(
-			"combined non-generated pkg coverage: %.1f%% (%d/%d statements)\n",
+			"non-generated library coverage: %.1f%% (%d/%d statements)\n",
 			measured,
 			combined.covered,
 			combined.all,

@@ -1,0 +1,6 @@
+package: icloud
+generate:
+  models: true
+output: pkg/icloud/models.gen.go
+output-options:
+  skip-prune: true

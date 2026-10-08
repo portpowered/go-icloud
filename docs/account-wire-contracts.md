@@ -21,8 +21,8 @@ the contract; private values, cookies and captures are not published
 (SCHEMA-08, SCHEMA-12). Captured Accept negotiation includes `*/*`, so the
 schema accepts it alongside the synthetic JSON negotiation (SCHEMA-09).
 
-All examples in this schema are invented. The 18 public account replay
-scenarios contain 24 synthetic exchanges. The contract suite checks their
+All examples in this schema are invented. The 26 public account replay
+scenarios contain 32 synthetic exchanges. The contract suite checks their
 JSON response shapes using the actual operation's status and media schema,
 checks explicit operation ownership, validates ten schema
 examples, and checks known required fields, types and byte-count bounds.
@@ -30,7 +30,7 @@ Binary member photos remain uninterpreted bytes, including empty content.
 These counts demonstrate wire-contract checks, not SDK semantic replay or
 live endpoint coverage (LIB-07).
 
-The generated Go client now executes all 18 synthetic account scenarios against
+The generated Go client now executes all 26 synthetic account scenarios against
 strict paired replay. Requests originate from portable initial account state
 and operation inputs, rather than from the expected request. Result checks bind
 device records, family names, storage bytes, plan JSON, and member-photo
@@ -41,9 +41,32 @@ response bodies: the generic generated JSON-default parser can mistake binary
 success labeled `application/json` for an error object. This is fixture/source
 compatibility, not a claim about observed live photo content types.
 
-These tests are generated request/response interoperability. They do not prove
-the public SDK's result types, error types, session cache semantics or account
-isolation; those layers still need implementation and the same replay tests.
+The generated client tests establish request/response interoperability. A separate
+public SDK driver now runs all eleven account-device scenarios, including empty,
+one and multiple devices, HTTP 503, and seven HTTP 200 provider-error envelopes.
+The same new synthetic cases pass the pinned Python reference with no network.
+Public projections come from `api/client-models.openapi.yaml`, independently of
+wire types (API-02). Contract tests validate its two invented examples, regenerate
+its models, and compile an independent consumer module.
+
+`GetAccountDevices` performs fresh requests with caller-owned `AuthContext`.
+Concurrent two-account paired replays bind separate identities, cookies and
+responses, then repeat each request to reject shared cache or cookie updates
+(API-03, API-13). The caller receives response headers for session updates.
+Typed errors retain exact body/headers and causes without displaying private
+provider text. Unit controls cover cancellation, timeouts, unknown metadata,
+HTTP failure classes, invalid provider bodies and falsy error fields.
+
+Non-generated coverage includes `pkg/icloud` and handwritten `internal` code,
+including the transport and binary-photo adapter. Replay: 150/187 statements
+(80.2%); unit: 165/187 (88.2%); combined: 171/187 (91.4%). These measurements
+are separate (LIB-07). They describe the current account-device SDK and transport
+milestone, not coverage of all selected iCloud services. Constructor validation
+and generic malformed caller inputs are outside the endpoint replay target.
+Run `make sdk-coverage` for the three measurements. `make check` and blocking CI
+require at least 80% replay and combined coverage; CI saves separate profiles.
+Schema-owned protocol constants have syntax/collision checks (SCHEMA-10).
+The remaining four account operations still have generated-client tests only.
 
 ## Unknown values and remaining work
 
@@ -59,7 +82,7 @@ reads unconditionally. Regression checks cover both contracts.
 
 The error object describes currently known JSON fields. Complete authentication
 failure variants, non-JSON failures, request framing, source-to-schema endpoint
-gates, public projection schemas and account SDK operations remain work in
+gates, the remaining public projections and account SDK operations remain work in
 progress. This document does not declare complete account schema acceptance.
 Other services and physical security-key behavior are outside this account
 contract milestone. Generic invalid caller inputs do not define the selected

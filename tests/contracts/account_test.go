@@ -133,7 +133,7 @@ func TestPortableAccountResponsesMatchSchemas(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 18 || pairs != 24 {
+	if len(paths) != 26 || pairs != 32 {
 		t.Fatalf("account fixture counts changed: scenarios=%d pairs=%d", len(paths), pairs)
 	}
 }
@@ -367,6 +367,8 @@ func TestAccountGenerationHasNoDrift(t *testing.T) {
 			Output: "../../pkg/dependencymodels/account/models.gen.go"},
 		{Schema: accountSchemaPath, Config: "../../internal/accountapi/config.yaml",
 			Output: "../../internal/accountapi/client.gen.go"},
+		{Schema: "../../api/client-models.openapi.yaml", Config: "../../pkg/icloud/config.yaml",
+			Output: "../../pkg/icloud/models.gen.go"},
 	} {
 		t.Run(filepath.Base(artifact.Output), func(t *testing.T) {
 			t.Parallel()

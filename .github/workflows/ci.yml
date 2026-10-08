@@ -50,3 +50,24 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .venv/Scripts/python.exe -m unittest discover -s tools/reference -p 'test_*.py' -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Measure SDK replay, unit and combined coverage separately
+        shell: pwsh
+        run: |
+          go test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-replay.out' ./tests/replay
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go run ./tools/coverage -profile coverage-replay.out -min 80
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-unit.out' ./pkg/icloud ./internal/accountapi
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go run ./tools/coverage -profile coverage-unit.out -min 0
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-combined.out' ./tests/replay ./pkg/icloud ./internal/accountapi
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go run ./tools/coverage -profile coverage-combined.out -min 80
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Save separate coverage profiles
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-coverage
+          path: coverage-*.out
+          if-no-files-found: error

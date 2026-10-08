@@ -43,7 +43,7 @@ func TestGeneratedAccountClientPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 18 {
+	if len(paths) != 26 {
 		t.Fatal("account scenario inventory changed")
 	}
 
@@ -256,8 +256,23 @@ func accountDevicesOperation(t *testing.T, client *accountapi.ClientWithResponse
 
 	response, err := client.ListAccountDevicesWithResponse(t.Context(),
 		accountParameters[accountapi.ListAccountDevicesParams](t, scenario.Initial))
-	if err != nil || response == nil || response.JSON200 == nil {
+	if err != nil || response == nil {
 		t.Fatalf("account devices: %v", err)
+	}
+
+	if len(scenario.Error) != 0 {
+		if response.StatusCode() != scenario.Exchanges[0].Response.Status ||
+			(response.JSONDefault == nil && response.JSON200 == nil) {
+			t.Fatal("account devices lost provider failure")
+		}
+
+		accountProviderFailure(t, scenario.Error, response.StatusCode(), response.Body)
+
+		return nil
+	}
+
+	if response.JSON200 == nil {
+		t.Fatal("account devices has no decoded success")
 	}
 
 	return response.JSON200.Devices
@@ -316,7 +331,32 @@ func accountProviderFailure(t *testing.T, encoded json.RawMessage, status int, b
 	}
 
 	if expected.Type != "PyiCloudAPIResponseException" ||
-		expected.Message != fmt.Sprintf(" (%d): %s", status, body) {
+		expected.Message != accountProviderMessage(t, status, body) {
 		t.Fatal("account provider failure lost its recorded class/status/body")
 	}
+}
+
+func accountProviderMessage(t *testing.T, status int, body []byte) string {
+	t.Helper()
+
+	if status != http.StatusOK {
+		return fmt.Sprintf(" (%d): %s", status, body)
+	}
+
+	fields, ok := accountJSON(t, body).(map[string]any)
+	if !ok {
+		t.Fatal("provider envelope is not an object")
+	}
+
+	reason := "Unknown reason"
+
+	for _, key := range []string{"errorMessage", "reason", "errorReason", "error"} {
+		if text, matches := fields[key].(string); matches && text != "" {
+			reason = text
+
+			break
+		}
+	}
+
+	return reason + ": " + string(body)
 }

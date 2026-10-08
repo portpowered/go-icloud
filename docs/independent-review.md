@@ -461,7 +461,26 @@ The reviewer approved the exact-file revive package-comment exception because
 the generated sibling owns the package godoc (GO-13, GO-15).
 Verdict: **limited interoperability pass**. Public SDK projections, session
 isolation, client error behavior and full migration acceptance remain open.
-Exact-commit CI review is required before merging this milestone.
+Exact-commit review approved `18cd869332f07c2c6530978b7b7149f3bca15578`
+after [CI 37774763797](https://github.com/portpowered/go-icloud/actions/runs/37774763797)
+passed. PR #2 merged; main commit `c9488cf353ce88f4f82771d726dbdb37c49687e7`
+also passed [CI 37775195864](https://github.com/portpowered/go-icloud/actions/runs/37775195864).
+
+### Interim public account-device SDK audit
+
+The reviewer independently passed eleven portable device replays, concurrent
+account isolation, model generation and independent consumer compilation under
+the race detector. It reproduced 80.2% replay, 88.2% unit and 91.4% combined
+handwritten SDK/internal transport coverage. The exact-file projection package
+comment exception is justified because the generated sibling owns the godoc.
+
+The reviewer found that Content-Type was still a generator literal rather than
+a schema-owned header. The external account schema now owns that declaration;
+the generator derives the constant and a rename control rejects a hardcoded
+fallback. The reviewer independently verified the fix (SCHEMA-10).
+Verdict: **limited working-tree pass** for GetAccountDevices. Exact-SHA CI
+approval is still required before merge. Remaining account operations, native
+authentication and full migration acceptance remain open.
 
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each
