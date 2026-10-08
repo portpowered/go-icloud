@@ -38,6 +38,15 @@ after a refusal. `observe_transfer` projects the return, parameters and final
 file position. Errors bind `error_arguments`, `error_drive_state`, optional
 `error_node_state`, and the exposed HTTP `error_context`.
 
+Node upload cases invoke the pinned `DriveNode.upload` after retrieving the
+folder. They bind the node's document ID and zone, binary/empty/current-cursor
+content, and provider refusal at preparation, transfer and registration. The
+portable result exposes final cursor and request parameters; failures also bind
+received node/root metadata. Instrumentation-owned file objects close after
+success and failure. A service-directory case exercises the public service
+facade's delegation to the root node. These eight cases are synthetic, with
+26 paired exchanges; they are reference behavior, not live writes or Go SDK parity.
+
 These examples preserve a pinned-reference date defect: a negative offset with
 nonzero minutes is decoded incorrectly: `2024-01-02T03:04:05-07:30` yields
 `09:34:05` rather than the correct UTC `10:34:05`.

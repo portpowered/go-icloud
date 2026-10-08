@@ -82,7 +82,7 @@ verification infrastructure, not an SDK operation port. Explicit JSON pattern
 and credential-redaction rules now instantiate all 16 portable declarations;
 negative controls reject changed fixed fields, string formats, code types and
 ambiguous paths. Multipart rules now bind ordered headers/bytes, filenames and
-strict boundary framing. All 429 scenarios/965 exchanges instantiate and seven
+strict boundary framing. All 437 scenarios/991 exchanges instantiate and thirteen
 upload pairs match Go's writer. These are matcher checks, not SDK semantic parity.
 Socket/auth timelines, the remaining scenario projections and SDK operations
 remain open. No Python semantic replay is counted as passing Go SDK replay.
@@ -95,7 +95,7 @@ cookies. An independent consumer module compiles. Current handwritten SDK and
 internal transport coverage is 81.6% replay, 82.5% unit and 92.2% combined;
 these figures do not represent the complete service port (LIB-07).
 
-The portable HTTP suite now has 429 scenarios and 965 paired exchanges after
+The portable HTTP suite now has 437 scenarios and 991 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
 sign-in behavior. SRP cases run both password protocols with declared client
 entropy and exact proof matching; they also exercise refusal, trust-token reuse,
@@ -108,16 +108,21 @@ or account setup. Physical security-key interaction is deferred; live socket
 evidence, Go interoperability and final SDK/release gates remain open.
 Authentication socket replay adds 53 synthetic ordered duplex scenarios
 (283 events), separate from combined bridge transcripts. Combined replay now
-enters 574/905 functions and executes 3,188/5,385 body statements (59.20%) and
-968/2,076 branch exits. These measurements
+enters 576/905 functions and executes 3,191/5,385 body statements (59.26%) and
+969/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
-Drive now has 59 scenarios and 89 pairs, including navigation/cache/refresh,
+Drive now has 67 scenarios and 115 pairs, including navigation/cache/refresh,
 node-backed endpoints, empty downloads, offset uploads and provider refusal at
 each transfer stage. Errors bind file position, token parameters, node state and
 exposed response context. Its pinned date parser mishandles negative offsets
 with nonzero minutes; the Go implementation must correct RFC 3339 conversion.
 These cases are synthetic reference behavior, not observed Apple writes.
-The [Drive wire contracts](drive-wire-contracts.md) now bind all 89 exchanges to
+Eight added node-upload/facade cases close measured function-entry gaps for
+`DriveNode.upload` and `DriveService.__getattr__`. They bind the received node's
+document ID/zone, file cursor, empty/binary content and all three upload-stage
+refusals. Owned instrumentation files close on success and failure. New negative
+controls reject changed cursor, zone, node state and unconsumed traffic.
+The [Drive wire contracts](drive-wire-contracts.md) now bind all 115 exchanges to
 13 operation contracts, with generated canonical models and internal clients.
 Contract validation, drift checks and negative controls pass. Drive client/SDK
 semantic replay and the full source/schema runtime gate remain open; these
@@ -127,7 +132,7 @@ readiness/progress/retry bounds and provider refusal at command/token stages.
 Declared waits are consumed offline; received device/user/server state and
 exposed errors are bound. A source monitor-replacement race is documented for
 Go correction. Partial refreshes retain cached devices rather than infer removal
-without provider deletion evidence. Local checks pass 65 offline test methods.
+without provider deletion evidence. Local checks now include 67 offline test methods.
 The latest 40 scenarios add 145 pairs for private/shared Photos container changes,
 shared lookup/library behavior and Reminders zones, including provider refusal
 and provider payload errors. Photos exceptions bind optional photo and album
@@ -135,6 +140,8 @@ resources. Source inspection excludes dormant Reminders database changes and
 includes the active shared batch-count route. Shared favorites use the private
 mutation client before a shared refresh in the pinned reference; Go must preserve
 the selected container and zone. These are synthetic cases, not observed writes.
+The preceding shared-Photos/Reminders milestone entered 574/905 functions and
+covered 3,188/5,385 statements (59.20%) and 968/2,076 branch exits.
 The preceding Find My milestone entered 572/905 functions and covered
 3,165/5,385 statements (58.77%) and 959/2,076 branch exits.
 The preceding Drive milestone entered 569/905 functions and covered
