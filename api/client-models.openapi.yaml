@@ -426,3 +426,47 @@ components:
         tokenMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
       example: {content: '', tokenMetadata: {statusCode: 200, headers: []}, metadata: {statusCode: 200, headers: []}}
+
+    UploadDriveFileRequest:
+      type: object
+      required: [auth, parentID, filename, content]
+      description: Prepare, transfer and register a file; content starts at the current cursor while declared size is the complete seekable file length. The caller owns and closes the content reader.
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        parentID: {type: string, x-go-name: ParentID, description: Destination folder document identifier.}
+        filename: {type: string, description: File name used for MIME inference and the multipart field.}
+        content: {type: string, format: binary, x-go-type: io.ReadSeeker, description: Caller-owned seekable content; do not share its mutable cursor across concurrent uploads.}
+        zone: {type: string, description: Document zone; omission uses the private document zone.}
+        modificationTime: {type: string, format: date-time, description: File modification time; omission uses the client clock at registration.}
+        creationTime: {type: string, format: date-time, description: File creation time; omission uses the client clock at registration.}
+    UploadedDriveFile:
+      type: object
+      required: [fileChecksum, wrappingKey, referenceChecksum, size]
+      properties:
+        fileChecksum: {type: string}
+        wrappingKey: {type: string}
+        referenceChecksum: {type: string}
+        size: {type: integer, format: int64, minimum: 0}
+        receipt: {type: string, description: Optional provider receipt; empty uploads may omit it.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    RegisteredDriveDocument:
+      type: object
+      properties:
+        documentID: {type: string, x-go-name: DocumentID}
+        status: {type: string, description: Open provider acknowledgement status.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    UploadDriveFileResult:
+      type: object
+      required: [documentID, uploadToken, uploadedFile, additionalReceiptMetadata, additionalRegistrationMetadata, preparationMetadata, transferMetadata, registrationMetadata]
+      description: Provider upload and registration acknowledgements; no uncertain upload is retried automatically.
+      properties:
+        documentID: {type: string, x-go-name: DocumentID}
+        uploadToken: {type: string, description: Secret token used in preparation and registration; returned for caller-owned session parameters.}
+        uploadedFile: {$ref: '#/components/schemas/UploadedDriveFile'}
+        documents: {type: array, items: {$ref: '#/components/schemas/RegisteredDriveDocument'}}
+        status: {type: string, description: Optional open registration status.}
+        additionalReceiptMetadata: {$ref: '#/components/schemas/AccountMetadata'}
+        additionalRegistrationMetadata: {$ref: '#/components/schemas/AccountMetadata'}
+        preparationMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
+        transferMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
+        registrationMetadata: {$ref: '#/components/schemas/ResponseMetadata'}

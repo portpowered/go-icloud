@@ -13,6 +13,7 @@ const consumerSource = `package consumer
 import (
  "context"
  "errors"
+ "io"
  "github.com/portpowered/go-icloud/pkg/icloud"
 )
 
@@ -29,6 +30,8 @@ func Devices(ctx context.Context, auth icloud.AuthContext) (*icloud.GetAccountDe
   _ = failure.ResponseHeaders()
   _ = failure.ResponseBody()
   _ = failure.PriorResponses()
+  _ = failure.CookieScopeURL()
+  _ = failure.UploadToken()
  }
  return result, err
 }
@@ -56,6 +59,21 @@ func Drive(ctx context.Context, auth icloud.AuthContext, nodeID string) error {
  return err
 }
 
+
+func Upload(ctx context.Context, auth icloud.AuthContext, parentID, filename string, content io.ReadSeeker) error {
+ client, err := icloud.New()
+ if err != nil { return err }
+ result, err := client.UploadDriveFile(ctx, icloud.UploadDriveFileRequest{
+  Auth: auth, ParentID: parentID, Filename: filename, Content: content,
+ })
+ if result != nil {
+  _ = result.UploadToken
+  _ = result.PreparationMetadata.CookieScopeURL
+  _ = result.TransferMetadata
+  _ = result.RegistrationMetadata
+ }
+ return err
+}
 
 func DriveMutations(ctx context.Context, auth icloud.AuthContext, node icloud.DriveNodeSelector) error {
  client, err := icloud.New()

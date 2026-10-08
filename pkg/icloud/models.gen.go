@@ -6,6 +6,7 @@ package icloud
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/oapi-codegen/nullable"
@@ -555,6 +556,15 @@ type PermanentlyDeleteDriveNodeRequest struct {
 // PermanentlyDeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type PermanentlyDeleteDriveNodeResult = DriveItemChangeResult
 
+// RegisteredDriveDocument defines model for RegisteredDriveDocument.
+type RegisteredDriveDocument struct {
+	DocumentID *string `json:"documentID,omitempty"`
+
+	// Status Open provider acknowledgement status.
+	Status               *string                     `json:"status,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
 // RenameDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"name":"Synthetic","node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
 type RenameDriveNodeRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -608,6 +618,69 @@ type TrashDriveNodeResult = DriveItemChangeResult
 
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
+
+// UploadDriveFileRequest Prepare, transfer and register a file; content starts at the current cursor while declared size is the complete seekable file length. The caller owns and closes the content reader.
+type UploadDriveFileRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Content Caller-owned seekable content; do not share its mutable cursor across concurrent uploads.
+	Content io.ReadSeeker `json:"content"`
+
+	// CreationTime File creation time; omission uses the client clock at registration.
+	CreationTime *time.Time `json:"creationTime,omitempty"`
+
+	// Filename File name used for MIME inference and the multipart field.
+	Filename string `json:"filename"`
+
+	// ModificationTime File modification time; omission uses the client clock at registration.
+	ModificationTime *time.Time `json:"modificationTime,omitempty"`
+
+	// ParentID Destination folder document identifier.
+	ParentID string `json:"parentID"`
+
+	// Zone Document zone; omission uses the private document zone.
+	Zone *string `json:"zone,omitempty"`
+}
+
+// UploadDriveFileResult Provider upload and registration acknowledgements; no uncertain upload is retried automatically.
+type UploadDriveFileResult struct {
+	// AdditionalReceiptMetadata Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
+	AdditionalReceiptMetadata AccountMetadata `json:"additionalReceiptMetadata"`
+
+	// AdditionalRegistrationMetadata Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
+	AdditionalRegistrationMetadata AccountMetadata            `json:"additionalRegistrationMetadata"`
+	DocumentID                     string                     `json:"documentID"`
+	Documents                      *[]RegisteredDriveDocument `json:"documents,omitempty"`
+
+	// PreparationMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	PreparationMetadata ResponseMetadata `json:"preparationMetadata"`
+
+	// RegistrationMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	RegistrationMetadata ResponseMetadata `json:"registrationMetadata"`
+
+	// Status Optional open registration status.
+	Status *string `json:"status,omitempty"`
+
+	// TransferMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	TransferMetadata ResponseMetadata `json:"transferMetadata"`
+
+	// UploadToken Secret token used in preparation and registration; returned for caller-owned session parameters.
+	UploadToken  string            `json:"uploadToken"`
+	UploadedFile UploadedDriveFile `json:"uploadedFile"`
+}
+
+// UploadedDriveFile defines model for UploadedDriveFile.
+type UploadedDriveFile struct {
+	FileChecksum string `json:"fileChecksum"`
+
+	// Receipt Optional provider receipt; empty uploads may omit it.
+	Receipt              *string                     `json:"receipt,omitempty"`
+	ReferenceChecksum    string                      `json:"referenceChecksum"`
+	Size                 int64                       `json:"size"`
+	WrappingKey          string                      `json:"wrappingKey"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
 
 // Getter for additional properties for AccountDevice. Returns the specified
 // element and whether it was found
@@ -1991,6 +2064,209 @@ func (a DriveShareID) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'zone': %w", err)
 		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for RegisteredDriveDocument. Returns the specified
+// element and whether it was found
+func (a RegisteredDriveDocument) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for RegisteredDriveDocument
+func (a *RegisteredDriveDocument) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for RegisteredDriveDocument to handle AdditionalProperties
+func (a *RegisteredDriveDocument) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["documentID"]; found {
+		err = json.Unmarshal(raw, &a.DocumentID)
+		if err != nil {
+			return fmt.Errorf("error reading 'documentID': %w", err)
+		}
+		delete(object, "documentID")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for RegisteredDriveDocument to handle AdditionalProperties
+func (a RegisteredDriveDocument) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.DocumentID != nil {
+		object["documentID"], err = json.Marshal(a.DocumentID)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'documentID': %w", err)
+		}
+	}
+
+	if a.Status != nil {
+		object["status"], err = json.Marshal(a.Status)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for UploadedDriveFile. Returns the specified
+// element and whether it was found
+func (a UploadedDriveFile) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for UploadedDriveFile
+func (a *UploadedDriveFile) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for UploadedDriveFile to handle AdditionalProperties
+func (a *UploadedDriveFile) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["fileChecksum"]; found {
+		err = json.Unmarshal(raw, &a.FileChecksum)
+		if err != nil {
+			return fmt.Errorf("error reading 'fileChecksum': %w", err)
+		}
+		delete(object, "fileChecksum")
+	}
+
+	if raw, found := object["receipt"]; found {
+		err = json.Unmarshal(raw, &a.Receipt)
+		if err != nil {
+			return fmt.Errorf("error reading 'receipt': %w", err)
+		}
+		delete(object, "receipt")
+	}
+
+	if raw, found := object["referenceChecksum"]; found {
+		err = json.Unmarshal(raw, &a.ReferenceChecksum)
+		if err != nil {
+			return fmt.Errorf("error reading 'referenceChecksum': %w", err)
+		}
+		delete(object, "referenceChecksum")
+	}
+
+	if raw, found := object["size"]; found {
+		err = json.Unmarshal(raw, &a.Size)
+		if err != nil {
+			return fmt.Errorf("error reading 'size': %w", err)
+		}
+		delete(object, "size")
+	}
+
+	if raw, found := object["wrappingKey"]; found {
+		err = json.Unmarshal(raw, &a.WrappingKey)
+		if err != nil {
+			return fmt.Errorf("error reading 'wrappingKey': %w", err)
+		}
+		delete(object, "wrappingKey")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for UploadedDriveFile to handle AdditionalProperties
+func (a UploadedDriveFile) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["fileChecksum"], err = json.Marshal(a.FileChecksum)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'fileChecksum': %w", err)
+	}
+
+	if a.Receipt != nil {
+		object["receipt"], err = json.Marshal(a.Receipt)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'receipt': %w", err)
+		}
+	}
+
+	object["referenceChecksum"], err = json.Marshal(a.ReferenceChecksum)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'referenceChecksum': %w", err)
+	}
+
+	object["size"], err = json.Marshal(a.Size)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'size': %w", err)
+	}
+
+	object["wrappingKey"], err = json.Marshal(a.WrappingKey)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'wrappingKey': %w", err)
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

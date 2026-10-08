@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
@@ -17,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// UploadDriveFile prepares, transfers and registers caller-owned seekable content.
+	UploadDriveFile(ctx context.Context, request UploadDriveFileRequest) (*UploadDriveFileResult, error)
 	// DownloadDriveFile retrieves exact document bytes through a provider-issued content URL.
 	DownloadDriveFile(ctx context.Context, request DownloadDriveFileRequest) (*DownloadDriveFileResult, error)
 	// CreateDriveFolder creates one named folder.
@@ -62,6 +65,7 @@ var (
 type configuration struct {
 	transport  http.RoundTripper
 	configured bool
+	clock      func() time.Time
 }
 
 // Option configures a reusable client without storing account credentials.
@@ -83,12 +87,15 @@ func WithHTTPTransport(transport http.RoundTripper) Option {
 }
 
 // SDK implements Client with immutable transport configuration.
-type SDK struct{ web *webtransport.Client }
+type SDK struct {
+	web   *webtransport.Client
+	clock func() time.Time
+}
 
 // New creates a reusable stateless client. The caller supplies request deadlines.
 // The default is http.DefaultTransport; automatic redirects are disabled.
 func New(options ...Option) (*SDK, error) {
-	config := configuration{transport: http.DefaultTransport, configured: false}
+	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now}
 
 	for _, option := range options {
 		if option == nil {
@@ -101,7 +108,7 @@ func New(options ...Option) (*SDK, error) {
 		}
 	}
 
-	return &SDK{web: webtransport.New(config.transport)}, nil
+	return &SDK{web: webtransport.New(config.transport), clock: config.clock}, nil
 }
 
 // GetAccountDevices fetches fresh account devices using caller-owned authentication state.
@@ -495,4 +502,44 @@ func driveSelections(nodes []DriveNodeSelector) []webtransport.DriveSelection {
 	}
 
 	return result
+}
+
+// WithClock supplies a concurrency-safe clock for default upload timestamps.
+func WithClock(clock func() time.Time) Option {
+	return func(config *configuration) error {
+		if clock == nil {
+			return errNilOption
+		}
+
+		config.clock = clock
+
+		return nil
+	}
+}
+
+// UploadDriveFile does not close the caller's reader or retry uncertain writes.
+func (sdk *SDK) UploadDriveFile(ctx context.Context, request UploadDriveFileRequest) (*UploadDriveFileResult, error) {
+	const operation = "UploadDriveFile"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	boundary.Origin = request.Auth.DriveDocumentServiceURL
+
+	zone := string(drive.ComAppleCloudDocs)
+	if request.Zone != nil {
+		zone = *request.Zone
+	}
+
+	response, err := sdk.web.UploadDriveFile(ctx, boundary, webtransport.DriveUploadInput{
+		ParentID: request.ParentID, Filename: request.Filename, Content: request.Content, Zone: zone,
+		ModificationTime: request.ModificationTime, CreationTime: request.CreationTime, Clock: sdk.clock,
+	})
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return projectDriveUpload(response), nil
 }

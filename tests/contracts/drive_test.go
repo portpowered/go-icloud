@@ -91,7 +91,7 @@ func TestPortableDriveExchangesMatchContracts(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 73 || pairs != 127 || len(operations) != 13 {
+	if len(paths) != 74 || pairs != 130 || len(operations) != 13 {
 		t.Fatalf("Drive inventory changed: scenarios=%d pairs=%d operations=%d", len(paths), pairs, len(operations))
 	}
 }
@@ -128,7 +128,8 @@ func bindDriveOperation(documents driveDocuments, exchanges []replay.Exchange, i
 }
 
 func issuedDriveURL(previous replay.Exchange, request replay.Request) bool {
-	if previous.Response == nil || previous.Response.Status != http.StatusOK || previous.Request.Method != request.Method {
+	if previous.Response == nil || !driveIssuerStatus(previous.Response.Status, previous.Request.Method) ||
+		previous.Request.Method != request.Method {
 		return false
 	}
 
@@ -485,4 +486,12 @@ func TestDriveRouteBindingRejectsUnknownMethodOrPath(t *testing.T) {
 			}
 		})
 	}
+}
+
+func driveIssuerStatus(status int, method string) bool {
+	if method == http.MethodPost {
+		return status >= http.StatusOK && status < http.StatusMultipleChoices
+	}
+
+	return status == http.StatusOK
 }

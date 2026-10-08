@@ -37,6 +37,11 @@ paths:
           multipart/form-data:
             schema: {$ref: '#/components/schemas/DriveMultipartUpload'}
       responses:
+        '2XX':
+          description: Upload receipt used to register the document.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DriveUploadReceipt'}
         '200':
           description: Upload receipt used to register the document.
           content:

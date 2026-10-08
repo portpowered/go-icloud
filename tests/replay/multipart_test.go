@@ -233,7 +233,7 @@ func TestAllPortableExchangesInstantiateAndMultipartUsesGoWriter(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 443 || pairs != 1003 || uploads != 13 {
+	if len(paths) != 444 || pairs != 1006 || uploads != 14 {
 		t.Fatalf("portable HTTP counts changed: scenarios=%d pairs=%d uploads=%d", len(paths), pairs, uploads)
 	}
 }
