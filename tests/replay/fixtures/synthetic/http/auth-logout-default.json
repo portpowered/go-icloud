@@ -1,0 +1,147 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "auth",
+  "initial_state": {
+    "account_name": "synthetic@example.invalid",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "params": {
+      "clientId": "synthetic-client"
+    },
+    "session_data": {
+      "session_token": "synthetic-token",
+      "trust_token": "synthetic-trust",
+      "account_country": "USA"
+    },
+    "cookies": [
+      {
+        "name": "X-APPLE-WEBAUTH-TOKEN",
+        "value": "synthetic-cookie",
+        "domain": ".icloud.com",
+        "path": "/"
+      }
+    ],
+    "account_data": {
+      "dsInfo": {
+        "dsid": "synthetic-dsid",
+        "hsaVersion": 2,
+        "languageCode": "en_US"
+      },
+      "hsaTrustedBrowser": true,
+      "webservices": {
+        "photos": {
+          "url": "https://photos.example.invalid"
+        },
+        "findme": {
+          "url": "https://findmy.example.invalid"
+        },
+        "drivews": {
+          "url": "https://drive.example.invalid"
+        }
+      }
+    },
+    "persist_session": true
+  },
+  "inputs": [],
+  "operation": "logout",
+  "keyword_inputs": {},
+  "result": {
+    "value": {
+      "payload": {
+        "trustBrowser": false,
+        "allBrowsers": false
+      },
+      "remote_logout_confirmed": true,
+      "local_session_cleared": true
+    },
+    "auth_state": {
+      "account": {},
+      "params": {
+        "clientBuildNumber": "2534Project66",
+        "clientMasteringNumber": "2534B22",
+        "clientId": "synthetic-client"
+      },
+      "session_data": {},
+      "challenge": {},
+      "requires_mfa": false,
+      "cookies": [],
+      "webservices": null,
+      "requires_2fa": false,
+      "requires_2sa": false,
+      "trusted_session": false,
+      "delivery_method": "unknown",
+      "code_requested": false,
+      "session_file_exists": false,
+      "cookie_file_exists": false
+    },
+    "arguments": []
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://setup.icloud.com",
+        "path": "/setup/ws/1/logout",
+        "query": [
+          [
+            "clientBuildNumber",
+            "2534Project66"
+          ],
+          [
+            "clientMasteringNumber",
+            "2534B22"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-dsid"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "text/plain;charset=UTF-8"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-TOKEN=synthetic-cookie"
+          ],
+          [
+            "content-length",
+            "45"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ0cnVzdEJyb3dzZXIiOiBmYWxzZSwgImFsbEJyb3dzZXJzIjogZmFsc2V9"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzdWNjZXNzIjogdHJ1ZX0="
+        }
+      }
+    }
+  ]
+}

@@ -44,38 +44,66 @@ def project(value):
 
 
 @contextmanager
+def replay_wait_clock(scenario, entropy):
+    entropy = entropy or {}
+    assert not ("photos_wait_trace" in entropy and "auth_wait_trace" in entropy)
+    trace = entropy.get("photos_wait_trace", entropy.get("auth_wait_trace"))
+    guarded = (
+        scenario.get("service") == "auth"
+        or scenario.get("operation") == "service_upload"
+    )
+    if trace is None and not guarded:
+        yield
+        return
+    if trace is not None:
+        assert isinstance(trace, list) and trace
+    events = trace or []
+    used = []
+    ticks = []
+    failed = []
+
+    def event(kind, duration=None):
+        try:
+            assert not failed and len(used) < len(events), "undeclared replay wait"
+            item = events[len(used)]
+            assert item["kind"] == kind, "replay wait event order mismatch"
+            value = item["value"]
+            assert type(value) in {int, float} and math.isfinite(value) and value >= 0
+            if kind == "monotonic":
+                assert not ticks or value >= ticks[-1]
+                ticks.append(value)
+            else:
+                assert value == duration, "replay sleep duration mismatch"
+            used.append(item)
+            return value
+        except (AssertionError, KeyError, TypeError, IndexError) as error:
+            failed.append(True)
+            raise AssertionError("Rejected replay wait event") from error
+
+    with (
+        patch("time.monotonic", lambda: event("monotonic")),
+        patch("time.sleep", lambda seconds: event("sleep", seconds)),
+    ):
+        try:
+            yield
+        finally:
+            assert not failed, "Rejected replay wait was caught by reference code"
+            assert len(used) == len(events), "unconsumed replay wait trace"
+
+
+@contextmanager
 def synthetic_entropy(scenario):
     """Inject declared UUID/epoch samples without replacing provider behavior."""
     entropy = scenario.get("entropy")
     if entropy is None:
-        yield
+        with replay_wait_clock(scenario, entropy):
+            yield
         return
     samples = entropy["uuid4"]
     seconds = entropy["unix_seconds"]
     assert type(seconds) in {int, float} and math.isfinite(seconds)
     used = []
     random_used = []
-    wait_trace = entropy.get("photos_wait_trace")
-    wait_used = []
-    monotonic_used = []
-
-    def wait_event(kind):
-        assert len(wait_used) < len(wait_trace), "unexpected upload wait event"
-        event = wait_trace[len(wait_used)]
-        assert event["kind"] == kind, "upload wait event order mismatch"
-        value = event["value"]
-        assert type(value) in {int, float} and math.isfinite(value) and value >= 0
-        if kind == "monotonic":
-            assert not monotonic_used or value >= monotonic_used[-1]
-            monotonic_used.append(value)
-        wait_used.append(event)
-        return value
-
-    def monotonic():
-        return wait_event("monotonic")
-
-    def sleep(seconds):
-        assert wait_event("sleep") == seconds, "upload sleep duration mismatch"
 
     def next_uuid():
         assert len(used) < len(samples), "unexpected UUID generation"
@@ -97,16 +125,13 @@ def synthetic_entropy(scenario):
     with (
         patch("uuid.uuid4", next_uuid),
         patch("time.time", return_value=seconds),
+        replay_wait_clock(scenario, entropy),
         ExitStack() as stack,
     ):
         if scenario.get("operation") in {"upload_pipeline", "service_upload"}:
             stack.enter_context(
                 patch("pyicloud.services.photos_cloudkit.upload.uuid4", next_uuid)
             )
-        if wait_trace is not None:
-            assert isinstance(wait_trace, list) and wait_trace
-            stack.enter_context(patch("time.monotonic", monotonic))
-            stack.enter_context(patch("time.sleep", sleep))
         if "random_bytes" in entropy:
             stack.enter_context(patch("os.urandom", random_bytes))
         position = None
@@ -140,7 +165,4 @@ def synthetic_entropy(scenario):
             )
             assert local_zone is None or local_zone.call_count == 1, (
                 "upload timezone consumption mismatch"
-            )
-            assert wait_trace is None or len(wait_used) == len(wait_trace), (
-                "unconsumed upload wait trace"
             )

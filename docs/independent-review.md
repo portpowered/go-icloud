@@ -126,6 +126,26 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim authentication HTTP/session audit
+
+The reviewer independently passed 51 auth scenarios with 83 pairs and latest
+`make check` with 50 methods. The cases bind token/cookie rotation, verification,
+trust, PCS retries, terms, account setup and logout to actual pinned methods.
+Portable session projections include challenge/cookie policy and file presence.
+They do not serialize Python objects or real credentials.
+
+Two concrete findings were fixed under LIB-05. Auth failures previously omitted
+caller argument state; the reviewer now rejects missing/changed expectations
+and its original late-mutation exploit. Removing retry entropy previously allowed
+an ambient sleep. Auth and service-upload clocks now reject undeclared events;
+the reviewer confirmed missing traces/whole entropy cause zero real sleeps,
+caught violations remain sticky and factories restore. Both findings are
+**independently resolved**. The added failure-context binding also rejects
+changed exposed HTTP responses, codes and missing expectations.
+
+Verdict: **limited interim pass**. Full SRP, bridge lifecycle, hardware
+authentication, Go interoperability and all final acceptance criteria remain open.
+
 ### Interim upload hydration and account endpoint audit
 
 The reviewer independently replayed 16 Photos service-upload cases with 83

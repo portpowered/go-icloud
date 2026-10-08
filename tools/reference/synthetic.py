@@ -21,6 +21,10 @@ def execute(api, scenario, observations=None):
 
     state = scenario["initial_state"]
     params = dict(state["params"])
+    if scenario["service"] == "auth":
+        from auth_scenarios import execute_auth
+
+        return execute_auth(api, scenario, observations)
     if scenario["service"] == "findmy":
         from pyicloud.services.findmyiphone import FindMyiPhoneServiceManager
 
@@ -200,7 +204,8 @@ def replay_synthetic(path):
     service = verify_reference()
     with TemporaryDirectory() as directory, forbid_network():
         api = service(
-            "synthetic@example.invalid",
+            scenario["initial_state"].get("account_name", "synthetic@example.invalid"),
+            password=scenario["initial_state"].get("synthetic_password"),
             authenticate=False,
             client_id="synthetic-client",
             cookie_directory=directory,
@@ -236,6 +241,19 @@ def replay_synthetic(path):
                     raise AssertionError(
                         "Synthetic error argument state mismatch"
                     ) from error
+                if scenario["service"] == "auth" and scenario.get(
+                    "error_auth_state"
+                ) != observations.get("auth_state"):
+                    raise AssertionError(
+                        "Synthetic auth error state mismatch"
+                    ) from error
+                if scenario["service"] == "auth":
+                    from auth_scenarios import auth_error_context
+
+                    if scenario.get("error_context") != auth_error_context(error):
+                        raise AssertionError(
+                            "Synthetic auth error context mismatch"
+                        ) from error
             else:
                 if (
                     "error" in scenario

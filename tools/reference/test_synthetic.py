@@ -2,17 +2,19 @@
 
 import json
 import threading
+import time
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from scenario_inputs import synthetic_entropy
 from synthetic import FIXTURES, replay_synthetic
 
 
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 230)
+        self.assertGreaterEqual(len(fixtures), 281)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -166,6 +168,73 @@ class SyntheticTests(unittest.TestCase):
                 path.write_text(json.dumps(original))
                 with self.assertRaises(AssertionError):
                     replay_synthetic(path)
+
+    def test_auth_session_and_error_state_are_bound(self):
+        for change in [
+            "token",
+            "cookie",
+            "logout",
+            "error",
+            "argument",
+            "clock",
+            "error_argument",
+            "error_context",
+        ]:
+            fixture = {
+                "token": "auth-token-cookie-rotation",
+                "cookie": "auth-token-cookie-rotation",
+                "logout": "auth-logout-default",
+                "error": "auth-terms-refused",
+                "argument": "auth-validate-code-success",
+                "clock": "auth-pcs-cookies-later",
+                "error_argument": "auth-send-code-error",
+                "error_context": "auth-token-login-needs-2fa",
+            }[change]
+            original = json.loads((FIXTURES / (fixture + ".json")).read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "token":
+                    original["result"]["auth_state"]["session_data"][
+                        "session_token"
+                    ] = "wrong"
+                elif change == "cookie":
+                    original["result"]["auth_state"]["cookies"][0]["value"] = "wrong"
+                elif change == "logout":
+                    original["result"]["auth_state"]["session_file_exists"] = True
+                elif change == "error":
+                    original["error_auth_state"]["trusted_session"] = False
+                elif change == "argument":
+                    del original["result"]["arguments"][0]["trustBrowser"]
+                elif change == "error_argument":
+                    original["error_arguments"][0]["unexpected"] = True
+                elif change == "error_context":
+                    original["error_context"]["response"]["status"] = 500
+                else:
+                    original["entropy"]["auth_wait_trace"][0]["value"] = 4
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(original))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_auth_and_upload_cannot_use_undeclared_waits(self):
+        for fixture, key in [
+            ("auth-pcs-cookies-later", "auth_wait_trace"),
+            ("photos-upload-service-delayed", "photos_wait_trace"),
+        ]:
+            with self.subTest(fixture=fixture), TemporaryDirectory() as directory:
+                scenario = json.loads((FIXTURES / (fixture + ".json")).read_text())
+                del scenario["entropy"][key]
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+        before = time.sleep, time.monotonic
+        with self.assertRaisesRegex(AssertionError, "caught by reference"):
+            with synthetic_entropy({"service": "auth"}):
+                try:
+                    time.sleep(1)
+                except AssertionError:
+                    pass
+        self.assertEqual(before, (time.sleep, time.monotonic))
 
 
 if __name__ == "__main__":

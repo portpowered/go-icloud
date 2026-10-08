@@ -7,10 +7,11 @@ of Apple's service. No live writes are performed to obtain them.
 Each scenario contains its source pin, service instantiation inputs, ordinary
 HTTP session state, operation inputs, ordered paired exchanges, and the expected
 semantic result or typed error including its message. Request bodies and response
-bodies use the same base64 entity format as the private recorder. All identities,
-origins, resource names, account values, cookies, and token parameters are
-invented. There are no real credentials or private account cookies in these
-scenarios.
+bodies use the same base64 entity format as the private recorder. Account
+identities, resource names, account values, cookies and token parameters are
+invented. Some authentication origins are pinned Apple constants; real network
+access remains forbidden. There are no real credentials or private account
+cookies in these scenarios.
 
 The reference runner creates the actual service and session, injects strict
 paired replay below request preparation, and forbids HTTP and socket fallback.
@@ -141,3 +142,30 @@ reading. Subscription summary cases call the actual property against its global
 and China gateway constants, binding empty results, invented plan projections
 and provider errors. These payloads describe reference behavior rather than an
 observed complete subscription schema.
+
+Authentication endpoint cases instantiate the actual pinned account service with
+declared account/session/challenge state. They cover cached and refreshed token
+login, paused/untrusted states, session probes, trusted-device lists, verification
+delivery/validation, SMS, session trust, terms/repair, one-factor service login,
+PCS consent/cookie polling and logout controls/failures. Zero/one/three device
+results and token/cookie rotations are explicit. A required MFA login without
+fresh credentials records the reference's failed-login result; it does not
+pretend to complete SRP authentication.
+
+Success projects both the operation value and resulting account/session/challenge
+state, cookies with policy metadata, resolved webservices, trust/delivery flags,
+caller argument changes and persistence-file presence. Auth failures require
+`error_auth_state` and `error_arguments` alongside exact type/message, including
+device changes made before a rejected verification request. `error_context`
+binds reason/code and the exposed HTTP response's status, headers and body.
+File paths and Python object
+snapshots are not part of this contract. The optional `synthetic_password` is an
+invented input; outgoing password/code fields use existing explicit match rules.
+
+PCS retries use ordered `auth_wait_trace` sleep events under the same consumed
+clock contract as Photos; the two trace selectors cannot coexist. Auth and
+service-upload operations reject undeclared clocks/waits even without an entropy
+object. Rejected events remain failures if reference code catches the exception.
+Delays are matched without actual waits. Full SRP, auth-shell/bridge lifecycle and hardware
+security-key behavior still require separately classified evidence; these HTTP
+cases do not replace the raw socket transcripts or prove those workflows.
