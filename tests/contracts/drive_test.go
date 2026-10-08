@@ -91,7 +91,7 @@ func TestPortableDriveExchangesMatchContracts(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 74 || pairs != 130 || len(operations) != 13 {
+	if len(paths) != 79 || pairs != 139 || len(operations) != 13 {
 		t.Fatalf("Drive inventory changed: scenarios=%d pairs=%d operations=%d", len(paths), pairs, len(operations))
 	}
 }

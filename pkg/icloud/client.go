@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// OpenDriveSession binds a cache and credential lifecycle to one copied account context.
+	OpenDriveSession(ctx context.Context, request OpenDriveSessionRequest) (*DriveSession, error)
 	// UploadDriveFile prepares, transfers and registers caller-owned seekable content.
 	UploadDriveFile(ctx context.Context, request UploadDriveFileRequest) (*UploadDriveFileResult, error)
 	// DownloadDriveFile retrieves exact document bytes through a provider-issued content URL.
@@ -228,6 +230,7 @@ func (sdk *SDK) DownloadDriveFile(ctx context.Context,
 	}
 
 	boundary.Origin = request.Auth.DriveDocumentServiceURL
+	boundary.DriveToken = request.Auth.DriveToken
 
 	zone := string(drive.ComAppleCloudDocs)
 	if request.Zone != nil {
@@ -257,6 +260,7 @@ func (sdk *SDK) GetDriveNode(ctx context.Context, request GetDriveNodeRequest) (
 	}
 
 	boundary.Origin = request.Auth.DriveServiceURL
+	boundary.DriveToken = request.Auth.DriveToken
 
 	var share *drive.DriveShareID
 
@@ -285,6 +289,7 @@ func (sdk *SDK) ListDriveLibraries(ctx context.Context,
 	}
 
 	boundary.Origin = request.Auth.DriveServiceURL
+	boundary.DriveToken = request.Auth.DriveToken
 
 	response, err := sdk.web.ListDriveLibraries(ctx, boundary)
 	if err != nil {
@@ -455,7 +460,7 @@ func accountRequestContext(auth AuthContext) (webtransport.RequestContext, error
 		return boundary, fmt.Errorf("account cookie context: %w", err)
 	}
 
-	boundary = webtransport.RequestContext{Origin: auth.AccountServiceURL, Params: *params,
+	boundary = webtransport.RequestContext{Origin: auth.AccountServiceURL, DriveToken: "", Params: *params,
 		Headers: requestHeaders(auth.Headers), Cookies: cookies}
 
 	return boundary, nil
@@ -487,6 +492,7 @@ func driveRequestContext(auth AuthContext) (webtransport.RequestContext, error) 
 	}
 
 	boundary.Origin = auth.DriveServiceURL
+	boundary.DriveToken = auth.DriveToken
 
 	return boundary, nil
 }

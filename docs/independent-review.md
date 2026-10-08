@@ -696,6 +696,41 @@ Handwritten SDK/internal coverage is 773/918 replay statements (84.2%),
 pending. Local lint used the same pinned all-linters executable with parallel
 runners enabled because another repository held its shared process lock.
 
-Verdict: **limited working-tree pass**. Exact-SHA review after CI is pending.
-Drive node/session upload behavior, navigation and full migration/release
-acceptance remain open.
+Verdict: **limited exact-commit pass**. The reviewer approved
+`6217ed8e2f7d24ccabc878b8a3ed252a3959c89a` after
+[CI 37815289981](https://github.com/portpowered/go-icloud/actions/runs/37815289981)
+passed. PR #11 merged as `949a4c73b4041fee360517ca0d1b74dfc08daa5a`; main passed
+[CI 37816040773](https://github.com/portpowered/go-icloud/actions/runs/37816040773).
+The following milestone implements node/session behavior; full migration and
+release acceptance remain open.
+
+### Interim Drive node/session audit
+
+Thirty-two portable node flows now execute the public session and entry methods,
+bringing semantic Drive replay to 79/79 scenarios and 139 paired exchanges.
+Five new implementation-derived Source cases bind file navigation guards,
+trash-only recovery/permanent deletion, and upload followed by refresh with
+updated cookies and token. The inventory has 449 HTTP scenarios and 1015 pairs;
+all remain explicitly synthetic. The consumer compiles all seventeen client
+methods and the session/entry operations. No live write was performed.
+
+The reviewer identified host-case cookie deletion and a local seek failure that
+erased previous network evidence. Both fixes were independently re-probed.
+Strict controls bind rotation/deletion, native cookie attributes, foreign-domain
+rejection, explicit-header precedence and snapshot copy ownership. The origin
+validator rejects path-prefixed origins before I/O. Two tenants share one client
+and concurrently execute isolated upload/refresh flows. Close cancels current and
+sixteen queued requests, is repeatable, and preserves caller resource ownership.
+Expired contexts retain a typed timeout cause. The lifetime context has one
+documented `containedctx` exception on its field (API-04, GO-09).
+
+Independent race checks passed SDK, replay, contract/consumer/drift and constant
+generator packages. The limited implementation review found no remaining code
+blocker. `make lint` and `make check` pass, including all 67 Python tests and the
+80% replay and combined coverage gates. Handwritten coverage is 1125/1351 replay
+statements (83.3%), 695/1351 unit (51.4%) and 1191/1351 combined (88.2%). The
+Source diagnostic measures 576/905 entered functions, 3195/5385 body statements
+and 973/2076 branch exits. Live Go integration remains pending (LIB-07).
+Verdict: **limited working-tree pass**. The reviewer approved the final docs and
+independently matched the coverage profiles and inventory to this receipt.
+Exact-SHA review after CI is pending; the full migration criteria remain open.

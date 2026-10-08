@@ -69,6 +69,7 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 	}
 
 	auth := icloud.AuthContext{
+		DriveToken:              "",
 		Cookies:                 sdkAccountCookies(initial.Cookies),
 		DriveDocumentServiceURL: "",
 		AccountID:               initial.Params[protocol.DSIDName], ClientID: initial.Params[protocol.ClientIDName],

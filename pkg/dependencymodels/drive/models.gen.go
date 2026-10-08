@@ -86,6 +86,51 @@ func (e DriveNodeQueryPartialData) Valid() bool {
 	}
 }
 
+// Defines values for DriveRootIdentifier.
+const (
+	FOLDERComAppleCloudDocsRoot DriveRootIdentifier = "FOLDER::com.apple.CloudDocs::root"
+)
+
+// Valid indicates whether the value is a known member of the DriveRootIdentifier enum.
+func (e DriveRootIdentifier) Valid() bool {
+	switch e {
+	case FOLDERComAppleCloudDocsRoot:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DriveTrashIdentifier.
+const (
+	FOLDERComAppleCloudDocsTRASHROOT DriveTrashIdentifier = "FOLDER::com.apple.CloudDocs::TRASH_ROOT"
+)
+
+// Valid indicates whether the value is a known member of the DriveTrashIdentifier enum.
+func (e DriveTrashIdentifier) Valid() bool {
+	switch e {
+	case FOLDERComAppleCloudDocsTRASHROOT:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DriveTrashNodeIdentifier.
+const (
+	TRASHROOT DriveTrashNodeIdentifier = "TRASH_ROOT"
+)
+
+// Valid indicates whether the value is a known member of the DriveTrashNodeIdentifier enum.
+func (e DriveTrashNodeIdentifier) Valid() bool {
+	switch e {
+	case TRASHROOT:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DriveUpdateDocumentCommand.
 const (
 	AddFile DriveUpdateDocumentCommand = "add_file"
@@ -393,6 +438,9 @@ type DriveRenameItems struct {
 	Items []DriveRenameItem `json:"items"`
 }
 
+// DriveRootIdentifier Drive service root identifier used by the reference navigator.
+type DriveRootIdentifier string
+
 // DriveShareID Provider sharing descriptor; no fixed field is universally required by the reference.
 type DriveShareID struct {
 	Owner                *string                     `json:"owner,omitempty"`
@@ -401,10 +449,16 @@ type DriveShareID struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// DriveTrashIdentifier Drive service trash identifier used by the reference navigator.
+type DriveTrashIdentifier string
+
 // DriveTrashItems defines model for DriveTrashItems.
 type DriveTrashItems struct {
 	Items []DriveMoveItem `json:"items"`
 }
+
+// DriveTrashNodeIdentifier Reference type fallback matches this unqualified identifier.
+type DriveTrashNodeIdentifier string
 
 // DriveUpdateDocument defines model for DriveUpdateDocument.
 type DriveUpdateDocument struct {

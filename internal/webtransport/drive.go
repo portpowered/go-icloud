@@ -132,7 +132,7 @@ func decodeDriveLibraries(body []byte) (drive.DriveAppLibraries, error) {
 }
 
 func driveRequestParameters(auth RequestContext) driveapi.DriveRetrieveNodesParams {
-	return driveapi.DriveRetrieveNodesParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid,
+	return driveapi.DriveRetrieveNodesParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid, Token: nil,
 		ClientBuildNumber: auth.Params.ClientBuildNumber, ClientMasteringNumber: auth.Params.ClientMasteringNumber,
 		Accept: nil, Cookie: nil, Origin: nil, Referer: nil, UserAgent: nil, AcceptEncoding: nil, Connection: nil}
 }

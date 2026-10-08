@@ -23,7 +23,7 @@ type DriveDownloadResponse struct {
 func (client *Client) DownloadDriveFile(ctx context.Context, auth RequestContext,
 	documentID, zone string,
 ) (*DriveDownloadResponse, error) {
-	params := driveapi.DriveGetDownloadTokensParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid,
+	params := driveapi.DriveGetDownloadTokensParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid, Token: nil,
 		ClientBuildNumber: auth.Params.ClientBuildNumber, ClientMasteringNumber: auth.Params.ClientMasteringNumber,
 		DocumentId: documentID, Accept: nil, Cookie: nil, Origin: nil, Referer: nil, UserAgent: nil,
 		AcceptEncoding: nil, Connection: nil}
@@ -96,7 +96,7 @@ func driveContentRequest(contentURL string, auth RequestContext) (*http.Request,
 		request.URL.RawQuery += "&"
 	}
 
-	request.URL.RawQuery += orderedAccountQuery(auth.Params)
+	request.URL.RawQuery += orderedRequestQuery(auth)
 
 	request.Header = auth.Headers.Clone()
 	if request.Header.Get(protocol.AcceptName) == "" {

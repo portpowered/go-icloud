@@ -6,6 +6,18 @@ info:
 paths: {}
 components:
   schemas:
+    DriveRootIdentifier:
+      type: string
+      enum: ['FOLDER::com.apple.CloudDocs::root']
+      description: Drive service root identifier used by the reference navigator.
+    DriveTrashIdentifier:
+      type: string
+      enum: ['FOLDER::com.apple.CloudDocs::TRASH_ROOT']
+      description: Drive service trash identifier used by the reference navigator.
+    DriveTrashNodeIdentifier:
+      type: string
+      enum: [TRASH_ROOT]
+      description: Reference type fallback matches this unqualified identifier.
     UnknownJSONValue:
       description: Extensible provider metadata retained without floating-point conversion.
       anyOf:

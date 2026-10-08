@@ -100,6 +100,9 @@ type DriveOrigin = string
 // DriveReferer defines model for DriveReferer.
 type DriveReferer = string
 
+// DriveToken defines model for DriveToken.
+type DriveToken = string
+
 // DriveUserAgent defines model for DriveUserAgent.
 type DriveUserAgent = string
 
@@ -119,6 +122,9 @@ type DriveCreateFoldersParams struct {
 
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
 
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
@@ -156,6 +162,9 @@ type DriveDeleteItemsParams struct {
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
+
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
 
@@ -191,6 +200,9 @@ type DriveMoveItemsParams struct {
 
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
 
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
@@ -228,6 +240,9 @@ type DriveTrashItemsParams struct {
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
+
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
 
@@ -263,6 +278,9 @@ type DriveRecoverItemsParams struct {
 
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
 
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
@@ -300,6 +318,9 @@ type DriveRenameItemsParams struct {
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
+
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
 
@@ -335,6 +356,9 @@ type DriveListAppLibrariesParams struct {
 
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
 
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
@@ -372,6 +396,9 @@ type DriveRetrieveNodesParams struct {
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
+
 	// Accept Caller content negotiation.
 	Accept *DriveAccept `json:"Accept,omitempty"`
 
@@ -407,6 +434,9 @@ type DriveGetDownloadTokensParams struct {
 
 	// ClientMasteringNumber Optional authenticated mastering parameter.
 	ClientMasteringNumber *DriveMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+
+	// Token Secret query token retained by an explicit Drive session after upload.
+	Token *DriveToken `form:"token,omitempty" json:"token,omitempty"`
 
 	// DocumentId Document identifier from the selected node.
 	DocumentId string `form:"document_id" json:"document_id"`
@@ -1140,6 +1170,18 @@ func NewDriveCreateFoldersRequestWithBody(server string, params *DriveCreateFold
 
 		}
 
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -1307,6 +1349,18 @@ func NewDriveDeleteItemsRequestWithBody(server string, params *DriveDeleteItemsP
 		if params.ClientMasteringNumber != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -1492,6 +1546,18 @@ func NewDriveMoveItemsRequestWithBody(server string, params *DriveMoveItemsParam
 
 		}
 
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -1659,6 +1725,18 @@ func NewDriveTrashItemsRequestWithBody(server string, params *DriveTrashItemsPar
 		if params.ClientMasteringNumber != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -1844,6 +1922,18 @@ func NewDriveRecoverItemsRequestWithBody(server string, params *DriveRecoverItem
 
 		}
 
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -2020,6 +2110,18 @@ func NewDriveRenameItemsRequestWithBody(server string, params *DriveRenameItemsP
 
 		}
 
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -2176,6 +2278,18 @@ func NewDriveListAppLibrariesRequest(server string, params *DriveListAppLibrarie
 		if params.ClientMasteringNumber != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -2359,6 +2473,18 @@ func NewDriveRetrieveNodesRequestWithBody(server string, params *DriveRetrieveNo
 
 		}
 
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -2522,6 +2648,18 @@ func NewDriveGetDownloadTokensRequest(server string, zone string, params *DriveG
 		if params.ClientMasteringNumber != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Token != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "token", *params.Token, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
