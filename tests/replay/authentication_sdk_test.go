@@ -22,7 +22,8 @@ func TestResumeSavedSessions(t *testing.T) {
 	for _, name := range []string{"auth-authenticate-cached", "auth-authenticate-paused", "auth-authenticate-refresh",
 		"auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation",
 		"auth-authenticate-validation-201", "auth-authenticate-refresh-202",
-		"auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh"} {
+		"auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh",
+		"auth-authenticate-quoted-cookie", "auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie"} {
 		t.Run(name, func(t *testing.T) { t.Parallel(); resumeSavedSession(t, name) })
 	}
 }

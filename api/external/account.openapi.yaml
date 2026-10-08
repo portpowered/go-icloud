@@ -246,3 +246,9 @@ components:
       $ref: './account-models.openapi.yaml#/components/schemas/AccountMediaUsage'
     AccountError:
       $ref: './account-models.openapi.yaml#/components/schemas/AccountError'
+    CookiePairFormat:
+      $ref: './account-models.openapi.yaml#/components/schemas/CookiePairFormat'
+    CookieSeparator:
+      $ref: './account-models.openapi.yaml#/components/schemas/CookieSeparator'
+    CookieQuotedValueFormat:
+      $ref: './account-models.openapi.yaml#/components/schemas/CookieQuotedValueFormat'

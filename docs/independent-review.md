@@ -1036,3 +1036,11 @@ coverage is 1718/2025 (84.8%), unit 1085/2025 (53.6%) and combined 1807/2025
 and 68/75 (90.7%). These are scoped implementation reports, not complete
 endpoint/migration acceptance (LIB-07). Independent working-tree review found no
 remaining saved-session blocker; exact post-CI SHA approval remains pending.
+
+A private live probe revealed native cookie sanitization warnings. Independent
+invented-value probes confirmed that AddCookie stripped embedded quotes and
+Set-Cookie parsing lost quote framing in returned credentials. Native request
+serialization and response projection now preserve those bytes using generated
+formats. Three Source-executed canonical controls cover seeded embedded quotes,
+quoted rotation with a subsequent refresh, and explicit-header precedence. The
+old commit af7e7b4 is not approved for merge; revised checks/review/CI are pending.

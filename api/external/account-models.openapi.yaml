@@ -140,3 +140,15 @@ components:
         errorCode: {$ref: '#/components/schemas/NullableJSONValue'}
         serverErrorCode: {$ref: '#/components/schemas/NullableJSONValue'}
       additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    CookiePairFormat:
+      type: string
+      description: Native request cookie name/value formatting; supplied version-zero cookie bytes remain unchanged.
+      enum: ['%s=%s']
+    CookieSeparator:
+      type: string
+      description: Separator between native request cookie pairs.
+      enum: ['; ']
+    CookieQuotedValueFormat:
+      type: string
+      description: Preserve outer quotes from a version-zero Set-Cookie value on its subsequent request.
+      enum: ['"%s"']

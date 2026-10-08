@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/portpowered/go-icloud/internal/webtransport"
 )
 
 func (session *DriveSession) bindInitialCookies() {
@@ -86,7 +88,7 @@ func driveResponseCookie(cookie *http.Cookie, target *url.URL) (AuthCookie, bool
 		path = driveDefaultCookiePath(target.Path)
 	}
 
-	value := AuthCookie{Name: cookie.Name, Value: cookie.Value, Domain: domain, Path: path,
+	value := AuthCookie{Name: cookie.Name, Value: webtransport.NativeCookieValue(cookie), Domain: domain, Path: path,
 		HostOnly: hostOnly, Secure: cookie.Secure, HTTPOnly: cookie.HttpOnly, MaxAge: cookie.MaxAge,
 		Expires: nil, SameSite: driveCookieSameSite(cookie.SameSite)}
 	if !cookie.Expires.IsZero() {

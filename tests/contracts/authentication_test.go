@@ -18,6 +18,7 @@ func TestSavedSessionWireContracts(t *testing.T) {
 		"auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation",
 		"auth-authenticate-validation-201", "auth-authenticate-refresh-202",
 		"auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh",
+		"auth-authenticate-quoted-cookie", "auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie",
 		"auth-terms-refused", "auth-token-login-needs-2fa", "auth-authenticate-untrusted-no-password"} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()

@@ -10,6 +10,51 @@ import (
 	"github.com/oapi-codegen/nullable"
 )
 
+// Defines values for CookiePairFormat.
+const (
+	Percentss CookiePairFormat = "%s=%s"
+)
+
+// Valid indicates whether the value is a known member of the CookiePairFormat enum.
+func (e CookiePairFormat) Valid() bool {
+	switch e {
+	case Percentss:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CookieQuotedValueFormat.
+const (
+	S CookieQuotedValueFormat = "\"%s\""
+)
+
+// Valid indicates whether the value is a known member of the CookieQuotedValueFormat enum.
+func (e CookieQuotedValueFormat) Valid() bool {
+	switch e {
+	case S:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CookieSeparator.
+const (
+	Empty CookieSeparator = "; "
+)
+
+// Valid indicates whether the value is a known member of the CookieSeparator enum.
+func (e CookieSeparator) Valid() bool {
+	switch e {
+	case Empty:
+		return true
+	default:
+		return false
+	}
+}
+
 // AccountDevice Known device metadata fields are optional; future provider fields are preserved.
 type AccountDevice struct {
 	Imei *string `json:"imei,omitempty"`
@@ -157,6 +202,15 @@ type AccountStorageUsage struct {
 	UsedStorageInBytes   int64                       `json:"usedStorageInBytes"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
+
+// CookiePairFormat Native request cookie name/value formatting; supplied version-zero cookie bytes remain unchanged.
+type CookiePairFormat string
+
+// CookieQuotedValueFormat Preserve outer quotes from a version-zero Set-Cookie value on its subsequent request.
+type CookieQuotedValueFormat string
+
+// CookieSeparator Separator between native request cookie pairs.
+type CookieSeparator string
 
 // NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
 type NullableJSONValue = json.RawMessage
