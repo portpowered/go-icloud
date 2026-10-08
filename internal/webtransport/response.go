@@ -54,7 +54,7 @@ func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
 	}
 
-	request.URL.RawQuery = orderedAccountQuery(auth.Params) + suffix
+	request.URL.RawQuery = orderedRequestQuery(auth) + suffix
 
 	return client.readPrepared(request, policy, auth.Cookies)
 }
@@ -91,6 +91,15 @@ func (client *Client) readPrepared(request *http.Request, policy responsePolicy,
 	}
 
 	return result, nil
+}
+
+func orderedRequestQuery(auth RequestContext) string {
+	query := orderedAccountQuery(auth.Params)
+	if auth.DriveToken != "" {
+		query += "&" + queryPart(protocol.DriveTokenName, auth.DriveToken)
+	}
+
+	return query
 }
 
 func acceptResponseStatus(status int, policy responsePolicy) bool {

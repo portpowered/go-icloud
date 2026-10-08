@@ -35,6 +35,9 @@ type DriveUploadResponse struct {
 func (client *Client) UploadDriveFile(ctx context.Context, auth RequestContext,
 	input DriveUploadInput,
 ) (*DriveUploadResponse, error) {
+	// Upload preparation replaces the session's query token with the current cookie token.
+	auth.DriveToken = ""
+
 	preparation, destination, token, err := client.prepareDriveUpload(ctx, auth, input)
 	if err != nil {
 		return nil, withUploadPrior(err, token)

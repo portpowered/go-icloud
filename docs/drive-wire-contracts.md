@@ -25,7 +25,7 @@ regenerate from the checked-in configs and reject drift (SCHEMA-10, SCHEMA-16).
 
 The source is timlaing/pyicloud commit
 `e2e44ab875d47dab4475096021da60030f26c35e`, especially
-`pyicloud/services/drive.py`. All 74 portable Drive scenarios and 130 paired
+`pyicloud/services/drive.py`. All 79 portable Drive scenarios and 139 paired
 exchanges are labeled synthetic and implementation-derived. No new live writes,
 private captures, tokens or account values are published. The four model examples
 are invented (SCHEMA-08, SCHEMA-12).
@@ -50,12 +50,12 @@ the input cursor, binary/empty transfers, each stage's provider refusal, receive
 node state and final file cursor; instrumentation-owned streams close on every
 exit. Cursor, zone, node/error state and extra-exchange negative controls reject.
 
-The measured Drive module enters 42/45 functions and covers 155/176 body
-statements and 48/66 branch exits. Unentered functions are local cached-child
+The measured Drive module enters 42/45 functions and covers 159/176 body
+statements and 52/66 branch exits. Unentered functions are local cached-child
 removal and display helpers (`remove`, `__str__`, `__repr__`), rather than new
 wire endpoints. The conservative diagnostic denominator retains them. Combined
-reference coverage enters 576/905 functions and covers 3,191/5,385 statements
-(59.26%) and 969/2,076 branch exits. These figures do not establish functional
+reference coverage enters 576/905 functions and covers 3,195/5,385 statements
+(59.33%) and 973/2,076 branch exits. These figures do not establish functional
 completeness or Go SDK parity. Reports stay private because their HTML embeds
 source and local paths; no captures or account values are published (LIB-07).
 
@@ -65,9 +65,11 @@ integers or decimal text because the reference converts either representation.
 Unknown metadata retains raw JSON, including null and large integers. Named error
 fields preserve omitted versus explicit null. Negative controls cover required
 fields, types, bounds, temporary folder IDs and fixed request values (SCHEMA-11).
-Generated timestamps retain RFC 3339 offsets; a regression verifies that
-`03:04:05-07:30` becomes `10:34:05Z`, correcting the reference's negative-minute
-offset bug when the SDK later exposes UTC projections.
+Generated raw timestamps retain RFC 3339 offsets; their standard UTC conversion
+turns `03:04:05-07:30` into `10:34:05Z`. Computed entry properties preserve the
+pinned Source arithmetic instead, including its negative-minute offset bug
+(`09:34:05Z` in that example). Full node replays bind that distinction; callers
+can use the raw timestamp for standard UTC conversion (SCHEMA-09, LIB-05).
 
 ## Remaining work
 
@@ -109,7 +111,7 @@ invalid provider acknowledgements, missing versus empty lists, unknown JSON
 values and the explicit creation header override. Two-account concurrent
 paired rename tests repeat requests after separate Set-Cookie replies, retaining
 request identity, cookie and result isolation (API-03, API-13). The public
-consumer build exercises all sixteen current methods.
+consumer build exercises all seventeen current client methods and the session/entry methods.
 
 `DownloadDriveFile` executes thirteen reference scenarios through the
 generated document-token builder and an issuer-bound content adapter. It prefers
@@ -127,29 +129,31 @@ operation-local jar seeded from structured cookies. Token-response cookie update
 apply before the content request; explicit Cookie headers retain precedence.
 CookieScopeURL metadata preserves the issuer origin/path for caller-owned
 persistence, and HostOnly preserves exact-host seed binding. Complete reference
-session persistence remains open. No account state is retained on the
+authentication persistence remains open. DriveSession now retains its own
+account's cookie and token updates. No account state is retained on the
 shared client (API-03, API-13). Focused controls cover token preference, missing
 and malformed token replies, escaped zones and paths, repeated provider query
 keys, binary bytes labeled JSON, cleanup at both stages, and preceding metadata
-copy ownership. The independent consumer compiles all sixteen current methods.
+copy ownership. The independent consumer compiles all seventeen current client methods and the session/entry methods.
 
-Node navigation and refresh state, the session facade and the complete
-source-to-schema runtime route gate remain open. Forty-seven service read/mutation/transfer scenarios do not
-establish parity for all 74 Drive scenarios. The non-generated library coverage
-measurement includes the five account reads and eleven Drive methods;
+All 79 portable Drive scenarios now execute through the public SDK: nine reads,
+sixteen mutations, thirteen downloads, nine service uploads and thirty-two node
+flows. The complete source-to-schema runtime route gate remains open.
+The non-generated library coverage includes account reads, Drive service methods
+and the explicit session and entry lifecycle;
 schema validation alone is not SDK replay coverage (LIB-07).
-Replay measures 773/918 handwritten SDK/internal statements (84.2%); unit
-measures 610/918 (66.4%); combined measures 833/918 (90.7%). Live Go integration
+Replay measures 1125/1351 handwritten SDK/internal statements (83.3%); unit
+measures 695/1351 (51.4%); combined measures 1191/1351 (88.2%). Live Go integration
 is still pending. `make lint` and `make check` pass. The portable reference
-inventory remains 444 HTTP scenarios/1006 pairs and 67 Python test methods.
+inventory remains 449 HTTP scenarios/1015 pairs and 67 Python test methods.
 
 The transfer issuer checks currently cover observed fixture URL forms. Exact
 provider query binding, complete common-parameter/header validation, provider
 failure media variants and a full source field inventory remain part of final
 schema acceptance. The generic generated content client cannot alone prove
 multi-segment path preservation or binary responses labeled JSON. The download
-SDK adapters now verify download and service-upload behavior; node/session
-facades and the final runtime route/schema gate remain open.
+SDK adapters now verify download, service-upload and node/session behavior;
+the final runtime route/schema gate remains open.
 
 ## Public service upload behavior
 
@@ -177,7 +181,29 @@ parameter state. The token is returned to caller-owned state on success and via
 metadata and every completed stage's response headers remain available.
 These are synthetic offline controls; no live writes have been exercised.
 
-The service upload is implemented; `DriveNode.upload`, cached node updates,
-refresh and session facades remain open. Forty-seven public service scenarios
-cover 47/74 Drive cases; schema validation and matcher-only checks do not add
-SDK semantic coverage. The independent consumer compiles all sixteen methods.
+Node upload derives the document ID and zone from its bound entry. Successful
+and failed uploads retain the extracted token in the session; a strict upload
+then refresh replay proves the next request sends the updated token and cookies.
+The independent consumer compiles all seventeen client methods and the public
+session/entry methods. Schema validation and matcher-only checks do not add SDK
+semantic coverage.
+
+## Explicit Drive session behavior
+
+`OpenDriveSession` copies credentials without I/O and binds a cancellable lifetime
+to one account. Root/trash replacement and forced child refresh preserve the
+pinned cache semantics, including old root pointers and metadata merge behavior.
+Copied authentication, response and node snapshots cannot mutate session state.
+Operations serialize without holding a state lock during network or reader I/O.
+The contained context exception represents this explicit lifetime (API-04, GO-09).
+Close cancels current and queued operations; the shared transport and caller-owned
+readers remain open. Two concurrent tenants execute complete uploads and refreshes
+through one shared client with isolated cookies, tokens and node state (API-13).
+
+Five additional Source-derived cases cover file navigation guards, recovery and
+permanent deletion outside trash, and upload followed by refresh. Source and SDK
+both execute them offline. Folder creation declares its UUIDv4 entropy while
+keeping every fixed field and complete body shape bound. Focused controls verify
+cookie rotation/deletion, host case normalization, native cookie attributes,
+foreign-domain rejection and explicit-header precedence. A local seek failure
+preserves prior network evidence rather than inventing an HTTP response (LIB-05).

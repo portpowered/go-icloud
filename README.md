@@ -197,7 +197,7 @@ _ = libraries.AdditionalMetadata // unknown envelope values
 
 Both methods return response metadata and the typed errors described above.
 Nine synthetic paired scenarios verify these two reads against the pinned
-reference. Drive navigation sessions and uploads remain in progress;
+reference. The explicit Drive session also covers navigation, caching and uploads;
 see [Drive contracts](docs/drive-wire-contracts.md).
 
 ## Go Drive downloads
@@ -271,12 +271,75 @@ Acknowledgement does not prove background processing has completed. Uploads
 are never retried automatically. `ClientError.PriorResponses()` retains earlier
 stage responses; `UploadToken()` retains the extracted secret on a failed stage.
 The shared client never saves account parameters or cookies. Keep returned
-updates in your private session store. A session facade that automatically
-carries the token into later operations is still being built.
+updates in your private session store. `DriveSession` carries those updates
+into later operations within its account-bound lifecycle.
 
 Nine synthetic service scenarios bind happy, empty, cursor/zone and stage-refusal
 behavior through the public SDK; focused controls reject incomplete provider
 replies before another write. These tests perform no live uploads.
+
+## Go Drive navigation sessions
+
+Open one session per account with the authenticated Drive origins. Origins must
+be bare HTTPS origins without paths or queries. The opening context bounds the
+session lifetime; `Close` cancels current and queued work and can be repeated.
+The shared client remains reusable across accounts.
+
+```go
+session, err := client.OpenDriveSession(ctx, icloud.OpenDriveSessionRequest{Auth: auth})
+if err != nil {
+    return err
+}
+defer session.Close()
+root, err := session.Root(ctx, icloud.DriveLocationRequest{})
+if err != nil {
+    return err
+}
+children, err := root.Children(ctx, icloud.DriveChildrenRequest{})
+if err != nil {
+    return err
+}
+for _, entry := range children.Entries {
+    snapshot, err := entry.Snapshot()
+    if err != nil {
+        return err
+    }
+    _ = snapshot.Name
+    _ = snapshot.Data // copied metadata, including provider identifiers
+}
+_ = session.Authentication() // copied secrets; persist privately if needed
+_ = session.LastResponses() // copied evidence from the latest network operation
+```
+
+`session.Trash` opens the trash root. `Root` and `Trash` accept
+`DriveLocationRequest{Refresh: true}` to replace the cached root; an earlier
+entry pointer keeps its earlier state. `Children` accepts
+`DriveChildrenRequest{Force: true}` to refresh a folder's metadata and children.
+`session.Lookup` and `entry.Lookup` accept `DriveLookupRequest{Name: name}` for
+exact display-name lookup. `session.Directory` and `entry.Directory` accept
+`DriveEntryRequest{}` and return ordered names. File navigation returns a typed
+`NotDirectory` error; a missing child returns `NotFound`.
+
+Entries expose `CreateFolder(ctx, DriveFolderRequest{Name: name})`,
+`Rename(ctx, DriveRenameRequest{Name: name})`, and `Trash`, `Delete`, `Restore`
+and `PermanentlyDelete` with `DriveEntryRequest{}`. Recovery and permanent
+deletion require recorded trash metadata and otherwise return `NotInTrash`.
+Acknowledgements preserve cached node data; request a refresh for fresh state.
+These operations do not retry writes automatically.
+
+`entry.Download(ctx, DriveEntryRequest{})` derives the document ID and zone
+from its node. A recorded numeric zero size returns empty content with
+`LocalEmpty: true` and absent HTTP metadata. `entry.Upload(ctx,
+DriveUploadRequest{Filename: filename, Content: reader})` uses the folder's
+document ID and zone; the caller owns the seekable reader. The session retains
+cookie and upload-token updates, including updates received before a failure.
+Cached calls and local failures leave `LastResponses` unchanged.
+
+Computed date properties preserve the pinned reference's offset arithmetic,
+including its negative fractional-hour offset quirk. `snapshot.Data` retains
+the parsed provider timestamps for callers that need standard UTC conversion.
+Thirty-two node/session scenarios plus forty-seven service scenarios exercise
+all 79 portable Drive cases through the SDK. The wider migration remains open.
 
 ## Go Drive changes
 

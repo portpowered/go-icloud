@@ -55,10 +55,11 @@ func (failure *ResponseError) Unwrap() error { return failure.Cause }
 
 // RequestContext is caller-owned request state, never retained by Client.
 type RequestContext struct {
-	Cookies *CookieState
-	Origin  string
-	Params  accountapi.ListAccountDevicesParams
-	Headers http.Header
+	DriveToken string
+	Cookies    *CookieState
+	Origin     string
+	Params     accountapi.ListAccountDevicesParams
+	Headers    http.Header
 }
 
 // DevicesResponse separates decoded wire data from HTTP response metadata.
@@ -126,6 +127,12 @@ func validateOrigin(origin string) error {
 	}
 
 	return nil
+}
+
+// ValidateOrigin checks a discovered HTTPS origin before opening a stateful session.
+// Service paths, credentials, queries and fragments do not belong in an origin.
+func ValidateOrigin(origin string) error {
+	return validateOrigin(origin)
 }
 
 func orderedAccountQuery(params accountapi.ListAccountDevicesParams) string {

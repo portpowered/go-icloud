@@ -14,6 +14,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -43,6 +44,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -67,6 +69,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -96,6 +99,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -125,6 +129,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -154,6 +159,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -183,6 +189,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -212,6 +219,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -241,6 +249,7 @@ paths:
         - {$ref: '#/components/parameters/DriveDSID'}
         - {$ref: '#/components/parameters/DriveBuildNumber'}
         - {$ref: '#/components/parameters/DriveMasteringNumber'}
+        - {$ref: '#/components/parameters/DriveToken'}
         - {$ref: '#/components/parameters/DriveAccept'}
         - {$ref: '#/components/parameters/DriveCookie'}
         - {$ref: '#/components/parameters/DriveOrigin'}
@@ -378,6 +387,12 @@ components:
       in: query
       required: false
       description: Optional authenticated mastering parameter.
+      schema: {type: string}
+    DriveToken:
+      name: token
+      in: query
+      required: false
+      description: Secret query token retained by an explicit Drive session after upload.
       schema: {type: string}
     DriveAccept:
       name: Accept

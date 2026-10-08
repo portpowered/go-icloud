@@ -220,7 +220,7 @@ func TestPortableJSONDeclarationsAreAccepted(t *testing.T) {
 		count += checkPortableJSON(t, fixture.Exchanges)
 	}
 
-	if count != 16 {
+	if count != 17 {
 		t.Fatalf("portable JSON declaration count changed: %d", count)
 	}
 }

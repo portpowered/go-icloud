@@ -156,8 +156,26 @@
           ]
         ],
         "body": {
-          "encoding": "base64",
-          "value": "eyJkZXN0aW5hdGlvbkRyaXZld3NJZCI6ICJGT0xERVI6OmNvbS5hcHBsZS5DbG91ZERvY3M6OnJvb3QiLCAiZm9sZGVycyI6IFt7ImNsaWVudElkIjogIkZPTERFUjo6VU5LTk9XTl9aT05FOjpUZW1wSWQtMDAwMDAwMDEtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwIiwgIm5hbWUiOiAiU3ludGhldGljIGZvbGRlciJ9XX0="
+          "encoding": "json-pattern",
+          "value": {
+            "destinationDrivewsId": "FOLDER::com.apple.CloudDocs::root",
+            "folders": [
+              {
+                "clientId": "FOLDER::UNKNOWN_ZONE::TempId-00000001-0000-4000-8000-000000000000",
+                "name": "Synthetic folder"
+              }
+            ]
+          },
+          "matchers": [
+            {
+              "path": [
+                "folders",
+                0,
+                "clientId"
+              ],
+              "pattern": "FOLDER::UNKNOWN_ZONE::TempId-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+            }
+          ]
         }
       },
       "response": {

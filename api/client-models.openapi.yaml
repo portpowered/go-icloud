@@ -60,6 +60,7 @@ components:
         accountServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: AccountServiceURL, description: HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.}
         driveServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: DriveServiceURL, description: HTTPS Drive origin from authenticated discovery; required by Drive operations.}
         driveDocumentServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: DriveDocumentServiceURL, description: HTTPS document-service origin from authenticated discovery; required by Drive transfers.}
+        driveToken: {type: string, x-go-type-skip-optional-pointer: true, description: Secret Drive query token returned by an upload; retained only by an explicit Drive session or supplied by the caller.}
         chinaMainland: {type: boolean, default: false, description: Authenticated account region; true selects the mainland China subscription gateway.}
         clientBuildNumber: {type: string, description: Optional build parameter from the authentication context; omission remains omission.}
         clientMasteringNumber: {type: string, description: Optional mastering parameter from the authentication context; omission remains omission.}
@@ -117,7 +118,7 @@ components:
     ErrorKind:
       type: string
       description: Inspectable client failure class; errors preserve their cause separately from their safe display message.
-      enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response]
+      enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response, closed, not-directory, not-in-trash]
 
     NullableJSONValue:
       description: An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
@@ -248,6 +249,80 @@ components:
         zone: {type: string}
         share: {type: string}
       additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    OpenDriveSessionRequest:
+      type: object
+      required: [auth]
+      description: Bind caller-owned authentication to an explicit Drive cache and credential lifecycle; opening performs no network request.
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    DriveLocationRequest:
+      type: object
+      description: Read a cached root or trash entry, optionally replacing it with a fresh provider read.
+      properties:
+        refresh: {type: boolean, x-go-type-skip-optional-pointer: true, default: false}
+    DriveChildrenRequest:
+      type: object
+      properties:
+        force: {type: boolean, x-go-type-skip-optional-pointer: true, default: false, description: Fetch and merge fresh folder metadata before rebuilding children.}
+    DriveLookupRequest:
+      type: object
+      required: [name]
+      properties:
+        name: {type: string, description: Exact child display name including extension.}
+    DriveEntryRequest:
+      type: object
+      additionalProperties: false
+      description: Operate on an entry already bound to its Drive session.
+    DriveDirectoryResult:
+      type: object
+      required: [names]
+      properties:
+        names: {type: array, items: {type: string}, description: Ordered child display names; empty folders return an empty array.}
+    DriveChildrenResult:
+      type: object
+      required: [entries]
+      properties:
+        entries: {type: array, items: {$ref: '#/components/schemas/DriveEntrySnapshot'}, x-go-type: '[]*DriveEntry', description: Entries bound to the same session; JSON encoding emits copied snapshots.}
+    DriveEntrySnapshot:
+      type: object
+      required: [data, name, type]
+      description: Copied metadata and computed display properties. Snapshot values do not mutate a cached entry.
+      properties:
+        data: {$ref: '#/components/schemas/DriveNode'}
+        name: {type: string, description: 'Name including extension, with provider ID/root/unknown fallback.'}
+        type: {type: string, x-extensible-enum: [file, folder, trash, unknown], description: Lowercase provider type with reference fallback for absent values.}
+        size: {type: integer, format: int64, minimum: 0, description: Nonzero file size; omitted for folders and zero-byte files to match the reference property.}
+        dateChanged: {type: string, format: date-time, description: Reference-adjusted changed timestamp; preserves the pinned arithmetic for negative offsets with minute components.}
+        dateModified: {type: string, format: date-time, description: Reference-adjusted modified timestamp.}
+        dateLastOpen: {type: string, format: date-time, description: Reference-adjusted last-open timestamp.}
+    DriveFolderRequest:
+      type: object
+      required: [name]
+      properties:
+        name: {type: string, description: New folder name under the selected entry.}
+    DriveRenameRequest:
+      type: object
+      required: [name]
+      properties:
+        name: {type: string, description: New name for the selected entry.}
+    DriveUploadRequest:
+      type: object
+      required: [filename, content]
+      description: Upload into an entry using its document identifier and zone; the caller owns the reader.
+      properties:
+        filename: {type: string}
+        content: {type: string, format: binary, x-go-type: io.ReadSeeker}
+        modificationTime: {type: string, format: date-time}
+        creationTime: {type: string, format: date-time}
+    DriveEntryDownloadResult:
+      type: object
+      required: [content, localEmpty]
+      description: Downloaded bytes, or a local empty result for numeric zero-byte nodes with no fabricated HTTP status.
+      properties:
+        content: {type: string, format: byte, x-go-type: '[]byte'}
+        localEmpty: {type: boolean, description: True when the zero-byte node shortcut performs no content request.}
+        tokenMetadata: {$ref: '#/components/schemas/ResponseMetadata'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
     DriveNode:
       type: object
       description: Optional provider node metadata. Folder contents may be absent on a status-only response.

@@ -39,10 +39,13 @@ func (e AuthCookieSameSite) Valid() bool {
 // Defines values for ErrorKind.
 const (
 	Canceled        ErrorKind = "canceled"
+	Closed          ErrorKind = "closed"
 	Configuration   ErrorKind = "configuration"
 	Forbidden       ErrorKind = "forbidden"
 	InvalidResponse ErrorKind = "invalid-response"
+	NotDirectory    ErrorKind = "not-directory"
 	NotFound        ErrorKind = "not-found"
+	NotInTrash      ErrorKind = "not-in-trash"
 	Provider        ErrorKind = "provider"
 	RateLimited     ErrorKind = "rate-limited"
 	Timeout         ErrorKind = "timeout"
@@ -56,13 +59,19 @@ func (e ErrorKind) Valid() bool {
 	switch e {
 	case Canceled:
 		return true
+	case Closed:
+		return true
 	case Configuration:
 		return true
 	case Forbidden:
 		return true
 	case InvalidResponse:
 		return true
+	case NotDirectory:
+		return true
 	case NotFound:
+		return true
+	case NotInTrash:
 		return true
 	case Provider:
 		return true
@@ -221,6 +230,9 @@ type AuthContext struct {
 	// DriveServiceURL HTTPS Drive origin from authenticated discovery; required by Drive operations.
 	DriveServiceURL string `json:"driveServiceURL,omitempty"`
 
+	// DriveToken Secret Drive query token returned by an upload; retained only by an explicit Drive session or supplied by the caller.
+	DriveToken string `json:"driveToken,omitempty"`
+
 	// Headers Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.
 	Headers []Header `json:"headers"`
 }
@@ -326,6 +338,71 @@ type DownloadDriveFileResult struct {
 	TokenMetadata ResponseMetadata `json:"tokenMetadata"`
 }
 
+// DriveChildrenRequest defines model for DriveChildrenRequest.
+type DriveChildrenRequest struct {
+	// Force Fetch and merge fresh folder metadata before rebuilding children.
+	Force bool `json:"force,omitempty"`
+}
+
+// DriveChildrenResult defines model for DriveChildrenResult.
+type DriveChildrenResult struct {
+	// Entries Entries bound to the same session; JSON encoding emits copied snapshots.
+	Entries []*DriveEntry `json:"entries"`
+}
+
+// DriveDirectoryResult defines model for DriveDirectoryResult.
+type DriveDirectoryResult struct {
+	// Names Ordered child display names; empty folders return an empty array.
+	Names []string `json:"names"`
+}
+
+// DriveEntryDownloadResult Downloaded bytes, or a local empty result for numeric zero-byte nodes with no fabricated HTTP status.
+type DriveEntryDownloadResult struct {
+	Content []byte `json:"content"`
+
+	// LocalEmpty True when the zero-byte node shortcut performs no content request.
+	LocalEmpty bool `json:"localEmpty"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata *ResponseMetadata `json:"metadata,omitempty"`
+
+	// TokenMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	TokenMetadata *ResponseMetadata `json:"tokenMetadata,omitempty"`
+}
+
+// DriveEntryRequest Operate on an entry already bound to its Drive session.
+type DriveEntryRequest = map[string]interface{}
+
+// DriveEntrySnapshot Copied metadata and computed display properties. Snapshot values do not mutate a cached entry.
+type DriveEntrySnapshot struct {
+	// Data Optional provider node metadata. Folder contents may be absent on a status-only response.
+	Data DriveNode `json:"data"`
+
+	// DateChanged Reference-adjusted changed timestamp; preserves the pinned arithmetic for negative offsets with minute components.
+	DateChanged *time.Time `json:"dateChanged,omitempty"`
+
+	// DateLastOpen Reference-adjusted last-open timestamp.
+	DateLastOpen *time.Time `json:"dateLastOpen,omitempty"`
+
+	// DateModified Reference-adjusted modified timestamp.
+	DateModified *time.Time `json:"dateModified,omitempty"`
+
+	// Name Name including extension, with provider ID/root/unknown fallback.
+	Name string `json:"name"`
+
+	// Size Nonzero file size; omitted for folders and zero-byte files to match the reference property.
+	Size *int64 `json:"size,omitempty"`
+
+	// Type Lowercase provider type with reference fallback for absent values.
+	Type string `json:"type"`
+}
+
+// DriveFolderRequest defines model for DriveFolderRequest.
+type DriveFolderRequest struct {
+	// Name New folder name under the selected entry.
+	Name string `json:"name"`
+}
+
 // DriveItemChangeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DriveItemChangeResult struct {
 	AdditionalMetadata map[string]UnknownJSONValue `json:"additionalMetadata"`
@@ -335,6 +412,17 @@ type DriveItemChangeResult struct {
 
 	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 	Metadata ResponseMetadata `json:"metadata"`
+}
+
+// DriveLocationRequest Read a cached root or trash entry, optionally replacing it with a fresh provider read.
+type DriveLocationRequest struct {
+	Refresh bool `json:"refresh,omitempty"`
+}
+
+// DriveLookupRequest defines model for DriveLookupRequest.
+type DriveLookupRequest struct {
+	// Name Exact child display name including extension.
+	Name string `json:"name"`
 }
 
 // DriveNode Optional provider node metadata. Folder contents may be absent on a status-only response.
@@ -374,12 +462,26 @@ type DriveNodeSelector struct {
 	NodeID string `json:"nodeID"`
 }
 
+// DriveRenameRequest defines model for DriveRenameRequest.
+type DriveRenameRequest struct {
+	// Name New name for the selected entry.
+	Name string `json:"name"`
+}
+
 // DriveShareID Provider sharing descriptor; no fixed field is universally required by the reference.
 type DriveShareID struct {
 	Owner                *string                     `json:"owner,omitempty"`
 	Share                *string                     `json:"share,omitempty"`
 	Zone                 *string                     `json:"zone,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// DriveUploadRequest Upload into an entry using its document identifier and zone; the caller owns the reader.
+type DriveUploadRequest struct {
+	Content          io.ReadSeeker `json:"content"`
+	CreationTime     *time.Time    `json:"creationTime,omitempty"`
+	Filename         string        `json:"filename"`
+	ModificationTime *time.Time    `json:"modificationTime,omitempty"`
 }
 
 // ErrorKind Inspectable client failure class; errors preserve their cause separately from their safe display message.
@@ -543,6 +645,12 @@ type MoveDriveNodesResult = DriveItemChangeResult
 
 // NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
 type NullableJSONValue = json.RawMessage
+
+// OpenDriveSessionRequest Bind caller-owned authentication to an explicit Drive cache and credential lifecycle; opening performs no network request.
+type OpenDriveSessionRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
 
 // PermanentlyDeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
 type PermanentlyDeleteDriveNodeRequest struct {

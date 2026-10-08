@@ -75,6 +75,48 @@ func Upload(ctx context.Context, auth icloud.AuthContext, parentID, filename str
  return err
 }
 
+func DriveSessionFlows(ctx context.Context, auth icloud.AuthContext, content io.ReadSeeker) error {
+ client, err := icloud.New()
+ if err != nil { return err }
+ session, err := client.OpenDriveSession(ctx, icloud.OpenDriveSessionRequest{Auth: auth})
+ if err != nil { return err }
+ defer session.Close()
+ _ = session.Authentication().DriveToken
+ _ = session.LastResponses()
+ root, err := session.Root(ctx, icloud.DriveLocationRequest{})
+ if err != nil { return err }
+ _, err = session.Trash(ctx, icloud.DriveLocationRequest{Refresh: true})
+ if err != nil { return err }
+ _, err = session.Directory(ctx, icloud.DriveEntryRequest{})
+ if err != nil { return err }
+ _, err = session.Lookup(ctx, icloud.DriveLookupRequest{Name: "Synthetic.txt"})
+ if err != nil { return err }
+ _, err = root.Snapshot()
+ if err != nil { return err }
+ _, err = root.Children(ctx, icloud.DriveChildrenRequest{Force: true})
+ if err != nil { return err }
+ _, err = root.Directory(ctx, icloud.DriveEntryRequest{})
+ if err != nil { return err }
+ _, err = root.Lookup(ctx, icloud.DriveLookupRequest{Name: "Synthetic.txt"})
+ if err != nil { return err }
+ _, err = root.CreateFolder(ctx, icloud.DriveFolderRequest{Name: "Synthetic"})
+ if err != nil { return err }
+ _, err = root.Rename(ctx, icloud.DriveRenameRequest{Name: "Synthetic"})
+ if err != nil { return err }
+ _, err = root.Trash(ctx, icloud.DriveEntryRequest{})
+ if err != nil { return err }
+ _, err = root.Delete(ctx, icloud.DriveEntryRequest{})
+ if err != nil { return err }
+ _, err = root.Restore(ctx, icloud.DriveEntryRequest{})
+ if err != nil { return err }
+ _, err = root.PermanentlyDelete(ctx, icloud.DriveEntryRequest{})
+ if err != nil { return err }
+ _, err = root.Download(ctx, icloud.DriveEntryRequest{})
+ if err != nil { return err }
+ _, err = root.Upload(ctx, icloud.DriveUploadRequest{Filename: "Synthetic.txt", Content: content})
+ return err
+}
+
 func DriveMutations(ctx context.Context, auth icloud.AuthContext, node icloud.DriveNodeSelector) error {
  client, err := icloud.New()
  if err != nil { return err }

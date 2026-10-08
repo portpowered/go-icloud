@@ -21,6 +21,7 @@ func (roundTrip sdkRoundTrip) RoundTrip(request *http.Request) (*http.Response, 
 
 func deviceRequest() icloud.GetAccountDevicesRequest {
 	return icloud.GetAccountDevicesRequest{Auth: icloud.AuthContext{
+		DriveToken:              "",
 		Cookies:                 nil,
 		DriveDocumentServiceURL: "",
 		AccountID:               "synthetic-account", ClientID: "synthetic-client",
