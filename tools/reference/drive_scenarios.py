@@ -2,6 +2,7 @@
 
 import base64
 from copy import deepcopy
+from io import BytesIO
 
 
 def node_result(node):
@@ -52,6 +53,10 @@ def execute_nodes(service, scenario, observations):
                 value = node_result(node)
             elif operation == "metadata":
                 value = node_result(node)
+            elif operation == "service_dir":
+                value = service.dir()
+            elif operation == "upload":
+                value = upload_node(node, args[0], kwargs, observations)
             elif operation == "open":
                 response = node.open(**kwargs)
                 try:
@@ -72,3 +77,22 @@ def execute_nodes(service, scenario, observations):
                 "node": node_result(node) if node is not None else None,
                 "root": node_result(root) if root is not None else None,
             }
+
+
+def upload_node(node, descriptor, kwargs, observations):
+    with BytesIO(base64.b64decode(descriptor["body"], validate=True)) as file:
+        file.name = descriptor["name"]
+        file.seek(descriptor.get("position", 0))
+        try:
+            value = node.upload(file, **kwargs)
+            return {
+                "value": value,
+                "params": dict(node.connection.params),
+                "file_position": file.tell(),
+            }
+        finally:
+            if observations is not None:
+                observations["drive_state"] = {
+                    "params": dict(node.connection.params),
+                    "file_position": file.tell(),
+                }

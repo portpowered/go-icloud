@@ -512,9 +512,26 @@ with RFC 4122 variant; separate negative controls reject wrong versions, variant
 and casing. The reviewer verified the fix (SCHEMA-15) and the exact-route/method
 issuer checks for provider-issued content URLs.
 
-Verdict: **limited working-tree pass**. Exact-SHA approval after CI remains
-required. Drive SDK semantic replay, complete runtime/source gates and the full
+Verdict: **limited milestone pass**. Exact-SHA review approved
+`dfd6c6041317dc01cb288ab765b92c6b43de1b7b` after
+[CI 37790183860](https://github.com/portpowered/go-icloud/actions/runs/37790183860)
+passed. PR #5 merged in `268d6f2973cfdaf3dd468b7ae5c08f05afed74c4`; main passed
+[CI 37791000251](https://github.com/portpowered/go-icloud/actions/runs/37791000251).
+Drive SDK semantic replay, complete runtime/source gates and the full
 migration acceptance remain open.
+
+### Interim Drive node-upload reference audit
+
+The reviewer independently passed all 19 synthetic-runner test methods, Drive
+contract race checks and Go paired multipart checks. It enumerated 437 HTTP
+scenarios/991 pairs, 67 Drive scenarios/115 pairs, eight additions/26 pairs and
+13 multipart writer pairs. The pinned `DriveNode.upload` and service facade
+delegation execute; instrumentation only constructs/closes its own input stream
+and snapshots cursor/state. Failure and wire mutations remain fail-closed.
+
+Verdict: **limited working-tree pass** for the reference gaps. Exact-SHA approval
+after CI remains required. Drive SDK semantics and full migration gates remain
+open; diagnostic coverage and local-helper gaps do not establish completeness.
 
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each

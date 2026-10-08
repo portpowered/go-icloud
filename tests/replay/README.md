@@ -26,11 +26,11 @@ These duplicate/ambiguous-rule checks deliberately strengthen reference replay.
 Multipart rules bind a full Content-Type pattern, its boundary and ordered parts.
 Part header values, filenames and unencoded binary bytes remain exact; framing
 requires CRLF delimiters with no preamble, epilogue or premature boundary.
-Nested and transfer-encoded parts are explicitly unsupported; the seven selected
+Nested and transfer-encoded parts are explicitly unsupported; the thirteen selected
 upload artifacts use unencoded parts. Only the declared Content-Type variation
 is normalized; actual lengths and other request headers remain bound.
 
-All 429 portable HTTP scenarios (965 exchanges) now instantiate in Go; all seven
+All 437 portable HTTP scenarios (991 exchanges) now instantiate in Go; all thirteen
 multipart upload pairs match Go's writer with a different declared boundary.
 These tests prove fixture decoding and matcher interoperability, not SDK
 operation semantics. Auth/socket timelines, account/session projections, source-pin scenario loading

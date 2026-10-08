@@ -24,7 +24,7 @@ regenerate from the checked-in configs and reject drift (SCHEMA-10, SCHEMA-16).
 
 The source is timlaing/pyicloud commit
 `e2e44ab875d47dab4475096021da60030f26c35e`, especially
-`pyicloud/services/drive.py`. All 59 portable Drive scenarios and 89 paired
+`pyicloud/services/drive.py`. All 67 portable Drive scenarios and 115 paired
 exchanges are labeled synthetic and implementation-derived. No new live writes,
 private captures, tokens or account values are published. The four model examples
 are invented (SCHEMA-08, SCHEMA-12).
@@ -41,6 +41,22 @@ Rename, movement and recovery have distinct request models and required fields.
 Permanent trash deletion omits the `clientId` used by ordinary deletion. Empty
 movement lists are legal. Source-required transfer receipt fields are required;
 the receipt string is optional, including for zero-length uploads.
+
+Eight node-upload/facade scenarios add 26 pairs and execute the actual
+`DriveNode.upload` and `DriveService.__getattr__` function bodies. Node uploads
+derive their document ID and zone from the preceding folder reply. They bind
+the input cursor, binary/empty transfers, each stage's provider refusal, received
+node state and final file cursor; instrumentation-owned streams close on every
+exit. Cursor, zone, node/error state and extra-exchange negative controls reject.
+
+The measured Drive module enters 42/45 functions and covers 155/176 body
+statements and 48/66 branch exits. Unentered functions are local cached-child
+removal and display helpers (`remove`, `__str__`, `__repr__`), rather than new
+wire endpoints. The conservative diagnostic denominator retains them. Combined
+reference coverage enters 576/905 functions and covers 3,191/5,385 statements
+(59.26%) and 969/2,076 branch exits. These figures do not establish functional
+completeness or Go SDK parity. Reports stay private because their HTML embeds
+source and local paths; no captures or account values are published (LIB-07).
 
 Node metadata remains optional because status-only replies and incomplete nodes
 are supported. Unknown node kinds and statuses stay open. Sizes accept nonnegative

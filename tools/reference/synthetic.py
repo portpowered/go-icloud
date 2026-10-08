@@ -91,9 +91,10 @@ def execute(api, scenario, observations=None):
         finally:
             if observations is not None:
                 observations["arguments"] = scenario["inputs"]
+                node_position = observations.get("drive_state", {}).get("file_position")
                 observations["drive_state"] = {
                     "params": dict(service.params),
-                    "file_position": file.tell() if file is not None else None,
+                    "file_position": file.tell() if file is not None else node_position,
                 }
             if file is not None:
                 file.close()

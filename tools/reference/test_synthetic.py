@@ -1,6 +1,7 @@
 """Portable service parity and fail-closed replay controls."""
 
 import base64
+import io
 import json
 import threading
 import time
@@ -65,6 +66,52 @@ class SyntheticTests(unittest.TestCase):
                     scenario["exchanges"].append(scenario["exchanges"][-1])
                 else:
                     scenario["error_node_state"]["root"]["name"] = "wrong"
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_node_upload_files_close_after_success_and_refusal(self):
+        for fixture in sorted(FIXTURES.glob("drive-node-upload-*.json")):
+            files = []
+
+            def make_file(*args, tracked_files=files, **kwargs):
+                file = io.BytesIO(*args, **kwargs)
+                tracked_files.append(file)
+                return file
+
+            with (
+                self.subTest(scenario=fixture.stem),
+                patch("drive_scenarios.BytesIO", side_effect=make_file),
+            ):
+                replay_synthetic(fixture)
+                self.assertEqual(len(files), 1)
+                self.assertTrue(files[0].closed)
+
+    def test_node_upload_cursor_zone_and_state_are_bound(self):
+        for change in ["position", "zone", "node", "file_state", "extra"]:
+            filename = (
+                "drive-node-upload-binary-refused-1"
+                if change in {"node", "file_state"}
+                else "drive-node-upload-position"
+            )
+            scenario = json.loads((FIXTURES / (filename + ".json")).read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "position":
+                    scenario["inputs"][0]["inputs"][0]["position"] = 0
+                elif change == "zone":
+                    body = scenario["exchanges"][0]["response"]["body"]
+                    payload = json.loads(base64.b64decode(body["value"]))
+                    payload[0]["zone"] = "wrong-zone"
+                    body["value"] = base64.b64encode(
+                        json.dumps(payload).encode()
+                    ).decode()
+                elif change == "node":
+                    scenario["error_node_state"]["node"]["data"]["docwsid"] = "wrong"
+                elif change == "file_state":
+                    scenario["error_drive_state"]["file_position"] = 0
+                else:
+                    scenario["exchanges"].append(scenario["exchanges"][-1])
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(scenario))
                 with self.assertRaises(AssertionError):
