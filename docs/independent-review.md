@@ -803,3 +803,46 @@ scenarios remains 576/905 entered functions, 3195/5385 body statements and
 973/2076 branch exits. Live Go integration remains pending. Final documentation
 and exact-commit approval after CI remain pending; full migration/release
 acceptance remains open.
+
+PR14 received exact-commit approval at
+`77e72a19cb1a9a5c950ee1c4ed55c40324d3d379` after
+[CI 37828401650](https://github.com/portpowered/go-icloud/actions/runs/37828401650)
+passed. It merged to `00586b140bb852f18c71e883818496e8dfecfffd`; its branch was
+deleted and [main CI 37829084493](https://github.com/portpowered/go-icloud/actions/runs/37829084493)
+also passed. The preceding pending-approval note describes its pre-merge state.
+
+### Interim Find My public-session audit
+
+The public SDK now drives all 37 current Find My scenarios and 70 pairs from
+scenario operation inputs. It binds full functional snapshots, wait traces,
+command acknowledgements, response metadata and error meaning; it does not use
+recorded routes to decide production orchestration. Independent public schemas
+remain separate from canonical wire models. No live command was performed.
+
+Initial replay checks caught absent userInfo projecting as an empty object and
+empty acknowledgement slice comparisons treating zero bytes as unequal. Explicit
+null projection matches Source results and byte-content comparisons retain exact
+wire fidelity. Focused cancellation checks caught wrapped scheduler cancellation
+classified as Transport; explicit wait classification preserves Canceled/Timeout
+and original causes. Arbitrary scheduler faults remain Transport, clear unrelated
+HTTP evidence, and stop the owned monitor. No matcher was relaxed.
+
+An independent working-tree reviewer found no scoped blocker after re-running
+race checks for SDK, replay, contracts, generator and transport. Reviewed controls
+include two accounts on one SDK, provider cookie rotation, foreign-domain cookie
+refusal, nested snapshot/credential/header ownership, cancellable family waits,
+monitor callback reentrancy, provider failure recovery and concurrent current/
+queued close. The session guide documents deliberate cache getter and monitor
+ownership corrections. Exact-SHA approval after final local checks and CI is
+still required before this milestone merges; overall acceptance remains open.
+
+Final local `make lint` and `make check` pass: all Go race/contracts/drift/consumer
+checks and 67 Python tests. Handwritten replay coverage is 1456/1758 statements
+(82.8%), unit 1045/1758 (59.4%) and combined 1567/1758 (89.1%). Live Go coverage
+remains pending. Fresh synthetic-only Source measurement is 564/905 entered
+functions, 3119/5385 body statements (57.92%) and 952/2076 branch exits. It excludes
+private captures; the preceding combined captured/synthetic measurement of
+576/905, 3195/5385 and 973/2076 is a different evidence set. These diagnostic
+counts do not replace functional parity or full selected-service acceptance
+(LIB-07). Global HTTP inventory remains 456 scenarios/1030 pairs, 74/75 draft
+HTTP routes, zero unmatched; physical security-key interaction remains deferred.

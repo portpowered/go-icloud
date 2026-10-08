@@ -9,6 +9,21 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/findmy"
 )
 
+// NormalizeFindMyContext prepares a copied provider context for account-bound cache reuse.
+// Missing, null and empty contexts remain distinguishable and do not enable refresh.
+func NormalizeFindMyContext(value findmy.FindMyRefreshContext) (findmy.FindMyRefreshContext, error) {
+	if !providerTruth(value) {
+		return append(findmy.FindMyRefreshContext{}, value...), nil
+	}
+
+	return clearFindMyTheftLoss(value)
+}
+
+// HasFindMyContext implements the reference's truth test for initialization versus refresh.
+func HasFindMyContext(value findmy.FindMyRefreshContext) bool {
+	return providerTruth(value)
+}
+
 // clearFindMyTheftLoss changes only the known top-level value, keeping provider member order.
 // The schema-owned raw type avoids sorting an opaque context through a Go map.
 func clearFindMyTheftLoss(context findmy.FindMyRefreshContext) (findmy.FindMyRefreshContext, error) {

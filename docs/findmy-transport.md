@@ -1,5 +1,9 @@
 # Find My transport replay
 
+This records the PR14 transport milestone. The later
+[public-session milestone](findmy-session.md) now supplies 37/37 SDK replay
+scenarios; the pending-session counts below describe the earlier tree.
+
 The internal transport now executes the seven selected Find My routes through
 schema-generated request builders. Account and header state belongs to each call;
 the reusable client retains no credentials or cookie jar. Initialization and

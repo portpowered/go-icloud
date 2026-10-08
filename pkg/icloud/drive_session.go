@@ -125,42 +125,7 @@ func (session *DriveSession) Directory(ctx context.Context, request DriveEntryRe
 }
 
 func (session *DriveSession) begin(ctx context.Context, operation string) (context.Context, func(), error) {
-	select {
-	case <-session.lifetime.Done():
-		return nil, nil, newClientError(operation, Closed, 0, nil, nil, errDriveClosed)
-	default:
-	}
-
-	select {
-	case <-ctx.Done():
-		return nil, nil, driveContextFailure(operation, ctx.Err())
-	case <-session.lifetime.Done():
-		return nil, nil, newClientError(operation, Closed, 0, nil, nil, errDriveClosed)
-	case <-session.gate:
-	}
-
-	if session.lifetime.Err() != nil {
-		session.gate <- struct{}{}
-
-		return nil, nil, newClientError(operation, Closed, 0, nil, nil, errDriveClosed)
-	}
-
-	if ctx.Err() != nil {
-		session.gate <- struct{}{}
-
-		return nil, nil, driveContextFailure(operation, ctx.Err())
-	}
-
-	call, cancel := context.WithCancel(ctx)
-	stop := context.AfterFunc(session.lifetime, cancel)
-	finish := func() {
-		stop()
-		cancel()
-
-		session.gate <- struct{}{}
-	}
-
-	return call, finish, nil
+	return beginSessionCall(ctx, session.lifetime, session.gate, operation, errDriveClosed)
 }
 
 func driveContextFailure(operation string, err error) *ClientError {

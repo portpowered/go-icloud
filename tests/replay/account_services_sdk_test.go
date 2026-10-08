@@ -29,7 +29,7 @@ func TestRemainingAccountSDKPortableScenarios(t *testing.T) {
 
 	for _, path := range paths {
 		scenario := readAccountScenario(t, path)
-		if scenario.Operation == "devices" {
+		if scenario.Operation == replayDevicesOperation {
 			continue
 		}
 

@@ -112,6 +112,7 @@ func TestAccountDevicesSDKConcurrentIsolation(t *testing.T) {
 func checkSDKAccountIsolation(t *testing.T, client icloud.Client, tenant string, auth icloud.AuthContext) {
 	t.Helper()
 
+	//nolint:gosec // LIB-09: this ownership assertion serializes only synthetic offline credentials.
 	original, encodeErr := json.Marshal(auth)
 	if encodeErr != nil {
 		t.Fatal(encodeErr)
@@ -122,6 +123,7 @@ func checkSDKAccountIsolation(t *testing.T, client icloud.Client, tenant string,
 		checkSDKAccountDevice(t, response, tenant, requestErr)
 	}
 
+	//nolint:gosec // LIB-09: compare synthetic credentials without writing them to an artifact.
 	after, encodeErr := json.Marshal(auth)
 	if encodeErr != nil || string(original) != string(after) {
 		t.Fatal("request auth was mutated")

@@ -138,6 +138,33 @@ func DriveMutations(ctx context.Context, auth icloud.AuthContext, node icloud.Dr
  return err
 }
 
+
+func FindMy(ctx context.Context, auth icloud.AuthContext, deviceID string) error {
+ client, err := icloud.New()
+ if err != nil { return err }
+ session, err := client.OpenFindMySession(ctx, icloud.OpenFindMySessionRequest{Auth: auth},
+  icloud.WithFindMyMonitorInterval(0))
+ if err != nil { return err }
+ defer session.Close()
+ _ = session.Authentication().SessionToken
+ _ = session.LastResponses()
+ _ = session.LastError()
+ _ = session.MonitorDone()
+ _, err = session.Snapshot()
+ if err != nil { return err }
+ _, err = session.Refresh(ctx, icloud.RefreshFindMyRequest{Locate: true})
+ if err != nil { return err }
+ _, err = session.PlaySound(ctx, icloud.FindMySoundRequest{DeviceID: deviceID})
+ if err != nil { return err }
+ _, err = session.SendMessage(ctx, icloud.FindMyMessageRequest{DeviceID: deviceID})
+ if err != nil { return err }
+ _, err = session.MarkLost(ctx, icloud.FindMyLostRequest{DeviceID: deviceID, PhoneNumber: "synthetic"})
+ if err != nil { return err }
+ result, err := session.Erase(ctx, icloud.FindMyEraseRequest{DeviceID: deviceID})
+ if result != nil { _ = result.Responses; _ = result.Acknowledgement }
+ return err
+}
+
 `
 
 func TestPublicSDKCompilesInIndependentConsumer(t *testing.T) {

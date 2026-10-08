@@ -115,6 +115,51 @@ func (e FindMyClientContextShouldLocate) Valid() bool {
 	}
 }
 
+// Defines values for FindMyDefaultLostMessage.
+const (
+	ThisDeviceHasBeenLostPleaseCallMe FindMyDefaultLostMessage = "This device has been lost. Please call me."
+)
+
+// Valid indicates whether the value is a known member of the FindMyDefaultLostMessage enum.
+func (e FindMyDefaultLostMessage) Valid() bool {
+	switch e {
+	case ThisDeviceHasBeenLostPleaseCallMe:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FindMyDefaultMessage.
+const (
+	ThisIsANote FindMyDefaultMessage = "This is a note"
+)
+
+// Valid indicates whether the value is a known member of the FindMyDefaultMessage enum.
+func (e FindMyDefaultMessage) Valid() bool {
+	switch e {
+	case ThisIsANote:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FindMyDefaultSubject.
+const (
+	FindMyIPhoneAlert FindMyDefaultSubject = "Find My iPhone Alert"
+)
+
+// Valid indicates whether the value is a known member of the FindMyDefaultSubject enum.
+func (e FindMyDefaultSubject) Valid() bool {
+	switch e {
+	case FindMyIPhoneAlert:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for FindMyInitializeContextDeviceListVersion.
 const (
 	FindMyInitializeContextDeviceListVersionN1 FindMyInitializeContextDeviceListVersion = 1
@@ -139,6 +184,27 @@ const (
 func (e FindMyInitializeContextInactiveTime) Valid() bool {
 	switch e {
 	case FindMyInitializeContextInactiveTimeN0:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FindMyKnownFetchStatus.
+const (
+	DONE    FindMyKnownFetchStatus = "DONE"
+	LOADING FindMyKnownFetchStatus = "LOADING"
+	READY   FindMyKnownFetchStatus = "READY"
+)
+
+// Valid indicates whether the value is a known member of the FindMyKnownFetchStatus enum.
+func (e FindMyKnownFetchStatus) Valid() bool {
+	switch e {
+	case DONE:
+		return true
+	case LOADING:
+		return true
+	case READY:
 		return true
 	default:
 		return false
@@ -304,6 +370,15 @@ type FindMyCommandState struct {
 	Vibrate              *bool                        `json:"vibrate,omitempty"`
 	AdditionalProperties map[string]FindMyUnknownJSON `json:"-"`
 }
+
+// FindMyDefaultLostMessage defines model for FindMyDefaultLostMessage.
+type FindMyDefaultLostMessage string
+
+// FindMyDefaultMessage defines model for FindMyDefaultMessage.
+type FindMyDefaultMessage string
+
+// FindMyDefaultSubject defines model for FindMyDefaultSubject.
+type FindMyDefaultSubject string
 
 // FindMyDevice defines model for FindMyDevice.
 type FindMyDevice struct {
@@ -472,6 +547,9 @@ type FindMyInitializeContextInactiveTime int
 type FindMyInitializeRequest struct {
 	ClientContext FindMyInitializeContext `json:"clientContext"`
 }
+
+// FindMyKnownFetchStatus defines model for FindMyKnownFetchStatus.
+type FindMyKnownFetchStatus string
 
 // FindMyLocation defines model for FindMyLocation.
 type FindMyLocation struct {

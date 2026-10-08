@@ -144,9 +144,12 @@ The [Find My wire contracts](findmy-wire-contracts.md) bind these exchanges to
 seven operations, validate payloads/query parameters and round-trip each JSON reply
 through generated canonical models. Regeneration and protocol-constant drift
 checks pass. The [internal transport driver](findmy-transport.md) also executes all 70 pairs,
-including a Source-verified reverse-order refresh context. These are transport and
-contract checks; Find My SDK semantic replay remains
-0/37 until public methods and the explicit lifecycle execute the scenarios.
+including a Source-verified reverse-order refresh context. The
+[public Find My session](findmy-session.md) executes all 37/37 scenarios through
+70 paired exchanges with full functional snapshots, command acknowledgements,
+capability/token guards and bounded family waits. Independent race controls cover
+owned monitoring, close, callback reentrancy, copied state and concurrent account
+cookie rotation. Native authentication and forced-reauth remain pending.
 Declared waits are consumed offline; received device/user/server state and
 exposed errors are bound. A source monitor-replacement race is documented for
 Go correction. Partial refreshes retain cached devices rather than infer removal
