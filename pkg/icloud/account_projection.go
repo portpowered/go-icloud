@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/portpowered/go-icloud/internal/accounttransport"
+	"github.com/portpowered/go-icloud/internal/webtransport"
 )
 
-func projectDevices(response *accounttransport.DevicesResponse) *GetAccountDevicesResult {
+func projectDevices(response *webtransport.DevicesResponse) *GetAccountDevicesResult {
 	devices := make([]AccountDevice, 0, len(response.Data.Devices))
 	for _, device := range response.Data.Devices {
 		devices = append(devices, AccountDevice(device))
@@ -52,11 +52,11 @@ func responseHeaders(headers http.Header) []Header {
 	return result
 }
 
-func publicMetadata(response *accounttransport.BytesResponse) ResponseMetadata {
+func publicMetadata(response *webtransport.BytesResponse) ResponseMetadata {
 	return ResponseMetadata{StatusCode: response.Status, Headers: responseHeaders(response.Headers)}
 }
 
-func projectFamily(response *accounttransport.FamilyResponse) *GetAccountFamilyResult {
+func projectFamily(response *webtransport.FamilyResponse) *GetAccountFamilyResult {
 	members := make([]AccountFamilyMember, 0)
 
 	if response.Data.FamilyMembers != nil {
@@ -70,7 +70,7 @@ func projectFamily(response *accounttransport.FamilyResponse) *GetAccountFamilyR
 		Metadata:           publicMetadata(response.Metadata)}
 }
 
-func projectStorage(response *accounttransport.StorageResponse) *GetAccountStorageResult {
+func projectStorage(response *webtransport.StorageResponse) *GetAccountStorageResult {
 	media := make([]AccountMediaUsage, 0)
 
 	if response.Data.StorageUsageByMedia != nil {

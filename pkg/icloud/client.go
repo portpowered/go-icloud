@@ -6,13 +6,18 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/accountapi"
-	"github.com/portpowered/go-icloud/internal/accounttransport"
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
 )
 
 // Client provides the currently implemented iCloud operations.
 // Credentials belong to each request; a Client can serve multiple accounts.
 type Client interface {
+	// GetDriveNode returns fresh node metadata, including available folder contents.
+	GetDriveNode(ctx context.Context, request GetDriveNodeRequest) (*GetDriveNodeResult, error)
+	// ListDriveLibraries returns fresh application-library records.
+	ListDriveLibraries(ctx context.Context, request ListDriveLibrariesRequest) (*ListDriveLibrariesResult, error)
 	// GetAccountDevices returns fresh devices and payment-method metadata.
 	GetAccountDevices(ctx context.Context, request GetAccountDevicesRequest) (*GetAccountDevicesResult, error)
 	// GetAccountFamily returns fresh family records.
@@ -30,6 +35,7 @@ var (
 	errNilOption       = errors.New("nil client option")
 	errAuthIdentifiers = errors.New("account and client identifiers are required")
 	errMemberID        = errors.New("family member identifier is required")
+	errDriveNodeID     = errors.New("drive node identifier is required")
 )
 
 type configuration struct {
@@ -56,7 +62,7 @@ func WithHTTPTransport(transport http.RoundTripper) Option {
 }
 
 // SDK implements Client with immutable transport configuration.
-type SDK struct{ account *accounttransport.Client }
+type SDK struct{ web *webtransport.Client }
 
 // New creates a reusable stateless client. The caller supplies request deadlines.
 // The default is http.DefaultTransport; automatic redirects are disabled.
@@ -74,7 +80,7 @@ func New(options ...Option) (*SDK, error) {
 		}
 	}
 
-	return &SDK{account: accounttransport.New(config.transport)}, nil
+	return &SDK{web: webtransport.New(config.transport)}, nil
 }
 
 // GetAccountDevices fetches fresh account devices using caller-owned authentication state.
@@ -88,7 +94,7 @@ func (sdk *SDK) GetAccountDevices(ctx context.Context,
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
 
-	response, err := sdk.account.GetDevices(ctx, boundary)
+	response, err := sdk.web.GetDevices(ctx, boundary)
 	if err != nil {
 		return nil, adaptFailure(operation, err)
 	}
@@ -107,7 +113,7 @@ func (sdk *SDK) GetAccountFamily(ctx context.Context,
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
 
-	response, err := sdk.account.GetFamily(ctx, boundary)
+	response, err := sdk.web.GetFamily(ctx, boundary)
 	if err != nil {
 		return nil, adaptFailure(operation, err)
 	}
@@ -130,7 +136,7 @@ func (sdk *SDK) GetAccountMemberPhoto(ctx context.Context,
 		return nil, newClientError(operation, Configuration, 0, nil, nil, errMemberID)
 	}
 
-	response, err := sdk.account.GetMemberPhoto(ctx, boundary, request.MemberID)
+	response, err := sdk.web.GetMemberPhoto(ctx, boundary, request.MemberID)
 	if err != nil {
 		return nil, adaptFailure(operation, err)
 	}
@@ -149,7 +155,7 @@ func (sdk *SDK) GetAccountStorage(ctx context.Context,
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
 
-	response, err := sdk.account.GetStorage(ctx, boundary)
+	response, err := sdk.web.GetStorage(ctx, boundary)
 	if err != nil {
 		return nil, adaptFailure(operation, err)
 	}
@@ -173,7 +179,7 @@ func (sdk *SDK) GetAccountPlanSummary(ctx context.Context,
 		boundary.Origin = protocol.AccountServer2
 	}
 
-	response, err := sdk.account.GetPlanSummary(ctx, boundary)
+	response, err := sdk.web.GetPlanSummary(ctx, boundary)
 	if err != nil {
 		return nil, adaptFailure(operation, err)
 	}
@@ -181,8 +187,61 @@ func (sdk *SDK) GetAccountPlanSummary(ctx context.Context,
 	return &GetAccountPlanSummaryResult{Summary: response.Body, Metadata: publicMetadata(response)}, nil
 }
 
-func accountRequestContext(auth AuthContext) (accounttransport.RequestContext, error) {
-	var boundary accounttransport.RequestContext
+// GetDriveNode retrieves the node selected by its provider identifier and optional sharing descriptor.
+func (sdk *SDK) GetDriveNode(ctx context.Context, request GetDriveNodeRequest) (*GetDriveNodeResult, error) {
+	const operation = "GetDriveNode"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	if request.NodeID == "" {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, errDriveNodeID)
+	}
+
+	boundary.Origin = request.Auth.DriveServiceURL
+
+	var share *drive.DriveShareID
+
+	if request.ShareID != nil {
+		value := drive.DriveShareID(*request.ShareID)
+		share = &value
+	}
+
+	response, err := sdk.web.GetDriveNode(ctx, boundary, request.NodeID, share)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return &GetDriveNodeResult{Node: projectDriveNode(response.Data), Metadata: publicMetadata(response.Response)}, nil
+}
+
+// ListDriveLibraries fetches application-library records using caller-owned Drive authentication.
+func (sdk *SDK) ListDriveLibraries(ctx context.Context,
+	request ListDriveLibrariesRequest,
+) (*ListDriveLibrariesResult, error) {
+	const operation = "ListDriveLibraries"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	boundary.Origin = request.Auth.DriveServiceURL
+
+	response, err := sdk.web.ListDriveLibraries(ctx, boundary)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return &ListDriveLibrariesResult{Libraries: projectDriveNodes(response.Data.Items),
+		AdditionalMetadata: copyAccountMetadata(response.Data.AdditionalProperties),
+		Metadata:           publicMetadata(response.Response)}, nil
+}
+
+func accountRequestContext(auth AuthContext) (webtransport.RequestContext, error) {
+	var boundary webtransport.RequestContext
 
 	if auth.AccountID == "" || auth.ClientID == "" {
 		return boundary, errAuthIdentifiers
@@ -195,7 +254,7 @@ func accountRequestContext(auth AuthContext) (accounttransport.RequestContext, e
 	params.ClientBuildNumber = copyString(auth.ClientBuildNumber)
 	params.ClientMasteringNumber = copyString(auth.ClientMasteringNumber)
 
-	boundary = accounttransport.RequestContext{Origin: auth.AccountServiceURL, Params: *params,
+	boundary = webtransport.RequestContext{Origin: auth.AccountServiceURL, Params: *params,
 		Headers: requestHeaders(auth.Headers)}
 
 	return boundary, nil

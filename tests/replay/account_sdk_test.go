@@ -70,7 +70,7 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 	auth := icloud.AuthContext{
 		AccountID: initial.Params[protocol.DSIDName], ClientID: initial.Params[protocol.ClientIDName],
 		AccountServiceURL: initial.Origin, Headers: headers,
-		ClientBuildNumber: nil, ClientMasteringNumber: nil, ChinaMainland: nil,
+		ClientBuildNumber: nil, ClientMasteringNumber: nil, ChinaMainland: nil, DriveServiceURL: "",
 	}
 
 	if value, exists := initial.Params[protocol.ClientBuildNumberName]; exists {

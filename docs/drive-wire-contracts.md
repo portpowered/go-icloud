@@ -17,7 +17,7 @@ the current fixtures have no provider query on their transfer URLs.
 
 Canonical models live in `api/external/drive-models.openapi.yaml` and generate
 `pkg/dependencymodels/drive`. The internal route and content clients import those
-definitions. `make generate-api` regenerates all three artifacts; contract tests
+definitions. `make generate-api` regenerates all three artifacts and schema-owned protocol constants; contract tests
 regenerate from the checked-in configs and reject drift (SCHEMA-10, SCHEMA-16).
 
 ## Evidence and verification
@@ -70,12 +70,30 @@ offset bug when the SDK later exposes UTC projections.
 
 ## Remaining work
 
-This is a wire-contract milestone. It does not yet execute the Drive scenarios
-through the generated clients or public SDK. Public projections, node navigation
-and refresh state, transfer behavior, typed error parity and the complete
-source-to-schema runtime route gate remain open. Existing SDK coverage percentages
-still describe the five account methods; schema validation does not count as
-Drive SDK replay coverage (LIB-07).
+The public SDK now exposes `GetDriveNode` and `ListDriveLibraries`. Nine existing
+portable scenarios execute the public methods and compare the full semantic
+result, while matching every paired request and consuming every exchange. They
+cover empty, one and many records, shared selectors and provider refusals.
+Independent public projections preserve recursive children and unknown JSON.
+Provider-shape controls retain exact failure bytes and reject missing records;
+string encoding and empty-share omission controls bind the pinned reference's
+wire behavior. Credentials remain per-request on the shared web transport
+(API-02, API-03, API-13).
+
+The document-registration operation is named `DriveRegisterDocument`, leaving
+`DriveUpdateDocument` as its request-model name. This prevents ambiguous generated
+operation-path and model-property constants; generation rejects collisions and
+checks both account and Drive artifacts for drift (SCHEMA-10).
+
+Node navigation and refresh state, mutations, transfers and the complete
+source-to-schema runtime route gate remain open. Nine read scenarios do not
+establish parity for all 67 Drive scenarios. The non-generated library coverage
+measurement includes the five account reads and these two Drive methods;
+schema validation alone is not SDK replay coverage (LIB-07).
+Replay measures 374/462 handwritten SDK/internal statements (81.0%); unit
+measures 393/462 (85.1%); combined measures 428/462 (92.6%). Live Go integration
+is still pending. `make lint` and `make check` pass, including the 67 reference
+test methods and all 437 portable HTTP scenarios/991 pairs.
 
 The transfer issuer checks currently cover observed fixture URL forms. Exact
 provider query binding, complete common-parameter/header validation, provider

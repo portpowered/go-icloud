@@ -100,7 +100,7 @@ func TestAccountServicesRejectInvalidProviderShapes(t *testing.T) {
 			`{"storageUsageInfo":{"usedStorageInBytes":null,"totalStorageInBytes":100}}`,
 			`{"storageUsageInfo":{"usedStorageInBytes":-1,"totalStorageInBytes":100}}`,
 			`{"storageUsageInfo":{"usedStorageInBytes":0,"totalStorageInBytes":100},"storageUsageByMedia":[{}]}`},
-		"plan": {`not-json`},
+		"plan": {invalidProviderJSON},
 	}
 
 	for name, bodies := range cases {

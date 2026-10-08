@@ -433,8 +433,8 @@ type DriveGetDownloadTokensParams struct {
 	Connection *DriveConnection `json:"Connection,omitempty"`
 }
 
-// DriveUpdateDocumentParams defines parameters for DriveUpdateDocument.
-type DriveUpdateDocumentParams struct {
+// DriveRegisterDocumentParams defines parameters for DriveRegisterDocument.
+type DriveRegisterDocumentParams struct {
 	// ClientId Authenticated client identifier.
 	ClientId DriveClientID `form:"clientId" json:"clientId"`
 
@@ -734,14 +734,14 @@ type ClientInterface interface {
 	// Corresponds with GET /ws/{zone}/download/by_id (the `DriveGetDownloadTokens` operationId).
 	DriveGetDownloadTokens(ctx context.Context, zone string, params *DriveGetDownloadTokensParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// DriveUpdateDocumentWithBody Register uploaded document content
+	// DriveRegisterDocumentWithBody Register uploaded document content
 	//
 	// Provider registration result.
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with POST /ws/{zone}/update/documents (the `DriveUpdateDocument` operationId).
-	DriveUpdateDocumentWithBody(ctx context.Context, zone string, params *DriveUpdateDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with POST /ws/{zone}/update/documents (the `DriveRegisterDocument` operationId).
+	DriveRegisterDocumentWithBody(ctx context.Context, zone string, params *DriveRegisterDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DriveGetUploadDestinationWithBody Prepare a document upload
 	//
@@ -1034,15 +1034,15 @@ func (c *Client) DriveGetDownloadTokens(ctx context.Context, zone string, params
 	return c.Client.Do(req)
 }
 
-// DriveUpdateDocumentWithBody Register uploaded document content
+// DriveRegisterDocumentWithBody Register uploaded document content
 //
 // Provider registration result.
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with POST /ws/{zone}/update/documents (the `DriveUpdateDocument` operationId).
-func (c *Client) DriveUpdateDocumentWithBody(ctx context.Context, zone string, params *DriveUpdateDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDriveUpdateDocumentRequestWithBody(c.Server, zone, params, contentType, body)
+// Corresponds with POST /ws/{zone}/update/documents (the `DriveRegisterDocument` operationId).
+func (c *Client) DriveRegisterDocumentWithBody(ctx context.Context, zone string, params *DriveRegisterDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDriveRegisterDocumentRequestWithBody(c.Server, zone, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -2634,8 +2634,8 @@ func NewDriveGetDownloadTokensRequest(server string, zone string, params *DriveG
 	return req, nil
 }
 
-// NewDriveUpdateDocumentRequestWithBody constructs an http.Request for the DriveUpdateDocument method, with any body, and a specified content type
-func NewDriveUpdateDocumentRequestWithBody(server string, zone string, params *DriveUpdateDocumentParams, contentType string, body io.Reader) (*http.Request, error) {
+// NewDriveRegisterDocumentRequestWithBody constructs an http.Request for the DriveRegisterDocument method, with any body, and a specified content type
+func NewDriveRegisterDocumentRequestWithBody(server string, zone string, params *DriveRegisterDocumentParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3177,14 +3177,14 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with GET /ws/{zone}/download/by_id (the `DriveGetDownloadTokens` operationId).
 	DriveGetDownloadTokensWithResponse(ctx context.Context, zone string, params *DriveGetDownloadTokensParams, reqEditors ...RequestEditorFn) (*DriveGetDownloadTokensResponse, error)
 
-	// DriveUpdateDocumentWithBodyWithResponse Register uploaded document content
+	// DriveRegisterDocumentWithBodyWithResponse Register uploaded document content
 	//
 	// Provider registration result.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with POST /ws/{zone}/update/documents (the `DriveUpdateDocument` operationId).
-	DriveUpdateDocumentWithBodyWithResponse(ctx context.Context, zone string, params *DriveUpdateDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveUpdateDocumentResponse, error)
+	// Corresponds with POST /ws/{zone}/update/documents (the `DriveRegisterDocument` operationId).
+	DriveRegisterDocumentWithBodyWithResponse(ctx context.Context, zone string, params *DriveRegisterDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveRegisterDocumentResponse, error)
 
 	// DriveGetUploadDestinationWithBodyWithResponse Prepare a document upload
 	//
@@ -3628,7 +3628,7 @@ func (r DriveGetDownloadTokensResponse) ContentType() string {
 	return ""
 }
 
-type DriveUpdateDocumentResponse struct {
+type DriveRegisterDocumentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -3638,22 +3638,22 @@ type DriveUpdateDocumentResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r DriveUpdateDocumentResponse) GetJSON200() *DriveUpdatedDocuments {
+func (r DriveRegisterDocumentResponse) GetJSON200() *DriveUpdatedDocuments {
 	return r.JSON200
 }
 
 // GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r DriveUpdateDocumentResponse) GetJSONDefault() *DriveFailure {
+func (r DriveRegisterDocumentResponse) GetJSONDefault() *DriveFailure {
 	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
-func (r DriveUpdateDocumentResponse) GetBody() []byte {
+func (r DriveRegisterDocumentResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r DriveUpdateDocumentResponse) Status() string {
+func (r DriveRegisterDocumentResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3661,7 +3661,7 @@ func (r DriveUpdateDocumentResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r DriveUpdateDocumentResponse) StatusCode() int {
+func (r DriveRegisterDocumentResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3669,7 +3669,7 @@ func (r DriveUpdateDocumentResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r DriveUpdateDocumentResponse) ContentType() string {
+func (r DriveRegisterDocumentResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -3949,19 +3949,19 @@ func (c *ClientWithResponses) DriveGetDownloadTokensWithResponse(ctx context.Con
 	return ParseDriveGetDownloadTokensResponse(rsp)
 }
 
-// DriveUpdateDocumentWithBodyWithResponse Register uploaded document content
+// DriveRegisterDocumentWithBodyWithResponse Register uploaded document content
 //
 // Provider registration result.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with POST /ws/{zone}/update/documents (the `DriveUpdateDocument` operationId).
-func (c *ClientWithResponses) DriveUpdateDocumentWithBodyWithResponse(ctx context.Context, zone string, params *DriveUpdateDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveUpdateDocumentResponse, error) {
-	rsp, err := c.DriveUpdateDocumentWithBody(ctx, zone, params, contentType, body, reqEditors...)
+// Corresponds with POST /ws/{zone}/update/documents (the `DriveRegisterDocument` operationId).
+func (c *ClientWithResponses) DriveRegisterDocumentWithBodyWithResponse(ctx context.Context, zone string, params *DriveRegisterDocumentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveRegisterDocumentResponse, error) {
+	rsp, err := c.DriveRegisterDocumentWithBody(ctx, zone, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseDriveUpdateDocumentResponse(rsp)
+	return ParseDriveRegisterDocumentResponse(rsp)
 }
 
 // DriveGetUploadDestinationWithBodyWithResponse Prepare a document upload
@@ -4276,15 +4276,15 @@ func ParseDriveGetDownloadTokensResponse(rsp *http.Response) (*DriveGetDownloadT
 	return response, nil
 }
 
-// ParseDriveUpdateDocumentResponse parses an HTTP response from a DriveUpdateDocumentWithResponse call
-func ParseDriveUpdateDocumentResponse(rsp *http.Response) (*DriveUpdateDocumentResponse, error) {
+// ParseDriveRegisterDocumentResponse parses an HTTP response from a DriveRegisterDocumentWithResponse call
+func ParseDriveRegisterDocumentResponse(rsp *http.Response) (*DriveRegisterDocumentResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &DriveUpdateDocumentResponse{
+	response := &DriveRegisterDocumentResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

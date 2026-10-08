@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: iCloud client models
   version: 0.1.0
-  description: Caller-owned authentication context and public account device results, independent of provider response envelopes.
+  description: Caller-owned authentication context and public account and Drive read results, independent of provider response envelopes.
 paths: {}
 components:
   schemas:
@@ -52,12 +52,13 @@ components:
         value: {type: string, description: Header value; authentication values may contain secrets.}
     AuthContext:
       type: object
-      required: [accountID, clientID, accountServiceURL, headers]
+      required: [accountID, clientID, headers]
       description: Caller-owned account identity and web authentication headers. The reusable client never saves this state.
       properties:
         accountID: {type: string, minLength: 1, x-go-name: AccountID, description: Authenticated account identifier returned by login.}
         clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
-        accountServiceURL: {type: string, format: uri, x-go-name: AccountServiceURL, description: HTTPS account origin returned by authenticated service discovery.}
+        accountServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: AccountServiceURL, description: HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.}
+        driveServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: DriveServiceURL, description: HTTPS Drive origin from authenticated discovery; required by Drive operations.}
         chinaMainland: {type: boolean, default: false, description: Authenticated account region; true selects the mainland China subscription gateway.}
         clientBuildNumber: {type: string, description: Optional build parameter from the authentication context; omission remains omission.}
         clientMasteringNumber: {type: string, description: Optional mastering parameter from the authentication context; omission remains omission.}
@@ -219,3 +220,76 @@ components:
         summary: {$ref: '#/components/schemas/UnknownJSONValue'}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
       example: {summary: {}, metadata: {statusCode: 200, headers: []}}
+
+    DriveShareID:
+      type: object
+      description: Provider sharing descriptor; no fixed field is universally required by the reference.
+      properties:
+        owner: {type: string}
+        zone: {type: string}
+        share: {type: string}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    DriveNode:
+      type: object
+      description: Optional provider node metadata. Folder contents may be absent on a status-only response.
+      properties:
+        drivewsid: {type: string}
+        docwsid: {type: string}
+        name: {type: string}
+        extension: {type: string}
+        etag: {type: string}
+        zone: {type: string}
+        type:
+          type: string
+          description: Open provider node kind; known values include FILE and FOLDER.
+          x-extensible-enum: [FILE, FOLDER]
+        status:
+          type: string
+          description: Open provider status; known values include OK and NOT_FOUND.
+          x-extensible-enum: [OK, NOT_FOUND]
+        size:
+          anyOf:
+            - {type: integer, format: int64, minimum: 0}
+            - {type: string, pattern: '^[0-9]+$'}
+          description: File size in bytes; reference conversion accepts integer or decimal text. Omitted for folders.
+          x-go-type: json.RawMessage
+        dateChanged: {type: string, format: date-time}
+        dateModified: {type: string, format: date-time}
+        lastOpenTime: {type: string, format: date-time}
+        restorePath: {type: string}
+        shareID: {$ref: '#/components/schemas/DriveShareID'}
+        items: {type: array, items: {$ref: '#/components/schemas/DriveNode'}}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    GetDriveNodeRequest:
+      type: object
+      required: [auth, nodeID]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        nodeID: {type: string, minLength: 1, x-go-name: NodeID, description: Drive node identifier from a listing; shared nodes require their returned sharing descriptor.}
+        shareID: {$ref: '#/components/schemas/DriveShareID'}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}
+        nodeID: 'FOLDER::synthetic::root'
+    GetDriveNodeResult:
+      type: object
+      required: [node, metadata]
+      description: Fresh node metadata and optional children. A missing child list remains distinguishable from an empty list.
+      properties:
+        node: {$ref: '#/components/schemas/DriveNode'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {node: {drivewsid: 'FOLDER::synthetic::root', items: []}, metadata: {statusCode: 200, headers: []}}
+    ListDriveLibrariesRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, driveServiceURL: 'https://drive.example.invalid', headers: []}
+    ListDriveLibrariesResult:
+      type: object
+      required: [libraries, additionalMetadata, metadata]
+      properties:
+        libraries: {type: array, items: {$ref: '#/components/schemas/DriveNode'}}
+        additionalMetadata: {type: object, additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {libraries: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
