@@ -584,7 +584,45 @@ interfacebloat exception is accepted as a narrow architecture choice supporting
 one traced interface; API-01 requires operations together in one file and does
 not itself require a single interface. No global linter is disabled (GO-15).
 
-Verdict: **limited working-tree pass**. Exact-SHA approval after CI remains
-required. Twenty-five Drive read/mutation scenarios do not establish parity for
+Verdict: **limited milestone pass**. Exact-SHA review approved
+`97b5449b9196ddae324f2fbbadc012e5d039bc2a` after
+[CI 37800827064](https://github.com/portpowered/go-icloud/actions/runs/37800827064)
+passed. PR #8 merged in `f3fe89ba4e95e5b1a759cb3df9726f68d090cd1b`; main passed
+[CI 37801891576](https://github.com/portpowered/go-icloud/actions/runs/37801891576).
+Twenty-five Drive read/mutation scenarios do not establish parity for
 all 67 reference scenarios. Navigation, transfers and complete migration/release
 acceptance remain open.
+
+### Interim Drive SDK download audit
+
+The independent reviewer passed SDK, replay, contract, generator-drift and
+consumer-build checks under the race detector. It found an unquoted comma in
+an inline YAML description, which silently created an extra sibling field.
+Quoting the description and regenerating resolved the schema-example failure;
+the reviewer independently verified the correction (SCHEMA-11).
+
+Seven existing download scenarios verify full public status/header/byte results
+and typed failures through the generated token request and issuer-bound content
+adapter. Focused controls check token preference, escaped paths/zones, repeated
+provider queries, binary data labeled JSON, both-stage cleanup and copied prior
+response metadata. Repeated two-account paired downloads exercise both stages
+on one shared client with all eight expected exchanges consumed (LIB-05, API-03).
+The reviewer found that identical stage cookie values and header-count checks
+could hide swapped metadata. Distinct tenant/stage values and exact header-value
+assertions now detect that gap; the reviewer independently passed the revised
+race replay.
+
+The reviewer additionally probed an HTTP 200 JSON content refusal: downloaded
+bytes are suppressed, while content response headers and copied preceding
+token metadata remain caller-visible. Documentation explicitly states that
+content requests reuse supplied headers and expose intermediate cookies
+afterward. Complete reference session cookie-jar parity remains open.
+
+The final status-policy audit independently passed 204/206 SDK and contract
+controls. Successful content accepts 2xx responses while ordinary reads retain
+their existing exact-200 policy; JSON provider-error handling remains active.
+
+Verdict: **limited working-tree pass**. Exact-SHA approval after CI remains
+required. Thirty-two Drive read/mutation/download scenarios do not establish
+parity for all 67 reference scenarios. Navigation, uploads and full migration,
+documentation and release acceptance remain open.

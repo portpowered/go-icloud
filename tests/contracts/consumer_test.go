@@ -28,6 +28,7 @@ func Devices(ctx context.Context, auth icloud.AuthContext) (*icloud.GetAccountDe
   _ = failure.StatusCode()
   _ = failure.ResponseHeaders()
   _ = failure.ResponseBody()
+  _ = failure.PriorResponses()
  }
  return result, err
 }
@@ -50,6 +51,8 @@ func Drive(ctx context.Context, auth icloud.AuthContext, nodeID string) error {
  _, err = client.GetDriveNode(ctx, icloud.GetDriveNodeRequest{Auth: auth, NodeID: nodeID})
  if err != nil { return err }
  _, err = client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth})
+ if err != nil { return err }
+ _, err = client.DownloadDriveFile(ctx, icloud.DownloadDriveFileRequest{Auth: auth, DocumentID: nodeID})
  return err
 }
 

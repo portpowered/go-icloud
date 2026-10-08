@@ -178,8 +178,36 @@ _ = libraries.AdditionalMetadata // unknown envelope values
 
 Both methods return response metadata and the typed errors described above.
 Nine synthetic paired scenarios verify these two reads against the pinned
-reference. Drive navigation sessions and transfers remain in progress;
+reference. Drive navigation sessions and uploads remain in progress;
 see [Drive contracts](docs/drive-wire-contracts.md).
+
+## Go Drive downloads
+
+Set `auth.DriveDocumentServiceURL` to the document-service origin returned by
+authenticated discovery. Supply the document identifier from node metadata;
+it differs from the Drive node identifier. Pass the node's zone when available;
+omission uses the reference private document zone.
+
+```go
+download, err := client.DownloadDriveFile(ctx, icloud.DownloadDriveFileRequest{
+    Auth: auth, DocumentID: documentID, Zone: &zone,
+})
+if err != nil {
+    return err
+}
+_ = download.Content // exact bytes, including an empty file
+_ = download.TokenMetadata // token response, including authentication updates
+_ = download.Metadata // content response
+```
+
+The SDK selects the provider's data URL before its package URL and preserves
+escaped paths and repeated provider query values. The content request reuses
+your supplied headers. Intermediate Set-Cookie updates are returned afterward;
+this stateless operation does not apply them through a session cookie jar.
+If a later exchange fails, inspect `ClientError.PriorResponses()` for earlier
+response metadata as well as its current response headers and body.
+Seven synthetic paired scenarios verify download results and failures.
+Account-session cookie rotation remains part of the pending session migration.
 
 ## Go Drive changes
 

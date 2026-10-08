@@ -16,6 +16,11 @@ paths:
       summary: Download content from a provider-issued URL
       description: Select data_token.url before package_token.url and append caller authentication parameters as the reference does. Preserve exact bytes, including empty content.
       responses:
+        '2XX':
+          description: Successful exact content bytes, including partial content or an empty no-content response.
+          content:
+            '*/*':
+              schema: {type: string, format: binary}
         '200':
           description: Exact file bytes, including an empty file.
           content:

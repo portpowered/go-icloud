@@ -68,7 +68,8 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 	}
 
 	auth := icloud.AuthContext{
-		AccountID: initial.Params[protocol.DSIDName], ClientID: initial.Params[protocol.ClientIDName],
+		DriveDocumentServiceURL: "",
+		AccountID:               initial.Params[protocol.DSIDName], ClientID: initial.Params[protocol.ClientIDName],
 		AccountServiceURL: initial.Origin, Headers: headers,
 		ClientBuildNumber: nil, ClientMasteringNumber: nil, ChinaMainland: nil, DriveServiceURL: "",
 	}

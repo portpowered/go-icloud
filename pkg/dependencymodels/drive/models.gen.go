@@ -11,6 +11,21 @@ import (
 	"github.com/oapi-codegen/nullable"
 )
 
+// Defines values for DriveDefaultDocumentZone.
+const (
+	ComAppleCloudDocs DriveDefaultDocumentZone = "com.apple.CloudDocs"
+)
+
+// Valid indicates whether the value is a known member of the DriveDefaultDocumentZone enum.
+func (e DriveDefaultDocumentZone) Valid() bool {
+	switch e {
+	case ComAppleCloudDocs:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DriveFileFlagsIsExecutable.
 const (
 	DriveFileFlagsIsExecutableFalse DriveFileFlagsIsExecutable = false
@@ -160,6 +175,9 @@ type DriveCreatedFolders struct {
 	Folders              *[]DriveNode                `json:"folders,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
+
+// DriveDefaultDocumentZone Private document zone used by the reference when the caller omits a zone.
+type DriveDefaultDocumentZone string
 
 // DriveDocumentData defines model for DriveDocumentData.
 type DriveDocumentData struct {

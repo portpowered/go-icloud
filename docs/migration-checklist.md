@@ -91,9 +91,10 @@ The public SDK now implements the five account reads, with all 34 portable
 account scenarios/40 exchanges executed through public methods and independent
 schema-generated projections. Family/photo flows derive IDs from public results.
 Two-account replay checks concurrency and repeated fresh requests without shared
-cookies. An independent consumer module compiles. Current handwritten SDK and
-internal transport coverage is 81.6% replay, 82.5% unit and 92.2% combined;
-these figures do not represent the complete service port (LIB-07).
+cookies. An independent consumer module compiles. The account milestone measured
+81.6% replay, 82.5% unit and 92.2% combined. With ten Drive methods, current
+handwritten SDK and internal transport coverage is 82.9% replay, 86.8% unit and
+92.6% combined; these figures do not represent the complete service port (LIB-07).
 
 The portable HTTP suite now has 437 scenarios and 991 paired exchanges after
 adding selected authentication setup, verification, consent, logout and SRP
@@ -125,8 +126,10 @@ controls reject changed cursor, zone, node state and unconsumed traffic.
 The [Drive wire contracts](drive-wire-contracts.md) now bind all 115 exchanges to
 13 operation contracts, with generated canonical models and internal clients.
 Contract validation, drift checks and negative controls pass. Drive client/SDK
-semantic replay and the full source/schema runtime gate remain open; these
-contract checks do not increase the SDK coverage numerator.
+semantic replay now covers 32/67 scenarios: nine reads, sixteen mutations and
+seven downloads. Node navigation, uploads, intermediate session cookie rotation
+and the full source/schema runtime gate remain open; schema-only contract checks
+do not increase the SDK coverage numerator.
 Find My has 30 scenarios and 55 pairs after adding explicit refresh, family
 readiness/progress/retry bounds and provider refusal at command/token stages.
 Declared waits are consumed offline; received device/user/server state and

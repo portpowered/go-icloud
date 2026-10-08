@@ -281,3 +281,7 @@ components:
         errorCode: {$ref: '#/components/schemas/NullableJSONValue'}
         error: {$ref: '#/components/schemas/NullableJSONValue'}
       additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    DriveDefaultDocumentZone:
+      type: string
+      description: Private document zone used by the reference when the caller omits a zone.
+      enum: [com.apple.CloudDocs]

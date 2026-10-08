@@ -19,6 +19,13 @@ type BytesResponse struct {
 	Headers http.Header
 }
 
+type responsePolicy uint8
+
+const (
+	exactOK responsePolicy = iota
+	successfulContent
+)
+
 func (client *Client) read(ctx context.Context, auth RequestContext,
 	request *http.Request, suffix string,
 ) (*BytesResponse, error) {
@@ -42,6 +49,10 @@ func (client *Client) read(ctx context.Context, auth RequestContext,
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + suffix
 
+	return client.readPrepared(request, exactOK)
+}
+
+func (client *Client) readPrepared(request *http.Request, policy responsePolicy) (*BytesResponse, error) {
 	response, err := client.httpClient.Do(request)
 	if err != nil {
 		return nil, failure(Transport, err, nil, nil)
@@ -55,7 +66,7 @@ func (client *Client) read(ctx context.Context, auth RequestContext,
 		return nil, failure(Transport, err, response, body)
 	}
 
-	if response.StatusCode != http.StatusOK {
+	if !acceptResponseStatus(response.StatusCode, policy) {
 		return nil, failure(Provider, nil, response, body)
 	}
 
@@ -65,6 +76,11 @@ func (client *Client) read(ctx context.Context, auth RequestContext,
 	}
 
 	return result, nil
+}
+
+func acceptResponseStatus(status int, policy responsePolicy) bool {
+	return status == http.StatusOK ||
+		(policy == successfulContent && status >= http.StatusOK && status < http.StatusMultipleChoices)
 }
 
 func responseProviderError(response *BytesResponse) bool {
@@ -82,5 +98,5 @@ func responseProviderError(response *BytesResponse) bool {
 
 func responseFailure(stage Stage, cause error, response *BytesResponse) *ResponseError {
 	return &ResponseError{Stage: stage, Cause: cause, Body: response.Body,
-		Status: response.Status, Headers: response.Headers}
+		Status: response.Status, Headers: response.Headers, Prior: nil}
 }

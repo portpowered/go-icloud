@@ -16,6 +16,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// DownloadDriveFile retrieves exact document bytes through a provider-issued content URL.
+	DownloadDriveFile(ctx context.Context, request DownloadDriveFileRequest) (*DownloadDriveFileResult, error)
 	// CreateDriveFolder creates one named folder.
 	CreateDriveFolder(ctx context.Context, request CreateDriveFolderRequest) (*CreateDriveFolderResult, error)
 	// RenameDriveNode requests a new node name using its supplied version token.
@@ -203,6 +205,34 @@ func (sdk *SDK) GetAccountPlanSummary(ctx context.Context,
 	}
 
 	return &GetAccountPlanSummaryResult{Summary: response.Body, Metadata: publicMetadata(response)}, nil
+}
+
+// DownloadDriveFile first locates content using the account's document-service origin.
+// The caller owns the returned token-response and content-response authentication updates.
+func (sdk *SDK) DownloadDriveFile(ctx context.Context,
+	request DownloadDriveFileRequest,
+) (*DownloadDriveFileResult, error) {
+	const operation = "DownloadDriveFile"
+
+	boundary, err := accountRequestContext(request.Auth)
+	if err != nil {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
+	}
+
+	boundary.Origin = request.Auth.DriveDocumentServiceURL
+
+	zone := string(drive.ComAppleCloudDocs)
+	if request.Zone != nil {
+		zone = *request.Zone
+	}
+
+	response, err := sdk.web.DownloadDriveFile(ctx, boundary, request.DocumentID, zone)
+	if err != nil {
+		return nil, adaptFailure(operation, err)
+	}
+
+	return &DownloadDriveFileResult{Content: response.Content.Body,
+		TokenMetadata: publicMetadata(response.Token), Metadata: publicMetadata(response.Content)}, nil
 }
 
 // GetDriveNode retrieves the node selected by its provider identifier and optional sharing descriptor.

@@ -31,9 +31,11 @@ type accountScenario struct {
 }
 
 type accountInitial struct {
-	Origin  string            `json:"origin"`
-	Params  map[string]string `json:"params"`
-	Headers map[string]string `json:"headers"`
+	//nolint:tagliatelle // LIB-05: the portable fixture fixes this field spelling.
+	DocumentOrigin string            `json:"document_origin"`
+	Origin         string            `json:"origin"`
+	Params         map[string]string `json:"params"`
+	Headers        map[string]string `json:"headers"`
 	//nolint:tagliatelle // LIB-05: the portable fixture fixes this field spelling.
 	China bool `json:"china_mainland"`
 }
