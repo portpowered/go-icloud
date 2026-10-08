@@ -21,8 +21,8 @@ the contract; private values, cookies and captures are not published
 (SCHEMA-08, SCHEMA-12). Captured Accept negotiation includes `*/*`, so the
 schema accepts it alongside the synthetic JSON negotiation (SCHEMA-09).
 
-All examples in this schema are invented. The 26 public account replay
-scenarios contain 32 synthetic exchanges. The contract suite checks their
+All examples in this schema are invented. The 34 public account replay
+scenarios contain 40 synthetic exchanges. The contract suite checks their
 JSON response shapes using the actual operation's status and media schema,
 checks explicit operation ownership, validates ten schema
 examples, and checks known required fields, types and byte-count bounds.
@@ -30,7 +30,7 @@ Binary member photos remain uninterpreted bytes, including empty content.
 These counts demonstrate wire-contract checks, not SDK semantic replay or
 live endpoint coverage (LIB-07).
 
-The generated Go client now executes all 26 synthetic account scenarios against
+The generated Go client now executes all 34 synthetic account scenarios against
 strict paired replay. Requests originate from portable initial account state
 and operation inputs, rather than from the expected request. Result checks bind
 device records, family names, storage bytes, plan JSON, and member-photo
@@ -46,7 +46,7 @@ public SDK driver now runs all eleven account-device scenarios, including empty,
 one and multiple devices, HTTP 503, and seven HTTP 200 provider-error envelopes.
 The same new synthetic cases pass the pinned Python reference with no network.
 Public projections come from `api/client-models.openapi.yaml`, independently of
-wire types (API-02). Contract tests validate its two invented examples, regenerate
+wire types (API-02). Contract tests validate its ten invented examples, regenerate
 its models, and compile an independent consumer module.
 
 `GetAccountDevices` performs fresh requests with caller-owned `AuthContext`.
@@ -57,16 +57,24 @@ Typed errors retain exact body/headers and causes without displaying private
 provider text. Unit controls cover cancellation, timeouts, unknown metadata,
 HTTP failure classes, invalid provider bodies and falsy error fields.
 
+All 34 account scenarios now execute the public SDK as well as the generated
+client. Family/photo flows obtain member DSIDs from the public family result.
+Storage binds usage, quota, media and unknown account metadata. Plan summaries
+bind the opaque JSON value, including arrays and null, for global/China gateways.
+New reference-derived cases cover omitted families, named nulls, provider refusal,
+zero byte totals, usage above quota and multiple media categories. They pass the
+pinned Python reference offline. Shared response handling reads/closes every body;
+unit controls verify read/close causes suppress output across all four new methods.
+
 Non-generated coverage includes `pkg/icloud` and handwritten `internal` code,
-including the transport and binary-photo adapter. Replay: 150/187 statements
-(80.2%); unit: 165/187 (88.2%); combined: 171/187 (91.4%). These measurements
-are separate (LIB-07). They describe the current account-device SDK and transport
-milestone, not coverage of all selected iCloud services. Constructor validation
-and generic malformed caller inputs are outside the endpoint replay target.
-Run `make sdk-coverage` for the three measurements. `make check` and blocking CI
-require at least 80% replay and combined coverage; CI saves separate profiles.
-Schema-owned protocol constants have syntax/collision checks (SCHEMA-10).
-The remaining four account operations still have generated-client tests only.
+including the transport and binary-photo adapter. Replay: 284/348 statements
+(81.6%); unit: 287/348 (82.5%); combined: 321/348 (92.2%). These measurements
+are separate (LIB-07) and describe the current five account operations, not all
+selected iCloud services. Constructor validation and generic malformed caller
+inputs are outside the endpoint replay target. Run `make sdk-coverage` for the
+three measurements. `make check` and blocking CI require at least 80% replay
+and combined coverage; CI saves separate profiles. Schema-owned protocol
+constants include inline operation parameters and have syntax/collision checks.
 
 ## Unknown values and remaining work
 
@@ -80,10 +88,15 @@ Generated nullable wrappers preserve both named explicit nulls and omitted
 values. Media usage entries require `mediaKey`, which the reference constructor
 reads unconditionally. Regression checks cover both contracts.
 
-The error object describes currently known JSON fields. Complete authentication
-failure variants, non-JSON failures, request framing, source-to-schema endpoint
-gates, the remaining public projections and account SDK operations remain work in
-progress. This document does not declare complete account schema acceptance.
+Unknown JSON and subscription values explicitly allow every JSON type, including
+null and arrays containing null. An OpenAPI 3.0 union keeps raw additional fields
+compatible with the pinned generator while permitting null in schema validation.
+Named nullable values retain separate absent/explicit-null wrappers.
+
+The error object describes currently known JSON fields. Authentication-specific
+error classification, complete failure/framing contracts and the full
+source-to-schema endpoint gate remain work in progress. This document does not
+declare complete account schema acceptance.
 Other services and physical security-key behavior are outside this account
 contract milestone. Generic invalid caller inputs do not define the selected
 endpoint replay coverage target.

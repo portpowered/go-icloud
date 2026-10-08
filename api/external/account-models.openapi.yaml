@@ -8,6 +8,12 @@ components:
   schemas:
     UnknownJSONValue:
       description: Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+      anyOf:
+        - {type: object, nullable: true}
+        - {type: array, items: {$ref: '#/components/schemas/UnknownJSONValue'}}
+        - {type: string}
+        - {type: number}
+        - {type: boolean}
       x-go-type: json.RawMessage
     NullableJSONValue:
       description: An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
@@ -15,6 +21,12 @@ components:
       x-go-type: json.RawMessage
     AccountPlanSummary:
       description: Opaque subscription JSON returned unchanged; plan-specific fields have not been observed or defined by the reference.
+      anyOf:
+        - {type: object, nullable: true}
+        - {type: array, items: {$ref: '#/components/schemas/UnknownJSONValue'}}
+        - {type: string}
+        - {type: number}
+        - {type: boolean}
       x-go-type: json.RawMessage
     AccountDevicesResponse:
       type: object

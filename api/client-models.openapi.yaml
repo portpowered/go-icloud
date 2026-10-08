@@ -8,6 +8,12 @@ components:
   schemas:
     UnknownJSONValue:
       description: Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+      anyOf:
+        - {type: object, nullable: true}
+        - {type: array, items: {$ref: '#/components/schemas/UnknownJSONValue'}}
+        - {type: string}
+        - {type: number}
+        - {type: boolean}
       x-go-type: json.RawMessage
     AccountDevice:
       type: object
@@ -52,6 +58,7 @@ components:
         accountID: {type: string, minLength: 1, x-go-name: AccountID, description: Authenticated account identifier returned by login.}
         clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
         accountServiceURL: {type: string, format: uri, x-go-name: AccountServiceURL, description: HTTPS account origin returned by authenticated service discovery.}
+        chinaMainland: {type: boolean, default: false, description: Authenticated account region; true selects the mainland China subscription gateway.}
         clientBuildNumber: {type: string, description: Optional build parameter from the authentication context; omission remains omission.}
         clientMasteringNumber: {type: string, description: Optional mastering parameter from the authentication context; omission remains omission.}
         headers: {type: array, items: {$ref: '#/components/schemas/Header'}, description: Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.}
@@ -91,3 +98,124 @@ components:
       type: string
       description: Inspectable client failure class; errors preserve their cause separately from their safe display message.
       enum: [configuration, transport, canceled, timeout, unauthorized, forbidden, not-found, rate-limited, unavailable, provider, invalid-response]
+
+    NullableJSONValue:
+      description: An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+      nullable: true
+      x-go-type: json.RawMessage
+
+    AccountFamilyMember:
+      type: object
+      properties:
+        lastName: {type: string, nullable: true}
+        dsid: {type: string, nullable: true}
+        originalInvitationEmail: {type: string, nullable: true}
+        fullName: {type: string, nullable: true}
+        appleIdForPurchases: {type: string, nullable: true}
+        appleId: {type: string, nullable: true}
+        firstName: {type: string, nullable: true}
+        ageClassification: {$ref: '#/components/schemas/NullableJSONValue'}
+        familyId: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasParentalPrivileges: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasScreenTimeEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasAskToBuyEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasSharePurchasesEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        shareMyLocationEnabledFamilyMembers: {$ref: '#/components/schemas/NullableJSONValue'}
+        hasShareMyLocationEnabled: {$ref: '#/components/schemas/NullableJSONValue'}
+        dsidForPurchases: {$ref: '#/components/schemas/NullableJSONValue'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    AccountStorageUsage:
+      type: object
+      required: [usedStorageInBytes, totalStorageInBytes]
+      properties:
+        usedStorageInBytes: {type: integer, format: int64, minimum: 0, description: Used storage in bytes.}
+        totalStorageInBytes: {type: integer, format: int64, minimum: 0, description: Total storage in bytes; used storage may exceed quota.}
+        compStorageInBytes: {type: integer, format: int64, minimum: 0, description: Provider comp storage in bytes.}
+        commerceStorageInBytes: {type: integer, format: int64, minimum: 0, description: Provider commerce storage in bytes.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    AccountQuota:
+      type: object
+      properties:
+        overQuota: {type: boolean}
+        haveMaxQuotaTier: {type: boolean}
+        almost-full: {type: boolean}
+        paidQuota: {type: boolean}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+
+    AccountMediaUsage:
+      type: object
+      required: [mediaKey]
+      properties:
+        mediaKey: {type: string}
+        displayLabel: {type: string}
+        displayColor: {type: string, description: Provider display color text; no encoding is inferred.}
+        usageInBytes: {type: integer, format: int64, minimum: 0, description: Storage used by this media category in bytes.}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    GetAccountFamilyRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, accountServiceURL: 'https://account.example.invalid', headers: []}
+    GetAccountFamilyResult:
+      type: object
+      required: [members, additionalMetadata, metadata]
+      description: Fresh family records; an omitted family list is successful and empty.
+      properties:
+        members: {type: array, items: {$ref: '#/components/schemas/AccountFamilyMember'}}
+        additionalMetadata: {$ref: '#/components/schemas/AccountMetadata'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {members: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    GetAccountMemberPhotoRequest:
+      type: object
+      required: [auth, memberID]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        memberID: {type: string, minLength: 1, x-go-name: MemberID, description: Member DSID returned by GetAccountFamily; no complete member object is needed.}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, accountServiceURL: 'https://account.example.invalid', headers: []}
+        memberID: synthetic-member
+    GetAccountMemberPhotoResult:
+      type: object
+      required: [content, metadata]
+      description: Exact member-photo bytes, including an empty successful body, and their HTTP metadata.
+      properties:
+        content: {type: string, format: byte, description: Exact response bytes; do not infer an image format from the provider label.}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {content: '', metadata: {statusCode: 200, headers: []}}
+    GetAccountStorageRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, accountServiceURL: 'https://account.example.invalid', headers: []}
+    GetAccountStorageResult:
+      type: object
+      required: [usage, media, additionalMetadata, metadata]
+      description: Fresh storage usage and available quota/media metadata. Byte counts remain absolute, including zero totals and usage above quota.
+      properties:
+        usage: {$ref: '#/components/schemas/AccountStorageUsage'}
+        quota: {$ref: '#/components/schemas/AccountQuota'}
+        media: {type: array, items: {$ref: '#/components/schemas/AccountMediaUsage'}}
+        additionalMetadata: {$ref: '#/components/schemas/AccountMetadata'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {usage: {usedStorageInBytes: 15, totalStorageInBytes: 100}, media: [], additionalMetadata: {}, metadata: {statusCode: 200, headers: []}}
+    GetAccountPlanSummaryRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+      example:
+        auth: {accountID: synthetic-account, clientID: synthetic-client, accountServiceURL: 'https://account.example.invalid', headers: [], chinaMainland: false}
+    GetAccountPlanSummaryResult:
+      type: object
+      required: [summary, metadata]
+      description: Opaque subscription JSON; no unobserved plan fields are inferred.
+      properties:
+        summary: {$ref: '#/components/schemas/UnknownJSONValue'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+      example: {summary: {}, metadata: {statusCode: 200, headers: []}}

@@ -31,6 +31,19 @@ func Devices(ctx context.Context, auth icloud.AuthContext) (*icloud.GetAccountDe
  }
  return result, err
 }
+func Account(ctx context.Context, auth icloud.AuthContext, memberID string) error {
+ client, err := icloud.New()
+ if err != nil { return err }
+ _, err = client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth})
+ if err != nil { return err }
+ _, err = client.GetAccountMemberPhoto(ctx, icloud.GetAccountMemberPhotoRequest{Auth: auth, MemberID: memberID})
+ if err != nil { return err }
+ _, err = client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth})
+ if err != nil { return err }
+ _, err = client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth})
+ return err
+}
+
 `
 
 func TestPublicSDKCompilesInIndependentConsumer(t *testing.T) {

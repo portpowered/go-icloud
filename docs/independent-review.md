@@ -478,9 +478,25 @@ The reviewer found that Content-Type was still a generator literal rather than
 a schema-owned header. The external account schema now owns that declaration;
 the generator derives the constant and a rename control rejects a hardcoded
 fallback. The reviewer independently verified the fix (SCHEMA-10).
-Verdict: **limited working-tree pass** for GetAccountDevices. Exact-SHA CI
-approval is still required before merge. Remaining account operations, native
+Verdict: **limited milestone pass** for GetAccountDevices. Exact-SHA review
+approved `a0946b15e596a4983b191671b30015513d184063` after
+[CI 37783571677](https://github.com/portpowered/go-icloud/actions/runs/37783571677)
+passed. PR #3 merged in `ff819ed3a2f507824985ebe78026c8d0a2594ee4`; main also passed
+[CI 37784242661](https://github.com/portpowered/go-icloud/actions/runs/37784242661). Remaining account operations, native
 authentication and full migration acceptance remain open.
+
+### Interim remaining account SDK operation audit
+
+The reviewer independently passed all 34 account scenarios/40 pairs through the
+public SDK, projection checks, body cleanup, schema generation and independent
+consumer compilation. It reproduced 81.6% replay, 82.5% unit and 92.2% combined
+handwritten SDK/internal transport coverage. Regional routing stays per request;
+nullable family fields and opaque JSON retain their contract-defined values.
+
+No actionable scoped findings remain. Verdict: **limited working-tree pass**
+for the five account reads. Exact-SHA CI approval is still required before merge.
+Native authentication, other selected services and full migration acceptance
+remain open.
 
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each

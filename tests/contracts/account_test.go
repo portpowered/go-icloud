@@ -133,7 +133,7 @@ func TestPortableAccountResponsesMatchSchemas(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 26 || pairs != 32 {
+	if len(paths) != 34 || pairs != 40 {
 		t.Fatalf("account fixture counts changed: scenarios=%d pairs=%d", len(paths), pairs)
 	}
 }

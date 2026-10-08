@@ -44,8 +44,9 @@ Live login, saved-session reuse, account/device reads, Drive listing, and Photos
 listing/pagination have been exercised. The observed Reminders account returned
 `ZONE_NOT_FOUND` for the reference's requested zone; this is a recorded failure,
 not successful reminder-list coverage.
-The first Go SDK operation is implemented: account device reads. The other
-selected operations and native Go authentication are still being built; the SDK
+The Go SDK implements the five account reads: devices, family, member photos,
+storage and plan summaries. The other selected services and native Go
+authentication are still being built; the SDK
 has not been released. See
 [capture development notes](docs/reference-capture.md) for evidence status,
 reference revisions, recording limitations, and verification commands.
@@ -86,3 +87,54 @@ Use `errors.As` with `*icloud.ClientError` to inspect `Kind`, `StatusCode`,
 Display messages omit provider content and credentials. Raw response details may
 contain private data. See [account contracts](docs/account-wire-contracts.md)
 for replay scope and remaining work.
+
+## Other account reads
+
+Use the same caller-owned `auth` context and deadline on `ctx` for each request.
+Set `auth.ChinaMainland` to a pointer to true for a mainland China account;
+plan summaries use the corresponding gateway. Omission selects the global one.
+
+```go
+family, err := client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth})
+if err != nil {
+    return err
+}
+for _, member := range family.Members {
+    if member.Dsid.IsSpecified() && !member.Dsid.IsNull() {
+        photo, err := client.GetAccountMemberPhoto(ctx, icloud.GetAccountMemberPhotoRequest{
+            Auth: auth, MemberID: member.Dsid.MustGet(),
+        })
+        if err != nil {
+            return err
+        }
+        _ = photo.Content // exact bytes; use photo.Metadata for its reported media type
+    }
+}
+```
+
+Family records retain optional/nullable values and unknown metadata. An omitted
+family list returns an empty slice. Member IDs come from the family response.
+An empty photo body succeeds; byte content is preserved independently of its label.
+
+```go
+storage, err := client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth})
+if err != nil {
+    return err
+}
+fmt.Println(storage.Usage.UsedStorageInBytes, storage.Usage.TotalStorageInBytes)
+```
+
+Storage includes optional quota flags and media categories. Zero totals and
+usage above quota remain absolute byte counts; no undefined percentage is added.
+
+```go
+plan, err := client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth})
+if err != nil {
+    return err
+}
+_ = plan.Summary // json.RawMessage; retains provider fields and JSON number precision
+```
+
+Every account read is fresh and returns response metadata. The typed error
+inspection described above applies to all five methods. These methods are
+verified with synthetic paired replay; native Go live integration is still pending.

@@ -6,6 +6,8 @@ package icloud
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/oapi-codegen/nullable"
 )
 
 // Defines values for ErrorKind.
@@ -75,6 +77,56 @@ type AccountDevice struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// AccountFamilyMember defines model for AccountFamilyMember.
+type AccountFamilyMember struct {
+	// AgeClassification An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	AgeClassification   nullable.Nullable[NullableJSONValue] `json:"ageClassification,omitempty"`
+	AppleId             nullable.Nullable[string]            `json:"appleId,omitempty"`
+	AppleIdForPurchases nullable.Nullable[string]            `json:"appleIdForPurchases,omitempty"`
+	Dsid                nullable.Nullable[string]            `json:"dsid,omitempty"`
+
+	// DsidForPurchases An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	DsidForPurchases nullable.Nullable[NullableJSONValue] `json:"dsidForPurchases,omitempty"`
+
+	// FamilyId An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	FamilyId  nullable.Nullable[NullableJSONValue] `json:"familyId,omitempty"`
+	FirstName nullable.Nullable[string]            `json:"firstName,omitempty"`
+	FullName  nullable.Nullable[string]            `json:"fullName,omitempty"`
+
+	// HasAskToBuyEnabled An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	HasAskToBuyEnabled nullable.Nullable[NullableJSONValue] `json:"hasAskToBuyEnabled,omitempty"`
+
+	// HasParentalPrivileges An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	HasParentalPrivileges nullable.Nullable[NullableJSONValue] `json:"hasParentalPrivileges,omitempty"`
+
+	// HasScreenTimeEnabled An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	HasScreenTimeEnabled nullable.Nullable[NullableJSONValue] `json:"hasScreenTimeEnabled,omitempty"`
+
+	// HasShareMyLocationEnabled An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	HasShareMyLocationEnabled nullable.Nullable[NullableJSONValue] `json:"hasShareMyLocationEnabled,omitempty"`
+
+	// HasSharePurchasesEnabled An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	HasSharePurchasesEnabled nullable.Nullable[NullableJSONValue] `json:"hasSharePurchasesEnabled,omitempty"`
+	LastName                 nullable.Nullable[string]            `json:"lastName,omitempty"`
+	OriginalInvitationEmail  nullable.Nullable[string]            `json:"originalInvitationEmail,omitempty"`
+
+	// ShareMyLocationEnabledFamilyMembers An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+	ShareMyLocationEnabledFamilyMembers nullable.Nullable[NullableJSONValue] `json:"shareMyLocationEnabledFamilyMembers,omitempty"`
+	AdditionalProperties                map[string]UnknownJSONValue          `json:"-"`
+}
+
+// AccountMediaUsage defines model for AccountMediaUsage.
+type AccountMediaUsage struct {
+	// DisplayColor Provider display color text; no encoding is inferred.
+	DisplayColor *string `json:"displayColor,omitempty"`
+	DisplayLabel *string `json:"displayLabel,omitempty"`
+	MediaKey     string  `json:"mediaKey"`
+
+	// UsageInBytes Storage used by this media category in bytes.
+	UsageInBytes         *int64                      `json:"usageInBytes,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
 // AccountMetadata Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
 type AccountMetadata map[string]UnknownJSONValue
 
@@ -89,6 +141,31 @@ type AccountPaymentMethod struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// AccountQuota defines model for AccountQuota.
+type AccountQuota struct {
+	AlmostFull           *bool                       `json:"almost-full,omitempty"`
+	HaveMaxQuotaTier     *bool                       `json:"haveMaxQuotaTier,omitempty"`
+	OverQuota            *bool                       `json:"overQuota,omitempty"`
+	PaidQuota            *bool                       `json:"paidQuota,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AccountStorageUsage defines model for AccountStorageUsage.
+type AccountStorageUsage struct {
+	// CommerceStorageInBytes Provider commerce storage in bytes.
+	CommerceStorageInBytes *int64 `json:"commerceStorageInBytes,omitempty"`
+
+	// CompStorageInBytes Provider comp storage in bytes.
+	CompStorageInBytes *int64 `json:"compStorageInBytes,omitempty"`
+
+	// TotalStorageInBytes Total storage in bytes; used storage may exceed quota.
+	TotalStorageInBytes int64 `json:"totalStorageInBytes"`
+
+	// UsedStorageInBytes Used storage in bytes.
+	UsedStorageInBytes   int64                       `json:"usedStorageInBytes"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
 // AuthContext Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 type AuthContext struct {
 	// AccountID Authenticated account identifier returned by login.
@@ -96,6 +173,9 @@ type AuthContext struct {
 
 	// AccountServiceURL HTTPS account origin returned by authenticated service discovery.
 	AccountServiceURL string `json:"accountServiceURL"`
+
+	// ChinaMainland Authenticated account region; true selects the mainland China subscription gateway.
+	ChinaMainland *bool `json:"chinaMainland,omitempty"`
 
 	// ClientBuildNumber Optional build parameter from the authentication context; omission remains omission.
 	ClientBuildNumber *string `json:"clientBuildNumber,omitempty"`
@@ -132,6 +212,81 @@ type GetAccountDevicesResult struct {
 	PaymentMethods []AccountPaymentMethod `json:"paymentMethods"`
 }
 
+// GetAccountFamilyRequest Example: {"auth":{"accountID":"synthetic-account","accountServiceURL":"https://account.example.invalid","clientID":"synthetic-client","headers":[]}}
+type GetAccountFamilyRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// GetAccountFamilyResult Fresh family records; an omitted family list is successful and empty.
+//
+// Example: {"additionalMetadata":{},"members":[],"metadata":{"headers":[],"statusCode":200}}
+type GetAccountFamilyResult struct {
+	// AdditionalMetadata Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
+	AdditionalMetadata AccountMetadata       `json:"additionalMetadata"`
+	Members            []AccountFamilyMember `json:"members"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+}
+
+// GetAccountMemberPhotoRequest Example: {"auth":{"accountID":"synthetic-account","accountServiceURL":"https://account.example.invalid","clientID":"synthetic-client","headers":[]},"memberID":"synthetic-member"}
+type GetAccountMemberPhotoRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// MemberID Member DSID returned by GetAccountFamily; no complete member object is needed.
+	MemberID string `json:"memberID"`
+}
+
+// GetAccountMemberPhotoResult Exact member-photo bytes, including an empty successful body, and their HTTP metadata.
+//
+// Example: {"content":"","metadata":{"headers":[],"statusCode":200}}
+type GetAccountMemberPhotoResult struct {
+	// Content Exact response bytes; do not infer an image format from the provider label.
+	Content []byte `json:"content"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+}
+
+// GetAccountPlanSummaryRequest Example: {"auth":{"accountID":"synthetic-account","accountServiceURL":"https://account.example.invalid","chinaMainland":false,"clientID":"synthetic-client","headers":[]}}
+type GetAccountPlanSummaryRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// GetAccountPlanSummaryResult Opaque subscription JSON; no unobserved plan fields are inferred.
+//
+// Example: {"metadata":{"headers":[],"statusCode":200},"summary":{}}
+type GetAccountPlanSummaryResult struct {
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+
+	// Summary Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Summary UnknownJSONValue `json:"summary"`
+}
+
+// GetAccountStorageRequest Example: {"auth":{"accountID":"synthetic-account","accountServiceURL":"https://account.example.invalid","clientID":"synthetic-client","headers":[]}}
+type GetAccountStorageRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// GetAccountStorageResult Fresh storage usage and available quota/media metadata. Byte counts remain absolute, including zero totals and usage above quota.
+//
+// Example: {"additionalMetadata":{},"media":[],"metadata":{"headers":[],"statusCode":200},"usage":{"totalStorageInBytes":100,"usedStorageInBytes":15}}
+type GetAccountStorageResult struct {
+	// AdditionalMetadata Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
+	AdditionalMetadata AccountMetadata     `json:"additionalMetadata"`
+	Media              []AccountMediaUsage `json:"media"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata    `json:"metadata"`
+	Quota    *AccountQuota       `json:"quota,omitempty"`
+	Usage    AccountStorageUsage `json:"usage"`
+}
+
 // Header One HTTP response or caller-owned authentication header value; repeated headers remain separate entries.
 type Header struct {
 	// Name Header name.
@@ -140,6 +295,9 @@ type Header struct {
 	// Value Header value; authentication values may contain secrets.
 	Value string `json:"value"`
 }
+
+// NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
+type NullableJSONValue = json.RawMessage
 
 // ResponseMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 type ResponseMetadata struct {
@@ -401,6 +559,410 @@ func (a AccountDevice) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for AccountFamilyMember. Returns the specified
+// element and whether it was found
+func (a AccountFamilyMember) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AccountFamilyMember
+func (a *AccountFamilyMember) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AccountFamilyMember to handle AdditionalProperties
+func (a *AccountFamilyMember) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["ageClassification"]; found {
+		err = json.Unmarshal(raw, &a.AgeClassification)
+		if err != nil {
+			return fmt.Errorf("error reading 'ageClassification': %w", err)
+		}
+		delete(object, "ageClassification")
+	}
+
+	if raw, found := object["appleId"]; found {
+		err = json.Unmarshal(raw, &a.AppleId)
+		if err != nil {
+			return fmt.Errorf("error reading 'appleId': %w", err)
+		}
+		delete(object, "appleId")
+	}
+
+	if raw, found := object["appleIdForPurchases"]; found {
+		err = json.Unmarshal(raw, &a.AppleIdForPurchases)
+		if err != nil {
+			return fmt.Errorf("error reading 'appleIdForPurchases': %w", err)
+		}
+		delete(object, "appleIdForPurchases")
+	}
+
+	if raw, found := object["dsid"]; found {
+		err = json.Unmarshal(raw, &a.Dsid)
+		if err != nil {
+			return fmt.Errorf("error reading 'dsid': %w", err)
+		}
+		delete(object, "dsid")
+	}
+
+	if raw, found := object["dsidForPurchases"]; found {
+		err = json.Unmarshal(raw, &a.DsidForPurchases)
+		if err != nil {
+			return fmt.Errorf("error reading 'dsidForPurchases': %w", err)
+		}
+		delete(object, "dsidForPurchases")
+	}
+
+	if raw, found := object["familyId"]; found {
+		err = json.Unmarshal(raw, &a.FamilyId)
+		if err != nil {
+			return fmt.Errorf("error reading 'familyId': %w", err)
+		}
+		delete(object, "familyId")
+	}
+
+	if raw, found := object["firstName"]; found {
+		err = json.Unmarshal(raw, &a.FirstName)
+		if err != nil {
+			return fmt.Errorf("error reading 'firstName': %w", err)
+		}
+		delete(object, "firstName")
+	}
+
+	if raw, found := object["fullName"]; found {
+		err = json.Unmarshal(raw, &a.FullName)
+		if err != nil {
+			return fmt.Errorf("error reading 'fullName': %w", err)
+		}
+		delete(object, "fullName")
+	}
+
+	if raw, found := object["hasAskToBuyEnabled"]; found {
+		err = json.Unmarshal(raw, &a.HasAskToBuyEnabled)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasAskToBuyEnabled': %w", err)
+		}
+		delete(object, "hasAskToBuyEnabled")
+	}
+
+	if raw, found := object["hasParentalPrivileges"]; found {
+		err = json.Unmarshal(raw, &a.HasParentalPrivileges)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasParentalPrivileges': %w", err)
+		}
+		delete(object, "hasParentalPrivileges")
+	}
+
+	if raw, found := object["hasScreenTimeEnabled"]; found {
+		err = json.Unmarshal(raw, &a.HasScreenTimeEnabled)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasScreenTimeEnabled': %w", err)
+		}
+		delete(object, "hasScreenTimeEnabled")
+	}
+
+	if raw, found := object["hasShareMyLocationEnabled"]; found {
+		err = json.Unmarshal(raw, &a.HasShareMyLocationEnabled)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasShareMyLocationEnabled': %w", err)
+		}
+		delete(object, "hasShareMyLocationEnabled")
+	}
+
+	if raw, found := object["hasSharePurchasesEnabled"]; found {
+		err = json.Unmarshal(raw, &a.HasSharePurchasesEnabled)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasSharePurchasesEnabled': %w", err)
+		}
+		delete(object, "hasSharePurchasesEnabled")
+	}
+
+	if raw, found := object["lastName"]; found {
+		err = json.Unmarshal(raw, &a.LastName)
+		if err != nil {
+			return fmt.Errorf("error reading 'lastName': %w", err)
+		}
+		delete(object, "lastName")
+	}
+
+	if raw, found := object["originalInvitationEmail"]; found {
+		err = json.Unmarshal(raw, &a.OriginalInvitationEmail)
+		if err != nil {
+			return fmt.Errorf("error reading 'originalInvitationEmail': %w", err)
+		}
+		delete(object, "originalInvitationEmail")
+	}
+
+	if raw, found := object["shareMyLocationEnabledFamilyMembers"]; found {
+		err = json.Unmarshal(raw, &a.ShareMyLocationEnabledFamilyMembers)
+		if err != nil {
+			return fmt.Errorf("error reading 'shareMyLocationEnabledFamilyMembers': %w", err)
+		}
+		delete(object, "shareMyLocationEnabledFamilyMembers")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AccountFamilyMember to handle AdditionalProperties
+func (a AccountFamilyMember) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AgeClassification != nil {
+		object["ageClassification"], err = json.Marshal(a.AgeClassification)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'ageClassification': %w", err)
+		}
+	}
+
+	if a.AppleId != nil {
+		object["appleId"], err = json.Marshal(a.AppleId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'appleId': %w", err)
+		}
+	}
+
+	if a.AppleIdForPurchases != nil {
+		object["appleIdForPurchases"], err = json.Marshal(a.AppleIdForPurchases)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'appleIdForPurchases': %w", err)
+		}
+	}
+
+	if a.Dsid != nil {
+		object["dsid"], err = json.Marshal(a.Dsid)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dsid': %w", err)
+		}
+	}
+
+	if a.DsidForPurchases != nil {
+		object["dsidForPurchases"], err = json.Marshal(a.DsidForPurchases)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dsidForPurchases': %w", err)
+		}
+	}
+
+	if a.FamilyId != nil {
+		object["familyId"], err = json.Marshal(a.FamilyId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'familyId': %w", err)
+		}
+	}
+
+	if a.FirstName != nil {
+		object["firstName"], err = json.Marshal(a.FirstName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'firstName': %w", err)
+		}
+	}
+
+	if a.FullName != nil {
+		object["fullName"], err = json.Marshal(a.FullName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'fullName': %w", err)
+		}
+	}
+
+	if a.HasAskToBuyEnabled != nil {
+		object["hasAskToBuyEnabled"], err = json.Marshal(a.HasAskToBuyEnabled)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasAskToBuyEnabled': %w", err)
+		}
+	}
+
+	if a.HasParentalPrivileges != nil {
+		object["hasParentalPrivileges"], err = json.Marshal(a.HasParentalPrivileges)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasParentalPrivileges': %w", err)
+		}
+	}
+
+	if a.HasScreenTimeEnabled != nil {
+		object["hasScreenTimeEnabled"], err = json.Marshal(a.HasScreenTimeEnabled)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasScreenTimeEnabled': %w", err)
+		}
+	}
+
+	if a.HasShareMyLocationEnabled != nil {
+		object["hasShareMyLocationEnabled"], err = json.Marshal(a.HasShareMyLocationEnabled)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasShareMyLocationEnabled': %w", err)
+		}
+	}
+
+	if a.HasSharePurchasesEnabled != nil {
+		object["hasSharePurchasesEnabled"], err = json.Marshal(a.HasSharePurchasesEnabled)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasSharePurchasesEnabled': %w", err)
+		}
+	}
+
+	if a.LastName != nil {
+		object["lastName"], err = json.Marshal(a.LastName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'lastName': %w", err)
+		}
+	}
+
+	if a.OriginalInvitationEmail != nil {
+		object["originalInvitationEmail"], err = json.Marshal(a.OriginalInvitationEmail)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'originalInvitationEmail': %w", err)
+		}
+	}
+
+	if a.ShareMyLocationEnabledFamilyMembers != nil {
+		object["shareMyLocationEnabledFamilyMembers"], err = json.Marshal(a.ShareMyLocationEnabledFamilyMembers)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'shareMyLocationEnabledFamilyMembers': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AccountMediaUsage. Returns the specified
+// element and whether it was found
+func (a AccountMediaUsage) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AccountMediaUsage
+func (a *AccountMediaUsage) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AccountMediaUsage to handle AdditionalProperties
+func (a *AccountMediaUsage) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["displayColor"]; found {
+		err = json.Unmarshal(raw, &a.DisplayColor)
+		if err != nil {
+			return fmt.Errorf("error reading 'displayColor': %w", err)
+		}
+		delete(object, "displayColor")
+	}
+
+	if raw, found := object["displayLabel"]; found {
+		err = json.Unmarshal(raw, &a.DisplayLabel)
+		if err != nil {
+			return fmt.Errorf("error reading 'displayLabel': %w", err)
+		}
+		delete(object, "displayLabel")
+	}
+
+	if raw, found := object["mediaKey"]; found {
+		err = json.Unmarshal(raw, &a.MediaKey)
+		if err != nil {
+			return fmt.Errorf("error reading 'mediaKey': %w", err)
+		}
+		delete(object, "mediaKey")
+	}
+
+	if raw, found := object["usageInBytes"]; found {
+		err = json.Unmarshal(raw, &a.UsageInBytes)
+		if err != nil {
+			return fmt.Errorf("error reading 'usageInBytes': %w", err)
+		}
+		delete(object, "usageInBytes")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AccountMediaUsage to handle AdditionalProperties
+func (a AccountMediaUsage) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.DisplayColor != nil {
+		object["displayColor"], err = json.Marshal(a.DisplayColor)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'displayColor': %w", err)
+		}
+	}
+
+	if a.DisplayLabel != nil {
+		object["displayLabel"], err = json.Marshal(a.DisplayLabel)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'displayLabel': %w", err)
+		}
+	}
+
+	object["mediaKey"], err = json.Marshal(a.MediaKey)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'mediaKey': %w", err)
+	}
+
+	if a.UsageInBytes != nil {
+		object["usageInBytes"], err = json.Marshal(a.UsageInBytes)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'usageInBytes': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for AccountPaymentMethod. Returns the specified
 // element and whether it was found
 func (a AccountPaymentMethod) Get(fieldName string) (value UnknownJSONValue, found bool) {
@@ -533,6 +1095,228 @@ func (a AccountPaymentMethod) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'type': %w", err)
 		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AccountQuota. Returns the specified
+// element and whether it was found
+func (a AccountQuota) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AccountQuota
+func (a *AccountQuota) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AccountQuota to handle AdditionalProperties
+func (a *AccountQuota) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["almost-full"]; found {
+		err = json.Unmarshal(raw, &a.AlmostFull)
+		if err != nil {
+			return fmt.Errorf("error reading 'almost-full': %w", err)
+		}
+		delete(object, "almost-full")
+	}
+
+	if raw, found := object["haveMaxQuotaTier"]; found {
+		err = json.Unmarshal(raw, &a.HaveMaxQuotaTier)
+		if err != nil {
+			return fmt.Errorf("error reading 'haveMaxQuotaTier': %w", err)
+		}
+		delete(object, "haveMaxQuotaTier")
+	}
+
+	if raw, found := object["overQuota"]; found {
+		err = json.Unmarshal(raw, &a.OverQuota)
+		if err != nil {
+			return fmt.Errorf("error reading 'overQuota': %w", err)
+		}
+		delete(object, "overQuota")
+	}
+
+	if raw, found := object["paidQuota"]; found {
+		err = json.Unmarshal(raw, &a.PaidQuota)
+		if err != nil {
+			return fmt.Errorf("error reading 'paidQuota': %w", err)
+		}
+		delete(object, "paidQuota")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AccountQuota to handle AdditionalProperties
+func (a AccountQuota) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.AlmostFull != nil {
+		object["almost-full"], err = json.Marshal(a.AlmostFull)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'almost-full': %w", err)
+		}
+	}
+
+	if a.HaveMaxQuotaTier != nil {
+		object["haveMaxQuotaTier"], err = json.Marshal(a.HaveMaxQuotaTier)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'haveMaxQuotaTier': %w", err)
+		}
+	}
+
+	if a.OverQuota != nil {
+		object["overQuota"], err = json.Marshal(a.OverQuota)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'overQuota': %w", err)
+		}
+	}
+
+	if a.PaidQuota != nil {
+		object["paidQuota"], err = json.Marshal(a.PaidQuota)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'paidQuota': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AccountStorageUsage. Returns the specified
+// element and whether it was found
+func (a AccountStorageUsage) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AccountStorageUsage
+func (a *AccountStorageUsage) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AccountStorageUsage to handle AdditionalProperties
+func (a *AccountStorageUsage) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["commerceStorageInBytes"]; found {
+		err = json.Unmarshal(raw, &a.CommerceStorageInBytes)
+		if err != nil {
+			return fmt.Errorf("error reading 'commerceStorageInBytes': %w", err)
+		}
+		delete(object, "commerceStorageInBytes")
+	}
+
+	if raw, found := object["compStorageInBytes"]; found {
+		err = json.Unmarshal(raw, &a.CompStorageInBytes)
+		if err != nil {
+			return fmt.Errorf("error reading 'compStorageInBytes': %w", err)
+		}
+		delete(object, "compStorageInBytes")
+	}
+
+	if raw, found := object["totalStorageInBytes"]; found {
+		err = json.Unmarshal(raw, &a.TotalStorageInBytes)
+		if err != nil {
+			return fmt.Errorf("error reading 'totalStorageInBytes': %w", err)
+		}
+		delete(object, "totalStorageInBytes")
+	}
+
+	if raw, found := object["usedStorageInBytes"]; found {
+		err = json.Unmarshal(raw, &a.UsedStorageInBytes)
+		if err != nil {
+			return fmt.Errorf("error reading 'usedStorageInBytes': %w", err)
+		}
+		delete(object, "usedStorageInBytes")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AccountStorageUsage to handle AdditionalProperties
+func (a AccountStorageUsage) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.CommerceStorageInBytes != nil {
+		object["commerceStorageInBytes"], err = json.Marshal(a.CommerceStorageInBytes)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'commerceStorageInBytes': %w", err)
+		}
+	}
+
+	if a.CompStorageInBytes != nil {
+		object["compStorageInBytes"], err = json.Marshal(a.CompStorageInBytes)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'compStorageInBytes': %w", err)
+		}
+	}
+
+	object["totalStorageInBytes"], err = json.Marshal(a.TotalStorageInBytes)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'totalStorageInBytes': %w", err)
+	}
+
+	object["usedStorageInBytes"], err = json.Marshal(a.UsedStorageInBytes)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'usedStorageInBytes': %w", err)
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

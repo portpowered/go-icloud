@@ -70,7 +70,7 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 	auth := icloud.AuthContext{
 		AccountID: initial.Params[protocol.DSIDName], ClientID: initial.Params[protocol.ClientIDName],
 		AccountServiceURL: initial.Origin, Headers: headers,
-		ClientBuildNumber: nil, ClientMasteringNumber: nil,
+		ClientBuildNumber: nil, ClientMasteringNumber: nil, ChinaMainland: nil,
 	}
 
 	if value, exists := initial.Params[protocol.ClientBuildNumberName]; exists {
@@ -79,6 +79,11 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 
 	if value, exists := initial.Params[protocol.ClientMasteringNumberName]; exists {
 		auth.ClientMasteringNumber = &value
+	}
+
+	if initial.China {
+		region := true
+		auth.ChinaMainland = &region
 	}
 
 	return auth

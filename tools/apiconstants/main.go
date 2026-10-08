@@ -84,6 +84,7 @@ func accountConstants(document *openapi3.T) (map[string]string, error) {
 			register(operation.OperationID+"Method", strings.ToUpper(method))
 
 			registerOperationMedia(operation, values, register)
+			registerInlineParameters(operation, register)
 		}
 	}
 
@@ -106,6 +107,14 @@ func accountConstants(document *openapi3.T) (map[string]string, error) {
 	}
 
 	return values, conflict
+}
+
+func registerInlineParameters(operation *openapi3.Operation, register func(name, value string)) {
+	for _, parameter := range operation.Parameters {
+		if parameter.Ref == "" {
+			register(operation.OperationID+identifier(parameter.Value.Name)+"Name", parameter.Value.Name)
+		}
+	}
 }
 
 func registerOperationMedia(operation *openapi3.Operation, values map[string]string,
