@@ -52,8 +52,8 @@ has not been released. See
 reference revisions, recording limitations, and verification commands.
 Generated [Find My wire contracts](docs/findmy-wire-contracts.md) now cover the
 reference exchanges, and the [internal transport](docs/findmy-transport.md) replays
-all 70 pairs. The [public Find My session](docs/findmy-session.md) now executes all 37 current
-portable scenarios through these 70 pairs.
+all 86 pairs. The [public Find My session](docs/findmy-session.md) now executes all 47 current
+portable scenarios, including device descriptions and timed background refresh.
 
 ## Supply session cookies
 
@@ -477,3 +477,27 @@ the latest refresh/command/monitor failure, and `MonitorDone()` signals monitor
 termination. `Close()` cancels active requests, queued calls, and waits;
 `Snapshot()` remains available afterward. See the [session guide](docs/findmy-session.md)
 for failure, scheduling, and remaining coverage limits.
+
+### Find My device descriptions
+
+`DescribeDevice` reads the copied session cache, including after Close. It returns
+metadata strings, advertised capabilities, available location, the raw device,
+and the reference status subset. Missing metadata strings default to empty;
+missing status fields become explicit null. A location is available only when
+LOC is true and the device contains a non-null location. An empty location object
+remains available. Additional status fields preserve unknown JSON and large
+integers without rounding.
+
+```go
+description, err := session.DescribeDevice(icloud.FindMyDeviceDescriptionRequest{
+    DeviceID: deviceID, AdditionalStatus: []string{"future"},
+})
+if err != nil { return err }
+_ = description.Capabilities.Location
+_ = description.Location
+_ = description.Status
+```
+
+Call `Refresh` explicitly before describing a device when fresh data is needed.
+The [behavior replay notes](docs/findmy-behavior.md) explain the reference getter
+and timed-monitor cases and the remaining acceptance work.

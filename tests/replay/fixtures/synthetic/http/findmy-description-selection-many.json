@@ -1,0 +1,152 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "findmy",
+  "operation": "device_description",
+  "device_id": "synthetic-device-selected",
+  "initial_state": {
+    "origin": "https://findmy.example.invalid",
+    "token_origin": "https://setup.example.invalid/setup/ws/1",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_data": {
+      "session_token": "synthetic-token"
+    }
+  },
+  "inputs": [
+    {
+      "additionalStatus": [
+        "future",
+        "optional",
+        "missing"
+      ]
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.example.invalid",
+        "path": "/fmipservice/client/web/initClient",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "177"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLWJlZm9yZSIsICJuYW1lIjogIkJlZm9yZSJ9LCB7ImlkIjogInN5bnRoZXRpYy1kZXZpY2Utc2VsZWN0ZWQiLCAibmFtZSI6ICJTZWxlY3RlZCBEZXZpY2UiLCAiZGV2aWNlTW9kZWwiOiAiU3ludGhldGljIE1vZGVsIiwgImRldmljZURpc3BsYXlOYW1lIjogIlN5bnRoZXRpYyBQaG9uZSIsICJkZXZpY2VDbGFzcyI6ICJpUGhvbmUiLCAiZGV2aWNlU3RhdHVzIjogIjIwMCIsICJiYXR0ZXJ5TGV2ZWwiOiAwLjc1LCAibG9zdE1vZGVDYXBhYmxlIjogdHJ1ZSwgImZlYXR1cmVzIjogeyJTTkQiOiB0cnVlLCAiTVNHIjogdHJ1ZSwgIldJUCI6IHRydWUsICJMT0MiOiB0cnVlfSwgImxvY2F0aW9uIjogeyJsYXRpdHVkZSI6IDM3LjEyMzQ1Njc4OSwgImxvbmdpdHVkZSI6IC0xMjIuMTIzNDU2Nzg5LCAiZnV0dXJlIjogW251bGwsIDkwMDcxOTkyNTQ3NDA5OTNdfSwgImZ1dHVyZSI6IHsibmVzdGVkIjogW251bGwsIGZhbHNlLCA5MDA3MTk5MjU0NzQwOTkzXX0sICJvcHRpb25hbCI6IG51bGx9LCB7ImlkIjogInN5bnRoZXRpYy1kZXZpY2UtYWZ0ZXIiLCAibmFtZSI6ICJBZnRlciJ9XX0="
+        }
+      }
+    }
+  ],
+  "result": {
+    "device": {
+      "id": "synthetic-device-selected",
+      "name": "Selected Device",
+      "deviceModel": "Synthetic Model",
+      "deviceDisplayName": "Synthetic Phone",
+      "deviceClass": "iPhone",
+      "deviceStatus": "200",
+      "batteryLevel": 0.75,
+      "lostModeCapable": true,
+      "features": {
+        "SND": true,
+        "MSG": true,
+        "WIP": true,
+        "LOC": true
+      },
+      "location": {
+        "latitude": 37.123456789,
+        "longitude": -122.123456789,
+        "future": [
+          null,
+          9007199254740993
+        ]
+      },
+      "future": {
+        "nested": [
+          null,
+          false,
+          9007199254740993
+        ]
+      },
+      "optional": null
+    },
+    "name": "Selected Device",
+    "model": "Synthetic Model",
+    "modelName": "Synthetic Phone",
+    "deviceType": "iPhone",
+    "location": {
+      "latitude": 37.123456789,
+      "longitude": -122.123456789,
+      "future": [
+        null,
+        9007199254740993
+      ]
+    },
+    "capabilities": {
+      "sound": true,
+      "messaging": true,
+      "erase": true,
+      "lostMode": true,
+      "location": true
+    },
+    "status": {
+      "batteryLevel": 0.75,
+      "deviceDisplayName": "Synthetic Phone",
+      "deviceStatus": "200",
+      "name": "Selected Device",
+      "future": {
+        "nested": [
+          null,
+          false,
+          9007199254740993
+        ]
+      },
+      "optional": null,
+      "missing": null
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "findmy",
+  "operation": "device_description",
+  "device_id": "synthetic-device-0",
+  "initial_state": {
+    "origin": "https://findmy.example.invalid",
+    "token_origin": "https://setup.example.invalid/setup/ws/1",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_data": {
+      "session_token": "synthetic-token"
+    }
+  },
+  "inputs": [
+    {
+      "additionalStatus": [
+        "future",
+        "optional",
+        "missing"
+      ]
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.example.invalid",
+        "path": "/fmipservice/client/web/initClient",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "177"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzZXJ2ZXJDb250ZXh0IjogeyJzeW50aGV0aWMiOiB0cnVlfSwgImNvbnRlbnQiOiBbeyJpZCI6ICJzeW50aGV0aWMtZGV2aWNlLTAiLCAibmFtZSI6ICJTeW50aGV0aWMgRGV2aWNlIiwgImRldmljZU1vZGVsIjogIlN5bnRoZXRpYyBNb2RlbCIsICJkZXZpY2VEaXNwbGF5TmFtZSI6ICJTeW50aGV0aWMgUGhvbmUiLCAiZGV2aWNlQ2xhc3MiOiAiaVBob25lIiwgImRldmljZVN0YXR1cyI6ICIyMDAiLCAiYmF0dGVyeUxldmVsIjogMC43NSwgImxvc3RNb2RlQ2FwYWJsZSI6IHRydWUsICJmZWF0dXJlcyI6IHsiU05EIjogdHJ1ZSwgIk1TRyI6IHRydWUsICJXSVAiOiB0cnVlLCAiTE9DIjogdHJ1ZX0sICJsb2NhdGlvbiI6IHt9LCAiZnV0dXJlIjogeyJuZXN0ZWQiOiBbbnVsbCwgZmFsc2UsIDkwMDcxOTkyNTQ3NDA5OTNdfSwgIm9wdGlvbmFsIjogbnVsbH1dfQ=="
+        }
+      }
+    }
+  ],
+  "result": {
+    "device": {
+      "id": "synthetic-device-0",
+      "name": "Synthetic Device",
+      "deviceModel": "Synthetic Model",
+      "deviceDisplayName": "Synthetic Phone",
+      "deviceClass": "iPhone",
+      "deviceStatus": "200",
+      "batteryLevel": 0.75,
+      "lostModeCapable": true,
+      "features": {
+        "SND": true,
+        "MSG": true,
+        "WIP": true,
+        "LOC": true
+      },
+      "location": {},
+      "future": {
+        "nested": [
+          null,
+          false,
+          9007199254740993
+        ]
+      },
+      "optional": null
+    },
+    "name": "Synthetic Device",
+    "model": "Synthetic Model",
+    "modelName": "Synthetic Phone",
+    "deviceType": "iPhone",
+    "location": {},
+    "capabilities": {
+      "sound": true,
+      "messaging": true,
+      "erase": true,
+      "lostMode": true,
+      "location": true
+    },
+    "status": {
+      "batteryLevel": 0.75,
+      "deviceDisplayName": "Synthetic Phone",
+      "deviceStatus": "200",
+      "name": "Synthetic Device",
+      "future": {
+        "nested": [
+          null,
+          false,
+          9007199254740993
+        ]
+      },
+      "optional": null,
+      "missing": null
+    }
+  }
+}

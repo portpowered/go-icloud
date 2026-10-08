@@ -846,3 +846,53 @@ private captures; the preceding combined captured/synthetic measurement of
 counts do not replace functional parity or full selected-service acceptance
 (LIB-07). Global HTTP inventory remains 456 scenarios/1030 pairs, 74/75 draft
 HTTP routes, zero unmatched; physical security-key interaction remains deferred.
+
+PR15 received scoped exact-commit approval at
+`75bc5e61a5b25ac792c5584c4993983921af8aa5` after
+[CI 37833251608](https://github.com/portpowered/go-icloud/actions/runs/37833251608)
+passed, then merged to `2140a28aae9e89e368057f75a021094466418864`. Its branch was
+deleted and [main CI 37833871353](https://github.com/portpowered/go-icloud/actions/runs/37833871353)
+passed. CI coverage was 1456/1758 replay, 1046/1758 unit and 1566/1758 combined;
+the preceding figures were explicitly local measurements. Full acceptance is open.
+
+### Interim Find My getter and timed-loop audit
+
+Seven new public-description scenarios and three timed-loop streams bring Find My
+to 47 scenarios/86 pairs and global HTTP to 466/1046. Actual pinned Source getters
+and _monitor_thread run under declared offline inputs, then the same functional
+artifacts drive DescribeDevice and the actual Go owned monitor. Strict paired
+requests, whole state, typed failures, response evidence, cookie updates and
+wait/stop ordering are bound. No fixture matcher was relaxed or live command sent.
+
+Permanent Source negative controls reject changed description results, rounded
+unknown integers, missing nulls, wrong wait durations/completion eligibility,
+unused events, premature stop, changed post-tick cache and false failure flags.
+Independent review and final measurements are pending for this follow-up. The
+behavior guide preserves native-auth/reauth and remaining functional/release gaps.
+
+Independent review found the Go monitor driver could finish without a terminal
+stop depending on scheduling, and independently replayed an infinite Source
+terminal timestamp successfully. Source/Go adapters now prevalidate a nonempty
+trace, finite time values, positive intervals and exactly one final stop;
+permanent negative cases include missing and repeated stops plus infinity/NaN.
+Both independent mutation probes now reject and focused race checks pass.
+The reviewer also requested precise cookie evidence wording. Portable Source/Go
+outcomes now inspect the cookie projection through Authentication at every tick,
+including a changed cookie in the last failed reply; a mutated final cookie is
+rejected. This closes a gap that subsequent-request checks alone could not prove.
+
+Final local checks pass: make lint/check, Go race/contracts/regeneration/consumer
+checks and 69 Python test methods, with the final cookie cases additionally
+re-probed through focused Source and Go checks. Handwritten replay coverage is
+1518/1805 statements (84.1%), unit 1085/1805 (60.1%) and combined 1608/1805 (89.1%).
+These are separate diagnostic measurements (LIB-07); cancellation paths can vary
+by a few statements. Live Go integration and full migration acceptance remain open.
+
+Fresh synthetic-only Source coverage over the final artifacts is 575/905 entered
+functions, 3149/5385 body statements (58.48%) and 964/2076 branch exits. Find My
+enters 35/39 functions, covers 148/171 body statements and 51/68 branch exits.
+The actual monitor now covers 8/8 body statements and 3/4 branch exits. Four
+unentered functions are manager/device display __str__/__repr__ helpers. Remaining
+selected branches include forced reauth, stopped-monitor implicit getter refresh,
+integer selection and the timer boundary/skew path; generic bad caller inputs
+remain outside the requested focus. Counts do not establish full acceptance.

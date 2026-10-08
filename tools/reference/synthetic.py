@@ -39,6 +39,14 @@ def execute(api, scenario, observations=None):
             family_poll_max_retries=state.get("family_poll_max_retries", 5),
         )
         api._devices = manager
+        if scenario["operation"] == "monitor_flow":
+            from findmy_monitor import execute_monitor
+
+            return execute_monitor(manager, scenario)
+        if scenario["operation"] == "device_description":
+            from findmy_scenarios import execute_description
+
+            return execute_description(manager, scenario)
         if scenario["operation"] == "refresh_flow":
             from findmy_scenarios import execute_refresh
 

@@ -143,6 +143,78 @@ class SyntheticTests(unittest.TestCase):
                 with self.assertRaises(AssertionError):
                     replay_synthetic(path)
 
+    def test_findmy_description_results_are_bound(self):
+        for change in ["name", "location", "capability", "status", "integer", "null"]:
+            scenario = json.loads(
+                (FIXTURES / "findmy-description-populated.json").read_text()
+            )
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                result = scenario["result"]
+                if change == "name":
+                    result["modelName"] = "wrong"
+                elif change == "location":
+                    result["location"] = None
+                elif change == "capability":
+                    result["capabilities"]["location"] = False
+                elif change == "status":
+                    result["status"]["batteryLevel"] = 0
+                elif change == "integer":
+                    result["status"]["future"]["nested"][-1] -= 1
+                else:
+                    result["status"].pop("missing")
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_findmy_monitor_clock_and_state_are_bound(self):
+        for change in [
+            "duration",
+            "clock",
+            "extra",
+            "stop",
+            "state",
+            "failure",
+            "infinite",
+            "no-stop",
+            "cookie",
+        ]:
+            scenario = json.loads(
+                (
+                    FIXTURES
+                    / (
+                        "findmy-monitor-repeated-refusal.json"
+                        if change == "cookie"
+                        else "findmy-monitor-recovery.json"
+                    )
+                ).read_text()
+            )
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                events = scenario["entropy"]["findmy_monitor_trace"]
+                if change == "duration":
+                    events[0]["delaySeconds"] = 61
+                elif change == "clock":
+                    events[0]["completedAtUnix"] = 1059
+                elif change == "extra":
+                    events.append(events[-1])
+                elif change == "stop":
+                    events[0]["stopped"] = True
+                elif change == "state":
+                    scenario["result"][-1]["state"]["devices"][0]["name"] = "wrong"
+                elif change == "infinite":
+                    events[-1]["completedAtUnix"] = float("inf")
+                elif change == "no-stop":
+                    events[-1]["stopped"] = False
+                    events[-1]["completedAtUnix"] = 1183
+                elif change == "cookie":
+                    scenario["result"][-1]["cookies"][0]["value"] = "wrong"
+                else:
+                    scenario["result"][1]["failed"] = False
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_cloudkit_scope_zone_and_payload_are_bound(self):
         for change in ["scope", "library", "zone", "error_payload", "favorite_route"]:
             names = {

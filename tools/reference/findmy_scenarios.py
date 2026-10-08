@@ -23,3 +23,30 @@ def execute_refresh(manager, scenario, observations):
     finally:
         observations["findmy_state"] = manager_state(manager)
         observations["arguments"] = scenario["inputs"]
+
+
+def execute_description(manager, scenario):
+    """Bind public reference getters to portable copied device descriptions."""
+    device = manager[scenario["device_id"]]
+    additional = scenario["inputs"][0]["additionalStatus"]
+    for field in additional:
+        if field in device.data:
+            assert device[field] == getattr(device, field) == device.data[field]
+    assert len(manager) == len(manager.devices)
+    assert [item.data["id"] for item in manager] == list(manager.devices)
+    return {
+        "device": deepcopy(device.data),
+        "name": device.name,
+        "model": device.model,
+        "modelName": device.model_name,
+        "deviceType": device.device_type,
+        "location": deepcopy(device.location),
+        "capabilities": {
+            "sound": device.sound_available,
+            "messaging": device.messaging_available,
+            "erase": device.erase_available,
+            "lostMode": device.lost_mode_available,
+            "location": device.location_available,
+        },
+        "status": deepcopy(device.status(additional)),
+    }

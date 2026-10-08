@@ -784,3 +784,56 @@ components:
       properties:
         kind: {$ref: '#/components/schemas/FindMyWaitKind'}
         delay: {type: integer, format: int64, minimum: 0, x-go-type: time.Duration, description: Delay in nanoseconds; Go callers use time.Duration.}
+
+    FindMyDeviceDescriptionRequest:
+      type: object
+      required: [deviceID]
+      description: Select a cached device and optional extra provider status fields; performs no request.
+      properties:
+        deviceID: {type: string, x-go-name: DeviceID}
+        additionalStatus: {type: array, x-go-type-skip-optional-pointer: true, items: {type: string}, description: Additional provider field names; unknown or absent fields project to null.}
+      example: {deviceID: synthetic-device, additionalStatus: [future]}
+    FindMyCapabilities:
+      type: object
+      required: [sound, messaging, erase, lostMode, location]
+      description: Provider-advertised capabilities; location also requires a non-null location value.
+      properties:
+        sound: {type: boolean}
+        messaging: {type: boolean}
+        erase: {type: boolean}
+        lostMode: {type: boolean}
+        location: {type: boolean}
+      example: {sound: true, messaging: true, erase: false, lostMode: true, location: false}
+    FindMyDeviceStatus:
+      type: object
+      required: [batteryLevel, deviceDisplayName, deviceStatus, name]
+      description: Reference status subset plus requested additional fields; absent fields are explicit null.
+      properties:
+        batteryLevel: {type: number, format: double, nullable: true}
+        deviceDisplayName: {type: string, nullable: true}
+        deviceStatus: {type: string, nullable: true, description: Open provider status code.}
+        name: {type: string, nullable: true}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+      example: {batteryLevel: null, deviceDisplayName: null, deviceStatus: null, name: null, future: [null, true]}
+    FindMyDeviceDescription:
+      type: object
+      required: [device, name, model, modelName, deviceType, location, capabilities, status]
+      description: Copied cached device data and reference-compatible metadata, status and capabilities.
+      properties:
+        device: {$ref: '#/components/schemas/FindMyDevice'}
+        name: {type: string, description: Device name; missing metadata defaults to an empty string.}
+        model: {type: string, description: Provider deviceModel; missing metadata defaults to an empty string.}
+        modelName: {type: string, description: Provider deviceDisplayName; missing metadata defaults to an empty string.}
+        deviceType: {type: string, description: Provider deviceClass; missing metadata defaults to an empty string.}
+        location: {$ref: '#/components/schemas/FindMyLocation'}
+        capabilities: {$ref: '#/components/schemas/FindMyCapabilities'}
+        status: {$ref: '#/components/schemas/FindMyDeviceStatus'}
+      example:
+        device: {id: synthetic-device}
+        name: ''
+        model: ''
+        modelName: ''
+        deviceType: ''
+        location: null
+        capabilities: {sound: false, messaging: false, erase: false, lostMode: false, location: false}
+        status: {batteryLevel: null, deviceDisplayName: null, deviceStatus: null, name: null}

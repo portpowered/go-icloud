@@ -71,9 +71,9 @@ automatic retries of uncertain commands (API-11, API-14).
 
 ## Remaining acceptance
 
-The [public Find My session](findmy-session.md) now executes all 37 current
-portable scenarios and 70 pairs through the SDK with semantic projection checks.
-The schema/model checks remain a separate layer. Selected Source status/location
-and timed monitor behavior, the full source/model/runtime binding gate, live Go
+The [public Find My session](findmy-session.md) now executes all 47 current
+portable scenarios and 86 pairs through the SDK with semantic projection checks.
+The schema/model checks remain a separate layer. Remaining Source implicit getter refresh, integer selection and timer boundary/skew
+behavior, the full source/model/runtime binding gate, live Go
 integration, native Go authentication/forced reauth and release acceptance remain
 open. Synthetic commands are offline only; live authorization covers reads.
