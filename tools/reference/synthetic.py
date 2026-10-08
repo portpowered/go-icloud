@@ -1,7 +1,10 @@
 """Run portable, implementation-derived service scenarios at the HTTP seam."""
 
 import argparse
+import base64
+import io
 import json
+from dataclasses import asdict
 from tempfile import TemporaryDirectory
 
 from icloud import ROOT, SOURCE, close_reference, verify_reference
@@ -43,7 +46,21 @@ def execute(api, scenario):
                 [DriveNode(service, node) for node in arguments[0]],
                 DriveNode(service, arguments[1]),
             ]
-        return getattr(service, scenario["operation"])(*arguments)
+        if scenario["operation"] == "send_file":
+            descriptor = arguments[1]
+            file = io.BytesIO(base64.b64decode(descriptor["body"], validate=True))
+            file.name = descriptor["name"]
+            arguments = [arguments[0], file, *arguments[2:]]
+        result = getattr(service, scenario["operation"])(
+            *arguments, **scenario.get("keyword_inputs", {})
+        )
+        if scenario["operation"] == "get_file":
+            return {
+                "status": result.status_code,
+                "headers": list(map(list, result.headers.items())),
+                "body": base64.b64encode(result.content).decode("ascii"),
+            }
+        return result
     if scenario["service"] == "account":
         service = AccountService(state["origin"], api.session, False, params)
         value = getattr(service, scenario["operation"])
@@ -68,11 +85,42 @@ def execute(api, scenario):
         if hasattr(value, "model_dump"):
             return value.model_dump(mode="json")
         return value
+    if scenario["service"] == "photos":
+        from pyicloud.services.photos import PhotosService
+
+        service = PhotosService(state["origin"], api.session, params, None, None)
+        operation = scenario["operation"]
+        if operation == "indexing":
+            return {
+                "state": service._root_library.indexing_state,
+                "sync_token": service._root_library.current_sync_token,
+            }
+        if operation == "libraries":
+            return [
+                {"id": key, "scope": library.scope}
+                for key, library in service.libraries.items()
+            ]
+        if operation == "shared_streams":
+            return list(service.shared_streams)
+        value = getattr(service, operation)(
+            *scenario["inputs"], **scenario.get("keyword_inputs", {})
+        )
+        if operation == "iter_changes":
+            return [
+                {
+                    **asdict(item),
+                    "modified": item.modified.isoformat() if item.modified else None,
+                }
+                for item in value
+            ]
+        return value
     raise ValueError("Unregistered synthetic service")
 
 
 def replay_synthetic(path):
     scenario = json.loads(path.read_text(encoding="utf-8"))
+    if scenario.get("format") != "portos.service-scenario.v1":
+        raise AssertionError("Unsupported service scenario format")
     if scenario["source"] != SOURCE["live"]:
         raise AssertionError("Synthetic source pin mismatch")
     if scenario["evidence"] != "synthetic; implementation-derived":
@@ -89,6 +137,8 @@ def replay_synthetic(path):
         api.session.headers.clear()
         api.session.headers.update(scenario["initial_state"]["headers"])
         api.session.data.update(scenario["initial_state"].get("session_data", {}))
+        for cookie in scenario["initial_state"].get("cookies", []):
+            api.session.cookies.set(**cookie)
         adapter = ReplayAdapter(scenario["exchanges"])
         api.session.mount("https://", adapter)
         api.session.mount("http://", adapter)

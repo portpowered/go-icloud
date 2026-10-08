@@ -12,7 +12,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 45)
+        self.assertGreaterEqual(len(fixtures), 65)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -21,7 +21,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_semantic_and_wire_changes_fail(self):
         original = json.loads((FIXTURES / "drive-rename-success.json").read_text())
-        for change in ["result", "path", "body", "duplicate", "source"]:
+        for change in ["result", "path", "body", "duplicate", "source", "format"]:
             with self.subTest(change=change), TemporaryDirectory() as directory:
                 scenario = json.loads(json.dumps(original))
                 if change == "result":
@@ -32,8 +32,10 @@ class SyntheticTests(unittest.TestCase):
                     scenario["inputs"][2] = "changed-name"
                 elif change == "duplicate":
                     scenario["exchanges"] *= 2
-                else:
+                elif change == "source":
                     scenario["source"]["commit"] = "wrong"
+                else:
+                    scenario["format"] = "unknown-format"
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(scenario))
                 with self.assertRaises(AssertionError):

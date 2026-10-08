@@ -13,7 +13,7 @@ from unittest.mock import patch
 import icloud
 import replay
 import requests
-from recording import Recorder, ReplayAdapter, request_record
+from recording import Recorder, ReplayAdapter, multipart_parts, request_record
 
 
 def pair(request, *, status=200, body=b'{"items":[]}', headers=None):
@@ -32,6 +32,78 @@ def prepared(url="https://example.invalid/items?q=one&q=two", **kwargs):
 
 
 class ReplayTests(unittest.TestCase):
+    def test_json_patterns_preserve_known_fields_and_validate_uuid_format(self):
+        sample = {
+            "id": "00000000-0000-4000-8000-000000000000",
+            "name": "synthetic",
+        }
+        request = prepared(json=sample)
+        expectation = pair(request)
+        expectation["request"]["body"] = {
+            "encoding": "json-pattern",
+            "value": sample,
+            "matchers": [
+                {
+                    "path": ["id"],
+                    "pattern": (
+                        "[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-"
+                        "[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+                    ),
+                }
+            ],
+        }
+        for body, accepted in [
+            ({**sample, "id": "11111111-1111-4111-9111-111111111111"}, True),
+            ({**sample, "id": "11111111-1111-5111-9111-111111111111"}, False),
+            ({**sample, "name": "different"}, False),
+            ({**sample, "extra": True}, False),
+        ]:
+            with self.subTest(body=body):
+                adapter = ReplayAdapter([expectation])
+                if accepted:
+                    adapter.send(prepared(json=body))
+                    adapter.assert_consumed()
+                else:
+                    with self.assertRaises(AssertionError):
+                        adapter.send(prepared(json=body))
+                    self.assertEqual(adapter.index, 0)
+
+    def test_multipart_boundary_is_variable_but_fields_and_bytes_are_exact(self):
+        request = prepared(files={"synthetic.txt": b"\x00\xffdata"})
+        expectation = pair(request)
+        expectation["request"]["body"] = {
+            "encoding": "multipart",
+            "content_type_pattern": "multipart/form-data; boundary=[0-9a-f]{32}",
+            "parts": multipart_parts(request.headers["Content-Type"], request.body),
+        }
+        adapter = ReplayAdapter([expectation])
+        adapter.send(prepared(files={"synthetic.txt": b"\x00\xffdata"}))
+        adapter.assert_consumed()
+        for files in [
+            {"synthetic.txt": b"\x00\xffFAIL"},
+            {"different.txt": b"\x00\xffdata"},
+            {"synthetic.txt": b"\x00\xffdata", "extra.txt": b"unexpected"},
+        ]:
+            with self.subTest(files=files):
+                adapter = ReplayAdapter([expectation])
+                with self.assertRaises(AssertionError):
+                    adapter.send(prepared(files=files))
+                self.assertEqual(adapter.index, 0)
+
+    def test_multipart_header_must_match_the_encoded_boundary(self):
+        request = prepared(files={"synthetic.txt": b"data"})
+        expectation = pair(request)
+        expectation["request"]["body"] = {
+            "encoding": "multipart",
+            "content_type_pattern": "multipart/form-data; boundary=[0-9a-f]{32}",
+            "parts": multipart_parts(request.headers["Content-Type"], request.body),
+        }
+        request.headers["Content-Type"] = "multipart/form-data; boundary=" + "0" * 32
+        adapter = ReplayAdapter([expectation])
+        with self.assertRaises(AssertionError):
+            adapter.send(request)
+        self.assertEqual(adapter.index, 0)
+
     def test_success_empty_many_and_provider_error(self):
         cases = [
             (b'{"items":[]}', 200),

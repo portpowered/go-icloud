@@ -80,6 +80,10 @@ reports; its scope and generated-code exclusions are explicit. The current
 [migration checklist](migration-checklist.md) records the uncovered baseline
 and [independent review](independent-review.md) findings. Passing replay does not
 mean all endpoints/functions have been exercised.
+The draft [wire inventory](reference-endpoints.json) records known HTTP/socket
+boundaries and their pinned source definitions. Schema bindings, actual send
+provenance, payload variants, dependency edges, and complete scenario matrices
+remain open; function-body coverage does not prove those requirements.
 Raw private snapshots are not publishable fixtures: portable sanitation and
 volatile token/ID bindings still need review. Initial login cannot yet replay
 because its trusted-device bridge includes uncaptured socket traffic.

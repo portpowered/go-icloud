@@ -7,6 +7,8 @@ import re
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from email.message import Message
+from email.parser import BytesParser
+from email.policy import default as email_policy
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -146,6 +148,71 @@ def comparable(request):
     return value
 
 
+def multipart_parts(content_type, body):
+    """Decode ordered multipart fields without ignoring their payload bytes."""
+    message = BytesParser(policy=email_policy).parsebytes(
+        b"Content-Type: " + content_type.encode("ascii") + b"\r\n\r\n" + body
+    )
+    if not message.is_multipart() or message.defects:
+        raise AssertionError("Invalid multipart request")
+    parts = []
+    for part in message.iter_parts():
+        if part.defects or part.is_multipart():
+            raise AssertionError("Invalid multipart field")
+        parts.append(
+            {
+                "headers": [[key.lower(), value] for key, value in part.items()],
+                "body": body_record(part.get_payload(decode=True)),
+            }
+        )
+    return parts
+
+
+def matches_request(actual, expected):
+    """Apply only explicit fixture match rules, keeping all other fields strict."""
+    actual = comparable(actual)
+    expected = comparable(expected)
+    rule = expected["body"]
+    if rule["encoding"] == "json-pattern":
+        if actual["body"]["encoding"] != "base64":
+            return False
+        value = json.loads(base64.b64decode(actual["body"]["value"], validate=True))
+        for matcher in rule["matchers"]:
+            parent = value
+            sample = rule["value"]
+            for key in matcher["path"][:-1]:
+                parent = parent[key]
+                sample = sample[key]
+            key = matcher["path"][-1]
+            if not isinstance(parent[key], str) or not re.fullmatch(
+                matcher["pattern"], parent[key]
+            ):
+                return False
+            parent[key] = sample[key]
+        if json.dumps(value, sort_keys=True) != json.dumps(
+            rule["value"], sort_keys=True
+        ):
+            return False
+        actual["body"] = rule
+    elif rule["encoding"] == "multipart":
+        content_type = dict(actual["headers"]).get("content-type", "")
+        if not re.fullmatch(rule["content_type_pattern"], content_type):
+            return False
+        if actual["body"]["encoding"] != "base64":
+            return False
+        parts = multipart_parts(
+            content_type, base64.b64decode(actual["body"]["value"], validate=True)
+        )
+        if parts != rule["parts"]:
+            return False
+        actual["body"] = rule
+        actual["headers"] = [
+            [key, dict(expected["headers"])[key] if key == "content-type" else value]
+            for key, value in actual["headers"]
+        ]
+    return actual == expected
+
+
 class ReplayAdapter(requests.adapters.BaseAdapter):
     """Reject any mismatch before exposing its response; never contact a network."""
 
@@ -158,7 +225,11 @@ class ReplayAdapter(requests.adapters.BaseAdapter):
         if self.index == len(self.exchanges):
             raise AssertionError("Unexpected or duplicate HTTP request")
         pair = self.exchanges[self.index]
-        if comparable(request_record(request)) != comparable(pair["request"]):
+        try:
+            matched = matches_request(request_record(request), pair["request"])
+        except (ValueError, KeyError, IndexError, TypeError) as error:
+            raise AssertionError("Invalid request or fixture match rule") from error
+        if not matched:
             raise AssertionError(f"HTTP request mismatch at exchange {self.index + 1}")
         self.index += 1
         if "error" in pair:

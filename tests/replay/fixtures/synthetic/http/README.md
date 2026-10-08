@@ -32,3 +32,16 @@ Reminders scenarios cover zero/one/many lists, sync-token pagination, absent
 zones, per-record errors, missing reminder lookups, query/fallback sync tokens,
 and incremental empty results. These are synthetic cases even when their
 operations overlap captured reads.
+
+Drive transfers include zero-byte and binary data/package downloads, multipart
+uploads with and without a receipt, document registration, and folder creation.
+Multipart rules validate the boundary format and its agreement with the encoded
+body; part order, complete part headers, filename, field count, file bytes, and
+remaining request metadata must match. Folder creation permits only an explicit
+UUID-v4 client-ID pattern; every other JSON field remains exact.
+
+Photos cases cover service instantiation with ready/pending/missing indexing,
+cached/discovered/missing sync tokens, private/shared zone discovery, incremental
+zero/one/many updates, deletions, and unavailable shared streams. They do not
+yet cover the full album/asset/upload/shared-stream function matrix.
+Photo change timestamps also have an explicit millisecond-to-UTC semantic case.

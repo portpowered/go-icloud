@@ -1,0 +1,212 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "drive",
+  "operation": "send_file",
+  "initial_state": {
+    "origin": "https://drive.example.invalid",
+    "document_origin": "https://documents.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    },
+    "cookies": [
+      {
+        "name": "X-APPLE-WEBAUTH-VALIDATE",
+        "value": "t=synthetic-upload:other=synthetic",
+        "domain": ".example.invalid",
+        "path": "/"
+      }
+    ]
+  },
+  "inputs": [
+    "FOLDER::synthetic::root",
+    {
+      "name": "synthetic.txt",
+      "body": ""
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://documents.example.invalid",
+        "path": "/ws/com.apple.CloudDocs/upload/web",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "token",
+            "synthetic-upload"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-VALIDATE=t=synthetic-upload:other=synthetic"
+          ],
+          [
+            "content-length",
+            "86"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJmaWxlbmFtZSI6ICJzeW50aGV0aWMudHh0IiwgInR5cGUiOiAiRklMRSIsICJjb250ZW50X3R5cGUiOiAidGV4dC9wbGFpbiIsICJzaXplIjogMH0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "W3siZG9jdW1lbnRfaWQiOiAic3ludGhldGljLWRvY3VtZW50IiwgInVybCI6ICJodHRwczovL2NvbnRlbnQuZXhhbXBsZS5pbnZhbGlkL3N5bnRoZXRpYy11cGxvYWQifV0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://content.example.invalid",
+        "path": "/synthetic-upload",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-VALIDATE=t=synthetic-upload:other=synthetic"
+          ],
+          [
+            "content-length",
+            "158"
+          ],
+          [
+            "content-type",
+            "multipart/form-data; boundary=ce6000b00d58e715f02dd814c1cf5ecb"
+          ]
+        ],
+        "body": {
+          "encoding": "multipart",
+          "content_type_pattern": "multipart/form-data; boundary=[0-9a-f]{32}",
+          "parts": [
+            {
+              "headers": [
+                [
+                  "content-disposition",
+                  "form-data; name=\"synthetic.txt\"; filename=\"synthetic.txt\""
+                ]
+              ],
+              "body": {
+                "encoding": "base64",
+                "value": ""
+              }
+            }
+          ]
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzaW5nbGVGaWxlIjogeyJmaWxlQ2hlY2tzdW0iOiAic3ludGhldGljLWNoZWNrc3VtIiwgIndyYXBwaW5nS2V5IjogInN5bnRoZXRpYy1rZXkiLCAicmVmZXJlbmNlQ2hlY2tzdW0iOiAic3ludGhldGljLXJlZmVyZW5jZSIsICJzaXplIjogMH19"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://documents.example.invalid",
+        "path": "/ws/com.apple.CloudDocs/update/documents",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ],
+          [
+            "token",
+            "synthetic-upload"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "plain/text"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-VALIDATE=t=synthetic-upload:other=synthetic"
+          ],
+          [
+            "content-length",
+            "443"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkYXRhIjogeyJzaWduYXR1cmUiOiAic3ludGhldGljLWNoZWNrc3VtIiwgIndyYXBwaW5nX2tleSI6ICJzeW50aGV0aWMta2V5IiwgInJlZmVyZW5jZV9zaWduYXR1cmUiOiAic3ludGhldGljLXJlZmVyZW5jZSIsICJzaXplIjogMH0sICJjb21tYW5kIjogImFkZF9maWxlIiwgImNyZWF0ZV9zaG9ydF9ndWlkIjogdHJ1ZSwgImRvY3VtZW50X2lkIjogInN5bnRoZXRpYy1kb2N1bWVudCIsICJwYXRoIjogeyJzdGFydGluZ19kb2N1bWVudF9pZCI6ICJGT0xERVI6OnN5bnRoZXRpYzo6cm9vdCIsICJwYXRoIjogInN5bnRoZXRpYy50eHQifSwgImFsbG93X2NvbmZsaWN0IjogdHJ1ZSwgImZpbGVfZmxhZ3MiOiB7ImlzX3dyaXRhYmxlIjogdHJ1ZSwgImlzX2V4ZWN1dGFibGUiOiBmYWxzZSwgImlzX2hpZGRlbiI6IGZhbHNlfSwgIm10aW1lIjogMTAwMCwgImJ0aW1lIjogMjAwMH0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJzdGF0dXMiOiAiT0sifQ=="
+        }
+      }
+    }
+  ],
+  "result": null,
+  "keyword_inputs": {
+    "mtime": 1,
+    "ctime": 2
+  }
+}

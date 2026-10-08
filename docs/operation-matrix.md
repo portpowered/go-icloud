@@ -13,8 +13,8 @@ login has HTTP captures but lacks the trusted-device binary socket transcript;
 do not treat it as complete authentication replay.
 
 Verification receipt: 17 completed private scenarios, 95 paired exchanges,
-matching semantic results/failures, and 24 passing synthetic/offline tests.
-An additional 45 portable synthetic service scenarios check Drive, account,
+matching semantic results/failures, and 27 passing synthetic/offline tests.
+An additional 65 portable synthetic service scenarios check Drive, account,
 Reminders, and Find My
 request shapes and results. They remain separate from this live observation
 matrix; see `tests/replay/fixtures/synthetic/http` for their evidence labels.
