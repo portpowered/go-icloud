@@ -1,5 +1,6 @@
 """Portable service parity and fail-closed replay controls."""
 
+import base64
 import json
 import threading
 import time
@@ -14,7 +15,7 @@ from synthetic import FIXTURES, replay_synthetic
 class SyntheticTests(unittest.TestCase):
     def test_all_portable_service_scenarios(self):
         fixtures = sorted(FIXTURES.glob("*.json"))
-        self.assertGreaterEqual(len(fixtures), 281)
+        self.assertGreaterEqual(len(fixtures), 289)
         initial_threads = set(threading.enumerate())
         for fixture in fixtures:
             with self.subTest(scenario=fixture.stem):
@@ -212,6 +213,32 @@ class SyntheticTests(unittest.TestCase):
                     original["entropy"]["auth_wait_trace"][0]["value"] = 4
                 path = Path(directory) / "scenario.json"
                 path.write_text(json.dumps(original))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_srp_wire_proofs_and_entropy_are_bound(self):
+        for change in ["secret", "missing", "surplus", "password", "m1", "m2"]:
+            scenario = json.loads((FIXTURES / "auth-srp-s2k.json").read_text())
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                if change == "secret":
+                    scenario["entropy"]["random_bytes"][0] = base64.b64encode(
+                        bytes(reversed(range(256)))
+                    ).decode()
+                elif change == "missing":
+                    scenario["entropy"]["random_bytes"].clear()
+                elif change == "surplus":
+                    scenario["entropy"]["random_bytes"] *= 2
+                elif change == "password":
+                    scenario["initial_state"]["synthetic_password"] = "other-password"
+                else:
+                    body = scenario["exchanges"][2]["request"]["body"]
+                    payload = json.loads(base64.b64decode(body["value"]))
+                    payload[change] = base64.b64encode(bytes(32)).decode()
+                    body["value"] = base64.b64encode(
+                        json.dumps(payload).encode()
+                    ).decode()
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
                 with self.assertRaises(AssertionError):
                     replay_synthetic(path)
 

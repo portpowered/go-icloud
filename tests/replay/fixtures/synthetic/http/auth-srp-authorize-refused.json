@@ -1,0 +1,139 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "auth",
+  "initial_state": {
+    "account_name": "synthetic@example.invalid",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "params": {
+      "clientId": "synthetic-client"
+    },
+    "session_data": {},
+    "cookies": [],
+    "account_data": {},
+    "synthetic_password": "invented-password"
+  },
+  "inputs": [],
+  "operation": "authenticate",
+  "keyword_inputs": {},
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"synthetic refusal\", \"errorCode\": 503}"
+  },
+  "error_auth_state": {
+    "account": {},
+    "params": {
+      "clientBuildNumber": "2534Project66",
+      "clientMasteringNumber": "2534B22",
+      "clientId": "synthetic-client"
+    },
+    "session_data": {
+      "client_id": "synthetic-client"
+    },
+    "challenge": {},
+    "requires_mfa": false,
+    "cookies": [],
+    "webservices": null,
+    "requires_2fa": false,
+    "requires_2sa": false,
+    "trusted_session": false,
+    "delivery_method": "unknown",
+    "code_requested": false,
+    "session_file_exists": true,
+    "cookie_file_exists": true
+  },
+  "error_arguments": [],
+  "error_context": {
+    "reason": null,
+    "code": 503,
+    "response": {
+      "status": 503,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
+      }
+    }
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth/authorize/signin",
+        "query": [
+          [
+            "frame_id",
+            "synthetic-client"
+          ],
+          [
+            "skVersion",
+            "7"
+          ],
+          [
+            "iframeid",
+            "synthetic-client"
+          ],
+          [
+            "client_id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "response_type",
+            "code"
+          ],
+          [
+            "redirect_uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "response_mode",
+            "web_message"
+          ],
+          [
+            "state",
+            "synthetic-client"
+          ],
+          [
+            "authVersion",
+            "latest"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 503,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIHJlZnVzYWwiLCAiZXJyb3JDb2RlIjogNTAzfQ=="
+        }
+      }
+    }
+  ]
+}

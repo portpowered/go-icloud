@@ -126,6 +126,25 @@ exists. Record its reviewed commit and separate verdict/evidence for every item.
 
 ## Final verification pending
 
+### Interim SRP sign-in audit
+
+The independent reviewer replayed eight SRP scenarios with 28 HTTP pairs and
+verified both proof values for all six sign-in completion exchanges with a
+separate synthetic server verifier. Both password protocols execute actual
+reference stretching/SRP calculations with declared client entropy; no provider
+business method is replaced. Cases bind successful setup, provider refusal,
+trust-token forwarding, paused MFA login and SMS challenge discovery/delivery.
+
+The reviewer passed the proof/entropy controls and six additional mutations of
+salt, challenge, iteration, protocol, resulting state and response consumption.
+Entropy and clock factories restore after success, refusal and mismatch.
+Independent `make check` passes all 51 methods, including lint, build and race
+checks. No actionable flaw was found in this limited extension.
+
+Verdict: **limited interim pass**. Evidence remains synthetic and
+implementation-derived. Trusted-device bridge lifecycle, hardware authentication,
+Go interoperability and all final SDK/release acceptance criteria remain open.
+
 ### Interim authentication HTTP/session audit
 
 The reviewer independently passed 51 auth scenarios with 83 pairs and latest

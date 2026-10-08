@@ -68,12 +68,18 @@ duplicate exclusions fail. Authentication's keyring lookup and shared helpers
 used by selected endpoints remain included. The remaining scope is conservative
 diagnostic coverage, not proof that every included utility needs endpoint replay.
 
-The portable HTTP suite now has 281 scenarios and 565 paired exchanges after
-adding selected authentication setup, verification, consent and logout behavior.
+The portable HTTP suite now has 289 scenarios and 593 paired exchanges after
+adding selected authentication setup, verification, consent, logout and SRP
+sign-in behavior. SRP cases run both password protocols with declared client
+entropy and exact proof matching; they also exercise refusal, trust-token reuse,
+paused MFA token login and SMS challenge setup. Trusted-device bridge login and
+physical security-key interaction remain open.
 Authentication socket replay adds 53 synthetic ordered duplex scenarios
-(283 events). Combined replay now enters 481/905 functions and executes
-2,615/5,385 body statements (48.56%) and 794/2,076 branch exits. These measurements
+(283 events). Combined replay now enters 488/905 functions and executes
+2,718/5,385 body statements (50.47%) and 822/2,076 branch exits. These measurements
 remain diagnostic; they are not a complete endpoint acceptance gate.
+The preceding authentication session milestone entered 481/905 functions and
+covered 2,615/5,385 statements (48.56%) and 794/2,076 branch exits.
 The preceding hydration/account milestone entered 445/905 functions and covered
 2,320/5,385 statements (43.08%) and 697/2,076 branch exits.
 The preceding upload/shared-stream milestone entered 433/905 functions and

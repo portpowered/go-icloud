@@ -166,6 +166,18 @@ PCS retries use ordered `auth_wait_trace` sleep events under the same consumed
 clock contract as Photos; the two trace selectors cannot coexist. Auth and
 service-upload operations reject undeclared clocks/waits even without an entropy
 object. Rejected events remain failures if reference code catches the exception.
-Delays are matched without actual waits. Full SRP, auth-shell/bridge lifecycle and hardware
-security-key behavior still require separately classified evidence; these HTTP
-cases do not replace the raw socket transcripts or prove those workflows.
+Delays are matched without actual waits.
+
+SRP sign-in cases run the actual reference password stretching and SRP proof
+calculations for both `s2k` and `s2k_fo`. Their declared `random_bytes` sample
+supplies the 256-byte client secret at `os.urandom`; no SRP business method is
+replaced. The pinned `srp==1.0.22` implementation sets the secret's high bit before
+deriving the public value. Authoring verified client and server proofs against a
+synthetic server verifier. Replay matches the public value, both proofs, challenge
+response, trust-token forwarding, resulting cookies/session state and errors.
+Cases cover successful account setup, authorize/init/complete provider refusal,
+paused MFA token login, and auth-shell discovery followed by SMS code delivery.
+All salts, secrets, passwords and challenge values are invented; these are
+implementation-derived protocol examples, not captured authentication evidence.
+Trusted-device bridge lifecycle and hardware security-key behavior remain open;
+the HTTP cases do not replace raw socket transcripts or prove those workflows.
