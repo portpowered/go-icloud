@@ -23,7 +23,7 @@ func deviceRequest() icloud.GetAccountDevicesRequest {
 	return icloud.GetAccountDevicesRequest{Auth: icloud.AuthContext{
 		AccountID: "synthetic-account", ClientID: "synthetic-client",
 		AccountServiceURL: "https://account.example.invalid", Headers: make([]icloud.Header, 0),
-		ClientBuildNumber: nil, ClientMasteringNumber: nil, ChinaMainland: nil,
+		ClientBuildNumber: nil, ClientMasteringNumber: nil, ChinaMainland: nil, DriveServiceURL: "",
 	}}
 }
 
@@ -85,7 +85,7 @@ func TestDeviceProviderFailureKindsAndCopies(t *testing.T) {
 func TestDeviceInvalidProviderResponses(t *testing.T) {
 	t.Parallel()
 
-	for _, body := range []string{`{}`, `{"devices":null}`, `{"devices":[{"name":false}]}`, `not-json`} {
+	for _, body := range []string{`{}`, `{"devices":null}`, `{"devices":[{"name":false}]}`, invalidProviderJSON} {
 		t.Run(body, func(t *testing.T) {
 			t.Parallel()
 

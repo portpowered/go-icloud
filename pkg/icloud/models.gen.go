@@ -6,6 +6,7 @@ package icloud
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/oapi-codegen/nullable"
 )
@@ -171,8 +172,8 @@ type AuthContext struct {
 	// AccountID Authenticated account identifier returned by login.
 	AccountID string `json:"accountID"`
 
-	// AccountServiceURL HTTPS account origin returned by authenticated service discovery.
-	AccountServiceURL string `json:"accountServiceURL"`
+	// AccountServiceURL HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.
+	AccountServiceURL string `json:"accountServiceURL,omitempty"`
 
 	// ChinaMainland Authenticated account region; true selects the mainland China subscription gateway.
 	ChinaMainland *bool `json:"chinaMainland,omitempty"`
@@ -186,8 +187,47 @@ type AuthContext struct {
 	// ClientMasteringNumber Optional mastering parameter from the authentication context; omission remains omission.
 	ClientMasteringNumber *string `json:"clientMasteringNumber,omitempty"`
 
+	// DriveServiceURL HTTPS Drive origin from authenticated discovery; required by Drive operations.
+	DriveServiceURL string `json:"driveServiceURL,omitempty"`
+
 	// Headers Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.
 	Headers []Header `json:"headers"`
+}
+
+// DriveNode Optional provider node metadata. Folder contents may be absent on a status-only response.
+type DriveNode struct {
+	DateChanged  *time.Time   `json:"dateChanged,omitempty"`
+	DateModified *time.Time   `json:"dateModified,omitempty"`
+	Docwsid      *string      `json:"docwsid,omitempty"`
+	Drivewsid    *string      `json:"drivewsid,omitempty"`
+	Etag         *string      `json:"etag,omitempty"`
+	Extension    *string      `json:"extension,omitempty"`
+	Items        *[]DriveNode `json:"items,omitempty"`
+	LastOpenTime *time.Time   `json:"lastOpenTime,omitempty"`
+	Name         *string      `json:"name,omitempty"`
+	RestorePath  *string      `json:"restorePath,omitempty"`
+
+	// ShareID Provider sharing descriptor; no fixed field is universally required by the reference.
+	ShareID *DriveShareID `json:"shareID,omitempty"`
+
+	// Size File size in bytes; reference conversion accepts integer or decimal text. Omitted for folders.
+	Size *json.RawMessage `json:"size,omitempty"`
+
+	// Status Open provider status; known values include OK and NOT_FOUND.
+	Status *string `json:"status,omitempty"`
+
+	// Type Open provider node kind; known values include FILE and FOLDER.
+	Type                 *string                     `json:"type,omitempty"`
+	Zone                 *string                     `json:"zone,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// DriveShareID Provider sharing descriptor; no fixed field is universally required by the reference.
+type DriveShareID struct {
+	Owner                *string                     `json:"owner,omitempty"`
+	Share                *string                     `json:"share,omitempty"`
+	Zone                 *string                     `json:"zone,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
 // ErrorKind Inspectable client failure class; errors preserve their cause separately from their safe display message.
@@ -287,6 +327,29 @@ type GetAccountStorageResult struct {
 	Usage    AccountStorageUsage `json:"usage"`
 }
 
+// GetDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"nodeID":"FOLDER::synthetic::root"}
+type GetDriveNodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// NodeID Drive node identifier from a listing; shared nodes require their returned sharing descriptor.
+	NodeID string `json:"nodeID"`
+
+	// ShareID Provider sharing descriptor; no fixed field is universally required by the reference.
+	ShareID *DriveShareID `json:"shareID,omitempty"`
+}
+
+// GetDriveNodeResult Fresh node metadata and optional children. A missing child list remains distinguishable from an empty list.
+//
+// Example: {"metadata":{"headers":[],"statusCode":200},"node":{"drivewsid":"FOLDER::synthetic::root","items":[]}}
+type GetDriveNodeResult struct {
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+
+	// Node Optional provider node metadata. Folder contents may be absent on a status-only response.
+	Node DriveNode `json:"node"`
+}
+
 // Header One HTTP response or caller-owned authentication header value; repeated headers remain separate entries.
 type Header struct {
 	// Name Header name.
@@ -294,6 +357,21 @@ type Header struct {
 
 	// Value Header value; authentication values may contain secrets.
 	Value string `json:"value"`
+}
+
+// ListDriveLibrariesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]}}
+type ListDriveLibrariesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListDriveLibrariesResult Example: {"additionalMetadata":{},"libraries":[],"metadata":{"headers":[],"statusCode":200}}
+type ListDriveLibrariesResult struct {
+	AdditionalMetadata map[string]UnknownJSONValue `json:"additionalMetadata"`
+	Libraries          []DriveNode                 `json:"libraries"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
 }
 
 // NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
@@ -1317,6 +1395,382 @@ func (a AccountStorageUsage) MarshalJSON() ([]byte, error) {
 	object["usedStorageInBytes"], err = json.Marshal(a.UsedStorageInBytes)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling 'usedStorageInBytes': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DriveNode. Returns the specified
+// element and whether it was found
+func (a DriveNode) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DriveNode
+func (a *DriveNode) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DriveNode to handle AdditionalProperties
+func (a *DriveNode) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["dateChanged"]; found {
+		err = json.Unmarshal(raw, &a.DateChanged)
+		if err != nil {
+			return fmt.Errorf("error reading 'dateChanged': %w", err)
+		}
+		delete(object, "dateChanged")
+	}
+
+	if raw, found := object["dateModified"]; found {
+		err = json.Unmarshal(raw, &a.DateModified)
+		if err != nil {
+			return fmt.Errorf("error reading 'dateModified': %w", err)
+		}
+		delete(object, "dateModified")
+	}
+
+	if raw, found := object["docwsid"]; found {
+		err = json.Unmarshal(raw, &a.Docwsid)
+		if err != nil {
+			return fmt.Errorf("error reading 'docwsid': %w", err)
+		}
+		delete(object, "docwsid")
+	}
+
+	if raw, found := object["drivewsid"]; found {
+		err = json.Unmarshal(raw, &a.Drivewsid)
+		if err != nil {
+			return fmt.Errorf("error reading 'drivewsid': %w", err)
+		}
+		delete(object, "drivewsid")
+	}
+
+	if raw, found := object["etag"]; found {
+		err = json.Unmarshal(raw, &a.Etag)
+		if err != nil {
+			return fmt.Errorf("error reading 'etag': %w", err)
+		}
+		delete(object, "etag")
+	}
+
+	if raw, found := object["extension"]; found {
+		err = json.Unmarshal(raw, &a.Extension)
+		if err != nil {
+			return fmt.Errorf("error reading 'extension': %w", err)
+		}
+		delete(object, "extension")
+	}
+
+	if raw, found := object["items"]; found {
+		err = json.Unmarshal(raw, &a.Items)
+		if err != nil {
+			return fmt.Errorf("error reading 'items': %w", err)
+		}
+		delete(object, "items")
+	}
+
+	if raw, found := object["lastOpenTime"]; found {
+		err = json.Unmarshal(raw, &a.LastOpenTime)
+		if err != nil {
+			return fmt.Errorf("error reading 'lastOpenTime': %w", err)
+		}
+		delete(object, "lastOpenTime")
+	}
+
+	if raw, found := object["name"]; found {
+		err = json.Unmarshal(raw, &a.Name)
+		if err != nil {
+			return fmt.Errorf("error reading 'name': %w", err)
+		}
+		delete(object, "name")
+	}
+
+	if raw, found := object["restorePath"]; found {
+		err = json.Unmarshal(raw, &a.RestorePath)
+		if err != nil {
+			return fmt.Errorf("error reading 'restorePath': %w", err)
+		}
+		delete(object, "restorePath")
+	}
+
+	if raw, found := object["shareID"]; found {
+		err = json.Unmarshal(raw, &a.ShareID)
+		if err != nil {
+			return fmt.Errorf("error reading 'shareID': %w", err)
+		}
+		delete(object, "shareID")
+	}
+
+	if raw, found := object["size"]; found {
+		err = json.Unmarshal(raw, &a.Size)
+		if err != nil {
+			return fmt.Errorf("error reading 'size': %w", err)
+		}
+		delete(object, "size")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if raw, found := object["type"]; found {
+		err = json.Unmarshal(raw, &a.Type)
+		if err != nil {
+			return fmt.Errorf("error reading 'type': %w", err)
+		}
+		delete(object, "type")
+	}
+
+	if raw, found := object["zone"]; found {
+		err = json.Unmarshal(raw, &a.Zone)
+		if err != nil {
+			return fmt.Errorf("error reading 'zone': %w", err)
+		}
+		delete(object, "zone")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DriveNode to handle AdditionalProperties
+func (a DriveNode) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.DateChanged != nil {
+		object["dateChanged"], err = json.Marshal(a.DateChanged)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dateChanged': %w", err)
+		}
+	}
+
+	if a.DateModified != nil {
+		object["dateModified"], err = json.Marshal(a.DateModified)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'dateModified': %w", err)
+		}
+	}
+
+	if a.Docwsid != nil {
+		object["docwsid"], err = json.Marshal(a.Docwsid)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'docwsid': %w", err)
+		}
+	}
+
+	if a.Drivewsid != nil {
+		object["drivewsid"], err = json.Marshal(a.Drivewsid)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'drivewsid': %w", err)
+		}
+	}
+
+	if a.Etag != nil {
+		object["etag"], err = json.Marshal(a.Etag)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'etag': %w", err)
+		}
+	}
+
+	if a.Extension != nil {
+		object["extension"], err = json.Marshal(a.Extension)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'extension': %w", err)
+		}
+	}
+
+	if a.Items != nil {
+		object["items"], err = json.Marshal(a.Items)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'items': %w", err)
+		}
+	}
+
+	if a.LastOpenTime != nil {
+		object["lastOpenTime"], err = json.Marshal(a.LastOpenTime)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'lastOpenTime': %w", err)
+		}
+	}
+
+	if a.Name != nil {
+		object["name"], err = json.Marshal(a.Name)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'name': %w", err)
+		}
+	}
+
+	if a.RestorePath != nil {
+		object["restorePath"], err = json.Marshal(a.RestorePath)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'restorePath': %w", err)
+		}
+	}
+
+	if a.ShareID != nil {
+		object["shareID"], err = json.Marshal(a.ShareID)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'shareID': %w", err)
+		}
+	}
+
+	if a.Size != nil {
+		object["size"], err = json.Marshal(a.Size)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'size': %w", err)
+		}
+	}
+
+	if a.Status != nil {
+		object["status"], err = json.Marshal(a.Status)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status': %w", err)
+		}
+	}
+
+	if a.Type != nil {
+		object["type"], err = json.Marshal(a.Type)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'type': %w", err)
+		}
+	}
+
+	if a.Zone != nil {
+		object["zone"], err = json.Marshal(a.Zone)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'zone': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DriveShareID. Returns the specified
+// element and whether it was found
+func (a DriveShareID) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DriveShareID
+func (a *DriveShareID) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DriveShareID to handle AdditionalProperties
+func (a *DriveShareID) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["owner"]; found {
+		err = json.Unmarshal(raw, &a.Owner)
+		if err != nil {
+			return fmt.Errorf("error reading 'owner': %w", err)
+		}
+		delete(object, "owner")
+	}
+
+	if raw, found := object["share"]; found {
+		err = json.Unmarshal(raw, &a.Share)
+		if err != nil {
+			return fmt.Errorf("error reading 'share': %w", err)
+		}
+		delete(object, "share")
+	}
+
+	if raw, found := object["zone"]; found {
+		err = json.Unmarshal(raw, &a.Zone)
+		if err != nil {
+			return fmt.Errorf("error reading 'zone': %w", err)
+		}
+		delete(object, "zone")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DriveShareID to handle AdditionalProperties
+func (a DriveShareID) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Owner != nil {
+		object["owner"], err = json.Marshal(a.Owner)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'owner': %w", err)
+		}
+	}
+
+	if a.Share != nil {
+		object["share"], err = json.Marshal(a.Share)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'share': %w", err)
+		}
+	}
+
+	if a.Zone != nil {
+		object["zone"], err = json.Marshal(a.Zone)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'zone': %w", err)
+		}
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

@@ -306,7 +306,7 @@ paths:
         default: {$ref: '#/components/responses/DriveFailure'}
   /ws/{zone}/update/documents:
     post:
-      operationId: DriveUpdateDocument
+      operationId: DriveRegisterDocument
       summary: Register uploaded document content
       description: Provider registration result.
       parameters:

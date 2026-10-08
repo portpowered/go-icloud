@@ -48,7 +48,7 @@ generate-api:
 sdk-coverage:
 	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-replay.out' ./tests/replay
 	$(GO) run ./tools/coverage -profile coverage-replay.out -min 80
-	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-unit.out' ./pkg/icloud ./internal/accountapi
+	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-unit.out' ./pkg/icloud ./internal/accountapi ./internal/webtransport
 	$(GO) run ./tools/coverage -profile coverage-unit.out -min 0
-	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-combined.out' ./tests/replay ./pkg/icloud ./internal/accountapi
+	$(GO) test -race '-coverpkg=./pkg/icloud,./internal/...' '-coverprofile=coverage-combined.out' ./tests/replay ./pkg/icloud ./internal/accountapi ./internal/webtransport
 	$(GO) run ./tools/coverage -profile coverage-combined.out -min 80

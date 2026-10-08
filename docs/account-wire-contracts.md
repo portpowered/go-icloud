@@ -68,9 +68,10 @@ unit controls verify read/close causes suppress output across all four new metho
 
 Non-generated coverage includes `pkg/icloud` and handwritten `internal` code,
 including the transport and binary-photo adapter. Replay: 284/348 statements
-(81.6%); unit: 287/348 (82.5%); combined: 321/348 (92.2%). These measurements
-are separate (LIB-07) and describe the current five account operations, not all
-selected iCloud services. Constructor validation and generic malformed caller
+(81.6%); unit: 287/348 (82.5%); combined: 321/348 (92.2%). These historical account-milestone measurements
+are separate (LIB-07) and describe its five account operations. See
+[Drive contracts](drive-wire-contracts.md) for current coverage including the two
+Drive reads. Neither measure establishes all selected service coverage. Constructor validation and generic malformed caller
 inputs are outside the endpoint replay target. Run `make sdk-coverage` for the
 three measurements. `make check` and blocking CI require at least 80% replay
 and combined coverage; CI saves separate profiles. Schema-owned protocol

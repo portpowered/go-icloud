@@ -1,4 +1,4 @@
-package accounttransport
+package webtransport
 
 import (
 	"context"
@@ -29,7 +29,13 @@ func (client *Client) read(ctx context.Context, auth RequestContext,
 
 	request = request.WithContext(ctx)
 
+	contentType := request.Header.Get(protocol.HTTPContentTypeName)
+
 	request.Header = auth.Headers.Clone()
+	if request.Header.Get(protocol.HTTPContentTypeName) == "" && contentType != "" {
+		request.Header.Set(protocol.HTTPContentTypeName, contentType)
+	}
+
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
 	}

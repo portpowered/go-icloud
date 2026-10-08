@@ -1,5 +1,5 @@
-// Package accounttransport owns schema-generated account requests and response bodies.
-package accounttransport
+// Package webtransport owns schema-generated web service requests and response bodies.
+package webtransport
 
 import (
 	"context"
@@ -44,7 +44,7 @@ type ResponseError struct {
 
 // Error is safe for display; raw response details remain separately inspectable.
 func (failure *ResponseError) Error() string {
-	return "account request failed: " + string(failure.Stage)
+	return "web request failed: " + string(failure.Stage)
 }
 
 // Unwrap preserves cancellation and injected transport failure identity.

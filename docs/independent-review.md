@@ -529,9 +529,33 @@ scenarios/991 pairs, 67 Drive scenarios/115 pairs, eight additions/26 pairs and
 delegation execute; instrumentation only constructs/closes its own input stream
 and snapshots cursor/state. Failure and wire mutations remain fail-closed.
 
-Verdict: **limited working-tree pass** for the reference gaps. Exact-SHA approval
-after CI remains required. Drive SDK semantics and full migration gates remain
-open; diagnostic coverage and local-helper gaps do not establish completeness.
+Verdict: **limited milestone pass** for the reference gaps. Exact-SHA review
+approved `33213f1a5a4491fabbd4ec77a1b90800ab0aa2aa` after
+[CI 37792226591](https://github.com/portpowered/go-icloud/actions/runs/37792226591)
+passed. PR #6 merged in `0c52ea5cf1c6f948ebf69c1574f6640cd0c14ecc`; main passed
+[CI 37792909781](https://github.com/portpowered/go-icloud/actions/runs/37792909781).
+Drive SDK semantics and full migration gates remain open; diagnostic coverage
+and local-helper gaps do not establish completeness.
+
+### Interim Drive SDK read audit
+
+The independent reviewer reproduced two wire discrepancies: a nonnil empty
+sharing descriptor was sent instead of omitted, and U+007F was sent literally
+instead of escaped. Both are fixed and a public-method regression binds their
+exact request bytes. The reviewer reran its original probes and verified both
+corrections against the pinned reference.
+
+Independent race checks pass for the public SDK, shared web transport, replay,
+contracts and constant generator. Nine existing portable reads exercise actual
+public methods, generated builders and semantic results. Optional recursive
+children, sharing fields, unknown nulls/large numbers, malformed provider replies,
+error evidence, schema constant drift and an independent consumer are checked.
+Existing account replays pass after moving the HTTP mechanics into the shared
+transport (API-02, API-03, LIB-01).
+
+Verdict: **limited working-tree pass** for `GetDriveNode` and
+`ListDriveLibraries`. Exact-SHA approval after CI remains required. Navigation,
+mutations, transfers and complete migration acceptance remain open.
 
 Reviewed commit, complete wire-model/endpoint inventories, CI run URLs, release
 tags, proxy verification, Pages inspection, and reviewer verification of each

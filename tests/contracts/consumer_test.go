@@ -44,6 +44,15 @@ func Account(ctx context.Context, auth icloud.AuthContext, memberID string) erro
  return err
 }
 
+func Drive(ctx context.Context, auth icloud.AuthContext, nodeID string) error {
+ client, err := icloud.New()
+ if err != nil { return err }
+ _, err = client.GetDriveNode(ctx, icloud.GetDriveNodeRequest{Auth: auth, NodeID: nodeID})
+ if err != nil { return err }
+ _, err = client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth})
+ return err
+}
+
 `
 
 func TestPublicSDKCompilesInIndependentConsumer(t *testing.T) {

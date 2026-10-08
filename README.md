@@ -45,7 +45,7 @@ listing/pagination have been exercised. The observed Reminders account returned
 `ZONE_NOT_FOUND` for the reference's requested zone; this is a recorded failure,
 not successful reminder-list coverage.
 The Go SDK implements the five account reads: devices, family, member photos,
-storage and plan summaries. The other selected services and native Go
+storage and plan summaries, plus Drive node and application-library reads. The other selected services and native Go
 authentication are still being built; the SDK
 has not been released. See
 [capture development notes](docs/reference-capture.md) for evidence status,
@@ -138,3 +138,45 @@ _ = plan.Summary // json.RawMessage; retains provider fields and JSON number pre
 Every account read is fresh and returns response metadata. The typed error
 inspection described above applies to all five methods. These methods are
 verified with synthetic paired replay; native Go live integration is still pending.
+
+## Go Drive reads
+
+Supply `auth.DriveServiceURL` from authenticated service discovery, together with
+the account/client identifiers and web headers. Each call fetches fresh data.
+An account-service origin is unnecessary for these Drive requests.
+
+```go
+node, err := client.GetDriveNode(ctx, icloud.GetDriveNodeRequest{
+    Auth: auth, NodeID: "FOLDER::com.apple.CloudDocs::root", // provider node ID
+})
+if err != nil {
+    return err
+}
+if node.Node.Items != nil {
+    for _, child := range *node.Node.Items {
+        if child.Name != nil {
+            fmt.Println(*child.Name)
+        }
+    }
+}
+```
+
+A missing `Items` pointer means the provider omitted folder contents; an empty
+slice means it returned no children. For a shared node, supply the provider's
+sharing descriptor in `ShareID`. An empty descriptor is omitted as in the
+reference. Optional node fields and unknown metadata remain available, including
+recursive children, nulls and large JSON numbers.
+
+```go
+libraries, err := client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth})
+if err != nil {
+    return err
+}
+_ = libraries.Libraries // an empty slice succeeds
+_ = libraries.AdditionalMetadata // unknown envelope values
+```
+
+Both methods return response metadata and the typed errors described above.
+Nine synthetic paired scenarios verify these two reads against the pinned
+reference. Drive navigation sessions, mutations and transfers remain in progress;
+see [Drive contracts](docs/drive-wire-contracts.md).

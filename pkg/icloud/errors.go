@@ -7,7 +7,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/portpowered/go-icloud/internal/accounttransport"
+	"github.com/portpowered/go-icloud/internal/webtransport"
 )
 
 // ClientError is an inspectable failure with a safe display message.
@@ -53,7 +53,7 @@ func newClientError(operation string, kind ErrorKind, status int, body []byte,
 }
 
 func adaptFailure(operation string, err error) *ClientError {
-	var failure *accounttransport.ResponseError
+	var failure *webtransport.ResponseError
 
 	if !errors.As(err, &failure) {
 		return newClientError(operation, Transport, 0, nil, nil, err)
@@ -78,15 +78,15 @@ func adaptFailure(operation string, err error) *ClientError {
 	return newClientError(operation, kind, failure.Status, failure.Body, responseHeaders(failure.Headers), err)
 }
 
-func transportKind(failure *accounttransport.ResponseError) ErrorKind {
+func transportKind(failure *webtransport.ResponseError) ErrorKind {
 	switch failure.Stage {
-	case accounttransport.Configuration:
+	case webtransport.Configuration:
 		return Configuration
-	case accounttransport.Decode:
+	case webtransport.Decode:
 		return InvalidResponse
-	case accounttransport.Provider:
+	case webtransport.Provider:
 		return providerKind(failure.Status)
-	case accounttransport.Transport:
+	case webtransport.Transport:
 		return Transport
 	default:
 		return Transport

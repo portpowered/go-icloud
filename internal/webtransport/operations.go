@@ -1,4 +1,4 @@
-package accounttransport
+package webtransport
 
 import (
 	"context"
