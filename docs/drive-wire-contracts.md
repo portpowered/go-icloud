@@ -142,10 +142,10 @@ flows. The complete source-to-schema runtime route gate remains open.
 The non-generated library coverage includes account reads, Drive service methods
 and the explicit session and entry lifecycle;
 schema validation alone is not SDK replay coverage (LIB-07).
-Replay measures 1125/1351 handwritten SDK/internal statements (83.3%); unit
-measures 696/1351 (51.5%); combined measures 1193/1351 (88.3%). Live Go integration
+Replay measures 1219/1457 handwritten SDK/internal statements (83.7%); unit
+measures 780/1457 (53.5%); combined measures 1293/1457 (88.7%). Live Go integration
 is still pending. `make lint` and `make check` pass. The portable reference
-inventory remains 455 HTTP scenarios/1028 pairs and 67 Python test methods.
+inventory remains 456 HTTP scenarios/1030 pairs and 67 Python test methods.
 
 The transfer issuer checks currently cover observed fixture URL forms. Exact
 provider query binding, complete common-parameter/header validation, provider

@@ -560,12 +560,15 @@ type FindMyMessageRequestUserText bool
 // FindMyNullableJSON Named unknown provider value preserving omission separately from explicit null.
 type FindMyNullableJSON = json.RawMessage
 
+// FindMyRefreshContext Provider context retained as raw JSON so refresh requests preserve its object member order; theftLoss is cleared before reuse.
+type FindMyRefreshContext = json.RawMessage
+
 // FindMyRefreshRequest Example: {"clientContext":{"apiVersion":"3.0","appName":"iCloud Find (Web)","appVersion":"2.0","deviceListVersion":1,"fmly":false,"inactiveTime":0,"timezone":"US/Pacific"},"serverContext":{"future":true}}
 type FindMyRefreshRequest struct {
 	ClientContext FindMyClientContext `json:"clientContext"`
 
-	// ServerContext Provider-issued opaque refresh context; the reference clears theftLoss before reuse.
-	ServerContext          nullable.Nullable[FindMyServerContext]      `json:"serverContext"`
+	// ServerContext Provider context retained as raw JSON so refresh requests preserve its object member order; theftLoss is cleared before reuse.
+	ServerContext          nullable.Nullable[FindMyRefreshContext]     `json:"serverContext"`
 	IsUpdatingAllLocations *FindMyRefreshRequestIsUpdatingAllLocations `json:"isUpdatingAllLocations,omitempty"`
 }
 

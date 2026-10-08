@@ -62,7 +62,7 @@ func TestPortableFindMyRepliesRoundTripThroughCanonicalModels(t *testing.T) {
 		}
 	}
 
-	if pairs != 68 || jsonReplies != 63 {
+	if pairs != 70 || jsonReplies != 65 {
 		t.Fatalf("Find My reply inventory changed: pairs=%d JSON=%d", pairs, jsonReplies)
 	}
 }

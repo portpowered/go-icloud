@@ -45,7 +45,7 @@ measurement remains `make reference-coverage`.
 
 ## Current occurrences and scoped gap
 
-The current audit maps 455 scenarios and 1028 exchanges to 74/75 HTTP routes,
+The current audit maps 456 scenarios and 1030 exchanges to 74/75 HTTP routes,
 with no unmatched exchange. The sole missing occurrence is physical security-key
 verification, explicitly deferred. Strict mode continues to report that gap.
 
