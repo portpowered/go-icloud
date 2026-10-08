@@ -14,10 +14,17 @@ import (
  "context"
  "errors"
  "io"
+ "github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
  "github.com/portpowered/go-icloud/pkg/icloud"
 )
 
 var _ icloud.Client = (*icloud.SDK)(nil)
+
+var _ = cloudkit.CKRecord{RecordName: "Reminder/synthetic", RecordType: "Reminder"}
+var _ = cloudkit.CKLookupRequest{
+ Records: []cloudkit.CKLookupDescriptor{{RecordName: "Reminder/synthetic"}},
+ ZoneID: cloudkit.CKZoneIDReq{ZoneName: "Reminders"},
+}
 
 func Devices(ctx context.Context, auth icloud.AuthContext) (*icloud.GetAccountDevicesResult, error) {
  client, err := icloud.New()

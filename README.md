@@ -501,3 +501,8 @@ _ = description.Status
 Call `Refresh` explicitly before describing a device when fresh data is needed.
 The [behavior replay notes](docs/findmy-behavior.md) explain the reference getter
 and timed-monitor cases and the remaining acceptance work.
+
+The [Reminders wire contracts](docs/reminders-wire-contracts.md) bind its 78
+reference scenarios/86 paired exchanges to six active operations and shared
+generated CloudKit models. Public Reminders service orchestration and semantic
+SDK replay remain work in progress; these contract checks are a separate layer.

@@ -242,3 +242,13 @@ negative controls. The draft [wire inventory](reference-endpoints.json) lists
 76 HTTP/socket boundaries with resolved pinned source definitions. It still
 requires actual send-site/route/payload/dependency audit and schema bindings;
 it is not a complete endpoint gate or proof of endpoint coverage.
+
+
+The [Reminders wire layer](reminders-wire-contracts.md) now binds all 78 existing
+scenarios/86 paired exchanges to six operations. Shared CloudKit models include
+all 28 source CKRecord fields and normal-record response union members omitted
+by automatic source schema export. Generated-model roundtrips, source-invalid
+zone rejection, ten examples, drift/constant checks, consumer imports and limited
+asset URL-issuer controls pass focused checks. SDK/domain/protobuf orchestration
+and full runtime provenance remain open; wire checks do not increase semantic
+Go replay coverage.
