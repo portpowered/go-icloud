@@ -4854,46 +4854,6 @@
           }
         }
       },
-      "RemindersOtherModificationRequest": {
-        "description": "Remaining linked-record variants: only complete reminder ID-list updates or explicit child record types. Core reminder writes cannot enter this fallback.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CKModifyRequest"
-          },
-          {
-            "type": "object",
-            "required": [
-              "operations"
-            ],
-            "properties": {
-              "operations": {
-                "type": "array",
-                "items": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ReminderLinkedParentOperation"
-                    },
-                    {
-                      "$ref": "#/components/schemas/ReminderPendingChildOperation"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "not": {
-              "properties": {
-                "operations": {
-                  "items": {
-                    "$ref": "#/components/schemas/ReminderLinkedParentOperation"
-                  }
-                }
-              }
-            }
-          }
-        ]
-      },
       "RemindersModificationRequest": {
         "description": "Implemented single-reminder variants plus explicitly scoped remaining linked-record shapes.",
         "oneOf": [
@@ -4905,9 +4865,6 @@
           },
           {
             "$ref": "#/components/schemas/ReminderDeletionRequest"
-          },
-          {
-            "$ref": "#/components/schemas/RemindersOtherModificationRequest"
           },
           {
             "$ref": "#/components/schemas/ReminderRecurrenceCreationRequest"
@@ -4932,6 +4889,15 @@
           },
           {
             "$ref": "#/components/schemas/ReminderLocationRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderHashtagCreationRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderHashtagUpdateRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderHashtagDeletionRequest"
           }
         ]
       },
@@ -5195,150 +5161,6 @@
             "x-order": 3
           }
         }
-      },
-      "ReminderLinkedParentRecord": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "recordName",
-          "recordType",
-          "fields",
-          "pluginFields"
-        ],
-        "properties": {
-          "recordName": {
-            "type": "string",
-            "x-order": 1
-          },
-          "recordType": {
-            "type": "string",
-            "enum": [
-              "Reminder"
-            ],
-            "x-enum-varnames": [
-              "ReminderLinkedParentRecordTypeReminder"
-            ],
-            "x-order": 2
-          },
-          "fields": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ReminderAlarmLinkFields"
-              },
-              {
-                "$ref": "#/components/schemas/ReminderHashtagLinkFields"
-              },
-              {
-                "$ref": "#/components/schemas/ReminderAttachmentLinkFields"
-              }
-            ],
-            "x-order": 3
-          },
-          "pluginFields": {
-            "type": "object",
-            "additionalProperties": false,
-            "x-order": 4
-          },
-          "recordChangeTag": {
-            "type": "string",
-            "x-order": 5
-          }
-        }
-      },
-      "ReminderLinkedParentOperation": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "operationType",
-          "record"
-        ],
-        "properties": {
-          "operationType": {
-            "type": "string",
-            "enum": [
-              "update"
-            ],
-            "x-enum-varnames": [
-              "ReminderLinkedParentOperationTypeUpdate"
-            ]
-          },
-          "record": {
-            "$ref": "#/components/schemas/ReminderLinkedParentRecord"
-          }
-        }
-      },
-      "ReminderPendingChildOperation": {
-        "description": "Child record payloads awaiting narrow field schemas; explicitly limited to known linked record types.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CKModifyOperation"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "record": {
-                "type": "object",
-                "required": [
-                  "recordType"
-                ],
-                "properties": {
-                  "recordType": {
-                    "type": "string",
-                    "enum": [
-                      "Alarm",
-                      "AlarmTrigger",
-                      "Hashtag",
-                      "Attachment"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
-              "record": {
-                "type": "object",
-                "required": [
-                  "recordType"
-                ],
-                "properties": {
-                  "recordType": {
-                    "type": "string",
-                    "enum": [
-                      "Alarm",
-                      "AlarmTrigger",
-                      "Hashtag",
-                      "RecurrenceRule"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
-              "record": {
-                "type": "object",
-                "required": [
-                  "recordType"
-                ],
-                "properties": {
-                  "recordType": {
-                    "type": "string",
-                    "enum": [
-                      "Hashtag",
-                      "Attachment",
-                      "RecurrenceRule"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        ]
       },
       "ReminderRecurrenceWriteFrequency": {
         "type": "object",
@@ -8201,6 +8023,611 @@
           },
           "lastModifiedDate": {
             "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderHashtagWriteName": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ENCRYPTED_BYTES"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagWriteNameTypeEncryptedBytes"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "string",
+            "format": "byte",
+            "description": "Base64 UTF-8 hashtag text, without CRDT or compression.",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderHashtagCreationFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "Name",
+          "Deleted",
+          "Reminder",
+          "CreationDate"
+        ],
+        "properties": {
+          "Name": {
+            "$ref": "#/components/schemas/ReminderHashtagWriteName",
+            "x-order": 1
+          },
+          "Deleted": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 2
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/ReminderWriteReference",
+            "x-order": 3
+          },
+          "CreationDate": {
+            "$ref": "#/components/schemas/ReminderWriteTimestamp",
+            "x-order": 4
+          }
+        }
+      },
+      "ReminderHashtagCreationRecord": {
+        "type": "object",
+        "description": "Known hashtag creation payload.",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Hashtag"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagCreationRecordTypeHashtag"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderHashtagCreationFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CKWriteParent",
+            "x-order": 6
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields",
+          "parent"
+        ]
+      },
+      "ReminderHashtagCreationOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "create"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagCreationOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderHashtagCreationRecord",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderHashtagCreationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operations",
+          "zoneID",
+          "atomic"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ReminderHashtagParentOperation"
+                },
+                {
+                  "$ref": "#/components/schemas/ReminderHashtagCreationOperation"
+                }
+              ]
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "atomic": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "ReminderHashtagCreationRequestAtomicEnabled"
+            ]
+          }
+        },
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Reminder/synthetic-item",
+                "recordType": "Reminder",
+                "fields": {
+                  "HashtagIDs": {
+                    "type": "STRING_LIST",
+                    "value": [
+                      "00000001-0000-4000-8000-000000000000"
+                    ]
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"hashtagIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            },
+            {
+              "operationType": "create",
+              "record": {
+                "recordName": "Hashtag/00000001-0000-4000-8000-000000000000",
+                "recordType": "Hashtag",
+                "fields": {
+                  "Name": {
+                    "type": "ENCRYPTED_BYTES",
+                    "value": "U3ludGhldGljIHRhZw=="
+                  },
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  },
+                  "CreationDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  }
+                },
+                "pluginFields": {},
+                "parent": {
+                  "recordName": "Reminder/synthetic-item"
+                }
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          },
+          "atomic": true
+        }
+      },
+      "ReminderHashtagUpdateFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "Name"
+        ],
+        "properties": {
+          "Name": {
+            "$ref": "#/components/schemas/ReminderHashtagWriteName",
+            "x-order": 1
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/ReminderWriteReference",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderHashtagUpdateRecord": {
+        "type": "object",
+        "description": "Known hashtag update payload.",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Hashtag"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagUpdateRecordTypeHashtag"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderHashtagUpdateFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ]
+      },
+      "ReminderHashtagUpdateOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagUpdateOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderHashtagUpdateRecord",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderHashtagUpdateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operations",
+          "zoneID"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/ReminderHashtagUpdateOperation"
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          }
+        },
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Hashtag/synthetic-tag",
+                "recordType": "Hashtag",
+                "fields": {
+                  "Name": {
+                    "type": "ENCRYPTED_BYTES",
+                    "value": "UmVuYW1lZCB0YWc="
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "ReminderHashtagDeletionFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "Deleted"
+        ],
+        "properties": {
+          "Deleted": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 1
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/ReminderWriteReference",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderHashtagDeletionRecord": {
+        "type": "object",
+        "description": "Known hashtag deletion payload.",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Hashtag"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagDeletionRecordTypeHashtag"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderHashtagDeletionFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ]
+      },
+      "ReminderHashtagDeletionOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagDeletionOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderHashtagDeletionRecord",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderHashtagDeletionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operations",
+          "zoneID",
+          "atomic"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ReminderHashtagParentOperation"
+                },
+                {
+                  "$ref": "#/components/schemas/ReminderHashtagDeletionOperation"
+                }
+              ]
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "atomic": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "ReminderHashtagDeletionRequestAtomicEnabled"
+            ]
+          }
+        },
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Reminder/synthetic-item",
+                "recordType": "Reminder",
+                "fields": {
+                  "HashtagIDs": {
+                    "type": "STRING_LIST",
+                    "value": [
+                      "keep-tag"
+                    ]
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"hashtagIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            },
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Hashtag/synthetic-tag",
+                "recordType": "Hashtag",
+                "fields": {
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 1
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          },
+          "atomic": true
+        }
+      },
+      "ReminderHashtagParentRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Reminder"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagParentRecordTypeReminder"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderHashtagLinkFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        }
+      },
+      "ReminderHashtagParentOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderHashtagParentOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderHashtagParentRecord",
             "x-order": 2
           }
         }

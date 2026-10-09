@@ -17,6 +17,33 @@ type ReminderModificationResponse struct {
 	Metadata *BytesResponse
 }
 
+// CreateReminderHashtag sends the atomic parent-link and child creation.
+func (client *Client) CreateReminderHashtag(ctx context.Context, auth RequestContext,
+	input cloudkit.ReminderHashtagCreationRequest,
+) (*ReminderModificationResponse, error) {
+	body, err := referenceJSON(input)
+
+	return client.modifyReminder(ctx, auth, body, err)
+}
+
+// UpdateReminderHashtag sends a revision-aware hashtag rename.
+func (client *Client) UpdateReminderHashtag(ctx context.Context, auth RequestContext,
+	input cloudkit.ReminderHashtagUpdateRequest,
+) (*ReminderModificationResponse, error) {
+	body, err := referenceJSON(input)
+
+	return client.modifyReminder(ctx, auth, body, err)
+}
+
+// DeleteReminderHashtag sends the atomic parent unlink and child soft deletion.
+func (client *Client) DeleteReminderHashtag(ctx context.Context, auth RequestContext,
+	input cloudkit.ReminderHashtagDeletionRequest,
+) (*ReminderModificationResponse, error) {
+	body, err := referenceJSON(input)
+
+	return client.modifyReminder(ctx, auth, body, err)
+}
+
 // DeleteReminder sends a schema-owned revision-aware soft-delete operation.
 func (client *Client) DeleteReminder(ctx context.Context, auth RequestContext,
 	input cloudkit.ReminderDeletionRequest,

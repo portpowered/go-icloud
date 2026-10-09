@@ -20,6 +20,18 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// CreateReminderHashtag creates a tag and atomically links it to a reminder.
+	CreateReminderHashtag(ctx context.Context,
+		request CreateReminderHashtagRequest,
+	) (*ReminderHashtagRelationResult, error)
+	// UpdateReminderHashtag renames a tag using its supplied revision.
+	UpdateReminderHashtag(ctx context.Context,
+		request UpdateReminderHashtagRequest,
+	) (*ReminderHashtagMutationResult, error)
+	// DeleteReminderHashtag soft-deletes a tag and atomically removes its parent link.
+	DeleteReminderHashtag(ctx context.Context,
+		request DeleteReminderHashtagRequest,
+	) (*ReminderHashtagRelationResult, error)
 	// AddReminderLocationTrigger atomically links a new location alarm to a reminder.
 	AddReminderLocationTrigger(ctx context.Context,
 		request AddReminderLocationTriggerRequest,

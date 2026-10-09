@@ -64,7 +64,7 @@ func checkReminderWriteTimestamp(t *testing.T, instant time.Time, millis int64) 
 	}
 
 	auth := deviceRequest().Auth
-	auth.RemindersServiceURL = "https://reminders.example.invalid"
+	auth.RemindersServiceURL = reminderTestOrigin
 
 	result, err := client.DeleteReminder(t.Context(), icloud.DeleteReminderRequest{
 		Auth: auth, ReminderID: reminderTestRecordName, RecordChangeTag: nil})

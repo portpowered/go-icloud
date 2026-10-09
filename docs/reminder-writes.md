@@ -42,7 +42,24 @@ captures (LIB-05). The explicit compressed-document matcher compares all decoded
 bytes and rejects corruption, truncation, trailing data and changed surrounding
 fields. Actual request framing remains validated.
 
-Linked-record writes for alarms, hashtags, attachments and recurrence rules
-remain separate work. Their endpoint variants still have an explicitly scoped
-fallback schema pending narrow model ports. This milestone does not establish
-full Reminders, Photos, authentication, CLI or template conformance.
+`CreateReminderHashtag`, `UpdateReminderHashtag` and `DeleteReminderHashtag`
+return independent hashtag snapshots and ordered response evidence. Create and
+delete also return the updated parent reminder. They submit the parent ID-list
+update and child operation atomically. Delete rejects a child linked to another
+reminder before consuming entropy, removes every matching raw or prefixed ID,
+and preserves the order and duplicates of retained IDs. An empty or unrelated
+acknowledgement does not overwrite a supplied revision. No snapshot is returned
+when either record is rejected.
+
+Hashtag text uses base64 UTF-8 bytes rather than a CRDT document. Creation returns
+an explicit null creation instant, matching the reference's returned model even
+though the wire record includes a creation timestamp. Six additional synthetic
+scenarios verify the complete requests, results, rejection evidence and immutable
+inputs. Narrow generated hashtag variants replace their pending endpoint
+fallback; negative controls reject malformed fields, missing required fields,
+non-atomic writes and orphaned parent updates (SCHEMA-11).
+
+Linked-record writes for alarms, attachments and recurrence rules remain separate
+work. Their endpoint variants retain an explicitly scoped fallback pending narrow
+model ports. These milestones do not establish full Reminders, Photos,
+authentication, CLI or template conformance.

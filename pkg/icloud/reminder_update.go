@@ -3,8 +3,6 @@ package icloud
 import (
 	"context"
 	"errors"
-	"maps"
-	"slices"
 	"strings"
 	"time"
 
@@ -57,18 +55,18 @@ func (sdk *SDK) UpdateReminder(ctx context.Context, request UpdateReminderReques
 }
 
 func copyReminder(input Reminder) Reminder {
-	input.AlarmIDs = slices.Clone(input.AlarmIDs)
-	input.AttachmentIDs = slices.Clone(input.AttachmentIDs)
-	input.HashtagIDs = slices.Clone(input.HashtagIDs)
-	input.RecurrenceRuleIDs = slices.Clone(input.RecurrenceRuleIDs)
-	input.CompletedDate = maps.Clone(input.CompletedDate)
-	input.Created = maps.Clone(input.Created)
-	input.DueDate = maps.Clone(input.DueDate)
-	input.Modified = maps.Clone(input.Modified)
-	input.ParentReminderID = maps.Clone(input.ParentReminderID)
-	input.RecordChangeTag = maps.Clone(input.RecordChangeTag)
-	input.StartDate = maps.Clone(input.StartDate)
-	input.TimeZone = maps.Clone(input.TimeZone)
+	input.AlarmIDs = reminderCopiedIDs(input.AlarmIDs)
+	input.AttachmentIDs = reminderCopiedIDs(input.AttachmentIDs)
+	input.HashtagIDs = reminderCopiedIDs(input.HashtagIDs)
+	input.RecurrenceRuleIDs = reminderCopiedIDs(input.RecurrenceRuleIDs)
+	input.CompletedDate = reminderCopiedNullable(input.CompletedDate)
+	input.Created = reminderCopiedNullable(input.Created)
+	input.DueDate = reminderCopiedNullable(input.DueDate)
+	input.Modified = reminderCopiedNullable(input.Modified)
+	input.ParentReminderID = reminderCopiedNullable(input.ParentReminderID)
+	input.RecordChangeTag = reminderCopiedNullable(input.RecordChangeTag)
+	input.StartDate = reminderCopiedNullable(input.StartDate)
+	input.TimeZone = reminderCopiedNullable(input.TimeZone)
 
 	return input
 }

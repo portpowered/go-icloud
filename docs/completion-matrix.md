@@ -18,7 +18,8 @@ operation parity. No row below grants final merge or release acceptance.
 | Photos legacy streams | Discover albums, count, enumerate, lookup and download | Open |
 | Photos local sync/watch | Persistent state, materialization, selection/options, reconciliation, bounded cancellable watch | Open |
 | Reminders | Create, update, soft delete; CRDT encoding and resolution tokens | Implemented; 11 paired scenarios, full local checks and two scoped reviews |
-| Reminders relations | Location alarm/trigger, hashtags, URL/image attachment updates, recurrence rules; atomic links and revision updates | Open |
+| Reminders hashtags | Create, rename, soft delete; atomic parent links and revision updates | Implemented; 6 paired scenarios and full local checks; final review pending |
+| Other Reminders relations | Location alarm/trigger, URL/image attachment updates, recurrence rules | Open |
 | Auth login | Native SRP s2k/s2k_fo, service one-factor paths, paused MFA and returned credentials | Open |
 | Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Open |
 | Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Open |

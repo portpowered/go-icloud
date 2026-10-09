@@ -11,10 +11,13 @@ import (
 )
 
 const (
-	reminderTestRecordName      = "Reminder/synthetic"
-	reminderCreateTestOperation = "reminder-create"
-	reminderUpdateTestOperation = "reminder-update"
-	reminderDeleteTestOperation = "reminder-delete"
+	reminderTestRecordName             = "Reminder/synthetic"
+	reminderCreateTestOperation        = "reminder-create"
+	reminderUpdateTestOperation        = "reminder-update"
+	reminderDeleteTestOperation        = "reminder-delete"
+	reminderHashtagCreateTestOperation = "hashtag-create"
+	reminderHashtagUpdateTestOperation = "hashtag-update"
+	reminderHashtagDeleteTestOperation = "hashtag-delete"
 )
 
 type reminderFailingEntropy struct{ calls int }
@@ -29,8 +32,13 @@ func TestReminderWritesCancellationAndEntropyFailure(t *testing.T) {
 	t.Parallel()
 
 	for _, operation := range []string{reminderCreateTestOperation,
-		reminderUpdateTestOperation, reminderDeleteTestOperation} {
+		reminderUpdateTestOperation, reminderDeleteTestOperation, reminderHashtagCreateTestOperation,
+		reminderHashtagUpdateTestOperation, reminderHashtagDeleteTestOperation} {
 		for _, canceled := range []bool{false, true} {
+			if operation == reminderHashtagUpdateTestOperation && !canceled {
+				continue
+			}
+
 			t.Run(operation+map[bool]string{false: "/entropy", true: "/canceled"}[canceled], func(t *testing.T) {
 				t.Parallel()
 				checkReminderPreparationFailure(t, operation, canceled)
@@ -81,13 +89,15 @@ func checkReminderPreparationFailure(t *testing.T, operation string, canceled bo
 //nolint:wrapcheck // LIB-05: return the client failure unchanged for exact failure assertions.
 func callReminderMutation(ctx context.Context, client *icloud.SDK, operation string) error {
 	auth := deviceRequest().Auth
-	auth.RemindersServiceURL = "https://reminders.example.invalid"
+	auth.RemindersServiceURL = reminderTestOrigin
 
 	switch operation {
+	case reminderHashtagCreateTestOperation, reminderHashtagUpdateTestOperation, reminderHashtagDeleteTestOperation:
+		return callReminderHashtagMutation(ctx, client, auth, operation)
 	case reminderCreateTestOperation:
 		request := new(icloud.CreateReminderRequest)
 		request.Auth = auth
-		request.Title = "synthetic"
+		request.Title = "synthetic-reminder-title"
 		request.ListID = "List/synthetic"
 		_, err := client.CreateReminder(ctx, *request)
 
@@ -104,5 +114,39 @@ func callReminderMutation(ctx context.Context, client *icloud.SDK, operation str
 		_, err := client.DeleteReminder(ctx, request)
 
 		return err
+	}
+}
+
+//nolint:wrapcheck // LIB-05: preserve client failures for exact assertions.
+func callReminderHashtagMutation(ctx context.Context, client *icloud.SDK,
+	auth icloud.AuthContext, operation string,
+) error {
+	switch operation {
+	case reminderHashtagCreateTestOperation:
+		request := new(icloud.CreateReminderHashtagRequest)
+		request.Auth = auth
+		request.Reminder.ID = reminderTestRecordName
+		request.Name = "synthetic-tag-name"
+		_, err := client.CreateReminderHashtag(ctx, *request)
+
+		return err
+	case reminderHashtagUpdateTestOperation:
+		request := new(icloud.UpdateReminderHashtagRequest)
+		request.Auth = auth
+		request.Hashtag.ID = reminderHashtagTestName
+		request.Name = "synthetic-tag-name"
+		_, err := client.UpdateReminderHashtag(ctx, *request)
+
+		return err
+	case reminderHashtagDeleteTestOperation:
+		request := new(icloud.DeleteReminderHashtagRequest)
+		request.Auth = auth
+		request.Reminder.ID = reminderTestRecordName
+		request.Hashtag.ID = reminderHashtagTestName
+		_, err := client.DeleteReminderHashtag(ctx, *request)
+
+		return err
+	default:
+		panic("unknown hashtag operation")
 	}
 }
