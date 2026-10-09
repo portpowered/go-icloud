@@ -117,7 +117,7 @@ func checkReminderQueryFailure(t *testing.T, scenario reminderQueryScenario,
 		t.Fatal(decodeErr)
 	}
 
-	if expected["type"] == "ValidationError" {
+	if expected["type"] == "ValidationError" || expected["message"] == "Changes response validation failed" {
 		kind = icloud.InvalidResponse
 	}
 
