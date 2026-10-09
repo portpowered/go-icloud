@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ListReminderZones discovers reminder storage zones and change cursors.
+	ListReminderZones(ctx context.Context, request ListReminderZonesRequest) (*ListReminderZonesResult, error)
 	// ResumeSession validates and refreshes caller-owned saved web credentials.
 	ResumeSession(ctx context.Context, request ResumeSessionRequest) (*ResumeSessionResult, error)
 	// OpenFindMySession discovers devices and binds cache, polling and commands to one account.

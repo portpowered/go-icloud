@@ -58,6 +58,7 @@ components:
         accountID: {type: string, minLength: 1, x-go-name: AccountID, description: Authenticated account identifier returned by login.}
         clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
         accountServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: AccountServiceURL, description: HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.}
+        remindersServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: RemindersServiceURL, description: HTTPS Reminders origin from authenticated discovery; required by reminders operations.}
         findMyServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: FindMyServiceURL, description: HTTPS Find My origin from authenticated discovery.}
         setupServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: SetupServiceURL, description: HTTPS setup origin from authentication; required for remote erase token lookup.}
         sessionToken: {type: string, description: Secret authenticated web session token; missing tokens remain distinguishable from empty tokens.}
@@ -97,6 +98,30 @@ components:
       type: object
       description: Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
       additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    ReminderZone:
+      type: object
+      required: [name, owner, type, syncToken, deleted]
+      description: Reminder storage zone identity and current change cursor.
+      example: {name: synthetic-reminders-0, owner: null, type: null, syncToken: synthetic-sync-0, deleted: false}
+      properties:
+        name: {type: string, description: Provider zone name used by subsequent reminder operations.}
+        owner: {type: string, nullable: true, description: Optional owner record name.}
+        type: {type: string, nullable: true, description: Optional extensible provider zone type.}
+        syncToken: {type: string, nullable: true, description: 'Provider change cursor, with null for unavailable values.'}
+        deleted: {type: boolean, nullable: true, description: 'Provider deletion flag, with null for unavailable values.'}
+    ListReminderZonesRequest:
+      type: object
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    ListReminderZonesResult:
+      type: object
+      required: [zones, metadata]
+      example: {zones: [], metadata: {statusCode: 200, headers: [{name: Content-Type, value: application/json}]}}
+      properties:
+        zones: {type: array, items: {$ref: '#/components/schemas/ReminderZone'}, description: Zones in provider order; an empty list is successful.}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
     GetAccountDevicesRequest:
       type: object
       required: [auth]

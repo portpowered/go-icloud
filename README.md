@@ -70,6 +70,25 @@ Keep credentials in your private session store.
 
 ## Go account devices
 
+The public Go client also supports reminder zone discovery with the same
+caller-owned authentication context. `ResumeSession` returns the discovered
+`RemindersServiceURL`; zone discovery preserves provider order and change
+cursors and returns typed provider or invalid-response errors.
+
+```go
+zones, err := client.ListReminderZones(ctx, icloud.ListReminderZonesRequest{Auth: resumed.Auth})
+if err != nil {
+    return err
+}
+for _, zone := range zones.Zones {
+    fmt.Println(zone.Name)
+}
+```
+
+This operation is verified against eight synthetic reference scenarios. Reminder
+listing and mutation methods, the corresponding Go CLI commands, and live Go
+reminders verification remain in progress.
+
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private
 Go session file. Password login and MFA completion are still pending, and live

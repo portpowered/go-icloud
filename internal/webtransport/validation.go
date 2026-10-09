@@ -8,6 +8,8 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/account"
 )
 
+const jsonNullValue = "null"
+
 func accountFields(body []byte) (map[string]json.RawMessage, error) {
 	var fields map[string]json.RawMessage
 
@@ -59,7 +61,7 @@ func decodeStorage(body []byte) (account.AccountStorageResponse, error) {
 
 	for _, key := range []string{protocol.AccountStorageUsageUsedStorageInBytes,
 		protocol.AccountStorageUsageTotalStorageInBytes} {
-		if len(usage[key]) == 0 || string(usage[key]) == "null" {
+		if len(usage[key]) == 0 || string(usage[key]) == jsonNullValue {
 			return data, errAccountShape
 		}
 	}

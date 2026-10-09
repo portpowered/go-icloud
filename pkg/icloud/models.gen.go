@@ -266,6 +266,9 @@ type AuthContext struct {
 	// Headers Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.
 	Headers []Header `json:"headers"`
 
+	// RemindersServiceURL HTTPS Reminders origin from authenticated discovery; required by reminders operations.
+	RemindersServiceURL string `json:"remindersServiceURL,omitempty"`
+
 	// SessionToken Secret authenticated web session token; missing tokens remain distinguishable from empty tokens.
 	SessionToken *string `json:"sessionToken,omitempty"`
 
@@ -987,6 +990,21 @@ type ListDriveLibrariesResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// ListReminderZonesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
+type ListReminderZonesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListReminderZonesResult Example: {"metadata":{"headers":[{"name":"Content-Type","value":"application/json"}],"statusCode":200},"zones":[]}
+type ListReminderZonesResult struct {
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+
+	// Zones Zones in provider order; an empty list is successful.
+	Zones []ReminderZone `json:"zones"`
+}
+
 // MoveDriveNodesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"destinationID":"FOLDER::synthetic::destination","nodes":[]}
 type MoveDriveNodesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -1045,6 +1063,26 @@ type RegisteredDriveDocument struct {
 	// Status Open provider acknowledgement status.
 	Status               *string                     `json:"status,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// ReminderZone Reminder storage zone identity and current change cursor.
+//
+// Example: {"deleted":false,"name":"synthetic-reminders-0","owner":null,"syncToken":"synthetic-sync-0","type":null}
+type ReminderZone struct {
+	// Deleted Provider deletion flag, with null for unavailable values.
+	Deleted nullable.Nullable[bool] `json:"deleted"`
+
+	// Name Provider zone name used by subsequent reminder operations.
+	Name string `json:"name"`
+
+	// Owner Optional owner record name.
+	Owner nullable.Nullable[string] `json:"owner"`
+
+	// SyncToken Provider change cursor, with null for unavailable values.
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
+
+	// Type Optional extensible provider zone type.
+	Type nullable.Nullable[string] `json:"type"`
 }
 
 // RenameDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"name":"Synthetic","node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}

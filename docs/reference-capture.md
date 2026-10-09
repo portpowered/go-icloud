@@ -12,6 +12,17 @@ The fresh synthetic-only diagnostic measures 583/905 entered functions,
 and denominators are unchanged; this closes the reachable incomplete-master
 skip branch without excluding uncovered code.
 
+The public Go `ListReminderZones` method now consumes the five original zone
+scenarios plus three Source-verified successful status cases (201, 202, 299).
+The 202 case advertises plain text while carrying valid JSON; JSON decoding is
+independent of the media type, as in the reference and external schema's 2XX
+contract. The SDK projects every known zone field, normalizes missing nullable
+values to the reference's nulls, and preserves status, headers and typed failures.
+Authentication carries the discovered reminders URL in caller-owned state.
+Reminder listing, mutation methods, CLI commands and live Go verification remain
+open; this milestone is zone discovery rather than complete reminders parity.
+The combined portable HTTP corpus contains 519 scenarios and 1,191 exchanges.
+
 This is the first migration stage, not a completed library or release. The
 layout, Go verification tools, all-linters configuration, and contributor
 standards come from `go-third-party-template`. The reusable Go client, generated
