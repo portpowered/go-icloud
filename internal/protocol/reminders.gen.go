@@ -305,6 +305,8 @@ const (
 	RemindersDownloadAssetPath                       = "/{assetPath}"
 	RemindersDsidName                                = "dsid"
 	RemindersGetCurrentSyncTokenName                 = "getCurrentSyncToken"
+	RemindersLegacyStartupMethod                     = "GET"
+	RemindersLegacyStartupPath                       = "/rd/startup"
 	RemindersListZonesMethod                         = "POST"
 	RemindersListZonesPath                           = "/database/1/com.apple.reminders/production/private/zones/list"
 	RemindersLookupRecordsMethod                     = "POST"

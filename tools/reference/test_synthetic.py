@@ -18,6 +18,29 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_legacy_reminders_matrix(self):
+        paths = sorted(FIXTURES.glob("reminders-legacy-*.json"))
+        self.assertEqual(len(paths), 6)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 6)
+
+    def test_legacy_reminders_results_and_consumption_are_bound(self):
+        baseline = json.loads((FIXTURES / "reminders-legacy-1.json").read_text())
+        for mutation in ["result", "request", "unused"]:
+            with self.subTest(mutation=mutation), TemporaryDirectory() as directory:
+                scenario = copy.deepcopy(baseline)
+                if mutation == "result":
+                    scenario["result"]["reminders"][0]["extra"] = {"wrong": True}
+                elif mutation == "request":
+                    scenario["exchanges"][0]["request"]["path"] = "/wrong"
+                else:
+                    scenario["exchanges"].append(
+                        copy.deepcopy(scenario["exchanges"][0])
+                    )
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_photo_assets_matrix(self):
         paths = sorted(FIXTURES.glob("photos-assets-*.json"))
         self.assertEqual(len(paths), 109)
@@ -69,7 +92,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_photo_count_matrix(self):
         paths = sorted(FIXTURES.glob("photos-count-*.json"))
-        self.assertEqual(len(paths), 56)
+        self.assertEqual(len(paths), 66)
         self.assertEqual(sum(replay_synthetic(path) for path in paths), 161)
 
     def test_photo_count_results_requests_and_consumption_are_bound(self):
@@ -158,7 +181,7 @@ class SyntheticTests(unittest.TestCase):
     def test_reminder_related_lookup_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-related-*.json"))
         self.assertEqual(len(paths), 46)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 51)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 61)
         for kind in ["tags", "attachments", "recurrence-rules", "alarms"]:
             scenario = json.loads(
                 (FIXTURES / f"reminders-related-{kind}-empty-ids.json").read_text()
@@ -486,7 +509,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_sync_cursor_fallback_and_paging_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-sync-*.json"))
-        self.assertEqual(len(paths), 53)
+        self.assertEqual(len(paths), 63)
         pairs = 0
         for path in paths:
             scenario = json.loads(path.read_text(encoding="utf-8"))

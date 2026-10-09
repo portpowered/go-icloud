@@ -6,6 +6,28 @@ info:
 paths: {}
 components:
   schemas:
+    GetLegacyRemindersSnapshotRequest:
+      type: object
+      description: Read the account-discovered legacy Reminders startup snapshot.
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, legacyRemindersServiceURL: 'https://reminders.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    GetLegacyRemindersSnapshotResult:
+      type: object
+      description: Legacy lists and startup reminders in provider order; completed discovery and CloudKit related records are not implied.
+      required: [lists, reminders, metadata]
+      example: {lists: [], reminders: [], metadata: {statusCode: 200, headers: [], cookieScopeURL: 'https://reminders.example.invalid/rd/startup'}}
+      properties:
+        lists: {type: array, items: {$ref: '#/components/schemas/LegacyReminderRecord'}}
+        reminders: {type: array, items: {$ref: '#/components/schemas/LegacyReminderRecord'}}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+    LegacyReminderRecord:
+      type: object
+      additionalProperties: true
+      x-go-type: json.RawMessage
+      description: Extensible legacy record without unobserved field assumptions. Lists may include title, guid, order, color and completedCount.
+      example: {title: Example list, guid: synthetic-list}
     ListPhotoAssetsRequest:
       type: object
       description: Enumerate all paired assets of a primary smart/custom album in reference order.
@@ -358,6 +380,7 @@ components:
         clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
         accountServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: AccountServiceURL, description: HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.}
         photosServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: PhotosServiceURL, description: HTTPS CloudKit origin from authenticated discovery; required by Photos operations.}
+        legacyRemindersServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: LegacyRemindersServiceURL, description: Account-discovered legacy Reminders origin for GetLegacyRemindersSnapshot.}
         remindersServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: RemindersServiceURL, description: HTTPS Reminders origin from authenticated discovery; required by reminders operations.}
         findMyServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: FindMyServiceURL, description: HTTPS Find My origin from authenticated discovery.}
         setupServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: SetupServiceURL, description: HTTPS setup origin from authentication; required for remote erase token lookup.}

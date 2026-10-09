@@ -906,3 +906,25 @@ complete outputs, error bodies and prior response evidence, with strict exchange
 consumption. Private live CLI resume, readiness and album reads succeeded with the
 stored account, returning 12 albums. Listing photo assets and downloading their
 content remain pending CLI work.
+
+### Legacy Reminders startup
+
+`GetLegacyRemindersSnapshot` reads lists and startup reminders using the separately
+account-discovered `AuthContext.LegacyRemindersServiceURL`. Resume the saved session
+first to obtain this origin. The result preserves provider fields and response metadata:
+
+```go
+snapshot, err := client.GetLegacyRemindersSnapshot(ctx,
+    icloud.GetLegacyRemindersSnapshotRequest{Auth: resumed.Auth})
+```
+
+This route returned HTTP 200 for the authenticated account, with list records and
+an empty reminders array. A private offline Python replay consumed the same captured
+request and matched the complete Go list/reminder projection (LIB-09/LIB-12).
+Six synthetic Source/Go scenarios cover empty, one, multiple, authentication/provider
+failure and missing-list responses. The Python reference session executes the HTTP
+request directly; its current Reminders convenience service targets CloudKit.
+Legacy reminder records remain extensible because live nonempty reminder shapes
+have not been captured. Historical backend fixtures do not establish that evidence.
+Completed-item discovery, CloudKit cursors and related records are separate operations;
+this startup read does not infer a migration flag or silently replace them.

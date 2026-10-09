@@ -529,6 +529,44 @@
           }
         }
       }
+    },
+    "/rd/startup": {
+      "get": {
+        "operationId": "RemindersLegacyStartup",
+        "summary": "Read legacy reminder startup",
+        "description": "Read the account-discovered legacy startup. Completed-item discovery and CloudKit related records are not implied.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemindersClientId"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersDsid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Legacy startup snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegacyRemindersStartup"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -858,6 +896,34 @@
       },
       "CKAssetBytes": {
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetBytes"
+      },
+      "LegacyRemindersStartup": {
+        "type": "object",
+        "required": [
+          "Collections",
+          "Reminders"
+        ],
+        "properties": {
+          "Collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LegacyReminderRecord"
+            }
+          },
+          "Reminders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LegacyReminderRecord"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "LegacyReminderRecord": {
+        "type": "object",
+        "additionalProperties": true,
+        "x-go-type": "json.RawMessage",
+        "description": "Extensible legacy record preserved without assuming historical reminder fields."
       }
     }
   }

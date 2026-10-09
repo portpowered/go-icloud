@@ -1,0 +1,71 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders_legacy",
+  "operation": "startup",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://reminders.example.invalid",
+        "path": "/rd/startup",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 503,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ],
+          [
+            "X-Synthetic-Response",
+            "legacy-unavailable"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAiU3ludGhldGljIHByb3ZpZGVyIGZhaWx1cmUifQ=="
+        }
+      }
+    }
+  ],
+  "error": {
+    "type": "PyiCloudAPIResponseException",
+    "message": " (503): {\"reason\": \"Synthetic provider failure\"}"
+  }
+}

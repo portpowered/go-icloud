@@ -439,3 +439,13 @@ and covers 3234/5398 function-body statements (59.91%) and 993/2076 branch exits
 The Go transport instantiates the pairs; public Go Photos parity and full
 migration/release acceptance remain open.
 
+
+
+Legacy Reminders compatibility now has an explicit `GetLegacyRemindersSnapshot`
+SDK operation with separate discovered authentication origin and generated wire/public
+models. Six synthetic Source/Go cases bind requests, full records, failure evidence
+and consumption. Live Go validation/startup both returned HTTP 200; private Python
+replay of startup matched the full returned list/reminder projection. The observed
+account has lists and an empty startup reminders array; nonempty live reminders,
+completed discovery, mutations and CloudKit availability remain unverified. Local
+full checks, blocking CI, exact-SHA review and the legacy CLI command are pending.

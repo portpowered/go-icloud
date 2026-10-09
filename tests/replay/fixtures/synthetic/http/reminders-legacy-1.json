@@ -1,0 +1,93 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders_legacy",
+  "operation": "startup",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://reminders.example.invalid",
+        "path": "/rd/startup",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ],
+          [
+            "X-Synthetic-Response",
+            "legacy-1"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJDb2xsZWN0aW9ucyI6IFt7Imd1aWQiOiAibGlzdC0xIiwgInRpdGxlIjogIkV4YW1wbGUiLCAib3JkZXIiOiAwLCAiY29sb3IiOiAiYmx1ZSIsICJlbmFibGVkIjogdHJ1ZSwgImNvbXBsZXRlZENvdW50IjogMH1dLCAiUmVtaW5kZXJzIjogW3siZ3VpZCI6ICJpdGVtLTEiLCAicEd1aWQiOiAibGlzdC0xIiwgInRpdGxlIjogIkV4YW1wbGUgcmVtaW5kZXIiLCAiZXh0cmEiOiB7ImZ1dHVyZSI6IFtudWxsLCBmYWxzZSwgOV19fV19"
+        }
+      }
+    }
+  ],
+  "result": {
+    "lists": [
+      {
+        "guid": "list-1",
+        "title": "Example",
+        "order": 0,
+        "color": "blue",
+        "enabled": true,
+        "completedCount": 0
+      }
+    ],
+    "reminders": [
+      {
+        "guid": "item-1",
+        "pGuid": "list-1",
+        "title": "Example reminder",
+        "extra": {
+          "future": [
+            null,
+            false,
+            9
+          ]
+        }
+      }
+    ]
+  }
+}

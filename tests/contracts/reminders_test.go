@@ -63,7 +63,7 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 348, Pairs: 414, Operations: 6, Invalid: 50}
+	want := remindersContractInventory{Scenarios: 354, Pairs: 420, Operations: 7, Invalid: 51}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}
@@ -96,7 +96,7 @@ func invalidReminderResponse(name string, index int) bool {
 }
 
 func invalidReminderRequiredFields(name string) bool {
-	return name == "reminders-zones-schema-error.json" ||
+	return name == "reminders-legacy-missing-lists.json" || name == "reminders-zones-schema-error.json" ||
 		strings.HasPrefix(name, "reminders-lists-schema-") ||
 		strings.HasPrefix(name, "reminders-get-schema-") || name == "reminders-get-no-records.json"
 }
@@ -374,6 +374,10 @@ func validateRemindersExchange(t *testing.T, operation *openapi3.Operation, exch
 	invalidResponse bool,
 ) {
 	t.Helper()
+
+	if operation.OperationID == "RemindersLegacyStartup" {
+		validateFindMyParameters(t, operation, exchange.Request)
+	}
 
 	if exchange.Request.Method == http.MethodPost {
 		validateFindMyParameters(t, operation, exchange.Request)

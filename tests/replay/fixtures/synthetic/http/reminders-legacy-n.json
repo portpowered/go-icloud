@@ -1,0 +1,105 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders_legacy",
+  "operation": "startup",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://reminders.example.invalid",
+        "path": "/rd/startup",
+        "query": [
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ],
+          [
+            "X-Synthetic-Response",
+            "legacy-n"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJDb2xsZWN0aW9ucyI6IFt7Imd1aWQiOiAibGlzdC0wIiwgInRpdGxlIjogIkV4YW1wbGUgMCJ9LCB7Imd1aWQiOiAibGlzdC0xIiwgInRpdGxlIjogIkV4YW1wbGUgMSJ9LCB7Imd1aWQiOiAibGlzdC0yIiwgInRpdGxlIjogIkV4YW1wbGUgMiJ9XSwgIlJlbWluZGVycyI6IFt7Imd1aWQiOiAiaXRlbS0wIiwgInBHdWlkIjogImxpc3QtMSIsICJ0aXRsZSI6ICJJdGVtIDAifSwgeyJndWlkIjogIml0ZW0tMSIsICJwR3VpZCI6ICJsaXN0LTEiLCAidGl0bGUiOiAiSXRlbSAxIn0sIHsiZ3VpZCI6ICJpdGVtLTIiLCAicEd1aWQiOiAibGlzdC0xIiwgInRpdGxlIjogIkl0ZW0gMiJ9LCB7Imd1aWQiOiAiaXRlbS0zIiwgInBHdWlkIjogImxpc3QtMSIsICJ0aXRsZSI6ICJJdGVtIDMifV19"
+        }
+      }
+    }
+  ],
+  "result": {
+    "lists": [
+      {
+        "guid": "list-0",
+        "title": "Example 0"
+      },
+      {
+        "guid": "list-1",
+        "title": "Example 1"
+      },
+      {
+        "guid": "list-2",
+        "title": "Example 2"
+      }
+    ],
+    "reminders": [
+      {
+        "guid": "item-0",
+        "pGuid": "list-1",
+        "title": "Item 0"
+      },
+      {
+        "guid": "item-1",
+        "pGuid": "list-1",
+        "title": "Item 1"
+      },
+      {
+        "guid": "item-2",
+        "pGuid": "list-1",
+        "title": "Item 2"
+      },
+      {
+        "guid": "item-3",
+        "pGuid": "list-1",
+        "title": "Item 3"
+      }
+    ]
+  }
+}

@@ -418,7 +418,8 @@ func assertAuthResponses(t *testing.T, raw map[string]json.RawMessage, result *i
 func assertAuthServiceURLs(t *testing.T, services map[string]map[string]string, auth icloud.AuthContext) {
 	t.Helper()
 
-	if auth.DriveServiceURL != services[protocol.AuthWebServicesDrivews][protocol.AuthServiceUrl] ||
+	if auth.LegacyRemindersServiceURL != services[protocol.AuthWebServicesReminders][protocol.AuthServiceUrl] ||
+		auth.DriveServiceURL != services[protocol.AuthWebServicesDrivews][protocol.AuthServiceUrl] ||
 		auth.RemindersServiceURL != services[protocol.AuthWebServicesCkdatabasews][protocol.AuthServiceUrl] ||
 		auth.PhotosServiceURL != services[protocol.AuthWebServicesCkdatabasews][protocol.AuthServiceUrl] ||
 		auth.FindMyServiceURL != services[protocol.AuthWebServicesFindme][protocol.AuthServiceUrl] ||
