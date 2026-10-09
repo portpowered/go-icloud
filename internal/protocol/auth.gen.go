@@ -21,6 +21,7 @@ const (
 	AuthTokenLoginRequestDsWebAuthToken     = "dsWebAuthToken"
 	AuthTokenLoginRequestExtendedLogin      = "extended_login"
 	AuthTokenLoginRequestTrustToken         = "trustToken"
+	AuthWebServicesAccount                  = "account"
 	AuthWebServicesDocws                    = "docws"
 	AuthWebServicesDrivews                  = "drivews"
 	AuthWebServicesFindme                   = "findme"

@@ -1,0 +1,123 @@
+{
+  "format": "portos.local-credentials.v1",
+  "evidence": "synthetic; generated and loaded with pinned Source cookie jar",
+  "source": {
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "cases": [
+    {
+      "identity": {
+        "username": "synthetic@example.invalid",
+        "china": false
+      },
+      "accountKey": "faa296d58b7dcae9eec26d19",
+      "filename": "syntheticexampleinvalid",
+      "session": {
+        "client_id": "synthetic-client",
+        "session_token": "synthetic-token",
+        "trust_token": "synthetic-trust",
+        "account_country": "USA"
+      },
+      "cookieFile": "#LWP-Cookies-2.0\nSet-Cookie3: X-APPLE-WEBAUTH-TOKEN=\"\\\"synthetic-cookie\\\"\"; path=\"/\"; domain=\".icloud.com\"; path_spec; domain_dot; secure; discard; HttpOnly=None; version=0\nSet-Cookie3: synthetic-expired=old; path=\"/\"; domain=\".icloud.com\"; path_spec; domain_dot; expires=\"1970-01-01 00:00:01Z\"; discard; HttpOnly=None; version=0\nSet-Cookie3: synthetic-future=future; path=\"/\"; domain=\".icloud.com\"; path_spec; domain_dot; expires=\"2040-01-01 00:00:00Z\"; discard; HttpOnly=None; version=0\nSet-Cookie3: X-APPLE-WEBAUTH-FMIP=stale; path=\"/\"; domain=\".icloud.com\"; path_spec; domain_dot; discard; HttpOnly=None; version=0\nSet-Cookie3: synthetic-host=\"synthetic\\\"quote;comma,back\\\\slash\"; path=\"/setup/ws/1\"; domain=\"setup.icloud.com\"; path_spec; discard; version=0\n",
+      "expectedCookies": [
+        {
+          "name": "X-APPLE-WEBAUTH-TOKEN",
+          "value": "\"synthetic-cookie\"",
+          "domain": ".icloud.com",
+          "path": "/",
+          "secure": true,
+          "hostOnly": false,
+          "httpOnly": true,
+          "maxAge": 0
+        },
+        {
+          "name": "synthetic-future",
+          "value": "future",
+          "domain": ".icloud.com",
+          "path": "/",
+          "secure": false,
+          "hostOnly": false,
+          "httpOnly": true,
+          "maxAge": 0,
+          "expires": "2040-01-01T00:00:00Z"
+        },
+        {
+          "name": "synthetic-host",
+          "value": "synthetic\"quote;comma,back\\slash",
+          "domain": "setup.icloud.com",
+          "path": "/setup/ws/1",
+          "secure": false,
+          "hostOnly": true,
+          "httpOnly": false,
+          "maxAge": 0
+        }
+      ],
+      "setupOrigin": "https://setup.icloud.com",
+      "expectedHeaders": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Origin": "https://www.icloud.com",
+        "Referer": "https://www.icloud.com/"
+      }
+    },
+    {
+      "identity": {
+        "username": "andré_Ⅻ@example.invalid",
+        "china": true
+      },
+      "accountKey": "9e01394972e7814036c1fe85",
+      "filename": "andré_Ⅻexampleinvalid",
+      "session": {
+        "client_id": "synthetic-client",
+        "session_token": "synthetic-token",
+        "trust_token": "synthetic-trust",
+        "account_country": "CHN"
+      },
+      "cookieFile": "#LWP-Cookies-2.0\nSet-Cookie3: X-APPLE-WEBAUTH-TOKEN=\"\\\"synthetic-cookie\\\"\"; path=\"/\"; domain=\".icloud.com.cn\"; path_spec; domain_dot; secure; discard; HttpOnly=None; version=0\nSet-Cookie3: synthetic-expired=old; path=\"/\"; domain=\".icloud.com.cn\"; path_spec; domain_dot; expires=\"1970-01-01 00:00:01Z\"; discard; HttpOnly=None; version=0\nSet-Cookie3: synthetic-future=future; path=\"/\"; domain=\".icloud.com.cn\"; path_spec; domain_dot; expires=\"2040-01-01 00:00:00Z\"; discard; HttpOnly=None; version=0\nSet-Cookie3: X-APPLE-WEBAUTH-FMIP=stale; path=\"/\"; domain=\".icloud.com.cn\"; path_spec; domain_dot; discard; HttpOnly=None; version=0\nSet-Cookie3: synthetic-host=\"synthetic\\\"quote;comma,back\\\\slash\"; path=\"/setup/ws/1\"; domain=\"setup.icloud.com.cn\"; path_spec; discard; version=0\n",
+      "expectedCookies": [
+        {
+          "name": "X-APPLE-WEBAUTH-TOKEN",
+          "value": "\"synthetic-cookie\"",
+          "domain": ".icloud.com.cn",
+          "path": "/",
+          "secure": true,
+          "hostOnly": false,
+          "httpOnly": true,
+          "maxAge": 0
+        },
+        {
+          "name": "synthetic-future",
+          "value": "future",
+          "domain": ".icloud.com.cn",
+          "path": "/",
+          "secure": false,
+          "hostOnly": false,
+          "httpOnly": true,
+          "maxAge": 0,
+          "expires": "2040-01-01T00:00:00Z"
+        },
+        {
+          "name": "synthetic-host",
+          "value": "synthetic\"quote;comma,back\\slash",
+          "domain": "setup.icloud.com.cn",
+          "path": "/setup/ws/1",
+          "secure": false,
+          "hostOnly": true,
+          "httpOnly": false,
+          "maxAge": 0
+        }
+      ],
+      "setupOrigin": "https://setup.icloud.com.cn",
+      "expectedHeaders": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Origin": "https://www.icloud.com.cn",
+        "Referer": "https://www.icloud.com.cn/"
+      }
+    }
+  ]
+}

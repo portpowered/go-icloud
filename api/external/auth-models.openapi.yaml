@@ -65,6 +65,9 @@
       "AuthWebServices": {
         "type": "object",
         "properties": {
+          "account": {
+            "$ref": "#/components/schemas/AuthService"
+          },
           "drivews": {
             "$ref": "#/components/schemas/AuthService"
           },
