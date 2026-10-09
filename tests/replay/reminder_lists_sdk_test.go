@@ -39,7 +39,7 @@ func TestReminderListUnionSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 10 {
+	if len(paths) != 13 {
 		t.Fatal("reminder list union scenario inventory changed")
 	}
 

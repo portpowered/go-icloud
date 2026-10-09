@@ -21,8 +21,8 @@ class SyntheticTests(unittest.TestCase):
         paths = sorted(FIXTURES.glob("reminders-list-union-*.json"))
         paths += sorted(FIXTURES.glob("reminders-snapshot-union-*.json"))
         paths += [FIXTURES / "reminders-snapshot-discovery-cookie.json"]
-        self.assertEqual(len(paths), 21)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 25)
+        self.assertEqual(len(paths), 27)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 31)
         for prefix in ["list", "snapshot"]:
             for name in [
                 "normal-extra-error",
@@ -49,6 +49,18 @@ class SyntheticTests(unittest.TestCase):
                     (FIXTURES / f"reminders-{prefix}-union-{name}.json").read_text()
                 )
                 self.assertEqual(scenario["error"]["type"], "RemindersApiError")
+            for name in [
+                "error-before-wire-validation",
+                "error-before-later-zone-validation",
+                "projection-before-later-zone-validation",
+            ]:
+                scenario = json.loads(
+                    (FIXTURES / f"reminders-{prefix}-union-{name}.json").read_text()
+                )
+                self.assertEqual(
+                    scenario["error"]["message"], "Changes response validation failed"
+                )
+                self.assertIn("zones", scenario["error_payload"])
 
     def test_reminder_list_union_selection_and_cookie_state_are_bound(self):
         for change in ["selected-result", "error", "cookie"]:
@@ -80,8 +92,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_snapshot_discovery_and_replacement(self):
         paths = sorted(FIXTURES.glob("reminders-snapshot-*.json"))
-        self.assertEqual(len(paths), 25)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 42)
+        self.assertEqual(len(paths), 28)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 45)
         for name, count in [
             ("explicit-0-active", 0),
             ("explicit-1-active", 1),

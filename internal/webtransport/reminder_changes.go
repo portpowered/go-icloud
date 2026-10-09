@@ -51,6 +51,15 @@ func (client *Client) ReminderListChanges(ctx context.Context, auth RequestConte
 		return nil, responseFailure(Decode, err, response)
 	}
 
+	if data.Zones != nil {
+		for _, zone := range *data.Zones {
+			err = validateReminderSyncRecords(zone.Records)
+			if err != nil {
+				return nil, responseFailure(Decode, err, response)
+			}
+		}
+	}
+
 	return &ReminderChangesResponse{Data: data, Metadata: response}, nil
 }
 
