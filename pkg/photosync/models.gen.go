@@ -175,6 +175,8 @@ type Asset struct {
 	ItemType    AssetItemType `json:"itemType"`
 
 	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
 	Library   *externalRef1.PhotoLibrary `json:"library,omitempty"`
 	Metadata  *externalRef0.Metadata     `json:"metadata,omitempty"`
 	Resources map[string]Resource        `json:"resources"`
