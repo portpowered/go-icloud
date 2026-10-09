@@ -46,8 +46,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-All 78 existing implementation-derived synthetic Reminders scenarios contain
-86 paired exchanges: 83 POST pairs and three membership-asset downloads. Contract
+All 83 existing implementation-derived synthetic Reminders scenarios contain
+91 paired exchanges: 88 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -75,10 +75,19 @@ The internal [text protocol adapter](reminders-text-protocol.md) now decodes
 versioned CRDT title and notes bytes against a separate portable Source corpus.
 Public domain conversion and write encoding remain pending.
 
-This milestone is the wire layer, not Go SDK semantic parity. The public Reminders
-API must still port pagination, sync-token fallback, list membership precedence,
+The public Go `ListReminderZones` operation now passes ten semantic replays,
+including empty, one and multiple zones, provider and schema failures, and
+201/202/299 success. HTTP202 JSON is decoded despite a plain-text content type.
+An additional case binds unknown metadata at response, zone and identity levels,
+including large JSON integers and nulls. It returns caller-owned zone projections and metadata; authentication returns
+the discovered reminders origin. See the [README example](../README.md).
+The build-parameter scenario binds the optional authentication build and
+mastering query values in Source order; the external schema owns these optional
+parameters for every Reminders POST operation.
+
+The remaining public Reminders API must still port pagination, sync-token fallback, list membership precedence,
 record/domain mapping, CRDT/protobuf text, linked record writes, receipt/state
 updates, typed errors and all portable functional outcomes. Native authentication,
 Photos, CLI/publication/release, complete source/schema/runtime/socket gates and
-both final independent full audits remain open. Schema checks do not increase
+both final independent full audits remain open. Wire schema checks alone do not increase
 handwritten SDK replay coverage or establish full migration acceptance (LIB-07).

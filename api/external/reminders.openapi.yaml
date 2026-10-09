@@ -47,6 +47,12 @@
           },
           {
             "$ref": "#/components/parameters/RemindersConnection"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientMasteringNumber"
           }
         ],
         "requestBody": {
@@ -137,6 +143,12 @@
           },
           {
             "$ref": "#/components/parameters/RemindersConnection"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientMasteringNumber"
           }
         ],
         "requestBody": {
@@ -227,6 +239,12 @@
           },
           {
             "$ref": "#/components/parameters/RemindersConnection"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientMasteringNumber"
           }
         ],
         "requestBody": {
@@ -317,6 +335,12 @@
           },
           {
             "$ref": "#/components/parameters/RemindersConnection"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientMasteringNumber"
           }
         ],
         "requestBody": {
@@ -407,6 +431,12 @@
           },
           {
             "$ref": "#/components/parameters/RemindersConnection"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientMasteringNumber"
           }
         ],
         "requestBody": {
@@ -601,6 +631,24 @@
       "RemindersConnection": {
         "name": "Connection",
         "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersClientBuildNumber": {
+        "name": "clientBuildNumber",
+        "in": "query",
+        "required": false,
+        "description": "Optional authentication client build parameter; preserve omission and the exact supplied value.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "RemindersClientMasteringNumber": {
+        "name": "clientMasteringNumber",
+        "in": "query",
+        "required": false,
+        "description": "Optional authentication client mastering parameter; preserve omission and the exact supplied value.",
         "schema": {
           "type": "string"
         }
