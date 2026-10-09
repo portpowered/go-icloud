@@ -52,6 +52,7 @@ func reminderSyncChangesBody(syncToken *string) ([]byte, error) {
 	body := fmt.Sprintf("{%q: [{%q: %s, %q: [], %q: []", protocol.RemindersCKZoneChangesRequestZones,
 		protocol.RemindersCKZoneChangesZoneReqZoneID, zone, protocol.RemindersCKZoneChangesZoneReqDesiredKeys,
 		protocol.RemindersCKZoneChangesZoneReqDesiredRecordTypes)
+
 	if syncToken != nil {
 		token, tokenErr := referenceJSON(syncToken)
 		if tokenErr != nil {

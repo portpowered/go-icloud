@@ -2,6 +2,7 @@ package webtransport
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
@@ -15,7 +16,7 @@ func validateReminderSyncRecords(records *[]cloudkit.CKQueryResponse_Records_Ite
 	for _, item := range *records {
 		raw, err := json.Marshal(item)
 		if err != nil {
-			return err
+			return fmt.Errorf("encode reminder sync record: %w", err)
 		}
 
 		fields, err := accountFields(raw)

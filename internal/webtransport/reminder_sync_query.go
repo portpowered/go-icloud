@@ -48,7 +48,8 @@ func (client *Client) ReminderCurrentSyncQuery(ctx context.Context,
 		return nil, err
 	}
 
-	result := &ReminderQueryResponse{Data: cloudkit.CKQueryResponse{}, Metadata: response}
+	result := &ReminderQueryResponse{Data: cloudkit.CKQueryResponse{Records: nil,
+		ContinuationMarker: nil, SyncToken: nil, AdditionalProperties: nil}, Metadata: response}
 
 	result.Data, err = decodeReminderSyncQuery(response.Body)
 	if err != nil {

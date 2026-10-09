@@ -1,4 +1,5 @@
 """Portable service parity and fail-closed replay controls."""
+
 import base64
 import io
 import json
