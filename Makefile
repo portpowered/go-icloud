@@ -58,6 +58,8 @@ generate-api:
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/photosapi/config.yaml api/external/photos.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/photosupload/config.yaml api/external/photos-upload-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/photosuploadapi/config.yaml api/external/photos-upload.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/sharedphotos/config.yaml api/external/sharedphotos-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/sharedphotosapi/config.yaml api/external/sharedphotos.openapi.yaml
 	$(GO) run ./tools/apiconstants
 
 # Pinned compiler and local plugin generate the source-identical Reminders protocols.

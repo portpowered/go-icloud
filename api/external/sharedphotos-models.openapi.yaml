@@ -1,0 +1,562 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Shared Photos",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "SharedAlbumsRequest": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false,
+        "example": {}
+      },
+      "SharedAssetsRequest": {
+        "type": "object",
+        "required": [
+          "albumguid",
+          "albumctag",
+          "limit",
+          "offset"
+        ],
+        "properties": {
+          "albumguid": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "albumctag": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "limit": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "offset": {
+            "type": "string",
+            "description": "Provider string."
+          }
+        },
+        "example": {
+          "albumguid": "synthetic-stream-0",
+          "albumctag": "synthetic-stream-tag",
+          "limit": "200",
+          "offset": "0"
+        }
+      },
+      "SharedCountRequest": {
+        "type": "object",
+        "required": [
+          "albumguid"
+        ],
+        "properties": {
+          "albumguid": {
+            "type": "string",
+            "description": "Provider string."
+          }
+        },
+        "example": {
+          "albumguid": "synthetic-stream-0"
+        }
+      },
+      "SharedAlbumAttributes": {
+        "type": "object",
+        "required": [
+          "name",
+          "creationDate",
+          "allowcontributions",
+          "ispublic"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "creationDate": {
+            "type": "string",
+            "description": "Unix milliseconds as a decimal string."
+          },
+          "allowcontributions": {
+            "type": "boolean"
+          },
+          "ispublic": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SharedAlbum": {
+        "type": "object",
+        "required": [
+          "albumguid",
+          "albumlocation",
+          "albumctag",
+          "ownerdsid",
+          "sharingtype",
+          "iswebuploadsupported",
+          "attributes"
+        ],
+        "properties": {
+          "albumguid": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "albumlocation": {
+            "type": "string",
+            "description": "Provider-issued HTTPS base URL ending in a slash. Asset routes resolve relative to this full URL, preserving nested path components.",
+            "format": "uri",
+            "pattern": "^https://[^?#]*/$"
+          },
+          "albumctag": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "ownerdsid": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "sharingtype": {
+            "type": "string",
+            "description": "Provider string."
+          },
+          "iswebuploadsupported": {
+            "type": "boolean"
+          },
+          "attributes": {
+            "$ref": "#/components/schemas/SharedAlbumAttributes"
+          },
+          "publicurl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "example": {
+          "albumguid": "synthetic-stream-0",
+          "albumlocation": "https://stream-content.example.invalid/synthetic/",
+          "albumctag": "synthetic-stream-tag",
+          "ownerdsid": "synthetic-owner",
+          "sharingtype": "owned",
+          "iswebuploadsupported": false,
+          "attributes": {
+            "name": "Synthetic stream 0",
+            "creationDate": "1700000000000",
+            "allowcontributions": false,
+            "ispublic": false
+          }
+        }
+      },
+      "SharedAlbumsResponse": {
+        "type": "object",
+        "required": [
+          "albums"
+        ],
+        "properties": {
+          "albums": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SharedAlbum"
+            }
+          }
+        },
+        "example": {
+          "albums": [
+            {
+              "albumguid": "synthetic-stream-0",
+              "albumlocation": "https://stream-content.example.invalid/synthetic/",
+              "albumctag": "synthetic-stream-tag",
+              "ownerdsid": "synthetic-owner",
+              "sharingtype": "owned",
+              "iswebuploadsupported": false,
+              "attributes": {
+                "name": "Synthetic stream 0",
+                "creationDate": "1700000000000",
+                "allowcontributions": false,
+                "ispublic": false
+              }
+            }
+          ]
+        }
+      },
+      "SharedCountResponse": {
+        "type": "object",
+        "required": [
+          "albumassetcount"
+        ],
+        "properties": {
+          "albumassetcount": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        },
+        "example": {
+          "albumassetcount": 1
+        }
+      },
+      "SharedPluginField": {
+        "type": "string",
+        "enum": [
+          "likeCount",
+          "likedByCaller"
+        ]
+      },
+      "SharedStreamContentType": {
+        "type": "string",
+        "enum": [
+          "plain/text"
+        ]
+      },
+      "SharedMasterField": {
+        "type": "string",
+        "enum": [
+          "originalCreationDate",
+          "resOriginalFileSize"
+        ]
+      },
+      "SharedIntegerValue": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "SharedBooleanValue": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SharedPluginFields": {
+        "type": "object",
+        "properties": {
+          "likeCount": {
+            "$ref": "#/components/schemas/SharedIntegerValue"
+          },
+          "likedByCaller": {
+            "$ref": "#/components/schemas/SharedBooleanValue"
+          }
+        }
+      },
+      "SharedPhotoRecord": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/SharedMasterRecord"
+          },
+          {
+            "$ref": "#/components/schemas/SharedAssetRecord"
+          },
+          {
+            "$ref": "#/components/schemas/SharedOtherRecord"
+          }
+        ]
+      },
+      "SharedRecordsResponse": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SharedPhotoRecord"
+            }
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedStringValue": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedNumberValue": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "x-go-type": "json.Number"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedReferenceValue": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKReference"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedResource": {
+        "type": "object",
+        "required": [
+          "downloadURL",
+          "size"
+        ],
+        "properties": {
+          "downloadURL": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedResourceValue": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/SharedResource"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedMasterFields": {
+        "type": "object",
+        "properties": {
+          "filenameEnc": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "itemType": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "originalCreationDate": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resOriginalWidth": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resOriginalHeight": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resOriginalFileSize": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resOriginalFileType": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "resOriginalRes": {
+            "$ref": "#/components/schemas/SharedResourceValue"
+          },
+          "resJPEGMedWidth": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resJPEGMedHeight": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resJPEGMedFileSize": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resJPEGMedFileType": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "resJPEGMedRes": {
+            "$ref": "#/components/schemas/SharedResourceValue"
+          },
+          "resJPEGThumbWidth": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resJPEGThumbHeight": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resJPEGThumbFileSize": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resJPEGThumbFileType": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "resJPEGThumbRes": {
+            "$ref": "#/components/schemas/SharedResourceValue"
+          },
+          "resOriginalVidComplWidth": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resOriginalVidComplHeight": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resOriginalVidComplFileSize": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resOriginalVidComplFileType": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "resOriginalVidComplRes": {
+            "$ref": "#/components/schemas/SharedResourceValue"
+          },
+          "resVidMedWidth": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resVidMedHeight": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resVidMedFileSize": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resVidMedFileType": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "resVidMedRes": {
+            "$ref": "#/components/schemas/SharedResourceValue"
+          },
+          "resVidSmallWidth": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resVidSmallHeight": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resVidSmallFileSize": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "resVidSmallFileType": {
+            "$ref": "#/components/schemas/SharedStringValue"
+          },
+          "resVidSmallRes": {
+            "$ref": "#/components/schemas/SharedResourceValue"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedAssetFields": {
+        "type": "object",
+        "properties": {
+          "masterRef": {
+            "$ref": "#/components/schemas/SharedReferenceValue"
+          },
+          "addedDate": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          },
+          "assetDate": {
+            "$ref": "#/components/schemas/SharedNumberValue"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedMasterRecord": {
+        "type": "object",
+        "required": [
+          "recordName",
+          "recordType"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string"
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "CPLMaster"
+            ]
+          },
+          "fields": {
+            "$ref": "#/components/schemas/SharedMasterFields"
+          },
+          "pluginFields": {
+            "$ref": "#/components/schemas/SharedPluginFields"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedAssetRecord": {
+        "type": "object",
+        "required": [
+          "recordName",
+          "recordType"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string"
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "CPLAsset"
+            ]
+          },
+          "fields": {
+            "$ref": "#/components/schemas/SharedAssetFields"
+          },
+          "pluginFields": {
+            "$ref": "#/components/schemas/SharedPluginFields"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedOtherRecord": {
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "not": {
+              "enum": [
+                "CPLMaster",
+                "CPLAsset"
+              ]
+            }
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+        }
+      },
+      "SharedImageExtension": {
+        "type": "string",
+        "enum": [
+          ".heic",
+          ".png",
+          ".jpg",
+          ".jpeg"
+        ]
+      }
+    }
+  }
+}

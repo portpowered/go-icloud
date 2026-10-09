@@ -111,6 +111,17 @@ type Client interface {
 	UploadPhoto(ctx context.Context, request UploadPhotoRequest) (*UploadPhotoResult, error)
 	// UploadPhotoFile reserves and registers a file without waiting for indexing.
 	UploadPhotoFile(ctx context.Context, request UploadPhotoFileRequest) (*UploadPhotoFileResult, error)
+	// ListSharedPhotoAlbums reads legacy shared stream data.
+	ListSharedPhotoAlbums(ctx context.Context, request ListSharedPhotoAlbumsRequest) (*ListSharedPhotoAlbumsResult, error)
+	// CountSharedPhotos reads legacy shared stream data.
+	CountSharedPhotos(ctx context.Context, request CountSharedPhotosRequest) (*CountSharedPhotosResult, error)
+	// ListSharedPhotos reads legacy shared stream data.
+	ListSharedPhotos(ctx context.Context, request ListSharedPhotosRequest) (*ListSharedPhotosResult, error)
+	// GetSharedPhoto reads legacy shared stream data.
+	GetSharedPhoto(ctx context.Context, request GetSharedPhotoRequest) (*GetSharedPhotoResult, error)
+	// DownloadSharedPhoto reads legacy shared stream data.
+	DownloadSharedPhoto(ctx context.Context, request DownloadSharedPhotoRequest) (*DownloadSharedPhotoResult, error)
+
 	// CreateReminder creates a reminder and hydrates its acknowledged record.
 	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
 	// UpdateReminder writes a snapshot and returns an independent updated snapshot.

@@ -572,6 +572,9 @@ type AuthContext struct {
 
 	// SetupServiceURL HTTPS setup origin from authentication; required for remote erase token lookup.
 	SetupServiceURL string `json:"setupServiceURL,omitempty"`
+
+	// SharedPhotosServiceURL Account-discovered shared streams origin.
+	SharedPhotosServiceURL string `json:"sharedPhotosServiceURL,omitempty"`
 }
 
 // AuthCookie Caller-owned web cookie state; credential values may contain secrets.
@@ -611,6 +614,21 @@ type AuthCookie struct {
 
 // AuthCookieSameSite Optional browser same-site attribute; native HTTP requests preserve this state without a browser navigation policy.
 type AuthCookieSameSite string
+
+// CountSharedPhotosRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
+type CountSharedPhotosRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// CountSharedPhotosResult Example: {"count":0,"responses":[]}
+type CountSharedPhotosResult struct {
+	Count     int64              `json:"count"`
+	Responses []ResponseMetadata `json:"responses"`
+}
 
 // CreateDriveFolderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"name":"Synthetic","parentID":"FOLDER::synthetic::root"}
 type CreateDriveFolderRequest struct {
@@ -913,6 +931,27 @@ type DownloadPhotoRequest struct {
 // Example: {"content":null,"responses":[]}
 type DownloadPhotoResult struct {
 	// Content Exact bytes; JSON uses base64. Null means unavailable and empty means an empty file.
+	Content   nullable.Nullable[[]byte] `json:"content"`
+	Responses []ResponseMetadata        `json:"responses"`
+}
+
+// DownloadSharedPhotoRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"},"photoID":"synthetic-photo"}
+type DownloadSharedPhotoRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth    AuthContext `json:"auth"`
+	PhotoID string      `json:"photoID"`
+
+	// Version Known photo/video resource key; a rendition unavailable on the selected asset returns null.
+	//
+	// Example: original
+	Version *PhotoVersion `json:"version,omitempty"`
+}
+
+// DownloadSharedPhotoResult Example: {"content":null,"responses":[]}
+type DownloadSharedPhotoResult struct {
 	Content   nullable.Nullable[[]byte] `json:"content"`
 	Responses []ResponseMetadata        `json:"responses"`
 }
@@ -1718,6 +1757,22 @@ type GetReminderSyncCursorResult struct {
 	SyncToken string `json:"syncToken"`
 }
 
+// GetSharedPhotoRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"},"photoID":"synthetic-photo"}
+type GetSharedPhotoRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth    AuthContext `json:"auth"`
+	PhotoID string      `json:"photoID"`
+}
+
+// GetSharedPhotoResult Example: {"photo":null,"responses":[]}
+type GetSharedPhotoResult struct {
+	Photo     nullable.Nullable[SharedPhoto] `json:"photo"`
+	Responses []ResponseMetadata             `json:"responses"`
+}
+
 // Header One HTTP response or caller-owned authentication header value; repeated headers remain separate entries.
 type Header struct {
 	// Name Header name.
@@ -2005,6 +2060,33 @@ type ListRemindersResult struct {
 	Reminders       []Reminder                         `json:"reminders"`
 	Responses       []ResponseMetadata                 `json:"responses"`
 	Triggers        map[string]ReminderLocationTrigger `json:"triggers"`
+}
+
+// ListSharedPhotoAlbumsRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
+type ListSharedPhotoAlbumsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListSharedPhotoAlbumsResult Example: {"albums":[],"responses":[]}
+type ListSharedPhotoAlbumsResult struct {
+	Albums    []SharedPhotoAlbum `json:"albums"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ListSharedPhotosRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
+type ListSharedPhotosRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListSharedPhotosResult Example: {"photos":[],"responses":[]}
+type ListSharedPhotosResult struct {
+	Photos    []SharedPhoto      `json:"photos"`
+	Responses []ResponseMetadata `json:"responses"`
 }
 
 // MoveDriveNodesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"destinationID":"FOLDER::synthetic::destination","nodes":[]}
@@ -2926,6 +3008,47 @@ type SetPhotoFavoriteRequest struct {
 
 	// PhotoID Provider asset identifier.
 	PhotoID string `json:"photoID"`
+}
+
+// SharedPhoto defines model for SharedPhoto.
+type SharedPhoto struct {
+	LikeCount int64 `json:"likeCount"`
+	Liked     bool  `json:"liked"`
+
+	// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+	//
+	// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+	Photo Photo `json:"photo"`
+}
+
+// SharedPhotoAlbum Example: {"allowContributions":false,"changeTag":"synthetic-tag","created":"1970-01-01T00:00:00Z","fullName":"Example","id":"synthetic-stream","isPublic":false,"isWebUploadSupported":false,"location":"https://shared.example.invalid/album/","name":"Example","ownerID":"synthetic-owner","publicURL":null,"sharingType":"owned"}
+type SharedPhotoAlbum struct {
+	AllowContributions bool `json:"allowContributions"`
+
+	// ChangeTag Provider string.
+	ChangeTag string    `json:"changeTag"`
+	Created   time.Time `json:"created"`
+
+	// FullName Provider string.
+	FullName string `json:"fullName"`
+
+	// ID Provider string.
+	ID                   string `json:"id"`
+	IsPublic             bool   `json:"isPublic"`
+	IsWebUploadSupported bool   `json:"isWebUploadSupported"`
+
+	// Location Provider string.
+	Location string `json:"location"`
+
+	// Name Provider string.
+	Name string `json:"name"`
+
+	// OwnerID Provider string.
+	OwnerID   string                    `json:"ownerID"`
+	PublicURL nullable.Nullable[string] `json:"publicURL"`
+
+	// SharingType Provider string.
+	SharingType string `json:"sharingType"`
 }
 
 // TrashDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}

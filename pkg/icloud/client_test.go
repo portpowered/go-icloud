@@ -21,6 +21,7 @@ func (roundTrip sdkRoundTrip) RoundTrip(request *http.Request) (*http.Response, 
 
 func deviceRequest() icloud.GetAccountDevicesRequest {
 	return icloud.GetAccountDevicesRequest{Auth: icloud.AuthContext{
+		SharedPhotosServiceURL:    "",
 		PhotosServiceURL:          "",
 		PhotosUploadServiceURL:    "",
 		LegacyRemindersServiceURL: "", RemindersServiceURL: "",

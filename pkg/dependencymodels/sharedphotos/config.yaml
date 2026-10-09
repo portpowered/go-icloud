@@ -1,0 +1,9 @@
+package: sharedphotos
+generate:
+  models: true
+output: pkg/dependencymodels/sharedphotos/models.gen.go
+output-options:
+  nullable-type: true
+  skip-prune: true
+import-mapping:
+  ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit

@@ -69,6 +69,7 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 	}
 
 	auth := icloud.AuthContext{
+		SharedPhotosServiceURL:    "",
 		PhotosServiceURL:          "",
 		LegacyRemindersServiceURL: "", RemindersServiceURL: "",
 		DriveToken:       "",

@@ -387,13 +387,6 @@
             "x-go-name": "PhotosServiceURL",
             "x-go-type-skip-optional-pointer": true
           },
-          "photosUploadServiceURL": {
-            "description": "HTTPS Photos upload origin returned by authenticated service discovery.",
-            "format": "uri",
-            "type": "string",
-            "x-go-name": "PhotosUploadServiceURL",
-            "x-go-type-skip-optional-pointer": true
-          },
           "remindersServiceURL": {
             "description": "HTTPS Reminders origin from authenticated discovery; required by reminders operations.",
             "format": "uri",
@@ -410,6 +403,20 @@
             "format": "uri",
             "type": "string",
             "x-go-name": "SetupServiceURL",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "photosUploadServiceURL": {
+            "description": "HTTPS Photos upload origin returned by authenticated service discovery.",
+            "format": "uri",
+            "type": "string",
+            "x-go-name": "PhotosUploadServiceURL",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "sharedPhotosServiceURL": {
+            "description": "Account-discovered shared streams origin.",
+            "format": "uri",
+            "type": "string",
+            "x-go-name": "SharedPhotosServiceURL",
             "x-go-type-skip-optional-pointer": true
           }
         },
@@ -2922,61 +2929,6 @@
         ],
         "type": "object"
       },
-      "ListPhotoLibrariesRequest": {
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid"
-          }
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          }
-        },
-        "required": [
-          "auth"
-        ],
-        "type": "object"
-      },
-      "ListPhotoLibrariesResult": {
-        "example": {
-          "libraries": [
-            {
-              "id": "root",
-              "indexingState": "FINISHED",
-              "isSharedLibrary": false,
-              "ownerRecordName": null,
-              "shared": false,
-              "syncToken": "synthetic-sync",
-              "zoneName": "PrimarySync",
-              "zoneType": "REGULAR_CUSTOM_ZONE"
-            }
-          ],
-          "responses": []
-        },
-        "properties": {
-          "libraries": {
-            "items": {
-              "$ref": "#/components/schemas/PhotoLibrary"
-            },
-            "type": "array"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "libraries",
-          "responses"
-        ],
-        "type": "object"
-      },
       "ListRecentlyAddedPhotosRequest": {
         "description": "Enumerate the primary library newest first using the recently-added trailing window index.",
         "example": {
@@ -3837,66 +3789,6 @@
           "name",
           "fullName",
           "recordChangeTag"
-        ],
-        "type": "object"
-      },
-      "PhotoLibrary": {
-        "description": "Caller-owned library identity; SharedSync zones discovered privately retain the private database.",
-        "example": {
-          "id": "root",
-          "indexingState": "FINISHED",
-          "isSharedLibrary": false,
-          "ownerRecordName": null,
-          "shared": false,
-          "syncToken": "synthetic-sync",
-          "zoneName": "PrimarySync",
-          "zoneType": "REGULAR_CUSTOM_ZONE"
-        },
-        "properties": {
-          "id": {
-            "type": "string",
-            "x-go-name": "ID"
-          },
-          "indexingState": {
-            "description": "Discovery initialization receipt; omission checks readiness.",
-            "enum": [
-              "FINISHED"
-            ],
-            "type": "string",
-            "x-go-type-skip-optional-pointer": true
-          },
-          "isSharedLibrary": {
-            "description": "Shared-library capabilities independent of database scope.",
-            "type": "boolean"
-          },
-          "ownerRecordName": {
-            "nullable": true,
-            "type": "string"
-          },
-          "shared": {
-            "description": "Selects the shared CloudKit database.",
-            "type": "boolean"
-          },
-          "syncToken": {
-            "nullable": true,
-            "type": "string"
-          },
-          "zoneName": {
-            "type": "string"
-          },
-          "zoneType": {
-            "nullable": true,
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "zoneName",
-          "shared",
-          "isSharedLibrary",
-          "zoneType",
-          "ownerRecordName",
-          "syncToken"
         ],
         "type": "object"
       },
@@ -6120,6 +6012,74 @@
         ],
         "type": "object"
       },
+      "GetPhotoUploadStatusRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "jobIDs": [
+            "synthetic-job"
+          ]
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "jobIDs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "x-go-name": "JobIDs"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          }
+        },
+        "required": [
+          "auth",
+          "jobIDs"
+        ],
+        "type": "object"
+      },
+      "GetPhotoUploadStatusResult": {
+        "example": {
+          "jobs": {
+            "synthetic-job": {
+              "errorCode": null,
+              "progress": 100,
+              "unknown": false
+            }
+          },
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "jobs": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PhotoUploadStatus"
+            },
+            "type": "object"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "jobs",
+          "responses"
+        ],
+        "type": "object"
+      },
       "GetPhotosCursorRequest": {
         "example": {
           "auth": {
@@ -6160,6 +6120,61 @@
         },
         "required": [
           "syncToken",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "ListPhotoLibrariesRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth"
+        ],
+        "type": "object"
+      },
+      "ListPhotoLibrariesResult": {
+        "example": {
+          "libraries": [
+            {
+              "id": "root",
+              "indexingState": "FINISHED",
+              "isSharedLibrary": false,
+              "ownerRecordName": null,
+              "shared": false,
+              "syncToken": "synthetic-sync",
+              "zoneName": "PrimarySync",
+              "zoneType": "REGULAR_CUSTOM_ZONE"
+            }
+          ],
+          "responses": []
+        },
+        "properties": {
+          "libraries": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoLibrary"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "libraries",
           "responses"
         ],
         "type": "object"
@@ -6313,6 +6328,66 @@
         ],
         "type": "object"
       },
+      "PhotoLibrary": {
+        "description": "Caller-owned library identity; SharedSync zones discovered privately retain the private database.",
+        "example": {
+          "id": "root",
+          "indexingState": "FINISHED",
+          "isSharedLibrary": false,
+          "ownerRecordName": null,
+          "shared": false,
+          "syncToken": "synthetic-sync",
+          "zoneName": "PrimarySync",
+          "zoneType": "REGULAR_CUSTOM_ZONE"
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-go-name": "ID"
+          },
+          "indexingState": {
+            "description": "Discovery initialization receipt; omission checks readiness.",
+            "enum": [
+              "FINISHED"
+            ],
+            "type": "string",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "isSharedLibrary": {
+            "description": "Shared-library capabilities independent of database scope.",
+            "type": "boolean"
+          },
+          "ownerRecordName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shared": {
+            "description": "Selects the shared CloudKit database.",
+            "type": "boolean"
+          },
+          "syncToken": {
+            "nullable": true,
+            "type": "string"
+          },
+          "zoneName": {
+            "type": "string"
+          },
+          "zoneType": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "zoneName",
+          "shared",
+          "isSharedLibrary",
+          "zoneType",
+          "ownerRecordName",
+          "syncToken"
+        ],
+        "type": "object"
+      },
       "PhotoLibraryChange": {
         "example": {
           "deleted": false,
@@ -6386,6 +6461,159 @@
         ],
         "type": "object"
       },
+      "PhotoUploadFile": {
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "modificationTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/PhotoUploadReceipt"
+          },
+          "timeZoneOffset": {
+            "description": "UTC minus local time, in minutes.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "filename",
+          "modificationTime",
+          "timeZoneOffset",
+          "receipt"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadReceipt": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "description": "Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.",
+        "properties": {
+          "fileChecksum": {
+            "nullable": true,
+            "type": "string"
+          },
+          "receipt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "referenceChecksum": {
+            "nullable": true,
+            "type": "string"
+          },
+          "size": {
+            "format": "int64",
+            "nullable": true,
+            "type": "integer"
+          },
+          "wrappingKey": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "referenceChecksum",
+          "size",
+          "fileChecksum",
+          "wrappingKey",
+          "receipt"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadRegistration": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "properties": {
+          "duplicate": {
+            "type": "boolean"
+          },
+          "jobID": {
+            "nullable": true,
+            "type": "string",
+            "x-go-name": "JobID"
+          },
+          "masterID": {
+            "nullable": true,
+            "type": "string",
+            "x-go-name": "MasterID"
+          },
+          "photoID": {
+            "nullable": true,
+            "type": "string",
+            "x-go-name": "PhotoID"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PhotoUploadRegistrationStatus"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "jobID",
+          "masterID",
+          "photoID",
+          "status",
+          "duplicate"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadRegistrationStatus": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "properties": {
+          "errorMessage": {
+            "nullable": true,
+            "type": "string"
+          },
+          "retryable": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "status": {
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "retryable",
+          "errorMessage"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadStatus": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "properties": {
+          "errorCode": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "progress": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "unknown": {
+            "description": "True when the provider does not recognize this job.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "progress",
+          "errorCode",
+          "unknown"
+        ],
+        "type": "object"
+      },
       "PhotoVisitEvent": {
         "description": "Owned photo projection and ordered response metadata available before the callback.",
         "example": {
@@ -6420,6 +6648,101 @@
         },
         "required": [
           "photo",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "RegisterPhotoUploadsRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "files": [
+            {
+              "filename": "synthetic.jpg",
+              "modificationTime": "2023-11-14T22:13:20Z",
+              "receipt": {
+                "fileChecksum": null,
+                "receipt": "synthetic-receipt",
+                "referenceChecksum": null,
+                "size": 3,
+                "wrappingKey": null
+              },
+              "timeZoneOffset": 0
+            }
+          ],
+          "importGroup": "synthetic-import",
+          "localTimeZoneID": "UTC"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoUploadFile"
+            },
+            "type": "array"
+          },
+          "importGroup": {
+            "type": "string"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          },
+          "localTimeZoneID": {
+            "type": "string",
+            "x-go-name": "LocalTimeZoneID"
+          }
+        },
+        "required": [
+          "auth",
+          "files",
+          "importGroup",
+          "localTimeZoneID"
+        ],
+        "type": "object"
+      },
+      "RegisterPhotoUploadsResult": {
+        "example": {
+          "registrations": [
+            {
+              "duplicate": false,
+              "jobID": "synthetic-job",
+              "masterID": "synthetic-master",
+              "photoID": "synthetic-photo",
+              "status": {
+                "errorMessage": null,
+                "retryable": false,
+                "status": 200
+              }
+            }
+          ],
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "registrations": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoUploadRegistration"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "registrations",
           "responses"
         ],
         "type": "object"
@@ -6727,6 +7050,142 @@
         ],
         "type": "object"
       },
+      "ReservePhotoUploadsRequest": {
+        "example": {
+          "assets": {
+            "synthetic-file": 3
+          },
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          }
+        },
+        "properties": {
+          "assets": {
+            "additionalProperties": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "description": "Caller-generated identities mapped to complete byte lengths.",
+            "type": "object"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          }
+        },
+        "required": [
+          "auth",
+          "assets"
+        ],
+        "type": "object"
+      },
+      "ReservePhotoUploadsResult": {
+        "example": {
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ],
+          "uploadURLs": {
+            "synthetic-file": "https://content.example.invalid/upload?token=synthetic"
+          }
+        },
+        "properties": {
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "uploadURLs": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "x-go-name": "UploadURLs"
+          }
+        },
+        "required": [
+          "uploadURLs",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "SendPhotoUploadBytesRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "content": "synthetic-bytes",
+          "url": "https://content.example.invalid/upload?token=synthetic"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "content": {
+            "description": "Caller-owned reader; bytes start at its current position. The SDK does not close it.",
+            "format": "binary",
+            "type": "string",
+            "x-go-type": "io.ReadSeeker"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          },
+          "url": {
+            "description": "Signed HTTPS URL returned by ReservePhotoUploads.",
+            "format": "uri",
+            "type": "string",
+            "x-go-name": "URL"
+          }
+        },
+        "required": [
+          "auth",
+          "url",
+          "content"
+        ],
+        "type": "object"
+      },
+      "SendPhotoUploadBytesResult": {
+        "example": {
+          "receipt": {
+            "fileChecksum": null,
+            "receipt": "synthetic-receipt",
+            "referenceChecksum": null,
+            "size": 3,
+            "wrappingKey": null
+          },
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "receipt": {
+            "$ref": "#/components/schemas/PhotoUploadReceipt"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "receipt",
+          "responses"
+        ],
+        "type": "object"
+      },
       "SetPhotoFavoriteRequest": {
         "additionalProperties": false,
         "description": "SetPhotoFavorite operation input.",
@@ -6952,458 +7411,6 @@
         ],
         "type": "object"
       },
-      "GetPhotoUploadStatusRequest": {
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "jobIDs": [
-            "synthetic-job"
-          ]
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "jobIDs": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "x-go-name": "JobIDs"
-          },
-          "library": {
-            "$ref": "#/components/schemas/PhotoLibrary"
-          }
-        },
-        "required": [
-          "auth",
-          "jobIDs"
-        ],
-        "type": "object"
-      },
-      "GetPhotoUploadStatusResult": {
-        "example": {
-          "jobs": {
-            "synthetic-job": {
-              "errorCode": null,
-              "progress": 100,
-              "unknown": false
-            }
-          },
-          "responses": [
-            {
-              "headers": [],
-              "statusCode": 200
-            }
-          ]
-        },
-        "properties": {
-          "jobs": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/PhotoUploadStatus"
-            },
-            "type": "object"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "jobs",
-          "responses"
-        ],
-        "type": "object"
-      },
-      "PhotoUploadFile": {
-        "properties": {
-          "filename": {
-            "type": "string"
-          },
-          "modificationTime": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "receipt": {
-            "$ref": "#/components/schemas/PhotoUploadReceipt"
-          },
-          "timeZoneOffset": {
-            "description": "UTC minus local time, in minutes.",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "filename",
-          "modificationTime",
-          "timeZoneOffset",
-          "receipt"
-        ],
-        "type": "object"
-      },
-      "PhotoUploadReceipt": {
-        "additionalProperties": {
-          "$ref": "#/components/schemas/UnknownJSONValue"
-        },
-        "description": "Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.",
-        "properties": {
-          "fileChecksum": {
-            "nullable": true,
-            "type": "string"
-          },
-          "receipt": {
-            "nullable": true,
-            "type": "string"
-          },
-          "referenceChecksum": {
-            "nullable": true,
-            "type": "string"
-          },
-          "size": {
-            "format": "int64",
-            "nullable": true,
-            "type": "integer"
-          },
-          "wrappingKey": {
-            "nullable": true,
-            "type": "string"
-          }
-        },
-        "required": [
-          "referenceChecksum",
-          "size",
-          "fileChecksum",
-          "wrappingKey",
-          "receipt"
-        ],
-        "type": "object"
-      },
-      "PhotoUploadRegistration": {
-        "additionalProperties": {
-          "$ref": "#/components/schemas/UnknownJSONValue"
-        },
-        "properties": {
-          "duplicate": {
-            "type": "boolean"
-          },
-          "jobID": {
-            "nullable": true,
-            "type": "string",
-            "x-go-name": "JobID"
-          },
-          "masterID": {
-            "nullable": true,
-            "type": "string",
-            "x-go-name": "MasterID"
-          },
-          "photoID": {
-            "nullable": true,
-            "type": "string",
-            "x-go-name": "PhotoID"
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PhotoUploadRegistrationStatus"
-              }
-            ],
-            "nullable": true
-          }
-        },
-        "required": [
-          "jobID",
-          "masterID",
-          "photoID",
-          "status",
-          "duplicate"
-        ],
-        "type": "object"
-      },
-      "PhotoUploadRegistrationStatus": {
-        "additionalProperties": {
-          "$ref": "#/components/schemas/UnknownJSONValue"
-        },
-        "properties": {
-          "errorMessage": {
-            "nullable": true,
-            "type": "string"
-          },
-          "retryable": {
-            "nullable": true,
-            "type": "boolean"
-          },
-          "status": {
-            "nullable": true,
-            "type": "integer"
-          }
-        },
-        "required": [
-          "status",
-          "retryable",
-          "errorMessage"
-        ],
-        "type": "object"
-      },
-      "PhotoUploadStatus": {
-        "additionalProperties": {
-          "$ref": "#/components/schemas/UnknownJSONValue"
-        },
-        "properties": {
-          "errorCode": {
-            "nullable": true,
-            "type": "integer"
-          },
-          "progress": {
-            "nullable": true,
-            "type": "integer"
-          },
-          "unknown": {
-            "description": "True when the provider does not recognize this job.",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "progress",
-          "errorCode",
-          "unknown"
-        ],
-        "type": "object"
-      },
-      "RegisterPhotoUploadsRequest": {
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "files": [
-            {
-              "filename": "synthetic.jpg",
-              "modificationTime": "2023-11-14T22:13:20Z",
-              "receipt": {
-                "fileChecksum": null,
-                "receipt": "synthetic-receipt",
-                "referenceChecksum": null,
-                "size": 3,
-                "wrappingKey": null
-              },
-              "timeZoneOffset": 0
-            }
-          ],
-          "importGroup": "synthetic-import",
-          "localTimeZoneID": "UTC"
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "files": {
-            "items": {
-              "$ref": "#/components/schemas/PhotoUploadFile"
-            },
-            "type": "array"
-          },
-          "importGroup": {
-            "type": "string"
-          },
-          "library": {
-            "$ref": "#/components/schemas/PhotoLibrary"
-          },
-          "localTimeZoneID": {
-            "type": "string",
-            "x-go-name": "LocalTimeZoneID"
-          }
-        },
-        "required": [
-          "auth",
-          "files",
-          "importGroup",
-          "localTimeZoneID"
-        ],
-        "type": "object"
-      },
-      "RegisterPhotoUploadsResult": {
-        "example": {
-          "registrations": [
-            {
-              "duplicate": false,
-              "jobID": "synthetic-job",
-              "masterID": "synthetic-master",
-              "photoID": "synthetic-photo",
-              "status": {
-                "errorMessage": null,
-                "retryable": false,
-                "status": 200
-              }
-            }
-          ],
-          "responses": [
-            {
-              "headers": [],
-              "statusCode": 200
-            }
-          ]
-        },
-        "properties": {
-          "registrations": {
-            "items": {
-              "$ref": "#/components/schemas/PhotoUploadRegistration"
-            },
-            "type": "array"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "registrations",
-          "responses"
-        ],
-        "type": "object"
-      },
-      "ReservePhotoUploadsRequest": {
-        "example": {
-          "assets": {
-            "synthetic-file": 3
-          },
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          }
-        },
-        "properties": {
-          "assets": {
-            "additionalProperties": {
-              "format": "int64",
-              "type": "integer"
-            },
-            "description": "Caller-generated identities mapped to complete byte lengths.",
-            "type": "object"
-          },
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "library": {
-            "$ref": "#/components/schemas/PhotoLibrary"
-          }
-        },
-        "required": [
-          "auth",
-          "assets"
-        ],
-        "type": "object"
-      },
-      "ReservePhotoUploadsResult": {
-        "example": {
-          "responses": [
-            {
-              "headers": [],
-              "statusCode": 200
-            }
-          ],
-          "uploadURLs": {
-            "synthetic-file": "https://content.example.invalid/upload?token=synthetic"
-          }
-        },
-        "properties": {
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          },
-          "uploadURLs": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object",
-            "x-go-name": "UploadURLs"
-          }
-        },
-        "required": [
-          "uploadURLs",
-          "responses"
-        ],
-        "type": "object"
-      },
-      "SendPhotoUploadBytesRequest": {
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "content": "synthetic-bytes",
-          "url": "https://content.example.invalid/upload?token=synthetic"
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "content": {
-            "description": "Caller-owned reader; bytes start at its current position. The SDK does not close it.",
-            "format": "binary",
-            "type": "string",
-            "x-go-type": "io.ReadSeeker"
-          },
-          "library": {
-            "$ref": "#/components/schemas/PhotoLibrary"
-          },
-          "url": {
-            "description": "Signed HTTPS URL returned by ReservePhotoUploads.",
-            "format": "uri",
-            "type": "string",
-            "x-go-name": "URL"
-          }
-        },
-        "required": [
-          "auth",
-          "url",
-          "content"
-        ],
-        "type": "object"
-      },
-      "SendPhotoUploadBytesResult": {
-        "example": {
-          "receipt": {
-            "fileChecksum": null,
-            "receipt": "synthetic-receipt",
-            "referenceChecksum": null,
-            "size": 3,
-            "wrappingKey": null
-          },
-          "responses": [
-            {
-              "headers": [],
-              "statusCode": 200
-            }
-          ]
-        },
-        "properties": {
-          "receipt": {
-            "$ref": "#/components/schemas/PhotoUploadReceipt"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "receipt",
-          "responses"
-        ],
-        "type": "object"
-      },
       "UploadPhotoFileRequest": {
         "description": "Transfer and register one file through the composable uploader; the result does not wait for CloudKit indexing.",
         "example": {
@@ -7625,6 +7632,368 @@
           "photo",
           "indexed",
           "responses"
+        ],
+        "type": "object"
+      },
+      "CountSharedPhotosRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          }
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth",
+          "album"
+        ],
+        "type": "object"
+      },
+      "CountSharedPhotosResult": {
+        "example": {
+          "count": 0,
+          "responses": []
+        },
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "count"
+        ],
+        "type": "object"
+      },
+      "DownloadSharedPhotoRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          },
+          "photoID": "synthetic-photo"
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "photoID": {
+            "type": "string",
+            "x-go-name": "PhotoID"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PhotoVersion"
+          }
+        },
+        "required": [
+          "auth",
+          "album",
+          "photoID"
+        ],
+        "type": "object"
+      },
+      "DownloadSharedPhotoResult": {
+        "example": {
+          "content": null,
+          "responses": []
+        },
+        "properties": {
+          "content": {
+            "format": "byte",
+            "nullable": true,
+            "type": "string"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "content"
+        ],
+        "type": "object"
+      },
+      "GetSharedPhotoRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          },
+          "photoID": "synthetic-photo"
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "photoID": {
+            "type": "string",
+            "x-go-name": "PhotoID"
+          }
+        },
+        "required": [
+          "auth",
+          "album",
+          "photoID"
+        ],
+        "type": "object"
+      },
+      "GetSharedPhotoResult": {
+        "example": {
+          "photo": null,
+          "responses": []
+        },
+        "properties": {
+          "photo": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SharedPhoto"
+              }
+            ],
+            "nullable": true
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "photo"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotoAlbumsRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotoAlbumsResult": {
+        "example": {
+          "albums": [],
+          "responses": []
+        },
+        "properties": {
+          "albums": {
+            "items": {
+              "$ref": "#/components/schemas/SharedPhotoAlbum"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "albums"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotosRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          }
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth",
+          "album"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotosResult": {
+        "example": {
+          "photos": [],
+          "responses": []
+        },
+        "properties": {
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/SharedPhoto"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "photos"
+        ],
+        "type": "object"
+      },
+      "SharedPhoto": {
+        "properties": {
+          "likeCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "liked": {
+            "type": "boolean"
+          },
+          "photo": {
+            "$ref": "#/components/schemas/Photo"
+          }
+        },
+        "required": [
+          "photo",
+          "likeCount",
+          "liked"
+        ],
+        "type": "object"
+      },
+      "SharedPhotoAlbum": {
+        "example": {
+          "allowContributions": false,
+          "changeTag": "synthetic-tag",
+          "created": "1970-01-01T00:00:00Z",
+          "fullName": "Example",
+          "id": "synthetic-stream",
+          "isPublic": false,
+          "isWebUploadSupported": false,
+          "location": "https://shared.example.invalid/album/",
+          "name": "Example",
+          "ownerID": "synthetic-owner",
+          "publicURL": null,
+          "sharingType": "owned"
+        },
+        "properties": {
+          "allowContributions": {
+            "type": "boolean"
+          },
+          "changeTag": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "created": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fullName": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Provider string.",
+            "type": "string",
+            "x-go-name": "ID"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "isWebUploadSupported": {
+            "type": "boolean"
+          },
+          "location": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "ownerID": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "publicURL": {
+            "nullable": true,
+            "type": "string"
+          },
+          "sharingType": {
+            "description": "Provider string.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "fullName",
+          "location",
+          "changeTag",
+          "ownerID",
+          "sharingType",
+          "created",
+          "allowContributions",
+          "isPublic",
+          "isWebUploadSupported",
+          "publicURL"
         ],
         "type": "object"
       }
