@@ -462,7 +462,7 @@ account has lists and an empty startup reminders array; nonempty live reminders,
 completed discovery, mutations and CloudKit availability remain unverified. SDK full local checks, blocking CI and exact-SHA review passed; it is merged.
 The separate CLI now exposes `reminder-legacy-snapshot` through the published SDK.
 Nine CLI replay cases and a private live read passed after native discovery resume.
-CLI full checks, blocking CI and exact-SHA review are pending.
+Legacy CLI full checks, blocking CI and exact-SHA review passed; PR61 is merged.
 
 
 Private live CLI reads also succeeded for account devices/family/storage/plan and
@@ -479,5 +479,8 @@ missing results, provider failures, paged fallback and stopping at the first mat
 The SDK retains explicit null absence and complete response evidence. A private
 live lookup succeeded; Python replay of its seven captured Photos exchanges
 matched the full Go result. Full checks, blocking CI and independent exact-SHA
-review passed; the SDK is merged. CLI lookup, downloads and remaining selected
-service work remain open.
+review passed; the SDK is merged. CLI lookup is implemented below; downloads and
+remaining selected service work remain open.
+
+
+Photo lookup SDK full local checks, blocking CI and exact-SHA review passed; PR60 is merged. The published SDK now powers the photo CLI command. All 22 lookup replay cases and existing photo/native-resume regressions passed under race detection. A private live CLI lookup returned a photo using the same saved credentials. CLI full checks, CI and exact-SHA review remain pending; downloads and broader Photos acceptance remain open.
