@@ -931,6 +931,17 @@ Completed-item discovery, CloudKit cursors and related records are separate oper
 this startup read does not infer a migration flag or silently replace them.
 
 
+The Go CLI exposes this explicit legacy snapshot through the published SDK:
+
+```powershell
+go-icloud --session <private-session.json> --save-session <private-session.json> resume
+go-icloud --session <private-session.json> reminder-legacy-snapshot
+```
+
+The CLI preserves list/reminder records and omits response metadata from console
+JSON. Nine strict replay cases bind complete output, failures and consumption.
+A private live read succeeded using the saved account after native discovery resume.
+
 ### Find one photo
 
 `GetPhoto` selects an album by ID, name or full name and finds an asset by ID:
