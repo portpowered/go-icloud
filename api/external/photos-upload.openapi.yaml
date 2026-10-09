@@ -515,6 +515,21 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The indexed asset is temporarily rate limited.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "$ref": "#/components/headers/Retry-After"
+              }
+            }
           }
         }
       }
@@ -616,6 +631,21 @@
                 "schema": {
                   "type": "string"
                 }
+              }
+            }
+          },
+          "429": {
+            "description": "The indexed asset is temporarily rate limited.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "$ref": "#/components/headers/Retry-After"
               }
             }
           }
@@ -795,7 +825,9 @@
             "x-order": 1
           }
         },
-        "additionalProperties": true
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+        }
       },
       "PhotosSingleFileUpload": {
         "type": "object",
@@ -832,7 +864,9 @@
             "x-order": 5
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+        },
         "description": "Stored-byte receipt. Unknown provider fields must be retained when registering the asset. Missing known fields default to null when echoed in registration."
       },
       "PhotosSingleFileUploadResponse": {
@@ -846,7 +880,9 @@
         "required": [
           "singleFile"
         ],
-        "additionalProperties": true
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+        }
       },
       "PhotosPutAssetFile": {
         "type": "object",
@@ -945,7 +981,9 @@
             "x-order": 2
           }
         },
-        "additionalProperties": true
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+        }
       },
       "PhotosUploadStatusEntries": {
         "type": "object",
@@ -976,7 +1014,9 @@
             "x-order": 3
           }
         },
-        "additionalProperties": true
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+        }
       },
       "PhotosPutAssetResult": {
         "type": "object",
@@ -1006,7 +1046,9 @@
             "x-order": 4
           }
         },
-        "additionalProperties": true
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+        }
       },
       "PhotosPutAssetResults": {
         "type": "array",
@@ -1142,6 +1184,14 @@
           "isKeyAsset"
         ],
         "type": "string"
+      }
+    },
+    "headers": {
+      "Retry-After": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "Provider retry delay, expressed as seconds or an HTTP date."
       }
     }
   }

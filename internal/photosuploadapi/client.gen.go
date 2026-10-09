@@ -574,11 +574,11 @@ type PhotosPutAssetRequest struct {
 
 // PhotosPutAssetResult defines model for PhotosPutAssetResult.
 type PhotosPutAssetResult struct {
-	UploadJobId          nullable.Nullable[string] `json:"uploadJobId,omitempty"`
-	CplMaster            nullable.Nullable[string] `json:"cplMaster,omitempty"`
-	CplAsset             nullable.Nullable[string] `json:"cplAsset,omitempty"`
-	Response             *PhotosPutAssetStatus     `json:"response,omitempty"`
-	AdditionalProperties map[string]interface{}    `json:"-"`
+	UploadJobId          nullable.Nullable[string]             `json:"uploadJobId,omitempty"`
+	CplMaster            nullable.Nullable[string]             `json:"cplMaster,omitempty"`
+	CplAsset             nullable.Nullable[string]             `json:"cplAsset,omitempty"`
+	Response             *PhotosPutAssetStatus                 `json:"response,omitempty"`
+	AdditionalProperties map[string]externalRef0.CKUnknownJSON `json:"-"`
 }
 
 // PhotosPutAssetResults defines model for PhotosPutAssetResults.
@@ -586,27 +586,27 @@ type PhotosPutAssetResults = []PhotosPutAssetResult
 
 // PhotosPutAssetStatus defines model for PhotosPutAssetStatus.
 type PhotosPutAssetStatus struct {
-	Status               nullable.Nullable[int64]  `json:"status,omitempty"`
-	IsRetryable          nullable.Nullable[bool]   `json:"isRetryable,omitempty"`
-	ErrorMessage         nullable.Nullable[string] `json:"errorMessage,omitempty"`
-	AdditionalProperties map[string]interface{}    `json:"-"`
+	Status               nullable.Nullable[int64]              `json:"status,omitempty"`
+	IsRetryable          nullable.Nullable[bool]               `json:"isRetryable,omitempty"`
+	ErrorMessage         nullable.Nullable[string]             `json:"errorMessage,omitempty"`
+	AdditionalProperties map[string]externalRef0.CKUnknownJSON `json:"-"`
 }
 
 // PhotosSingleFileUpload Stored-byte receipt. Unknown provider fields must be retained when registering the asset. Missing known fields default to null when echoed in registration.
 type PhotosSingleFileUpload struct {
-	ReferenceChecksum    nullable.Nullable[string] `json:"referenceChecksum,omitempty"`
-	Size                 nullable.Nullable[int64]  `json:"size,omitempty"`
-	FileChecksum         nullable.Nullable[string] `json:"fileChecksum,omitempty"`
-	WrappingKey          nullable.Nullable[string] `json:"wrappingKey,omitempty"`
-	Receipt              nullable.Nullable[string] `json:"receipt,omitempty"`
-	AdditionalProperties map[string]interface{}    `json:"-"`
+	ReferenceChecksum    nullable.Nullable[string]             `json:"referenceChecksum,omitempty"`
+	Size                 nullable.Nullable[int64]              `json:"size,omitempty"`
+	FileChecksum         nullable.Nullable[string]             `json:"fileChecksum,omitempty"`
+	WrappingKey          nullable.Nullable[string]             `json:"wrappingKey,omitempty"`
+	Receipt              nullable.Nullable[string]             `json:"receipt,omitempty"`
+	AdditionalProperties map[string]externalRef0.CKUnknownJSON `json:"-"`
 }
 
 // PhotosSingleFileUploadResponse defines model for PhotosSingleFileUploadResponse.
 type PhotosSingleFileUploadResponse struct {
 	// SingleFile Stored-byte receipt. Unknown provider fields must be retained when registering the asset. Missing known fields default to null when echoed in registration.
-	SingleFile           PhotosSingleFileUpload `json:"singleFile"`
-	AdditionalProperties map[string]interface{} `json:"-"`
+	SingleFile           PhotosSingleFileUpload                `json:"singleFile"`
+	AdditionalProperties map[string]externalRef0.CKUnknownJSON `json:"-"`
 }
 
 // PhotosUnknownJobErrorCode Upload status error for an unknown job.
@@ -617,15 +617,15 @@ type PhotosUploadDesiredKey string
 
 // PhotosUploadReservationResponse defines model for PhotosUploadReservationResponse.
 type PhotosUploadReservationResponse struct {
-	UploadUrls           *map[string]string     `json:"uploadUrls,omitempty"`
-	AdditionalProperties map[string]interface{} `json:"-"`
+	UploadUrls           *map[string]string                    `json:"uploadUrls,omitempty"`
+	AdditionalProperties map[string]externalRef0.CKUnknownJSON `json:"-"`
 }
 
 // PhotosUploadStatus defines model for PhotosUploadStatus.
 type PhotosUploadStatus struct {
-	Progress             nullable.Nullable[int64] `json:"progress,omitempty"`
-	ErrorCode            nullable.Nullable[int64] `json:"errorCode,omitempty"`
-	AdditionalProperties map[string]interface{}   `json:"-"`
+	Progress             nullable.Nullable[int64]              `json:"progress,omitempty"`
+	ErrorCode            nullable.Nullable[int64]              `json:"errorCode,omitempty"`
+	AdditionalProperties map[string]externalRef0.CKUnknownJSON `json:"-"`
 }
 
 // PhotosUploadStatusEntries defines model for PhotosUploadStatusEntries.
@@ -834,7 +834,7 @@ type PhotosUploadStatusJSONRequestBody = PhotosUploadStatusRequest
 
 // Getter for additional properties for PhotosPutAssetResult. Returns the specified
 // element and whether it was found
-func (a PhotosPutAssetResult) Get(fieldName string) (value interface{}, found bool) {
+func (a PhotosPutAssetResult) Get(fieldName string) (value externalRef0.CKUnknownJSON, found bool) {
 	if a.AdditionalProperties != nil {
 		value, found = a.AdditionalProperties[fieldName]
 	}
@@ -842,9 +842,9 @@ func (a PhotosPutAssetResult) Get(fieldName string) (value interface{}, found bo
 }
 
 // Setter for additional properties for PhotosPutAssetResult
-func (a *PhotosPutAssetResult) Set(fieldName string, value interface{}) {
+func (a *PhotosPutAssetResult) Set(fieldName string, value externalRef0.CKUnknownJSON) {
 	if a.AdditionalProperties == nil {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 	}
 	a.AdditionalProperties[fieldName] = value
 }
@@ -890,9 +890,9 @@ func (a *PhotosPutAssetResult) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(object) != 0 {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 		for fieldName, fieldBuf := range object {
-			var fieldVal interface{}
+			var fieldVal externalRef0.CKUnknownJSON
 			err := json.Unmarshal(fieldBuf, &fieldVal)
 			if err != nil {
 				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
@@ -947,7 +947,7 @@ func (a PhotosPutAssetResult) MarshalJSON() ([]byte, error) {
 
 // Getter for additional properties for PhotosPutAssetStatus. Returns the specified
 // element and whether it was found
-func (a PhotosPutAssetStatus) Get(fieldName string) (value interface{}, found bool) {
+func (a PhotosPutAssetStatus) Get(fieldName string) (value externalRef0.CKUnknownJSON, found bool) {
 	if a.AdditionalProperties != nil {
 		value, found = a.AdditionalProperties[fieldName]
 	}
@@ -955,9 +955,9 @@ func (a PhotosPutAssetStatus) Get(fieldName string) (value interface{}, found bo
 }
 
 // Setter for additional properties for PhotosPutAssetStatus
-func (a *PhotosPutAssetStatus) Set(fieldName string, value interface{}) {
+func (a *PhotosPutAssetStatus) Set(fieldName string, value externalRef0.CKUnknownJSON) {
 	if a.AdditionalProperties == nil {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 	}
 	a.AdditionalProperties[fieldName] = value
 }
@@ -995,9 +995,9 @@ func (a *PhotosPutAssetStatus) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(object) != 0 {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 		for fieldName, fieldBuf := range object {
-			var fieldVal interface{}
+			var fieldVal externalRef0.CKUnknownJSON
 			err := json.Unmarshal(fieldBuf, &fieldVal)
 			if err != nil {
 				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
@@ -1045,7 +1045,7 @@ func (a PhotosPutAssetStatus) MarshalJSON() ([]byte, error) {
 
 // Getter for additional properties for PhotosSingleFileUpload. Returns the specified
 // element and whether it was found
-func (a PhotosSingleFileUpload) Get(fieldName string) (value interface{}, found bool) {
+func (a PhotosSingleFileUpload) Get(fieldName string) (value externalRef0.CKUnknownJSON, found bool) {
 	if a.AdditionalProperties != nil {
 		value, found = a.AdditionalProperties[fieldName]
 	}
@@ -1053,9 +1053,9 @@ func (a PhotosSingleFileUpload) Get(fieldName string) (value interface{}, found 
 }
 
 // Setter for additional properties for PhotosSingleFileUpload
-func (a *PhotosSingleFileUpload) Set(fieldName string, value interface{}) {
+func (a *PhotosSingleFileUpload) Set(fieldName string, value externalRef0.CKUnknownJSON) {
 	if a.AdditionalProperties == nil {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 	}
 	a.AdditionalProperties[fieldName] = value
 }
@@ -1109,9 +1109,9 @@ func (a *PhotosSingleFileUpload) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(object) != 0 {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 		for fieldName, fieldBuf := range object {
-			var fieldVal interface{}
+			var fieldVal externalRef0.CKUnknownJSON
 			err := json.Unmarshal(fieldBuf, &fieldVal)
 			if err != nil {
 				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
@@ -1173,7 +1173,7 @@ func (a PhotosSingleFileUpload) MarshalJSON() ([]byte, error) {
 
 // Getter for additional properties for PhotosSingleFileUploadResponse. Returns the specified
 // element and whether it was found
-func (a PhotosSingleFileUploadResponse) Get(fieldName string) (value interface{}, found bool) {
+func (a PhotosSingleFileUploadResponse) Get(fieldName string) (value externalRef0.CKUnknownJSON, found bool) {
 	if a.AdditionalProperties != nil {
 		value, found = a.AdditionalProperties[fieldName]
 	}
@@ -1181,9 +1181,9 @@ func (a PhotosSingleFileUploadResponse) Get(fieldName string) (value interface{}
 }
 
 // Setter for additional properties for PhotosSingleFileUploadResponse
-func (a *PhotosSingleFileUploadResponse) Set(fieldName string, value interface{}) {
+func (a *PhotosSingleFileUploadResponse) Set(fieldName string, value externalRef0.CKUnknownJSON) {
 	if a.AdditionalProperties == nil {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 	}
 	a.AdditionalProperties[fieldName] = value
 }
@@ -1205,9 +1205,9 @@ func (a *PhotosSingleFileUploadResponse) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(object) != 0 {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 		for fieldName, fieldBuf := range object {
-			var fieldVal interface{}
+			var fieldVal externalRef0.CKUnknownJSON
 			err := json.Unmarshal(fieldBuf, &fieldVal)
 			if err != nil {
 				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
@@ -1239,7 +1239,7 @@ func (a PhotosSingleFileUploadResponse) MarshalJSON() ([]byte, error) {
 
 // Getter for additional properties for PhotosUploadReservationResponse. Returns the specified
 // element and whether it was found
-func (a PhotosUploadReservationResponse) Get(fieldName string) (value interface{}, found bool) {
+func (a PhotosUploadReservationResponse) Get(fieldName string) (value externalRef0.CKUnknownJSON, found bool) {
 	if a.AdditionalProperties != nil {
 		value, found = a.AdditionalProperties[fieldName]
 	}
@@ -1247,9 +1247,9 @@ func (a PhotosUploadReservationResponse) Get(fieldName string) (value interface{
 }
 
 // Setter for additional properties for PhotosUploadReservationResponse
-func (a *PhotosUploadReservationResponse) Set(fieldName string, value interface{}) {
+func (a *PhotosUploadReservationResponse) Set(fieldName string, value externalRef0.CKUnknownJSON) {
 	if a.AdditionalProperties == nil {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 	}
 	a.AdditionalProperties[fieldName] = value
 }
@@ -1271,9 +1271,9 @@ func (a *PhotosUploadReservationResponse) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(object) != 0 {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 		for fieldName, fieldBuf := range object {
-			var fieldVal interface{}
+			var fieldVal externalRef0.CKUnknownJSON
 			err := json.Unmarshal(fieldBuf, &fieldVal)
 			if err != nil {
 				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
@@ -1307,7 +1307,7 @@ func (a PhotosUploadReservationResponse) MarshalJSON() ([]byte, error) {
 
 // Getter for additional properties for PhotosUploadStatus. Returns the specified
 // element and whether it was found
-func (a PhotosUploadStatus) Get(fieldName string) (value interface{}, found bool) {
+func (a PhotosUploadStatus) Get(fieldName string) (value externalRef0.CKUnknownJSON, found bool) {
 	if a.AdditionalProperties != nil {
 		value, found = a.AdditionalProperties[fieldName]
 	}
@@ -1315,9 +1315,9 @@ func (a PhotosUploadStatus) Get(fieldName string) (value interface{}, found bool
 }
 
 // Setter for additional properties for PhotosUploadStatus
-func (a *PhotosUploadStatus) Set(fieldName string, value interface{}) {
+func (a *PhotosUploadStatus) Set(fieldName string, value externalRef0.CKUnknownJSON) {
 	if a.AdditionalProperties == nil {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 	}
 	a.AdditionalProperties[fieldName] = value
 }
@@ -1347,9 +1347,9 @@ func (a *PhotosUploadStatus) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(object) != 0 {
-		a.AdditionalProperties = make(map[string]interface{})
+		a.AdditionalProperties = make(map[string]externalRef0.CKUnknownJSON)
 		for fieldName, fieldBuf := range object {
-			var fieldVal interface{}
+			var fieldVal externalRef0.CKUnknownJSON
 			err := json.Unmarshal(fieldBuf, &fieldVal)
 			if err != nil {
 				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
@@ -3201,6 +3201,11 @@ type ClientWithResponsesInterface interface {
 	PhotosSendUploadBytesWithBodyWithResponse(ctx context.Context, contentPath PhotosUploadContentPath, params *PhotosSendUploadBytesParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PhotosSendUploadBytesResponse, error)
 }
 
+// PhotosHydrateUploadedAssetResponse429Headers the declared response headers of an HTTP 429 response for PhotosHydrateUploadedAsset
+type PhotosHydrateUploadedAssetResponse429Headers struct {
+	RetryAfter *string
+}
+
 type PhotosHydrateUploadedAssetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3208,6 +3213,8 @@ type PhotosHydrateUploadedAssetResponse struct {
 	JSON200 *CKLookupResponse
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *CKLookupResponse
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *PhotosHydrateUploadedAssetResponse429Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -3249,6 +3256,11 @@ func (r PhotosHydrateUploadedAssetResponse) ContentType() string {
 	return ""
 }
 
+// PhotosHydrateUploadedAssetSharedResponse429Headers the declared response headers of an HTTP 429 response for PhotosHydrateUploadedAssetShared
+type PhotosHydrateUploadedAssetSharedResponse429Headers struct {
+	RetryAfter *string
+}
+
 type PhotosHydrateUploadedAssetSharedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3256,6 +3268,8 @@ type PhotosHydrateUploadedAssetSharedResponse struct {
 	JSON200 *CKLookupResponse
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *CKLookupResponse
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *PhotosHydrateUploadedAssetSharedResponse429Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -3690,6 +3704,19 @@ func ParsePhotosHydrateUploadedAssetResponse(rsp *http.Response) (*PhotosHydrate
 
 	}
 
+	switch {
+	case rsp.StatusCode == 429:
+		var headers PhotosHydrateUploadedAssetResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
 	return response, nil
 }
 
@@ -3727,6 +3754,19 @@ func ParsePhotosHydrateUploadedAssetSharedResponse(rsp *http.Response) (*PhotosH
 	case rsp.StatusCode == 200:
 		// Content-type (*/*) unsupported
 
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers PhotosHydrateUploadedAssetSharedResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
 	}
 
 	return response, nil

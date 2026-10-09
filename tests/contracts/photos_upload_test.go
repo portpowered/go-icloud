@@ -1,10 +1,13 @@
 package contracts_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/portpowered/go-icloud/internal/photosuploadapi"
 )
 
 const photosUploadSchemaPath = "../../api/external/photos-upload.openapi.yaml"
@@ -13,6 +16,33 @@ func TestPhotosUploadGenerationHasNoDrift(t *testing.T) {
 	t.Parallel()
 	verifyGeneration(t, generationArtifact{Schema: photosUploadSchemaPath,
 		Config: "../../internal/photosuploadapi/config.yaml", Output: "../../internal/photosuploadapi/client.gen.go"})
+}
+
+func TestPhotosUploadReceiptPreservesUnknownNumber(t *testing.T) {
+	t.Parallel()
+
+	var receipt photosuploadapi.PhotosSingleFileUpload
+
+	err := json.Unmarshal([]byte(`{"providerGeneration":9007199254740993}`), &receipt)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	encoded, err := json.Marshal(receipt)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var fields map[string]json.RawMessage
+
+	err = json.Unmarshal(encoded, &fields)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(fields["providerGeneration"], []byte("9007199254740993")) {
+		t.Fatal("unknown receipt integer lost precision")
+	}
 }
 
 func TestPhotosUploadWireContracts(t *testing.T) {

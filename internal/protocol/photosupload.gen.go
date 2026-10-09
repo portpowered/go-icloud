@@ -7,6 +7,7 @@ const (
 	PhotosUploadCKLookupRequestZoneID                     = "zoneID"
 	PhotosUploadCKLookupResponseRecords                   = "records"
 	PhotosUploadCKLookupResponseSyncToken                 = "syncToken"
+	PhotosUploadHTTPRetryAfterName                        = "Retry-After"
 	PhotosUploadMedia                                     = "*/*"
 	PhotosUploadMediaApplicationJson                      = "application/json"
 	PhotosUploadMediaApplicationOctetStream               = "application/octet-stream"
