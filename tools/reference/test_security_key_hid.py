@@ -1,6 +1,7 @@
 """Actual pinned Fido2Client ceremonies over strict, synthetic HID transcripts."""
 
 import json
+import struct
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -43,6 +44,30 @@ class StrictHIDConnection(CtapHidConnection):
 
 
 class SecurityKeyHIDTests(unittest.TestCase):
+    def test_malformed_apdu_reply_propagates(self):
+        fixture = json.loads((FIXTURES / "python-u2f-synthetic.json").read_text())
+        fixture["steps"] = fixture["steps"][:2]
+        malformed = bytearray.fromhex(fixture["steps"][1]["reads"][0])
+        malformed[6] = 1
+        malformed[7] = 0
+        fixture["steps"][1]["reads"] = [malformed.hex()]
+        connection = StrictHIDConnection(fixture)
+        descriptor = HidDescriptor("synthetic", 0, 0, 64, 64, "Synthetic", None)
+        with patch("fido2.hid.os.urandom", return_value=bytes(range(8))):
+            device = CtapHidDevice(descriptor, connection)
+            try:
+                client = Fido2Client(device, DefaultClientDataCollector("https://apple.com"))
+                options = PublicKeyCredentialRequestOptions.from_dict({
+                    "challenge": "AQID", "rpId": "apple.com", "userVerification": "discouraged",
+                    "allowCredentials": [{"type": "public-key", "id": "qrvM"}],
+                })
+                with self.assertRaises(struct.error):
+                    client.get_assertion(options)
+                self.assertEqual(connection.events, [])
+            finally:
+                device.close()
+        self.assertTrue(connection.closed)
+
     def test_source_ceremonies(self):
         names = (
             "python-ctap2-synthetic.json",

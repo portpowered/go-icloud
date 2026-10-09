@@ -64,7 +64,7 @@ func (channel *channel) pollU2F(ctx context.Context, clientHash, rpHash, credent
 			return nil, err
 		}
 		if len(response) < 2 {
-			return nil, &Error{Stage: "APDU", Cause: ErrProtocol}
+			return nil, &Error{Stage: "APDU framing", Cause: ErrProtocol}
 		}
 		status := int(binary.BigEndian.Uint16(response[len(response)-2:]))
 		if status == int(wire.APDUSuccess) {

@@ -145,6 +145,23 @@ func TestU2FHardwareFailurePropagates(test *testing.T) {
 	}
 }
 
+func TestU2FMalformedAPDUPropagates(test *testing.T) {
+	test.Parallel()
+	fixture := readTranscriptFile(test, "python-u2f-synthetic.json")
+	connection := transcriptConnection(test, transcript{Steps: fixture.Steps[:2]})
+	connection.reads[1][6] = 1
+	connection.reads[1][7] = 0
+	provider, err := New(fakeBackend{connection: connection}, bytes.NewReader([]byte{0, 1, 2, 3, 4, 5, 6, 7}))
+	if err != nil {
+		test.Fatal(err)
+	}
+	_, err = provider.Assert(test.Context(), Request{DeviceID: "synthetic", RelyingPartyID: "apple.com", Origin: "https://apple.com", Challenge: "AQID", CredentialIDs: []string{"qrvM", "u8zd"}})
+	var failure *Error
+	if !errors.As(err, &failure) || failure.Stage != "APDU framing" || connection.closed != 1 || len(connection.writes) != 0 {
+		test.Fatalf("malformed APDU converted into credential refusal: %v", err)
+	}
+}
+
 func TestEntropyAndCloseCausesPreserved(test *testing.T) {
 	test.Parallel()
 	closeFailure := errors.New("synthetic close failure")
