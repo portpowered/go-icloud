@@ -18,6 +18,41 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_findmy_saved_token_recovery_matrix(self):
+        paths = sorted(FIXTURES.glob("session-findmy-autorefresh-*.json"))
+        self.assertEqual(len(paths), 4)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 11)
+
+    def test_findmy_recovery_state_request_and_bounded_retry_are_bound(self):
+        for name in ["success", "repeat-450", "cookie-rotation", "token-refused"]:
+            for mutation in ["state", "request", "unused"]:
+                scenario = json.loads(
+                    (FIXTURES / f"session-findmy-autorefresh-{name}.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                if mutation == "state":
+                    state = (
+                        scenario["result"]["auth_state"]
+                        if "result" in scenario
+                        else scenario["error_auth_state"]
+                    )
+                    state["session_data"]["session_token"] = "changed-token"
+                elif mutation == "request":
+                    scenario["exchanges"][1]["request"]["path"] = "/wrong"
+                else:
+                    scenario["exchanges"].append(
+                        copy.deepcopy(scenario["exchanges"][-1])
+                    )
+                with (
+                    self.subTest(name=name, mutation=mutation),
+                    TemporaryDirectory() as directory,
+                ):
+                    path = Path(directory) / "changed.json"
+                    path.write_text(json.dumps(scenario), encoding="utf-8")
+                    with self.assertRaises(AssertionError):
+                        replay_synthetic(path)
+
     def test_photo_lookup_matrix(self):
         paths = sorted(FIXTURES.glob("photos-get-*.json"))
         self.assertEqual(len(paths), 22)

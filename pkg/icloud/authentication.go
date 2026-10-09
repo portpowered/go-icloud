@@ -39,6 +39,9 @@ func (sdk *SDK) ResumeSession(ctx context.Context, request ResumeSessionRequest)
 	}
 
 	state.auth = bindAuthCookies(state.auth)
+	for _, metadata := range cloneDriveResponses(request.ResponseUpdates) {
+		state.recordMetadata(metadata)
+	}
 
 	cookies, err := webtransport.NewCookieState(authCookies(state.auth.Cookies))
 	if err != nil {
