@@ -1326,6 +1326,22 @@ type ListPhotoAssetsResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// ListRecentlyAddedPhotosRequest Enumerate the primary library newest first using the recently-added trailing window index.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type ListRecentlyAddedPhotosRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListRecentlyAddedPhotosResult Complete deduplicated newest-first photos and every initialization, library discovery and page response.
+//
+// Example: {"photos":[],"responses":[]}
+type ListRecentlyAddedPhotosResult struct {
+	Photos    []Photo            `json:"photos"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListReminderAlarmsRequest Look up ordered alarms and optional triggers from raw or complete related record identifiers.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"ids":[]}

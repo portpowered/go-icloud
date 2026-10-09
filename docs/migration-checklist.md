@@ -483,7 +483,19 @@ review passed; the SDK is merged. CLI lookup is merged below; downloads and
 remaining selected service work remain open.
 
 
-DownloadPhoto now has generated public models, typed rendition selection, provider-issued URL binding and exact binary results. Twenty-five Source-first paired replay cases cover bytes/empty/null, rendition alternatives, HTTP/transport failures, signed escaped paths/repeated queries, lazy unused dates and paged lookup. Contract controls reject changed resource origins, paths and signed queries. Private live Go thumbnail download succeeded; offline Python replay consumed eight exchanges and matched complete bytes. Full local checks, CI and exact-SHA review are pending. CLI downloads, remaining Photos operations and full migration acceptance remain open.
+DownloadPhoto now has generated public models, typed rendition selection, provider-issued URL binding and exact binary results. Twenty-five Source-first paired replay cases cover bytes/empty/null, rendition alternatives, HTTP/transport failures, signed escaped paths/repeated queries, lazy unused dates and paged lookup. Contract controls reject changed resource origins, paths and signed queries. Private live Go thumbnail download succeeded; offline Python replay consumed eight exchanges and matched complete bytes. SDK full local checks, CI and exact-SHA review passed; PR63 is merged. CLI downloads, remaining Photos operations and full migration acceptance remain open.
 
 
 Photo lookup SDK full local checks, blocking CI and exact-SHA review passed; PR60 is merged. The published SDK now powers the photo CLI command. All 22 lookup replay cases and existing photo/native-resume regressions passed under race detection. A private live CLI lookup returned a photo using the same saved credentials. CLI full checks, CI and exact-SHA review passed; PR62 is merged. Downloads and broader Photos acceptance remain open.
+
+
+Recently Added now has a generated public request/result and a stateless SDK
+operation. Sixteen Source/Go scenarios consume 61 exchanges and cover empty,
+one/many, overlap, full/partial/duplicate-only windows, and provider failures at
+initialization, zone discovery and initial/later pages. Shared-zone provider
+refusals retain complete response evidence while the root read continues,
+matching Source. Ten new Source-first cases add 34 pairs; this branch's corpus
+is 1,053 HTTP scenarios / 2,343 pairs before other pending milestones merge.
+Focused race replay passes; full checks, CI and independent review remain
+pending. The live account most recently reports indexing RUNNING at 0%, so
+successful live Recently Added access remains unverified.

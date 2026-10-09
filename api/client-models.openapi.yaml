@@ -6,6 +6,21 @@ info:
 paths: {}
 components:
   schemas:
+    ListRecentlyAddedPhotosRequest:
+      type: object
+      description: Enumerate the primary library newest first using the recently-added trailing window index.
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    ListRecentlyAddedPhotosResult:
+      type: object
+      description: Complete deduplicated newest-first photos and every initialization, library discovery and page response.
+      required: [photos, responses]
+      example: {photos: [], responses: []}
+      properties:
+        photos: {type: array, items: {$ref: '#/components/schemas/Photo'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     DownloadPhotoRequest:
       type: object
       description: Download one available rendition through its provider-issued resource URL after album lookup.
