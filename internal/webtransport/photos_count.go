@@ -130,7 +130,10 @@ func photosCountJSON(body []byte) ([]byte, error) {
 		return nil, fmt.Errorf("decode photo count document: %w", err)
 	}
 
-	normalized, err := json.Marshal(photosCountNumbers(value))
+	path := []string{protocol.PhotosCountResponseBatch, protocol.PhotosCountResponseBatchRecords,
+		protocol.PhotosCountRecordFields, protocol.PhotosCountFieldsItemCount, protocol.PhotosCountFieldValue}
+
+	normalized, err := json.Marshal(photosCountNumbers(value, path))
 	if err != nil {
 		return nil, fmt.Errorf("normalize photo count numbers: %w", err)
 	}
@@ -138,23 +141,35 @@ func photosCountJSON(body []byte) ([]byte, error) {
 	return normalized, nil
 }
 
-func photosCountNumbers(value any) any {
+func photosCountNumbers(value any, path []string) any {
+	if len(path) == 0 {
+		return photosCountNumber(value)
+	}
+
 	switch typed := value.(type) {
-	case json.Number:
-		if strings.ContainsAny(string(typed), ".eE") {
-			converted, err := strconv.ParseFloat(string(typed), 64)
-			if err == nil {
-				return converted
-			}
-		}
 	case []any:
 		for index, item := range typed {
-			typed[index] = photosCountNumbers(item)
+			typed[index] = photosCountNumbers(item, path)
 		}
 	case map[string]any:
-		for key, item := range typed {
-			typed[key] = photosCountNumbers(item)
+		key := path[0]
+		if item, exists := typed[key]; exists {
+			typed[key] = photosCountNumbers(item, path[1:])
 		}
+	}
+
+	return value
+}
+
+func photosCountNumber(value any) any {
+	number, ok := value.(json.Number)
+	if !ok || !strings.ContainsAny(string(number), ".eE") {
+		return value
+	}
+
+	converted, err := strconv.ParseFloat(string(number), 64)
+	if err == nil || errors.Is(err, strconv.ErrRange) {
+		return converted
 	}
 
 	return value

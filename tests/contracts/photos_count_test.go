@@ -1,11 +1,15 @@
 package contracts_test
 
 import (
+	"encoding/json"
+	"errors"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/portpowered/go-icloud/tests/replay"
 )
 
 func TestPhotoCountWireContracts(t *testing.T) {
@@ -17,7 +21,7 @@ func TestPhotoCountWireContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 53 {
+	if len(paths) != 56 {
 		t.Fatal("photo count contract inventory changed")
 	}
 
@@ -48,20 +52,45 @@ func validatePhotoCountPairs(t *testing.T, document *openapi3.T, path string) {
 		validateDriveRequest(t, operation, exchange.Request)
 
 		if index == len(exchanges)-1 && photoCountInvalidSchema(path) {
-			contract := driveResponseContract(operation, exchange.Response.Status)
-
-			value, err := driveJSONValue(exchange.Response.Body)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if contract.Value.Content["application/json"].Schema.Value.VisitJSON(value) == nil {
-				t.Fatal("Source-invalid photo count accepted by schema")
-			}
+			validatePhotoCountInvalidReply(t, operation, exchange.Response, path)
 		} else {
 			validateDriveResponse(t, operation, exchange.Response)
 		}
 	}
+}
+
+func validatePhotoCountInvalidReply(t *testing.T, operation *openapi3.Operation,
+	response *replay.Response, path string,
+) {
+	t.Helper()
+
+	contract := driveResponseContract(operation, response.Status)
+
+	value, err := driveJSONValue(response.Body)
+	if err != nil {
+		// Source JSON decoding overflows to infinity; its count model rejects
+		// that value. Go rejects it at binary64 decoding instead.
+		if strings.HasSuffix(path, "overflow.json") && photoCountJSONOverflow(err) {
+			return
+		}
+
+		t.Fatal(err)
+	}
+
+	if contract.Value.Content["application/json"].Schema.Value.VisitJSON(value) == nil {
+		t.Fatal("Source-invalid photo count accepted by schema")
+	}
+}
+
+func photoCountJSONOverflow(err error) bool {
+	var failure *json.UnmarshalTypeError
+	if !errors.As(err, &failure) || !strings.HasPrefix(failure.Value, "number ") {
+		return false
+	}
+
+	_, parseErr := strconv.ParseFloat(strings.TrimPrefix(failure.Value, "number "), 64)
+
+	return errors.Is(parseErr, strconv.ErrRange)
 }
 
 func photoCountInvalidSchema(path string) bool {
@@ -72,5 +101,5 @@ func photoCountInvalidSchema(path string) bool {
 		}
 	}
 
-	return false
+	return strings.HasSuffix(path, "overflow.json")
 }

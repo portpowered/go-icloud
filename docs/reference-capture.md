@@ -11,7 +11,7 @@ and unused traffic (LIB-05/LIB-12). The added cases cover overlapping normal,
 error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
-The current portable HTTP corpus contains 897 scenarios and 1,770 pairs, including
+The current portable HTTP corpus contains 900 scenarios and 1,779 pairs, including
 348 Reminders scenarios and 414 pairs. The Go snapshot facade executes all
 
 twenty-eight Source cases; full verification and independent review remain open.
@@ -306,8 +306,8 @@ reads, downloads and mutations remain pending.
 
 ## Primary Photos album counts
 
-`GetPhotoAlbumCount` consumes 53 Source-executed scenarios and 152 paired
-exchanges. Fifty new synthetic cases cover each smart index, custom IDs and
+`GetPhotoAlbumCount` consumes 56 Source-executed scenarios and 161 paired
+exchanges. Fifty-three new synthetic cases cover each smart index, custom IDs and
 names, full folder paths, ID collisions, cookie reuse, first-value precedence,
 whole-batch validation, Source binary64 rounding of decimal/exponent numbers,
 exact preservation of plain JSON integers, integer input forms, empty/missing/invalid counts,
