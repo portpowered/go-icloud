@@ -178,7 +178,9 @@ def summarize(measurement, files, root, policy=None):
     return {
         "format": "portos.reference-function-coverage.v1",
         "source": SOURCE["live"],
-        "evidence": "offline paired replay; captured and synthetic reported separately",
+        "evidence": (
+            "offline paired replay; captured, synthetic and setup reported separately"
+        ),
         "measurement": {
             "tool": "coverage.py",
             "version": coverage.__version__,
@@ -218,6 +220,8 @@ def main():
     measurement.start()
     try:
         # Import after tracing starts, so constructor/import behavior is visible.
+        measurement.switch_context("setup:reference-import")
+        from reference_resume import replay_reference_resume
         from reminders_text import replay_reminders_text
         from replay import replay
         from socket_replay import FIXTURES as SOCKET_FIXTURES
@@ -291,6 +295,20 @@ def main():
                 "evidence": "synthetic",
             }
         )
+        for name, format_name in [
+            ("reference-resume", "portos.reference-resume.v1"),
+            ("reference-resume-repeat", "portos.reference-resume-repeat.v1"),
+        ]:
+            measurement.switch_context("synthetic:local:" + name)
+            count = replay_reference_resume(name + ".json", format_name)
+            scenarios.append(
+                {
+                    "name": name,
+                    "operation": "restore-authenticate-account-read",
+                    "exchanges": count,
+                    "evidence": "synthetic",
+                }
+            )
     finally:
         measurement.stop()
         measurement.save()
@@ -307,7 +325,7 @@ def main():
         ),
     }
     report["by_evidence"] = {}
-    for evidence in ["captured", "synthetic"]:
+    for evidence in ["captured", "synthetic", "setup"]:
         measurement.get_data().set_query_contexts(["^" + evidence + ":"])
         report["by_evidence"][evidence] = summarize(measurement, files, root, policy)[
             "summary"

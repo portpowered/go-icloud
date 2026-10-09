@@ -1,100 +1,63 @@
-"""Replay reference login-file loading, authentication and Account reads together."""
+"""Replay reference login restoration through the shared coverage runner."""
 
+import copy
 import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-from auth_scenarios import auth_state
-from icloud import ROOT, SOURCE, close_reference, verify_reference
-from network_guard import forbid_network
-from recording import ReplayAdapter
+from icloud import ROOT
+from reference_resume import replay_reference_resume
 
 
 class ReferenceResumeTests(unittest.TestCase):
     def test_reference_import_authentication_and_read(self):
-        self.replay_corpus("reference-resume.json", "portos.reference-resume.v1")
+        self.assertEqual(
+            replay_reference_resume(
+                "reference-resume.json", "portos.reference-resume.v1"
+            ),
+            8,
+        )
 
     def test_reference_restore_and_resume_again(self):
-        self.replay_corpus(
-            "reference-resume-repeat.json", "portos.reference-resume-repeat.v1"
+        self.assertEqual(
+            replay_reference_resume(
+                "reference-resume-repeat.json", "portos.reference-resume-repeat.v1"
+            ),
+            12,
         )
 
-    def replay_corpus(self, filename, format_name):
+    def test_shared_runner_rejects_changed_state_requests_and_unused_exchanges(self):
         fixtures = ROOT / "tests/replay/fixtures/synthetic/local"
-        local = json.loads(
-            (fixtures / "reference-logins.json").read_text(encoding="utf-8")
-        )
-        corpus = json.loads((fixtures / filename).read_text(encoding="utf-8"))
-        self.assertEqual(corpus["source"], SOURCE["live"])
-        self.assertEqual(corpus["format"], format_name)
-        self.assertEqual(corpus["evidence"], "synthetic; implementation-derived")
-        self.assertEqual(len(corpus["cases"]), 4)
-        service = verify_reference()
-        for case in corpus["cases"]:
-            login = next(
-                row for row in local["cases"] if row["filename"] == case["localCase"]
-            )
-            with (
-                self.subTest(case=case["name"]),
-                tempfile.TemporaryDirectory() as directory,
-                forbid_network(),
-            ):
-                account = Path(directory) / "accounts" / login["accountKey"]
-                account.mkdir(parents=True)
-                (account / (login["filename"] + ".session")).write_text(
-                    json.dumps(login["session"]), encoding="utf-8"
+        name = "reference-resume-repeat.json"
+        corpus = json.loads((fixtures / name).read_text(encoding="utf-8"))
+        for field, replacement in [
+            ("authState", {}),
+            ("restoredAuthState", {}),
+            ("headers", {}),
+            ("cookieState", []),
+            ("request", "DELETE"),
+            ("unused", None),
+        ]:
+            changed = copy.deepcopy(corpus)
+            case = changed["cases"][0]
+            if field == "request":
+                case["exchanges"][0]["request"]["method"] = replacement
+            elif field == "unused":
+                case["exchanges"].append(copy.deepcopy(case["exchanges"][-1]))
+            else:
+                case[field] = replacement
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                destination = root / "tests/replay/fixtures/synthetic/local"
+                destination.mkdir(parents=True)
+                (destination / name).write_text(json.dumps(changed), encoding="utf-8")
+                (destination / "reference-logins.json").write_bytes(
+                    (fixtures / "reference-logins.json").read_bytes()
                 )
-                (account / (login["filename"] + ".cookiejar")).write_text(
-                    login["cookieFile"], encoding="utf-8"
-                )
-                api = service(
-                    login["identity"]["username"],
-                    authenticate=False,
-                    cookie_directory=str(account),
-                    china_mainland=login["identity"]["china"],
-                    with_family=False,
-                )
-                adapter = ReplayAdapter(case["exchanges"])
-                api.session.mount("https://", adapter)
-                api.session.mount("http://", adapter)
-                try:
-                    api.authenticate()
-                    self.assertEqual(auth_state(api), case["authState"])
-                    self.assertEqual(
-                        [dict(item) for item in api.account.devices], case["devices"]
-                    )
-                    if "restoredAuthState" in case:
-                        self.assertEqual(dict(api.session.headers), case["headers"])
-                        self.assertEqual(cookie_state(api), case["cookieState"])
-                        close_reference(api)
-                        api = service(
-                            login["identity"]["username"],
-                            authenticate=False,
-                            cookie_directory=str(account),
-                            china_mainland=login["identity"]["china"],
-                            with_family=False,
-                        )
-                        api.session.mount("https://", adapter)
-                        api.session.mount("http://", adapter)
-                        api.authenticate()
-                        self.assertEqual(auth_state(api), case["restoredAuthState"])
-                    adapter.assert_consumed()
-                finally:
-                    close_reference(api)
-
-
-def cookie_state(api):
-    return [
-        {
-            "name": cookie.name,
-            "value": cookie.value,
-            "domain": cookie.domain,
-            "path": cookie.path,
-            "secure": cookie.secure,
-            "domainSpecified": cookie.domain_specified,
-            "expires": cookie.expires,
-            "httpOnly": cookie.has_nonstandard_attr("HttpOnly"),
-        }
-        for cookie in api.session.cookies
-    ]
+                with (
+                    patch("reference_resume.ROOT", root),
+                    self.assertRaises(AssertionError),
+                ):
+                    replay_reference_resume(name, "portos.reference-resume-repeat.v1")
