@@ -22,6 +22,11 @@ func decodeReminderNormalRecord(fields map[string]json.RawMessage) (cloudkit.CKR
 		return record, false, err
 	}
 
+	err = normalizeReminderMetadata(normalized)
+	if err != nil {
+		return record, false, err
+	}
+
 	body, err := json.Marshal(normalized)
 	if err != nil {
 		return record, false, fmt.Errorf("encode normalized reminder record: %w", err)

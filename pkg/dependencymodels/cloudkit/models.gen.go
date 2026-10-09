@@ -1107,6 +1107,20 @@ type CKAuditInfo struct {
 	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
 }
 
+// CKAuditTimestampInput Source audit milliseconds input before coercion. Numeric values truncate toward zero; text must parse as an integer. Year-one sentinels and out-of-range dates are rejected by the required audit timestamp validator.
+type CKAuditTimestampInput struct {
+	union json.RawMessage
+}
+
+// CKAuditTimestampInput0 defines model for CKAuditTimestampInput.0.
+type CKAuditTimestampInput0 = float64
+
+// CKAuditTimestampInput1 defines model for CKAuditTimestampInput.1.
+type CKAuditTimestampInput1 = bool
+
+// CKAuditTimestampInputText Source integer text accepted for required audit milliseconds.
+type CKAuditTimestampInputText = string
+
 // CKBase64Input Source non-strict base64 input: ignores non-alphabet bytes and accepts excess padding or data following completed padding.
 type CKBase64Input = string
 
@@ -1403,9 +1417,9 @@ type CKParticipant struct {
 	CustomRole             nullable.Nullable[string]                      `json:"customRole,omitempty"`
 	IsApprovedRequester    nullable.Nullable[bool]                        `json:"isApprovedRequester,omitempty"`
 	OrgUser                nullable.Nullable[bool]                        `json:"orgUser,omitempty"`
-	PublicKeyVersion       nullable.Nullable[int64]                       `json:"publicKeyVersion,omitempty"`
+	PublicKeyVersion       nullable.Nullable[json.Number]                 `json:"publicKeyVersion,omitempty"`
 	OutOfNetworkPrivateKey nullable.Nullable[string]                      `json:"outOfNetworkPrivateKey,omitempty"`
-	OutOfNetworkKeyType    nullable.Nullable[int64]                       `json:"outOfNetworkKeyType,omitempty"`
+	OutOfNetworkKeyType    nullable.Nullable[json.Number]                 `json:"outOfNetworkKeyType,omitempty"`
 	ProtectionInfo         nullable.Nullable[CKParticipantProtectionInfo] `json:"protectionInfo,omitempty"`
 	AdditionalProperties   map[string]CKUnknownJSON                       `json:"-"`
 }
@@ -7617,6 +7631,94 @@ func (a CKZoneListZone) MarshalJSON() ([]byte, error) {
 		}
 	}
 	return json.Marshal(object)
+}
+
+// AsCKAuditTimestampInput0 returns the union data inside the CKAuditTimestampInput as a CKAuditTimestampInput0
+func (t CKAuditTimestampInput) AsCKAuditTimestampInput0() (CKAuditTimestampInput0, error) {
+	var body CKAuditTimestampInput0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKAuditTimestampInput0 overwrites any union data inside the CKAuditTimestampInput as the provided CKAuditTimestampInput0
+func (t *CKAuditTimestampInput) FromCKAuditTimestampInput0(v CKAuditTimestampInput0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKAuditTimestampInput0 performs a merge with any union data inside the CKAuditTimestampInput, using the provided CKAuditTimestampInput0
+func (t *CKAuditTimestampInput) MergeCKAuditTimestampInput0(v CKAuditTimestampInput0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKAuditTimestampInput1 returns the union data inside the CKAuditTimestampInput as a CKAuditTimestampInput1
+func (t CKAuditTimestampInput) AsCKAuditTimestampInput1() (CKAuditTimestampInput1, error) {
+	var body CKAuditTimestampInput1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKAuditTimestampInput1 overwrites any union data inside the CKAuditTimestampInput as the provided CKAuditTimestampInput1
+func (t *CKAuditTimestampInput) FromCKAuditTimestampInput1(v CKAuditTimestampInput1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKAuditTimestampInput1 performs a merge with any union data inside the CKAuditTimestampInput, using the provided CKAuditTimestampInput1
+func (t *CKAuditTimestampInput) MergeCKAuditTimestampInput1(v CKAuditTimestampInput1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKAuditTimestampInputText returns the union data inside the CKAuditTimestampInput as a CKAuditTimestampInputText
+func (t CKAuditTimestampInput) AsCKAuditTimestampInputText() (CKAuditTimestampInputText, error) {
+	var body CKAuditTimestampInputText
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKAuditTimestampInputText overwrites any union data inside the CKAuditTimestampInput as the provided CKAuditTimestampInputText
+func (t *CKAuditTimestampInput) FromCKAuditTimestampInputText(v CKAuditTimestampInputText) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKAuditTimestampInputText performs a merge with any union data inside the CKAuditTimestampInput, using the provided CKAuditTimestampInputText
+func (t *CKAuditTimestampInput) MergeCKAuditTimestampInputText(v CKAuditTimestampInputText) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CKAuditTimestampInput) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CKAuditTimestampInput) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
 }
 
 // AsCKBooleanInput0 returns the union data inside the CKBooleanInput as a CKBooleanInput0

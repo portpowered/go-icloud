@@ -46,8 +46,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 209 implementation-derived synthetic Reminders scenarios contain
-252 paired exchanges: 249 POST pairs and three membership-asset downloads. Contract
+The current 230 implementation-derived synthetic Reminders scenarios contain
+273 paired exchanges: 270 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -71,21 +71,27 @@ executes these same 53 scenarios and 85 paired exchanges. It returns the exact u
 response metadata, preserving prior exchanges when a later page fails. Decode
 failures in the query permit fallback; HTTP/session failures stop immediately.
 
-Fifty-one Source change-iteration scenarios contain 54 paired exchanges and
+72 paired Source/Go change-iteration scenarios contain 75 paired exchanges and
 bind no/null/empty cursors, ordered duplicates, unrelated records, complete deleted
 reminders and tombstones, last-zone cursor selection, later-page failures and
 schema rejection. Source API errors bind their structured payloads as well as
 their type and message, including null payloads. Negative controls reject changed
-events, event order, requests, unused pages and error payloads. Twenty-six cases bind
+events, event order, requests, unused pages and error payloads. 47 cases bind
 Source's selection among overlapping record, tombstone and error alternatives,
 including ties, nested metadata, boolean coercion and encrypted-field validation.
 The Go adapter scores supplied declared model fields and strict/coerced matches
 before selecting a valid alternative. The SDK preserves event order, duplicate
 events, complete reminder projections, null tombstones and response metadata.
-Forty-eight cases currently pass Go; valid audit timestamp text, participant
-boolean text and participant integer text remain failing Go cases. The SDK port
-is unmerged pending these corrections and review. This synthetic evidence does
-not establish live Go behavior.
+Nested required identities and non-nullable optional dictionaries are checked before union
+selection. Participant bool/int coercions apply to owners, current users,
+participants, requesters and blocked members; arbitrary integer magnitudes are
+preserved. Audit numeric JSON floats round before truncation, while numeric text
+retains integer parsing. Public dates reproduce float-seconds conversion to
+microseconds, including the pinned Windows runtime's UTC range from Unix second
+-43,200 through 32,536,850,399. Boundary controls execute the actual Source mapper.
+These runtime limits are reference parity evidence, not Apple date restrictions.
+Full checks and exact-commit review remain required before merging. This synthetic
+evidence does not establish live Go behavior.
 
 Asset binding checks that the HTTPS origin, escaped path and decoded query occur
 in a prior validated POST List record's ReminderIDsAsset/ASSETID downloadURL. It

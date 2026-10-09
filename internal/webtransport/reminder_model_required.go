@@ -18,13 +18,27 @@ func reminderModelRequired(model reflect.Type, fields map[string]json.RawMessage
 		}
 
 		raw, supplied := fields[name]
-		if options == "" && (!supplied || string(raw) == jsonNullValue) {
+		if !reminderRequiredMember(field.Type, options, raw, supplied) {
 			return false
 		}
 
 		if supplied && !reminderNestedRequired(field.Type, raw) {
 			return false
 		}
+	}
+
+	return true
+}
+
+func reminderRequiredMember(model reflect.Type, options string, raw json.RawMessage, supplied bool) bool {
+	if !supplied {
+		return options != ""
+	}
+
+	if string(raw) == jsonNullValue {
+		// Optional non-nullable fields use pointers; nullable generated metadata
+		// uses nullable.Nullable. An omitted default dictionary differs from null.
+		return options != "" && model.Kind() != reflect.Pointer
 	}
 
 	return true

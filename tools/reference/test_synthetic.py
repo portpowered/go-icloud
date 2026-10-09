@@ -19,12 +19,12 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_reminder_change_iteration_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-changes-*.json"))
-        self.assertEqual(len(paths), 51)
+        self.assertEqual(len(paths), 72)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 54)
+        self.assertEqual(pairs, 75)
         full = json.loads(
             (FIXTURES / "reminders-changes-full-deleted.json").read_text()
         )

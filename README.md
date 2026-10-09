@@ -167,9 +167,11 @@ Omit `Since` for the initial change read. The operation consumes every page and
 preserves event order and duplicates. Updated records include the full reminder;
 tombstone deletions have a null reminder. `changes.Responses` contains page
 metadata and cookie updates. Failures return typed errors with response evidence
-and no partial result. Fifty-one synthetic Source cases specify these paths,
-including overlapping record/error alternatives. Forty-eight currently pass
-the Go port; three valid nested metadata coercions remain under development.
+and no partial result. 72 synthetic paired Source/Go cases cover these paths,
+including overlapping record/error alternatives, nested metadata coercion,
+arbitrary participant integers and complete audit-date projections. Date handling
+matches the pinned Windows reference runtime's microsecond rounding and range;
+these limits are reference behavior rather than verified Apple date restrictions.
 Compound reminder queries,
 the CLI change command, and live Go verification remain pending.
 

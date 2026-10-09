@@ -10,12 +10,12 @@ import (
 
 	"github.com/oapi-codegen/nullable"
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/internal/remindersdate"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 const (
 	reminderMinimumMillis int64 = -62135596800000
-	reminderMaximumYear   int   = 9999
 )
 
 func projectReminderDates(result *Reminder, record cloudkit.CKRecord) error {
@@ -55,12 +55,7 @@ func reminderDate(raw json.RawMessage) *time.Time {
 		return nil
 	}
 
-	instant := time.UnixMilli(millis).UTC()
-	if instant.Year() > reminderMaximumYear {
-		return nil
-	}
-
-	return &instant
+	return remindersdate.FromMillis(millis)
 }
 
 func reminderAuditDate(record cloudkit.CKRecord, name string) *time.Time {

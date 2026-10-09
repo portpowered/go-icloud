@@ -19,6 +19,7 @@ const (
 	RemindersCKAuditInfoDeviceID                     = "deviceID"
 	RemindersCKAuditInfoTimestamp                    = "timestamp"
 	RemindersCKAuditInfoUserRecordName               = "userRecordName"
+	RemindersCKAuditTimestampInputTextPattern        = "^\\s*[+-]?[0-9](?:_?[0-9])*\\s*$"
 	RemindersCKBase64InputPattern                    = "^(?:[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=?[^A-Za-z0-9+/=]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*[A-Za-z0-9+/])*(?:[^A-Za-z0-9+/]*|[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=[^A-Za-z0-9+/=]*=[\\s\\S]*|[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=?[^A-Za-z0-9+/=]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=[\\s\\S]*)$"
 	RemindersCKBooleanInputTextPattern               = "(?i)^(?:0|1|f|t|false|true|off|on|n|no|y|yes)$"
 	RemindersCKBooleanTrueInputTextPattern           = "(?i)^(?:1|t|true|on|y|yes)$"

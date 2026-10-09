@@ -1,24 +1,26 @@
 # iCloud migration checklist
 
-The reminder change-iteration matrix contains 51 Source-executed scenarios and
-54 paired exchanges. Forty-eight currently pass the Go port. It binds optional cursors, pagination,
+The reminder change-iteration matrix contains 72 Source-executed scenarios and
+75 paired exchanges. It binds optional cursors, pagination,
 multiple zones, ordered duplicate events, unrelated records, tombstones,
 full deleted reminders, provider failures and invalid replies. Negative controls
 reject changed events, order, requests, unused pages and structured error payloads.
-The Source harness now binds payloads for all 44 Reminders API error scenarios,
-including null payloads. Portable HTTP inventory is 647 scenarios and 1,354 pairs.
+The Source harness now binds payloads for all 54 Reminders API error scenarios,
+including null payloads. Portable HTTP inventory is 668 scenarios and 1,375 pairs.
 The initial Go change-iteration port passed the original 25 cases, but independent
 review found ambiguous record/error selection did not match Source's smart union.
-Twenty-six additional Source cases distinguish preferred alternatives, ties, nested
+47 additional Source cases distinguish preferred alternatives, ties, nested
 metadata, boolean coercion and encrypted-field validity. Independent review found
 missing nested identities and valid metadata coercions omitted by the initial
-matrix. The Go nested-required-field fix resolves six new error cases; audit
-timestamp text and participant boolean/integer text still fail in Go. These
-corrections, independent review, full verification and exact-commit CI approval
+matrix. Go now validates nested required identities, coerces metadata, preserves
+arbitrary participant integer magnitude and reproduces audit-date microsecond
+rounding and the pinned Windows runtime's date range. Independent review, full
+verification and exact-commit CI approval
 remain required before merging this public SDK milestone.
 The preceding all-evidence Source run enters 592/905 inventoried functions and
-covers 3,337/5,398 body statements (61.82%) and 1,031/2,076 branch exits. This
-measurement precedes the eleven newly added nested-metadata scenarios.
+covers 3,339/5,398 body statements (61.86%) and 1,031/2,076 branch exits. This
+measurement covers the preceding 70-case matrix; the two explicit null-container
+cases were added afterward. Coverage remains a conservative scope diagnostic.
 
 The sync-cursor reference matrix now has 53 Source-executed scenarios and 85
 paired exchanges. Cases cover token defaults, query decode fallback,
