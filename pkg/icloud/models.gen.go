@@ -998,6 +998,9 @@ type ListReminderZonesRequest struct {
 
 // ListReminderZonesResult Example: {"metadata":{"headers":[{"name":"Content-Type","value":"application/json"}],"statusCode":200},"zones":[]}
 type ListReminderZonesResult struct {
+	// AdditionalMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
+	AdditionalMetadata ReminderMetadata `json:"additionalMetadata,omitempty"`
+
 	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 	Metadata ResponseMetadata `json:"metadata"`
 
@@ -1065,12 +1068,21 @@ type RegisteredDriveDocument struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// ReminderMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
+type ReminderMetadata map[string]UnknownJSONValue
+
 // ReminderZone Reminder storage zone identity and current change cursor.
 //
 // Example: {"deleted":false,"name":"synthetic-reminders-0","owner":null,"syncToken":"synthetic-sync-0","type":null}
 type ReminderZone struct {
+	// AdditionalMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
+	AdditionalMetadata ReminderMetadata `json:"additionalMetadata,omitempty"`
+
 	// Deleted Provider deletion flag, with null for unavailable values.
 	Deleted nullable.Nullable[bool] `json:"deleted"`
+
+	// IdentityMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
+	IdentityMetadata ReminderMetadata `json:"identityMetadata,omitempty"`
 
 	// Name Provider zone name used by subsequent reminder operations.
 	Name string `json:"name"`

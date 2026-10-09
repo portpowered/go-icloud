@@ -98,6 +98,10 @@ components:
       type: object
       description: Additional uninterpreted account-level provider fields; nulls and original JSON numbers remain intact.
       additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    ReminderMetadata:
+      type: object
+      description: Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
     ReminderZone:
       type: object
       required: [name, owner, type, syncToken, deleted]
@@ -105,6 +109,8 @@ components:
       example: {name: synthetic-reminders-0, owner: null, type: null, syncToken: synthetic-sync-0, deleted: false}
       properties:
         name: {type: string, description: Provider zone name used by subsequent reminder operations.}
+        additionalMetadata: {$ref: '#/components/schemas/ReminderMetadata', x-go-type-skip-optional-pointer: true, description: Unknown fields attached to the zone.}
+        identityMetadata: {$ref: '#/components/schemas/ReminderMetadata', x-go-type-skip-optional-pointer: true, description: Unknown fields attached to the zone identity.}
         owner: {type: string, nullable: true, description: Optional owner record name.}
         type: {type: string, nullable: true, description: Optional extensible provider zone type.}
         syncToken: {type: string, nullable: true, description: 'Provider change cursor, with null for unavailable values.'}
@@ -120,6 +126,7 @@ components:
       required: [zones, metadata]
       example: {zones: [], metadata: {statusCode: 200, headers: [{name: Content-Type, value: application/json}]}}
       properties:
+        additionalMetadata: {$ref: '#/components/schemas/ReminderMetadata', x-go-type-skip-optional-pointer: true, description: Unknown fields attached to the response envelope.}
         zones: {type: array, items: {$ref: '#/components/schemas/ReminderZone'}, description: Zones in provider order; an empty list is successful.}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
     GetAccountDevicesRequest:

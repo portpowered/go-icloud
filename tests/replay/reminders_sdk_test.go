@@ -20,7 +20,7 @@ func TestReminderZonesSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 8 {
+	if len(paths) != 9 {
 		t.Fatal("reminder zone scenario inventory changed")
 	}
 
@@ -82,9 +82,24 @@ func checkReminderZonesValue(t *testing.T, scenario accountScenario, result *icl
 			!reflect.DeepEqual(actual.Deleted, zone.Deleted) {
 			t.Fatal("complete reminder zone projection differs from reference")
 		}
+
+		checkReminderMetadata(t, actual.AdditionalMetadata, zone.AdditionalProperties)
+		checkReminderMetadata(t, actual.IdentityMetadata, zone.ZoneID.AdditionalProperties)
 	}
 
+	checkReminderMetadata(t, result.AdditionalMetadata, expected.AdditionalProperties)
 	checkSDKMetadata(t, result.Metadata, scenario.Exchanges[0].Response)
+}
+
+func checkReminderMetadata(t *testing.T, actual icloud.ReminderMetadata, expected map[string]json.RawMessage) {
+	t.Helper()
+
+	encoded, err := json.Marshal(expected)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	checkSDKValue(t, actual, encoded)
 }
 
 func checkReminderZonesFailure(t *testing.T, scenario accountScenario,

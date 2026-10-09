@@ -46,8 +46,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-All 81 existing implementation-derived synthetic Reminders scenarios contain
-89 paired exchanges: 86 POST pairs and three membership-asset downloads. Contract
+All 82 existing implementation-derived synthetic Reminders scenarios contain
+90 paired exchanges: 87 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -75,10 +75,11 @@ The internal [text protocol adapter](reminders-text-protocol.md) now decodes
 versioned CRDT title and notes bytes against a separate portable Source corpus.
 Public domain conversion and write encoding remain pending.
 
-The public Go `ListReminderZones` operation now passes eight semantic replays,
+The public Go `ListReminderZones` operation now passes nine semantic replays,
 including empty, one and multiple zones, provider and schema failures, and
 201/202/299 success. HTTP202 JSON is decoded despite a plain-text content type.
-It returns caller-owned zone projections and metadata; authentication returns
+An additional case binds unknown metadata at response, zone and identity levels,
+including large JSON integers and nulls. It returns caller-owned zone projections and metadata; authentication returns
 the discovered reminders origin. See the [README example](../README.md).
 
 The remaining public Reminders API must still port pagination, sync-token fallback, list membership precedence,

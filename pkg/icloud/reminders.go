@@ -2,6 +2,7 @@ package icloud
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -32,12 +33,15 @@ func (sdk *SDK) ListReminderZones(ctx context.Context,
 		}
 	}
 
-	return &ListReminderZonesResult{Zones: zones, Metadata: publicMetadata(response.Metadata)}, nil
+	return &ListReminderZonesResult{Zones: zones, Metadata: publicMetadata(response.Metadata),
+		AdditionalMetadata: copyReminderMetadata(response.Data.AdditionalProperties)}, nil
 }
 
 func projectReminderZone(zone cloudkit.CKZoneListZone) ReminderZone {
 	result := ReminderZone{Name: zone.ZoneID.ZoneName,
-		Owner: zone.ZoneID.OwnerRecordName, Type: zone.ZoneID.ZoneType,
+		AdditionalMetadata: copyReminderMetadata(zone.AdditionalProperties),
+		IdentityMetadata:   copyReminderMetadata(zone.ZoneID.AdditionalProperties),
+		Owner:              zone.ZoneID.OwnerRecordName, Type: zone.ZoneID.ZoneType,
 		SyncToken: zone.SyncToken, Deleted: zone.Deleted}
 	if !result.Owner.IsSpecified() {
 		result.Owner.SetNull()
@@ -53,6 +57,19 @@ func projectReminderZone(zone cloudkit.CKZoneListZone) ReminderZone {
 
 	if !result.Deleted.IsSpecified() {
 		result.Deleted.SetNull()
+	}
+
+	return result
+}
+
+func copyReminderMetadata(fields map[string]json.RawMessage) ReminderMetadata {
+	if len(fields) == 0 {
+		return nil
+	}
+
+	result := make(ReminderMetadata, len(fields))
+	for name, value := range fields {
+		result[name] = append(json.RawMessage(nil), value...)
 	}
 
 	return result
