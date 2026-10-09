@@ -482,7 +482,10 @@
           "clientData": {
             "type": "string",
             "format": "byte",
-            "x-order": 1
+            "x-order": 1,
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/AuthWebAuthnClientData"
+            }
           },
           "signatureData": {
             "type": "string",
@@ -1187,6 +1190,13 @@
         "enum": [
           "Trusted-device prompt failed; falling back to SMS."
         ]
+      },
+      "AuthenticatorDataMinimumBytes": {
+        "type": "integer",
+        "enum": [
+          37
+        ],
+        "description": "WebAuthn authenticator data begins with 32-byte RP hash, flags and 4-byte signature counter."
       }
     }
   }

@@ -336,6 +336,21 @@ func (e AuthWrongVerificationCode) Valid() bool {
 	}
 }
 
+// Defines values for AuthenticatorDataMinimumBytes.
+const (
+	N37 AuthenticatorDataMinimumBytes = 37
+)
+
+// Valid indicates whether the value is a known member of the AuthenticatorDataMinimumBytes enum.
+func (e AuthenticatorDataMinimumBytes) Valid() bool {
+	switch e {
+	case N37:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for BridgeFallbackNotice.
 const (
 	TrustedDevicePromptFailedFallingBackToSMS BridgeFallbackNotice = "Trusted-device prompt failed; falling back to SMS."
@@ -980,6 +995,9 @@ type AuthWebServices struct {
 
 // AuthWrongVerificationCode defines model for AuthWrongVerificationCode.
 type AuthWrongVerificationCode int
+
+// AuthenticatorDataMinimumBytes WebAuthn authenticator data begins with 32-byte RP hash, flags and 4-byte signature counter.
+type AuthenticatorDataMinimumBytes int
 
 // BridgeFallbackNotice defines model for BridgeFallbackNotice.
 type BridgeFallbackNotice string
