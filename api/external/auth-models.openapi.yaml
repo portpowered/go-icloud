@@ -80,6 +80,9 @@
           "photos": {
             "$ref": "#/components/schemas/AuthService"
           },
+          "ckdatabasews": {
+            "$ref": "#/components/schemas/AuthService"
+          },
           "reminders": {
             "$ref": "#/components/schemas/AuthService"
           }

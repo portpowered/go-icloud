@@ -115,6 +115,7 @@ type AuthTokenLoginRequest struct {
 // AuthWebServices defines model for AuthWebServices.
 type AuthWebServices struct {
 	Account              *AuthService           `json:"account,omitempty"`
+	Ckdatabasews         *AuthService           `json:"ckdatabasews,omitempty"`
 	Docws                *AuthService           `json:"docws,omitempty"`
 	Drivews              *AuthService           `json:"drivews,omitempty"`
 	Findme               *AuthService           `json:"findme,omitempty"`
@@ -539,6 +540,14 @@ func (a *AuthWebServices) UnmarshalJSON(b []byte) error {
 		delete(object, "account")
 	}
 
+	if raw, found := object["ckdatabasews"]; found {
+		err = json.Unmarshal(raw, &a.Ckdatabasews)
+		if err != nil {
+			return fmt.Errorf("error reading 'ckdatabasews': %w", err)
+		}
+		delete(object, "ckdatabasews")
+	}
+
 	if raw, found := object["docws"]; found {
 		err = json.Unmarshal(raw, &a.Docws)
 		if err != nil {
@@ -602,6 +611,13 @@ func (a AuthWebServices) MarshalJSON() ([]byte, error) {
 		object["account"], err = json.Marshal(a.Account)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'account': %w", err)
+		}
+	}
+
+	if a.Ckdatabasews != nil {
+		object["ckdatabasews"], err = json.Marshal(a.Ckdatabasews)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'ckdatabasews': %w", err)
 		}
 	}
 
