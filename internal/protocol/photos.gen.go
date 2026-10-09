@@ -256,6 +256,8 @@ const (
 	PhotosCountResponseBatchRecords               = "records"
 	PhotosCountStringListType                     = "type"
 	PhotosCountStringListValue                    = "value"
+	PhotosDownloadContentMethod                   = "GET"
+	PhotosDownloadContentPath                     = "/{contentPath}"
 	PhotosDsidName                                = "dsid"
 	PhotosGetCurrentSyncTokenName                 = "getCurrentSyncToken"
 	PhotosOriginName                              = "Origin"

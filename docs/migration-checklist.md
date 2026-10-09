@@ -481,3 +481,6 @@ live lookup succeeded; Python replay of its seven captured Photos exchanges
 matched the full Go result. Full checks, blocking CI and independent exact-SHA
 review passed; the SDK is merged. CLI lookup, downloads and remaining selected
 service work remain open.
+
+
+DownloadPhoto now has generated public models, typed rendition selection, provider-issued URL binding and exact binary results. Twenty-five Source-first paired replay cases cover bytes/empty/null, rendition alternatives, HTTP/transport failures, signed escaped paths/repeated queries, lazy unused dates and paged lookup. Contract controls reject changed resource origins, paths and signed queries. Private live Go thumbnail download succeeded; offline Python replay consumed eight exchanges and matched complete bytes. Full local checks, CI and exact-SHA review are pending. CLI downloads, remaining Photos operations and full migration acceptance remain open.

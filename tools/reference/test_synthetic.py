@@ -630,6 +630,34 @@ class SyntheticTests(unittest.TestCase):
                 with self.assertRaises(AssertionError):
                     replay_synthetic(path)
 
+    def test_photo_download_matrix_binds_exact_bytes_null_and_lazy_getters(self):
+        paths = sorted(FIXTURES.glob("photos-download-*.json"))
+        self.assertEqual(len(paths), 25)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 105)
+
+    def test_photo_download_success_rejects_changed_bytes_urls_and_unused_calls(self):
+        for change in ["result", "origin", "query", "unused"]:
+            scenario = json.loads(
+                (FIXTURES / "photos-download-escaped-signed-url.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            if change == "result":
+                scenario["result"] = None
+            elif change == "origin":
+                scenario["exchanges"][-1]["request"]["origin"] = (
+                    "https://wrong-assets.example.invalid"
+                )
+            elif change == "query":
+                scenario["exchanges"][-1]["request"]["query"][-1][1] = "wrong"
+            else:
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_photo_download_failures_reject_changed_outcomes_and_requests(self):
         for name in [
             "photos-download-refused-429.json",

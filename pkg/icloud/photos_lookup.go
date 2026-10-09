@@ -28,7 +28,7 @@ func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhot
 		return nil, read.failure(errPhotoAlbumMissing, NotFound)
 	}
 
-	photos, err := read.lookupPhoto(ctx, entry, request.PhotoID)
+	photos, err := read.lookupPhoto(ctx, entry, request.PhotoID, projectPhoto)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,11 @@ func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhot
 	return result, nil
 }
 
-func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, photoID string) ([]Photo, error) {
+type photoProjection func(cloudkit.CKRecord, cloudkit.CKRecord) (Photo, error)
+
+func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, photoID string,
+	project photoProjection,
+) ([]Photo, error) {
 	spec := photoQuerySpec(entry)
 
 	response, err := read.sdk.web.PhotosLookupAsset(ctx, read.auth, spec.index, photoID, spec.filters)
@@ -53,7 +57,7 @@ func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, 
 
 	read.responses = append(read.responses, response.Metadata)
 
-	photos, err := selectPhotoPair(response.Data, photoID)
+	photos, err := selectPhotoPair(response.Data, photoID, project)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}
@@ -67,10 +71,10 @@ func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, 
 		return nil, err
 	}
 
-	return read.assetPages(ctx, spec, offset, &photoID)
+	return read.assetPages(ctx, spec, offset, &photoID, project)
 }
 
-func selectPhotoPair(data cloudkit.CKQueryResponse, photoID string) ([]Photo, error) {
+func selectPhotoPair(data cloudkit.CKQueryResponse, photoID string, project photoProjection) ([]Photo, error) {
 	records, err := photoNormalRecords(data)
 	if err != nil {
 		return nil, err
@@ -83,7 +87,7 @@ func selectPhotoPair(data cloudkit.CKQueryResponse, photoID string) ([]Photo, er
 
 	for _, pair := range pairs {
 		if pair.asset.RecordName == photoID {
-			photo, err := projectPhoto(pair.master, pair.asset)
+			photo, err := project(pair.master, pair.asset)
 			if err != nil {
 				return nil, err
 			}

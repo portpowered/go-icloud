@@ -80,7 +80,7 @@ func (read *photosRead) assets(ctx context.Context, entry photoAlbumEntry) ([]Ph
 		return nil, err
 	}
 
-	return read.assetPages(ctx, spec, offset, nil)
+	return read.assetPages(ctx, spec, offset, nil, projectPhoto)
 }
 
 func (read *photosRead) assetOffset(ctx context.Context, entry photoAlbumEntry,
@@ -109,6 +109,7 @@ func (read *photosRead) assetOffset(ctx context.Context, entry photoAlbumEntry,
 
 func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec, offset int64,
 	photoID *string,
+	project photoProjection,
 ) ([]Photo, error) {
 	photos := []Photo{}
 	seen := map[string]bool{}
@@ -131,7 +132,7 @@ func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec
 			return nil, read.failure(err, InvalidResponse)
 		}
 
-		projected, err := projectSelectedPhotoPage(page, seen, photoID)
+		projected, err := projectSelectedPhotoPage(page, seen, photoID, project)
 		if err != nil {
 			return nil, read.failure(err, InvalidResponse)
 		}
@@ -194,7 +195,9 @@ func projectPhotoPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
 	return photos, nil
 }
 
-func projectSelectedPhotoPage(page []photoPair, seen map[string]bool, photoID *string) ([]Photo, error) {
+func projectSelectedPhotoPage(page []photoPair, seen map[string]bool, photoID *string,
+	project photoProjection,
+) ([]Photo, error) {
 	photos := []Photo{}
 
 	for _, pair := range page {
@@ -202,7 +205,7 @@ func projectSelectedPhotoPage(page []photoPair, seen map[string]bool, photoID *s
 			continue
 		}
 
-		photo, err := projectPhoto(pair.master, pair.asset)
+		photo, err := project(pair.master, pair.asset)
 		if err != nil {
 			return nil, err
 		}
