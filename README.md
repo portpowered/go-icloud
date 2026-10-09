@@ -172,8 +172,7 @@ including overlapping record/error alternatives, nested metadata coercion,
 arbitrary participant integers and complete audit-date projections. Date handling
 matches the pinned Windows reference runtime's microsecond rounding and range;
 these limits are reference behavior rather than verified Apple date restrictions.
-The all-lists snapshot facade, linked-record reads, mutations and live Go
-verification remain pending.
+Linked-record reads, mutations and live Go verification remain pending.
 
 `ListReminders` reads every page of a list's compound reminder query and returns
 the complete reminder snapshot together with linked alarms, location triggers,
@@ -181,6 +180,28 @@ URL/image attachments, hashtags and recurrence rules. The list ID is sent
 literally; obtain its complete record name from `ListReminderLists`.
 Related records outside the returned list are filtered after all pages, and
 duplicate IDs retain their last value and original reminder position.
+
+Collect reminders across discovered lists, including completed items:
+
+```go
+snapshot, err := client.ListReminderSnapshot(ctx, icloud.ListReminderSnapshotRequest{
+    Auth: resumed.Auth,
+})
+if err != nil {
+    return err
+}
+for _, reminder := range snapshot.Reminders {
+    fmt.Println(reminder.ID, reminder.Title)
+}
+```
+
+An optional `ListID` selects one literal list record name. Omission or empty text
+discovers every list, consuming membership assets and all list/query pages.
+Queries use page size 200 and include completed items. Duplicate reminder IDs
+retain their last value and first position across lists. `Responses` contains
+all request evidence and cookie updates; failures return typed errors with prior
+response evidence and no partial snapshot. Fourteen paired Source/Go cases cover
+these paths. Live Go verification and full Reminders parity remain open.
 
 ```go
 snapshot, err := client.ListReminders(ctx, icloud.ListRemindersRequest{

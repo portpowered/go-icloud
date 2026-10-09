@@ -6,6 +6,22 @@ info:
 paths: {}
 components:
   schemas:
+    ListReminderSnapshotRequest:
+      type: object
+      description: Discover lists and collect complete reminders, or select one literal list record name.
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        listID: {type: string, x-go-name: ListID, description: "Optional literal list record name; omission or empty text discovers all lists."}
+    ListReminderSnapshotResult:
+      type: object
+      description: Complete reminders including completed items; duplicate IDs retain their last value and first position across lists.
+      required: [reminders, responses]
+      example: {reminders: [], responses: []}
+      properties:
+        reminders: {type: array, items: {$ref: '#/components/schemas/Reminder'}, description: "Ordered complete reminder projections, without related-record collections."}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}, description: "List, membership asset and query response evidence in request order."}
     ReminderAlarm:
       type: object
       description: Alarm linked to a reminder and an optional trigger identifier.
