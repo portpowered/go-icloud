@@ -14,7 +14,8 @@ var errBridgeMissing = errors.New("the trusted-device bridge did not return a se
 func verifyBridge(ctx context.Context, client icloud.Client, config options,
 	state icloud.NativeAuthState, input io.ReadCloser, environment Environment, output io.Writer,
 ) (resultErr error) {
-	session, openErr := client.OpenNativeBridgeSession(ctx, icloud.OpenNativeBridgeSessionRequest{Auth: state.Auth, State: state})
+	request := icloud.OpenNativeBridgeSessionRequest{Auth: state.Auth, State: state}
+	session, openErr := client.OpenNativeBridgeSession(ctx, request)
 	if session == nil {
 		return fmt.Errorf("open trusted-device bridge: %w", errors.Join(errBridgeMissing, openErr))
 	}

@@ -2,12 +2,15 @@ package replay_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
 	"github.com/portpowered/go-icloud/pkg/icloud"
@@ -37,6 +40,13 @@ func TestNativeAuthenticationCommands(t *testing.T) {
 		{fixture: "auth-logout-remote-error", operation: "logout"},
 		{fixture: "auth-logout-remote-refused", operation: "logout"},
 		{fixture: "auth-logout-no-cookie", operation: "logout"},
+		{fixture: "auth-pcs-enabled", operation: "pcs-access"},
+		{fixture: "auth-pcs-consented", operation: "pcs-access"},
+		{fixture: "auth-pcs-consent-later", operation: "pcs-access"},
+		{fixture: "auth-pcs-consent-refused", operation: "pcs-access"},
+		{fixture: "auth-pcs-cookies-later", operation: "pcs-access"},
+		{fixture: "auth-pcs-retries-exhausted", operation: "pcs-access"},
+		{fixture: "auth-pcs-unknown-state", operation: "pcs-access"},
 	} {
 		t.Run(test.fixture, func(t *testing.T) { t.Parallel(); runNativeAuthentication(t, test.fixture, test.operation) })
 	}
@@ -51,7 +61,8 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	client, err := icloud.New(icloud.WithHTTPTransport(transport))
+	client, err := icloud.New(icloud.WithHTTPTransport(transport),
+		icloud.WithAuthenticationWait(func(ctx context.Context, _ time.Duration) error { return ctx.Err() }))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,12 +85,23 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 		return ""
 	}
 	var output, diagnostic bytes.Buffer
-	err = command.RunWithInput(t.Context(), client, []string{sessionFlag, path, operation},
+	arguments := []string{sessionFlag, path}
+	if operation == "pcs-access" {
+		arguments = append(arguments, "--service", inputs[0])
+	}
+	arguments = append(arguments, operation)
+	err = command.RunWithInput(t.Context(), client, arguments,
 		io.NopCloser(strings.NewReader("")), environment, &output, &diagnostic)
 	_, providerFailed := raw["error"]
 	accepted := nativeCommandAccepted(t, raw, operation)
 	if (providerFailed || !accepted) != (err != nil) {
 		t.Fatalf("authentication acceptance differs: %v", err)
+	}
+	if providerFailed {
+		var failure *icloud.ClientError
+		if !errors.As(err, &failure) {
+			t.Fatal("CLI lost the typed provider failure")
+		}
 	}
 	for _, secret := range []string{"synthetic-token", "synthetic-trust", "synthetic-cookie", "synthetic@example.invalid", "responses", "accountData"} {
 		if strings.Contains(output.String()+diagnostic.String(), secret) {

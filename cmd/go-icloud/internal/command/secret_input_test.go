@@ -20,17 +20,23 @@ func TestSecretSources(t *testing.T) {
 		want        string
 		failure     bool
 	}{
-		{name: "environment", environment: func(string) string { return " synthetic password " }, want: " synthetic password "},
-		{name: "line", text: " synthetic password \r\nignored", stdin: true, want: " synthetic password "},
-		{name: "end of file", text: "synthetic-code", stdin: true, want: "synthetic-code"},
-		{name: "empty", stdin: true, failure: true},
-		{name: "missing environment", failure: true},
-		{name: "bounded input", text: strings.Repeat("x", maximumSecretBytes+1), stdin: true, failure: true},
-		{name: "bounded environment", environment: func(string) string { return strings.Repeat("x", maximumSecretBytes+1) }, failure: true},
+		{name: "environment", text: "", stdin: false,
+			environment: func(string) string { return " synthetic password " }, want: " synthetic password ", failure: false},
+		{name: "line", text: " synthetic password \r\nignored", stdin: true,
+			environment: nil, want: " synthetic password ", failure: false},
+		{name: "end of file", text: "synthetic-code", stdin: true,
+			environment: nil, want: "synthetic-code", failure: false},
+		{name: "empty", text: "", stdin: true, environment: nil, want: "", failure: true},
+		{name: "missing environment", text: "", stdin: false, environment: nil, want: "", failure: true},
+		{name: "bounded input", text: strings.Repeat("x", maximumSecretBytes+1), stdin: true,
+			environment: nil, want: "", failure: true},
+		{name: "bounded environment", text: "", stdin: false,
+			environment: func(string) string { return strings.Repeat("x", maximumSecretBytes+1) }, want: "", failure: true},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
-			value, err := readSecret(t.Context(), io.NopCloser(strings.NewReader(test.text)), test.environment, "SECRET", test.stdin)
+			input := io.NopCloser(strings.NewReader(test.text))
+			value, err := readSecret(t.Context(), input, test.environment, "SECRET", test.stdin)
 			if test.failure {
 				if !errors.Is(err, errSecret) || value != "" {
 					t.Fatal("secret input did not reject unavailable or oversized data")
@@ -74,7 +80,11 @@ func TestSecretPreCancellationAvoidsReading(t *testing.T) {
 	t.Parallel()
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
-	_, err := readSecret(ctx, nil, func(string) string { t.Fatal("environment read after cancellation"); return "" }, "SECRET", false)
+	environment := func(string) string {
+		t.Fatal("environment read after cancellation")
+		return ""
+	}
+	_, err := readSecret(ctx, nil, environment, "SECRET", false)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatal("secret read lost prior cancellation")
 	}

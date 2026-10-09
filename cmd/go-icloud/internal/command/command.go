@@ -120,7 +120,8 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.StringVar(&config.session, "session", "", "Private JSON containing an icloud.AuthContext")
 	flags.StringVar(&config.requestFile, "request", "", "Private JSON containing the generated request for a named write")
 	flags.StringVar(&config.contentFile, "file", "", "Local content file for a named upload")
-	flags.StringVar(&config.saveResult, "save-result", "", "Explicit private destination for complete generated write results and receipts")
+	flags.StringVar(&config.saveResult, "save-result", "",
+		"Explicit private destination for complete generated write results and receipts")
 	authenticationFlags(flags, &config)
 	flags.StringVar(&config.referenceState, "reference-state", "", "Existing reference login directory for resume")
 	flags.StringVar(&config.saveSession, "save-session", "", "Private native-session destination for resume")
