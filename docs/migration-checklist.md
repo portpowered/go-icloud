@@ -8,8 +8,8 @@ HTTP inventory is 600 scenarios and 1,304 paired exchanges. This is reference
 evidence for the public Go `GetReminderSyncCursor` port, which passes all 53
 paired semantic replays with exact tokens, ordered response metadata and prior
 response evidence on failures. Public change iteration remains open. The latest
-preceding all-evidence Source measurement enters 592/905 inventoried functions and covers
-3,325/5,398 body statements (61.60%) and 1,023/2,076 branch exits. The preceding
+all-evidence Source measurement enters 592/905 inventoried functions and covers
+3,326/5,398 body statements (61.62%) and 1,024/2,076 branch exits. The preceding
 synthetic-only run enters 584 functions and covers 3,278 body statements and
 1,011 branch exits; these evidence categories remain separate.
 
