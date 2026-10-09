@@ -1,6 +1,6 @@
 # Reminders wire contracts
 
-The Go `ListReminders` implementation is under verification against all thirty-nine
+The Go `ListReminders` implementation passes all thirty-nine
 portable compound query cases. It sends the literal list identifier, completion
 filter, optional page size and continuation marker; consumes all pages; and
 projects complete reminders and supported related records. Per-record failures
@@ -11,17 +11,23 @@ filtering, matching the pinned Source's behavior.
 The initial eight compound reference cases entered every statement and branch exit
 in `_ingest_compound_record` (26/26 statements, 16/16 exits). The synthetic-only
 diagnostic keeps the unchanged overall denominators: 585/905 functions entered,
-3,346/5,398 function-body statements (61.99%) and 1,050/2,076 branch exits covered
-after all thirty-one compound cases and fourteen snapshot facade cases.
+3,347/5,398 function-body statements (62.00%) and 1,051/2,076 branch exits covered
+after all thirty-one compound cases, twenty-five snapshot facade cases and
+ten overlapping list-record union cases.
 Further Source cases now exercise asset URLs, integer-coercible size metadata,
 byte-backed text, invalid UTF-8 replacement and raw frequency selection. Six more
 cases bind wrapper-sensitive discriminator and URL behavior: bytes are compared
 before model coercion and byte-backed URLs avoid a second decoding step.
 Two strict-decoding cases preserve STRING base64 URLs containing CR or LF.
-Fourteen Source snapshot facade cases now cover public list discovery, explicit
-and empty filters, pagination and replacement across lists. The Go snapshot
+Twenty-five Source snapshot facade cases now cover public list discovery, explicit
+and empty filters, pagination, replacement across lists, overlapping record/error/
+tombstone alternatives and discovery-cookie reuse. The Go snapshot
 facade port remains in progress.
-Go compound query parity, remaining endpoint ports, live Go verification and
+Ten additional list discovery cases execute both Source and Go. Selection follows
+the Source model union before errors are checked: normal records and tombstones
+can win over error-shaped extra metadata, while a selected error with an empty
+code still fails. All selected errors are rejected before list projection.
+Remaining endpoint ports, live Go verification and
 full migration/release acceptance remain open.
 
 The selected Reminders service uses five CloudKit POST operations: record lookup,
@@ -70,8 +76,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 275 implementation-derived synthetic Reminders scenarios contain
-332 paired exchanges: 329 POST pairs and three membership-asset downloads. Contract
+The current 296 implementation-derived synthetic Reminders scenarios contain
+357 paired exchanges: 354 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -156,7 +162,7 @@ The build-parameter scenario binds the optional authentication build and
 mastering query values in Source order; the external schema owns these optional
 parameters for every Reminders POST operation.
 
-The public `ListReminderLists` reader now binds twenty-four Source scenarios
+The public `ListReminderLists` reader now binds thirty-four Source scenarios
 to complete domain results and ordered response metadata. It consumes list
 pagination and inline or downloaded membership; record errors fail the snapshot.
 Twelve added scenarios execute against the pinned reference under the strict

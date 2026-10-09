@@ -31,6 +31,26 @@ func TestReminderListsSDKPortableScenarios(t *testing.T) {
 	}
 }
 
+func TestReminderListUnionSDKPortableScenarios(t *testing.T) {
+	t.Parallel()
+
+	paths, err := filepath.Glob("fixtures/synthetic/http/reminders-list-union-*.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(paths) != 10 {
+		t.Fatal("reminder list union scenario inventory changed")
+	}
+
+	for _, path := range paths {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			t.Parallel()
+			runReminderListsSDK(t, readAccountScenario(t, path))
+		})
+	}
+}
+
 func runReminderListsSDK(t *testing.T, scenario accountScenario) {
 	t.Helper()
 

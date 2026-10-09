@@ -17,10 +17,71 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_reminder_list_union_selection_and_discovery_cookies(self):
+        paths = sorted(FIXTURES.glob("reminders-list-union-*.json"))
+        paths += sorted(FIXTURES.glob("reminders-snapshot-union-*.json"))
+        paths += [FIXTURES / "reminders-snapshot-discovery-cookie.json"]
+        self.assertEqual(len(paths), 21)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 25)
+        for prefix in ["list", "snapshot"]:
+            for name in [
+                "normal-extra-error",
+                "normal-tie-error",
+                "normal-tombstone-preferred",
+            ]:
+                scenario = json.loads(
+                    (FIXTURES / f"reminders-{prefix}-union-{name}.json").read_text()
+                )
+                self.assertEqual(len(scenario["result"]), 1)
+            for name in ["tombstone-only", "tombstone-tie-error"]:
+                scenario = json.loads(
+                    (FIXTURES / f"reminders-{prefix}-union-{name}.json").read_text()
+                )
+                self.assertEqual(scenario["result"], [])
+            for name in [
+                "normal-invalid-error",
+                "error-preferred",
+                "error-tombstone-preferred",
+                "error-before-projection",
+                "empty-error-code",
+            ]:
+                scenario = json.loads(
+                    (FIXTURES / f"reminders-{prefix}-union-{name}.json").read_text()
+                )
+                self.assertEqual(scenario["error"]["type"], "RemindersApiError")
+
+    def test_reminder_list_union_selection_and_cookie_state_are_bound(self):
+        for change in ["selected-result", "error", "cookie"]:
+            name = (
+                "reminders-list-union-normal-extra-error"
+                if change == "selected-result"
+                else "reminders-snapshot-discovery-cookie"
+            )
+            scenario = json.loads((FIXTURES / f"{name}.json").read_text())
+            if change == "selected-result":
+                scenario["result"].clear()
+            elif change == "error":
+                scenario = json.loads(
+                    (
+                        FIXTURES / "reminders-list-union-empty-error-code.json"
+                    ).read_text()
+                )
+                scenario["error_payload"][0]["serverErrorCode"] = "REFUSAL"
+            else:
+                headers = scenario["exchanges"][1]["request"]["headers"]
+                scenario["exchanges"][1]["request"]["headers"] = [
+                    item for item in headers if item[0] != "cookie"
+                ]
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_reminder_snapshot_discovery_and_replacement(self):
         paths = sorted(FIXTURES.glob("reminders-snapshot-*.json"))
-        self.assertEqual(len(paths), 14)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 27)
+        self.assertEqual(len(paths), 25)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 42)
         for name, count in [
             ("explicit-0-active", 0),
             ("explicit-1-active", 1),

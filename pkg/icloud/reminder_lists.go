@@ -89,24 +89,25 @@ func (read *reminderListsRead) zone(ctx context.Context, zone cloudkit.CKZoneCha
 	if zone.Records == nil {
 		return nil
 	}
+
+	records := make([]cloudkit.CKRecord, 0, len(*zone.Records))
 	// Source rejects any error in the zone before projecting its first record.
 	for _, item := range *zone.Records {
-		failure, err := item.AsCKErrorItem()
-		if err != nil {
-			return fmt.Errorf("decode reminder record error: %w", err)
-		}
-
-		if failure.ServerErrorCode != "" {
-			return read.providerFailure(fmt.Errorf("%w: %s", errReminderList, failure.ServerErrorCode))
-		}
-	}
-
-	for _, item := range *zone.Records {
-		record, err := item.AsCKRecord()
+		selected, err := webtransport.DecodeReminderEventRecord(item)
 		if err != nil {
 			return fmt.Errorf("decode reminder list record: %w", err)
 		}
 
+		if selected.Failure != nil {
+			return read.providerFailure(fmt.Errorf("%w: %s", errReminderList, selected.Failure.ServerErrorCode))
+		}
+
+		if selected.Record != nil {
+			records = append(records, *selected.Record)
+		}
+	}
+
+	for _, record := range records {
 		if record.RecordType != protocol.RemindersListRecordTypeValue {
 			continue
 		}
