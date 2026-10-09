@@ -243,7 +243,7 @@ library returns `FINISHED`, its nullable change cursor, and exact response
 metadata. Pending or absent indexing state returns a typed `Unavailable` error;
 malformed replies retain their response evidence in `InvalidResponse`. The
 operation follows the reference's first normal record selection after validating
-the whole reply. Twenty-two Source/Go initialization cases bind request ordering,
+the whole reply. Twenty-seven Source/Go initialization cases bind request ordering,
 complete results, cookies and failures. A private live capture confirms trusted
 Go session validation and Photos initialization both return HTTP 200. This is an
 initialization milestone; album, asset, download and mutation SDK parity remain open.

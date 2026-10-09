@@ -1041,7 +1041,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_photos_initialization_matrix(self):
         paths = sorted(FIXTURES.glob("photos-index-*.json"))
-        self.assertEqual(len(paths), 22)
+        self.assertEqual(len(paths), 27)
         for path in paths:
             with self.subTest(path=path.name):
                 self.assertEqual(replay_synthetic(path), 1)

@@ -15,7 +15,7 @@ func TestPhotosInitializationWireContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 22 {
+	if len(paths) != 27 {
 		t.Fatal("photo initialization contract inventory changed")
 	}
 

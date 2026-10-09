@@ -11,7 +11,7 @@ and unused traffic (LIB-05/LIB-12). The added cases cover overlapping normal,
 error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
-The current portable HTTP corpus contains 806 scenarios and 1,536 pairs, including
+The current portable HTTP corpus contains 811 scenarios and 1,541 pairs, including
 348 Reminders scenarios and 414 pairs. The Go snapshot facade executes all
 
 twenty-eight Source cases; full verification and independent review remain open.
@@ -278,8 +278,8 @@ this does not establish successful live reminder list/query access.
 
 ## Photos initialization
 
-The public `GetPhotosStatus` operation consumes all 22 Source initialization
-cases. Nineteen new synthetic cases cover first-record precedence, ignored
+The public `GetPhotosStatus` operation consumes all 27 Source initialization
+cases. Twenty-four new synthetic cases cover first-record precedence, ignored
 errors/tombstones, absent and nullable state/cursor, whole-reply validation,
 alternate success status, cookie updates and HTTP failures. Source and Go
 compare complete results and exact response evidence; mutation controls reject
