@@ -2285,8 +2285,11 @@ type NativeAuthState struct {
 	Challenge      NativeAuthChallenge     `json:"challenge"`
 	CodeRequested  bool                    `json:"codeRequested"`
 	DeliveryMethod TwoFactorDeliveryMethod `json:"deliveryMethod"`
-	RequiresMFA    bool                    `json:"requiresMFA"`
-	TrustToken     string                  `json:"trustToken"`
+
+	// DeliveryNotice Provider-derived explanation of the selected MFA delivery route.
+	DeliveryNotice *string `json:"deliveryNotice,omitempty"`
+	RequiresMFA    bool    `json:"requiresMFA"`
+	TrustToken     string  `json:"trustToken"`
 }
 
 // NativeBridgeSessionState Detached progress of an explicit trusted-device bridge lifecycle. Values contain secrets.

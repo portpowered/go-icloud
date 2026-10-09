@@ -336,6 +336,21 @@ func (e AuthWrongVerificationCode) Valid() bool {
 	}
 }
 
+// Defines values for BridgeFallbackNotice.
+const (
+	TrustedDevicePromptFailedFallingBackToSMS BridgeFallbackNotice = "Trusted-device prompt failed; falling back to SMS."
+)
+
+// Valid indicates whether the value is a known member of the BridgeFallbackNotice enum.
+func (e BridgeFallbackNotice) Valid() bool {
+	switch e {
+	case TrustedDevicePromptFailedFallingBackToSMS:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for FindMyReauthenticationStatus.
 const (
 	FindMyReauthenticationRequired FindMyReauthenticationStatus = 450
@@ -965,6 +980,9 @@ type AuthWebServices struct {
 
 // AuthWrongVerificationCode defines model for AuthWrongVerificationCode.
 type AuthWrongVerificationCode int
+
+// BridgeFallbackNotice defines model for BridgeFallbackNotice.
+type BridgeFallbackNotice string
 
 // FindMyReauthenticationStatus Find My service response status requiring one saved-token refresh before a bounded retry.
 type FindMyReauthenticationStatus int

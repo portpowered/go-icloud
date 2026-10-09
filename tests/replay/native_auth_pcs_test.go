@@ -94,7 +94,7 @@ func nativeFlowFixture(t *testing.T, name string) (map[string]json.RawMessage, *
 	state := icloud.NativeAuthState{Auth: boundary, AccountName: "", AccountCountryCode: country,
 		AccountData: initial["account_data"], TrustToken: resume.TrustToken, Challenge: icloud.NativeAuthChallenge{
 			Mode: "", AuthInitialRoute: "", HasTrustedDevices: false, PhoneNumbers: []icloud.TrustedPhoneNumber{},
-			AuthFactors: []string{}, SecurityKeyNames: []string{}, BridgeBootstrap: nil, SecurityKeyChallenge: nil},
+			AuthFactors: []string{}, SecurityKeyNames: []string{}, BridgeBootstrap: nil, SecurityKeyChallenge: nil, ProviderData: nil},
 		CodeRequested: false, RequiresMFA: false, DeliveryMethod: icloud.TwoFactorDeliveryUnknown}
 	authReplayDecode(t, initial["account_name"], &state.AccountName)
 
@@ -102,6 +102,18 @@ func nativeFlowFixture(t *testing.T, name string) (map[string]json.RawMessage, *
 	authReplayDecode(t, initial["account_data"], &account)
 	if account.DsInfo != nil && account.DsInfo.Dsid != nil {
 		state.Auth.AccountID = *account.DsInfo.Dsid
+	}
+	if account.Webservices != nil {
+		services := account.Webservices
+		state.Auth.AccountServiceURL = nativeFixtureService(services.Account)
+		state.Auth.DriveServiceURL = nativeFixtureService(services.Drivews)
+		state.Auth.DriveDocumentServiceURL = nativeFixtureService(services.Docws)
+		state.Auth.FindMyServiceURL = nativeFixtureService(services.Findme)
+		state.Auth.PhotosServiceURL = nativeFixtureService(services.Ckdatabasews)
+		state.Auth.RemindersServiceURL = nativeFixtureService(services.Ckdatabasews)
+		state.Auth.LegacyRemindersServiceURL = nativeFixtureService(services.Reminders)
+		state.Auth.PhotosUploadServiceURL = nativeFixtureService(services.Photosupload)
+		state.Auth.SharedPhotosServiceURL = nativeFixtureService(services.Sharedstreams)
 	}
 	build, mastering := protocol.AuthClientBuildNumberValue, protocol.AuthClientMasteringNumberValue
 	state.Auth.ClientBuildNumber = &build
@@ -251,4 +263,11 @@ func TestNativeAuthWaitConfiguration(t *testing.T) {
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Configuration {
 		t.Fatalf("nil authentication wait accepted: %v", err)
 	}
+}
+
+func nativeFixtureService(service *auth.AuthService) string {
+	if service == nil || service.Url == nil {
+		return ""
+	}
+	return *service.Url
 }

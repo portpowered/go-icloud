@@ -24,7 +24,9 @@ func nativeSRPReplay(t *testing.T, name string) {
 	raw, transport, state := nativeFlowFixture(t, name)
 	initial := authReplayObjectBytes(t, raw["initial_state"])
 	var password string
-	authReplayDecode(t, initial["synthetic_password"], &password)
+	if encoded, exists := initial["synthetic_password"]; exists {
+		authReplayDecode(t, encoded, &password)
+	}
 	var entropy struct {
 		RandomBytes []string `json:"random_bytes"`
 	}
@@ -89,7 +91,15 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 		TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep}
 	assertAuthFlags(t, state, &projection)
 	assertResumedCookies(t, state, &projection)
-	assertResumedCountry(t, nativeFixtureSession(t, state), &projection)
+	session := nativeFixtureSession(t, state)
+	assertResumedCountry(t, session, &projection)
+	if token, exists := session["session_token"]; exists && (result.State.Auth.SessionToken == nil || *result.State.Auth.SessionToken != token) {
+		t.Fatal("native authentication lost session token rotation")
+	}
+	if trust, exists := session["trust_token"]; exists && result.State.TrustToken != trust {
+		t.Fatal("native authentication lost trust token rotation")
+	}
+	assertAuthDiscovery(t, state, &projection)
 	nativeFlowResponses(t, raw, result.Responses)
 }
 
@@ -98,4 +108,11 @@ func nativeFixtureSession(t *testing.T, state map[string]json.RawMessage) map[st
 	var session map[string]string
 	authReplayDecode(t, state["session_data"], &session)
 	return session
+}
+
+func TestNativeSavedSessionReplay(t *testing.T) {
+	t.Parallel()
+	for _, name := range []string{"auth-authenticate-cloudkit-discovery", "auth-authenticate-cached", "auth-authenticate-paused", "auth-authenticate-refresh", "auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation", "auth-authenticate-validation-201", "auth-authenticate-refresh-202", "auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh", "auth-authenticate-quoted-cookie", "auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie"} {
+		t.Run(name, func(t *testing.T) { t.Parallel(); nativeSRPReplay(t, name) })
+	}
 }

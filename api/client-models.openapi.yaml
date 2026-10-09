@@ -3877,6 +3877,10 @@
           "deliveryMethod": {
             "$ref": "#/components/schemas/TwoFactorDeliveryMethod"
           },
+          "deliveryNotice": {
+            "description": "Provider-derived explanation of the selected MFA delivery route.",
+            "type": "string"
+          },
           "requiresMFA": {
             "type": "boolean"
           },

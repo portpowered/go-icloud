@@ -128,6 +128,8 @@ type Client interface {
 	GetAuthenticationChallenge(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
 	// GetAuthenticationStatus probes saved credentials without initiating password login or MFA delivery.
 	GetAuthenticationStatus(ctx context.Context, request NativeAuthRequest) (*AuthenticationStatusResult, error)
+	// UseExistingTrustedDeviceCode selects a code already displayed on a trusted device.
+	UseExistingTrustedDeviceCode(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
 	// RequestTwoFactorCode requests SMS delivery or returns the explicit bridge/security-key route.
 	RequestTwoFactorCode(ctx context.Context, request RequestTwoFactorCodeRequest) (*NativeAuthResult, error)
 	// VerifyTwoFactorCode validates a trusted-device or SMS code and refreshes session trust.
@@ -324,6 +326,14 @@ func New(options ...Option) (*SDK, error) {
 		if err != nil {
 			return nil, newClientError("New", Configuration, 0, nil, nil, err)
 		}
+	}
+
+	if config.securityKey == nil {
+		provider, err := newNativeSecurityKeyProvider(config.random)
+		if err != nil {
+			return nil, newClientError("New", Configuration, 0, nil, nil, err)
+		}
+		config.securityKey = provider
 	}
 
 	return &SDK{web: webtransport.New(config.transport), clock: config.clock, random: config.random,

@@ -1181,6 +1181,12 @@
         "additionalProperties": {
           "$ref": "#/components/schemas/UnknownJSONValue"
         }
+      },
+      "BridgeFallbackNotice": {
+        "type": "string",
+        "enum": [
+          "Trusted-device prompt failed; falling back to SMS."
+        ]
       }
     }
   }

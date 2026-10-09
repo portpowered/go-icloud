@@ -168,6 +168,7 @@ const (
 	AuthorizeAuthSignInResponseTypeName                       = "response_type"
 	AuthorizeAuthSignInSkVersionName                          = "skVersion"
 	AuthorizeAuthSignInStateName                              = "state"
+	AuthBridgeFallbackNoticeValue                             = "Trusted-device prompt failed; falling back to SMS."
 	AuthCompleteAuthSRPIsRememberMeEnabledName                = "isRememberMeEnabled"
 	AuthCompleteAuthSRPMethod                                 = "POST"
 	AuthCompleteAuthSRPPath                                   = "/appleauth/auth/signin/complete"
