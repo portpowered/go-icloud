@@ -19,7 +19,7 @@ func TestReminderListsSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 23 {
+	if len(paths) != 24 {
 		t.Fatal("reminder list scenario inventory changed")
 	}
 

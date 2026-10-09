@@ -104,9 +104,9 @@ for _, list := range lists.Lists {
 `lists.Responses` contains every page and asset response in request order,
 including cookie updates. The complete result is returned after pagination;
 provider record failures return a typed error with the original response bytes.
-Twenty-three list scenarios pass semantic Go replay, including required-field
+Twenty-four list scenarios pass semantic Go replay, including required-field
 failures, reference truthiness and display conversion, embedded membership,
-invalid membership, and an empty pagination token. Individual reminder
+invalid membership, nested control-character escaping, and an empty pagination token. Individual reminder
 reads, mutations, Go CLI reminders commands, and live Go verification remain
 in progress.
 

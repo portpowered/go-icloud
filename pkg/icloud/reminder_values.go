@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 const (
 	reminderFloatScientificUpper = 1e16
 	reminderFloatScientificLower = 1e-4
+	reminderBMPMaximum           = '\uffff'
 )
 
 func reminderTruthy(raw json.RawMessage) (bool, error) {
@@ -89,16 +91,55 @@ func reminderValueRepresentation(raw json.RawMessage) (string, error) {
 }
 
 func reminderQuotedText(text string) string {
-	quote := "'"
+	quote := '\''
 	if strings.Contains(text, "'") && !strings.Contains(text, `"`) {
-		quote = `"`
+		quote = '"'
 	}
 
-	text = strings.ReplaceAll(text, `\`, `\\`)
-	text = strings.ReplaceAll(text, quote, `\`+quote)
-	text = strings.NewReplacer("\n", `\n`, "\r", `\r`, "\t", `\t`).Replace(text)
+	var output strings.Builder
 
-	return quote + text + quote
+	output.WriteRune(quote)
+
+	for _, character := range text {
+		writeReminderRepresentationRune(&output, character, quote)
+	}
+
+	output.WriteRune(quote)
+
+	return output.String()
+}
+
+func writeReminderRepresentationRune(output *strings.Builder, character, quote rune) {
+	switch character {
+	case quote, '\\':
+		output.WriteRune('\\')
+		output.WriteRune(character)
+	case '\n':
+		output.WriteString(`\n`)
+	case '\r':
+		output.WriteString(`\r`)
+	case '\t':
+		output.WriteString(`\t`)
+	default:
+		writeReminderPrintableRune(output, character)
+	}
+}
+
+func writeReminderPrintableRune(output *strings.Builder, character rune) {
+	if unicode.IsPrint(character) && (!unicode.Is(unicode.Zs, character) || character == ' ') {
+		output.WriteRune(character)
+
+		return
+	}
+
+	switch {
+	case character <= unicode.MaxLatin1:
+		fmt.Fprintf(output, `\x%02x`, character)
+	case character <= reminderBMPMaximum:
+		fmt.Fprintf(output, `\u%04x`, character)
+	default:
+		fmt.Fprintf(output, `\U%08x`, character)
+	}
 }
 
 func reminderSequenceRepresentation(raw json.RawMessage) (string, error) {
