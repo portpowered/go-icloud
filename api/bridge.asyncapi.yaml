@@ -10,8 +10,24 @@ servers:
   sandbox:
     url: websocket.sandbox.push.apple.com
     protocol: wss
+  bootstrap:
+    url: '{host}'
+    protocol: wss
+    description: Host normalized from the bridge bootstrap URL, with APNS environment fallback.
+    variables:
+      host:
+        default: websocket.push.apple.com
+        description: Authority returned by the typed bridge bootstrap host normalizer.
+    x-host-schema:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeInitiateData/properties/webSocketUrl'
+    x-environment-schema:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeInitiateData/properties/apnsEnvironment'
 channels:
   /v2/{connection}:
+    x-framing-schema:
+      $ref: './external/bridge-websocket.openapi.yaml#/components/schemas/Frame'
+    x-upgrade-operation:
+      $ref: './external/bridge-websocket.openapi.yaml#/paths/~1v2~1{connection}/get'
     parameters:
       connection:
         description: Hex protobuf ClientMessage connection request with signed nonce.
