@@ -1,0 +1,139 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Reference saved-login configuration",
+    "version": "0.1.0",
+    "description": "Private local-file import and reference browser-profile defaults; no provider operations are defined here."
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "SetupOrigin": {
+        "type": "string",
+        "description": "Setup origins used by the pinned reference login.",
+        "enum": [
+          "https://setup.icloud.com",
+          "https://setup.icloud.com.cn"
+        ],
+        "x-enum-varnames": [
+          "GlobalSetup",
+          "ChinaSetup"
+        ]
+      },
+      "HomeOrigin": {
+        "type": "string",
+        "description": "Browser origins reconstructed for saved credentials.",
+        "enum": [
+          "https://www.icloud.com",
+          "https://www.icloud.com.cn"
+        ],
+        "x-enum-varnames": [
+          "GlobalHome",
+          "ChinaHome"
+        ]
+      },
+      "RefererValue": {
+        "type": "string",
+        "description": "Browser root referer including its trailing slash.",
+        "enum": [
+          "https://www.icloud.com/",
+          "https://www.icloud.com.cn/"
+        ],
+        "x-enum-varnames": [
+          "GlobalReferer",
+          "ChinaReferer"
+        ]
+      },
+      "HeaderName": {
+        "type": "string",
+        "description": "Header names used by reference session construction.",
+        "enum": [
+          "User-Agent",
+          "Accept",
+          "Accept-Encoding",
+          "Connection",
+          "Origin",
+          "Referer"
+        ],
+        "x-enum-varnames": [
+          "UserAgentHeader",
+          "AcceptHeader",
+          "EncodingHeader",
+          "ConnectionHeader",
+          "OriginHeader",
+          "RefererHeader"
+        ]
+      },
+      "BrowserUserAgent": {
+        "type": "string",
+        "description": "User agent from the pinned reference browser profile.",
+        "enum": [
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+        ],
+        "x-enum-varnames": [
+          "SafariUserAgent"
+        ]
+      },
+      "AcceptValue": {
+        "type": "string",
+        "description": "Reference default Accept header.",
+        "enum": [
+          "*/*"
+        ],
+        "x-enum-varnames": [
+          "AnyAccept"
+        ]
+      },
+      "EncodingValue": {
+        "type": "string",
+        "description": "Content encodings negotiated by the pinned Requests dependency.",
+        "enum": [
+          "gzip, deflate"
+        ],
+        "x-enum-varnames": [
+          "GzipDeflate"
+        ]
+      },
+      "ConnectionValue": {
+        "type": "string",
+        "description": "Reference default persistent HTTP connection preference.",
+        "enum": [
+          "keep-alive"
+        ],
+        "x-enum-varnames": [
+          "KeepAlive"
+        ]
+      },
+      "CookieJarMagic": {
+        "type": "string",
+        "description": "Pinned reference persisted cookie file marker.",
+        "enum": [
+          "#LWP-Cookies-2.0"
+        ],
+        "x-enum-varnames": [
+          "LWPCookies2"
+        ]
+      },
+      "CookieRecordPrefix": {
+        "type": "string",
+        "description": "Prefix for each saved LWP cookie record.",
+        "enum": [
+          "Set-Cookie3:"
+        ],
+        "x-enum-varnames": [
+          "CookieRecord"
+        ]
+      },
+      "ExcludedCookieName": {
+        "type": "string",
+        "description": "Source discards this cookie on import regardless of its scope.",
+        "enum": [
+          "X-APPLE-WEBAUTH-FMIP"
+        ],
+        "x-enum-varnames": [
+          "DiscardFindMyCookie"
+        ]
+      }
+    }
+  }
+}

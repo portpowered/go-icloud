@@ -50,11 +50,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           go test -race ./...
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          go test -race '-coverpkg=./internal/command' '-coverprofile=coverage-replay.out' ./tests/replay
+          go test -race '-coverpkg=./internal/...' '-coverprofile=coverage-replay.out' ./tests/replay
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          go test -race '-coverpkg=./internal/command' '-coverprofile=coverage-unit.out' ./internal/command
+          go test -race '-coverpkg=./internal/...' '-coverprofile=coverage-unit.out' ./internal/...
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          go test -race '-coverpkg=./internal/command' '-coverprofile=coverage-combined.out' ./tests/replay ./internal/command
+          go test -race '-coverpkg=./internal/...' '-coverprofile=coverage-combined.out' ./tests/replay ./internal/...
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Push-Location ../..
           go run ./tools/coverage -root cmd/go-icloud -profile coverage-replay.out -min 80

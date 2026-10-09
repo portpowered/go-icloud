@@ -41,6 +41,7 @@ endpoint-coverage:
 
 # Schema-owned account, Drive, Find My and Reminders wire models; Photos/auth contracts remain pending.
 generate-api:
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config cmd/go-icloud/internal/referenceconfig/config.yaml cmd/go-icloud/api/reference-login.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/auth/config.yaml api/external/auth-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/authapi/config.yaml api/external/auth.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/account/config.yaml api/external/account-models.openapi.yaml
@@ -70,9 +71,9 @@ sdk-coverage:
 
 # LIB-07: command package coverage is separate from SDK and the main entry point.
 cli-coverage:
-	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/command" "-coverprofile=coverage-replay.out" ./tests/replay
-	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/command" "-coverprofile=coverage-unit.out" ./internal/command
-	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/command" "-coverprofile=coverage-combined.out" ./tests/replay ./internal/command
+	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/..." "-coverprofile=coverage-replay.out" ./tests/replay
+	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/..." "-coverprofile=coverage-unit.out" ./internal/...
+	cd cmd/go-icloud && $(GO) test -race "-coverpkg=./internal/..." "-coverprofile=coverage-combined.out" ./tests/replay ./internal/...
 	$(GO) run ./tools/coverage -root cmd/go-icloud -profile coverage-replay.out -min 80
 	$(GO) run ./tools/coverage -root cmd/go-icloud -profile coverage-unit.out -min 0
 	$(GO) run ./tools/coverage -root cmd/go-icloud -profile coverage-combined.out -min 80

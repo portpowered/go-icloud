@@ -1,0 +1,6 @@
+package: referenceconfig
+generate:
+  models: true
+output: cmd/go-icloud/internal/referenceconfig/models.gen.go
+output-options:
+  skip-prune: true
