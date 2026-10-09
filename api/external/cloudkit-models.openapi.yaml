@@ -137,8 +137,18 @@
           "deleted": {
             "x-order": 2,
             "anyOf": [
-              {"type": "boolean", "enum": [true]},
-              {"type": "number", "enum": [1]}
+              {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  1
+                ]
+              }
             ],
             "x-go-type": "bool",
             "description": "Source Literal true accepts true and numeric one; string boolean forms are rejected."
@@ -1407,8 +1417,13 @@
             "default": null,
             "x-order": 6,
             "nullable": true,
-            "type": "integer",
-            "format": "int64"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKIntegerInput"
+              }
+            ],
+            "x-go-type": "json.Number",
+            "description": "Optional Source integer-coercible asset size; metadata may carry integral numeric text."
           }
         },
         "type": "object"
@@ -1421,7 +1436,11 @@
         "properties": {
           "timestamp": {
             "description": "milliseconds since Unix epoch",
-            "allOf": [{"$ref": "#/components/schemas/CKAuditTimestampInput"}],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKAuditTimestampInput"
+              }
+            ],
             "x-go-type": "int64",
             "x-order": 1,
             "x-go-type-skip-optional-pointer": true
@@ -1849,21 +1868,33 @@
             "default": null,
             "x-order": 7,
             "nullable": true,
-            "allOf": [{"$ref": "#/components/schemas/CKBooleanInput"}],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBooleanInput"
+              }
+            ],
             "x-go-type": "bool"
           },
           "orgUser": {
             "default": null,
             "x-order": 8,
             "nullable": true,
-            "allOf": [{"$ref": "#/components/schemas/CKBooleanInput"}],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBooleanInput"
+              }
+            ],
             "x-go-type": "bool"
           },
           "publicKeyVersion": {
             "default": null,
             "x-order": 9,
             "nullable": true,
-            "allOf": [{"$ref": "#/components/schemas/CKIntegerInput"}],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKIntegerInput"
+              }
+            ],
             "x-go-type": "json.Number"
           },
           "outOfNetworkPrivateKey": {
@@ -1876,7 +1907,11 @@
             "default": null,
             "x-order": 11,
             "nullable": true,
-            "allOf": [{"$ref": "#/components/schemas/CKIntegerInput"}],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKIntegerInput"
+              }
+            ],
             "x-go-type": "json.Number"
           },
           "protectionInfo": {
@@ -2294,7 +2329,11 @@
             "default": null,
             "x-order": 8,
             "nullable": true,
-            "allOf": [{"$ref": "#/components/schemas/CKBooleanInput"}],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBooleanInput"
+              }
+            ],
             "x-go-type": "bool"
           },
           "zoneID": {
@@ -2386,7 +2425,11 @@
             "default": null,
             "x-order": 19,
             "nullable": true,
-            "allOf": [{"$ref": "#/components/schemas/CKBooleanInput"}],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBooleanInput"
+              }
+            ],
             "x-go-type": "bool"
           },
           "owner": {
@@ -2813,9 +2856,16 @@
       },
       "CKAuditTimestampInput": {
         "anyOf": [
-          {"type": "number", "format": "double"},
-          {"type": "boolean"},
-          {"$ref": "#/components/schemas/CKAuditTimestampInputText"}
+          {
+            "type": "number",
+            "format": "double"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/components/schemas/CKAuditTimestampInputText"
+          }
         ],
         "description": "Source audit milliseconds input before coercion. Numeric values truncate toward zero; text must parse as an integer. Year-one sentinels and out-of-range dates are rejected by the required audit timestamp validator."
       },
@@ -2846,7 +2896,9 @@
       },
       "EncryptedFieldNameSuffix": {
         "type": "string",
-        "enum": ["Encrypted"],
+        "enum": [
+          "Encrypted"
+        ],
         "description": "Record field-name suffix requiring ENCRYPTED_BYTES or STRING with isEncrypted true."
       },
       "CKBooleanTrueInputText": {

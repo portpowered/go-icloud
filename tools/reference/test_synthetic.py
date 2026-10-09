@@ -19,10 +19,12 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 8)
+        self.assertEqual(len(paths), 31)
+        pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
-                self.assertEqual(replay_synthetic(path), 1)
+                pairs += replay_synthetic(path)
+        self.assertEqual(pairs, 32)
         complete = json.loads(
             (FIXTURES / "reminders-query-compound-all-types.json").read_text()
         )["result"]
@@ -35,6 +37,70 @@ class SyntheticTests(unittest.TestCase):
             "recurrence_rules": 1,
         }.items():
             self.assertEqual(len(complete[name]), count)
+
+    def test_reminder_related_wrapper_sensitive_selection(self):
+        for kind, whitespace in [("lf", "\n"), ("cr", "\r")]:
+            scenario = json.loads(
+                (
+                    FIXTURES / f"reminders-query-compound-encoded-url-{kind}.json"
+                ).read_text()
+            )
+            self.assertEqual(
+                scenario["result"]["attachments"]["Attachment/synthetic-url"]["url"],
+                base64.b64encode(b"https://example.invalid/synthetic").decode()
+                + whitespace * 4,
+            )
+        for kind in ["bytes", "encrypted-bytes"]:
+            scenario = json.loads(
+                (FIXTURES / f"reminders-query-compound-type-{kind}.json").read_text()
+            )
+            self.assertEqual(scenario["result"]["triggers"], {})
+            self.assertEqual(scenario["result"]["attachments"], {})
+            for form in ["plain", "encoded"]:
+                scenario = json.loads(
+                    (
+                        FIXTURES / f"reminders-query-compound-url-{form}-{kind}.json"
+                    ).read_text()
+                )
+                value = b"https://example.invalid/synthetic"
+                if form == "encoded":
+                    value = base64.b64encode(value)
+                self.assertEqual(
+                    scenario["result"]["attachments"]["Attachment/synthetic-url"][
+                        "url"
+                    ],
+                    value.decode(),
+                )
+
+    def test_reminder_related_field_decoding_and_frequency_selection(self):
+        for name in ["numeric-text", "fractional-frequency"]:
+            scenario = json.loads(
+                (FIXTURES / f"reminders-query-compound-{name}.json").read_text()
+            )
+            self.assertEqual(
+                scenario["result"]["recurrence_rules"]["RecurrenceRule/synthetic-rule"][
+                    "frequency"
+                ],
+                1,
+            )
+        for name in ["bytes", "encrypted-bytes"]:
+            scenario = json.loads(
+                (FIXTURES / f"reminders-query-compound-text-{name}.json").read_text()
+            )
+            self.assertEqual(
+                scenario["result"]["hashtags"]["Hashtag/synthetic-tag"]["name"],
+                "synthetic tag 🌍",
+            )
+            self.assertEqual(
+                scenario["result"]["alarms"]["Alarm/synthetic-alarm"]["alarm_uid"],
+                "synthetic alarm 🌍",
+            )
+        invalid = json.loads(
+            (
+                FIXTURES / "reminders-query-compound-invalid-orphan-image.json"
+            ).read_text()
+        )
+        self.assertEqual(invalid["error"]["type"], "ValidationError")
 
     def test_reminder_compound_query_binds_relations_and_public_results(self):
         for change in ["relation", "result", "replacement", "request", "unused"]:
