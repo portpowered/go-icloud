@@ -8,7 +8,14 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
-func validateReminderSyncRecords(records *[]cloudkit.CKQueryResponse_Records_Item) error {
+type reminderSyncRecord interface {
+	json.Marshaler
+	AsCKRecord() (cloudkit.CKRecord, error)
+	AsCKErrorItem() (cloudkit.CKErrorItem, error)
+	AsCKTombstoneRecord() (cloudkit.CKTombstoneRecord, error)
+}
+
+func validateReminderSyncRecords[T reminderSyncRecord](records *[]T) error {
 	if records == nil {
 		return nil
 	}
@@ -35,7 +42,7 @@ func validateReminderSyncRecords(records *[]cloudkit.CKQueryResponse_Records_Ite
 	return nil
 }
 
-func reminderSyncNormalRecord(item cloudkit.CKQueryResponse_Records_Item,
+func reminderSyncNormalRecord(item reminderSyncRecord,
 	fields map[string]json.RawMessage,
 ) bool {
 	if !reminderRequiredValue(fields, protocol.RemindersCKRecordRecordName) ||
@@ -51,7 +58,7 @@ func reminderSyncNormalRecord(item cloudkit.CKQueryResponse_Records_Item,
 	return validateReminderSyncFields(record.Fields)
 }
 
-func reminderSyncErrorRecord(item cloudkit.CKQueryResponse_Records_Item,
+func reminderSyncErrorRecord(item reminderSyncRecord,
 	fields map[string]json.RawMessage,
 ) bool {
 	if !reminderRequiredValue(fields, protocol.RemindersCKErrorItemServerErrorCode) {
@@ -63,7 +70,7 @@ func reminderSyncErrorRecord(item cloudkit.CKQueryResponse_Records_Item,
 	return err == nil
 }
 
-func reminderSyncTombstone(item cloudkit.CKQueryResponse_Records_Item,
+func reminderSyncTombstone(item reminderSyncRecord,
 	fields map[string]json.RawMessage,
 ) bool {
 	if !reminderRequiredValue(fields, protocol.RemindersCKTombstoneRecordRecordName) ||

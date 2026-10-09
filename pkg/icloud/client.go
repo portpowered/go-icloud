@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ListReminderChanges consumes ordered reminder updates and deletions from an optional cursor.
+	ListReminderChanges(ctx context.Context, request ListReminderChangesRequest) (*ListReminderChangesResult, error)
 	// GetReminderSyncCursor discovers a usable token, consuming fallback pages when required.
 	GetReminderSyncCursor(ctx context.Context, request GetReminderSyncCursorRequest) (*GetReminderSyncCursorResult, error)
 	// GetReminder reads one complete reminder by raw or full record identifier.
