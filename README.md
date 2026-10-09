@@ -172,7 +172,7 @@ including overlapping record/error alternatives, nested metadata coercion,
 arbitrary participant integers and complete audit-date projections. Date handling
 matches the pinned Windows reference runtime's microsecond rounding and range;
 these limits are reference behavior rather than verified Apple date restrictions.
-Linked-record reads, mutations and live Go verification remain pending.
+Related-record reads are implemented. Mutations and successful live reminder contents remain pending.
 
 `ListReminders` reads every page of a list's compound reminder query and returns
 the complete reminder snapshot together with linked alarms, location triggers,
@@ -227,7 +227,7 @@ Queries use page size 200 and include completed items. Duplicate reminder IDs
 retain their last value and first position across lists. `Responses` contains
 all request evidence and cookie updates; failures return typed errors with prior
 response evidence and no partial snapshot. Twenty-eight Source/Go cases with
-forty-six paired exchanges cover these paths. Live Go verification and full
+forty-five paired exchanges cover these paths. Live Go verification and full
 Reminders parity remain open.
 
 Fetch related records using the identifiers returned on a reminder:
@@ -248,7 +248,7 @@ alarms, err := client.ListReminderAlarms(ctx, icloud.ListReminderAlarmsRequest{
 ```
 
 Each result has ordered `Items` and `Responses`. Raw and complete identifiers
-are accepted; duplicates remain distinct. Empty identifiers perform no network
+are accepted; duplicates remain distinct. An empty identifier list performs no network
 requests. Alarm lookups resolve supported location triggers in a second request,
 using the last returned trigger for each identity; missing and unsupported
 triggers become null. Related provider failures return no partial result and
