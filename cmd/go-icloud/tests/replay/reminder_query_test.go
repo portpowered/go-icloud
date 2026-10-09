@@ -104,7 +104,8 @@ func checkReminderCLIQueryOutcome(t *testing.T, row map[string]json.RawMessage, 
 		checkReminderCLIReminder(t, reminder, expected[index])
 	}
 
-	for _, name := range []string{"alarms", "triggers", "attachments", "hashtags", "recurrence_rules"} {
+	for _, name := range []string{reminderCLIAlarmsField, "triggers", reminderCLIAttachmentsField,
+		"hashtags", "recurrence_rules"} {
 		target := name
 		if name == "recurrence_rules" {
 			target = "recurrenceRules"

@@ -19,7 +19,8 @@ import (
 func TestNativeResumeCommands(t *testing.T) {
 	t.Parallel()
 
-	names := []string{"auth-authenticate-cached", "auth-authenticate-paused", "auth-authenticate-refresh",
+	names := []string{"auth-authenticate-cloudkit-discovery", "auth-authenticate-cached", "auth-authenticate-paused",
+		"auth-authenticate-refresh",
 		"auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation",
 		"auth-authenticate-validation-201", "auth-authenticate-refresh-202", "auth-authenticate-empty-headers",
 		"auth-authenticate-empty-headers-refresh", "auth-authenticate-quoted-cookie",

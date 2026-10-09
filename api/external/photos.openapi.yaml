@@ -134,7 +134,7 @@
           ],
           "default": "True"
         },
-        "description": "Photos CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it."
+        "description": "Photos initialization forces this query control to the Python boolean text True."
       },
       "PhotosGetCurrentSyncToken": {
         "name": "getCurrentSyncToken",
@@ -147,7 +147,7 @@
           ],
           "default": "True"
         },
-        "description": "Photos CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it."
+        "description": "Photos initialization forces this query control to the Python boolean text True."
       },
       "PhotosAccept": {
         "name": "Accept",

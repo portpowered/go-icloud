@@ -143,10 +143,10 @@ type PhotosQueryRecordsParams struct {
 	ClientId PhotosClientId `form:"clientId" json:"clientId"`
 	Dsid     PhotosDsid     `form:"dsid" json:"dsid"`
 
-	// RemapEnums Photos CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it.
+	// RemapEnums Photos initialization forces this query control to the Python boolean text True.
 	RemapEnums PhotosQueryRecordsParamsRemapEnums `form:"remapEnums" json:"remapEnums"`
 
-	// GetCurrentSyncToken Photos CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it.
+	// GetCurrentSyncToken Photos initialization forces this query control to the Python boolean text True.
 	GetCurrentSyncToken PhotosQueryRecordsParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
 
 	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.

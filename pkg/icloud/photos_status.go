@@ -61,16 +61,7 @@ func photosIndexingState(data cloudkit.CKQueryResponse) (string, error) {
 			continue
 		}
 
-		raw, err := reminderField(*record.Record, protocol.PhotosPhotoIndexingStateFieldValue)
-		if err != nil {
-			return "", err
-		}
-
-		if len(raw) == 0 || string(raw) == jsonNullValue {
-			return "", nil
-		}
-
-		return reminderDisplayText(raw)
+		return photosIndexingStateText(*record.Record)
 	}
 
 	return "", nil
@@ -82,4 +73,32 @@ func photosStatusFailure(kind ErrorKind, err error, response *webtransport.Bytes
 	failure.cookieScopeURL = response.CookieScopeURL
 
 	return failure
+}
+
+func photosIndexingStateText(record cloudkit.CKRecord) (string, error) {
+	if record.Fields != nil {
+		if field, exists := (*record.Fields)[protocol.PhotosPhotoIndexingStateFieldValue]; exists {
+			wrapper, err := field.AsCKPassthroughField()
+			if err != nil {
+				return "", fmt.Errorf("decode photo indexing field: %w", err)
+			}
+
+			switch wrapper.Type {
+			case string(cloudkit.BYTES), string(cloudkit.ENCRYPTEDBYTES):
+				// Source converts binary values to Python byte representations, never the text readiness token.
+				return "", nil
+			}
+		}
+	}
+
+	raw, err := reminderField(record, protocol.PhotosPhotoIndexingStateFieldValue)
+	if err != nil {
+		return "", err
+	}
+
+	if len(raw) == 0 || string(raw) == jsonNullValue {
+		return "", nil
+	}
+
+	return reminderDisplayText(raw)
 }
