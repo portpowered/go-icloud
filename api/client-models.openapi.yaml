@@ -6,6 +6,57 @@ info:
 paths: {}
 components:
   schemas:
+    CreateReminderRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"listID":"List/synthetic-list","title":"Synthetic title"}
+      type: object
+      required: [auth, listID, title]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        listID: {type: string, x-go-name: ListID}
+        title: {type: string}
+        description: {type: string, x-go-type-skip-optional-pointer: true}
+        completed: {type: boolean, x-go-type-skip-optional-pointer: true}
+        dueDate: {type: string, format: date-time, nullable: true}
+        priority: {type: integer, format: int64, x-go-type-skip-optional-pointer: true}
+        flagged: {type: boolean, x-go-type-skip-optional-pointer: true}
+        allDay: {type: boolean, x-go-type-skip-optional-pointer: true}
+        timeZone: {type: string, x-go-type-skip-optional-pointer: true}
+        parentReminderID: {type: string, x-go-name: ParentReminderID, x-go-type-skip-optional-pointer: true}
+    UpdateReminderRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","title":"Untitled","description":"","completed":false,"completedDate":null,"dueDate":null,"startDate":null,"priority":0,"flagged":false,"allDay":false,"deleted":false,"timeZone":null,"alarmIDs":[],"hashtagIDs":[],"attachmentIDs":[],"recurrenceRuleIDs":[],"parentReminderID":null,"created":null,"modified":null,"recordChangeTag":null}}
+      type: object
+      required: [auth, reminder]
+      description: Write the supplied reminder snapshot and return an independent updated snapshot.
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        reminder: {$ref: '#/components/schemas/Reminder'}
+    ReminderMutationResult:
+      example: {"reminder":{"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","title":"Untitled","description":"","completed":false,"completedDate":null,"dueDate":null,"startDate":null,"priority":0,"flagged":false,"allDay":false,"deleted":false,"timeZone":null,"alarmIDs":[],"hashtagIDs":[],"attachmentIDs":[],"recurrenceRuleIDs":[],"parentReminderID":null,"created":null,"modified":null,"recordChangeTag":null},"responses":[]}
+      type: object
+      required: [reminder, responses]
+      description: Updated or freshly hydrated reminder with ordered response evidence.
+      properties:
+        reminder: {$ref: '#/components/schemas/Reminder'}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    DeleteReminderRequest:
+      type: object
+      description: Soft-delete a reminder by raw or complete record identifier using its current revision.
+      required: [auth, reminderID, recordChangeTag]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, headers: []}, reminderID: Reminder/synthetic-item, recordChangeTag: synthetic-old-tag}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        reminderID: {type: string, description: Raw identifier or complete Reminder record name.}
+        recordChangeTag: {type: string, nullable: true, description: 'Current provider revision, or null when absent.'}
+    DeleteReminderResult:
+      type: object
+      description: Acknowledged soft deletion with the refreshed revision and all response evidence.
+      required: [deleted, modified, recordChangeTag, responses]
+      example: {deleted: true, modified: '2023-11-14T22:13:20Z', recordChangeTag: synthetic-new-tag, responses: []}
+      properties:
+        deleted: {type: boolean, description: True after the provider accepts every record operation.}
+        modified: {type: string, format: date-time, description: Modification instant sent to the provider.}
+        recordChangeTag: {type: string, nullable: true, description: 'Last nonempty matching acknowledgement revision, or the supplied revision.'}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     ApplySessionResponsesRequest:
       type: object
       description: Apply observed response cookie/token updates to a copied native session without making a network request.

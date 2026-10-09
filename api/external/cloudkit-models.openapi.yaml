@@ -3736,6 +3736,1571 @@
           "PhotoSharedLibraryKeyPrefixValue"
         ],
         "description": "Pinned Source prefix for discovered shared library identity keys."
+      },
+      "ReminderResolutionToken": {
+        "type": "object",
+        "description": "Per-field conflict-resolution token generated for a reminder mutation.",
+        "properties": {
+          "counter": {
+            "type": "integer",
+            "enum": [
+              1
+            ],
+            "x-order": 1,
+            "x-enum-varnames": [
+              "ReminderResolutionTokenCounterN1"
+            ]
+          },
+          "modificationTime": {
+            "type": "number",
+            "description": "Seconds since 2001-01-01 UTC.",
+            "x-order": 2,
+            "x-go-type": "json.Number"
+          },
+          "replicaID": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$",
+            "x-order": 3,
+            "x-go-type": "string"
+          }
+        },
+        "required": [
+          "counter",
+          "modificationTime",
+          "replicaID"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderDeletionTokens": {
+        "type": "object",
+        "description": "Conflict-resolution entries for soft deletion.",
+        "properties": {
+          "deleted": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 1
+          },
+          "lastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "deleted",
+          "lastModifiedDate"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderDeletionResolutionMap": {
+        "type": "object",
+        "description": "JSON serialized inside the ResolutionTokenMap string field.",
+        "properties": {
+          "map": {
+            "$ref": "#/components/schemas/ReminderDeletionTokens"
+          }
+        },
+        "required": [
+          "map"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderWriteInteger": {
+        "type": "object",
+        "description": "An integer-valued reminder write field.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INT64"
+            ],
+            "x-order": 1,
+            "x-enum-varnames": [
+              "ReminderWriteIntegerTypeINT64"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderWriteTimestamp": {
+        "type": "object",
+        "description": "A timestamp-valued reminder write field in Unix milliseconds.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "TIMESTAMP"
+            ],
+            "x-order": 1,
+            "x-enum-varnames": [
+              "ReminderWriteTimestampTypeTIMESTAMP"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderWriteString": {
+        "type": "object",
+        "description": "A string-valued reminder write field.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-order": 1,
+            "x-enum-varnames": [
+              "ReminderWriteStringTypeSTRING"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderDeletionFields": {
+        "type": "object",
+        "description": "Known fields sent when soft-deleting a reminder.",
+        "properties": {
+          "Deleted": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 1
+          },
+          "ResolutionTokenMap": {
+            "x-order": 2,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderWriteString"
+              }
+            ],
+            "description": "Compact JSON matching the generated ReminderDeletionResolutionMap model.",
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/ReminderDeletionResolutionMap"
+            }
+          },
+          "LastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderWriteTimestamp",
+            "x-order": 3
+          }
+        },
+        "required": [
+          "Deleted",
+          "ResolutionTokenMap",
+          "LastModifiedDate"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderDeletionRecord": {
+        "type": "object",
+        "description": "Exact record update used to soft-delete a reminder.",
+        "additionalProperties": false,
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Reminder"
+            ],
+            "x-order": 2,
+            "x-enum-varnames": [
+              "ReminderDeletionRecordRecordTypeReminder"
+            ]
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderDeletionFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        }
+      },
+      "ReminderDeletionOperation": {
+        "type": "object",
+        "description": "Revision-aware soft-delete operation.",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-order": 1,
+            "x-enum-varnames": [
+              "ReminderDeletionOperationOperationTypeUpdate"
+            ]
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderDeletionRecord",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderDeletionRequest": {
+        "type": "object",
+        "description": "Soft deletion of one Reminder record in the Reminders zone.",
+        "additionalProperties": false,
+        "required": [
+          "operations",
+          "zoneID"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReminderDeletionOperation"
+            },
+            "x-order": 1,
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          }
+        },
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Reminder/synthetic-item",
+                "recordType": "Reminder",
+                "fields": {
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 1
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"deleted\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "ReminderOptionalString": {
+        "type": "object",
+        "description": "Optional-value write field; a cleared value is omitted to match the reference serialization.",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "ReminderOptionalSTRINGType"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "string",
+            "nullable": true,
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "ReminderOptionalTimestamp": {
+        "type": "object",
+        "description": "Optional-value write field; a cleared value is omitted to match the reference serialization.",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "TIMESTAMP"
+            ],
+            "x-enum-varnames": [
+              "ReminderOptionalTIMESTAMPType"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "ReminderWriteReferenceValue": {
+        "type": "object",
+        "description": "A validated named record reference.",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "VALIDATE"
+            ],
+            "x-enum-varnames": [
+              "ReminderWriteReferenceValueActionVALIDATE"
+            ],
+            "x-order": 2
+          }
+        },
+        "required": [
+          "recordName",
+          "action"
+        ]
+      },
+      "ReminderWriteReference": {
+        "type": "object",
+        "description": "Optional record-reference write field.",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "REFERENCE"
+            ],
+            "x-enum-varnames": [
+              "ReminderWriteReferenceTypeREFERENCE"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/ReminderWriteReferenceValue",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "ReminderCreationFields": {
+        "type": "object",
+        "description": "Known reminder fields in reference mutation order.",
+        "additionalProperties": false,
+        "properties": {
+          "AllDay": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 1
+          },
+          "Completed": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 2
+          },
+          "CompletionDate": {
+            "$ref": "#/components/schemas/ReminderOptionalTimestamp",
+            "x-order": 3
+          },
+          "CreationDate": {
+            "$ref": "#/components/schemas/ReminderOptionalTimestamp",
+            "x-order": 4
+          },
+          "Deleted": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 5
+          },
+          "Flagged": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 6
+          },
+          "Imported": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 7
+          },
+          "LastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderOptionalTimestamp",
+            "x-order": 8
+          },
+          "List": {
+            "$ref": "#/components/schemas/ReminderWriteReference",
+            "x-order": 9
+          },
+          "NotesDocument": {
+            "$ref": "#/components/schemas/ReminderDocumentWriteString",
+            "x-order": 10
+          },
+          "Priority": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 11
+          },
+          "ResolutionTokenMap": {
+            "x-order": 12,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderWriteString"
+              }
+            ],
+            "description": "Compact JSON matching the generated ReminderCreationTokensMap model.",
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/ReminderCreationTokensMap"
+            }
+          },
+          "TitleDocument": {
+            "$ref": "#/components/schemas/ReminderDocumentWriteString",
+            "x-order": 13
+          },
+          "DueDate": {
+            "$ref": "#/components/schemas/ReminderOptionalTimestamp",
+            "x-order": 14
+          },
+          "TimeZone": {
+            "$ref": "#/components/schemas/ReminderOptionalString",
+            "x-order": 15
+          },
+          "ParentReminder": {
+            "$ref": "#/components/schemas/ReminderWriteReference",
+            "x-order": 16
+          }
+        },
+        "required": [
+          "AllDay",
+          "Completed",
+          "CompletionDate",
+          "CreationDate",
+          "Deleted",
+          "Flagged",
+          "Imported",
+          "LastModifiedDate",
+          "List",
+          "NotesDocument",
+          "Priority",
+          "ResolutionTokenMap",
+          "TitleDocument"
+        ]
+      },
+      "ReminderUpdateFields": {
+        "type": "object",
+        "description": "Known reminder fields in reference mutation order.",
+        "additionalProperties": false,
+        "properties": {
+          "TitleDocument": {
+            "$ref": "#/components/schemas/ReminderDocumentWriteString",
+            "x-order": 1
+          },
+          "NotesDocument": {
+            "$ref": "#/components/schemas/ReminderDocumentWriteString",
+            "x-order": 2
+          },
+          "Completed": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 3
+          },
+          "CompletionDate": {
+            "$ref": "#/components/schemas/ReminderOptionalTimestamp",
+            "x-order": 4
+          },
+          "Priority": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 5
+          },
+          "Flagged": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 6
+          },
+          "AllDay": {
+            "$ref": "#/components/schemas/ReminderWriteInteger",
+            "x-order": 7
+          },
+          "LastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderOptionalTimestamp",
+            "x-order": 8
+          },
+          "DueDate": {
+            "$ref": "#/components/schemas/ReminderOptionalTimestamp",
+            "x-order": 9
+          },
+          "TimeZone": {
+            "$ref": "#/components/schemas/ReminderOptionalString",
+            "x-order": 10
+          },
+          "ParentReminder": {
+            "$ref": "#/components/schemas/ReminderWriteReference",
+            "x-order": 11
+          },
+          "ResolutionTokenMap": {
+            "x-order": 12,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderWriteString"
+              }
+            ],
+            "description": "Compact JSON matching the generated ReminderUpdateTokensMap model.",
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/ReminderUpdateTokensMap"
+            }
+          }
+        },
+        "required": [
+          "TitleDocument",
+          "NotesDocument",
+          "Completed",
+          "CompletionDate",
+          "Priority",
+          "Flagged",
+          "AllDay",
+          "LastModifiedDate",
+          "DueDate",
+          "TimeZone",
+          "ParentReminder",
+          "ResolutionTokenMap"
+        ]
+      },
+      "ReminderCreationRecord": {
+        "type": "object",
+        "description": "Known ReminderCreation record payload.",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Reminder"
+            ],
+            "x-enum-varnames": [
+              "ReminderCreationRecordTypeReminder"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderCreationFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CKWriteParent",
+            "x-order": 6
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields",
+          "parent"
+        ]
+      },
+      "ReminderCreationOperation": {
+        "type": "object",
+        "description": "Known ReminderCreation operation.",
+        "additionalProperties": false,
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "create"
+            ],
+            "x-enum-varnames": [
+              "ReminderCreationOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderCreationRecord",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operationType",
+          "record"
+        ]
+      },
+      "ReminderCreationRequest": {
+        "type": "object",
+        "description": "Known ReminderCreation request.",
+        "additionalProperties": false,
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReminderCreationOperation"
+            },
+            "x-order": 1,
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operations",
+          "zoneID"
+        ],
+        "example": {
+          "operations": [
+            {
+              "operationType": "create",
+              "record": {
+                "recordName": "Reminder/00000001-0000-4000-8000-000000000000",
+                "recordType": "Reminder",
+                "fields": {
+                  "AllDay": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Completed": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "CompletionDate": {
+                    "type": "TIMESTAMP"
+                  },
+                  "CreationDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  },
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Flagged": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Imported": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  },
+                  "List": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "List/synthetic-list",
+                      "action": "VALIDATE"
+                    }
+                  },
+                  "NotesDocument": {
+                    "type": "STRING",
+                    "value": "eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJytJMMlxSVwJfvUE+n2tIO9pe8fx0x0PSzExMEAxIwAhRkUpg=="
+                  },
+                  "Priority": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"icsDisplayOrder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"creationDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"list\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000C-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000D-0000-4000-8000-000000000000\"},\"recurrenceRuleIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000E-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000F-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000010-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "TitleDocument": {
+                    "type": "STRING",
+                    "value": "eJzjYBCq4mAQYJAqERIJrswryUgtyUxWKMksyUlV+DB/RoOUABcLSB6oAkxrMIJFGIEiQlJgWoNJSoyLAyj3Hwj4gergbCUZLikugSvZp55It6cd7C19/zhmouthISYOISBm1ALSAAI7Hv4="
+                  }
+                },
+                "pluginFields": {},
+                "parent": {
+                  "recordName": "List/synthetic-list"
+                }
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "ReminderUpdateRecord": {
+        "type": "object",
+        "description": "Known ReminderUpdate record payload.",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Reminder"
+            ],
+            "x-enum-varnames": [
+              "ReminderUpdateRecordTypeReminder"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderUpdateFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CKWriteParent",
+            "x-order": 6
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ]
+      },
+      "ReminderUpdateOperation": {
+        "type": "object",
+        "description": "Known ReminderUpdate operation.",
+        "additionalProperties": false,
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderUpdateOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderUpdateRecord",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operationType",
+          "record"
+        ]
+      },
+      "ReminderUpdateRequest": {
+        "type": "object",
+        "description": "Known ReminderUpdate request.",
+        "additionalProperties": false,
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReminderUpdateOperation"
+            },
+            "x-order": 1,
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operations",
+          "zoneID"
+        ],
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Reminder/synthetic-item",
+                "recordType": "Reminder",
+                "fields": {
+                  "TitleDocument": {
+                    "type": "STRING",
+                    "value": "eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWKMksyUmVEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDIvRwf"
+                  },
+                  "NotesDocument": {
+                    "type": "STRING",
+                    "value": "eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWyMsvSS2WEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDLSRwm"
+                  },
+                  "Completed": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "CompletionDate": {
+                    "type": "TIMESTAMP"
+                  },
+                  "Priority": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Flagged": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "AllDay": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  },
+                  "DueDate": {
+                    "type": "TIMESTAMP"
+                  },
+                  "TimeZone": {
+                    "type": "STRING"
+                  },
+                  "ParentReminder": {
+                    "type": "REFERENCE"
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"}}}"
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "ReminderCreationTokens": {
+        "type": "object",
+        "description": "Named per-field resolution tokens in reference order.",
+        "additionalProperties": false,
+        "properties": {
+          "allDay": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 1
+          },
+          "titleDocument": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 2
+          },
+          "notesDocument": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 3
+          },
+          "parentReminder": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 4
+          },
+          "priority": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 5
+          },
+          "icsDisplayOrder": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 6
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 7
+          },
+          "list": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 8
+          },
+          "flagged": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 9
+          },
+          "completed": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 10
+          },
+          "completionDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 11
+          },
+          "lastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 12
+          },
+          "recurrenceRuleIDs": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 13
+          },
+          "dueDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 14
+          },
+          "timeZone": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 15
+          }
+        },
+        "required": [
+          "allDay",
+          "titleDocument",
+          "notesDocument",
+          "parentReminder",
+          "priority",
+          "icsDisplayOrder",
+          "creationDate",
+          "list",
+          "flagged",
+          "completed",
+          "completionDate",
+          "lastModifiedDate",
+          "recurrenceRuleIDs",
+          "dueDate",
+          "timeZone"
+        ]
+      },
+      "ReminderCreationTokensMap": {
+        "type": "object",
+        "description": "ResolutionTokenMap embedded JSON for this operation.",
+        "additionalProperties": false,
+        "properties": {
+          "map": {
+            "$ref": "#/components/schemas/ReminderCreationTokens"
+          }
+        },
+        "required": [
+          "map"
+        ]
+      },
+      "ReminderUpdateTokens": {
+        "type": "object",
+        "description": "Named per-field resolution tokens in reference order.",
+        "additionalProperties": false,
+        "properties": {
+          "titleDocument": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 1
+          },
+          "notesDocument": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 2
+          },
+          "completed": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 3
+          },
+          "completionDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 4
+          },
+          "priority": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 5
+          },
+          "flagged": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 6
+          },
+          "allDay": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 7
+          },
+          "lastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 8
+          },
+          "dueDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 9
+          },
+          "timeZone": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 10
+          },
+          "parentReminder": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 11
+          }
+        },
+        "required": [
+          "titleDocument",
+          "notesDocument",
+          "completed",
+          "completionDate",
+          "priority",
+          "flagged",
+          "allDay",
+          "lastModifiedDate",
+          "dueDate",
+          "timeZone",
+          "parentReminder"
+        ]
+      },
+      "ReminderUpdateTokensMap": {
+        "type": "object",
+        "description": "ResolutionTokenMap embedded JSON for this operation.",
+        "additionalProperties": false,
+        "properties": {
+          "map": {
+            "$ref": "#/components/schemas/ReminderUpdateTokens"
+          }
+        },
+        "required": [
+          "map"
+        ]
+      },
+      "ReminderAppleEpoch": {
+        "type": "integer",
+        "enum": [
+          978307200
+        ],
+        "description": "Pinned resolution-token epoch in Unix seconds (2001-01-01).",
+        "x-enum-varnames": [
+          "ReminderAppleEpochUnixSeconds"
+        ]
+      },
+      "ReminderTextReplicaIdentity": {
+        "type": "string",
+        "enum": [
+          "d46bcae41b8766c18d75efe35c9145c3"
+        ],
+        "description": "Pinned topotext writer replica identity, hex encoded."
+      },
+      "ReminderDocumentWriteString": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "value"
+        ],
+        "description": "Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "ReminderDocumentWriteStringTypeSTRING"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+            "x-protobuf-message": "versioned_document.Document",
+            "x-protobuf-source": "api/external/reminders-proto/versioned_document.proto",
+            "x-content-encoding": [
+              "base64",
+              "zlib"
+            ]
+          }
+        }
+      },
+      "RemindersOtherModificationRequest": {
+        "description": "Remaining linked-record variants: only complete reminder ID-list updates or explicit child record types. Core reminder writes cannot enter this fallback.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CKModifyRequest"
+          },
+          {
+            "type": "object",
+            "required": [
+              "operations"
+            ],
+            "properties": {
+              "operations": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ReminderLinkedParentOperation"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ReminderPendingChildOperation"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "RemindersModificationRequest": {
+        "description": "Implemented single-reminder variants plus explicitly scoped remaining linked-record shapes.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ReminderCreationRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderUpdateRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderDeletionRequest"
+          },
+          {
+            "$ref": "#/components/schemas/RemindersOtherModificationRequest"
+          }
+        ]
+      },
+      "ReminderTextSerializationVersion": {
+        "type": "integer",
+        "format": "int64",
+        "enum": [
+          0
+        ],
+        "x-enum-varnames": [
+          "ReminderTextSerializationVersionValue"
+        ],
+        "description": "Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py."
+      },
+      "ReminderTextSentinelReplica": {
+        "type": "integer",
+        "format": "int64",
+        "enum": [
+          0
+        ],
+        "x-enum-varnames": [
+          "ReminderTextSentinelReplicaValue"
+        ],
+        "description": "Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py."
+      },
+      "ReminderTextContentReplica": {
+        "type": "integer",
+        "format": "int64",
+        "enum": [
+          1
+        ],
+        "x-enum-varnames": [
+          "ReminderTextContentReplicaValue"
+        ],
+        "description": "Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py."
+      },
+      "ReminderTextTerminalClock": {
+        "type": "integer",
+        "format": "int64",
+        "enum": [
+          4294967295
+        ],
+        "x-enum-varnames": [
+          "ReminderTextTerminalClockValue"
+        ],
+        "description": "Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py."
+      },
+      "ReminderTextContentChild": {
+        "type": "integer",
+        "format": "int64",
+        "enum": [
+          2
+        ],
+        "x-enum-varnames": [
+          "ReminderTextContentChildValue"
+        ],
+        "description": "Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py."
+      },
+      "ReminderWriteStringList": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING_LIST"
+            ],
+            "x-enum-varnames": [
+              "ReminderWriteStringListTypeSTRINGLIST"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ReminderAlarmLinkTokensMap": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "map"
+        ],
+        "properties": {
+          "map": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "alarmIDs",
+              "lastModifiedDate"
+            ],
+            "properties": {
+              "alarmIDs": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              },
+              "lastModifiedDate": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              }
+            }
+          }
+        }
+      },
+      "ReminderAlarmLinkFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "AlarmIDs",
+          "ResolutionTokenMap",
+          "LastModifiedDate"
+        ],
+        "properties": {
+          "AlarmIDs": {
+            "$ref": "#/components/schemas/ReminderWriteStringList",
+            "x-order": 1
+          },
+          "ResolutionTokenMap": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderWriteString"
+              }
+            ],
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/ReminderAlarmLinkTokensMap"
+            },
+            "x-order": 2
+          },
+          "LastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderWriteTimestamp",
+            "x-order": 3
+          }
+        }
+      },
+      "ReminderHashtagLinkTokensMap": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "map"
+        ],
+        "properties": {
+          "map": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "hashtagIDs",
+              "lastModifiedDate"
+            ],
+            "properties": {
+              "hashtagIDs": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              },
+              "lastModifiedDate": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              }
+            }
+          }
+        }
+      },
+      "ReminderHashtagLinkFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "HashtagIDs",
+          "ResolutionTokenMap",
+          "LastModifiedDate"
+        ],
+        "properties": {
+          "HashtagIDs": {
+            "$ref": "#/components/schemas/ReminderWriteStringList",
+            "x-order": 1
+          },
+          "ResolutionTokenMap": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderWriteString"
+              }
+            ],
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/ReminderHashtagLinkTokensMap"
+            },
+            "x-order": 2
+          },
+          "LastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderWriteTimestamp",
+            "x-order": 3
+          }
+        }
+      },
+      "ReminderAttachmentLinkTokensMap": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "map"
+        ],
+        "properties": {
+          "map": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "attachmentIDs",
+              "lastModifiedDate"
+            ],
+            "properties": {
+              "attachmentIDs": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              },
+              "lastModifiedDate": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              }
+            }
+          }
+        }
+      },
+      "ReminderAttachmentLinkFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "AttachmentIDs",
+          "ResolutionTokenMap",
+          "LastModifiedDate"
+        ],
+        "properties": {
+          "AttachmentIDs": {
+            "$ref": "#/components/schemas/ReminderWriteStringList",
+            "x-order": 1
+          },
+          "ResolutionTokenMap": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderWriteString"
+              }
+            ],
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/ReminderAttachmentLinkTokensMap"
+            },
+            "x-order": 2
+          },
+          "LastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderWriteTimestamp",
+            "x-order": 3
+          }
+        }
+      },
+      "ReminderRecurrenceLinkTokensMap": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "map"
+        ],
+        "properties": {
+          "map": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "recurrenceRuleIDs",
+              "lastModifiedDate"
+            ],
+            "properties": {
+              "recurrenceRuleIDs": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              },
+              "lastModifiedDate": {
+                "$ref": "#/components/schemas/ReminderResolutionToken"
+              }
+            }
+          }
+        }
+      },
+      "ReminderRecurrenceLinkFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "RecurrenceRuleIDs",
+          "ResolutionTokenMap",
+          "LastModifiedDate"
+        ],
+        "properties": {
+          "RecurrenceRuleIDs": {
+            "$ref": "#/components/schemas/ReminderWriteStringList",
+            "x-order": 1
+          },
+          "ResolutionTokenMap": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderWriteString"
+              }
+            ],
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/ReminderRecurrenceLinkTokensMap"
+            },
+            "x-order": 2
+          },
+          "LastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderWriteTimestamp",
+            "x-order": 3
+          }
+        }
+      },
+      "ReminderLinkedParentRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Reminder"
+            ],
+            "x-enum-varnames": [
+              "ReminderLinkedParentRecordTypeReminder"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ReminderAlarmLinkFields"
+              },
+              {
+                "$ref": "#/components/schemas/ReminderHashtagLinkFields"
+              },
+              {
+                "$ref": "#/components/schemas/ReminderAttachmentLinkFields"
+              },
+              {
+                "$ref": "#/components/schemas/ReminderRecurrenceLinkFields"
+              }
+            ],
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        }
+      },
+      "ReminderLinkedParentOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderLinkedParentOperationTypeUpdate"
+            ]
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderLinkedParentRecord"
+          }
+        }
+      },
+      "ReminderPendingChildOperation": {
+        "description": "Child record payloads awaiting narrow field schemas; explicitly limited to known linked record types.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CKModifyOperation"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "record": {
+                "type": "object",
+                "required": [
+                  "recordType"
+                ],
+                "properties": {
+                  "recordType": {
+                    "type": "string",
+                    "enum": [
+                      "Alarm",
+                      "AlarmTrigger",
+                      "Hashtag",
+                      "Attachment",
+                      "RecurrenceRule"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     }
   }

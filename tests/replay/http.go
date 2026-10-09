@@ -438,7 +438,7 @@ func matchHeaders(request *http.Request, expected []Pair, length int, entity Ent
 		actual["content-length"] = []string{strconv.FormatInt(request.ContentLength, 10)}
 	}
 
-	err := matchLengthHeader(actual["content-length"], length)
+	err := matchFramingLength(actual["content-length"], want, length, entity)
 	if err != nil {
 		return err
 	}

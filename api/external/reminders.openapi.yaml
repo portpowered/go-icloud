@@ -251,7 +251,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CKModifyRequest"
+                "$ref": "#/components/schemas/RemindersModificationRequest"
               }
             }
           },
@@ -945,6 +945,21 @@
         "additionalProperties": true,
         "x-go-type": "json.RawMessage",
         "description": "Extensible legacy record preserved without assuming historical reminder fields."
+      },
+      "ReminderCreationRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/ReminderCreationRequest"
+      },
+      "ReminderUpdateRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/ReminderUpdateRequest"
+      },
+      "ReminderDeletionRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/ReminderDeletionRequest"
+      },
+      "RemindersOtherModificationRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/RemindersOtherModificationRequest"
+      },
+      "RemindersModificationRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/RemindersModificationRequest"
       }
     }
   }

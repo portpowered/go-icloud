@@ -87,7 +87,7 @@ func checkPhotoAssetsProjection(t *testing.T, actual []icloud.Photo, raw json.Ra
 			delete(photo, old)
 		}
 
-		for _, field := range []string{"created", "added"} {
+		for _, field := range []string{reminderSourceCreated, "added"} {
 			var instant time.Time
 
 			err := json.Unmarshal(photo[field], &instant)

@@ -234,7 +234,7 @@ func checkSDKUploadCursor(t *testing.T, scenario driveUploadScenario, reader *by
 		expectedState = scenario.ErrorState
 	}
 
-	if len(expectedState) == 0 || string(expectedState) == "null" {
+	if len(expectedState) == 0 || string(expectedState) == reminderChangeNullValue {
 		return
 	}
 

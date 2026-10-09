@@ -270,7 +270,7 @@ func callFindMySDK(t *testing.T, scenario findMySDKScenario, session *icloud.Fin
 		t.Fatal("Find My command discarded acknowledgement bytes")
 	}
 
-	return json.RawMessage("null"), nil
+	return json.RawMessage(reminderChangeNullValue), nil
 }
 
 func callFindMySDKCommand(t *testing.T, scenario findMySDKScenario,

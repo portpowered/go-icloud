@@ -64,8 +64,8 @@ func runPhotoAlbumsSDK(t *testing.T, scenario accountScenario) {
 		for _, album := range expected {
 			album["fullName"] = album["fullname"]
 			delete(album, "fullname")
-			album["recordChangeTag"] = album["record_change_tag"]
-			delete(album, "record_change_tag")
+			album[reminderPublicRevisionField] = album[reminderSourceRevisionField]
+			delete(album, reminderSourceRevisionField)
 		}
 
 		encoded, encodeErr := json.Marshal(expected)

@@ -49,6 +49,16 @@ func DecodeReminderLookupRecord(item cloudkit.CKLookupResponse_Records_Item) (*R
 	return decodeReminderEventJSON(raw)
 }
 
+// DecodeReminderModificationRecord selects the Source model alternative for a modification acknowledgement.
+func DecodeReminderModificationRecord(item cloudkit.CKModifyResponse_Records_Item) (*ReminderEventRecord, error) {
+	raw, err := json.Marshal(item)
+	if err != nil {
+		return nil, fmt.Errorf("encode reminder modification record: %w", err)
+	}
+
+	return decodeReminderEventJSON(raw)
+}
+
 func decodeReminderEventJSON(raw []byte) (*ReminderEventRecord, error) {
 	fields, err := accountFields(raw)
 	if err != nil {

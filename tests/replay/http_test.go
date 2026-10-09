@@ -373,7 +373,7 @@ func TestMalformedOrUnsupportedOutcomesFailBeforeReplay(t *testing.T) {
 func mutateExchange(exchange *replay.Exchange, change string) {
 	switch change {
 	case "encoding":
-		exchange.Request.Body.Encoding = "json-pattern"
+		exchange.Request.Body.Encoding = testJSONPattern
 	case "base64":
 		exchange.Response.Body.Value = json.RawMessage(`"!"`)
 	case "outcome":

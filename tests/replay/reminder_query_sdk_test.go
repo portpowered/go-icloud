@@ -216,7 +216,7 @@ func normalizeReminderRelatedValues(t *testing.T, record map[string]json.RawMess
 		}
 	}
 
-	if raw, exists := record["created"]; exists && string(raw) != reminderChangeNullValue {
+	if raw, exists := record[reminderSourceCreated]; exists && string(raw) != reminderChangeNullValue {
 		var instant time.Time
 
 		err := json.Unmarshal(raw, &instant)
@@ -224,7 +224,7 @@ func normalizeReminderRelatedValues(t *testing.T, record map[string]json.RawMess
 			t.Fatal(err)
 		}
 
-		record["created"], err = json.Marshal(instant)
+		record[reminderSourceCreated], err = json.Marshal(instant)
 		if err != nil {
 			t.Fatal(err)
 		}

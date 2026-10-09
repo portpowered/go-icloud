@@ -138,7 +138,7 @@ func checkReminderListProjection(t *testing.T, actual []icloud.ReminderList, exp
 	for _, list := range lists {
 		for source, destination := range map[string]string{"badge_emblem": "badgeEmblem",
 			"sorting_style": "sortingStyle", "is_group": "isGroup", "reminder_ids": "reminderIDs",
-			"record_change_tag": "recordChangeTag"} {
+			reminderSourceRevisionField: reminderPublicRevisionField} {
 			list[destination] = list[source]
 			delete(list, source)
 		}

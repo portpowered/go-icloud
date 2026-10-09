@@ -251,11 +251,6 @@ type CKLookupRequest = externalRef0.CKLookupRequest
 // Example: {"records":[{"fields":{"Completed":{"type":"INT64","value":0},"List":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"List/synthetic-list"}},"Priority":{"type":"INT64","value":0}},"recordChangeTag":"synthetic-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}]}
 type CKLookupResponse = externalRef0.CKLookupResponse
 
-// CKModifyRequest Payload for modifying records in a zone.
-//
-// Example: {"operations":[{"operationType":"create","record":{"fields":{"AllDay":{"type":"INT64","value":0},"Completed":{"type":"INT64","value":0},"CompletionDate":{"type":"TIMESTAMP"},"CreationDate":{"type":"TIMESTAMP","value":1700000000000},"Deleted":{"type":"INT64","value":0},"Flagged":{"type":"INT64","value":0},"Imported":{"type":"INT64","value":0},"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"List":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"List/synthetic-list"}},"NotesDocument":{"type":"STRING","value":"eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJytJMMlxSVwJfvUE+n2tIO9pe8fx0x0PSzExMEAxIwAhRkUpg=="},"Priority":{"type":"INT64","value":0},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"icsDisplayOrder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"creationDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"list\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000C-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000D-0000-4000-8000-000000000000\"},\"recurrenceRuleIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000E-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000F-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000010-0000-4000-8000-000000000000\"}}}"},"TitleDocument":{"type":"STRING","value":"eJzjYBCq4mAQYJAqERIJrswryUgtyUxWKMksyUlV+DB/RoOUABcLSB6oAkxrMIJFGIEiQlJgWoNJSoyLAyj3Hwj4gergbCUZLikugSvZp55It6cd7C19/zhmouthISYOISBm1ALSAAI7Hv4="}},"parent":{"recordName":"List/synthetic-list"},"pluginFields":{},"recordName":"Reminder/00000001-0000-4000-8000-000000000000","recordType":"Reminder"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
-type CKModifyRequest = externalRef0.CKModifyRequest
-
 // CKModifyResponse Response containing records after modification operations.
 //
 // Example: {"records":[{"fields":{},"recordChangeTag":"synthetic-new-tag","recordName":"Reminder/00000001-0000-4000-8000-000000000000","recordType":"Reminder"}]}
@@ -301,6 +296,9 @@ type LegacyRemindersStartup struct {
 	Reminders            []LegacyReminderRecord `json:"Reminders"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
+
+// RemindersModificationRequest Implemented single-reminder variants plus explicitly scoped remaining linked-record shapes.
+type RemindersModificationRequest = externalRef0.RemindersModificationRequest
 
 // RemindersAccept defines model for RemindersAccept.
 type RemindersAccept = string
@@ -523,7 +521,7 @@ type RemindersZoneChangesJSONRequestBody = CKZoneChangesRequest
 type RemindersLookupRecordsJSONRequestBody = CKLookupRequest
 
 // RemindersModifyRecordsJSONRequestBody defines body for RemindersModifyRecords for application/json ContentType.
-type RemindersModifyRecordsJSONRequestBody = CKModifyRequest
+type RemindersModifyRecordsJSONRequestBody = RemindersModificationRequest
 
 // RemindersQueryRecordsJSONRequestBody defines body for RemindersQueryRecords for application/json ContentType.
 type RemindersQueryRecordsJSONRequestBody = CKQueryRequest

@@ -365,7 +365,7 @@ func TestCloudKitModelExamplesValidate(t *testing.T) {
 		count++
 	}
 
-	if count != 10 {
+	if count != 13 {
 		t.Fatalf("CloudKit example inventory changed: %d", count)
 	}
 }

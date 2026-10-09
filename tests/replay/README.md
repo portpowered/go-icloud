@@ -23,6 +23,13 @@ length is omitted. JSON number spelling is retained without float64 conversion;
 duplicate keys, trailing values, invalid UTF-8 and unknown rule fields reject.
 These duplicate/ambiguous-rule checks deliberately strengthen reference replay.
 
+The explicit `base64-zlib-exact` rule binds a named string path to the complete
+decompressed bytes of its recorded value. It rejects invalid base64, checksum
+errors, truncated streams, trailing bytes and changed protobuf content. Go and
+Python may produce different DEFLATE encodings for the same bytes. This rule
+adjusts the recorded Content-Length only after validating the actual entity size;
+all surrounding JSON fields and request headers remain bound (LIB-05).
+
 Multipart rules bind a full Content-Type pattern, its boundary and ordered parts.
 Part header values, filenames and unencoded binary bytes remain exact; framing
 requires CRLF delimiters with no preamble, epilogue or premature boundary.

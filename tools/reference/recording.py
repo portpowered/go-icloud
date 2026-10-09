@@ -4,6 +4,7 @@ import base64
 import io
 import json
 import re
+import zlib
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from email.message import Message
@@ -151,9 +152,30 @@ def comparable(request):
     value = dict(request)
     value["headers"] = sorted(request["headers"])
     # A redacted body has a structural matcher; its original wire size differs.
-    if request["body"]["encoding"] == "json-redacted":
+    if request["body"]["encoding"] == "json-redacted" or has_compressed_json_rule(
+        request["body"]
+    ):
         value["headers"] = [p for p in value["headers"] if p[0] != "content-length"]
     return value
+
+
+def has_compressed_json_rule(entity):
+    return entity.get("encoding") == "json-pattern" and any(
+        matcher.get("pattern") == "base64-zlib-exact"
+        for matcher in entity.get("matchers", [])
+    )
+
+
+def compressed_json_bytes(value):
+    try:
+        decoder = zlib.decompressobj()
+        result = decoder.decompress(base64.b64decode(value, validate=True))
+        result += decoder.flush()
+    except zlib.error as error:
+        raise ValueError("Invalid compressed JSON stream") from error
+    if not decoder.eof or decoder.unused_data or decoder.unconsumed_tail:
+        raise ValueError("Invalid or trailing compressed JSON stream")
+    return result
 
 
 def multipart_parts(content_type, body):
@@ -197,9 +219,14 @@ def matches_request(actual, expected):
                 parent = parent[key]
                 sample = sample[key]
             key = matcher["path"][-1]
-            if not isinstance(parent[key], str) or not re.fullmatch(
-                matcher["pattern"], parent[key]
-            ):
+            if not isinstance(parent[key], str):
+                return False
+            if matcher["pattern"] == "base64-zlib-exact":
+                if compressed_json_bytes(parent[key]) != compressed_json_bytes(
+                    sample[key]
+                ):
+                    return False
+            elif not re.fullmatch(matcher["pattern"], parent[key]):
                 return False
             parent[key] = sample[key]
         if json.dumps(value, sort_keys=True) != json.dumps(
@@ -207,6 +234,10 @@ def matches_request(actual, expected):
         ):
             return False
         actual["body"] = rule
+        if has_compressed_json_rule(rule):
+            actual["headers"] = [
+                p for p in actual["headers"] if p[0] != "content-length"
+            ]
     elif rule["encoding"] == "multipart":
         content_type = dict(actual["headers"]).get("content-type", "")
         if not re.fullmatch(rule["content_type_pattern"], content_type):

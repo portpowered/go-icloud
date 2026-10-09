@@ -368,31 +368,31 @@ func (e CKInt64ListFieldType) Valid() bool {
 
 // Defines values for CKModifyOperationOperationType.
 const (
-	Create       CKModifyOperationOperationType = "create"
-	Delete       CKModifyOperationOperationType = "delete"
-	ForceDelete  CKModifyOperationOperationType = "forceDelete"
-	ForceReplace CKModifyOperationOperationType = "forceReplace"
-	ForceUpdate  CKModifyOperationOperationType = "forceUpdate"
-	Replace      CKModifyOperationOperationType = "replace"
-	Update       CKModifyOperationOperationType = "update"
+	CKModifyOperationOperationTypeCreate       CKModifyOperationOperationType = "create"
+	CKModifyOperationOperationTypeDelete       CKModifyOperationOperationType = "delete"
+	CKModifyOperationOperationTypeForceDelete  CKModifyOperationOperationType = "forceDelete"
+	CKModifyOperationOperationTypeForceReplace CKModifyOperationOperationType = "forceReplace"
+	CKModifyOperationOperationTypeForceUpdate  CKModifyOperationOperationType = "forceUpdate"
+	CKModifyOperationOperationTypeReplace      CKModifyOperationOperationType = "replace"
+	CKModifyOperationOperationTypeUpdate       CKModifyOperationOperationType = "update"
 )
 
 // Valid indicates whether the value is a known member of the CKModifyOperationOperationType enum.
 func (e CKModifyOperationOperationType) Valid() bool {
 	switch e {
-	case Create:
+	case CKModifyOperationOperationTypeCreate:
 		return true
-	case Delete:
+	case CKModifyOperationOperationTypeDelete:
 		return true
-	case ForceDelete:
+	case CKModifyOperationOperationTypeForceDelete:
 		return true
-	case ForceReplace:
+	case CKModifyOperationOperationTypeForceReplace:
 		return true
-	case ForceUpdate:
+	case CKModifyOperationOperationTypeForceUpdate:
 		return true
-	case Replace:
+	case CKModifyOperationOperationTypeReplace:
 		return true
-	case Update:
+	case CKModifyOperationOperationTypeUpdate:
 		return true
 	default:
 		return false
@@ -1992,6 +1992,96 @@ func (e RelatedFieldWidth) Valid() bool {
 	}
 }
 
+// Defines values for ReminderAppleEpoch.
+const (
+	ReminderAppleEpochUnixSeconds ReminderAppleEpoch = 9.783072e+08
+)
+
+// Valid indicates whether the value is a known member of the ReminderAppleEpoch enum.
+func (e ReminderAppleEpoch) Valid() bool {
+	switch e {
+	case ReminderAppleEpochUnixSeconds:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderCreationOperationOperationType.
+const (
+	ReminderCreationOperationType ReminderCreationOperationOperationType = "create"
+)
+
+// Valid indicates whether the value is a known member of the ReminderCreationOperationOperationType enum.
+func (e ReminderCreationOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderCreationOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderCreationRecordRecordType.
+const (
+	ReminderCreationRecordTypeReminder ReminderCreationRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderCreationRecordRecordType enum.
+func (e ReminderCreationRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderCreationRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderDeletionOperationOperationType.
+const (
+	ReminderDeletionOperationOperationTypeUpdate ReminderDeletionOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderDeletionOperationOperationType enum.
+func (e ReminderDeletionOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderDeletionOperationOperationTypeUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderDeletionRecordRecordType.
+const (
+	ReminderDeletionRecordRecordTypeReminder ReminderDeletionRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderDeletionRecordRecordType enum.
+func (e ReminderDeletionRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderDeletionRecordRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderDocumentWriteStringType.
+const (
+	ReminderDocumentWriteStringTypeSTRING ReminderDocumentWriteStringType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the ReminderDocumentWriteStringType enum.
+func (e ReminderDocumentWriteStringType) Valid() bool {
+	switch e {
+	case ReminderDocumentWriteStringTypeSTRING:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderFieldAlarmIDs.
 const (
 	AlarmIDs ReminderFieldAlarmIDs = "AlarmIDs"
@@ -2292,6 +2382,126 @@ func (e ReminderIDPrefix) Valid() bool {
 	}
 }
 
+// Defines values for ReminderLinkedParentOperationOperationType.
+const (
+	ReminderLinkedParentOperationTypeUpdate ReminderLinkedParentOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderLinkedParentOperationOperationType enum.
+func (e ReminderLinkedParentOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderLinkedParentOperationTypeUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderLinkedParentRecordRecordType.
+const (
+	ReminderLinkedParentRecordTypeReminder ReminderLinkedParentRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderLinkedParentRecordRecordType enum.
+func (e ReminderLinkedParentRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderLinkedParentRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderOptionalStringType.
+const (
+	ReminderOptionalSTRINGType ReminderOptionalStringType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the ReminderOptionalStringType enum.
+func (e ReminderOptionalStringType) Valid() bool {
+	switch e {
+	case ReminderOptionalSTRINGType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderOptionalTimestampType.
+const (
+	ReminderOptionalTIMESTAMPType ReminderOptionalTimestampType = "TIMESTAMP"
+)
+
+// Valid indicates whether the value is a known member of the ReminderOptionalTimestampType enum.
+func (e ReminderOptionalTimestampType) Valid() bool {
+	switch e {
+	case ReminderOptionalTIMESTAMPType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderPendingChildOperationOperationType.
+const (
+	ReminderPendingChildOperationOperationTypeCreate       ReminderPendingChildOperationOperationType = "create"
+	ReminderPendingChildOperationOperationTypeDelete       ReminderPendingChildOperationOperationType = "delete"
+	ReminderPendingChildOperationOperationTypeForceDelete  ReminderPendingChildOperationOperationType = "forceDelete"
+	ReminderPendingChildOperationOperationTypeForceReplace ReminderPendingChildOperationOperationType = "forceReplace"
+	ReminderPendingChildOperationOperationTypeForceUpdate  ReminderPendingChildOperationOperationType = "forceUpdate"
+	ReminderPendingChildOperationOperationTypeReplace      ReminderPendingChildOperationOperationType = "replace"
+	ReminderPendingChildOperationOperationTypeUpdate       ReminderPendingChildOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderPendingChildOperationOperationType enum.
+func (e ReminderPendingChildOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderPendingChildOperationOperationTypeCreate:
+		return true
+	case ReminderPendingChildOperationOperationTypeDelete:
+		return true
+	case ReminderPendingChildOperationOperationTypeForceDelete:
+		return true
+	case ReminderPendingChildOperationOperationTypeForceReplace:
+		return true
+	case ReminderPendingChildOperationOperationTypeForceUpdate:
+		return true
+	case ReminderPendingChildOperationOperationTypeReplace:
+		return true
+	case ReminderPendingChildOperationOperationTypeUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderPendingChildOperationRecordRecordType.
+const (
+	ReminderPendingChildOperationRecordRecordTypeAlarm          ReminderPendingChildOperationRecordRecordType = "Alarm"
+	ReminderPendingChildOperationRecordRecordTypeAlarmTrigger   ReminderPendingChildOperationRecordRecordType = "AlarmTrigger"
+	ReminderPendingChildOperationRecordRecordTypeAttachment     ReminderPendingChildOperationRecordRecordType = "Attachment"
+	ReminderPendingChildOperationRecordRecordTypeHashtag        ReminderPendingChildOperationRecordRecordType = "Hashtag"
+	ReminderPendingChildOperationRecordRecordTypeRecurrenceRule ReminderPendingChildOperationRecordRecordType = "RecurrenceRule"
+)
+
+// Valid indicates whether the value is a known member of the ReminderPendingChildOperationRecordRecordType enum.
+func (e ReminderPendingChildOperationRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderPendingChildOperationRecordRecordTypeAlarm:
+		return true
+	case ReminderPendingChildOperationRecordRecordTypeAlarmTrigger:
+		return true
+	case ReminderPendingChildOperationRecordRecordTypeAttachment:
+		return true
+	case ReminderPendingChildOperationRecordRecordTypeHashtag:
+		return true
+	case ReminderPendingChildOperationRecordRecordTypeRecurrenceRule:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderRecordType.
 const (
 	ReminderRecordTypeReminder ReminderRecordType = "Reminder"
@@ -2301,6 +2511,21 @@ const (
 func (e ReminderRecordType) Valid() bool {
 	switch e {
 	case ReminderRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderResolutionTokenCounter.
+const (
+	ReminderResolutionTokenCounterN1 ReminderResolutionTokenCounter = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderResolutionTokenCounter enum.
+func (e ReminderResolutionTokenCounter) Valid() bool {
+	switch e {
+	case ReminderResolutionTokenCounterN1:
 		return true
 	default:
 		return false
@@ -2331,6 +2556,216 @@ const (
 func (e ReminderSyncQueryRecordType) Valid() bool {
 	switch e {
 	case ReminderList:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderTextContentChild.
+const (
+	ReminderTextContentChildValue ReminderTextContentChild = 2
+)
+
+// Valid indicates whether the value is a known member of the ReminderTextContentChild enum.
+func (e ReminderTextContentChild) Valid() bool {
+	switch e {
+	case ReminderTextContentChildValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderTextContentReplica.
+const (
+	ReminderTextContentReplicaValue ReminderTextContentReplica = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderTextContentReplica enum.
+func (e ReminderTextContentReplica) Valid() bool {
+	switch e {
+	case ReminderTextContentReplicaValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderTextReplicaIdentity.
+const (
+	D46bcae41b8766c18d75efe35c9145c3 ReminderTextReplicaIdentity = "d46bcae41b8766c18d75efe35c9145c3"
+)
+
+// Valid indicates whether the value is a known member of the ReminderTextReplicaIdentity enum.
+func (e ReminderTextReplicaIdentity) Valid() bool {
+	switch e {
+	case D46bcae41b8766c18d75efe35c9145c3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderTextSentinelReplica.
+const (
+	ReminderTextSentinelReplicaValue ReminderTextSentinelReplica = 0
+)
+
+// Valid indicates whether the value is a known member of the ReminderTextSentinelReplica enum.
+func (e ReminderTextSentinelReplica) Valid() bool {
+	switch e {
+	case ReminderTextSentinelReplicaValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderTextSerializationVersion.
+const (
+	ReminderTextSerializationVersionValue ReminderTextSerializationVersion = 0
+)
+
+// Valid indicates whether the value is a known member of the ReminderTextSerializationVersion enum.
+func (e ReminderTextSerializationVersion) Valid() bool {
+	switch e {
+	case ReminderTextSerializationVersionValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderTextTerminalClock.
+const (
+	ReminderTextTerminalClockValue ReminderTextTerminalClock = 4.294967295e+09
+)
+
+// Valid indicates whether the value is a known member of the ReminderTextTerminalClock enum.
+func (e ReminderTextTerminalClock) Valid() bool {
+	switch e {
+	case ReminderTextTerminalClockValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderUpdateOperationOperationType.
+const (
+	ReminderUpdateOperationType ReminderUpdateOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderUpdateOperationOperationType enum.
+func (e ReminderUpdateOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderUpdateOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderUpdateRecordRecordType.
+const (
+	ReminderUpdateRecordTypeReminder ReminderUpdateRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderUpdateRecordRecordType enum.
+func (e ReminderUpdateRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderUpdateRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteIntegerType.
+const (
+	ReminderWriteIntegerTypeINT64 ReminderWriteIntegerType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteIntegerType enum.
+func (e ReminderWriteIntegerType) Valid() bool {
+	switch e {
+	case ReminderWriteIntegerTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteReferenceType.
+const (
+	ReminderWriteReferenceTypeREFERENCE ReminderWriteReferenceType = "REFERENCE"
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteReferenceType enum.
+func (e ReminderWriteReferenceType) Valid() bool {
+	switch e {
+	case ReminderWriteReferenceTypeREFERENCE:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteReferenceValueAction.
+const (
+	ReminderWriteReferenceValueActionVALIDATE ReminderWriteReferenceValueAction = "VALIDATE"
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteReferenceValueAction enum.
+func (e ReminderWriteReferenceValueAction) Valid() bool {
+	switch e {
+	case ReminderWriteReferenceValueActionVALIDATE:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteStringType.
+const (
+	ReminderWriteStringTypeSTRING ReminderWriteStringType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteStringType enum.
+func (e ReminderWriteStringType) Valid() bool {
+	switch e {
+	case ReminderWriteStringTypeSTRING:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteStringListType.
+const (
+	ReminderWriteStringListTypeSTRINGLIST ReminderWriteStringListType = "STRING_LIST"
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteStringListType enum.
+func (e ReminderWriteStringListType) Valid() bool {
+	switch e {
+	case ReminderWriteStringListTypeSTRINGLIST:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteTimestampType.
+const (
+	ReminderWriteTimestampTypeTIMESTAMP ReminderWriteTimestampType = "TIMESTAMP"
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteTimestampType enum.
+func (e ReminderWriteTimestampType) Valid() bool {
+	switch e {
+	case ReminderWriteTimestampTypeTIMESTAMP:
 		return true
 	default:
 		return false
@@ -3540,6 +3975,263 @@ type RelatedFieldUTI string
 // RelatedFieldWidth Pinned Source compound reminder query protocol value.
 type RelatedFieldWidth string
 
+// ReminderAlarmLinkFields defines model for ReminderAlarmLinkFields.
+type ReminderAlarmLinkFields struct {
+	AlarmIDs           ReminderWriteStringList `json:"AlarmIDs"`
+	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
+
+	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
+}
+
+// ReminderAlarmLinkTokensMap defines model for ReminderAlarmLinkTokensMap.
+type ReminderAlarmLinkTokensMap struct {
+	Map struct {
+		// AlarmIDs Per-field conflict-resolution token generated for a reminder mutation.
+		AlarmIDs ReminderResolutionToken `json:"alarmIDs"`
+
+		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+	} `json:"map"`
+}
+
+// ReminderAppleEpoch Pinned resolution-token epoch in Unix seconds (2001-01-01).
+type ReminderAppleEpoch int
+
+// ReminderAttachmentLinkFields defines model for ReminderAttachmentLinkFields.
+type ReminderAttachmentLinkFields struct {
+	AttachmentIDs      ReminderWriteStringList `json:"AttachmentIDs"`
+	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
+
+	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
+}
+
+// ReminderAttachmentLinkTokensMap defines model for ReminderAttachmentLinkTokensMap.
+type ReminderAttachmentLinkTokensMap struct {
+	Map struct {
+		// AttachmentIDs Per-field conflict-resolution token generated for a reminder mutation.
+		AttachmentIDs ReminderResolutionToken `json:"attachmentIDs"`
+
+		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+	} `json:"map"`
+}
+
+// ReminderCreationFields Known reminder fields in reference mutation order.
+type ReminderCreationFields struct {
+	// AllDay An integer-valued reminder write field.
+	AllDay ReminderWriteInteger `json:"AllDay"`
+
+	// Completed An integer-valued reminder write field.
+	Completed ReminderWriteInteger `json:"Completed"`
+
+	// CompletionDate Optional-value write field; a cleared value is omitted to match the reference serialization.
+	CompletionDate ReminderOptionalTimestamp `json:"CompletionDate"`
+
+	// CreationDate Optional-value write field; a cleared value is omitted to match the reference serialization.
+	CreationDate ReminderOptionalTimestamp `json:"CreationDate"`
+
+	// Deleted An integer-valued reminder write field.
+	Deleted ReminderWriteInteger `json:"Deleted"`
+
+	// Flagged An integer-valued reminder write field.
+	Flagged ReminderWriteInteger `json:"Flagged"`
+
+	// Imported An integer-valued reminder write field.
+	Imported ReminderWriteInteger `json:"Imported"`
+
+	// LastModifiedDate Optional-value write field; a cleared value is omitted to match the reference serialization.
+	LastModifiedDate ReminderOptionalTimestamp `json:"LastModifiedDate"`
+
+	// List Optional record-reference write field.
+	List ReminderWriteReference `json:"List"`
+
+	// NotesDocument Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.
+	NotesDocument ReminderDocumentWriteString `json:"NotesDocument"`
+
+	// Priority An integer-valued reminder write field.
+	Priority ReminderWriteInteger `json:"Priority"`
+
+	// ResolutionTokenMap Compact JSON matching the generated ReminderCreationTokensMap model.
+	ResolutionTokenMap ReminderWriteString `json:"ResolutionTokenMap"`
+
+	// TitleDocument Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.
+	TitleDocument ReminderDocumentWriteString `json:"TitleDocument"`
+
+	// DueDate Optional-value write field; a cleared value is omitted to match the reference serialization.
+	DueDate *ReminderOptionalTimestamp `json:"DueDate,omitempty"`
+
+	// TimeZone Optional-value write field; a cleared value is omitted to match the reference serialization.
+	TimeZone *ReminderOptionalString `json:"TimeZone,omitempty"`
+
+	// ParentReminder Optional record-reference write field.
+	ParentReminder *ReminderWriteReference `json:"ParentReminder,omitempty"`
+}
+
+// ReminderCreationOperation Known ReminderCreation operation.
+type ReminderCreationOperation struct {
+	OperationType ReminderCreationOperationOperationType `json:"operationType"`
+
+	// Record Known ReminderCreation record payload.
+	Record ReminderCreationRecord `json:"record"`
+}
+
+// ReminderCreationOperationOperationType defines model for ReminderCreationOperation.OperationType.
+type ReminderCreationOperationOperationType string
+
+// ReminderCreationRecord Known ReminderCreation record payload.
+type ReminderCreationRecord struct {
+	RecordName string                           `json:"recordName"`
+	RecordType ReminderCreationRecordRecordType `json:"recordType"`
+
+	// Fields Known reminder fields in reference mutation order.
+	Fields          ReminderCreationFields `json:"fields"`
+	PluginFields    map[string]interface{} `json:"pluginFields"`
+	RecordChangeTag *string                `json:"recordChangeTag,omitempty"`
+
+	// Parent Write-side parent reference embedded under a record.
+	Parent CKWriteParent `json:"parent"`
+}
+
+// ReminderCreationRecordRecordType defines model for ReminderCreationRecord.RecordType.
+type ReminderCreationRecordRecordType string
+
+// ReminderCreationRequest Known ReminderCreation request.
+//
+// Example: {"operations":[{"operationType":"create","record":{"fields":{"AllDay":{"type":"INT64","value":0},"Completed":{"type":"INT64","value":0},"CompletionDate":{"type":"TIMESTAMP"},"CreationDate":{"type":"TIMESTAMP","value":1700000000000},"Deleted":{"type":"INT64","value":0},"Flagged":{"type":"INT64","value":0},"Imported":{"type":"INT64","value":0},"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"List":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"List/synthetic-list"}},"NotesDocument":{"type":"STRING","value":"eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJytJMMlxSVwJfvUE+n2tIO9pe8fx0x0PSzExMEAxIwAhRkUpg=="},"Priority":{"type":"INT64","value":0},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"icsDisplayOrder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"creationDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"list\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000C-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000D-0000-4000-8000-000000000000\"},\"recurrenceRuleIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000E-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000F-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000010-0000-4000-8000-000000000000\"}}}"},"TitleDocument":{"type":"STRING","value":"eJzjYBCq4mAQYJAqERIJrswryUgtyUxWKMksyUlV+DB/RoOUABcLSB6oAkxrMIJFGIEiQlJgWoNJSoyLAyj3Hwj4gergbCUZLikugSvZp55It6cd7C19/zhmouthISYOISBm1ALSAAI7Hv4="}},"parent":{"recordName":"List/synthetic-list"},"pluginFields":{},"recordName":"Reminder/00000001-0000-4000-8000-000000000000","recordType":"Reminder"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderCreationRequest struct {
+	Operations []ReminderCreationOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
+// ReminderCreationTokens Named per-field resolution tokens in reference order.
+type ReminderCreationTokens struct {
+	// AllDay Per-field conflict-resolution token generated for a reminder mutation.
+	AllDay ReminderResolutionToken `json:"allDay"`
+
+	// TitleDocument Per-field conflict-resolution token generated for a reminder mutation.
+	TitleDocument ReminderResolutionToken `json:"titleDocument"`
+
+	// NotesDocument Per-field conflict-resolution token generated for a reminder mutation.
+	NotesDocument ReminderResolutionToken `json:"notesDocument"`
+
+	// ParentReminder Per-field conflict-resolution token generated for a reminder mutation.
+	ParentReminder ReminderResolutionToken `json:"parentReminder"`
+
+	// Priority Per-field conflict-resolution token generated for a reminder mutation.
+	Priority ReminderResolutionToken `json:"priority"`
+
+	// IcsDisplayOrder Per-field conflict-resolution token generated for a reminder mutation.
+	IcsDisplayOrder ReminderResolutionToken `json:"icsDisplayOrder"`
+
+	// CreationDate Per-field conflict-resolution token generated for a reminder mutation.
+	CreationDate ReminderResolutionToken `json:"creationDate"`
+
+	// List Per-field conflict-resolution token generated for a reminder mutation.
+	List ReminderResolutionToken `json:"list"`
+
+	// Flagged Per-field conflict-resolution token generated for a reminder mutation.
+	Flagged ReminderResolutionToken `json:"flagged"`
+
+	// Completed Per-field conflict-resolution token generated for a reminder mutation.
+	Completed ReminderResolutionToken `json:"completed"`
+
+	// CompletionDate Per-field conflict-resolution token generated for a reminder mutation.
+	CompletionDate ReminderResolutionToken `json:"completionDate"`
+
+	// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+	LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+
+	// RecurrenceRuleIDs Per-field conflict-resolution token generated for a reminder mutation.
+	RecurrenceRuleIDs ReminderResolutionToken `json:"recurrenceRuleIDs"`
+
+	// DueDate Per-field conflict-resolution token generated for a reminder mutation.
+	DueDate ReminderResolutionToken `json:"dueDate"`
+
+	// TimeZone Per-field conflict-resolution token generated for a reminder mutation.
+	TimeZone ReminderResolutionToken `json:"timeZone"`
+}
+
+// ReminderCreationTokensMap ResolutionTokenMap embedded JSON for this operation.
+type ReminderCreationTokensMap struct {
+	// Map Named per-field resolution tokens in reference order.
+	Map ReminderCreationTokens `json:"map"`
+}
+
+// ReminderDeletionFields Known fields sent when soft-deleting a reminder.
+type ReminderDeletionFields struct {
+	// Deleted An integer-valued reminder write field.
+	Deleted ReminderWriteInteger `json:"Deleted"`
+
+	// ResolutionTokenMap Compact JSON matching the generated ReminderDeletionResolutionMap model.
+	ResolutionTokenMap ReminderWriteString `json:"ResolutionTokenMap"`
+
+	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
+}
+
+// ReminderDeletionOperation Revision-aware soft-delete operation.
+type ReminderDeletionOperation struct {
+	OperationType ReminderDeletionOperationOperationType `json:"operationType"`
+
+	// Record Exact record update used to soft-delete a reminder.
+	Record ReminderDeletionRecord `json:"record"`
+}
+
+// ReminderDeletionOperationOperationType defines model for ReminderDeletionOperation.OperationType.
+type ReminderDeletionOperationOperationType string
+
+// ReminderDeletionRecord Exact record update used to soft-delete a reminder.
+type ReminderDeletionRecord struct {
+	RecordName string                           `json:"recordName"`
+	RecordType ReminderDeletionRecordRecordType `json:"recordType"`
+
+	// Fields Known fields sent when soft-deleting a reminder.
+	Fields          ReminderDeletionFields `json:"fields"`
+	PluginFields    map[string]interface{} `json:"pluginFields"`
+	RecordChangeTag *string                `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderDeletionRecordRecordType defines model for ReminderDeletionRecord.RecordType.
+type ReminderDeletionRecordRecordType string
+
+// ReminderDeletionRequest Soft deletion of one Reminder record in the Reminders zone.
+//
+// Example: {"operations":[{"operationType":"update","record":{"fields":{"Deleted":{"type":"INT64","value":1},"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"deleted\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"}}}"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderDeletionRequest struct {
+	Operations []ReminderDeletionOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
+// ReminderDeletionResolutionMap JSON serialized inside the ResolutionTokenMap string field.
+type ReminderDeletionResolutionMap struct {
+	// Map Conflict-resolution entries for soft deletion.
+	Map ReminderDeletionTokens `json:"map"`
+}
+
+// ReminderDeletionTokens Conflict-resolution entries for soft deletion.
+type ReminderDeletionTokens struct {
+	// Deleted Per-field conflict-resolution token generated for a reminder mutation.
+	Deleted ReminderResolutionToken `json:"deleted"`
+
+	// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+	LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+}
+
+// ReminderDocumentWriteString Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.
+type ReminderDocumentWriteString struct {
+	Type  ReminderDocumentWriteStringType `json:"type"`
+	Value string                          `json:"value"`
+}
+
+// ReminderDocumentWriteStringType defines model for ReminderDocumentWriteString.Type.
+type ReminderDocumentWriteStringType string
+
 // ReminderFieldAlarmIDs Pinned Reminder domain mapping protocol value.
 type ReminderFieldAlarmIDs string
 
@@ -3597,17 +4289,340 @@ type ReminderFieldTimeZone string
 // ReminderFieldTitleDocument Pinned Reminder domain mapping protocol value.
 type ReminderFieldTitleDocument string
 
+// ReminderHashtagLinkFields defines model for ReminderHashtagLinkFields.
+type ReminderHashtagLinkFields struct {
+	HashtagIDs         ReminderWriteStringList `json:"HashtagIDs"`
+	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
+
+	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
+}
+
+// ReminderHashtagLinkTokensMap defines model for ReminderHashtagLinkTokensMap.
+type ReminderHashtagLinkTokensMap struct {
+	Map struct {
+		// HashtagIDs Per-field conflict-resolution token generated for a reminder mutation.
+		HashtagIDs ReminderResolutionToken `json:"hashtagIDs"`
+
+		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+	} `json:"map"`
+}
+
 // ReminderIDPrefix Pinned Reminders list protocol value used by the domain projection.
 type ReminderIDPrefix string
 
+// ReminderLinkedParentOperation defines model for ReminderLinkedParentOperation.
+type ReminderLinkedParentOperation struct {
+	OperationType ReminderLinkedParentOperationOperationType `json:"operationType"`
+	Record        ReminderLinkedParentRecord                 `json:"record"`
+}
+
+// ReminderLinkedParentOperationOperationType defines model for ReminderLinkedParentOperation.OperationType.
+type ReminderLinkedParentOperationOperationType string
+
+// ReminderLinkedParentRecord defines model for ReminderLinkedParentRecord.
+type ReminderLinkedParentRecord struct {
+	RecordName      string                               `json:"recordName"`
+	RecordType      ReminderLinkedParentRecordRecordType `json:"recordType"`
+	Fields          ReminderLinkedParentRecord_Fields    `json:"fields"`
+	PluginFields    map[string]interface{}               `json:"pluginFields"`
+	RecordChangeTag *string                              `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderLinkedParentRecordRecordType defines model for ReminderLinkedParentRecord.RecordType.
+type ReminderLinkedParentRecordRecordType string
+
+// ReminderLinkedParentRecord_Fields defines model for ReminderLinkedParentRecord.Fields.
+type ReminderLinkedParentRecord_Fields struct {
+	union json.RawMessage
+}
+
+// ReminderOptionalString Optional-value write field; a cleared value is omitted to match the reference serialization.
+type ReminderOptionalString struct {
+	Type  ReminderOptionalStringType `json:"type"`
+	Value nullable.Nullable[string]  `json:"value,omitempty"`
+}
+
+// ReminderOptionalStringType defines model for ReminderOptionalString.Type.
+type ReminderOptionalStringType string
+
+// ReminderOptionalTimestamp Optional-value write field; a cleared value is omitted to match the reference serialization.
+type ReminderOptionalTimestamp struct {
+	Type  ReminderOptionalTimestampType `json:"type"`
+	Value nullable.Nullable[int64]      `json:"value,omitempty"`
+}
+
+// ReminderOptionalTimestampType defines model for ReminderOptionalTimestamp.Type.
+type ReminderOptionalTimestampType string
+
+// ReminderPendingChildOperation Child record payloads awaiting narrow field schemas; explicitly limited to known linked record types.
+type ReminderPendingChildOperation struct {
+	OperationType ReminderPendingChildOperationOperationType `json:"operationType"`
+	Record        struct {
+		RecordType ReminderPendingChildOperationRecordRecordType `json:"recordType"`
+	} `json:"record"`
+	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+}
+
+// ReminderPendingChildOperationOperationType defines model for ReminderPendingChildOperation.OperationType.
+type ReminderPendingChildOperationOperationType string
+
+// ReminderPendingChildOperationRecordRecordType defines model for ReminderPendingChildOperation.Record.RecordType.
+type ReminderPendingChildOperationRecordRecordType string
+
 // ReminderRecordType Pinned Reminder domain mapping protocol value.
 type ReminderRecordType string
+
+// ReminderRecurrenceLinkFields defines model for ReminderRecurrenceLinkFields.
+type ReminderRecurrenceLinkFields struct {
+	RecurrenceRuleIDs  ReminderWriteStringList `json:"RecurrenceRuleIDs"`
+	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
+
+	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
+}
+
+// ReminderRecurrenceLinkTokensMap defines model for ReminderRecurrenceLinkTokensMap.
+type ReminderRecurrenceLinkTokensMap struct {
+	Map struct {
+		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+
+		// RecurrenceRuleIDs Per-field conflict-resolution token generated for a reminder mutation.
+		RecurrenceRuleIDs ReminderResolutionToken `json:"recurrenceRuleIDs"`
+	} `json:"map"`
+}
+
+// ReminderResolutionToken Per-field conflict-resolution token generated for a reminder mutation.
+type ReminderResolutionToken struct {
+	Counter ReminderResolutionTokenCounter `json:"counter"`
+
+	// ModificationTime Seconds since 2001-01-01 UTC.
+	ModificationTime json.Number `json:"modificationTime"`
+	ReplicaID        string      `json:"replicaID"`
+}
+
+// ReminderResolutionTokenCounter defines model for ReminderResolutionToken.Counter.
+type ReminderResolutionTokenCounter int
 
 // ReminderSyncQueryLimit Pinned lightweight current-token query result limit.
 type ReminderSyncQueryLimit int
 
 // ReminderSyncQueryRecordType Pinned pseudo record type used to discover the current Reminders sync token.
 type ReminderSyncQueryRecordType string
+
+// ReminderTextContentChild Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py.
+type ReminderTextContentChild int64
+
+// ReminderTextContentReplica Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py.
+type ReminderTextContentReplica int64
+
+// ReminderTextReplicaIdentity Pinned topotext writer replica identity, hex encoded.
+type ReminderTextReplicaIdentity string
+
+// ReminderTextSentinelReplica Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py.
+type ReminderTextSentinelReplica int64
+
+// ReminderTextSerializationVersion Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py.
+type ReminderTextSerializationVersion int64
+
+// ReminderTextTerminalClock Pinned _encode_crdt_document protocol primitive in pyicloud/services/reminders/_protocol.py.
+type ReminderTextTerminalClock int64
+
+// ReminderUpdateFields Known reminder fields in reference mutation order.
+type ReminderUpdateFields struct {
+	// TitleDocument Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.
+	TitleDocument ReminderDocumentWriteString `json:"TitleDocument"`
+
+	// NotesDocument Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.
+	NotesDocument ReminderDocumentWriteString `json:"NotesDocument"`
+
+	// Completed An integer-valued reminder write field.
+	Completed ReminderWriteInteger `json:"Completed"`
+
+	// CompletionDate Optional-value write field; a cleared value is omitted to match the reference serialization.
+	CompletionDate ReminderOptionalTimestamp `json:"CompletionDate"`
+
+	// Priority An integer-valued reminder write field.
+	Priority ReminderWriteInteger `json:"Priority"`
+
+	// Flagged An integer-valued reminder write field.
+	Flagged ReminderWriteInteger `json:"Flagged"`
+
+	// AllDay An integer-valued reminder write field.
+	AllDay ReminderWriteInteger `json:"AllDay"`
+
+	// LastModifiedDate Optional-value write field; a cleared value is omitted to match the reference serialization.
+	LastModifiedDate ReminderOptionalTimestamp `json:"LastModifiedDate"`
+
+	// DueDate Optional-value write field; a cleared value is omitted to match the reference serialization.
+	DueDate ReminderOptionalTimestamp `json:"DueDate"`
+
+	// TimeZone Optional-value write field; a cleared value is omitted to match the reference serialization.
+	TimeZone ReminderOptionalString `json:"TimeZone"`
+
+	// ParentReminder Optional record-reference write field.
+	ParentReminder ReminderWriteReference `json:"ParentReminder"`
+
+	// ResolutionTokenMap Compact JSON matching the generated ReminderUpdateTokensMap model.
+	ResolutionTokenMap ReminderWriteString `json:"ResolutionTokenMap"`
+}
+
+// ReminderUpdateOperation Known ReminderUpdate operation.
+type ReminderUpdateOperation struct {
+	OperationType ReminderUpdateOperationOperationType `json:"operationType"`
+
+	// Record Known ReminderUpdate record payload.
+	Record ReminderUpdateRecord `json:"record"`
+}
+
+// ReminderUpdateOperationOperationType defines model for ReminderUpdateOperation.OperationType.
+type ReminderUpdateOperationOperationType string
+
+// ReminderUpdateRecord Known ReminderUpdate record payload.
+type ReminderUpdateRecord struct {
+	RecordName string                         `json:"recordName"`
+	RecordType ReminderUpdateRecordRecordType `json:"recordType"`
+
+	// Fields Known reminder fields in reference mutation order.
+	Fields          ReminderUpdateFields   `json:"fields"`
+	PluginFields    map[string]interface{} `json:"pluginFields"`
+	RecordChangeTag *string                `json:"recordChangeTag,omitempty"`
+
+	// Parent Write-side parent reference embedded under a record.
+	Parent *CKWriteParent `json:"parent,omitempty"`
+}
+
+// ReminderUpdateRecordRecordType defines model for ReminderUpdateRecord.RecordType.
+type ReminderUpdateRecordRecordType string
+
+// ReminderUpdateRequest Known ReminderUpdate request.
+//
+// Example: {"operations":[{"operationType":"update","record":{"fields":{"AllDay":{"type":"INT64","value":0},"Completed":{"type":"INT64","value":0},"CompletionDate":{"type":"TIMESTAMP"},"DueDate":{"type":"TIMESTAMP"},"Flagged":{"type":"INT64","value":0},"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"NotesDocument":{"type":"STRING","value":"eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWyMsvSS2WEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDLSRwm"},"ParentReminder":{"type":"REFERENCE"},"Priority":{"type":"INT64","value":0},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"}}}"},"TimeZone":{"type":"STRING"},"TitleDocument":{"type":"STRING","value":"eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWKMksyUmVEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDIvRwf"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderUpdateRequest struct {
+	Operations []ReminderUpdateOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
+// ReminderUpdateTokens Named per-field resolution tokens in reference order.
+type ReminderUpdateTokens struct {
+	// TitleDocument Per-field conflict-resolution token generated for a reminder mutation.
+	TitleDocument ReminderResolutionToken `json:"titleDocument"`
+
+	// NotesDocument Per-field conflict-resolution token generated for a reminder mutation.
+	NotesDocument ReminderResolutionToken `json:"notesDocument"`
+
+	// Completed Per-field conflict-resolution token generated for a reminder mutation.
+	Completed ReminderResolutionToken `json:"completed"`
+
+	// CompletionDate Per-field conflict-resolution token generated for a reminder mutation.
+	CompletionDate ReminderResolutionToken `json:"completionDate"`
+
+	// Priority Per-field conflict-resolution token generated for a reminder mutation.
+	Priority ReminderResolutionToken `json:"priority"`
+
+	// Flagged Per-field conflict-resolution token generated for a reminder mutation.
+	Flagged ReminderResolutionToken `json:"flagged"`
+
+	// AllDay Per-field conflict-resolution token generated for a reminder mutation.
+	AllDay ReminderResolutionToken `json:"allDay"`
+
+	// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+	LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+
+	// DueDate Per-field conflict-resolution token generated for a reminder mutation.
+	DueDate ReminderResolutionToken `json:"dueDate"`
+
+	// TimeZone Per-field conflict-resolution token generated for a reminder mutation.
+	TimeZone ReminderResolutionToken `json:"timeZone"`
+
+	// ParentReminder Per-field conflict-resolution token generated for a reminder mutation.
+	ParentReminder ReminderResolutionToken `json:"parentReminder"`
+}
+
+// ReminderUpdateTokensMap ResolutionTokenMap embedded JSON for this operation.
+type ReminderUpdateTokensMap struct {
+	// Map Named per-field resolution tokens in reference order.
+	Map ReminderUpdateTokens `json:"map"`
+}
+
+// ReminderWriteInteger An integer-valued reminder write field.
+type ReminderWriteInteger struct {
+	Type  ReminderWriteIntegerType `json:"type"`
+	Value int64                    `json:"value"`
+}
+
+// ReminderWriteIntegerType defines model for ReminderWriteInteger.Type.
+type ReminderWriteIntegerType string
+
+// ReminderWriteReference Optional record-reference write field.
+type ReminderWriteReference struct {
+	Type ReminderWriteReferenceType `json:"type"`
+
+	// Value A validated named record reference.
+	Value *ReminderWriteReferenceValue `json:"value,omitempty"`
+}
+
+// ReminderWriteReferenceType defines model for ReminderWriteReference.Type.
+type ReminderWriteReferenceType string
+
+// ReminderWriteReferenceValue A validated named record reference.
+type ReminderWriteReferenceValue struct {
+	RecordName string                            `json:"recordName"`
+	Action     ReminderWriteReferenceValueAction `json:"action"`
+}
+
+// ReminderWriteReferenceValueAction defines model for ReminderWriteReferenceValue.Action.
+type ReminderWriteReferenceValueAction string
+
+// ReminderWriteString A string-valued reminder write field.
+type ReminderWriteString struct {
+	Type  ReminderWriteStringType `json:"type"`
+	Value string                  `json:"value"`
+}
+
+// ReminderWriteStringType defines model for ReminderWriteString.Type.
+type ReminderWriteStringType string
+
+// ReminderWriteStringList defines model for ReminderWriteStringList.
+type ReminderWriteStringList struct {
+	Type  ReminderWriteStringListType `json:"type"`
+	Value []string                    `json:"value"`
+}
+
+// ReminderWriteStringListType defines model for ReminderWriteStringList.Type.
+type ReminderWriteStringListType string
+
+// ReminderWriteTimestamp A timestamp-valued reminder write field in Unix milliseconds.
+type ReminderWriteTimestamp struct {
+	Type  ReminderWriteTimestampType `json:"type"`
+	Value nullable.Nullable[int64]   `json:"value"`
+}
+
+// ReminderWriteTimestampType defines model for ReminderWriteTimestamp.Type.
+type ReminderWriteTimestampType string
+
+// RemindersModificationRequest Implemented single-reminder variants plus explicitly scoped remaining linked-record shapes.
+type RemindersModificationRequest struct {
+	union json.RawMessage
+}
+
+// RemindersOtherModificationRequest Remaining linked-record variants: only complete reminder ID-list updates or explicit child record types. Core reminder writes cannot enter this fallback.
+type RemindersOtherModificationRequest struct {
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID               CKZoneIDReq                                         `json:"zoneID"`
+	Atomic               nullable.Nullable[bool]                             `json:"atomic,omitempty"`
+	Operations           []RemindersOtherModificationRequest_Operations_Item `json:"operations"`
+	AdditionalProperties map[string]CKUnknownJSON                            `json:"-"`
+}
+
+// RemindersOtherModificationRequest_Operations_Item defines model for RemindersOtherModificationRequest.operations.Item.
+type RemindersOtherModificationRequest_Operations_Item struct {
+	union json.RawMessage
+}
 
 // URLAttachmentType Pinned Source compound reminder query protocol value.
 type URLAttachmentType string
@@ -9659,6 +10674,181 @@ func (a PhotosCountResponseBatch) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for ReminderPendingChildOperation. Returns the specified
+// element and whether it was found
+func (a ReminderPendingChildOperation) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for ReminderPendingChildOperation
+func (a *ReminderPendingChildOperation) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for ReminderPendingChildOperation to handle AdditionalProperties
+func (a *ReminderPendingChildOperation) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["operationType"]; found {
+		err = json.Unmarshal(raw, &a.OperationType)
+		if err != nil {
+			return fmt.Errorf("error reading 'operationType': %w", err)
+		}
+		delete(object, "operationType")
+	}
+
+	if raw, found := object["record"]; found {
+		err = json.Unmarshal(raw, &a.Record)
+		if err != nil {
+			return fmt.Errorf("error reading 'record': %w", err)
+		}
+		delete(object, "record")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for ReminderPendingChildOperation to handle AdditionalProperties
+func (a ReminderPendingChildOperation) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["operationType"], err = json.Marshal(a.OperationType)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'operationType': %w", err)
+	}
+
+	object["record"], err = json.Marshal(a.Record)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'record': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for RemindersOtherModificationRequest. Returns the specified
+// element and whether it was found
+func (a RemindersOtherModificationRequest) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for RemindersOtherModificationRequest
+func (a *RemindersOtherModificationRequest) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for RemindersOtherModificationRequest to handle AdditionalProperties
+func (a *RemindersOtherModificationRequest) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["zoneID"]; found {
+		err = json.Unmarshal(raw, &a.ZoneID)
+		if err != nil {
+			return fmt.Errorf("error reading 'zoneID': %w", err)
+		}
+		delete(object, "zoneID")
+	}
+
+	if raw, found := object["atomic"]; found {
+		err = json.Unmarshal(raw, &a.Atomic)
+		if err != nil {
+			return fmt.Errorf("error reading 'atomic': %w", err)
+		}
+		delete(object, "atomic")
+	}
+
+	if raw, found := object["operations"]; found {
+		err = json.Unmarshal(raw, &a.Operations)
+		if err != nil {
+			return fmt.Errorf("error reading 'operations': %w", err)
+		}
+		delete(object, "operations")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for RemindersOtherModificationRequest to handle AdditionalProperties
+func (a RemindersOtherModificationRequest) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["zoneID"], err = json.Marshal(a.ZoneID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'zoneID': %w", err)
+	}
+
+	if a.Atomic != nil {
+		object["atomic"], err = json.Marshal(a.Atomic)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'atomic': %w", err)
+		}
+	}
+
+	if a.Operations != nil {
+		object["operations"], err = json.Marshal(a.Operations)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'operations': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // AsCKAuditTimestampInput0 returns the union data inside the CKAuditTimestampInput as a CKAuditTimestampInput0
 func (t CKAuditTimestampInput) AsCKAuditTimestampInput0() (CKAuditTimestampInput0, error) {
 	var body CKAuditTimestampInput0
@@ -11261,6 +12451,296 @@ func (t CKZoneChangesZone_Records_Item) MarshalJSON() ([]byte, error) {
 }
 
 func (t *CKZoneChangesZone_Records_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderAlarmLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderAlarmLinkFields
+func (t ReminderLinkedParentRecord_Fields) AsReminderAlarmLinkFields() (ReminderAlarmLinkFields, error) {
+	var body ReminderAlarmLinkFields
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAlarmLinkFields overwrites any union data inside the ReminderLinkedParentRecord_Fields as the provided ReminderAlarmLinkFields
+func (t *ReminderLinkedParentRecord_Fields) FromReminderAlarmLinkFields(v ReminderAlarmLinkFields) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAlarmLinkFields performs a merge with any union data inside the ReminderLinkedParentRecord_Fields, using the provided ReminderAlarmLinkFields
+func (t *ReminderLinkedParentRecord_Fields) MergeReminderAlarmLinkFields(v ReminderAlarmLinkFields) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderHashtagLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderHashtagLinkFields
+func (t ReminderLinkedParentRecord_Fields) AsReminderHashtagLinkFields() (ReminderHashtagLinkFields, error) {
+	var body ReminderHashtagLinkFields
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagLinkFields overwrites any union data inside the ReminderLinkedParentRecord_Fields as the provided ReminderHashtagLinkFields
+func (t *ReminderLinkedParentRecord_Fields) FromReminderHashtagLinkFields(v ReminderHashtagLinkFields) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagLinkFields performs a merge with any union data inside the ReminderLinkedParentRecord_Fields, using the provided ReminderHashtagLinkFields
+func (t *ReminderLinkedParentRecord_Fields) MergeReminderHashtagLinkFields(v ReminderHashtagLinkFields) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderAttachmentLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderAttachmentLinkFields
+func (t ReminderLinkedParentRecord_Fields) AsReminderAttachmentLinkFields() (ReminderAttachmentLinkFields, error) {
+	var body ReminderAttachmentLinkFields
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentLinkFields overwrites any union data inside the ReminderLinkedParentRecord_Fields as the provided ReminderAttachmentLinkFields
+func (t *ReminderLinkedParentRecord_Fields) FromReminderAttachmentLinkFields(v ReminderAttachmentLinkFields) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentLinkFields performs a merge with any union data inside the ReminderLinkedParentRecord_Fields, using the provided ReminderAttachmentLinkFields
+func (t *ReminderLinkedParentRecord_Fields) MergeReminderAttachmentLinkFields(v ReminderAttachmentLinkFields) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderRecurrenceLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderRecurrenceLinkFields
+func (t ReminderLinkedParentRecord_Fields) AsReminderRecurrenceLinkFields() (ReminderRecurrenceLinkFields, error) {
+	var body ReminderRecurrenceLinkFields
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderRecurrenceLinkFields overwrites any union data inside the ReminderLinkedParentRecord_Fields as the provided ReminderRecurrenceLinkFields
+func (t *ReminderLinkedParentRecord_Fields) FromReminderRecurrenceLinkFields(v ReminderRecurrenceLinkFields) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderRecurrenceLinkFields performs a merge with any union data inside the ReminderLinkedParentRecord_Fields, using the provided ReminderRecurrenceLinkFields
+func (t *ReminderLinkedParentRecord_Fields) MergeReminderRecurrenceLinkFields(v ReminderRecurrenceLinkFields) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderLinkedParentRecord_Fields) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderLinkedParentRecord_Fields) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderCreationRequest returns the union data inside the RemindersModificationRequest as a ReminderCreationRequest
+func (t RemindersModificationRequest) AsReminderCreationRequest() (ReminderCreationRequest, error) {
+	var body ReminderCreationRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderCreationRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderCreationRequest
+func (t *RemindersModificationRequest) FromReminderCreationRequest(v ReminderCreationRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderCreationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderCreationRequest
+func (t *RemindersModificationRequest) MergeReminderCreationRequest(v ReminderCreationRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderUpdateRequest returns the union data inside the RemindersModificationRequest as a ReminderUpdateRequest
+func (t RemindersModificationRequest) AsReminderUpdateRequest() (ReminderUpdateRequest, error) {
+	var body ReminderUpdateRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderUpdateRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderUpdateRequest
+func (t *RemindersModificationRequest) FromReminderUpdateRequest(v ReminderUpdateRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderUpdateRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderUpdateRequest
+func (t *RemindersModificationRequest) MergeReminderUpdateRequest(v ReminderUpdateRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderDeletionRequest returns the union data inside the RemindersModificationRequest as a ReminderDeletionRequest
+func (t RemindersModificationRequest) AsReminderDeletionRequest() (ReminderDeletionRequest, error) {
+	var body ReminderDeletionRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderDeletionRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderDeletionRequest
+func (t *RemindersModificationRequest) FromReminderDeletionRequest(v ReminderDeletionRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderDeletionRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderDeletionRequest
+func (t *RemindersModificationRequest) MergeReminderDeletionRequest(v ReminderDeletionRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsRemindersOtherModificationRequest returns the union data inside the RemindersModificationRequest as a RemindersOtherModificationRequest
+func (t RemindersModificationRequest) AsRemindersOtherModificationRequest() (RemindersOtherModificationRequest, error) {
+	var body RemindersOtherModificationRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromRemindersOtherModificationRequest overwrites any union data inside the RemindersModificationRequest as the provided RemindersOtherModificationRequest
+func (t *RemindersModificationRequest) FromRemindersOtherModificationRequest(v RemindersOtherModificationRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeRemindersOtherModificationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided RemindersOtherModificationRequest
+func (t *RemindersModificationRequest) MergeRemindersOtherModificationRequest(v RemindersOtherModificationRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t RemindersModificationRequest) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *RemindersModificationRequest) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderLinkedParentOperation returns the union data inside the RemindersOtherModificationRequest_Operations_Item as a ReminderLinkedParentOperation
+func (t RemindersOtherModificationRequest_Operations_Item) AsReminderLinkedParentOperation() (ReminderLinkedParentOperation, error) {
+	var body ReminderLinkedParentOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderLinkedParentOperation overwrites any union data inside the RemindersOtherModificationRequest_Operations_Item as the provided ReminderLinkedParentOperation
+func (t *RemindersOtherModificationRequest_Operations_Item) FromReminderLinkedParentOperation(v ReminderLinkedParentOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderLinkedParentOperation performs a merge with any union data inside the RemindersOtherModificationRequest_Operations_Item, using the provided ReminderLinkedParentOperation
+func (t *RemindersOtherModificationRequest_Operations_Item) MergeReminderLinkedParentOperation(v ReminderLinkedParentOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderPendingChildOperation returns the union data inside the RemindersOtherModificationRequest_Operations_Item as a ReminderPendingChildOperation
+func (t RemindersOtherModificationRequest_Operations_Item) AsReminderPendingChildOperation() (ReminderPendingChildOperation, error) {
+	var body ReminderPendingChildOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderPendingChildOperation overwrites any union data inside the RemindersOtherModificationRequest_Operations_Item as the provided ReminderPendingChildOperation
+func (t *RemindersOtherModificationRequest_Operations_Item) FromReminderPendingChildOperation(v ReminderPendingChildOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderPendingChildOperation performs a merge with any union data inside the RemindersOtherModificationRequest_Operations_Item, using the provided ReminderPendingChildOperation
+func (t *RemindersOtherModificationRequest_Operations_Item) MergeReminderPendingChildOperation(v ReminderPendingChildOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t RemindersOtherModificationRequest_Operations_Item) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *RemindersOtherModificationRequest_Operations_Item) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }

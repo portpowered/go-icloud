@@ -96,9 +96,9 @@ func callReminderRelated(t *testing.T, client icloud.Client, auth icloud.AuthCon
 ) (any, []icloud.ResponseMetadata, error) {
 	t.Helper()
 
-	key := map[string]string{"tags_for": "hashtag_ids", "attachments_for": "attachment_ids",
-		"recurrence_rules_for": "recurrence_rule_ids",
-		"alarms_for":           "alarm_ids"}[scenario.Operation]
+	key := map[string]string{"tags_for": reminderSourceHashtagIDs, "attachments_for": reminderSourceAttachmentIDs,
+		"recurrence_rules_for": reminderSourceRecurrenceIDs,
+		"alarms_for":           reminderSourceAlarmIDs}[scenario.Operation]
 
 	var ids []string
 

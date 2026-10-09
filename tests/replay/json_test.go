@@ -13,15 +13,16 @@ import (
 )
 
 const (
-	patternBody  = `{"items":[{"id":"TempId-aa","flag":true}],"big":9007199254740993}`
-	redactedBody = `{"Password":"<redacted:nonempty-password>",` +
+	testJSONPattern = "json-pattern"
+	patternBody     = `{"items":[{"id":"TempId-aa","flag":true}],"big":9007199254740993}`
+	redactedBody    = `{"Password":"<redacted:nonempty-password>",` +
 		`"items":[{"verificationCode":"<redacted:six-digit-code>"}],"fixed":true}`
 	unknownRule = "unknown"
 )
 
 func patternEntity() replay.Entity {
 	return replay.Entity{
-		Encoding: "json-pattern", Value: json.RawMessage(patternBody), ContentTypePattern: "", Parts: nil,
+		Encoding: testJSONPattern, Value: json.RawMessage(patternBody), ContentTypePattern: "", Parts: nil,
 		Matchers: []replay.JSONMatcher{{
 			Path:    []json.RawMessage{json.RawMessage(`"items"`), json.RawMessage(`0`), json.RawMessage(`"id"`)},
 			Pattern: "TempId-[a-z]{2}",
@@ -72,7 +73,7 @@ func TestJSONPatternBindsAllUndeclaredFieldsAndFullFormat(t *testing.T) {
 		strings.Replace(patternBody, "TempId-aa", "TempId-aa-suffix", 1),
 		strings.Replace(patternBody, "true", "false", 1),
 		strings.Replace(patternBody, "9007199254740993", "9007199254740992", 1),
-		strings.Replace(patternBody, `"TempId-aa"`, "null", 1),
+		strings.Replace(patternBody, `"TempId-aa"`, reminderChangeNullValue, 1),
 		strings.Replace(patternBody, `"id":"TempId-aa"`, `"missing":"TempId-aa"`, 1),
 		strings.Replace(patternBody, `"flag":true`, `"flag":true,"extra":1`, 1),
 		patternBody + `{}`,
@@ -220,7 +221,7 @@ func TestPortableJSONDeclarationsAreAccepted(t *testing.T) {
 		count += checkPortableJSON(t, fixture.Exchanges)
 	}
 
-	if count != 17 {
+	if count != 26 {
 		t.Fatalf("portable JSON declaration count changed: %d", count)
 	}
 }

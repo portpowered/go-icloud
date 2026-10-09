@@ -2,8 +2,10 @@ package icloud
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -18,6 +20,12 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// CreateReminder creates a reminder and hydrates its acknowledged record.
+	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
+	// UpdateReminder writes a snapshot and returns an independent updated snapshot.
+	UpdateReminder(ctx context.Context, request UpdateReminderRequest) (*ReminderMutationResult, error)
+	// DeleteReminder soft-deletes a reminder using its supplied revision.
+	DeleteReminder(ctx context.Context, request DeleteReminderRequest) (*DeleteReminderResult, error)
 	// ApplySessionResponses copies a native session and applies response updates without network I/O.
 	ApplySessionResponses(ctx context.Context, request ApplySessionResponsesRequest) (*ApplySessionResponsesResult, error)
 	// ListRecentlyAddedPhotos reads the primary library newest first with overlap deduplication.
@@ -115,6 +123,7 @@ var (
 	errNilOption       = errors.New("nil client option")
 	errAuthIdentifiers = errors.New("account and client identifiers are required")
 	errMemberID        = errors.New("family member identifier is required")
+	errRandomSource    = errors.New("random source must be nonnil")
 	errDriveNodeID     = errors.New("drive node identifier is required")
 )
 
@@ -122,6 +131,7 @@ type configuration struct {
 	transport  http.RoundTripper
 	configured bool
 	clock      func() time.Time
+	random     io.Reader
 }
 
 // Option configures a reusable client without storing account credentials.
@@ -144,14 +154,15 @@ func WithHTTPTransport(transport http.RoundTripper) Option {
 
 // SDK implements Client with immutable transport configuration.
 type SDK struct {
-	web   *webtransport.Client
-	clock func() time.Time
+	web    *webtransport.Client
+	clock  func() time.Time
+	random io.Reader
 }
 
 // New creates a reusable stateless client. The caller supplies request deadlines.
 // The default is http.DefaultTransport; automatic redirects are disabled.
 func New(options ...Option) (*SDK, error) {
-	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now}
+	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now, random: rand.Reader}
 
 	for _, option := range options {
 		if option == nil {
@@ -164,7 +175,21 @@ func New(options ...Option) (*SDK, error) {
 		}
 	}
 
-	return &SDK{web: webtransport.New(config.transport), clock: config.clock}, nil
+	return &SDK{web: webtransport.New(config.transport), clock: config.clock, random: config.random}, nil
+}
+
+// WithRandomSource supplies a concurrency-safe entropy reader for generated identities and authentication.
+// Production callers normally use the default cryptographic source.
+func WithRandomSource(source io.Reader) Option {
+	return func(config *configuration) error {
+		if source == nil {
+			return errRandomSource
+		}
+
+		config.random = source
+
+		return nil
+	}
 }
 
 // GetAccountDevices fetches fresh account devices using caller-owned authentication state.

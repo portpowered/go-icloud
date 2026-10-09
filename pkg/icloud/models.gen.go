@@ -497,6 +497,23 @@ type CreateDriveFolderResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// CreateReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"listID":"List/synthetic-list","title":"Synthetic title"}
+type CreateReminderRequest struct {
+	AllDay bool `json:"allDay,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth             AuthContext                  `json:"auth"`
+	Completed        bool                         `json:"completed,omitempty"`
+	Description      string                       `json:"description,omitempty"`
+	DueDate          nullable.Nullable[time.Time] `json:"dueDate,omitempty"`
+	Flagged          bool                         `json:"flagged,omitempty"`
+	ListID           string                       `json:"listID"`
+	ParentReminderID string                       `json:"parentReminderID,omitempty"`
+	Priority         int64                        `json:"priority,omitempty"`
+	TimeZone         string                       `json:"timeZone,omitempty"`
+	Title            string                       `json:"title"`
+}
+
 // DeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
 type DeleteDriveNodeRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -508,6 +525,35 @@ type DeleteDriveNodeRequest struct {
 
 // DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DeleteReminderRequest Soft-delete a reminder by raw or complete record identifier using its current revision.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"recordChangeTag":"synthetic-old-tag","reminderID":"Reminder/synthetic-item"}
+type DeleteReminderRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// RecordChangeTag Current provider revision, or null when absent.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderID Raw identifier or complete Reminder record name.
+	ReminderID string `json:"reminderID"`
+}
+
+// DeleteReminderResult Acknowledged soft deletion with the refreshed revision and all response evidence.
+//
+// Example: {"deleted":true,"modified":"2023-11-14T22:13:20Z","recordChangeTag":"synthetic-new-tag","responses":[]}
+type DeleteReminderResult struct {
+	// Deleted True after the provider accepts every record operation.
+	Deleted bool `json:"deleted"`
+
+	// Modified Modification instant sent to the provider.
+	Modified time.Time `json:"modified"`
+
+	// RecordChangeTag Last nonempty matching acknowledgement revision, or the supplied revision.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+	Responses       []ResponseMetadata        `json:"responses"`
+}
 
 // DownloadDriveFileRequest Download a document using its node-provided document identifier and zone.
 //
@@ -1944,6 +1990,17 @@ type ReminderLocationTriggerProximity int
 // ReminderMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
 type ReminderMetadata map[string]UnknownJSONValue
 
+// ReminderMutationResult Updated or freshly hydrated reminder with ordered response evidence.
+//
+// Example: {"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderMutationResult struct {
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ReminderRecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
 //
 // Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
@@ -2129,6 +2186,19 @@ type TrashDriveNodeResult = DriveItemChangeResult
 
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
+
+// UpdateReminderRequest Write the supplied reminder snapshot and return an independent updated snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type UpdateReminderRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
 
 // UploadDriveFileRequest Prepare, transfer and register a file; content starts at the current cursor while declared size is the complete seekable file length. The caller owns and closes the content reader.
 type UploadDriveFileRequest struct {
