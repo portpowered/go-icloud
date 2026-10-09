@@ -7,6 +7,10 @@ full valid photo result. All twelve exchanges are consumed; negative controls
 reject changed master references, omitted public results, and unused traffic.
 The portable HTTP corpus contains 516 scenarios and 1,188 paired exchanges.
 These cases describe reference behavior; public Go Photos parity remains open.
+The fresh synthetic-only diagnostic measures 583/905 entered functions,
+3,235/5,398 function-body statements (59.93%), and 994/2,076 branch exits. Scope
+and denominators are unchanged; this closes the reachable incomplete-master
+skip branch without excluding uncovered code.
 
 This is the first migration stage, not a completed library or release. The
 layout, Go verification tools, all-linters configuration, and contributor

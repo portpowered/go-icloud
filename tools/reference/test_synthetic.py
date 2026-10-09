@@ -35,9 +35,9 @@ class SyntheticTests(unittest.TestCase):
             if change == "master-reference":
                 body = scenario["exchanges"][-1]["response"]["body"]
                 payload = json.loads(base64.b64decode(body["value"]))
-                payload["records"][-1]["fields"]["masterRef"]["value"][
-                    "recordName"
-                ] = "synthetic-missing-master"
+                payload["records"][-1]["fields"]["masterRef"]["value"]["recordName"] = (
+                    "synthetic-missing-master"
+                )
                 body["value"] = base64.b64encode(json.dumps(payload).encode()).decode()
             elif change == "result":
                 scenario["result"] = []
