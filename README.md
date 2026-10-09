@@ -390,7 +390,7 @@ Use `--reminder <identifier> reminder` to read one complete reminder; identifier
 may be raw or begin with `Reminder/`. Titles, notes, dates, state, related IDs,
 parent and revision are returned using the public SDK projection.
 Both reuse the same private saved session. Response authentication headers are
-omitted from command output. The Go CLI also supports `photos-status` and `photo-albums` using the same
+omitted from command output. The Go CLI also supports `photos-status`, `photo-albums` and `photo-count` using the same
 private saved session. Write operations remain pending.
 
 CLI replay tests use the root canonical synthetic fixture tree and public SDK.
@@ -871,10 +871,11 @@ service discovery:
 go-icloud --session <private-session.json> --save-session <private-session.json> resume
 go-icloud --session <private-session.json> photos-status
 go-icloud --session <private-session.json> photo-albums
+go-icloud --session <private-session.json> --album Library photo-count
 ```
 
 The commands call the public SDK, preserve typed failures and suppress response
-metadata from console JSON. The 27 readiness and 41 album replay scenarios bind
+metadata from console JSON. The 27 readiness, 41 album and 56 count replay scenarios bind
 complete outputs, error bodies and prior response evidence, with strict exchange
 consumption. Private live CLI resume, readiness and album reads succeeded with the
 stored account, returning 12 albums. Listing photo assets and downloading their

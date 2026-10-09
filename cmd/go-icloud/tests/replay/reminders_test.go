@@ -119,7 +119,7 @@ func checkReminderCLIOutcome(t *testing.T, operation string, row map[string]json
 	t.Helper()
 
 	switch operation {
-	case photoStatusCommand, photoAlbumsCommand:
+	case photoStatusCommand, photoAlbumsCommand, photoCountCommand:
 		checkPhotoCLIOutcome(t, operation, row, output, err)
 	case reminderCLITagsCommand, reminderCLIAttachmentsCommand, reminderCLIRecurrenceCommand, reminderCLIAlarmsCommand:
 		checkReminderCLIRelatedOutcome(t, operation, row, output, err)
@@ -140,6 +140,13 @@ func reminderCLIArgs(t *testing.T, operation, session string, row map[string]jso
 	t.Helper()
 
 	args := []string{sessionFlag, session}
+
+	if operation == photoCountCommand && len(row["album"]) != 0 {
+		var album string
+
+		decode(t, row["album"], &album)
+		args = append(args, "--album", album)
+	}
 
 	if operation == reminderCommand {
 		var inputs []string
