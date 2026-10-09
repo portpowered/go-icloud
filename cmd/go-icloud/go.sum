@@ -21,14 +21,8 @@ github.com/oapi-codegen/runtime v1.7.0 h1:t7358VYPvNbWJ9gdAkIK/smVeHpBf6yp8VTsaZ
 github.com/oapi-codegen/runtime v1.7.0/go.mod h1:GwV7hC2hviaMzj+ITfHVRESK5J2W/GefVwIND/bMGvU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/portpowered/go-icloud v0.0.0-20261009034656-c0e27fab026c h1:MwLf5AwJLLh+PfftP7ERsxF/XFgbfK/oxguFcOZ9+jI=
-github.com/portpowered/go-icloud v0.0.0-20261009034656-c0e27fab026c/go.mod h1:kMsNMBCHGdnGy18fy/RYcO4+lTLGZWL0lpAYEyi2gCs=
-github.com/portpowered/go-icloud v0.0.0-20261009044815-2c2da06cf514 h1:VssgGejxakOrRbCjLoSPNxl+GF4XYG9OxWOrAQhdIqw=
-github.com/portpowered/go-icloud v0.0.0-20261009044815-2c2da06cf514/go.mod h1:kMsNMBCHGdnGy18fy/RYcO4+lTLGZWL0lpAYEyi2gCs=
-github.com/portpowered/go-icloud v0.0.0-20261009045724-f67dc4abd282 h1:1TnupGt7oZIXwUXMa0w6ucSYxxd/yRtYwqNeA73vSlQ=
-github.com/portpowered/go-icloud v0.0.0-20261009045724-f67dc4abd282/go.mod h1:kMsNMBCHGdnGy18fy/RYcO4+lTLGZWL0lpAYEyi2gCs=
-github.com/portpowered/go-icloud v0.0.0-20261009060522-4ab192f42133 h1:dt9i6Nf8P2QhZyfkDSNYjp2UBd15RK7ODtKGKFYOjm8=
-github.com/portpowered/go-icloud v0.0.0-20261009060522-4ab192f42133/go.mod h1:kMsNMBCHGdnGy18fy/RYcO4+lTLGZWL0lpAYEyi2gCs=
+github.com/portpowered/go-icloud v0.0.0-20261009061910-08d2b7cbf669 h1:vS+88CgviJocynsWXqTyoZ1HFkK/FI02TNpKGeyg6sE=
+github.com/portpowered/go-icloud v0.0.0-20261009061910-08d2b7cbf669/go.mod h1:kMsNMBCHGdnGy18fy/RYcO4+lTLGZWL0lpAYEyi2gCs=
 github.com/spkg/bom v0.0.0-20160624110644-59b7046e48ad/go.mod h1:qLr4V1qq6nMqFKkMo8ZTx3f+BZEkzsRUY10Xsm2mwU0=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=

@@ -90,8 +90,9 @@ retains integer parsing. Public dates reproduce float-seconds conversion to
 microseconds, including the pinned Windows runtime's UTC range from Unix second
 -43,200 through 32,536,850,399. Boundary controls execute the actual Source mapper.
 These runtime limits are reference parity evidence, not Apple date restrictions.
-Full checks and exact-commit review remain required before merging. This synthetic
-evidence does not establish live Go behavior.
+The SDK milestone merged through PR #40 after full checks, successful CI and
+independent exact-commit approval. This synthetic evidence does not establish
+live Go behavior.
 
 Asset binding checks that the HTTPS origin, escaped path and decoded query occur
 in a prior validated POST List record's ReminderIDsAsset/ASSETID downloadURL. It
