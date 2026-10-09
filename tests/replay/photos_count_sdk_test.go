@@ -18,7 +18,7 @@ func TestPhotoCountSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 49 {
+	if len(paths) != 53 {
 		t.Fatal("photo count scenario inventory changed")
 	}
 

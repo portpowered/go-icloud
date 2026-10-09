@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
+	"strings"
 
 	"github.com/portpowered/go-icloud/internal/photosapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
@@ -84,6 +86,11 @@ func (client *Client) PhotosAlbumCount(
 func decodePhotosCount(body []byte) (cloudkit.PhotosCountResponse, error) {
 	var data cloudkit.PhotosCountResponse
 
+	body, err := photosCountJSON(body)
+	if err != nil {
+		return data, err
+	}
+
 	fields, err := accountFields(body)
 	if err != nil {
 		return data, err
@@ -98,22 +105,57 @@ func decodePhotosCount(body []byte) (cloudkit.PhotosCountResponse, error) {
 		return data, fmt.Errorf("decode photo count: %w", err)
 	}
 
-	if data.Batch == nil {
-		return data, nil
+	return data, nil
+}
+
+// Source JSON decoding rounds decimal and exponent numbers to binary64 before
+// its integer model validates them. Keep plain JSON integers exact, and retain
+// the original HTTP bytes separately as response evidence.
+func photosCountJSON(body []byte) ([]byte, error) {
+	decoder := json.NewDecoder(bytes.NewReader(body))
+	decoder.UseNumber()
+
+	var value any
+
+	err := decoder.Decode(&value)
+	if err != nil {
+		return nil, fmt.Errorf("decode photo count numbers: %w", err)
 	}
 
-	for _, batch := range *data.Batch {
-		if batch.Records == nil {
-			continue
-		}
+	// Unmarshal also rejects trailing JSON before normalization replaces bytes.
+	var complete json.RawMessage
 
-		for _, record := range *batch.Records {
-			raw, encodeErr := json.Marshal(record.Fields.ItemCount.Value)
-			if encodeErr != nil || !reminderSyncInteger(raw) {
-				return data, errPhotosCountShape
+	err = json.Unmarshal(body, &complete)
+	if err != nil {
+		return nil, fmt.Errorf("decode photo count document: %w", err)
+	}
+
+	normalized, err := json.Marshal(photosCountNumbers(value))
+	if err != nil {
+		return nil, fmt.Errorf("normalize photo count numbers: %w", err)
+	}
+
+	return normalized, nil
+}
+
+func photosCountNumbers(value any) any {
+	switch typed := value.(type) {
+	case json.Number:
+		if strings.ContainsAny(string(typed), ".eE") {
+			converted, err := strconv.ParseFloat(string(typed), 64)
+			if err == nil {
+				return converted
 			}
 		}
+	case []any:
+		for index, item := range typed {
+			typed[index] = photosCountNumbers(item)
+		}
+	case map[string]any:
+		for key, item := range typed {
+			typed[key] = photosCountNumbers(item)
+		}
 	}
 
-	return data, nil
+	return value
 }

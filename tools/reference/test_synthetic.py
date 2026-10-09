@@ -20,8 +20,8 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_photo_count_matrix(self):
         paths = sorted(FIXTURES.glob("photos-count-*.json"))
-        self.assertEqual(len(paths), 49)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 140)
+        self.assertEqual(len(paths), 53)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 152)
 
     def test_photo_count_results_requests_and_consumption_are_bound(self):
         baseline = json.loads((FIXTURES / "photos-count-3.json").read_text())

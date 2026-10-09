@@ -1,8 +1,8 @@
 # iCloud migration checklist
 
 Primary photo counts now have generated batch wire models and a stateless
-`GetPhotoAlbumCount` SDK operation. Forty-nine Source/Go cases consume 140 pairs;
-forty-six new cases bring the HTTP corpus to 893 scenarios and 1,758 exchanges.
+`GetPhotoAlbumCount` SDK operation. Fifty-three Source/Go cases consume 152 pairs;
+fifty new cases bring the HTTP corpus to 897 scenarios and 1,770 exchanges.
 Live saved-session validation, album discovery and the count lookup all returned
 HTTP 200. Full local checks, CI and independent review are pending for this
 milestone. Asset enumeration and downloads remain next.
@@ -25,8 +25,8 @@ is merged. Full Photos parity remains open.
 Current related-read milestone adds forty-six Source-executed synthetic cases
 and fifty-one paired exchanges for hashtag, attachment, recurrence and alarm
 lookup. Go consumes the same artifacts and compares complete ordered results,
-response evidence and failures. The corpus now contains 893 HTTP scenarios and
-1,758 paired exchanges. Reminder writes and full Photos SDK parity remain open.
+response evidence and failures. The corpus now contains 897 HTTP scenarios and
+1,770 paired exchanges. Reminder writes and full Photos SDK parity remain open.
 Source synthetic measurement after this addition covers 62.02% of inventoried
 function-body statements and 1,057/2,076 branch exits; this remains a conservative
 diagnostic, not endpoint completeness proof. Related-read checks, CI and
@@ -424,3 +424,4 @@ and unused exchanges. The fresh reference diagnostic enters 583/905 functions
 and covers 3234/5398 function-body statements (59.91%) and 993/2076 branch exits.
 The Go transport instantiates the pairs; public Go Photos parity and full
 migration/release acceptance remain open.
+
