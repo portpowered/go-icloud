@@ -74,28 +74,42 @@ func photoQuerySpec(entry photoAlbumEntry) photoAlbumQuerySpec {
 
 func (read *photosRead) assets(ctx context.Context, entry photoAlbumEntry) ([]Photo, error) {
 	spec := photoQuerySpec(entry)
+
+	offset, err := read.assetOffset(ctx, entry, spec)
+	if err != nil {
+		return nil, err
+	}
+
+	return read.assetPages(ctx, spec, offset, nil)
+}
+
+func (read *photosRead) assetOffset(ctx context.Context, entry photoAlbumEntry,
+	spec photoAlbumQuerySpec,
+) (int64, error) {
 	offset := int64(0)
 
 	if spec.direction == cloudkit.DESCENDING {
 		response, err := read.sdk.web.PhotosAlbumCount(ctx, read.auth, entry.index)
 		if err != nil {
-			return nil, read.failure(err, InvalidResponse)
+			return 0, read.failure(err, InvalidResponse)
 		}
 
 		read.responses = append(read.responses, response.Metadata)
 
 		count, err := photoCount(response.Data)
 		if err != nil {
-			return nil, read.failure(err, InvalidResponse)
+			return 0, read.failure(err, InvalidResponse)
 		}
 
 		offset = count - 1
 	}
 
-	return read.assetPages(ctx, spec, offset)
+	return offset, nil
 }
 
-func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec, offset int64) ([]Photo, error) {
+func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec, offset int64,
+	photoID *string,
+) ([]Photo, error) {
 	photos := []Photo{}
 	seen := map[string]bool{}
 
@@ -117,17 +131,14 @@ func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec
 			return nil, read.failure(err, InvalidResponse)
 		}
 
-		for _, pair := range page {
-			if !seen[pair.asset.RecordName] {
-				photo, err := projectPhoto(pair.master, pair.asset)
-				if err != nil {
-					return nil, read.failure(err, InvalidResponse)
-				}
+		projected, err := projectSelectedPhotoPage(page, seen, photoID)
+		if err != nil {
+			return nil, read.failure(err, InvalidResponse)
+		}
 
-				seen[photo.ID] = true
-
-				photos = append(photos, photo)
-			}
+		photos = append(photos, projected...)
+		if photoID != nil && len(projected) != 0 {
+			return photos, nil
 		}
 
 		if len(page) < photoSourcePageSize/2 {
@@ -178,6 +189,30 @@ func projectPhotoPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
 		}
 
 		photos = append(photos, photoPair{master: master, asset: asset})
+	}
+
+	return photos, nil
+}
+
+func projectSelectedPhotoPage(page []photoPair, seen map[string]bool, photoID *string) ([]Photo, error) {
+	photos := []Photo{}
+
+	for _, pair := range page {
+		if seen[pair.asset.RecordName] || (photoID != nil && pair.asset.RecordName != *photoID) {
+			continue
+		}
+
+		photo, err := projectPhoto(pair.master, pair.asset)
+		if err != nil {
+			return nil, err
+		}
+
+		seen[photo.ID] = true
+
+		photos = append(photos, photo)
+		if photoID != nil {
+			return photos, nil
+		}
 	}
 
 	return photos, nil

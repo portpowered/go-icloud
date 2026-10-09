@@ -461,3 +461,12 @@ replay of startup matched the full returned list/reminder projection. The observ
 account has lists and an empty startup reminders array; nonempty live reminders,
 completed discovery, mutations and CloudKit availability remain unverified. Local
 full checks, blocking CI, exact-SHA review and the legacy CLI command are pending.
+
+
+Primary `GetPhoto` now has schema-generated public models and paired Source/Go
+lookup coverage: 22 scenarios/77 exchanges across smart/custom albums, folders,
+missing results, provider failures, paged fallback and stopping at the first match.
+The SDK retains explicit null absence and complete response evidence. A private
+live lookup succeeded; Python replay of its seven captured Photos exchanges
+matched the full Go result. Full checks, blocking CI and independent review are
+pending. CLI lookup, downloads and remaining selected service work remain open.

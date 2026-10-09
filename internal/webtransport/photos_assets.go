@@ -35,6 +35,12 @@ func (client *Client) PhotosAssetQuery(ctx context.Context, auth RequestContext,
 func photosAssetBody(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
 	extra []PhotosAssetSelector,
 ) (string, error) {
+	return photosAssetBodyLimit(index, direction, offset, extra, photosAssetResultsLimit)
+}
+
+func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
+	extra []PhotosAssetSelector, limit int64,
+) (string, error) {
 	filters := []string{}
 
 	for _, selector := range append([]PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldDirection,
@@ -69,7 +75,7 @@ func photosAssetBody(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDire
 		protocol.PhotosCKQueryRequestQuery, protocol.PhotosCKQueryObjectRecordType, index,
 		protocol.PhotosCKQueryObjectFilterBy, strings.Join(filters, ", "),
 		protocol.PhotosCKQueryRequestZoneID, identity, protocol.PhotosCKQueryRequestResultsLimit,
-		photosAssetResultsLimit), nil
+		limit), nil
 }
 
 func photosAssetFilter(name cloudkit.PhotoAssetQueryField, field any) (string, error) {

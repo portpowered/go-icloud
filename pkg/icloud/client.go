@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// GetPhoto finds one album asset by identifier with Source enumeration fallback.
+	GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error)
 	// GetLegacyRemindersSnapshot reads account-discovered legacy startup lists and reminders.
 	GetLegacyRemindersSnapshot(ctx context.Context,
 		request GetLegacyRemindersSnapshotRequest,
