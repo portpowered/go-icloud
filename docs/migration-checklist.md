@@ -489,6 +489,23 @@ DownloadPhoto now has generated public models, typed rendition selection, provid
 Photo lookup SDK full local checks, blocking CI and exact-SHA review passed; PR60 is merged. The published SDK now powers the photo CLI command. All 22 lookup replay cases and existing photo/native-resume regressions passed under race detection. A private live CLI lookup returned a photo using the same saved credentials. CLI full checks, CI and exact-SHA review passed; PR62 is merged. Downloads and broader Photos acceptance remain open.
 
 
+PR63 download SDK, PR64 download CLI and PR65 saved-token recovery primitive
+passed full checks, blocking CI and independent exact-SHA review and are merged.
+The CLI now composes Find My recovery through the published SDK. Six strict
+Source cases cover successful recovery, cookie/token rotation before refresh
+and during successful or rejected reads, rejected tokens and one failed retry. Tests compare complete persisted credential snapshots,
+responses and typed failure evidence; rejected refresh preserves the original
+private file. SDK replay input cookies now retain Python's default HttpOnly
+attribute, matching the complete Source snapshot rather than only cookie names
+and values. Full CLI checks, CI and independent review remain pending.
+
+A private live CLI run using the existing native credentials validated the
+session, received Find My 450, refreshed the saved token with HTTP 200, and
+retried Find My with HTTP 200. It updated the private native session file.
+Offline Python consumed the three captured Find My/authentication exchanges
+and matched the complete returned devices and refreshed token/trust/country
+values. Captures remain outside Git. This establishes live automatic recovery
+for this account, not a fixed token-expiry schedule or mutation coverage.
 Recently Added now has a generated public request/result and a stateless SDK
 operation. The initial sixteen Source/Go scenarios consumed 61 exchanges and covered empty,
 one/many, overlap, full/partial/duplicate-only windows, and provider failures at

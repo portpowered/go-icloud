@@ -18,7 +18,7 @@ func TestFindMySavedTokenRecoverySDK(t *testing.T) {
 	t.Parallel()
 
 	paths, err := filepath.Glob("fixtures/synthetic/http/session-findmy-autorefresh-*.json")
-	if err != nil || len(paths) != 5 {
+	if err != nil || len(paths) != 6 {
 		t.Fatal("Find My saved-token recovery inventory changed", err)
 	}
 

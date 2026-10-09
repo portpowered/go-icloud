@@ -20,8 +20,8 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_findmy_saved_token_recovery_matrix(self):
         paths = sorted(FIXTURES.glob("session-findmy-autorefresh-*.json"))
-        self.assertEqual(len(paths), 5)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 14)
+        self.assertEqual(len(paths), 6)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 17)
 
     def test_findmy_recovery_state_request_and_bounded_retry_are_bound(self):
         for name in [
@@ -29,6 +29,7 @@ class SyntheticTests(unittest.TestCase):
             "repeat-450",
             "cookie-rotation",
             "token-refused",
+            "read-cookie-rotation",
             "failed-retry-rotation",
         ]:
             for mutation in ["state", "request", "unused"]:
@@ -59,20 +60,21 @@ class SyntheticTests(unittest.TestCase):
                     with self.assertRaises(AssertionError):
                         replay_synthetic(path)
 
-    def test_findmy_failed_retry_pre_refresh_state_is_bound(self):
-        scenario = json.loads(
-            (
-                FIXTURES / "session-findmy-autorefresh-failed-retry-rotation.json"
-            ).read_text(encoding="utf-8")
-        )
-        scenario["refresh_auth_state"]["session_data"]["session_token"] = (
-            "changed-before-retry-token"
-        )
-        with TemporaryDirectory() as directory:
-            path = Path(directory) / "changed.json"
-            path.write_text(json.dumps(scenario), encoding="utf-8")
-            with self.assertRaises(AssertionError):
-                replay_synthetic(path)
+    def test_findmy_pre_retry_credential_state_is_bound(self):
+        for name in ["read-cookie-rotation", "failed-retry-rotation"]:
+            scenario = json.loads(
+                (FIXTURES / f"session-findmy-autorefresh-{name}.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            scenario["refresh_auth_state"]["session_data"]["session_token"] = (
+                "changed-before-retry-token"
+            )
+            with self.subTest(name=name), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
 
     def test_photo_lookup_matrix(self):
         paths = sorted(FIXTURES.glob("photos-get-*.json"))

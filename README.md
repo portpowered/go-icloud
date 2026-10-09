@@ -450,8 +450,15 @@ the reference library's recovery, pass the failed response metadata in
 `ResponseUpdates` and set `ForceRefresh: true`; this applies rotated cookies and
 tokens before the saved-token account login. Persist the returned credentials
 privately and retry the Find My read once. Offline Source replays cover recovery,
-cookie rotation, a rejected token, and a second 450. Automatic CLI recovery is
-still pending.
+cookie rotation, a rejected token, and a second 450. The CLI now performs this
+bounded recovery automatically for `findmy` when given a native saved-session
+file. It saves refreshed credentials before retrying and applies cookie, token,
+trust-token and country updates from both successful and rejected retries to the
+private session. Native response history includes the failed read, login, and
+retry in order. A returned typed error's prior responses belong to its final SDK
+attempt; the earlier authentication exchanges remain in the saved session.
+Raw `AuthContext` files without
+saved-token credentials retain the original authentication failure.
 
 After a read succeeds or fails, `ApplySessionResponses` copies the saved native
 session and applies its response cookies, session token, trust token, and account
