@@ -1,5 +1,17 @@
 # Reference capture development
 
+Fourteen synthetic snapshot facade cases execute the pinned Source's public
+`reminders(list_id=None)` operation. The 27 paired exchanges cover explicit list
+filters, discovery of zero/one/multiple lists, list and query pagination, empty
+filters triggering discovery, duplicate replacement across lists, and failures
+during discovery or query. The facade requests completed reminders with page
+size 200. Complete results and structured errors are Source-derived; negative
+controls reject altered inputs, completion filters, results, replacement values
+and unused traffic (LIB-05/LIB-12).
+The current portable HTTP corpus contains 713 scenarios and 1,434 pairs, including
+275 Reminders scenarios and 332 pairs. Go snapshot facade parity remains open;
+these cases do not establish live provider behavior or complete Reminders coverage.
+
 The compound reminder reference matrix contains thirty-one scenarios and thirty-two
 paired exchanges. It covers all supported related records, defaults, populated
 fields, orphan filtering, unsupported types, duplicate replacement across pages,
@@ -22,7 +34,8 @@ accepts integer-coercible text for ASSET and ASSETID; its schema preserves integ
 magnitude. Byte-backed ordinary text is UTF-8 decoded, while hashtag text replaces
 invalid UTF-8. Non-strict base64 inputs, tombstones and invalid orphan images also
 have reference cases. These are offline cases; Go compound parity remains open.
-The current portable HTTP corpus contains 699 scenarios and 1,407 exchanges.
+At the compound milestone the portable HTTP corpus contained 699 scenarios and
+1,407 exchanges.
 Before the six wrapper-sensitive additions, synthetic-only coverage measured
 584/905 entered functions, 3,336/5,398 body statements and 1,045/2,076 branch exits.
 These fixed denominators include remaining selected-service work (LIB-07).
