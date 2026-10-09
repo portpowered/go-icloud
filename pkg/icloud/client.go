@@ -132,6 +132,9 @@ type Client interface {
 	UseExistingTrustedDeviceCode(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
 	// RequestTwoFactorCode requests SMS delivery or returns the explicit bridge/security-key route.
 	RequestTwoFactorCode(ctx context.Context, request RequestTwoFactorCodeRequest) (*NativeAuthResult, error)
+	// OpenNativeBridgeSession owns one account's trusted-device prompt and verification socket.
+	OpenNativeBridgeSession(ctx context.Context, request OpenNativeBridgeSessionRequest,
+		options ...NativeBridgeOption) (*NativeBridgeSession, error)
 	// VerifyTwoFactorCode validates a trusted-device or SMS code and refreshes session trust.
 	VerifyTwoFactorCode(ctx context.Context, request VerifyTwoFactorCodeRequest) (*NativeAuthResult, error)
 	// VerifySecurityKey submits a caller-owned WebAuthn assertion and refreshes session trust.
