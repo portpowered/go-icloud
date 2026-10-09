@@ -1090,6 +1090,44 @@ type ListDriveLibrariesResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// ListReminderAlarmsRequest Look up ordered alarms and optional triggers from raw or complete related record identifiers.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"ids":[]}
+type ListReminderAlarmsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// IDs Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests.
+	IDs []string `json:"ids"`
+}
+
+// ListReminderAlarmsResult Ordered alarms and optional triggers and all response evidence, without deduplication.
+//
+// Example: {"items":[],"responses":[]}
+type ListReminderAlarmsResult struct {
+	Items     []ReminderAlarmWithTrigger `json:"items"`
+	Responses []ResponseMetadata         `json:"responses"`
+}
+
+// ListReminderAttachmentsRequest Look up ordered attachments from raw or complete related record identifiers.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"ids":[]}
+type ListReminderAttachmentsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// IDs Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests.
+	IDs []string `json:"ids"`
+}
+
+// ListReminderAttachmentsResult Ordered attachments and all response evidence, without deduplication.
+//
+// Example: {"items":[],"responses":[]}
+type ListReminderAttachmentsResult struct {
+	Items     []ReminderAttachment `json:"items"`
+	Responses []ResponseMetadata   `json:"responses"`
+}
+
 // ListReminderChangesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
 type ListReminderChangesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -1125,6 +1163,25 @@ type ListReminderListsResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// ListReminderRecurrenceRulesRequest Look up ordered recurrence rules from raw or complete related record identifiers.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"ids":[]}
+type ListReminderRecurrenceRulesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// IDs Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests.
+	IDs []string `json:"ids"`
+}
+
+// ListReminderRecurrenceRulesResult Ordered recurrence rules and all response evidence, without deduplication.
+//
+// Example: {"items":[],"responses":[]}
+type ListReminderRecurrenceRulesResult struct {
+	Items     []ReminderRecurrenceRule `json:"items"`
+	Responses []ResponseMetadata       `json:"responses"`
+}
+
 // ListReminderSnapshotRequest Discover lists and collect complete reminders, or select one literal list record name.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
@@ -1144,6 +1201,25 @@ type ListReminderSnapshotResult struct {
 	Reminders []Reminder `json:"reminders"`
 
 	// Responses List, membership asset and query response evidence in request order.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ListReminderTagsRequest Look up ordered hashtags from raw or complete related record identifiers.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"ids":[]}
+type ListReminderTagsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// IDs Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests.
+	IDs []string `json:"ids"`
+}
+
+// ListReminderTagsResult Ordered hashtags and all response evidence, without deduplication.
+//
+// Example: {"items":[],"responses":[]}
+type ListReminderTagsResult struct {
+	Items     []ReminderHashtag  `json:"items"`
 	Responses []ResponseMetadata `json:"responses"`
 }
 
@@ -1341,6 +1417,17 @@ type ReminderAlarm struct {
 
 	// TriggerID Trigger identifier; absent values produce empty text.
 	TriggerID string `json:"triggerID"`
+}
+
+// ReminderAlarmWithTrigger One alarm with its resolved location trigger, or null when absent or unsupported.
+//
+// Example: {"alarm":{"alarmUID":"synthetic","id":"Alarm/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","triggerID":""},"trigger":null}
+type ReminderAlarmWithTrigger struct {
+	// Alarm Alarm linked to a reminder and an optional trigger identifier.
+	//
+	// Example: {"alarmUID":"synthetic","id":"Alarm/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","triggerID":"synthetic"}
+	Alarm   ReminderAlarm                              `json:"alarm"`
+	Trigger nullable.Nullable[ReminderLocationTrigger] `json:"trigger"`
 }
 
 // ReminderAttachment Complete URL or image attachment projection.

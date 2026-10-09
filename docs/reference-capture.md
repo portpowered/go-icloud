@@ -11,8 +11,8 @@ and unused traffic (LIB-05/LIB-12). The added cases cover overlapping normal,
 error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
-The current portable HTTP corpus contains 740 scenarios and 1,465 pairs, including
-302 Reminders scenarios and 363 pairs. The Go snapshot facade executes all
+The current portable HTTP corpus contains 786 scenarios and 1,516 pairs, including
+348 Reminders scenarios and 414 pairs. The Go snapshot facade executes all
 twenty-eight Source cases; full verification and independent review remain open.
 These cases do not establish live provider behavior or complete Reminders coverage.
 

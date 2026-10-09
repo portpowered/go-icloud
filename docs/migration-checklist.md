@@ -1,5 +1,22 @@
 # iCloud migration checklist
 
+Current related-read milestone adds forty-six Source-executed synthetic cases
+and fifty-one paired exchanges for hashtag, attachment, recurrence and alarm
+lookup. Go consumes the same artifacts and compares complete ordered results,
+response evidence and failures. The corpus contains 786 HTTP scenarios and
+1,516 paired exchanges. Reminder writes and full Photos SDK parity remain open.
+Source synthetic measurement after this addition covers 62.02% of inventoried
+function-body statements and 1,057/2,076 branch exits; this remains a conservative
+diagnostic, not endpoint completeness proof. Final checks and independent
+approval are pending for this milestone.
+
+Live investigation on the refreshed login: Python validation, forced token
+login and account reads succeeded. Go imported/resumed a trusted session. Python
+Photos returned two live results. Reminders zone discovery succeeded, but the
+reference's fixed Reminders zone returned ZONE_NOT_FOUND, and a read probe of the
+discovered default zone returned BAD_REQUEST. These private captures do not
+establish successful live Reminders access; cause and compatibility remain open.
+
 The separate Go CLI now exposes `reminder-changes`, with optional `--since` input
 that preserves the difference between omission and an explicit empty cursor.
 Its 72 Source-derived change cases bind all ordered events, full reminder fields,

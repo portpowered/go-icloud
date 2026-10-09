@@ -22,7 +22,7 @@ Two strict-decoding cases preserve STRING base64 URLs containing CR or LF.
 Twenty-eight Source snapshot facade cases now cover public list discovery, explicit
 and empty filters, pagination, replacement across lists, overlapping record/error/
 tombstone alternatives and discovery-cookie reuse. The Go `ListReminderSnapshot`
-port executes all twenty-eight scenarios and forty-five paired exchanges with
+port executes all twenty-eight scenarios and forty-six paired exchanges with
 complete reminders, ordered response evidence and no partial result on failure.
 Full verification and independent review remain pending.
 Thirteen additional list discovery cases execute both Source and Go. Selection follows
@@ -184,3 +184,20 @@ covered by the preceding Source/Go cases. Native authentication,
 Photos, CLI/publication/release, complete source/schema/runtime/socket gates and
 both final independent full audits remain open. Wire schema checks alone do not increase
 handwritten SDK replay coverage or establish full migration acceptance (LIB-07).
+
+## Related lookup projections
+
+`ListReminderTags`, `ListReminderAttachments`, `ListReminderRecurrenceRules`, and
+`ListReminderAlarms` reuse the schema-owned lookup route with ordered record
+names. Forty-six synthetic scenarios, executed through the pinned Python
+reference, contain fifty-one paired exchanges. Each Go replay binds complete
+ordered public results, response metadata, structured failure bodies, prior
+responses and final exchange consumption (LIB-05/LIB-12).
+
+Empty input skips HTTP, while empty replies return allocated empty lists.
+Unrelated records and tombstones are skipped; unsupported attachments and
+triggers are skipped after full wire validation. Provider errors are detected
+before projection, but complete response validation precedes provider errors.
+Alarm trigger IDs preserve duplicates; later duplicate triggers replace earlier
+ones without collapsing the ordered alarm list. Missing triggers are null.
+This is offline reference evidence, not a claim of successful live operations.
