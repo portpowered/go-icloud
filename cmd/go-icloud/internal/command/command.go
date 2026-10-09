@@ -107,7 +107,8 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.Usage = func() {
 		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
 			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
-			"reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, reminders, reminder-snapshot, "+
+			"reminder-legacy-snapshot, reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, "+
+			"reminders, reminder-snapshot, "+
 			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, "+
 			"photos-status, photo-albums, photo-count, photo-assets, resume")
 
@@ -164,7 +165,8 @@ func loadSession(path string) (icloud.AuthContext, error) {
 
 func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync", "reminder-changes",
+	case "reminder-legacy-snapshot", "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync",
+		"reminder-changes",
 		"reminders", "reminder-snapshot",
 		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", "reminder-alarms":
 		return readReminders(ctx, client, auth, config)
@@ -185,6 +187,8 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 
 func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
+	case "reminder-legacy-snapshot":
+		return wrap(client.GetLegacyRemindersSnapshot(ctx, icloud.GetLegacyRemindersSnapshotRequest{Auth: auth}))
 	case "reminder-zones":
 		return wrap(client.ListReminderZones(ctx, icloud.ListReminderZonesRequest{Auth: auth}))
 	case reminderCommand:

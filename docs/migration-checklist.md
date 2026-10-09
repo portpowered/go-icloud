@@ -459,8 +459,18 @@ models. Nine synthetic Source/Go cases bind requests, full records, failure evid
 and consumption. Live Go validation/startup both returned HTTP 200; private Python
 replay of startup matched the full returned list/reminder projection. The observed
 account has lists and an empty startup reminders array; nonempty live reminders,
-completed discovery, mutations and CloudKit availability remain unverified. Local
-full checks, blocking CI, exact-SHA review and the legacy CLI command are pending.
+completed discovery, mutations and CloudKit availability remain unverified. SDK full local checks, blocking CI and exact-SHA review passed; it is merged.
+The separate CLI now exposes `reminder-legacy-snapshot` through the published SDK.
+Nine CLI replay cases and a private live read passed after native discovery resume.
+CLI full checks, blocking CI and exact-SHA review are pending.
+
+
+Private live CLI reads also succeeded for account devices/family/storage/plan and
+Drive libraries with the same saved credentials. Find My initially returned 450;
+Python refreshed the saved token and retried successfully. An explicit native Go
+forced resume followed by the Find My CLI also succeeded. The failure/refresh/read
+Python exchanges remain captured outside Git. Automatic 450 recovery in Go CLI and
+its paired replay coverage are next; these reads do not establish mutation coverage.
 
 
 Primary `GetPhoto` now has schema-generated public models and paired Source/Go
@@ -468,5 +478,6 @@ lookup coverage: 22 scenarios/77 exchanges across smart/custom albums, folders,
 missing results, provider failures, paged fallback and stopping at the first match.
 The SDK retains explicit null absence and complete response evidence. A private
 live lookup succeeded; Python replay of its seven captured Photos exchanges
-matched the full Go result. Full checks, blocking CI and independent review are
-pending. CLI lookup, downloads and remaining selected service work remain open.
+matched the full Go result. Full checks, blocking CI and independent exact-SHA
+review passed; the SDK is merged. CLI lookup, downloads and remaining selected
+service work remain open.

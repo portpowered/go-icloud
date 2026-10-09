@@ -138,6 +138,7 @@ func expectedReferenceSession(t *testing.T, row map[string]json.RawMessage,
 	expected.Auth.DriveDocumentServiceURL = services["docws"]["url"]
 	expected.Auth.FindMyServiceURL = services["findme"]["url"]
 	expected.Auth.RemindersServiceURL = services["ckdatabasews"]["url"]
+	expected.Auth.LegacyRemindersServiceURL = services["reminders"]["url"]
 	expected.Auth.PhotosServiceURL = services["ckdatabasews"]["url"]
 	expected.Auth.Headers = referenceSavedHeaders(t, row)
 	expected.Auth.Cookies = referenceSavedCookies(t, row)

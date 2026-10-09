@@ -119,6 +119,8 @@ func checkReminderCLIOutcome(t *testing.T, operation string, row map[string]json
 	t.Helper()
 
 	switch operation {
+	case legacyRemindersCommand:
+		checkLegacyReminderCLIOutcome(t, row, output, err)
 	case photoStatusCommand, photoAlbumsCommand, photoCountCommand, photoAssetsCommand:
 		checkPhotoCLIOutcome(t, operation, row, output, err)
 	case reminderCLITagsCommand, reminderCLIAttachmentsCommand, reminderCLIRecurrenceCommand, reminderCLIAlarmsCommand:
