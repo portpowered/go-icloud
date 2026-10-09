@@ -99,25 +99,35 @@ func TestPhotoVisitorPreservesCallerFailure(t *testing.T) {
 var errPhotoVisitorCaller = errors.New("synthetic visitor failure")
 
 func TestRecentlyAddedVisitorStopsBeforeAnotherWindow(t *testing.T) {
- t.Parallel()
- scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", "photos-recently-added-overlap-partial-next.json"))
- exchanges := scenario.Exchanges[:4]
- transport, err := replay.NewHTTPTransport(exchanges)
- if err != nil { t.Fatal(err) }
- client, err := icloud.New(icloud.WithHTTPTransport(transport))
- if err != nil { t.Fatal(err) }
- auth := sdkAccountAuth(scenario.Initial)
- auth.PhotosServiceURL = scenario.Initial.Origin
- visited := 0
- result, err := client.VisitRecentlyAddedPhotos(t.Context(),icloud.ListRecentlyAddedPhotosRequest{Auth:auth, Library:nil},
-  func(event icloud.PhotoVisitEvent)(bool,error) {
-   visited++
-   checkReminderSyncResponses(t,event.Responses,exchanges)
-   return false,nil
-  })
- if err != nil { t.Fatal(err) }
- if visited != 1 || len(result.Photos) != 1 { t.Fatal("recent visitor eagerly continued") }
- checkReminderSyncResponses(t,result.Responses,exchanges)
- err = transport.AssertConsumed()
- if err != nil { t.Fatal(err) }
+	t.Parallel()
+	scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", "photos-recently-added-overlap-partial-next.json"))
+	exchanges := scenario.Exchanges[:4]
+	transport, err := replay.NewHTTPTransport(exchanges)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client, err := icloud.New(icloud.WithHTTPTransport(transport))
+	if err != nil {
+		t.Fatal(err)
+	}
+	auth := sdkAccountAuth(scenario.Initial)
+	auth.PhotosServiceURL = scenario.Initial.Origin
+	visited := 0
+	result, err := client.VisitRecentlyAddedPhotos(t.Context(), icloud.ListRecentlyAddedPhotosRequest{Auth: auth, Library: nil},
+		func(event icloud.PhotoVisitEvent) (bool, error) {
+			visited++
+			checkReminderSyncResponses(t, event.Responses, exchanges)
+			return false, nil
+		})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if visited != 1 || len(result.Photos) != 1 {
+		t.Fatal("recent visitor eagerly continued")
+	}
+	checkReminderSyncResponses(t, result.Responses, exchanges)
+	err = transport.AssertConsumed()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
