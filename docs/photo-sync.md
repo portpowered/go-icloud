@@ -113,3 +113,12 @@ helpers and two result serializers. The helper groups above cover the active
 calls. `_sanitize_name` has no active caller in the pinned module; its filename
 purpose is superseded by the explicitly documented native manifest naming.
 This denominator is independent of the HTTP route inventory.
+
+The date renderer intentionally fixes its dialect to CPython 3.12 on Windows with
+`LC_TIME=C`, the runtime stated in the checked-in Source oracle. It produces the
+same deterministic date paths on every Go host. The replay runner uses explicit
+fixed-offset timestamps and an injected lexical filesystem; it does not recompute
+Windows CRT expectations using Ubuntu's Python/libc. Linux/macOS-specific
+`strftime` extensions and locale-dependent text are outside this dialect. A
+successful replay on Ubuntu therefore proves portable Go execution of the pinned
+Windows/C semantics, not parity with arbitrary native Python runtimes or locales.
