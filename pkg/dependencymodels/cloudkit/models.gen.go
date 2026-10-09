@@ -1089,13 +1089,15 @@ type CKAssetIDListFieldType string
 
 // CKAssetToken Asset token with download URL, checksums, and wrapping key.
 type CKAssetToken struct {
-	FileChecksum         nullable.Nullable[string]        `json:"fileChecksum,omitempty"`
-	ReferenceChecksum    nullable.Nullable[string]        `json:"referenceChecksum,omitempty"`
-	WrappingKey          nullable.Nullable[string]        `json:"wrappingKey,omitempty"`
-	DownloadURL          nullable.Nullable[string]        `json:"downloadURL,omitempty"`
-	DownloadedData       nullable.Nullable[CKBase64Input] `json:"downloadedData,omitempty"`
-	Size                 nullable.Nullable[int64]         `json:"size,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON         `json:"-"`
+	FileChecksum      nullable.Nullable[string]        `json:"fileChecksum,omitempty"`
+	ReferenceChecksum nullable.Nullable[string]        `json:"referenceChecksum,omitempty"`
+	WrappingKey       nullable.Nullable[string]        `json:"wrappingKey,omitempty"`
+	DownloadURL       nullable.Nullable[string]        `json:"downloadURL,omitempty"`
+	DownloadedData    nullable.Nullable[CKBase64Input] `json:"downloadedData,omitempty"`
+
+	// Size Optional Source integer-coercible asset size; metadata may carry integral numeric text.
+	Size                 nullable.Nullable[json.Number] `json:"size,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON       `json:"-"`
 }
 
 // CKAuditInfo Appears as `created` / `modified` at the record level (response).

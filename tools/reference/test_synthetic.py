@@ -19,12 +19,12 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 20)
+        self.assertEqual(len(paths), 23)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 21)
+        self.assertEqual(pairs, 24)
         complete = json.loads(
             (FIXTURES / "reminders-query-compound-all-types.json").read_text()
         )["result"]

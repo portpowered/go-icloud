@@ -1,5 +1,12 @@
 # Reference capture development
 
+Three further reference cases bind integral text asset sizes for both ASSET and
+ASSETID, and the Source's non-strict base64 decoding of byte-backed related text.
+The compound matrix contains twenty-three cases and twenty-four pairs. The shared
+asset size schema now describes the Source's integer-coercible inputs and preserves
+integer magnitude in its generated model. Go URL extraction must not reject valid
+metadata that is unrelated to the projected URL (SCHEMA-04/SCHEMA-16).
+
 Twelve additional compound cases bind typed versus untyped asset URLs, byte-backed
 related text and invalid UTF-8 replacement, encoded attachment URLs, raw recurrence
 frequency selection, tombstone skipping, duplicate replacement across pages,
