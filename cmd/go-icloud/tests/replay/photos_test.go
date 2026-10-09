@@ -14,11 +14,13 @@ import (
 
 const photoStatusCommand = "photos-status"
 const photoAlbumsCommand = "photo-albums"
+const photoCountCommand = "photo-count"
 
 func TestPhotoReadCommands(t *testing.T) {
 	t.Parallel()
 
-	for prefix, operation := range map[string]string{"index": photoStatusCommand, "albums": photoAlbumsCommand} {
+	for prefix, operation := range map[string]string{"index": photoStatusCommand,
+		"albums": photoAlbumsCommand, "count": photoCountCommand} {
 		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/photos-" + prefix + "-*.json")
 		if err != nil {
 			t.Fatal(err)
@@ -27,6 +29,10 @@ func TestPhotoReadCommands(t *testing.T) {
 		want := 27
 		if prefix == "albums" {
 			want = 41
+		}
+
+		if prefix == "count" {
+			want = 56
 		}
 
 		if len(paths) != want {
@@ -58,6 +64,19 @@ func checkPhotoCLIOutcome(t *testing.T, operation string, row map[string]json.Ra
 	var actual map[string]json.RawMessage
 
 	decode(t, output, &actual)
+
+	if operation == photoCountCommand {
+		if len(actual) != 1 {
+			t.Fatal("photo count CLI exposed unexpected fields")
+		}
+
+		var expected int64
+
+		decode(t, row["result"], &expected)
+		checkReminderCLIValue(t, actual["count"], expected)
+
+		return
+	}
 
 	if operation == photoStatusCommand {
 		var expected map[string]json.RawMessage
@@ -113,6 +132,10 @@ func checkPhotoCLIFailure(t *testing.T, row map[string]json.RawMessage, output [
 
 	if sourceError["type"] == "PyiCloudServiceNotActivatedException" {
 		kind = icloud.Unavailable
+	}
+
+	if sourceError["type"] == "KeyError" {
+		kind = icloud.NotFound
 	}
 
 	if failure.Kind() != kind || failure.StatusCode() != last.Response.Status ||
