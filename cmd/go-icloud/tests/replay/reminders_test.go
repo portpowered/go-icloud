@@ -27,7 +27,7 @@ func TestReminderCommands(t *testing.T) {
 	t.Parallel()
 
 	for prefix, operation := range map[string]string{"zones": "reminder-zones",
-		"lists": "reminder-lists", "get": reminderCommand, "sync": reminderSyncCommand,
+		"lists": "reminder-lists", lookupFixturePrefix: reminderCommand, "sync": reminderSyncCommand,
 		"changes": reminderChangesCommand} {
 		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/reminders-" + prefix + "-*.json")
 		if err != nil {
@@ -39,7 +39,7 @@ func TestReminderCommands(t *testing.T) {
 			want = 24
 		}
 
-		if prefix == "get" {
+		if prefix == lookupFixturePrefix {
 			want = 19
 		}
 
@@ -121,7 +121,7 @@ func checkReminderCLIOutcome(t *testing.T, operation string, row map[string]json
 	switch operation {
 	case legacyRemindersCommand:
 		checkLegacyReminderCLIOutcome(t, row, output, err)
-	case photoStatusCommand, photoAlbumsCommand, photoCountCommand, photoAssetsCommand:
+	case photoStatusCommand, photoAlbumsCommand, photoCountCommand, photoAssetsCommand, photoLookupCommand:
 		checkPhotoCLIOutcome(t, operation, row, output, err)
 	case reminderCLITagsCommand, reminderCLIAttachmentsCommand, reminderCLIRecurrenceCommand, reminderCLIAlarmsCommand:
 		checkReminderCLIRelatedOutcome(t, operation, row, output, err)
@@ -143,12 +143,7 @@ func reminderCLIArgs(t *testing.T, operation, session string, row map[string]jso
 
 	args := []string{sessionFlag, session}
 
-	if (operation == photoCountCommand || operation == photoAssetsCommand) && len(row["album"]) != 0 {
-		var album string
-
-		decode(t, row["album"], &album)
-		args = append(args, "--album", album)
-	}
+	args = append(args, photoCLIArgs(t, operation, row)...)
 
 	if operation == reminderCommand {
 		var inputs []string

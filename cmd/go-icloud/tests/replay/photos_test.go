@@ -16,12 +16,14 @@ const photoStatusCommand = "photos-status"
 const photoAlbumsCommand = "photo-albums"
 const photoCountCommand = "photo-count"
 const photoAssetsCommand = "photo-assets"
+const photoLookupCommand = "photo"
 
 func TestPhotoReadCommands(t *testing.T) {
 	t.Parallel()
 
 	for prefix, operation := range map[string]string{"index": photoStatusCommand,
-		"albums": photoAlbumsCommand, "count": photoCountCommand, "assets": photoAssetsCommand} {
+		"albums": photoAlbumsCommand, "count": photoCountCommand, "assets": photoAssetsCommand,
+		lookupFixturePrefix: photoLookupCommand} {
 		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/photos-" + prefix + "-*.json")
 		if err != nil {
 			t.Fatal(err)
@@ -38,6 +40,10 @@ func TestPhotoReadCommands(t *testing.T) {
 
 		if prefix == "assets" {
 			want = 109
+		}
+
+		if prefix == lookupFixturePrefix {
+			want = 22
 		}
 
 		if len(paths) != want {
@@ -69,6 +75,12 @@ func checkPhotoCLIOutcome(t *testing.T, operation string, row map[string]json.Ra
 	var actual map[string]json.RawMessage
 
 	decode(t, output, &actual)
+
+	if operation == photoLookupCommand {
+		checkPhotoLookupCLI(t, row, actual)
+
+		return
+	}
 
 	if operation == photoAssetsCommand {
 		checkPhotoAssetsCLI(t, row, actual)
