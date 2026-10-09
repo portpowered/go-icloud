@@ -1,6 +1,6 @@
 # Reminders wire contracts
 
-The Go `ListReminders` implementation is under verification against all thirty-seven
+The Go `ListReminders` implementation is under verification against all thirty-nine
 portable compound query cases. It sends the literal list identifier, completion
 filter, optional page size and continuation marker; consumes all pages; and
 projects complete reminders and supported related records. Per-record failures
@@ -17,6 +17,7 @@ Further Source cases now exercise asset URLs, integer-coercible size metadata,
 byte-backed text, invalid UTF-8 replacement and raw frequency selection. Six more
 cases bind wrapper-sensitive discriminator and URL behavior: bytes are compared
 before model coercion and byte-backed URLs avoid a second decoding step.
+Two strict-decoding cases preserve STRING base64 URLs containing CR or LF.
 A fresh measurement of the expanded corpus is pending. The all-lists reminder facade
 remains unentered and is not excluded as unreachable.
 Go compound query parity, remaining endpoint ports, live Go verification and

@@ -39,7 +39,7 @@ func TestReminderQuerySDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 37 {
+	if len(paths) != 39 {
 		t.Fatal("compound reminder query inventory changed")
 	}
 

@@ -151,6 +151,11 @@ func reminderAttachmentURL(value string) string {
 		return value
 	}
 
+	// Go's decoder ignores CR and LF; Source's strict URL decoder rejects them.
+	if strings.ContainsAny(value, "\r\n") {
+		return value
+	}
+
 	padding := (reminderBase64Quantum - len(value)%reminderBase64Quantum) % reminderBase64Quantum
 
 	decoded, err := base64.StdEncoding.DecodeString(value + strings.Repeat("=", padding))
