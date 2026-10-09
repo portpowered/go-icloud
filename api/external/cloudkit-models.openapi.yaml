@@ -2690,7 +2690,9 @@
       },
       "AlarmTriggerIDPrefix": {
         "type": "string",
-        "enum": ["AlarmTrigger/"],
+        "enum": [
+          "AlarmTrigger/"
+        ],
         "description": "Prefix for location trigger identifiers used by alarm lookups."
       },
       "AlarmIDPrefix": {
@@ -3234,6 +3236,74 @@
           "FINISHED"
         ],
         "description": "Reference Photos initialization protocol value."
+      },
+      "PhotoAlbumQueryRecordType": {
+        "type": "string",
+        "enum": [
+          "CPLAlbumByPositionLive"
+        ],
+        "description": "Reference Photos album protocol value."
+      },
+      "PhotoAlbumNameField": {
+        "type": "string",
+        "enum": [
+          "albumNameEnc"
+        ],
+        "description": "Reference Photos album protocol value."
+      },
+      "PhotoAlbumTypeField": {
+        "type": "string",
+        "enum": [
+          "albumType"
+        ],
+        "description": "Reference Photos album protocol value."
+      },
+      "PhotoAlbumDeletedField": {
+        "type": "string",
+        "enum": [
+          "isDeleted"
+        ],
+        "description": "Reference Photos album protocol value."
+      },
+      "PhotoAlbumParentField": {
+        "type": "string",
+        "enum": [
+          "parentId"
+        ],
+        "description": "Reference Photos album protocol value."
+      },
+      "PhotoAlbumType": {
+        "type": "integer",
+        "enum": [
+          0,
+          3,
+          6
+        ],
+        "description": "Known custom, folder and smart album kinds."
+      },
+      "PhotoSmartAlbumName": {
+        "type": "string",
+        "enum": [
+          "Library",
+          "Time-lapse",
+          "Videos",
+          "Slo-mo",
+          "Bursts",
+          "Favorites",
+          "Panoramas",
+          "Screenshots",
+          "Live",
+          "Recently Deleted",
+          "Hidden"
+        ],
+        "description": "Source smart album names in their discovery order."
+      },
+      "PhotoAlbumSortAscendingField": {
+        "type": "string",
+        "enum": [
+          "sortAscending"
+        ],
+        "description": "Reference album sorting direction flag."
       }
     }
   }

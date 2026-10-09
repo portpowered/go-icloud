@@ -6,6 +6,31 @@ info:
 paths: {}
 components:
   schemas:
+    ListPhotoAlbumsRequest:
+      type: object
+      description: Discover smart and custom albums in the primary photo library.
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    ListPhotoAlbumsResult:
+      type: object
+      description: Ordered smart and custom albums with response evidence from initialization and every page.
+      required: [albums, responses]
+      example: {albums: [], responses: []}
+      properties:
+        albums: {type: array, items: {$ref: '#/components/schemas/PhotoAlbum'}, description: "Duplicate IDs retain their last value and first position."}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    PhotoAlbum:
+      type: object
+      description: One smart album or custom photo album with its resolved folder path.
+      required: [id, name, fullName, recordChangeTag]
+      example: {id: Library, name: Library, fullName: Library, recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: Provider album record identifier or smart album name.}
+        name: {type: string, description: Decoded display name.}
+        fullName: {type: string, description: Name including discovered ancestor folders.}
+        recordChangeTag: {type: string, nullable: true, description: Provider revision or null when omitted.}
     GetPhotosStatusRequest:
       type: object
       description: Check the primary photo library using caller-owned authentication.

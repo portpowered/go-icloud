@@ -149,16 +149,16 @@ func (e CKAssetIDListFieldType) Valid() bool {
 
 // Defines values for CKBooleanInput1.
 const (
-	N0 CKBooleanInput1 = 0
-	N1 CKBooleanInput1 = 1
+	CKBooleanInput1N0 CKBooleanInput1 = 0
+	CKBooleanInput1N1 CKBooleanInput1 = 1
 )
 
 // Valid indicates whether the value is a known member of the CKBooleanInput1 enum.
 func (e CKBooleanInput1) Valid() bool {
 	switch e {
-	case N0:
+	case CKBooleanInput1N0:
 		return true
-	case N1:
+	case CKBooleanInput1N1:
 		return true
 	default:
 		return false
@@ -789,6 +789,117 @@ func (e LocationTriggerType) Valid() bool {
 	}
 }
 
+// Defines values for PhotoAlbumDeletedField.
+const (
+	IsDeleted PhotoAlbumDeletedField = "isDeleted"
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumDeletedField enum.
+func (e PhotoAlbumDeletedField) Valid() bool {
+	switch e {
+	case IsDeleted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumNameField.
+const (
+	AlbumNameEnc PhotoAlbumNameField = "albumNameEnc"
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumNameField enum.
+func (e PhotoAlbumNameField) Valid() bool {
+	switch e {
+	case AlbumNameEnc:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumParentField.
+const (
+	ParentId PhotoAlbumParentField = "parentId"
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumParentField enum.
+func (e PhotoAlbumParentField) Valid() bool {
+	switch e {
+	case ParentId:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumQueryRecordType.
+const (
+	CPLAlbumByPositionLive PhotoAlbumQueryRecordType = "CPLAlbumByPositionLive"
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumQueryRecordType enum.
+func (e PhotoAlbumQueryRecordType) Valid() bool {
+	switch e {
+	case CPLAlbumByPositionLive:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumSortAscendingField.
+const (
+	SortAscending PhotoAlbumSortAscendingField = "sortAscending"
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumSortAscendingField enum.
+func (e PhotoAlbumSortAscendingField) Valid() bool {
+	switch e {
+	case SortAscending:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumType.
+const (
+	PhotoAlbumTypeN0 PhotoAlbumType = 0
+	PhotoAlbumTypeN3 PhotoAlbumType = 3
+	PhotoAlbumTypeN6 PhotoAlbumType = 6
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumType enum.
+func (e PhotoAlbumType) Valid() bool {
+	switch e {
+	case PhotoAlbumTypeN0:
+		return true
+	case PhotoAlbumTypeN3:
+		return true
+	case PhotoAlbumTypeN6:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumTypeField.
+const (
+	AlbumType PhotoAlbumTypeField = "albumType"
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumTypeField enum.
+func (e PhotoAlbumTypeField) Valid() bool {
+	switch e {
+	case AlbumType:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotoFinishedState.
 const (
 	FINISHED PhotoFinishedState = "FINISHED"
@@ -858,6 +969,51 @@ const (
 func (e PhotoPrimaryZoneType) Valid() bool {
 	switch e {
 	case PhotoPrimaryZoneTypeREGULARCUSTOMZONE:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoSmartAlbumName.
+const (
+	Bursts          PhotoSmartAlbumName = "Bursts"
+	Favorites       PhotoSmartAlbumName = "Favorites"
+	Hidden          PhotoSmartAlbumName = "Hidden"
+	Library         PhotoSmartAlbumName = "Library"
+	Live            PhotoSmartAlbumName = "Live"
+	Panoramas       PhotoSmartAlbumName = "Panoramas"
+	RecentlyDeleted PhotoSmartAlbumName = "Recently Deleted"
+	Screenshots     PhotoSmartAlbumName = "Screenshots"
+	SloMo           PhotoSmartAlbumName = "Slo-mo"
+	TimeLapse       PhotoSmartAlbumName = "Time-lapse"
+	Videos          PhotoSmartAlbumName = "Videos"
+)
+
+// Valid indicates whether the value is a known member of the PhotoSmartAlbumName enum.
+func (e PhotoSmartAlbumName) Valid() bool {
+	switch e {
+	case Bursts:
+		return true
+	case Favorites:
+		return true
+	case Hidden:
+		return true
+	case Library:
+		return true
+	case Live:
+		return true
+	case Panoramas:
+		return true
+	case RecentlyDeleted:
+		return true
+	case Screenshots:
+		return true
+	case SloMo:
+		return true
+	case TimeLapse:
+		return true
+	case Videos:
 		return true
 	default:
 		return false
@@ -2549,6 +2705,27 @@ type ListRecordType string
 // LocationTriggerType Pinned Source compound reminder query protocol value.
 type LocationTriggerType string
 
+// PhotoAlbumDeletedField Reference Photos album protocol value.
+type PhotoAlbumDeletedField string
+
+// PhotoAlbumNameField Reference Photos album protocol value.
+type PhotoAlbumNameField string
+
+// PhotoAlbumParentField Reference Photos album protocol value.
+type PhotoAlbumParentField string
+
+// PhotoAlbumQueryRecordType Reference Photos album protocol value.
+type PhotoAlbumQueryRecordType string
+
+// PhotoAlbumSortAscendingField Reference album sorting direction flag.
+type PhotoAlbumSortAscendingField string
+
+// PhotoAlbumType Known custom, folder and smart album kinds.
+type PhotoAlbumType int
+
+// PhotoAlbumTypeField Reference Photos album protocol value.
+type PhotoAlbumTypeField string
+
 // PhotoFinishedState Reference Photos initialization protocol value.
 type PhotoFinishedState string
 
@@ -2563,6 +2740,9 @@ type PhotoPrimaryZoneName string
 
 // PhotoPrimaryZoneType Reference Photos initialization protocol value.
 type PhotoPrimaryZoneType string
+
+// PhotoSmartAlbumName Source smart album names in their discovery order.
+type PhotoSmartAlbumName string
 
 // RecurrenceRuleIDPrefix Pinned Reminder domain mapping protocol value.
 type RecurrenceRuleIDPrefix string

@@ -30,6 +30,13 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 	body := fmt.Sprintf("{%q: {%q: %q}, %q: %s, %q: %d}", protocol.PhotosCKQueryRequestQuery,
 		protocol.PhotosCKQueryObjectRecordType, protocol.PhotosPhotoIndexingRecordTypeValue,
 		protocol.PhotosCKQueryRequestZoneID, identity, protocol.PhotosCKQueryRequestResultsLimit, 1)
+
+	return client.photosQueryBytes(ctx, auth, body)
+}
+
+func (client *Client) photosQueryBytes(
+	ctx context.Context, auth RequestContext, body string,
+) (*PhotosQueryResponse, error) {
 	params := new(photosapi.PhotosQueryRecordsParams)
 	params.ClientId = auth.Params.ClientId
 	params.Dsid = auth.Params.Dsid

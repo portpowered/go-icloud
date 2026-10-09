@@ -18,6 +18,50 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_photo_album_matrix(self):
+        paths = sorted(FIXTURES.glob("photos-albums-*.json"))
+        self.assertEqual(len(paths), 31)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 71)
+
+    def test_photo_album_results_requests_and_consumption_are_bound(self):
+        baseline = json.loads((FIXTURES / "photos-albums-1.json").read_text())
+        for mutation in ["name", "fullname", "order", "request", "unused"]:
+            with self.subTest(mutation=mutation), TemporaryDirectory() as directory:
+                scenario = copy.deepcopy(baseline)
+                if mutation in {"name", "fullname"}:
+                    scenario["result"][-1][mutation] = "different-album"
+                elif mutation == "order":
+                    scenario["result"].reverse()
+                elif mutation == "request":
+                    scenario["exchanges"][1]["request"]["query"][2][1] = "true"
+                else:
+                    scenario["exchanges"].append(
+                        copy.deepcopy(scenario["exchanges"][-1])
+                    )
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_photo_album_error_and_cookie_are_bound(self):
+        for fixture, mutation in [
+            ("photos-albums-sort-invalid", "error"),
+            ("photos-albums-pagination-cookie", "cookie"),
+        ]:
+            with self.subTest(mutation=mutation), TemporaryDirectory() as directory:
+                scenario = json.loads((FIXTURES / (fixture + ".json")).read_text())
+                if mutation == "error":
+                    scenario["error"]["message"] = "different-error"
+                else:
+                    headers = scenario["exchanges"][-1]["request"]["headers"]
+                    scenario["exchanges"][-1]["request"]["headers"] = [
+                        header for header in headers if header[0].lower() != "cookie"
+                    ]
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_reminder_related_lookup_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-related-*.json"))
         self.assertEqual(len(paths), 46)
