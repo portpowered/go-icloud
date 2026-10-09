@@ -719,8 +719,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_recently_added_matrix_preserves_newest_first_without_count_requests(self):
         paths = sorted(FIXTURES.glob("photos-recently-added-*.json"))
-        self.assertEqual(len(paths), 16)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 61)
+        self.assertEqual(len(paths), 21)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 81)
         for path in paths:
             scenario = json.loads(path.read_text(encoding="utf-8"))
             if "error" in scenario:

@@ -53,6 +53,10 @@ func (client *Client) PhotosLibraryZones(ctx context.Context, auth RequestContex
 
 		_, err = decodeReminderZones(response.Body)
 		if err != nil {
+			if shared {
+				return append(responses, response), nil
+			}
+
 			return responses, responseFailure(Decode, err, response)
 		}
 

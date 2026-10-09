@@ -500,3 +500,11 @@ and saved-token recovery milestones.
 Focused race replay passes; full checks, CI and independent review remain
 pending. The live account most recently reports indexing RUNNING at 0%, so
 successful live Recently Added access remains unverified.
+
+Independent review found an additional shared-discovery fallback boundary.
+Five new Source-first cases prove invalid zone identities, null/object zone
+arrays, array envelopes and malformed JSON are suppressed during shared
+initialization while the root read continues. Go retains each failed HTTP 200
+response and matches the complete Source result. Recently Added now has 21
+scenarios / 81 exchanges; the combined corpus is 1,062 / 2,374 before the
+pending automatic CLI recovery milestone. Full checks and CI are being rerun.
