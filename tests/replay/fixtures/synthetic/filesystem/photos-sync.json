@@ -1,0 +1,706 @@
+{
+  "provenance": {
+    "kind": "synthetic",
+    "source": "timlaing/pyicloud",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e",
+    "call": "photos_cloudkit.sync.run_photo_sync",
+    "clock": "2026-04-10T00:00:00Z",
+    "description": "Executed pinned Source with deterministic injected in-memory photo operations and real temporary SQLite/filesystem. Paths normalized; persisted format is an explicit Go JSON adaptation."
+  },
+  "scenarios": [
+    {
+      "name": "download",
+      "options": {},
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 1,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "photo.jpg": "YXNzZXQtMTpvcmlnaW5hbA=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original"
+        ]
+      }
+    },
+    {
+      "name": "dry-run",
+      "options": {
+        "dryRun": true
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "listed",
+            "reason": "dry-run"
+          }
+        ],
+        "downloadedCount": 0,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 1,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {},
+      "calls": {
+        "asset-1": []
+      }
+    },
+    {
+      "name": "print-only",
+      "options": {
+        "onlyPrintFilenames": true
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "listed",
+            "reason": "print-only"
+          }
+        ],
+        "downloadedCount": 0,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 1,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {},
+      "calls": {
+        "asset-1": []
+      }
+    },
+    {
+      "name": "live",
+      "options": {},
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": true,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            },
+            "original_video": {
+              "key": "original_video",
+              "filename": "photo.jpg.mov",
+              "url": "https://example.invalid/asset-1/video",
+              "size": 22,
+              "type": "com.apple.quicktime-movie"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "downloaded"
+          },
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original_video",
+            "path": "photo.jpg.mov",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 2,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "photo.jpg": "YXNzZXQtMTpvcmlnaW5hbA==",
+        "photo.jpg.mov": "YXNzZXQtMTpvcmlnaW5hbF92aWRlbw=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original",
+          "download:original_video"
+        ]
+      }
+    },
+    {
+      "name": "skip-videos",
+      "options": {
+        "skipVideos": true
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": true,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            },
+            "original_video": {
+              "key": "original_video",
+              "filename": "photo.jpg.mov",
+              "url": "https://example.invalid/asset-1/video",
+              "size": 22,
+              "type": "com.apple.quicktime-movie"
+            }
+          }
+        },
+        {
+          "id": "asset-2",
+          "filename": "movie.mov",
+          "itemType": "movie",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "movie.mov",
+              "url": "https://example.invalid/asset-2",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-2"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 1,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "photo.jpg": "YXNzZXQtMTpvcmlnaW5hbA=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original"
+        ],
+        "asset-2": []
+      }
+    },
+    {
+      "name": "skip-live",
+      "options": {
+        "skipLivePhotos": true
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": true,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            },
+            "original_video": {
+              "key": "original_video",
+              "filename": "photo.jpg.mov",
+              "url": "https://example.invalid/asset-1/video",
+              "size": 22,
+              "type": "com.apple.quicktime-movie"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [],
+        "downloadedCount": 0,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {},
+      "calls": {
+        "asset-1": []
+      }
+    },
+    {
+      "name": "raw-original",
+      "options": {
+        "alignRaw": "original"
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            },
+            "alternative": {
+              "key": "alternative",
+              "filename": "photo.jpg.dng",
+              "url": "https://example.invalid/asset-1/raw",
+              "size": 19,
+              "type": "public.camera-raw-image"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "alternative",
+            "path": "photo.jpg.dng",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 1,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "photo.jpg.dng": "YXNzZXQtMTphbHRlcm5hdGl2ZQ=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:alternative"
+        ]
+      }
+    },
+    {
+      "name": "raw-alternative",
+      "options": {
+        "alignRaw": "alternative"
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            },
+            "alternative": {
+              "key": "alternative",
+              "filename": "photo.jpg.dng",
+              "url": "https://example.invalid/asset-1/raw",
+              "size": 19,
+              "type": "public.camera-raw-image"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 1,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "photo.jpg": "YXNzZXQtMTpvcmlnaW5hbA=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original"
+        ]
+      }
+    },
+    {
+      "name": "collision",
+      "options": {},
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            }
+          }
+        },
+        {
+          "id": "asset-2",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-2",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-2"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "downloaded"
+          },
+          {
+            "assetID": "asset-2",
+            "resourceKey": "original",
+            "path": "photo_asset-2.jpg",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 2,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "photo.jpg": "YXNzZXQtMTpvcmlnaW5hbA==",
+        "photo_asset-2.jpg": "YXNzZXQtMjpvcmlnaW5hbA=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original"
+        ],
+        "asset-2": [
+          "download:original"
+        ]
+      }
+    },
+    {
+      "name": "safe-paths",
+      "options": {
+        "folderStructure": "../%Y/../%m"
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "../../unsafe:photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "../../unsafe:photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "2026/04/unsafe-photo.jpg",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 1,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "2026/04/unsafe-photo.jpg": "YXNzZXQtMTpvcmlnaW5hbA=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original"
+        ]
+      }
+    },
+    {
+      "name": "recent",
+      "options": {
+        "recent": 3
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "new.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-04-10T00:00:00+00:00",
+          "takenAt": "2026-04-10T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "new.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            }
+          }
+        },
+        {
+          "id": "asset-2",
+          "filename": "old.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-03-31T00:00:00+00:00",
+          "takenAt": "2026-03-31T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "old.jpg",
+              "url": "https://example.invalid/asset-2",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-2"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "new.jpg",
+            "action": "downloaded"
+          }
+        ],
+        "downloadedCount": 1,
+        "skippedCount": 0,
+        "deletedCount": 0,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "new.jpg": "YXNzZXQtMTpvcmlnaW5hbA=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original"
+        ],
+        "asset-2": []
+      }
+    },
+    {
+      "name": "retention",
+      "options": {
+        "keepIcloudRecentDays": 3
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "filename": "photo.jpg",
+          "itemType": "image",
+          "isLivePhoto": false,
+          "addedAt": "2026-03-31T00:00:00+00:00",
+          "takenAt": "2026-03-31T00:00:00+00:00",
+          "resources": {
+            "original": {
+              "key": "original",
+              "filename": "photo.jpg",
+              "url": "https://example.invalid/asset-1",
+              "size": 16,
+              "type": "public.jpeg",
+              "checksum": "checksum-asset-1"
+            }
+          }
+        }
+      ],
+      "result": {
+        "items": [
+          {
+            "assetID": "asset-1",
+            "resourceKey": "original",
+            "path": "photo.jpg",
+            "action": "downloaded"
+          },
+          {
+            "assetID": "asset-1",
+            "resourceKey": "remote",
+            "path": "photo.jpg",
+            "action": "deleted",
+            "reason": "keep-icloud-recent-days"
+          }
+        ],
+        "downloadedCount": 1,
+        "skippedCount": 0,
+        "deletedCount": 1,
+        "listedCount": 0,
+        "shortCircuited": false,
+        "syncCursor": "cursor-1"
+      },
+      "files": {
+        "photo.jpg": "YXNzZXQtMTpvcmlnaW5hbA=="
+      },
+      "calls": {
+        "asset-1": [
+          "download:original",
+          "delete"
+        ]
+      }
+    }
+  ]
+}
