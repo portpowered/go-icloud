@@ -14,7 +14,8 @@ Asset SDK full checks, CI and exact-SHA independent review passed and the SDK
 is merged. The separate CLI now exposes `photo-assets`, selects albums with
 `--album` (default Library), and uses the published SDK without a local replace.
 Its 233 Photos scenarios cover complete output and failures with strict exchange
-consumption. CLI full checks, CI and independent review remain pending. Downloads,
+consumption. CLI full local checks passed; a private live CLI read returned 684
+photos using stored credentials. CI and independent review remain pending. Downloads,
 shared libraries and mutations remain next.
 
 Primary photo counts now have generated batch wire models and a stateless
@@ -441,7 +442,6 @@ and unused exchanges. The fresh reference diagnostic enters 583/905 functions
 and covers 3234/5398 function-body statements (59.91%) and 993/2076 branch exits.
 The Go transport instantiates the pairs; public Go Photos parity and full
 migration/release acceptance remain open.
-
 
 
 A private Python read of the account-discovered legacy Reminders `/rd/startup`
