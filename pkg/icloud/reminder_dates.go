@@ -85,11 +85,11 @@ func reminderAuditDate(record cloudkit.CKRecord, name string) *time.Time {
 }
 
 func reminderInteger(raw json.RawMessage) (int64, error) {
-	if len(raw) == 0 || string(raw) == jsonNullValue || string(raw) == "false" {
+	if len(raw) == 0 || string(raw) == jsonNullValue || string(raw) == jsonFalseValue {
 		return 0, nil
 	}
 
-	if string(raw) == "true" {
+	if string(raw) == jsonTrueValue {
 		return 1, nil
 	}
 
@@ -125,7 +125,7 @@ func reminderWireInteger(raw json.RawMessage) (int64, error) {
 		return 0, errReminderList
 	}
 
-	if string(raw) == "true" || string(raw) == "false" {
+	if string(raw) == jsonTrueValue || string(raw) == jsonFalseValue {
 		return reminderInteger(raw)
 	}
 
@@ -142,6 +142,10 @@ func reminderWireInteger(raw json.RawMessage) (int64, error) {
 		return integer, nil
 	}
 
+	return reminderWireFloatInteger(text)
+}
+
+func reminderWireFloatInteger(text string) (int64, error) {
 	number, err := strconv.ParseFloat(text, 64)
 	if err != nil || math.Trunc(number) != number || number >= float64(math.MaxInt64) || number < float64(math.MinInt64) {
 		return 0, errReminderList
