@@ -1,0 +1,409 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "findmy",
+  "operation": "devices_with_auth_state",
+  "inputs": [],
+  "initial_state": {
+    "account_name": "synthetic@example.invalid",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "params": {
+      "clientBuildNumber": "2534Project66",
+      "clientMasteringNumber": "2534B22",
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-dsid"
+    },
+    "session_data": {
+      "session_token": "synthetic-token",
+      "trust_token": "synthetic-trust",
+      "account_country": "USA"
+    },
+    "cookies": [
+      {
+        "name": "X-APPLE-WEBAUTH-TOKEN",
+        "value": "synthetic-cookie",
+        "domain": ".icloud.com",
+        "path": "/"
+      }
+    ],
+    "account_data": {
+      "dsInfo": {
+        "dsid": "synthetic-dsid",
+        "hsaVersion": 2,
+        "languageCode": "en_US"
+      },
+      "hsaTrustedBrowser": true,
+      "webservices": {
+        "photos": {
+          "url": "https://photos.example.invalid"
+        },
+        "findme": {
+          "url": "https://findmy.example.invalid"
+        },
+        "drivews": {
+          "url": "https://drive.example.invalid"
+        }
+      }
+    },
+    "origin": "https://findmy.icloud.com",
+    "token_origin": "https://setup.icloud.com/setup/ws/1"
+  },
+  "error": {
+    "type": "PyiCloudAuthRequiredException",
+    "message": "Re-authentication required for account: synthetic@example.invalid"
+  },
+  "error_context": {
+    "reason": null,
+    "code": null,
+    "response": {
+      "status": 450,
+      "headers": [
+        [
+          "Content-Type",
+          "application/json"
+        ],
+        [
+          "Set-Cookie",
+          "X-APPLE-WEBAUTH-TOKEN=synthetic-failed-retry; Domain=.icloud.com; Path=/; Secure; HttpOnly"
+        ],
+        [
+          "X-Apple-Session-Token",
+          "synthetic-failed-retry-token"
+        ],
+        [
+          "X-Apple-TwoSV-Trust-Token",
+          "synthetic-failed-retry-trust"
+        ],
+        [
+          "X-Apple-ID-Account-Country",
+          "CAN"
+        ]
+      ],
+      "body": {
+        "encoding": "base64",
+        "value": "eyJyZWFzb24iOiAic3ludGhldGljIGF1dGhlbnRpY2F0aW9uIHN0aWxsIHJlcXVpcmVkIn0="
+      }
+    }
+  },
+  "error_auth_state": {
+    "account": {
+      "dsInfo": {
+        "dsid": "synthetic-dsid",
+        "hsaVersion": 2,
+        "languageCode": "en_US"
+      },
+      "hsaTrustedBrowser": true,
+      "webservices": {
+        "photos": {
+          "url": "https://photos.example.invalid"
+        },
+        "findme": {
+          "url": "https://findmy.example.invalid"
+        },
+        "drivews": {
+          "url": "https://drive.example.invalid"
+        }
+      }
+    },
+    "params": {
+      "clientBuildNumber": "2534Project66",
+      "clientMasteringNumber": "2534B22",
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-dsid"
+    },
+    "session_data": {
+      "client_id": "synthetic-client",
+      "session_token": "synthetic-failed-retry-token",
+      "trust_token": "synthetic-failed-retry-trust",
+      "account_country": "CAN"
+    },
+    "challenge": {},
+    "requires_mfa": false,
+    "cookies": [
+      {
+        "name": "X-APPLE-WEBAUTH-TOKEN",
+        "value": "synthetic-failed-retry",
+        "domain": ".icloud.com",
+        "path": "/",
+        "secure": true,
+        "expires": null,
+        "discard": true,
+        "attributes": {
+          "HttpOnly": null
+        }
+      }
+    ],
+    "webservices": {
+      "photos": {
+        "url": "https://photos.example.invalid"
+      },
+      "findme": {
+        "url": "https://findmy.example.invalid"
+      },
+      "drivews": {
+        "url": "https://drive.example.invalid"
+      }
+    },
+    "requires_2fa": false,
+    "requires_2sa": false,
+    "trusted_session": true,
+    "delivery_method": "unknown",
+    "code_requested": false,
+    "session_file_exists": true,
+    "cookie_file_exists": true
+  },
+  "exchanges": [
+    {
+      "response": {
+        "status": 450,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIGF1dGhlbnRpY2F0aW9uIHJlcXVpcmVkIn0="
+        }
+      },
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.icloud.com",
+        "path": "/fmipservice/client/web/initClient",
+        "query": [
+          [
+            "clientBuildNumber",
+            "2534Project66"
+          ],
+          [
+            "clientMasteringNumber",
+            "2534B22"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-dsid"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-TOKEN=synthetic-cookie"
+          ],
+          [
+            "content-length",
+            "177"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://setup.icloud.com",
+        "path": "/setup/ws/1/accountLogin",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-TOKEN=synthetic-cookie"
+          ],
+          [
+            "content-length",
+            "123"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhY2NvdW50Q291bnRyeUNvZGUiOiAiVVNBIiwgImRzV2ViQXV0aFRva2VuIjogInN5bnRoZXRpYy10b2tlbiIsICJleHRlbmRlZF9sb2dpbiI6IHRydWUsICJ0cnVzdFRva2VuIjogInN5bnRoZXRpYy10cnVzdCJ9"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn19fQ=="
+        }
+      }
+    },
+    {
+      "response": {
+        "status": 450,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ],
+          [
+            "Set-Cookie",
+            "X-APPLE-WEBAUTH-TOKEN=synthetic-failed-retry; Domain=.icloud.com; Path=/; Secure; HttpOnly"
+          ],
+          [
+            "X-Apple-Session-Token",
+            "synthetic-failed-retry-token"
+          ],
+          [
+            "X-Apple-TwoSV-Trust-Token",
+            "synthetic-failed-retry-trust"
+          ],
+          [
+            "X-Apple-ID-Account-Country",
+            "CAN"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWFzb24iOiAic3ludGhldGljIGF1dGhlbnRpY2F0aW9uIHN0aWxsIHJlcXVpcmVkIn0="
+        }
+      },
+      "request": {
+        "method": "POST",
+        "origin": "https://findmy.icloud.com",
+        "path": "/fmipservice/client/web/initClient",
+        "query": [
+          [
+            "clientBuildNumber",
+            "2534Project66"
+          ],
+          [
+            "clientMasteringNumber",
+            "2534B22"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-dsid"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "cookie",
+            "X-APPLE-WEBAUTH-TOKEN=synthetic-cookie"
+          ],
+          [
+            "content-length",
+            "177"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJjbGllbnRDb250ZXh0IjogeyJhcHBOYW1lIjogImlDbG91ZCBGaW5kIChXZWIpIiwgImFwcFZlcnNpb24iOiAiMi4wIiwgImFwaVZlcnNpb24iOiAiMy4wIiwgImRldmljZUxpc3RWZXJzaW9uIjogMSwgImZtbHkiOiBmYWxzZSwgInRpbWV6b25lIjogIlVTL1BhY2lmaWMiLCAiaW5hY3RpdmVUaW1lIjogMH19"
+        }
+      }
+    }
+  ],
+  "refresh_auth_state": {
+    "account": {
+      "dsInfo": {
+        "dsid": "synthetic-dsid",
+        "hsaVersion": 2,
+        "languageCode": "en_US"
+      },
+      "hsaTrustedBrowser": true,
+      "webservices": {
+        "photos": {
+          "url": "https://photos.example.invalid"
+        },
+        "findme": {
+          "url": "https://findmy.example.invalid"
+        },
+        "drivews": {
+          "url": "https://drive.example.invalid"
+        }
+      }
+    },
+    "params": {
+      "clientBuildNumber": "2534Project66",
+      "clientMasteringNumber": "2534B22",
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-dsid"
+    },
+    "session_data": {
+      "client_id": "synthetic-client",
+      "session_token": "synthetic-token",
+      "trust_token": "synthetic-trust",
+      "account_country": "USA"
+    },
+    "challenge": {},
+    "requires_mfa": false,
+    "cookies": [
+      {
+        "name": "X-APPLE-WEBAUTH-TOKEN",
+        "value": "synthetic-cookie",
+        "domain": ".icloud.com",
+        "path": "/",
+        "secure": false,
+        "expires": null,
+        "discard": true,
+        "attributes": {
+          "HttpOnly": null
+        }
+      }
+    ],
+    "webservices": {
+      "photos": {
+        "url": "https://photos.example.invalid"
+      },
+      "findme": {
+        "url": "https://findmy.example.invalid"
+      },
+      "drivews": {
+        "url": "https://drive.example.invalid"
+      }
+    },
+    "requires_2fa": false,
+    "requires_2sa": false,
+    "trusted_session": true,
+    "delivery_method": "unknown",
+    "code_requested": false,
+    "session_file_exists": true,
+    "cookie_file_exists": true
+  }
+}

@@ -453,6 +453,24 @@ privately and retry the Find My read once. Offline Source replays cover recovery
 cookie rotation, a rejected token, and a second 450. Automatic CLI recovery is
 still pending.
 
+After a read succeeds or fails, `ApplySessionResponses` copies the saved native
+session and applies its response cookies, session token, trust token, and account
+country without issuing another request. Discovery and trust flags remain those
+of the saved authentication result, and response history is appended in order.
+Pass each response once, including a failed retry's metadata, and save the result
+privately. This preserves rotations even when the provider rejects the read:
+
+```go
+updated, err := client.ApplySessionResponses(ctx, icloud.ApplySessionResponsesRequest{
+    Session: *resumed,
+    Responses: readResponses, // ordered success or typed-error metadata
+})
+if err != nil {
+    return err
+}
+savedSession := updated.Session // persist privately; contains credentials
+```
+
 `authentication-required` can require interactive login; `terms-required` requests
 terms acceptance. This operation performs neither. `AllowUntrusted` can return
 paused MFA discovery. The CLI imports existing reference credentials and resumes

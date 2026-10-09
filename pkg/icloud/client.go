@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ApplySessionResponses copies a native session and applies response updates without network I/O.
+	ApplySessionResponses(ctx context.Context, request ApplySessionResponsesRequest) (*ApplySessionResponsesResult, error)
 	// ListRecentlyAddedPhotos reads the primary library newest first with overlap deduplication.
 	ListRecentlyAddedPhotos(ctx context.Context,
 		request ListRecentlyAddedPhotosRequest,
