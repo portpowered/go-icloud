@@ -19,7 +19,7 @@ components:
       required: [state, syncToken, metadata]
       example: {state: FINISHED, syncToken: null, metadata: {statusCode: 200, headers: []}}
       properties:
-        state: {type: string, description: Provider indexing state; successful initialization returns FINISHED.}
+        state: {type: string, enum: [FINISHED], description: Provider indexing state; successful initialization returns FINISHED.}
         syncToken: {type: string, nullable: true, description: "Current CloudKit change cursor, or null when omitted."}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
     ListReminderTagsRequest:

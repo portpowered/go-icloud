@@ -118,6 +118,21 @@ func (e FindMyWaitKind) Valid() bool {
 	}
 }
 
+// Defines values for GetPhotosStatusResultState.
+const (
+	FINISHED GetPhotosStatusResultState = "FINISHED"
+)
+
+// Valid indicates whether the value is a known member of the GetPhotosStatusResultState enum.
+func (e GetPhotosStatusResultState) Valid() bool {
+	switch e {
+	case FINISHED:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderChangeEventType.
 const (
 	ReminderChangeDeleted ReminderChangeEventType = "deleted"
@@ -1046,11 +1061,14 @@ type GetPhotosStatusResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 
 	// State Provider indexing state; successful initialization returns FINISHED.
-	State string `json:"state"`
+	State GetPhotosStatusResultState `json:"state"`
 
 	// SyncToken Current CloudKit change cursor, or null when omitted.
 	SyncToken nullable.Nullable[string] `json:"syncToken"`
 }
+
+// GetPhotosStatusResultState Provider indexing state; successful initialization returns FINISHED.
+type GetPhotosStatusResultState string
 
 // GetReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"reminderID":"synthetic-reminder"}
 type GetReminderRequest struct {

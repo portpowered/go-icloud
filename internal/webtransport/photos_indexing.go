@@ -21,10 +21,12 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+
 	identity, err := referenceJSON(zone)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
+
 	body := fmt.Sprintf("{%q: {%q: %q}, %q: %s, %q: %d}", protocol.PhotosCKQueryRequestQuery,
 		protocol.PhotosCKQueryObjectRecordType, protocol.PhotosPhotoIndexingRecordTypeValue,
 		protocol.PhotosCKQueryRequestZoneID, identity, protocol.PhotosCKQueryRequestResultsLimit, 1)
@@ -33,24 +35,30 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 	params.Dsid = auth.Params.Dsid
 	params.RemapEnums = photosapi.PhotosQueryRecordsParamsRemapEnumsTrue
 	params.GetCurrentSyncToken = photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue
+
 	request, err := photosapi.NewPhotosQueryRecordsRequestWithBody(auth.Origin, params,
 		protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
+
 	err = validateOrigin(auth.Origin)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
+
 	request = request.WithContext(ctx)
 	request.Header = auth.Headers.Clone()
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaApplicationJson)
+
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
 	}
+
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
 		queryPart(protocol.PhotosRemapEnumsName, string(params.RemapEnums)) + "&" +
 		queryPart(protocol.PhotosGetCurrentSyncTokenName, string(params.GetCurrentSyncToken))
+
 	response, err := client.readPrepared(request, successfulContent, auth.Cookies)
 	if err != nil {
 		return nil, err
@@ -60,5 +68,6 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 	if err != nil {
 		return nil, responseFailure(Decode, err, response)
 	}
+
 	return &PhotosQueryResponse{Data: data, Metadata: response}, nil
 }

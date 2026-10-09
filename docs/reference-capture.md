@@ -275,3 +275,14 @@ The synthetic `auth-authenticate-cloudkit-discovery` scenario supplies both with
 distinct origins and binds the pinned Source getter plus Go resume projection.
 Live Go session validation and zone discovery succeeded after this correction;
 this does not establish successful live reminder list/query access.
+
+## Photos initialization
+
+The public `GetPhotosStatus` operation consumes all 22 Source initialization
+cases. Nineteen new synthetic cases cover first-record precedence, ignored
+errors/tombstones, absent and nullable state/cursor, whole-reply validation,
+alternate success status, cookie updates and HTTP failures. Source and Go
+compare complete results and exact response evidence; mutation controls reject
+changed state, cursor, query serialization and unused traffic. Private live
+Go initialization succeeded on the refreshed account and remains outside Git.
+This is not proof of complete album, asset, shared-library or write coverage.
