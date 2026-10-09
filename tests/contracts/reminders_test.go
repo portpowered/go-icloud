@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/getkin/kin-openapi/openapi3"
@@ -48,7 +49,8 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 				t.Fatalf("%s exchange%d: %v", path, index, err)
 			}
 
-			invalidResponse := filepath.Base(path) == "reminders-zones-schema-error.json"
+			invalidResponse := filepath.Base(path) == "reminders-zones-schema-error.json" ||
+				strings.HasPrefix(filepath.Base(path), "reminders-lists-schema-")
 			validateRemindersExchange(t, operation, exchange, invalidResponse)
 
 			if invalidResponse {
@@ -62,7 +64,7 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 83, Pairs: 91, Operations: 6, Invalid: 1}
+	want := remindersContractInventory{Scenarios: 95, Pairs: 104, Operations: 6, Invalid: 6}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}

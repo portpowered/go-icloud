@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ListReminderLists reads the complete ordered list snapshot and membership.
+	ListReminderLists(ctx context.Context, request ListReminderListsRequest) (*ListReminderListsResult, error)
 	// ListReminderZones discovers reminder storage zones and change cursors.
 	ListReminderZones(ctx context.Context, request ListReminderZonesRequest) (*ListReminderZonesResult, error)
 	// ResumeSession validates and refreshes caller-owned saved web credentials.

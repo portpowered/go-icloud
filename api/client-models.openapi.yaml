@@ -129,6 +129,37 @@ components:
         additionalMetadata: {$ref: '#/components/schemas/ReminderMetadata', x-go-type-skip-optional-pointer: true, description: Unknown fields attached to the response envelope.}
         zones: {type: array, items: {$ref: '#/components/schemas/ReminderZone'}, description: Zones in provider order; an empty list is successful.}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+    ReminderList:
+      type: object
+      required: [id, title, color, count, badgeEmblem, sortingStyle, isGroup, deleted, reminderIDs, guid, recordChangeTag]
+      description: A reminder list snapshot with ordered membership and reference defaults.
+      example: {id: List/synthetic-list, title: Synthetic list, color: null, count: 0, badgeEmblem: null, sortingStyle: null, isGroup: false, deleted: false, reminderIDs: [], guid: null, recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: Complete provider list record name.}
+        title: {type: string, description: Display name; defaults to Untitled when absent or empty.}
+        color: {type: string, nullable: true, description: Optional display color.}
+        count: {type: integer, format: int64, description: Provider count; zero falls back to nonempty membership size.}
+        badgeEmblem: {type: string, nullable: true, description: Optional badge emblem.}
+        sortingStyle: {type: string, nullable: true, description: Optional sorting style.}
+        isGroup: {type: boolean, description: Whether the list groups other lists.}
+        deleted: {type: boolean, description: Record deletion state.}
+        reminderIDs: {type: array, x-go-name: ReminderIDs, items: {type: string}, description: Ordered membership with the Reminder/ prefix removed.}
+        guid: {type: string, nullable: true, description: Optional list GUID; reference discovery leaves it null.}
+        recordChangeTag: {type: string, nullable: true, description: Optional provider record revision.}
+    ListReminderListsRequest:
+      type: object
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    ListReminderListsResult:
+      type: object
+      required: [lists, responses]
+      description: Complete list snapshot after all pages and membership assets have been consumed.
+      example: {lists: [], responses: [{statusCode: 200, headers: []}]}
+      properties:
+        lists: {type: array, items: {$ref: '#/components/schemas/ReminderList'}, description: Lists in provider order.}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}, description: 'Every page and asset response in request order, including cookie updates.'}
     GetAccountDevicesRequest:
       type: object
       required: [auth]

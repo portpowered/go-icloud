@@ -990,6 +990,23 @@ type ListDriveLibrariesResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// ListReminderListsRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
+type ListReminderListsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListReminderListsResult Complete list snapshot after all pages and membership assets have been consumed.
+//
+// Example: {"lists":[],"responses":[{"headers":[],"statusCode":200}]}
+type ListReminderListsResult struct {
+	// Lists Lists in provider order.
+	Lists []ReminderList `json:"lists"`
+
+	// Responses Every page and asset response in request order, including cookie updates.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListReminderZonesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
 type ListReminderZonesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -1066,6 +1083,44 @@ type RegisteredDriveDocument struct {
 	// Status Open provider acknowledgement status.
 	Status               *string                     `json:"status,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// ReminderList A reminder list snapshot with ordered membership and reference defaults.
+//
+// Example: {"badgeEmblem":null,"color":null,"count":0,"deleted":false,"guid":null,"id":"List/synthetic-list","isGroup":false,"recordChangeTag":null,"reminderIDs":[],"sortingStyle":null,"title":"Synthetic list"}
+type ReminderList struct {
+	// BadgeEmblem Optional badge emblem.
+	BadgeEmblem nullable.Nullable[string] `json:"badgeEmblem"`
+
+	// Color Optional display color.
+	Color nullable.Nullable[string] `json:"color"`
+
+	// Count Provider count; zero falls back to nonempty membership size.
+	Count int64 `json:"count"`
+
+	// Deleted Record deletion state.
+	Deleted bool `json:"deleted"`
+
+	// Guid Optional list GUID; reference discovery leaves it null.
+	Guid nullable.Nullable[string] `json:"guid"`
+
+	// ID Complete provider list record name.
+	ID string `json:"id"`
+
+	// IsGroup Whether the list groups other lists.
+	IsGroup bool `json:"isGroup"`
+
+	// RecordChangeTag Optional provider record revision.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderIDs Ordered membership with the Reminder/ prefix removed.
+	ReminderIDs []string `json:"reminderIDs"`
+
+	// SortingStyle Optional sorting style.
+	SortingStyle nullable.Nullable[string] `json:"sortingStyle"`
+
+	// Title Display name; defaults to Untitled when absent or empty.
+	Title string `json:"title"`
 }
 
 // ReminderMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.

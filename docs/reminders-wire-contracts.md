@@ -85,7 +85,16 @@ The build-parameter scenario binds the optional authentication build and
 mastering query values in Source order; the external schema owns these optional
 parameters for every Reminders POST operation.
 
-The remaining public Reminders API must still port pagination, sync-token fallback, list membership precedence,
+The public `ListReminderLists` reader now binds twenty-four Source scenarios
+to complete domain results and ordered response metadata. It consumes list
+pagination and inline or downloaded membership; record errors fail the snapshot.
+Twelve added scenarios execute against the pinned reference under the strict
+offline adapter. They bind missing required response fields, nullable-array
+rejection, numeric/container truthiness and display conversion, embedded asset
+precedence, invalid membership, and empty pagination tokens. An additional nested
+display case binds control-character escaping to the reference. Five malformed
+responses must fail external schema validation as well as Source and Go decoding.
+The remaining public Reminders API must still port reminder pagination, sync-token fallback,
 record/domain mapping, CRDT/protobuf text, linked record writes, receipt/state
 updates, typed errors and all portable functional outcomes. Native authentication,
 Photos, CLI/publication/release, complete source/schema/runtime/socket gates and
