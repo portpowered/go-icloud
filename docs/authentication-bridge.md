@@ -46,6 +46,14 @@ nonce retry, modern proof exchange, cancellation, overlapping verification,
 state copies, and failed confirmations. These fixtures are synthetic evidence;
 they do not establish live-account compatibility.
 
+Thirty additional Source-derived SDK scenarios combine the HTTP and socket
+timelines. They cover full authentication, modern and legacy prompts, nonce
+retry, failed prompts, explicit SMS fallback, verification, and browser trust.
+The replay verifies both transport streams, scoped request headers, complete
+payloads, and returned account state. Separate synthetic controls check failed
+trust credential rotation, cancellation, close, overlapping verification, and
+snapshot ownership.
+
 Response headers can contain private credential values. Display client errors
 using their safe `Error` method. Inspect response metadata deliberately when
 applying rotated credentials after a failed exchange; the session retains those
