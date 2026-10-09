@@ -57,7 +57,6 @@ func uploadInteger(value nullable.Nullable[int64]) nullable.Nullable[int] {
 	result := nullable.NewNullNullable[int]()
 
 	number, err := value.Get()
-
 	if err == nil {
 		result.Set(int(number))
 	}
@@ -95,5 +94,5 @@ func photoUploadFiles(files []PhotoUploadFile) []photosupload.PhotosPutAssetFile
 }
 
 func photoUploadUnixMilliseconds(value time.Time) int64 {
-	return int64((float64(value.Unix()) + float64(value.Nanosecond())/float64(time.Second)) * 1000)
+	return int64((float64(value.Unix()) + float64(value.Nanosecond())/float64(time.Second)) * float64(time.Second/time.Millisecond))
 }

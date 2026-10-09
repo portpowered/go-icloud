@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/webtransport"
-	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
+
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/photosupload"
 	"maps"
 )
@@ -21,39 +21,7 @@ func (sdk *SDK) beginPhotoUpload(ctx context.Context, auth AuthContext, library 
 		return nil, driveContextFailure(operation, err)
 	}
 
-	boundary, err := photosRequestContext(auth, library)
-	if err != nil {
-		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
-	}
-
-	read :=
-		&photosRead{sdk: sdk, auth: boundary, operation: operation, responses: []*webtransport.BytesResponse{}}
-
-	var response *webtransport.PhotosQueryResponse
-	if library == nil {
-		response, err = sdk.web.PhotosIndexing(ctx, boundary)
-	} else {
-		zone := cloudkit.CKZoneID{ZoneName: library.ZoneName, ZoneType: library.ZoneType,
-			OwnerRecordName: library.OwnerRecordName, AdditionalProperties: nil}
-		response, err = sdk.web.PhotosLibraryIndexing(ctx, boundary, zone, library.Shared)
-	}
-
-	if err != nil {
-		return nil, read.failure(err, InvalidResponse)
-	}
-
-	read.responses = append(read.responses, response.Metadata)
-
-	state, err := photosIndexingState(response.Data)
-	if err != nil {
-		return nil, read.failure(err, InvalidResponse)
-	}
-
-	if state != protocol.PhotosPhotoFinishedStateValue {
-		return nil, read.failure(errPhotosIndexing, Unavailable)
-	}
-
-	return read, nil
+	return sdk.beginPhotosRead(ctx, auth, operation, library)
 }
 
 func photoUploadZone(auth webtransport.RequestContext) string {

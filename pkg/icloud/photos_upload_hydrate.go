@@ -130,7 +130,11 @@ func (read *photosRead) waitForPhotoIndexing(ctx context.Context, deadline time.
 
 	err := read.sdk.photoUploadWait(ctx, min(delay, remaining))
 	if err != nil {
-		return read.failure(err, Canceled)
+		kind := Canceled
+		if errors.Is(err, context.DeadlineExceeded) {
+			kind = Timeout
+		}
+		return read.failure(err, kind)
 	}
 
 	return nil
@@ -211,18 +215,24 @@ func photoUploadSessionFailure(err error) bool {
 	if !errors.As(err, &failure) {
 		return false
 	}
+
 	var envelope photosupload.PhotosSessionErrorResponse
 	if json.Unmarshal(failure.ResponseBody(), &envelope) != nil {
 		return false
 	}
-	for _, value := range []*cloudkit.CKUnknownJSON{envelope.ErrorMessage, envelope.Reason, envelope.ErrorReason, envelope.Error} {
+
+	reasons := []*cloudkit.CKUnknownJSON{envelope.ErrorMessage, envelope.Reason,
+		envelope.ErrorReason, envelope.Error}
+	for _, value := range reasons {
 		if value == nil {
 			continue
 		}
+
 		present, truthErr := reminderTruthy(*value)
 		if truthErr == nil && present {
 			return true
 		}
 	}
+
 	return false
 }

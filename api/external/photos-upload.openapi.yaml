@@ -105,6 +105,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -206,6 +216,16 @@
               "*/*": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
                 }
               }
             }
@@ -312,6 +332,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -412,6 +442,16 @@
               "*/*": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
                 }
               }
             }
@@ -520,17 +560,12 @@
             }
           },
           "429": {
-            "description": "The indexed asset is temporarily rate limited.",
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
                 }
-              }
-            },
-            "headers": {
-              "Retry-After": {
-                "$ref": "#/components/headers/Retry-After"
               }
             }
           }
@@ -638,17 +673,12 @@
             }
           },
           "429": {
-            "description": "The indexed asset is temporarily rate limited.",
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
                 }
-              }
-            },
-            "headers": {
-              "Retry-After": {
-                "$ref": "#/components/headers/Retry-After"
               }
             }
           }
@@ -855,6 +885,9 @@
       },
       "PhotosUploadTransferEncoding": {
         "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadTransferEncoding"
+      },
+      "PhotosSessionErrorResponse": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosSessionErrorResponse"
       }
     },
     "headers": {

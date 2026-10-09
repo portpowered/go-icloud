@@ -18,7 +18,7 @@ func (counter *photoUploadEntropyCounter) Read([]byte) (int, error) {
 	return 0, io.EOF
 }
 
-func TestPhotoUploadAlreadyCanceledDoesNotReadContentOrEntropy(t *testing.T) {
+func TestPhotoUploadAlreadyCanceledAvoidsContentAndEntropy(t *testing.T) {
 	t.Parallel()
 
 	calls := 0
@@ -87,6 +87,11 @@ func photoCanceledUploadOperations(client *icloud.SDK) map[string]func(context.C
 
 			return err
 		},
+		"file": func(ctx context.Context) error {
+			request := new(icloud.UploadPhotoFileRequest)
+			_, err := client.UploadPhotoFile(ctx, *request)
+			return err
+		},
 		"upload": func(ctx context.Context) error {
 			request := new(icloud.UploadPhotoRequest)
 			_, err := client.UploadPhoto(ctx, *request)
@@ -105,5 +110,14 @@ func TestPhotoUploadWaiterRejectsNil(t *testing.T) {
 
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Configuration {
 		t.Fatal("nil indexing waiter was accepted", err)
+	}
+}
+
+func TestPhotoUploadClockRejectsNil(t *testing.T) {
+	t.Parallel()
+	_, err := icloud.New(icloud.WithPhotoUploadClock(nil))
+	var failure *icloud.ClientError
+	if !errors.As(err, &failure) || failure.Kind() != icloud.Configuration {
+		t.Fatal("nil indexing elapsed clock was accepted", err)
 	}
 }

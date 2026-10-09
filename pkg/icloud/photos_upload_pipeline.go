@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/oapi-codegen/nullable"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/photosupload"
 	"io"
 	"strings"
@@ -33,11 +34,15 @@ func (sdk *SDK) UploadPhoto(ctx context.Context, request UploadPhotoRequest) (*U
 		return nil, err
 	}
 
+	var album *PhotoAlbum
+
 	if request.AlbumID != nil {
-		_, albumErr := read.photoUploadAlbum(ctx, *request.AlbumID)
+		selected, albumErr := read.photoUploadAlbum(ctx, *request.AlbumID)
 		if albumErr != nil {
 			return nil, albumErr
 		}
+
+		album = &selected
 	}
 
 	identity, err := sdk.randomUUID()
@@ -52,24 +57,35 @@ func (sdk *SDK) UploadPhoto(ctx context.Context, request UploadPhotoRequest) (*U
 		return nil, err
 	}
 
-	return read.completePhotoUpload(ctx, request, registration)
+	return read.completePhotoUpload(ctx, request, registration, album)
 }
 
 func (read *photosRead) completePhotoUpload(ctx context.Context, request UploadPhotoRequest,
-	registration photosupload.PhotosPutAssetResult,
+	registration photosupload.PhotosPutAssetResult, album *PhotoAlbum,
 ) (*UploadPhotoResult, error) {
 	result := &UploadPhotoResult{Registration: projectPhotoRegistration(registration),
 		Photo: nullable.NewNullNullable[Photo](), Indexed: false, Responses: read.metadata()}
 
-	if request.Hydrate || request.AlbumID != nil {
-		photo, hydrationErr := read.hydratePhotoUpload(ctx, request, registration)
-		if hydrationErr != nil {
-			return nil, hydrationErr
+	if !request.Hydrate && request.AlbumID == nil {
+		return result, nil
+	}
+	photo, hydrationErr := read.hydratePhotoUpload(ctx, request, registration)
+	if hydrationErr != nil {
+		return nil, hydrationErr
+	}
+	if len(photo) == 0 {
+		result.Responses = read.metadata()
+		return result, nil
+	}
+	result.Photo.Set(photo[0])
+	result.Indexed = true
+	if album != nil && album.ID != string(cloudkit.Library) {
+		added, albumErr := read.addPhotoToAlbum(ctx, *album, photo[0])
+		if albumErr != nil {
+			return nil, albumErr
 		}
-
-		if len(photo) != 0 {
-			result.Photo.Set(photo[0])
-			result.Indexed = true
+		if !added {
+			return nil, read.failure(errPhotoMutationRejected, Provider)
 		}
 	}
 

@@ -14,7 +14,9 @@ const photosUploadSchemaPath = "../../api/external/photos-upload.openapi.yaml"
 
 func TestPhotosUploadGenerationHasNoDrift(t *testing.T) {
 	t.Parallel()
-	verifyGeneration(t, generationArtifact{Schema: "../../api/external/photos-upload-models.openapi.yaml", Config: "../../pkg/dependencymodels/photosupload/config.yaml", Output: "../../pkg/dependencymodels/photosupload/models.gen.go"})
+	verifyGeneration(t, generationArtifact{Schema: "../../api/external/photos-upload-models.openapi.yaml",
+		Config: "../../pkg/dependencymodels/photosupload/config.yaml",
+		Output: "../../pkg/dependencymodels/photosupload/models.gen.go"})
 	verifyGeneration(t, generationArtifact{Schema: photosUploadSchemaPath,
 		Config: "../../internal/photosuploadapi/config.yaml", Output: "../../internal/photosuploadapi/client.gen.go"})
 }

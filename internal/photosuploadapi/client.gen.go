@@ -229,6 +229,9 @@ type PhotosPutAssetResults = externalRef1.PhotosPutAssetResults
 // PhotosPutAssetStatus defines model for PhotosPutAssetStatus.
 type PhotosPutAssetStatus = externalRef1.PhotosPutAssetStatus
 
+// PhotosSessionErrorResponse Session error reasons that raise before the CloudKit response adapter.
+type PhotosSessionErrorResponse = externalRef1.PhotosSessionErrorResponse
+
 // PhotosSingleFileUpload Stored-byte receipt. Unknown provider fields must be retained when registering the asset. Missing known fields default to null when echoed in registration.
 type PhotosSingleFileUpload = externalRef1.PhotosSingleFileUpload
 
@@ -2277,11 +2280,6 @@ type ClientWithResponsesInterface interface {
 	PhotosSendUploadBytesWithBodyWithResponse(ctx context.Context, contentPath PhotosUploadContentPath, params *PhotosSendUploadBytesParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PhotosSendUploadBytesResponse, error)
 }
 
-// PhotosHydrateUploadedAssetResponse429Headers the declared response headers of an HTTP 429 response for PhotosHydrateUploadedAsset
-type PhotosHydrateUploadedAssetResponse429Headers struct {
-	RetryAfter *string
-}
-
 type PhotosHydrateUploadedAssetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2289,8 +2287,8 @@ type PhotosHydrateUploadedAssetResponse struct {
 	JSON200 *CKLookupResponse
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *CKLookupResponse
-	// Headers429 the parsed response headers for an HTTP 429 response
-	Headers429 *PhotosHydrateUploadedAssetResponse429Headers
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *PhotosSessionErrorResponse
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -2301,6 +2299,11 @@ func (r PhotosHydrateUploadedAssetResponse) GetJSON200() *CKLookupResponse {
 // GetJSON2XX returns the response for an HTTP 2XX `application/json` response
 func (r PhotosHydrateUploadedAssetResponse) GetJSON2XX() *CKLookupResponse {
 	return r.JSON2XX
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r PhotosHydrateUploadedAssetResponse) GetJSON429() *PhotosSessionErrorResponse {
+	return r.JSON429
 }
 
 // GetBody returns the raw response body bytes
@@ -2332,11 +2335,6 @@ func (r PhotosHydrateUploadedAssetResponse) ContentType() string {
 	return ""
 }
 
-// PhotosHydrateUploadedAssetSharedResponse429Headers the declared response headers of an HTTP 429 response for PhotosHydrateUploadedAssetShared
-type PhotosHydrateUploadedAssetSharedResponse429Headers struct {
-	RetryAfter *string
-}
-
 type PhotosHydrateUploadedAssetSharedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2344,8 +2342,8 @@ type PhotosHydrateUploadedAssetSharedResponse struct {
 	JSON200 *CKLookupResponse
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *CKLookupResponse
-	// Headers429 the parsed response headers for an HTTP 429 response
-	Headers429 *PhotosHydrateUploadedAssetSharedResponse429Headers
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *PhotosSessionErrorResponse
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -2356,6 +2354,11 @@ func (r PhotosHydrateUploadedAssetSharedResponse) GetJSON200() *CKLookupResponse
 // GetJSON2XX returns the response for an HTTP 2XX `application/json` response
 func (r PhotosHydrateUploadedAssetSharedResponse) GetJSON2XX() *CKLookupResponse {
 	return r.JSON2XX
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r PhotosHydrateUploadedAssetSharedResponse) GetJSON429() *PhotosSessionErrorResponse {
+	return r.JSON429
 }
 
 // GetBody returns the raw response body bytes
@@ -2394,6 +2397,8 @@ type PhotosCreateUploadUrlResponse struct {
 	JSON200 *PhotosUploadReservationResponse
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *PhotosUploadReservationResponse
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *PhotosSessionErrorResponse
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -2404,6 +2409,11 @@ func (r PhotosCreateUploadUrlResponse) GetJSON200() *PhotosUploadReservationResp
 // GetJSON2XX returns the response for an HTTP 2XX `application/json` response
 func (r PhotosCreateUploadUrlResponse) GetJSON2XX() *PhotosUploadReservationResponse {
 	return r.JSON2XX
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r PhotosCreateUploadUrlResponse) GetJSON429() *PhotosSessionErrorResponse {
+	return r.JSON429
 }
 
 // GetBody returns the raw response body bytes
@@ -2442,6 +2452,8 @@ type PhotosPutAssetResponse struct {
 	JSON200 *PhotosPutAssetResults
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *PhotosPutAssetResults
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *PhotosSessionErrorResponse
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -2452,6 +2464,11 @@ func (r PhotosPutAssetResponse) GetJSON200() *PhotosPutAssetResults {
 // GetJSON2XX returns the response for an HTTP 2XX `application/json` response
 func (r PhotosPutAssetResponse) GetJSON2XX() *PhotosPutAssetResults {
 	return r.JSON2XX
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r PhotosPutAssetResponse) GetJSON429() *PhotosSessionErrorResponse {
+	return r.JSON429
 }
 
 // GetBody returns the raw response body bytes
@@ -2490,6 +2507,8 @@ type PhotosUploadStatusResponse struct {
 	JSON200 *PhotosUploadStatusEntries
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *PhotosUploadStatusEntries
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *PhotosSessionErrorResponse
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -2500,6 +2519,11 @@ func (r PhotosUploadStatusResponse) GetJSON200() *PhotosUploadStatusEntries {
 // GetJSON2XX returns the response for an HTTP 2XX `application/json` response
 func (r PhotosUploadStatusResponse) GetJSON2XX() *PhotosUploadStatusEntries {
 	return r.JSON2XX
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r PhotosUploadStatusResponse) GetJSON429() *PhotosSessionErrorResponse {
+	return r.JSON429
 }
 
 // GetBody returns the raw response body bytes
@@ -2538,6 +2562,8 @@ type PhotosSendUploadBytesResponse struct {
 	JSON200 *PhotosSingleFileUploadResponse
 	// JSON2XX the response for an HTTP 2XX `application/json` response
 	JSON2XX *PhotosSingleFileUploadResponse
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *PhotosSessionErrorResponse
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -2548,6 +2574,11 @@ func (r PhotosSendUploadBytesResponse) GetJSON200() *PhotosSingleFileUploadRespo
 // GetJSON2XX returns the response for an HTTP 2XX `application/json` response
 func (r PhotosSendUploadBytesResponse) GetJSON2XX() *PhotosSingleFileUploadResponse {
 	return r.JSON2XX
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r PhotosSendUploadBytesResponse) GetJSON429() *PhotosSessionErrorResponse {
+	return r.JSON429
 }
 
 // GetBody returns the raw response body bytes
@@ -2772,25 +2803,19 @@ func ParsePhotosHydrateUploadedAssetResponse(rsp *http.Response) (*PhotosHydrate
 		}
 		response.JSON2XX = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest PhotosSessionErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
+
 	case rsp.StatusCode/100 == 2:
 	// Content-type (*/*) unsupported
 
 	case rsp.StatusCode == 200:
 		// Content-type (*/*) unsupported
 
-	}
-
-	switch {
-	case rsp.StatusCode == 429:
-		var headers PhotosHydrateUploadedAssetResponse429Headers
-		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
-				return nil, err
-			}
-			headers.RetryAfter = &value
-		}
-		response.Headers429 = &headers
 	}
 
 	return response, nil
@@ -2824,25 +2849,19 @@ func ParsePhotosHydrateUploadedAssetSharedResponse(rsp *http.Response) (*PhotosH
 		}
 		response.JSON2XX = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest PhotosSessionErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
+
 	case rsp.StatusCode/100 == 2:
 	// Content-type (*/*) unsupported
 
 	case rsp.StatusCode == 200:
 		// Content-type (*/*) unsupported
 
-	}
-
-	switch {
-	case rsp.StatusCode == 429:
-		var headers PhotosHydrateUploadedAssetSharedResponse429Headers
-		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
-				return nil, err
-			}
-			headers.RetryAfter = &value
-		}
-		response.Headers429 = &headers
 	}
 
 	return response, nil
@@ -2875,6 +2894,13 @@ func ParsePhotosCreateUploadUrlResponse(rsp *http.Response) (*PhotosCreateUpload
 			return nil, err
 		}
 		response.JSON2XX = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest PhotosSessionErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
 
 	case rsp.StatusCode/100 == 2:
 	// Content-type (*/*) unsupported
@@ -2915,6 +2941,13 @@ func ParsePhotosPutAssetResponse(rsp *http.Response) (*PhotosPutAssetResponse, e
 		}
 		response.JSON2XX = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest PhotosSessionErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
+
 	case rsp.StatusCode/100 == 2:
 	// Content-type (*/*) unsupported
 
@@ -2954,6 +2987,13 @@ func ParsePhotosUploadStatusResponse(rsp *http.Response) (*PhotosUploadStatusRes
 		}
 		response.JSON2XX = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest PhotosSessionErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
+
 	case rsp.StatusCode/100 == 2:
 	// Content-type (*/*) unsupported
 
@@ -2992,6 +3032,13 @@ func ParsePhotosSendUploadBytesResponse(rsp *http.Response) (*PhotosSendUploadBy
 			return nil, err
 		}
 		response.JSON2XX = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest PhotosSessionErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
 
 	case rsp.StatusCode/100 == 2:
 	// Content-type (*/*) unsupported
