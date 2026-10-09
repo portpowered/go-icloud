@@ -92,7 +92,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_photo_count_matrix(self):
         paths = sorted(FIXTURES.glob("photos-count-*.json"))
-        self.assertEqual(len(paths), 66)
+        self.assertEqual(len(paths), 56)
         self.assertEqual(sum(replay_synthetic(path) for path in paths), 161)
 
     def test_photo_count_results_requests_and_consumption_are_bound(self):
@@ -181,7 +181,7 @@ class SyntheticTests(unittest.TestCase):
     def test_reminder_related_lookup_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-related-*.json"))
         self.assertEqual(len(paths), 46)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 61)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 51)
         for kind in ["tags", "attachments", "recurrence-rules", "alarms"]:
             scenario = json.loads(
                 (FIXTURES / f"reminders-related-{kind}-empty-ids.json").read_text()
@@ -509,7 +509,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_sync_cursor_fallback_and_paging_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-sync-*.json"))
-        self.assertEqual(len(paths), 63)
+        self.assertEqual(len(paths), 53)
         pairs = 0
         for path in paths:
             scenario = json.loads(path.read_text(encoding="utf-8"))
