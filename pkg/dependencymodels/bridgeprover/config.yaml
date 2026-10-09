@@ -1,0 +1,6 @@
+package: bridgeprover
+generate:
+  models: true
+output: pkg/dependencymodels/bridgeprover/models.gen.go
+output-options:
+  skip-prune: true
