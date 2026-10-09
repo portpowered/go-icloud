@@ -1,12 +1,20 @@
 # iCloud migration checklist
 
-Latest incomplete Photos record milestone: three synthetic public-iterator
-cases and twelve exchanges preserve complete valid results while skipping
-orphan masters and assets. Pairing, omitted-result and unused-traffic negative
-controls pass. The portable corpus contains 516 scenarios and 1,188 exchanges;
-Source diagnostic coverage is 583/905 entered functions, 3,235/5,398 body
-statements (59.93%), and 994/2,076 branch exits. Public Go Photos semantic parity
-and full template acceptance remain open.
+Latest reference milestone: three synthetic single-reminder lookup cases bind
+all 21 public fields, versioned title/notes documents, ordered related IDs,
+field dates, audit-date fallback and unreadable-document fallback. Missing-field
+negative controls cover text, dates and related IDs. The portable corpus now
+contains 536 scenarios and 1,209 exchanges. These new cases run through the
+pinned Source; public Go reminder lookup is not implemented yet.
+
+The preceding merged Go milestone implements reminder zone and list reads in
+the SDK and separate CLI. The CLI passes 34 complete semantic replays against
+the published SDK dependency, with 275/335 handwritten statements covered by
+replay (82.1%) and 282/335 combined (84.2%). PR32 passed exact-commit CI and
+independent review before merging. The last Source measurement, before the new
+lookup cases, entered 592/905 functions and covered 3,293/5,398 body statements
+(61.0%) and 1,012/2,076 branch exits. Public Go Photos semantic parity, remaining
+Reminders operations, native login and full template acceptance remain open.
 
 Objective: cover every relevant endpoint/function in Photos, Find My/devices,
 Drive, account, and reminders; establish portable reference scenarios; implement

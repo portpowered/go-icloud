@@ -46,12 +46,12 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-All 83 existing implementation-derived synthetic Reminders scenarios contain
-91 paired exchanges: 88 POST pairs and three membership-asset downloads. Contract
+The current 98 implementation-derived synthetic Reminders scenarios contain
+107 paired exchanges: 104 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
-The source-invalid zone reply is required to fail schema validation. Ten sanitized
+Six source-invalid zone/list replies must fail schema validation. Ten sanitized
 examples cover each POST request/reply responsibility. These are synthetic
 reference examples, not captured Apple writes (SCHEMA-08, SCHEMA-12).
 
