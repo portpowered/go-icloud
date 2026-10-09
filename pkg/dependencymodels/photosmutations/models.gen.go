@@ -281,8 +281,9 @@ func (e PhotoFavoriteRequestAtomic) Valid() bool {
 
 // Defines values for PhotoMutationAlbumKind.
 const (
-	AlbumKind  PhotoMutationAlbumKind = 0
-	FolderKind PhotoMutationAlbumKind = 3
+	AlbumKind      PhotoMutationAlbumKind = 0
+	FolderKind     PhotoMutationAlbumKind = 3
+	SmartAlbumKind PhotoMutationAlbumKind = 6
 )
 
 // Valid indicates whether the value is a known member of the PhotoMutationAlbumKind enum.
@@ -291,6 +292,8 @@ func (e PhotoMutationAlbumKind) Valid() bool {
 	case AlbumKind:
 		return true
 	case FolderKind:
+		return true
+	case SmartAlbumKind:
 		return true
 	default:
 		return false

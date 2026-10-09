@@ -2,12 +2,15 @@ package icloud
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	pm "github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations"
+	"maps"
+	"net/http"
 )
 
 var errPhotoMutationRejected = errors.New("photo mutation rejected")
@@ -59,6 +62,7 @@ func (read *photosRead) modifyPhoto(ctx context.Context,
 	if len(private) != 0 && private[0] {
 		auth.PhotoShared = false
 	}
+
 	response, err := read.sdk.web.ModifyPhotos(ctx, auth, input)
 	if err != nil {
 		return nil, false, read.failure(err, InvalidResponse)
@@ -116,28 +120,35 @@ func (read *photosRead) mutationPhoto(ctx context.Context, album *string,
 	if album != nil {
 		name = *album
 	}
+
 	entry, err := read.mutationAlbum(ctx, name)
 	if err != nil {
 		return cloudkit.CKRecord{}, cloudkit.CKRecord{}, err
 	}
+
 	master, asset, present, err := read.lookupMutationPhoto(ctx, entry, photoID)
 	if err != nil {
 		return master, asset, err
 	}
+
 	if !present {
 		return master, asset, read.failure(fmt.Errorf("%w: %s", errPhotoMutationRejected, photoID), NotFound)
 	}
+
 	return master, asset, nil
 }
 func (read *photosRead) lookupMutationPhoto(ctx context.Context, entry photoAlbumEntry,
 	photoID string,
 ) (cloudkit.CKRecord, cloudkit.CKRecord, bool, error) {
 	var master, asset cloudkit.CKRecord
+
 	photos, err := read.lookupPhoto(ctx, entry, photoID, func(masterRecord, assetRecord cloudkit.CKRecord) (Photo, error) {
 		master = masterRecord
 		asset = assetRecord
+
 		return projectPhoto(masterRecord, assetRecord)
 	})
+
 	return master, asset, len(photos) != 0, err
 }
 
@@ -181,5 +192,48 @@ func (sdk *SDK) beginPhotosMutation(ctx context.Context, auth AuthContext, opera
 	if err != nil {
 		return nil, driveContextFailure(operation, err)
 	}
+
 	return sdk.beginPhotosRead(ctx, auth, operation, library)
+}
+
+func photoFavoriteFallback(asset cloudkit.CKRecord, value int64) (cloudkit.CKRecord, error) {
+	encoded, err := json.Marshal(photoMutationInteger(value))
+	if err != nil {
+		return asset, fmt.Errorf("encode favorite fallback: %w", err)
+	}
+
+	var field cloudkit.CKFieldOpen
+
+	err = json.Unmarshal(encoded, &field)
+	if err != nil {
+		return asset, fmt.Errorf("decode favorite fallback: %w", err)
+	}
+
+	fields := map[string]cloudkit.CKFieldOpen{}
+	if asset.Fields != nil {
+		fields = maps.Clone(*asset.Fields)
+	}
+
+	if fields == nil {
+		fields = map[string]cloudkit.CKFieldOpen{}
+	}
+
+	fields[string(pm.FavoriteFieldName)] = field
+	asset.Fields = &fields
+
+	return asset, nil
+}
+func (read *photosRead) appendPhotoRefreshFailure(err error) {
+	var failure *ClientError
+	if !errors.As(err, &failure) || failure.StatusCode() == 0 {
+		return
+	}
+
+	headers := http.Header{}
+	for _, header := range failure.ResponseHeaders() {
+		headers.Add(header.Name, header.Value)
+	}
+
+	read.responses = append(read.responses, &webtransport.BytesResponse{Body: failure.ResponseBody(),
+		Status: failure.StatusCode(), Headers: headers, CookieScopeURL: failure.CookieScopeURL()})
 }

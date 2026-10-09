@@ -8,9 +8,11 @@ import (
 func TestPhotoMutationVariantsRejectMalformedRequests(t *testing.T) {
 	t.Parallel()
 	models := loadDriveDocument(t, "../../api/external/photos-mutations-models.openapi.yaml")
+	document := loadDriveDocument(t, "../../api/external/photos.openapi.yaml")
 
 	for variant, names := range map[string][]string{
-		"PhotoAlbumCreationRequest": {"photos-create-album", "photos-create-folder"},
+		"PhotoAlbumCreationRequest": {"photos-create-album", "photos-create-folder",
+			"photos-shared-library-create-album", "photos-shared-library-create-album-refused-4"},
 		"PhotoAlbumRenameRequest":   {"photos-rename-album"},
 		"PhotoAlbumDeletionRequest": {"photos-delete-album"},
 		"PhotoAlbumRelationRequest": {"photos-add-to-album"},
@@ -23,7 +25,8 @@ func TestPhotoMutationVariantsRejectMalformedRequests(t *testing.T) {
 
 				exchanges := accountExchanges(t, "../replay/fixtures/synthetic/http/"+name+".json")
 				for _, pair := range exchanges {
-					if pair.Request.Path != "/database/1/com.apple.photos.cloud/production/private/records/modify" {
+					if pair.Request.Path != "/database/1/com.apple.photos.cloud/production/private/records/modify" &&
+						pair.Request.Path != "/database/1/com.apple.photos.cloud/production/shared/records/modify" {
 						continue
 					}
 
@@ -33,7 +36,8 @@ func TestPhotoMutationVariantsRejectMalformedRequests(t *testing.T) {
 					}
 
 					for _, schema := range []*openapi3.Schema{models.Components.Schemas[variant].Value,
-						models.Components.Schemas["PhotoMutationRequest"].Value} {
+						models.Components.Schemas["PhotoMutationRequest"].Value,
+						document.Paths.Value(pair.Request.Path).Post.RequestBody.Value.Content["application/json"].Schema.Value} {
 						err = schema.VisitJSON(value)
 						if err != nil {
 							t.Fatal(err)

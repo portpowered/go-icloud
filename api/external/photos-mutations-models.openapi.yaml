@@ -229,7 +229,8 @@
         "properties": {
           "recordName": {
             "type": "string",
-            "x-order": 1
+            "x-order": 1,
+            "pattern": "^[0-9A-F]{32}$"
           },
           "recordType": {
             "type": "string",
@@ -989,11 +990,13 @@
         "format": "int64",
         "enum": [
           0,
-          3
+          3,
+          6
         ],
         "x-enum-varnames": [
           "AlbumKind",
-          "FolderKind"
+          "FolderKind",
+          "SmartAlbumKind"
         ],
         "description": "Generated PhotoMutationAlbumKind CloudKit wire contract."
       },
@@ -1042,7 +1045,8 @@
             "format": "int64",
             "enum": [
               0,
-              3
+              3,
+              6
             ]
           }
         },

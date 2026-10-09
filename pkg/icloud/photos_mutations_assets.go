@@ -19,13 +19,27 @@ func (sdk *SDK) AddPhotoToAlbum(ctx context.Context,
 		return nil, err
 	}
 
-	return read.addPhotoRelation(ctx, request.AlbumID, asset.RecordName)
+	var album PhotoAlbum
+
+	album.ID = request.AlbumID
+
+	var photo Photo
+
+	photo.ID = asset.RecordName
+
+	added, err := read.addPhotoToAlbum(ctx, album, photo)
+	if err != nil {
+		return nil, err
+	}
+
+	return &PhotoAlbumRelationResult{Added: added, Responses: read.metadata()}, nil
 }
 func (read *photosRead) addPhotoToAlbum(ctx context.Context, album PhotoAlbum, photo Photo) (bool, error) {
 	result, err := read.addPhotoRelation(ctx, album.ID, photo.ID)
 	if err != nil {
 		return false, err
 	}
+
 	return result.Added, nil
 }
 func (read *photosRead) addPhotoRelation(ctx context.Context, albumID, item string) (*PhotoAlbumRelationResult, error) {
@@ -42,8 +56,8 @@ func (read *photosRead) addPhotoRelation(ctx context.Context, albumID, item stri
 		Atomic: pm.PhotoAlbumRelationRequestAtomicTrue}
 
 	var wire pm.PhotoMutationRequest
-	err := wire.FromPhotoAlbumRelationRequest(input)
 
+	err := wire.FromPhotoAlbumRelationRequest(input)
 	if err != nil {
 		return nil, read.failure(err, Configuration)
 	}
@@ -91,8 +105,8 @@ func (sdk *SDK) DeletePhoto(ctx context.Context, request DeletePhotoRequest) (*P
 		Atomic: pm.PhotoAssetDeletionRequestAtomicTrue}
 
 	var wire pm.PhotoMutationRequest
-	err = wire.FromPhotoAssetDeletionRequest(input)
 
+	err = wire.FromPhotoAssetDeletionRequest(input)
 	if err != nil {
 		return nil, read.failure(err, Configuration)
 	}
@@ -146,8 +160,8 @@ func (sdk *SDK) SetPhotoFavorite(ctx context.Context,
 		Atomic: pm.PhotoFavoriteRequestAtomicTrue}
 
 	var wire pm.PhotoMutationRequest
-	err = wire.FromPhotoFavoriteRequest(input)
 
+	err = wire.FromPhotoFavoriteRequest(input)
 	if err != nil {
 		return nil, read.failure(err, Configuration)
 	}
@@ -157,20 +171,35 @@ func (sdk *SDK) SetPhotoFavorite(ctx context.Context,
 		return nil, err
 	}
 
-	return read.confirmPhotoFavorite(ctx, request, master, asset, records, rejected, value)
+	return read.confirmPhotoFavorite(ctx, request.PhotoID, master, asset, records, rejected, value)
 }
 func (read *photosRead) confirmPhotoFavorite(ctx context.Context,
-	request SetPhotoFavoriteRequest,
+	photoID string,
 	master,
 	asset cloudkit.CKRecord,
 	records []cloudkit.CKRecord,
 	rejected bool,
 	value int64) (*PhotoMutationResult, error) {
 	asset, matched := photoAcknowledgedAsset(asset, records)
-	shared := request.Library != nil && request.Library.IsSharedLibrary
-	if shared || !matched || rejected {
-		refreshedMaster, refreshedAsset, ok, refreshErr := read.refreshMutationPhoto(ctx, request.PhotoID)
-		if refreshErr == nil && ok {
+	if !matched {
+		var err error
+
+		asset, err = photoFavoriteFallback(asset, value)
+		if err != nil {
+			return nil, read.failure(err, InvalidResponse)
+		}
+	}
+
+	if read.sharedLibrary || !matched || rejected {
+		refreshedMaster, refreshedAsset, present, refreshErr := read.refreshMutationPhoto(ctx, photoID)
+
+		if ctx.Err() != nil {
+			return nil, read.failure(ctx.Err(), Canceled)
+		}
+
+		read.appendPhotoRefreshFailure(refreshErr)
+
+		if refreshErr == nil && present {
 			master = refreshedMaster
 			asset = refreshedAsset
 			rejected = false
@@ -183,7 +212,9 @@ func (read *photosRead) confirmPhotoFavorite(ctx context.Context,
 
 	return read.favoriteMutationResult(master, asset, value)
 }
-func (read *photosRead) favoriteMutationResult(master, asset cloudkit.CKRecord, value int64) (*PhotoMutationResult, error) {
+func (read *photosRead) favoriteMutationResult(master, asset cloudkit.CKRecord,
+	value int64,
+) (*PhotoMutationResult, error) {
 	raw, err := photoFieldValue(asset, string(pm.FavoriteFieldName))
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
@@ -211,6 +242,7 @@ func photoAcknowledgedAsset(asset cloudkit.CKRecord, records []cloudkit.CKRecord
 			return record, true
 		}
 	}
+
 	return asset, false
 }
 func (read *photosRead) refreshMutationPhoto(ctx context.Context, photoID string,
@@ -218,5 +250,6 @@ func (read *photosRead) refreshMutationPhoto(ctx context.Context, photoID string
 	entry := photoAlbumEntry{album: PhotoAlbum{ID: string(cloudkit.Library), Name: string(cloudkit.Library),
 		FullName: string(cloudkit.Library), RecordChangeTag: nil}, index: photoSmartIndex(cloudkit.Library),
 		parent: nil, descending: false}
+
 	return read.lookupMutationPhoto(ctx, entry, photoID)
 }

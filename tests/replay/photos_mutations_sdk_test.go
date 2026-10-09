@@ -8,6 +8,7 @@ import (
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -27,7 +28,9 @@ func TestPhotoMutationSDKPortableScenarios(t *testing.T) {
 		"photos-delete-asset",
 		"photos-delete-asset-record-rejection",
 		"photos-shared-library-favorite-true",
-		"photos-shared-library-favorite-record-error"} {
+		"photos-shared-library-favorite-record-error",
+		"photos-shared-library-create-album",
+		"photos-shared-library-create-album-refused-4"} {
 		t.Run(name, func(t *testing.T) { t.Parallel(); runPhotoMutationScenario(t, name) })
 	}
 }
@@ -37,11 +40,6 @@ func runPhotoMutationScenario(t *testing.T, name string) {
 	path := filepath.Join("fixtures", "synthetic", "http", name+".json")
 	scenario := readAccountScenario(t, path)
 
-	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	raw := authReplayObject(t, path)
 
 	var operation string
@@ -50,21 +48,9 @@ func runPhotoMutationScenario(t *testing.T, name string) {
 	var inputs []json.RawMessage
 	authReplayDecode(t, raw["inputs"], &inputs)
 
-	entropy := []byte{}
-	if operation == "create_album" {
-		entropy, _ = base64.StdEncoding.DecodeString("AAECAwQFBgcICQoLDA0ODw==")
-	}
+	client, transport := newPhotoMutationReplay(t, scenario)
 
-	client,
-		err := icloud.New(icloud.WithHTTPTransport(transport),
-		icloud.WithRandomSource(bytes.NewReader(entropy)),
-		icloud.WithClock(func() time.Time {
-			return time.Unix(1700000000,
-				0)
-		}))
-	if err != nil {
-		t.Fatal(err)
-	}
+	var err error
 
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
@@ -80,7 +66,11 @@ func runPhotoMutationScenario(t *testing.T, name string) {
 	metadata, err = callPhotoMutationScenario(t, client, auth, library, scenario, operation, name, inputs)
 
 	if len(scenario.Error) != 0 || name == "photos-delete-asset-record-rejection" {
-		checkPhotoMutationFailure(t, scenario, prefix, err, icloud.Provider)
+		kind := icloud.Provider
+		if scenario.Exchanges[len(scenario.Exchanges)-1].Response.Status >= 400 {
+			kind = reminderSyncFailureKind(scenario.Exchanges[len(scenario.Exchanges)-1].Response.Status)
+		}
+		checkPhotoMutationFailure(t, scenario, prefix, err, kind)
 	} else {
 		if err != nil {
 			t.Fatal(err, errors.Unwrap(err), transport.AssertConsumed())
@@ -116,9 +106,10 @@ func callPhotoMutationScenario(t *testing.T, client *icloud.SDK, auth icloud.Aut
 	scenario accountScenario, operation, name string, inputs []json.RawMessage,
 ) ([]icloud.ResponseMetadata, error) {
 	t.Helper()
+
 	switch operation {
 	case "create_album", "album_rename", "album_delete":
-		return callPhotoAlbumMutation(t, client, auth, scenario, operation, name, inputs)
+		return callPhotoAlbumMutation(t, client, auth, library, scenario, operation, name, inputs)
 	default:
 		return callPhotoAssetMutation(t, client, auth, library, scenario, operation, inputs)
 	}
@@ -132,10 +123,13 @@ const (
 func discoverPhotoMutationLibrary(t *testing.T, client *icloud.SDK, auth icloud.AuthContext, name string,
 ) (*icloud.PhotoLibrary, []icloud.ResponseMetadata) {
 	t.Helper()
-	var library *icloud.PhotoLibrary
-	var prefix []icloud.ResponseMetadata
 
-	if name == "photos-shared-library-favorite-true" || name == "photos-shared-library-favorite-record-error" {
+	var (
+		library *icloud.PhotoLibrary
+		prefix  []icloud.ResponseMetadata
+	)
+
+	if strings.HasPrefix(name, "photos-shared-library-") {
 		discovered, callErr := client.ListPhotoLibraries(t.Context(), icloud.ListPhotoLibrariesRequest{Auth: auth})
 		if callErr != nil {
 			t.Fatal(callErr)
@@ -159,12 +153,15 @@ func discoverPhotoMutationLibrary(t *testing.T, client *icloud.SDK, auth icloud.
 	return library, prefix
 }
 
-func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthContext,
+func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthContext, library *icloud.PhotoLibrary,
 	scenario accountScenario, operation, name string, inputs []json.RawMessage,
 ) ([]icloud.ResponseMetadata, error) {
 	t.Helper()
-	var metadata []icloud.ResponseMetadata
-	var err error
+
+	var (
+		metadata []icloud.ResponseMetadata
+		err      error
+	)
 
 	switch operation {
 	case "create_album":
@@ -175,7 +172,8 @@ func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 			icloud.CreatePhotoAlbumRequest{Auth: auth,
 				Name:    value,
 				Folder:  name == "photos-create-folder",
-				Library: nil})
+				Type:    nil,
+				Library: library})
 		err = callErr
 
 		if result != nil {
@@ -190,7 +188,7 @@ func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 			icloud.RenamePhotoAlbumRequest{Auth: auth,
 				AlbumID: photoMutationAlbumID,
 				Name:    value,
-				Library: nil})
+				Library: library})
 		err = callErr
 
 		if result != nil {
@@ -205,16 +203,15 @@ func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 			callErr := client.DeletePhotoAlbum(t.Context(),
 			icloud.DeletePhotoAlbumRequest{Auth: auth,
 				AlbumID: photoMutationAlbumID,
-				Library: nil})
+				Library: library})
 		err = callErr
 
 		if result != nil {
 			metadata = result.Responses
-			if !result.Deleted {
-				t.Fatal("album not deleted")
-			}
+			requirePhotoMutationAcknowledged(t, result.Deleted)
 		}
 	}
+
 	return metadata, err
 }
 
@@ -222,8 +219,12 @@ func callPhotoAssetMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 	scenario accountScenario, operation string, inputs []json.RawMessage,
 ) ([]icloud.ResponseMetadata, error) {
 	t.Helper()
-	var metadata []icloud.ResponseMetadata
-	var err error
+
+	var (
+		metadata []icloud.ResponseMetadata
+		err      error
+	)
+
 	switch operation {
 	case "album_add_photo":
 		result,
@@ -236,9 +237,7 @@ func callPhotoAssetMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 
 		if result != nil {
 			metadata = result.Responses
-			if !result.Added {
-				t.Fatal("relation not added")
-			}
+			requirePhotoMutationAcknowledged(t, result.Added)
 		}
 	case "photo_favorite":
 		var value bool
@@ -255,13 +254,7 @@ func callPhotoAssetMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 		if result != nil {
 			metadata = result.Responses
 
-			var expected map[string]json.RawMessage
-			authReplayDecode(t, scenario.Result, &expected)
-			checkPhotoAssetsProjection(t,
-				[]icloud.Photo{result.Photo},
-				append(append(json.RawMessage("["),
-					expected["photo"]...),
-					']'))
+			checkPhotoMutationPhoto(t, result.Photo, scenario.Result)
 		}
 	case "photo_delete":
 		result,
@@ -274,12 +267,53 @@ func callPhotoAssetMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 
 		if result != nil {
 			metadata = result.Responses
-			if !result.Deleted {
-				t.Fatal("asset not deleted")
-			}
+			requirePhotoMutationAcknowledged(t, result.Deleted)
 		}
 	default:
 		t.Fatal("unknown mutation", operation)
 	}
+
 	return metadata, err
+}
+
+func newPhotoMutationReplay(t *testing.T, scenario accountScenario) (*icloud.SDK, *replay.HTTPTransport) {
+	t.Helper()
+
+	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entropy, err := base64.StdEncoding.DecodeString("AAECAwQFBgcICQoLDA0ODw==")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client,
+		err := icloud.New(icloud.WithHTTPTransport(transport),
+		icloud.WithRandomSource(bytes.NewReader(entropy)),
+		icloud.WithClock(func() time.Time {
+			return time.Unix(1700000000,
+				0)
+		}))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return client, transport
+}
+
+func requirePhotoMutationAcknowledged(t *testing.T, acknowledged bool) {
+	t.Helper()
+	if !acknowledged {
+		t.Fatal("mutation not acknowledged")
+	}
+}
+
+func checkPhotoMutationPhoto(t *testing.T, photo icloud.Photo, raw json.RawMessage) {
+	t.Helper()
+	var expected map[string]json.RawMessage
+	authReplayDecode(t, raw, &expected)
+	checkPhotoAssetsProjection(t, []icloud.Photo{photo},
+		append(append(json.RawMessage("["), expected["photo"]...), ']'))
 }
