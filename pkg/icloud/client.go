@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ApplySessionResponses copies a native session and applies response updates without network I/O.
+	ApplySessionResponses(ctx context.Context, request ApplySessionResponsesRequest) (*ApplySessionResponsesResult, error)
 	// GetPhoto finds one album asset by identifier with Source enumeration fallback.
 	GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error)
 	// DownloadPhoto retrieves exact rendition bytes through the photo's provider-issued resource URL.

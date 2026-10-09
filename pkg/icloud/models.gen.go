@@ -364,6 +364,24 @@ type AccountStorageUsage struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// ApplySessionResponsesRequest Apply observed response cookie/token updates to a copied native session without making a network request.
+//
+// Example: {"responses":[],"session":{"accountCountryCode":null,"accountData":{},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"requiresTwoFactor":false,"requiresTwoStep":false,"responses":[],"trustToken":"synthetic-trust","trustedSession":true}}
+type ApplySessionResponsesRequest struct {
+	Responses []ResponseMetadata `json:"responses"`
+
+	// Session Copied authentication state and discovered account data. Credential fields are private and must not be printed implicitly.
+	Session ResumeSessionResult `json:"session"`
+}
+
+// ApplySessionResponsesResult Copied native session retaining all observed responses and cookie/token/trust/country rotations, including a failed read.
+//
+// Example: {"session":{"accountCountryCode":null,"accountData":{},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"requiresTwoFactor":false,"requiresTwoStep":false,"responses":[],"trustToken":"synthetic-trust","trustedSession":true}}
+type ApplySessionResponsesResult struct {
+	// Session Copied authentication state and discovered account data. Credential fields are private and must not be printed implicitly.
+	Session ResumeSessionResult `json:"session"`
+}
+
 // AuthContext Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 type AuthContext struct {
 	// AccountID Authenticated account identifier returned by login.
