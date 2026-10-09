@@ -29,8 +29,9 @@ type nativeAuthOperation struct {
 func newNativeAuthOperation(ctx context.Context, name string, boundary AuthContext,
 	state NativeAuthState,
 ) (*nativeAuthOperation, error) {
-	if err := ctx.Err(); err != nil {
-		return nil, driveContextFailure(name, err)
+	contextErr := ctx.Err()
+	if contextErr != nil {
+		return nil, driveContextFailure(name, contextErr)
 	}
 
 	state = cloneNativeAuthState(state)
@@ -46,14 +47,18 @@ func newNativeAuthOperation(ctx context.Context, name string, boundary AuthConte
 		return nil, newClientError(name, Configuration, 0, nil, nil, err)
 	}
 
-	return &nativeAuthOperation{name: name, state: state, responses: []ResponseMetadata{}, cookies: cookies, success: true, response: nil, passwordTokenLogged: false}, nil
+	return &nativeAuthOperation{name: name, state: state, responses: []ResponseMetadata{}, cookies: cookies, success: true,
+		response: nil, passwordTokenLogged: false}, nil
 }
 
 func cloneNativeAuthState(state NativeAuthState) NativeAuthState {
+	state.DeliveryNotice = copyString(state.DeliveryNotice)
 	state.Auth = cloneDriveAuth(state.Auth)
 	state.AccountCountryCode = maps.Clone(state.AccountCountryCode)
 	state.AccountData = bytes.Clone(state.AccountData)
+
 	state.Challenge.PhoneNumbers = slices.Clone(state.Challenge.PhoneNumbers)
+
 	for index := range state.Challenge.PhoneNumbers {
 		phone := &state.Challenge.PhoneNumbers[index]
 		if phone.NonFTEU != nil {
@@ -61,6 +66,7 @@ func cloneNativeAuthState(state NativeAuthState) NativeAuthState {
 			phone.NonFTEU = &value
 		}
 	}
+
 	state.Challenge.AuthFactors = slices.Clone(state.Challenge.AuthFactors)
 	state.Challenge.SecurityKeyNames = slices.Clone(state.Challenge.SecurityKeyNames)
 
@@ -138,9 +144,11 @@ func nativeAuthResult(operation *nativeAuthOperation) (*NativeAuthResult, error)
 		version = *account.DsInfo.HsaVersion
 	}
 
-	return &NativeAuthResult{State: cloneNativeAuthState(operation.state), TrustedSession: trusted, Success: operation.success,
-		RequiresTwoFactor: required && (version == 2 || operation.state.RequiresMFA || len(operation.state.Challenge.ProviderData) > 0), RequiresTwoStep: required && version >= 1,
-		Responses: cloneDriveResponses(operation.responses)}, nil
+	return &NativeAuthResult{State: cloneNativeAuthState(operation.state), TrustedSession: trusted,
+		Success:           operation.success,
+		RequiresTwoFactor: nativeTwoFactorRequired(operation.state, version, required),
+		RequiresTwoStep:   required && version >= 1,
+		Responses:         cloneDriveResponses(operation.responses)}, nil
 }
 
 func nativeIDMSOrigin(_ NativeAuthState) string {
@@ -153,4 +161,8 @@ func nativeHomeOrigin(state NativeAuthState) string {
 	}
 
 	return protocol.AuthHomeOriginValue
+}
+
+func nativeTwoFactorRequired(state NativeAuthState, version int, required bool) bool {
+	return required && (version == 2 || state.RequiresMFA || len(state.Challenge.ProviderData) > 0)
 }

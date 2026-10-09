@@ -7,7 +7,7 @@ import (
 )
 
 func nativeAuthHeaders(state NativeAuthState, accept string) http.Header {
-	headers := make(http.Header)
+	headers := requestHeaders(state.Auth.Headers)
 	headers.Set(protocol.AuthHTTPAcceptName, accept)
 	headers.Set(protocol.AuthHTTPContentTypeName, protocol.AuthMediaApplicationJson)
 	headers.Set(protocol.AuthHTTPXAppleOAuthClientIdName, protocol.AuthOAuthClientIDValue)
