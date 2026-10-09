@@ -929,3 +929,15 @@ Legacy reminder records remain extensible because live nonempty reminder shapes
 have not been captured. Historical backend fixtures do not establish that evidence.
 Completed-item discovery, CloudKit cursors and related records are separate operations;
 this startup read does not infer a migration flag or silently replace them.
+
+
+The Go CLI exposes this explicit legacy snapshot through the published SDK:
+
+```powershell
+go-icloud --session <private-session.json> --save-session <private-session.json> resume
+go-icloud --session <private-session.json> reminder-legacy-snapshot
+```
+
+The CLI preserves list/reminder records and omits response metadata from console
+JSON. Nine strict replay cases bind complete output, failures and consumption.
+A private live read succeeded using the saved account after native discovery resume.

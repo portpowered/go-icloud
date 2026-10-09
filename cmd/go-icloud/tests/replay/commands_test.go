@@ -163,6 +163,7 @@ func fixtureAuth(t *testing.T, initial json.RawMessage) icloud.AuthContext {
 	auth.DriveServiceURL = origin
 
 	auth.FindMyServiceURL = origin
+	auth.LegacyRemindersServiceURL = origin
 	auth.RemindersServiceURL = origin
 	auth.PhotosServiceURL = origin
 
