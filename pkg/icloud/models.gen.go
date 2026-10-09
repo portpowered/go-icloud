@@ -360,6 +360,9 @@ type AuthContext struct {
 	// Headers Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.
 	Headers []Header `json:"headers"`
 
+	// LegacyRemindersServiceURL Account-discovered legacy Reminders origin for GetLegacyRemindersSnapshot.
+	LegacyRemindersServiceURL string `json:"legacyRemindersServiceURL,omitempty"`
+
 	// PhotosServiceURL HTTPS CloudKit origin from authenticated discovery; required by Photos operations.
 	PhotosServiceURL string `json:"photosServiceURL,omitempty"`
 
@@ -1063,6 +1066,25 @@ type GetDriveNodeResult struct {
 	Node DriveNode `json:"node"`
 }
 
+// GetLegacyRemindersSnapshotRequest Read the account-discovered legacy Reminders startup snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"legacyRemindersServiceURL":"https://reminders.example.invalid"}}
+type GetLegacyRemindersSnapshotRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// GetLegacyRemindersSnapshotResult Legacy lists and startup reminders in provider order; completed discovery and CloudKit related records are not implied.
+//
+// Example: {"lists":[],"metadata":{"cookieScopeURL":"https://reminders.example.invalid/rd/startup","headers":[],"statusCode":200},"reminders":[]}
+type GetLegacyRemindersSnapshotResult struct {
+	Lists []LegacyReminderRecord `json:"lists"`
+
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata  ResponseMetadata       `json:"metadata"`
+	Reminders []LegacyReminderRecord `json:"reminders"`
+}
+
 // GetPhotoAlbumCountRequest Read the primary photo album count using a smart/custom ID, name or full name.
 //
 // Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
@@ -1177,6 +1199,11 @@ type Header struct {
 	// Value Header value; authentication values may contain secrets.
 	Value string `json:"value"`
 }
+
+// LegacyReminderRecord Extensible legacy record without unobserved field assumptions. Lists may include title, guid, order, color and completedCount.
+//
+// Example: {"guid":"synthetic-list","title":"Example list"}
+type LegacyReminderRecord = json.RawMessage
 
 // ListDriveLibrariesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]}}
 type ListDriveLibrariesRequest struct {

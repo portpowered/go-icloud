@@ -292,6 +292,16 @@ type CKZoneChangesResponse = externalRef0.CKZoneChangesResponse
 // Example: {"zones":[{"deleted":false,"syncToken":"synthetic-sync-0","zoneID":{"zoneName":"synthetic-reminders-0"}}]}
 type CKZoneListResponse = externalRef0.CKZoneListResponse
 
+// LegacyReminderRecord Extensible legacy record preserved without assuming historical reminder fields.
+type LegacyReminderRecord = json.RawMessage
+
+// LegacyRemindersStartup defines model for LegacyRemindersStartup.
+type LegacyRemindersStartup struct {
+	Collections          []LegacyReminderRecord `json:"Collections"`
+	Reminders            []LegacyReminderRecord `json:"Reminders"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
 // RemindersAccept defines model for RemindersAccept.
 type RemindersAccept = string
 
@@ -494,6 +504,18 @@ type RemindersListZonesParamsRemapEnums string
 // RemindersListZonesParamsGetCurrentSyncToken defines parameters for RemindersListZones.
 type RemindersListZonesParamsGetCurrentSyncToken string
 
+// RemindersLegacyStartupParams defines parameters for RemindersLegacyStartup.
+type RemindersLegacyStartupParams struct {
+	ClientId RemindersClientId `form:"clientId" json:"clientId"`
+	Dsid     RemindersDsid     `form:"dsid" json:"dsid"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *RemindersClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+}
+
 // RemindersZoneChangesJSONRequestBody defines body for RemindersZoneChanges for application/json ContentType.
 type RemindersZoneChangesJSONRequestBody = CKZoneChangesRequest
 
@@ -508,6 +530,89 @@ type RemindersQueryRecordsJSONRequestBody = CKQueryRequest
 
 // RemindersListZonesJSONRequestBody defines body for RemindersListZones for application/json ContentType.
 type RemindersListZonesJSONRequestBody = CKEmptyRequest
+
+// Getter for additional properties for LegacyRemindersStartup. Returns the specified
+// element and whether it was found
+func (a LegacyRemindersStartup) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for LegacyRemindersStartup
+func (a *LegacyRemindersStartup) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for LegacyRemindersStartup to handle AdditionalProperties
+func (a *LegacyRemindersStartup) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["Collections"]; found {
+		err = json.Unmarshal(raw, &a.Collections)
+		if err != nil {
+			return fmt.Errorf("error reading 'Collections': %w", err)
+		}
+		delete(object, "Collections")
+	}
+
+	if raw, found := object["Reminders"]; found {
+		err = json.Unmarshal(raw, &a.Reminders)
+		if err != nil {
+			return fmt.Errorf("error reading 'Reminders': %w", err)
+		}
+		delete(object, "Reminders")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for LegacyRemindersStartup to handle AdditionalProperties
+func (a LegacyRemindersStartup) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Collections != nil {
+		object["Collections"], err = json.Marshal(a.Collections)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'Collections': %w", err)
+		}
+	}
+
+	if a.Reminders != nil {
+		object["Reminders"], err = json.Marshal(a.Reminders)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'Reminders': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -672,6 +777,13 @@ type ClientInterface interface {
 	//
 	// Corresponds with POST /database/1/com.apple.reminders/production/private/zones/list (the `RemindersListZones` operationId).
 	RemindersListZones(ctx context.Context, params *RemindersListZonesParams, body RemindersListZonesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RemindersLegacyStartup Read legacy reminder startup
+	//
+	// Read the account-discovered legacy startup. Completed-item discovery and CloudKit related records are not implied.
+	//
+	// Corresponds with GET /rd/startup (the `RemindersLegacyStartup` operationId).
+	RemindersLegacyStartup(ctx context.Context, params *RemindersLegacyStartupParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RemindersDownloadAsset Download provider-issued reminder membership asset bytes
 	//
@@ -861,6 +973,23 @@ func (c *Client) RemindersListZonesWithBody(ctx context.Context, params *Reminde
 // Corresponds with POST /database/1/com.apple.reminders/production/private/zones/list (the `RemindersListZones` operationId).
 func (c *Client) RemindersListZones(ctx context.Context, params *RemindersListZonesParams, body RemindersListZonesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewRemindersListZonesRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RemindersLegacyStartup Read legacy reminder startup
+//
+// Read the account-discovered legacy startup. Completed-item discovery and CloudKit related records are not implied.
+//
+// Corresponds with GET /rd/startup (the `RemindersLegacyStartup` operationId).
+func (c *Client) RemindersLegacyStartup(ctx context.Context, params *RemindersLegacyStartupParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemindersLegacyStartupRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1903,6 +2032,88 @@ func NewRemindersListZonesRequestWithBody(server string, params *RemindersListZo
 	return req, nil
 }
 
+// NewRemindersLegacyStartupRequest constructs an http.Request for the RemindersLegacyStartup method
+func NewRemindersLegacyStartupRequest(server string, params *RemindersLegacyStartupParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/rd/startup")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientId", params.ClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "dsid", params.Dsid, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewRemindersDownloadAssetRequest constructs an http.Request for the RemindersDownloadAsset method
 func NewRemindersDownloadAssetRequest(server string, assetPath string) (*http.Request, error) {
 	var err error
@@ -2070,6 +2281,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with POST /database/1/com.apple.reminders/production/private/zones/list (the `RemindersListZones` operationId).
 	RemindersListZonesWithResponse(ctx context.Context, params *RemindersListZonesParams, body RemindersListZonesJSONRequestBody, reqEditors ...RequestEditorFn) (*RemindersListZonesResponse, error)
+
+	// RemindersLegacyStartupWithResponse Read legacy reminder startup
+	//
+	// Read the account-discovered legacy startup. Completed-item discovery and CloudKit related records are not implied.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /rd/startup (the `RemindersLegacyStartup` operationId).
+	RemindersLegacyStartupWithResponse(ctx context.Context, params *RemindersLegacyStartupParams, reqEditors ...RequestEditorFn) (*RemindersLegacyStartupResponse, error)
 
 	// RemindersDownloadAssetWithResponse Download provider-issued reminder membership asset bytes
 	//
@@ -2321,6 +2541,54 @@ func (r RemindersListZonesResponse) ContentType() string {
 	return ""
 }
 
+type RemindersLegacyStartupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *LegacyRemindersStartup
+	// JSONDefault the response for an HTTP default `application/json` response
+	JSONDefault *map[string]interface{}
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r RemindersLegacyStartupResponse) GetJSON200() *LegacyRemindersStartup {
+	return r.JSON200
+}
+
+// GetJSONDefault returns the response for an HTTP default `application/json` response
+func (r RemindersLegacyStartupResponse) GetJSONDefault() *map[string]interface{} {
+	return r.JSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r RemindersLegacyStartupResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RemindersLegacyStartupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RemindersLegacyStartupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RemindersLegacyStartupResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type RemindersDownloadAssetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2503,6 +2771,21 @@ func (c *ClientWithResponses) RemindersListZonesWithResponse(ctx context.Context
 		return nil, err
 	}
 	return ParseRemindersListZonesResponse(rsp)
+}
+
+// RemindersLegacyStartupWithResponse Read legacy reminder startup
+//
+// Read the account-discovered legacy startup. Completed-item discovery and CloudKit related records are not implied.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /rd/startup (the `RemindersLegacyStartup` operationId).
+func (c *ClientWithResponses) RemindersLegacyStartupWithResponse(ctx context.Context, params *RemindersLegacyStartupParams, reqEditors ...RequestEditorFn) (*RemindersLegacyStartupResponse, error) {
+	rsp, err := c.RemindersLegacyStartup(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRemindersLegacyStartupResponse(rsp)
 }
 
 // RemindersDownloadAssetWithResponse Download provider-issued reminder membership asset bytes
@@ -2706,6 +2989,42 @@ func ParseRemindersListZonesResponse(rsp *http.Response) (*RemindersListZonesRes
 
 	case rsp.StatusCode/100 == 2:
 	// Content-type (*/*) unsupported
+
+	case rsp.StatusCode == 200:
+		// Content-type (*/*) unsupported
+
+	}
+
+	return response, nil
+}
+
+// ParseRemindersLegacyStartupResponse parses an HTTP response from a RemindersLegacyStartupWithResponse call
+func ParseRemindersLegacyStartupResponse(rsp *http.Response) (*RemindersLegacyStartupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RemindersLegacyStartupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest LegacyRemindersStartup
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest map[string]interface{}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	case rsp.StatusCode == 200:
 		// Content-type (*/*) unsupported

@@ -20,6 +20,10 @@ import (
 type Client interface {
 	// GetPhoto finds one album asset by identifier with Source enumeration fallback.
 	GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error)
+	// GetLegacyRemindersSnapshot reads account-discovered legacy startup lists and reminders.
+	GetLegacyRemindersSnapshot(ctx context.Context,
+		request GetLegacyRemindersSnapshotRequest,
+	) (*GetLegacyRemindersSnapshotResult, error)
 	// ListPhotoAssets enumerates paired assets of a primary photo album.
 	ListPhotoAssets(ctx context.Context, request ListPhotoAssetsRequest) (*ListPhotoAssetsResult, error)
 	// GetPhotoAlbumCount reads the indexed count of a primary-library album.

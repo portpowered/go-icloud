@@ -1542,6 +1542,29 @@
       ],
       "schema_binding": "pending external protocol and pinned protobuf audit",
       "scenario_matrix": "pending"
+    },
+    {
+      "service": "reminders",
+      "transport": "http",
+      "method": "GET",
+      "path": "/rd/startup",
+      "authority_source": "authenticated webservices.reminders.url",
+      "provenance": "Live-captured compatibility extension executed through the pinned Python session; not a modern Reminders convenience method.",
+      "source_file": "session.py",
+      "source_functions": [
+        {
+          "name": "PyiCloudSession.request",
+          "line": 210
+        }
+      ],
+      "known_payload_variants": [
+        "legacy-startup-empty",
+        "legacy-startup-one",
+        "legacy-startup-many",
+        "legacy-startup-provider-failure"
+      ],
+      "schema_binding": "api/external/reminders.openapi.yaml#/paths/~1rd~1startup/get",
+      "scenario_matrix": "tests/replay/fixtures/synthetic/http/reminders-legacy-*.json"
     }
   ],
   "remaining_audit": [

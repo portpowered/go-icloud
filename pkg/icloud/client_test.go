@@ -21,10 +21,10 @@ func (roundTrip sdkRoundTrip) RoundTrip(request *http.Request) (*http.Response, 
 
 func deviceRequest() icloud.GetAccountDevicesRequest {
 	return icloud.GetAccountDevicesRequest{Auth: icloud.AuthContext{
-		PhotosServiceURL:    "",
-		RemindersServiceURL: "",
-		DriveToken:          "",
-		FindMyServiceURL:    "", SetupServiceURL: "", SessionToken: nil,
+		PhotosServiceURL:          "",
+		LegacyRemindersServiceURL: "", RemindersServiceURL: "",
+		DriveToken:       "",
+		FindMyServiceURL: "", SetupServiceURL: "", SessionToken: nil,
 		Cookies:                 nil,
 		DriveDocumentServiceURL: "",
 		AccountID:               "synthetic-account", ClientID: "synthetic-client",
