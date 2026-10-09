@@ -17,6 +17,44 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_reminder_sync_cursor_fallback_and_paging_matrix(self):
+        paths = sorted(FIXTURES.glob("reminders-sync-*.json"))
+        self.assertEqual(len(paths), 16)
+        pairs = 0
+        for path in paths:
+            scenario = json.loads(path.read_text(encoding="utf-8"))
+            with self.subTest(case=path.name):
+                pairs += replay_synthetic(path)
+                if path.stem in {
+                    "reminders-sync-unavailable",
+                    "reminders-sync-rate-limit",
+                    "reminders-sync-unauthorized",
+                    "reminders-sync-forbidden",
+                }:
+                    self.assertEqual(len(scenario["exchanges"]), 1)
+                    self.assertEqual(
+                        scenario["error"]["type"], "PyiCloudAPIResponseException"
+                    )
+        self.assertEqual(pairs, 28)
+
+    def test_reminder_sync_cursor_binds_final_token_and_consumption(self):
+        for change in ["token", "result", "unused"]:
+            scenario = json.loads((FIXTURES / "reminders-sync-paged.json").read_text())
+            if change == "token":
+                body = scenario["exchanges"][-1]["response"]["body"]
+                payload = json.loads(base64.b64decode(body["value"]))
+                payload["zones"][0]["syncToken"] = "synthetic-changed"
+                body["value"] = base64.b64encode(json.dumps(payload).encode()).decode()
+            elif change == "result":
+                scenario["result"] = "synthetic-changed"
+            else:
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_reminder_lookup_complete_projection_and_text_fallbacks(self):
         for name in ["full", "audit-dates", "unreadable-documents"]:
             path = FIXTURES / f"reminders-get-{name}.json"
