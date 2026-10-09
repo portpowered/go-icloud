@@ -31,10 +31,10 @@ func (sdk *SDK) VerifyTwoFactorCode(ctx context.Context, request VerifyTwoFactor
 
 func (sdk *SDK) nativeBridgeLegacy(ctx context.Context, state NativeAuthState, code string,
 	afterVerification func(),
-) (*NativeAuthResult, error) {
+) (NativeAuthState, *NativeAuthResult, error) {
 	operation, err := newNativeAuthOperation(ctx, "VerifyNativeBridgeCode", state.Auth, state)
 	if err != nil {
-		return nil, err
+		return cloneNativeAuthState(state), nil, err
 	}
 	operation.state.DeliveryMethod = TwoFactorDeliveryTrustedDevice
 	err = sdk.nativeVerifyCode(ctx, operation, code)
@@ -42,14 +42,15 @@ func (sdk *SDK) nativeBridgeLegacy(ctx context.Context, state NativeAuthState, c
 		afterVerification()
 	}
 	if err != nil {
-		return nil, err
+		return cloneNativeAuthState(operation.state), nil, err
 	}
 	if operation.success {
 		if err = sdk.nativeTrust(ctx, operation); err != nil {
-			return nil, err
+			return cloneNativeAuthState(operation.state), nil, err
 		}
 	}
-	return nativeAuthResult(operation)
+	result, err := nativeAuthResult(operation)
+	return cloneNativeAuthState(operation.state), result, err
 }
 
 func (sdk *SDK) nativeVerifyCode(ctx context.Context, operation *nativeAuthOperation, code string) error {

@@ -15,7 +15,8 @@ var errUnknownAuthRoute = errors.New("authentication route is absent from the pr
 func (client *Client) ExchangeAuthentication(ctx context.Context, request *http.Request,
 	headers http.Header, cookies *CookieState,
 ) (*BytesResponse, error) {
-	if request == nil || !knownAuthenticationRoute(request) {
+	if request == nil || request.URL == nil || request.URL.User != nil || request.URL.Fragment != "" ||
+		!knownAuthenticationRoute(request) {
 		return nil, failure(Configuration, errUnknownAuthRoute, nil, nil)
 	}
 

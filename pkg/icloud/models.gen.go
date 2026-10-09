@@ -2240,10 +2240,13 @@ type NativeAuthChallenge struct {
 	AuthInitialRoute string   `json:"authInitialRoute"`
 
 	// BridgeBootstrap Schema-owned bridge bootstrap for the explicit native bridge lifecycle.
-	BridgeBootstrap      []byte                `json:"bridgeBootstrap,omitempty"`
-	HasTrustedDevices    bool                  `json:"hasTrustedDevices"`
-	Mode                 string                `json:"mode"`
-	PhoneNumbers         []TrustedPhoneNumber  `json:"phoneNumbers"`
+	BridgeBootstrap   []byte               `json:"bridgeBootstrap,omitempty"`
+	HasTrustedDevices bool                 `json:"hasTrustedDevices"`
+	Mode              string               `json:"mode"`
+	PhoneNumbers      []TrustedPhoneNumber `json:"phoneNumbers"`
+
+	// ProviderData Detached normalized provider authentication options.
+	ProviderData         []byte                `json:"providerData,omitempty"`
 	SecurityKeyChallenge *SecurityKeyChallenge `json:"securityKeyChallenge,omitempty"`
 	SecurityKeyNames     []string              `json:"securityKeyNames"`
 }

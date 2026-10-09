@@ -40,7 +40,7 @@ func (sdk *SDK) GetAuthenticationStatus(ctx context.Context, request NativeAuthR
 func clearNativeDerivedState(state NativeAuthState) NativeAuthState {
 	state = cloneNativeAuthState(state)
 	state.AccountData = []byte("{}")
-	state.Challenge = initialNativeAuthState(AuthenticateRequest{}).Challenge
+	state.Challenge = emptyNativeAuthChallenge()
 	state.RequiresMFA = false
 	state.CodeRequested = false
 	state.DeliveryMethod = TwoFactorDeliveryUnknown

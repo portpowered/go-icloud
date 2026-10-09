@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"slices"
 
 	"github.com/portpowered/go-icloud/internal/authapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
@@ -54,6 +55,15 @@ func (sdk *SDK) ListSecurityKeyDevices(ctx context.Context, _ ListSecurityKeyDev
 func (sdk *SDK) ConfirmSecurityKey(ctx context.Context, request ConfirmSecurityKeyRequest) (*NativeAuthResult, error) {
 	const operation = "ConfirmSecurityKey"
 
+	progress, validationErr := newNativeAuthOperation(ctx, operation, request.Auth, request.State)
+	if validationErr != nil {
+		return nil, validationErr
+	}
+	challenge := progress.state.Challenge.SecurityKeyChallenge
+	if challenge == nil || challenge.Challenge == "" || challenge.RelyingPartyID == "" || len(challenge.CredentialIDs) == 0 {
+		return nil, newClientError(operation, Configuration, 0, nil, nil, errNativeAuthInput)
+	}
+
 	devices, err := sdk.ListSecurityKeyDevices(ctx, ListSecurityKeyDevicesRequest{})
 	if err != nil {
 		return nil, err
@@ -64,10 +74,7 @@ func (sdk *SDK) ConfirmSecurityKey(ctx context.Context, request ConfirmSecurityK
 		return nil, newClientError(operation, NoDevices, 0, nil, nil, err)
 	}
 
-	challenge := request.State.Challenge.SecurityKeyChallenge
-	if challenge == nil {
-		return nil, newClientError(operation, Configuration, 0, nil, nil, errNativeAuthInput)
-	}
+	challenge.CredentialIDs = slices.Clone(challenge.CredentialIDs)
 
 	ceremony := SecurityKeyCeremony{DeviceID: device.ID, Challenge: *challenge, Origin: HttpsappleCom, UserVerification: Discouraged}
 

@@ -46,11 +46,15 @@ func (sdk *SDK) nativeGetChallenge(ctx context.Context, operation *nativeAuthOpe
 		return err
 	}
 
-	challenge := initialNativeAuthState(AuthenticateRequest{}).Challenge
+	challenge := emptyNativeAuthChallenge()
 
 	var data auth.AuthChallenge
 
 	if bytes.HasPrefix(bytes.TrimSpace(response.Body), []byte{'{'}) && json.Unmarshal(response.Body, &data) == nil {
+		data, err = nativeNormalizeChallenge(data)
+		if err != nil {
+			return nativeResponseError(operation, response, err, InvalidResponse)
+		}
 		err = nativeProjectChallenge(&challenge, data)
 		if err != nil {
 			return nativeResponseError(operation, response, err, InvalidResponse)
@@ -61,11 +65,19 @@ func (sdk *SDK) nativeGetChallenge(ctx context.Context, operation *nativeAuthOpe
 			return nativeResponseError(operation, response, parseErr, InvalidResponse)
 		}
 
-		err = nativeProjectBootstrap(&challenge, bootstrap)
+		data, err = nativeNormalizeChallenge(auth.AuthChallenge{Direct: bootstrap})
+		if err == nil {
+			err = nativeProjectChallenge(&challenge, data)
+			data.Direct = nil
+		}
 
 		if err != nil {
 			return nativeResponseError(operation, response, err, InvalidResponse)
 		}
+	}
+	challenge.ProviderData, err = json.Marshal(data)
+	if err != nil {
+		return nativeResponseError(operation, response, err, InvalidResponse)
 	}
 
 	operation.state.Challenge = challenge
@@ -98,6 +110,19 @@ func (sdk *SDK) nativeProbeSecurityKey(ctx context.Context, operation *nativeAut
 	var data auth.AuthChallenge
 	if json.Unmarshal(response.Body, &data) == nil {
 		nativeProjectSecurityKey(&operation.state.Challenge, data)
+		var retained auth.AuthChallenge
+		if json.Unmarshal(operation.state.Challenge.ProviderData, &retained) == nil {
+			if data.FsaChallenge != nil {
+				retained.FsaChallenge = data.FsaChallenge
+			}
+			if data.KeyNames != nil {
+				retained.KeyNames = data.KeyNames
+			}
+			operation.state.Challenge.ProviderData, err = json.Marshal(retained)
+			if err != nil {
+				return nativeResponseError(operation, response, err, InvalidResponse)
+			}
+		}
 	}
 
 	return nil

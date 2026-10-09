@@ -84,9 +84,7 @@ func (sdk *SDK) Authenticate(ctx context.Context, request AuthenticateRequest) (
 func initialNativeAuthState(request AuthenticateRequest) NativeAuthState {
 	state := NativeAuthState{Auth: cloneDriveAuth(request.Auth), AccountName: request.AccountName,
 		TrustToken: request.TrustToken, AccountCountryCode: maps.Clone(request.AccountCountryCode),
-		AccountData: []byte("{}"), Challenge: NativeAuthChallenge{Mode: "", PhoneNumbers: []TrustedPhoneNumber{},
-			SecurityKeyNames: []string{}, AuthInitialRoute: "", HasTrustedDevices: false, AuthFactors: []string{},
-			BridgeBootstrap: nil, SecurityKeyChallenge: nil}, DeliveryMethod: TwoFactorDeliveryUnknown,
+		AccountData: []byte("{}"), Challenge: emptyNativeAuthChallenge(), DeliveryMethod: TwoFactorDeliveryUnknown,
 		CodeRequested: false, RequiresMFA: false}
 	if request.SavedState != nil {
 		state = cloneNativeAuthState(*request.SavedState)
@@ -119,4 +117,10 @@ func initialNativeAuthState(request AuthenticateRequest) NativeAuthState {
 
 func nativeHasToken(state NativeAuthState) bool {
 	return state.Auth.SessionToken != nil && *state.Auth.SessionToken != ""
+}
+
+func emptyNativeAuthChallenge() NativeAuthChallenge {
+	return NativeAuthChallenge{Mode: "", PhoneNumbers: []TrustedPhoneNumber{}, SecurityKeyNames: []string{},
+		AuthInitialRoute: "", HasTrustedDevices: false, AuthFactors: []string{}, BridgeBootstrap: nil,
+		SecurityKeyChallenge: nil, ProviderData: nil}
 }

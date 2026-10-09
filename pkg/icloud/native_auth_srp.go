@@ -22,7 +22,9 @@ func (sdk *SDK) nativePassword(ctx context.Context, operation *nativeAuthOperati
 
 	user, err := srp.New(operation.state.AccountName, input.Password, sdk.random)
 	if err != nil {
-		return newClientError(operation.name, Configuration, 0, nil, nil, err)
+		failure := newClientError(operation.name, Configuration, 0, nil, nil, err)
+		failure.prior = cloneDriveResponses(operation.responses)
+		return failure
 	}
 
 	challenge, err := sdk.nativeSRPChallenge(ctx, operation, user.Public())
@@ -33,7 +35,7 @@ func (sdk *SDK) nativePassword(ctx context.Context, operation *nativeAuthOperati
 	proof, err := user.Challenge(challenge.Salt, challenge.B, challenge.Iteration,
 		srpmodels.Protocol(challenge.Protocol))
 	if err != nil {
-		return newClientError(operation.name, InvalidResponse, 0, nil, nil, err)
+		return nativeResponseError(operation, operation.response, err, InvalidResponse)
 	}
 
 	err = sdk.nativeSRPComplete(ctx, operation, input, challenge.C, proof)
@@ -101,6 +103,9 @@ func (sdk *SDK) nativeSRPChallenge(ctx context.Context, operation *nativeAuthOpe
 	err = json.Unmarshal(response.Body, &challenge)
 	if err != nil {
 		return nil, nativeResponseError(operation, response, err, InvalidResponse)
+	}
+	if challenge.C == "" || len(challenge.Salt) == 0 || len(challenge.B) == 0 {
+		return nil, nativeResponseError(operation, response, errNativeAuthInput, InvalidResponse)
 	}
 
 	return &challenge, nil

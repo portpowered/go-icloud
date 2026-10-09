@@ -54,9 +54,17 @@ func cloneNativeAuthState(state NativeAuthState) NativeAuthState {
 	state.AccountCountryCode = maps.Clone(state.AccountCountryCode)
 	state.AccountData = bytes.Clone(state.AccountData)
 	state.Challenge.PhoneNumbers = slices.Clone(state.Challenge.PhoneNumbers)
+	for index := range state.Challenge.PhoneNumbers {
+		phone := &state.Challenge.PhoneNumbers[index]
+		if phone.NonFTEU != nil {
+			value := *phone.NonFTEU
+			phone.NonFTEU = &value
+		}
+	}
 	state.Challenge.AuthFactors = slices.Clone(state.Challenge.AuthFactors)
 	state.Challenge.SecurityKeyNames = slices.Clone(state.Challenge.SecurityKeyNames)
 
+	state.Challenge.ProviderData = bytes.Clone(state.Challenge.ProviderData)
 	state.Challenge.BridgeBootstrap = bytes.Clone(state.Challenge.BridgeBootstrap)
 
 	if state.Challenge.SecurityKeyChallenge != nil {
@@ -131,7 +139,7 @@ func nativeAuthResult(operation *nativeAuthOperation) (*NativeAuthResult, error)
 	}
 
 	return &NativeAuthResult{State: cloneNativeAuthState(operation.state), TrustedSession: trusted, Success: operation.success,
-		RequiresTwoFactor: operation.state.RequiresMFA || required && version == 2, RequiresTwoStep: required && version >= 1,
+		RequiresTwoFactor: required && (version == 2 || operation.state.RequiresMFA || len(operation.state.Challenge.ProviderData) > 0), RequiresTwoStep: required && version >= 1,
 		Responses: cloneDriveResponses(operation.responses)}, nil
 }
 

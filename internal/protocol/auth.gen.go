@@ -251,7 +251,7 @@ const (
 	AuthRequestAuthPCSPath                                    = "/setup/ws/1/requestPCS"
 	AuthRequestAuthSMSMethod                                  = "PUT"
 	AuthRequestAuthSMSPath                                    = "/appleauth/auth/verify/phone"
-	AuthSMSAcceptValue                                        = "application/json, text/plain"
+	AuthSMSAcceptValue                                        = "application/json, plain/text"
 	AuthSendAuthVerificationCodeClientBuildNumberName         = "clientBuildNumber"
 	AuthSendAuthVerificationCodeClientIdName                  = "clientId"
 	AuthSendAuthVerificationCodeClientMasteringNumberName     = "clientMasteringNumber"

@@ -43,7 +43,7 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 		return nil
 	}
 
-	if challenge.AuthInitialRoute == protocol.AuthBridgeInitialRouteValue && challenge.HasTrustedDevices &&
+	if selected == nil && challenge.AuthInitialRoute == protocol.AuthBridgeInitialRouteValue && challenge.HasTrustedDevices &&
 		len(challenge.BridgeBootstrap) > 0 {
 		operation.state.DeliveryMethod = TwoFactorDeliveryTrustedDevice
 		operation.success = false
@@ -91,6 +91,7 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 		return err
 	}
 
+	operation.state.Challenge.PhoneNumbers = nativePrioritizePhone(challenge.PhoneNumbers, phone)
 	operation.state.DeliveryMethod = TwoFactorDeliverySMS
 	operation.state.CodeRequested = true
 
@@ -138,4 +139,16 @@ func nativePhonePayload(phone TrustedPhoneNumber) (auth.AuthPhoneNumber, error) 
 	}
 
 	return auth.AuthPhoneNumber{Id: identifier, NonFTEU: phone.NonFTEU, AdditionalProperties: nil}, nil
+}
+
+func nativePrioritizePhone(phones []TrustedPhoneNumber, selected TrustedPhoneNumber) []TrustedPhoneNumber {
+	result := []TrustedPhoneNumber{selected}
+	wanted, _ := json.Marshal(selected.ID)
+	for _, phone := range phones {
+		actual, _ := json.Marshal(phone.ID)
+		if !bytes.Equal(wanted, actual) {
+			result = append(result, phone)
+		}
+	}
+	return result
 }

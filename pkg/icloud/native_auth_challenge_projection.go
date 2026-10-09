@@ -52,6 +52,7 @@ func nativeProjectBootstrap(challenge *NativeAuthChallenge, data *bridgemodels.B
 		return fmt.Errorf("decode native phone verification: %w", err)
 	}
 
+	challenge.PhoneNumbers = []TrustedPhoneNumber{}
 	return nativeProjectPhones(challenge, nil, &phones)
 }
 

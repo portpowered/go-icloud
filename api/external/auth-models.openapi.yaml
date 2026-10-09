@@ -923,7 +923,7 @@
       "SMSAccept": {
         "type": "string",
         "enum": [
-          "application/json, text/plain"
+          "application/json, plain/text"
         ]
       },
       "IDMSOrigin": {

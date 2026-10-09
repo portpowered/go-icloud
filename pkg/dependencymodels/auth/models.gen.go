@@ -518,13 +518,13 @@ func (e RememberMeQuery) Valid() bool {
 
 // Defines values for SMSAccept.
 const (
-	ApplicationjsonTextplain SMSAccept = "application/json, text/plain"
+	ApplicationjsonPlaintext SMSAccept = "application/json, plain/text"
 )
 
 // Valid indicates whether the value is a known member of the SMSAccept enum.
 func (e SMSAccept) Valid() bool {
 	switch e {
-	case ApplicationjsonTextplain:
+	case ApplicationjsonPlaintext:
 		return true
 	default:
 		return false

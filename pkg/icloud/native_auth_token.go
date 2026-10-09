@@ -62,7 +62,7 @@ func (sdk *SDK) nativeLoginToken(ctx context.Context, operation *nativeAuthOpera
 	operation.state.RequiresMFA = false
 	operation.state.CodeRequested = false
 	operation.state.DeliveryMethod = TwoFactorDeliveryUnknown
-	operation.state.Challenge = initialNativeAuthState(AuthenticateRequest{}).Challenge
+	operation.state.Challenge = emptyNativeAuthChallenge()
 
 	return true, nil
 }
