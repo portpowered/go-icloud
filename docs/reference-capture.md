@@ -1,5 +1,14 @@
 # Reference capture development
 
+Eight synthetic compound reminder query cases exercise all supported related
+record types: alarms, location triggers, URL/image attachments, hashtags, and
+recurrence rules. The pinned Source produces the complete portable results,
+including default values, populated fields, unknown enum fallbacks, unsupported
+types, orphan filtering, out-of-order records, and duplicate replacement.
+Negative controls reject altered relationships, omitted related results, stale
+duplicate values, changed list inputs, and unused traffic (LIB-05/LIB-12).
+These are offline reference cases; Go compound query parity remains open.
+
 Three synthetic Photos record-pairing cases cover a master without an asset,
 an asset without its master, and a mixed response containing both orphans and
 one valid pair. The pinned reference skips incomplete pairs and preserves the

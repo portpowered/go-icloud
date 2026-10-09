@@ -17,6 +17,54 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_reminder_compound_query_matrix(self):
+        paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
+        self.assertEqual(len(paths), 8)
+        for path in paths:
+            with self.subTest(case=path.name):
+                self.assertEqual(replay_synthetic(path), 1)
+        complete = json.loads(
+            (FIXTURES / "reminders-query-compound-all-types.json").read_text()
+        )["result"]
+        self.assertEqual(len(complete["reminders"]), 1)
+        for name, count in {
+            "alarms": 1,
+            "triggers": 1,
+            "attachments": 2,
+            "hashtags": 1,
+            "recurrence_rules": 1,
+        }.items():
+            self.assertEqual(len(complete[name]), count)
+
+    def test_reminder_compound_query_binds_relations_and_public_results(self):
+        for change in ["relation", "result", "replacement", "request", "unused"]:
+            name = "duplicates" if change == "replacement" else "all-types"
+            scenario = json.loads(
+                (FIXTURES / f"reminders-query-compound-{name}.json").read_text()
+            )
+            if change == "relation":
+                body = scenario["exchanges"][0]["response"]["body"]
+                payload = json.loads(base64.b64decode(body["value"]))
+                payload["records"][1]["fields"]["Reminder"]["value"]["recordName"] = (
+                    "Reminder/synthetic-orphan"
+                )
+                body["value"] = base64.b64encode(json.dumps(payload).encode()).decode()
+            elif change == "result":
+                scenario["result"]["attachments"].clear()
+            elif change == "replacement":
+                scenario["result"]["alarms"]["Alarm/synthetic-alarm"][
+                    "record_change_tag"
+                ] = "synthetic-tag"
+            elif change == "request":
+                scenario["inputs"][0] = "List/synthetic-other"
+            else:
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_reminder_change_iteration_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-changes-*.json"))
         self.assertEqual(len(paths), 72)
