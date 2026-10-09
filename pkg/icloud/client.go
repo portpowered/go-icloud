@@ -20,6 +20,10 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// AddReminderLocationTrigger atomically links a new location alarm to a reminder.
+	AddReminderLocationTrigger(ctx context.Context,
+		request AddReminderLocationTriggerRequest,
+	) (*AddReminderLocationTriggerResult, error)
 	// CreateReminderURLAttachment creates and atomically links a URL attachment.
 	CreateReminderURLAttachment(ctx context.Context,
 		request CreateReminderURLAttachmentRequest,

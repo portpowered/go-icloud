@@ -4929,6 +4929,9 @@
           },
           {
             "$ref": "#/components/schemas/ReminderAttachmentURLCreationRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderLocationRequest"
           }
         ]
       },
@@ -5020,20 +5023,7 @@
         ],
         "properties": {
           "map": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "alarmIDs",
-              "lastModifiedDate"
-            ],
-            "properties": {
-              "alarmIDs": {
-                "$ref": "#/components/schemas/ReminderResolutionToken"
-              },
-              "lastModifiedDate": {
-                "$ref": "#/components/schemas/ReminderResolutionToken"
-              }
-            }
+            "$ref": "#/components/schemas/ReminderAlarmLinkTokens"
           }
         }
       },
@@ -5320,6 +5310,27 @@
                       "Alarm",
                       "AlarmTrigger",
                       "Hashtag",
+                      "RecurrenceRule"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "record": {
+                "type": "object",
+                "required": [
+                  "recordType"
+                ],
+                "properties": {
+                  "recordType": {
+                    "type": "string",
+                    "enum": [
+                      "Hashtag",
+                      "Attachment",
                       "RecurrenceRule"
                     ]
                   }
@@ -7312,6 +7323,885 @@
           },
           "lastModifiedDate": {
             "$ref": "#/components/schemas/ReminderResolutionToken"
+          }
+        }
+      },
+      "LocationString": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "x-order": 2
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "LocationStringType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationEncryptedString": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "isEncrypted",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "x-order": 2
+          },
+          "isEncrypted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "LocationEncryptedStringEncryptedTrue"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "LocationEncryptedStringType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationDouble": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "format": "double",
+            "x-go-type": "json.Number",
+            "x-order": 2
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DOUBLE"
+            ],
+            "x-enum-varnames": [
+              "LocationDoubleType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationEncryptedDouble": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "isEncrypted",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "format": "double",
+            "x-go-type": "json.Number",
+            "x-order": 2
+          },
+          "isEncrypted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "LocationEncryptedDoubleEncryptedTrue"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DOUBLE"
+            ],
+            "x-enum-varnames": [
+              "LocationEncryptedDoubleType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationNonceOffset": {
+        "type": "integer",
+        "format": "int64",
+        "enum": [
+          100000000000
+        ],
+        "x-enum-varnames": [
+          "LocationNonceOffsetValue"
+        ]
+      },
+      "LocationAlarmFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "AlarmUID",
+          "Deleted",
+          "Imported",
+          "Reminder",
+          "TriggerID",
+          "DueDateResolutionTokenAsNonce"
+        ],
+        "properties": {
+          "AlarmUID": {
+            "$ref": "#/components/schemas/LocationString",
+            "x-order": 1
+          },
+          "Deleted": {
+            "$ref": "#/components/schemas/LocationZero",
+            "x-order": 2
+          },
+          "Imported": {
+            "$ref": "#/components/schemas/LocationZero",
+            "x-order": 3
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/LocationReference",
+            "x-order": 4
+          },
+          "TriggerID": {
+            "$ref": "#/components/schemas/LocationString",
+            "x-order": 5
+          },
+          "DueDateResolutionTokenAsNonce": {
+            "$ref": "#/components/schemas/LocationDouble",
+            "x-order": 6
+          }
+        }
+      },
+      "LocationTriggerFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "Address",
+          "Alarm",
+          "Deleted",
+          "Latitude",
+          "LocationUID",
+          "Longitude",
+          "Proximity",
+          "Radius",
+          "ReferenceFrameString",
+          "Title",
+          "Type"
+        ],
+        "properties": {
+          "Address": {
+            "$ref": "#/components/schemas/LocationEncryptedString",
+            "x-order": 1
+          },
+          "Alarm": {
+            "$ref": "#/components/schemas/LocationReference",
+            "x-order": 2
+          },
+          "Deleted": {
+            "$ref": "#/components/schemas/LocationZero",
+            "x-order": 3
+          },
+          "Latitude": {
+            "$ref": "#/components/schemas/LocationEncryptedDouble",
+            "x-order": 4
+          },
+          "LocationUID": {
+            "$ref": "#/components/schemas/LocationString",
+            "x-order": 5
+          },
+          "Longitude": {
+            "$ref": "#/components/schemas/LocationEncryptedDouble",
+            "x-order": 6
+          },
+          "Proximity": {
+            "$ref": "#/components/schemas/LocationProximity",
+            "x-order": 7
+          },
+          "Radius": {
+            "$ref": "#/components/schemas/LocationRadius",
+            "x-order": 8
+          },
+          "ReferenceFrameString": {
+            "$ref": "#/components/schemas/LocationFrame",
+            "x-order": 9
+          },
+          "Title": {
+            "$ref": "#/components/schemas/LocationEncryptedString",
+            "x-order": 10
+          },
+          "Type": {
+            "$ref": "#/components/schemas/LocationKind",
+            "x-order": 11
+          }
+        }
+      },
+      "LocationAlarmRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields",
+          "parent"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Alarm"
+            ],
+            "x-enum-varnames": [
+              "LocationAlarmRecordType"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/LocationAlarmFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CKWriteParent",
+            "x-order": 5
+          }
+        }
+      },
+      "LocationAlarmOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "create"
+            ],
+            "x-enum-varnames": [
+              "LocationAlarmOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/LocationAlarmRecord",
+            "x-order": 2
+          }
+        }
+      },
+      "LocationTriggerRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields",
+          "parent"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "AlarmTrigger"
+            ],
+            "x-enum-varnames": [
+              "LocationTriggerRecordType"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/LocationTriggerFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CKWriteParent",
+            "x-order": 5
+          }
+        }
+      },
+      "LocationTriggerOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "create"
+            ],
+            "x-enum-varnames": [
+              "LocationTriggerOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/LocationTriggerRecord",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderLocationOperation": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/LocationParentOperation"
+          },
+          {
+            "$ref": "#/components/schemas/LocationAlarmOperation"
+          },
+          {
+            "$ref": "#/components/schemas/LocationTriggerOperation"
+          }
+        ]
+      },
+      "ReminderLocationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operations",
+          "zoneID",
+          "atomic"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "$ref": "#/components/schemas/ReminderLocationOperation"
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "atomic": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "ReminderLocationAtomicTrue"
+            ]
+          }
+        },
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Reminder/synthetic-item",
+                "recordType": "Reminder",
+                "fields": {
+                  "AlarmIDs": {
+                    "type": "STRING_LIST",
+                    "value": [
+                      "keep-alarm",
+                      "00000001-0000-4000-8000-000000000000"
+                    ]
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"alarmIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            },
+            {
+              "operationType": "create",
+              "record": {
+                "recordName": "Alarm/00000001-0000-4000-8000-000000000000",
+                "recordType": "Alarm",
+                "fields": {
+                  "AlarmUID": {
+                    "type": "STRING",
+                    "value": "00000001-0000-4000-8000-000000000000"
+                  },
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Imported": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  },
+                  "TriggerID": {
+                    "type": "STRING",
+                    "value": "00000002-0000-4000-8000-000000000000"
+                  },
+                  "DueDateResolutionTokenAsNonce": {
+                    "type": "DOUBLE",
+                    "value": 100721692800.0
+                  }
+                },
+                "pluginFields": {},
+                "parent": {
+                  "recordName": "Reminder/synthetic-item"
+                }
+              }
+            },
+            {
+              "operationType": "create",
+              "record": {
+                "recordName": "AlarmTrigger/00000002-0000-4000-8000-000000000000",
+                "recordType": "AlarmTrigger",
+                "fields": {
+                  "Address": {
+                    "type": "STRING",
+                    "value": "Synthetic address",
+                    "isEncrypted": true
+                  },
+                  "Alarm": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Alarm/00000001-0000-4000-8000-000000000000",
+                      "action": "VALIDATE"
+                    }
+                  },
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Latitude": {
+                    "type": "DOUBLE",
+                    "value": 1.25,
+                    "isEncrypted": true
+                  },
+                  "LocationUID": {
+                    "type": "STRING",
+                    "value": "00000003-0000-4000-8000-000000000000"
+                  },
+                  "Longitude": {
+                    "type": "DOUBLE",
+                    "value": 2.5,
+                    "isEncrypted": true
+                  },
+                  "Proximity": {
+                    "type": "INT64",
+                    "value": 2
+                  },
+                  "Radius": {
+                    "type": "DOUBLE",
+                    "value": 50.0
+                  },
+                  "ReferenceFrameString": {
+                    "type": "STRING",
+                    "value": "1",
+                    "isEncrypted": true
+                  },
+                  "Title": {
+                    "type": "STRING",
+                    "value": "Synthetic place",
+                    "isEncrypted": true
+                  },
+                  "Type": {
+                    "type": "STRING",
+                    "value": "Location"
+                  }
+                },
+                "pluginFields": {},
+                "parent": {
+                  "recordName": "Alarm/00000001-0000-4000-8000-000000000000"
+                }
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          },
+          "atomic": true
+        },
+        "description": "Atomic location alarm request; emit parent update, alarm creation, then trigger creation in that order. Exactly one operation of each kind is required.",
+        "not": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "operations": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/LocationAlarmOperation"
+                      },
+                      {
+                        "$ref": "#/components/schemas/LocationTriggerOperation"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operations": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/LocationParentOperation"
+                      },
+                      {
+                        "$ref": "#/components/schemas/LocationTriggerOperation"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operations": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/LocationParentOperation"
+                      },
+                      {
+                        "$ref": "#/components/schemas/LocationAlarmOperation"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "LocationDefaultRadius": {
+        "type": "integer",
+        "enum": [
+          100
+        ],
+        "x-enum-varnames": [
+          "LocationDefaultRadiusValue"
+        ]
+      },
+      "LocationZero": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "integer",
+            "enum": [
+              0
+            ],
+            "x-order": 2,
+            "x-enum-varnames": [
+              "LocationZeroValue0"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "INT64"
+            ],
+            "x-enum-varnames": [
+              "LocationIntegerType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationProximity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "integer",
+            "enum": [
+              1,
+              2
+            ],
+            "x-order": 2,
+            "x-enum-varnames": [
+              "LocationProximityValue0",
+              "LocationProximityValue1"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "INT64"
+            ],
+            "x-enum-varnames": [
+              "LocationIntegerType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationFrame": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "isEncrypted",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": [
+              "1"
+            ],
+            "x-order": 2,
+            "x-enum-varnames": [
+              "LocationFrameValue0"
+            ]
+          },
+          "isEncrypted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "LocationFrameEncryptedTrue"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "LocationEncryptedStringType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationKind": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": [
+              "Location"
+            ],
+            "x-order": 2,
+            "x-enum-varnames": [
+              "LocationKindValue0"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "LocationStringType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationRadius": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "type"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "format": "double",
+            "x-go-type": "json.Number",
+            "x-order": 2,
+            "minimum": 0
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DOUBLE"
+            ],
+            "x-enum-varnames": [
+              "LocationDoubleType"
+            ],
+            "x-order": 1
+          }
+        }
+      },
+      "LocationParentRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Reminder"
+            ],
+            "x-enum-varnames": [
+              "LocationParentRecordType"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderAlarmLinkFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        }
+      },
+      "LocationParentOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "LocationParentOperationType"
+            ]
+          },
+          "record": {
+            "$ref": "#/components/schemas/LocationParentRecord"
+          }
+        }
+      },
+      "LocationReference": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "REFERENCE"
+            ],
+            "x-enum-varnames": [
+              "LocationReferenceType"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/ReminderWriteReferenceValue",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderAlarmLinkTokens": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "alarmIDs",
+          "lastModifiedDate"
+        ],
+        "properties": {
+          "alarmIDs": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 1
+          },
+          "lastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken",
+            "x-order": 2
           }
         }
       }

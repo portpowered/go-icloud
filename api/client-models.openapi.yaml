@@ -1800,3 +1800,137 @@ components:
         fileAssetURL:
           type: string
           x-go-name: FileAssetURL
+
+    AddReminderLocationTriggerRequest:
+      type: object
+      description: Add an atomic location alarm to a revision-aware reminder snapshot.
+      example:
+        auth:
+          accountID: synthetic
+          clientID: synthetic
+          headers: []
+        reminder:
+          id: Reminder/synthetic
+          listID: List/synthetic
+          title: Untitled
+          description: ''
+          completed: false
+          priority: 0
+          flagged: false
+          allDay: false
+          deleted: false
+          alarmIDs: []
+          hashtagIDs: []
+          attachmentIDs: []
+          recurrenceRuleIDs: []
+          recordChangeTag: null
+          created: null
+          modified: null
+          completedDate: null
+          dueDate: null
+          startDate: null
+          parentReminderID: null
+          timeZone: null
+      required:
+      - auth
+      - reminder
+      properties:
+        auth:
+          $ref: '#/components/schemas/AuthContext'
+        reminder:
+          $ref: '#/components/schemas/Reminder'
+        title:
+          type: string
+          default: ''
+          x-go-type-skip-optional-pointer: true
+        address:
+          type: string
+          default: ''
+          x-go-type-skip-optional-pointer: true
+        latitude:
+          type: number
+          format: double
+          default: 0
+          x-go-type-skip-optional-pointer: true
+        longitude:
+          type: number
+          format: double
+          default: 0
+          x-go-type-skip-optional-pointer: true
+        radius:
+          type: number
+          format: double
+          minimum: 0
+          default: 100
+        proximity:
+          type: integer
+          enum:
+          - 1
+          - 2
+          default: 1
+          x-enum-varnames:
+          - LocationArriving
+          - LocationLeaving
+
+    AddReminderLocationTriggerResult:
+      type: object
+      description: Acknowledged alarm, trigger, independent updated reminder and response
+        evidence.
+      example:
+        reminder:
+          id: Reminder/synthetic
+          listID: List/synthetic
+          title: Untitled
+          description: ''
+          completed: false
+          priority: 0
+          flagged: false
+          allDay: false
+          deleted: false
+          alarmIDs:
+          - synthetic
+          hashtagIDs: []
+          attachmentIDs: []
+          recurrenceRuleIDs: []
+          recordChangeTag: null
+          created: null
+          modified: null
+          completedDate: null
+          dueDate: null
+          startDate: null
+          parentReminderID: null
+          timeZone: null
+        alarm:
+          id: Alarm/synthetic
+          reminderID: Reminder/synthetic
+          alarmUID: synthetic
+          triggerID: synthetic
+          recordChangeTag: null
+        trigger:
+          id: AlarmTrigger/synthetic
+          alarmID: Alarm/synthetic
+          title: ''
+          address: ''
+          latitude: 0
+          longitude: 0
+          radius: 100
+          proximity: 1
+          locationUID: synthetic
+          recordChangeTag: null
+        responses: []
+      required:
+      - reminder
+      - alarm
+      - trigger
+      - responses
+      properties:
+        reminder:
+          $ref: '#/components/schemas/Reminder'
+        alarm:
+          $ref: '#/components/schemas/ReminderAlarm'
+        trigger:
+          $ref: '#/components/schemas/ReminderLocationTrigger'
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseMetadata'

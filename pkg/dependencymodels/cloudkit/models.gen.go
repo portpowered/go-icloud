@@ -774,6 +774,354 @@ func (e ListRecordType) Valid() bool {
 	}
 }
 
+// Defines values for LocationAlarmOperationOperationType.
+const (
+	LocationAlarmOperationType LocationAlarmOperationOperationType = "create"
+)
+
+// Valid indicates whether the value is a known member of the LocationAlarmOperationOperationType enum.
+func (e LocationAlarmOperationOperationType) Valid() bool {
+	switch e {
+	case LocationAlarmOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationAlarmRecordRecordType.
+const (
+	LocationAlarmRecordType LocationAlarmRecordRecordType = "Alarm"
+)
+
+// Valid indicates whether the value is a known member of the LocationAlarmRecordRecordType enum.
+func (e LocationAlarmRecordRecordType) Valid() bool {
+	switch e {
+	case LocationAlarmRecordType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationDefaultRadius.
+const (
+	LocationDefaultRadiusValue LocationDefaultRadius = 100
+)
+
+// Valid indicates whether the value is a known member of the LocationDefaultRadius enum.
+func (e LocationDefaultRadius) Valid() bool {
+	switch e {
+	case LocationDefaultRadiusValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationDoubleType.
+const (
+	LocationDoubleTypeLocationDoubleType LocationDoubleType = "DOUBLE"
+)
+
+// Valid indicates whether the value is a known member of the LocationDoubleType enum.
+func (e LocationDoubleType) Valid() bool {
+	switch e {
+	case LocationDoubleTypeLocationDoubleType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationEncryptedDoubleType.
+const (
+	LocationEncryptedDoubleTypeLocationEncryptedDoubleType LocationEncryptedDoubleType = "DOUBLE"
+)
+
+// Valid indicates whether the value is a known member of the LocationEncryptedDoubleType enum.
+func (e LocationEncryptedDoubleType) Valid() bool {
+	switch e {
+	case LocationEncryptedDoubleTypeLocationEncryptedDoubleType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationEncryptedDoubleIsEncrypted.
+const (
+	LocationEncryptedDoubleEncryptedTrue LocationEncryptedDoubleIsEncrypted = true
+)
+
+// Valid indicates whether the value is a known member of the LocationEncryptedDoubleIsEncrypted enum.
+func (e LocationEncryptedDoubleIsEncrypted) Valid() bool {
+	switch e {
+	case LocationEncryptedDoubleEncryptedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationEncryptedStringType.
+const (
+	LocationEncryptedStringTypeLocationEncryptedStringType LocationEncryptedStringType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the LocationEncryptedStringType enum.
+func (e LocationEncryptedStringType) Valid() bool {
+	switch e {
+	case LocationEncryptedStringTypeLocationEncryptedStringType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationEncryptedStringIsEncrypted.
+const (
+	LocationEncryptedStringEncryptedTrue LocationEncryptedStringIsEncrypted = true
+)
+
+// Valid indicates whether the value is a known member of the LocationEncryptedStringIsEncrypted enum.
+func (e LocationEncryptedStringIsEncrypted) Valid() bool {
+	switch e {
+	case LocationEncryptedStringEncryptedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationFrameType.
+const (
+	LocationFrameTypeLocationEncryptedStringType LocationFrameType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the LocationFrameType enum.
+func (e LocationFrameType) Valid() bool {
+	switch e {
+	case LocationFrameTypeLocationEncryptedStringType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationFrameValue.
+const (
+	LocationFrameValue0 LocationFrameValue = "1"
+)
+
+// Valid indicates whether the value is a known member of the LocationFrameValue enum.
+func (e LocationFrameValue) Valid() bool {
+	switch e {
+	case LocationFrameValue0:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationFrameIsEncrypted.
+const (
+	LocationFrameEncryptedTrue LocationFrameIsEncrypted = true
+)
+
+// Valid indicates whether the value is a known member of the LocationFrameIsEncrypted enum.
+func (e LocationFrameIsEncrypted) Valid() bool {
+	switch e {
+	case LocationFrameEncryptedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationKindType.
+const (
+	LocationKindTypeLocationStringType LocationKindType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the LocationKindType enum.
+func (e LocationKindType) Valid() bool {
+	switch e {
+	case LocationKindTypeLocationStringType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationKindValue.
+const (
+	LocationKindValue0 LocationKindValue = "Location"
+)
+
+// Valid indicates whether the value is a known member of the LocationKindValue enum.
+func (e LocationKindValue) Valid() bool {
+	switch e {
+	case LocationKindValue0:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationNonceOffset.
+const (
+	LocationNonceOffsetValue LocationNonceOffset = 1e+11
+)
+
+// Valid indicates whether the value is a known member of the LocationNonceOffset enum.
+func (e LocationNonceOffset) Valid() bool {
+	switch e {
+	case LocationNonceOffsetValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationParentOperationOperationType.
+const (
+	LocationParentOperationType LocationParentOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the LocationParentOperationOperationType enum.
+func (e LocationParentOperationOperationType) Valid() bool {
+	switch e {
+	case LocationParentOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationParentRecordRecordType.
+const (
+	LocationParentRecordType LocationParentRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the LocationParentRecordRecordType enum.
+func (e LocationParentRecordRecordType) Valid() bool {
+	switch e {
+	case LocationParentRecordType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationProximityType.
+const (
+	LocationProximityTypeLocationIntegerType LocationProximityType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the LocationProximityType enum.
+func (e LocationProximityType) Valid() bool {
+	switch e {
+	case LocationProximityTypeLocationIntegerType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationProximityValue.
+const (
+	LocationProximityValue0 LocationProximityValue = 1
+	LocationProximityValue1 LocationProximityValue = 2
+)
+
+// Valid indicates whether the value is a known member of the LocationProximityValue enum.
+func (e LocationProximityValue) Valid() bool {
+	switch e {
+	case LocationProximityValue0:
+		return true
+	case LocationProximityValue1:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationRadiusType.
+const (
+	LocationRadiusTypeLocationDoubleType LocationRadiusType = "DOUBLE"
+)
+
+// Valid indicates whether the value is a known member of the LocationRadiusType enum.
+func (e LocationRadiusType) Valid() bool {
+	switch e {
+	case LocationRadiusTypeLocationDoubleType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationReferenceType.
+const (
+	LocationReferenceTypeLocationReferenceType LocationReferenceType = "REFERENCE"
+)
+
+// Valid indicates whether the value is a known member of the LocationReferenceType enum.
+func (e LocationReferenceType) Valid() bool {
+	switch e {
+	case LocationReferenceTypeLocationReferenceType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationStringType.
+const (
+	LocationStringTypeLocationStringType LocationStringType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the LocationStringType enum.
+func (e LocationStringType) Valid() bool {
+	switch e {
+	case LocationStringTypeLocationStringType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationTriggerOperationOperationType.
+const (
+	LocationTriggerOperationType LocationTriggerOperationOperationType = "create"
+)
+
+// Valid indicates whether the value is a known member of the LocationTriggerOperationOperationType enum.
+func (e LocationTriggerOperationOperationType) Valid() bool {
+	switch e {
+	case LocationTriggerOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationTriggerRecordRecordType.
+const (
+	LocationTriggerRecordType LocationTriggerRecordRecordType = "AlarmTrigger"
+)
+
+// Valid indicates whether the value is a known member of the LocationTriggerRecordRecordType enum.
+func (e LocationTriggerRecordRecordType) Valid() bool {
+	switch e {
+	case LocationTriggerRecordType:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LocationTriggerType.
 const (
 	Location LocationTriggerType = "Location"
@@ -783,6 +1131,36 @@ const (
 func (e LocationTriggerType) Valid() bool {
 	switch e {
 	case Location:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationZeroType.
+const (
+	LocationZeroTypeLocationIntegerType LocationZeroType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the LocationZeroType enum.
+func (e LocationZeroType) Valid() bool {
+	switch e {
+	case LocationZeroTypeLocationIntegerType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LocationZeroValue.
+const (
+	LocationZeroValue0 LocationZeroValue = 0
+)
+
+// Valid indicates whether the value is a known member of the LocationZeroValue enum.
+func (e LocationZeroValue) Valid() bool {
+	switch e {
+	case LocationZeroValue0:
 		return true
 	default:
 		return false
@@ -2772,6 +3150,21 @@ func (e ReminderLinkedParentRecordRecordType) Valid() bool {
 	}
 }
 
+// Defines values for ReminderLocationRequestAtomic.
+const (
+	ReminderLocationAtomicTrue ReminderLocationRequestAtomic = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderLocationRequestAtomic enum.
+func (e ReminderLocationRequestAtomic) Valid() bool {
+	switch e {
+	case ReminderLocationAtomicTrue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderOptionalStringType.
 const (
 	ReminderOptionalSTRINGType ReminderOptionalStringType = "STRING"
@@ -2837,8 +3230,7 @@ func (e ReminderPendingChildOperationOperationType) Valid() bool {
 
 // Defines values for ReminderPendingChildOperationRecordRecordType.
 const (
-	ReminderPendingChildOperationRecordRecordTypeAlarm          ReminderPendingChildOperationRecordRecordType = "Alarm"
-	ReminderPendingChildOperationRecordRecordTypeAlarmTrigger   ReminderPendingChildOperationRecordRecordType = "AlarmTrigger"
+	ReminderPendingChildOperationRecordRecordTypeAttachment     ReminderPendingChildOperationRecordRecordType = "Attachment"
 	ReminderPendingChildOperationRecordRecordTypeHashtag        ReminderPendingChildOperationRecordRecordType = "Hashtag"
 	ReminderPendingChildOperationRecordRecordTypeRecurrenceRule ReminderPendingChildOperationRecordRecordType = "RecurrenceRule"
 )
@@ -2846,9 +3238,7 @@ const (
 // Valid indicates whether the value is a known member of the ReminderPendingChildOperationRecordRecordType enum.
 func (e ReminderPendingChildOperationRecordRecordType) Valid() bool {
 	switch e {
-	case ReminderPendingChildOperationRecordRecordTypeAlarm:
-		return true
-	case ReminderPendingChildOperationRecordRecordTypeAlarmTrigger:
+	case ReminderPendingChildOperationRecordRecordTypeAttachment:
 		return true
 	case ReminderPendingChildOperationRecordRecordTypeHashtag:
 		return true
@@ -4388,8 +4778,222 @@ type ListFieldSortingStyle string
 // ListRecordType Pinned Reminders list protocol value used by the domain projection.
 type ListRecordType string
 
+// LocationAlarmFields defines model for LocationAlarmFields.
+type LocationAlarmFields struct {
+	AlarmUID                      LocationString    `json:"AlarmUID"`
+	Deleted                       LocationZero      `json:"Deleted"`
+	Imported                      LocationZero      `json:"Imported"`
+	Reminder                      LocationReference `json:"Reminder"`
+	TriggerID                     LocationString    `json:"TriggerID"`
+	DueDateResolutionTokenAsNonce LocationDouble    `json:"DueDateResolutionTokenAsNonce"`
+}
+
+// LocationAlarmOperation defines model for LocationAlarmOperation.
+type LocationAlarmOperation struct {
+	OperationType LocationAlarmOperationOperationType `json:"operationType"`
+	Record        LocationAlarmRecord                 `json:"record"`
+}
+
+// LocationAlarmOperationOperationType defines model for LocationAlarmOperation.OperationType.
+type LocationAlarmOperationOperationType string
+
+// LocationAlarmRecord defines model for LocationAlarmRecord.
+type LocationAlarmRecord struct {
+	RecordName   string                        `json:"recordName"`
+	RecordType   LocationAlarmRecordRecordType `json:"recordType"`
+	Fields       LocationAlarmFields           `json:"fields"`
+	PluginFields map[string]interface{}        `json:"pluginFields"`
+
+	// Parent Write-side parent reference embedded under a record.
+	Parent CKWriteParent `json:"parent"`
+}
+
+// LocationAlarmRecordRecordType defines model for LocationAlarmRecord.RecordType.
+type LocationAlarmRecordRecordType string
+
+// LocationDefaultRadius defines model for LocationDefaultRadius.
+type LocationDefaultRadius int
+
+// LocationDouble defines model for LocationDouble.
+type LocationDouble struct {
+	Type  LocationDoubleType `json:"type"`
+	Value json.Number        `json:"value"`
+}
+
+// LocationDoubleType defines model for LocationDouble.Type.
+type LocationDoubleType string
+
+// LocationEncryptedDouble defines model for LocationEncryptedDouble.
+type LocationEncryptedDouble struct {
+	Type        LocationEncryptedDoubleType        `json:"type"`
+	Value       json.Number                        `json:"value"`
+	IsEncrypted LocationEncryptedDoubleIsEncrypted `json:"isEncrypted"`
+}
+
+// LocationEncryptedDoubleType defines model for LocationEncryptedDouble.Type.
+type LocationEncryptedDoubleType string
+
+// LocationEncryptedDoubleIsEncrypted defines model for LocationEncryptedDouble.IsEncrypted.
+type LocationEncryptedDoubleIsEncrypted bool
+
+// LocationEncryptedString defines model for LocationEncryptedString.
+type LocationEncryptedString struct {
+	Type        LocationEncryptedStringType        `json:"type"`
+	Value       string                             `json:"value"`
+	IsEncrypted LocationEncryptedStringIsEncrypted `json:"isEncrypted"`
+}
+
+// LocationEncryptedStringType defines model for LocationEncryptedString.Type.
+type LocationEncryptedStringType string
+
+// LocationEncryptedStringIsEncrypted defines model for LocationEncryptedString.IsEncrypted.
+type LocationEncryptedStringIsEncrypted bool
+
+// LocationFrame defines model for LocationFrame.
+type LocationFrame struct {
+	Type        LocationFrameType        `json:"type"`
+	Value       LocationFrameValue       `json:"value"`
+	IsEncrypted LocationFrameIsEncrypted `json:"isEncrypted"`
+}
+
+// LocationFrameType defines model for LocationFrame.Type.
+type LocationFrameType string
+
+// LocationFrameValue defines model for LocationFrame.Value.
+type LocationFrameValue string
+
+// LocationFrameIsEncrypted defines model for LocationFrame.IsEncrypted.
+type LocationFrameIsEncrypted bool
+
+// LocationKind defines model for LocationKind.
+type LocationKind struct {
+	Type  LocationKindType  `json:"type"`
+	Value LocationKindValue `json:"value"`
+}
+
+// LocationKindType defines model for LocationKind.Type.
+type LocationKindType string
+
+// LocationKindValue defines model for LocationKind.Value.
+type LocationKindValue string
+
+// LocationNonceOffset defines model for LocationNonceOffset.
+type LocationNonceOffset int64
+
+// LocationParentOperation defines model for LocationParentOperation.
+type LocationParentOperation struct {
+	OperationType LocationParentOperationOperationType `json:"operationType"`
+	Record        LocationParentRecord                 `json:"record"`
+}
+
+// LocationParentOperationOperationType defines model for LocationParentOperation.OperationType.
+type LocationParentOperationOperationType string
+
+// LocationParentRecord defines model for LocationParentRecord.
+type LocationParentRecord struct {
+	RecordName      string                         `json:"recordName"`
+	RecordType      LocationParentRecordRecordType `json:"recordType"`
+	Fields          ReminderAlarmLinkFields        `json:"fields"`
+	PluginFields    map[string]interface{}         `json:"pluginFields"`
+	RecordChangeTag *string                        `json:"recordChangeTag,omitempty"`
+}
+
+// LocationParentRecordRecordType defines model for LocationParentRecord.RecordType.
+type LocationParentRecordRecordType string
+
+// LocationProximity defines model for LocationProximity.
+type LocationProximity struct {
+	Type  LocationProximityType  `json:"type"`
+	Value LocationProximityValue `json:"value"`
+}
+
+// LocationProximityType defines model for LocationProximity.Type.
+type LocationProximityType string
+
+// LocationProximityValue defines model for LocationProximity.Value.
+type LocationProximityValue int
+
+// LocationRadius defines model for LocationRadius.
+type LocationRadius struct {
+	Type  LocationRadiusType `json:"type"`
+	Value json.Number        `json:"value"`
+}
+
+// LocationRadiusType defines model for LocationRadius.Type.
+type LocationRadiusType string
+
+// LocationReference defines model for LocationReference.
+type LocationReference struct {
+	Type LocationReferenceType `json:"type"`
+
+	// Value A validated named record reference.
+	Value ReminderWriteReferenceValue `json:"value"`
+}
+
+// LocationReferenceType defines model for LocationReference.Type.
+type LocationReferenceType string
+
+// LocationString defines model for LocationString.
+type LocationString struct {
+	Type  LocationStringType `json:"type"`
+	Value string             `json:"value"`
+}
+
+// LocationStringType defines model for LocationString.Type.
+type LocationStringType string
+
+// LocationTriggerFields defines model for LocationTriggerFields.
+type LocationTriggerFields struct {
+	Address              LocationEncryptedString `json:"Address"`
+	Alarm                LocationReference       `json:"Alarm"`
+	Deleted              LocationZero            `json:"Deleted"`
+	Latitude             LocationEncryptedDouble `json:"Latitude"`
+	LocationUID          LocationString          `json:"LocationUID"`
+	Longitude            LocationEncryptedDouble `json:"Longitude"`
+	Proximity            LocationProximity       `json:"Proximity"`
+	Radius               LocationRadius          `json:"Radius"`
+	ReferenceFrameString LocationFrame           `json:"ReferenceFrameString"`
+	Title                LocationEncryptedString `json:"Title"`
+	Type                 LocationKind            `json:"Type"`
+}
+
+// LocationTriggerOperation defines model for LocationTriggerOperation.
+type LocationTriggerOperation struct {
+	OperationType LocationTriggerOperationOperationType `json:"operationType"`
+	Record        LocationTriggerRecord                 `json:"record"`
+}
+
+// LocationTriggerOperationOperationType defines model for LocationTriggerOperation.OperationType.
+type LocationTriggerOperationOperationType string
+
+// LocationTriggerRecord defines model for LocationTriggerRecord.
+type LocationTriggerRecord struct {
+	RecordName   string                          `json:"recordName"`
+	RecordType   LocationTriggerRecordRecordType `json:"recordType"`
+	Fields       LocationTriggerFields           `json:"fields"`
+	PluginFields map[string]interface{}          `json:"pluginFields"`
+
+	// Parent Write-side parent reference embedded under a record.
+	Parent CKWriteParent `json:"parent"`
+}
+
+// LocationTriggerRecordRecordType defines model for LocationTriggerRecord.RecordType.
+type LocationTriggerRecordRecordType string
+
 // LocationTriggerType Pinned Source compound reminder query protocol value.
 type LocationTriggerType string
+
+// LocationZero defines model for LocationZero.
+type LocationZero struct {
+	Type  LocationZeroType  `json:"type"`
+	Value LocationZeroValue `json:"value"`
+}
+
+// LocationZeroType defines model for LocationZero.Type.
+type LocationZeroType string
+
+// LocationZeroValue defines model for LocationZero.Value.
+type LocationZeroValue int
 
 // PhotoAlbumDeletedField Reference Photos album protocol value.
 type PhotoAlbumDeletedField string
@@ -4650,15 +5254,18 @@ type ReminderAlarmLinkFields struct {
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
+// ReminderAlarmLinkTokens defines model for ReminderAlarmLinkTokens.
+type ReminderAlarmLinkTokens struct {
+	// AlarmIDs Per-field conflict-resolution token generated for a reminder mutation.
+	AlarmIDs ReminderResolutionToken `json:"alarmIDs"`
+
+	// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+	LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+}
+
 // ReminderAlarmLinkTokensMap defines model for ReminderAlarmLinkTokensMap.
 type ReminderAlarmLinkTokensMap struct {
-	Map struct {
-		// AlarmIDs Per-field conflict-resolution token generated for a reminder mutation.
-		AlarmIDs ReminderResolutionToken `json:"alarmIDs"`
-
-		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
-		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
-	} `json:"map"`
+	Map ReminderAlarmLinkTokens `json:"map"`
 }
 
 // ReminderAppleEpoch Pinned resolution-token epoch in Unix seconds (2001-01-01).
@@ -5305,6 +5912,25 @@ type ReminderLinkedParentRecordRecordType string
 type ReminderLinkedParentRecord_Fields struct {
 	union json.RawMessage
 }
+
+// ReminderLocationOperation defines model for ReminderLocationOperation.
+type ReminderLocationOperation struct {
+	union json.RawMessage
+}
+
+// ReminderLocationRequest Atomic location alarm request; emit parent update, alarm creation, then trigger creation in that order. Exactly one operation of each kind is required.
+//
+// Example: {"atomic":true,"operations":[{"operationType":"update","record":{"fields":{"AlarmIDs":{"type":"STRING_LIST","value":["keep-alarm","00000001-0000-4000-8000-000000000000"]},"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"alarmIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"}}}"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}},{"operationType":"create","record":{"fields":{"AlarmUID":{"type":"STRING","value":"00000001-0000-4000-8000-000000000000"},"Deleted":{"type":"INT64","value":0},"DueDateResolutionTokenAsNonce":{"type":"DOUBLE","value":100721692800},"Imported":{"type":"INT64","value":0},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}},"TriggerID":{"type":"STRING","value":"00000002-0000-4000-8000-000000000000"}},"parent":{"recordName":"Reminder/synthetic-item"},"pluginFields":{},"recordName":"Alarm/00000001-0000-4000-8000-000000000000","recordType":"Alarm"}},{"operationType":"create","record":{"fields":{"Address":{"isEncrypted":true,"type":"STRING","value":"Synthetic address"},"Alarm":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Alarm/00000001-0000-4000-8000-000000000000"}},"Deleted":{"type":"INT64","value":0},"Latitude":{"isEncrypted":true,"type":"DOUBLE","value":1.25},"LocationUID":{"type":"STRING","value":"00000003-0000-4000-8000-000000000000"},"Longitude":{"isEncrypted":true,"type":"DOUBLE","value":2.5},"Proximity":{"type":"INT64","value":2},"Radius":{"type":"DOUBLE","value":50},"ReferenceFrameString":{"isEncrypted":true,"type":"STRING","value":"1"},"Title":{"isEncrypted":true,"type":"STRING","value":"Synthetic place"},"Type":{"type":"STRING","value":"Location"}},"parent":{"recordName":"Alarm/00000001-0000-4000-8000-000000000000"},"pluginFields":{},"recordName":"AlarmTrigger/00000002-0000-4000-8000-000000000000","recordType":"AlarmTrigger"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderLocationRequest struct {
+	Operations []ReminderLocationOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq                   `json:"zoneID"`
+	Atomic ReminderLocationRequestAtomic `json:"atomic"`
+}
+
+// ReminderLocationRequestAtomic defines model for ReminderLocationRequest.Atomic.
+type ReminderLocationRequestAtomic bool
 
 // ReminderOptionalString Optional-value write field; a cleared value is omitted to match the reference serialization.
 type ReminderOptionalString struct {
@@ -13869,6 +14495,94 @@ func (t *ReminderLinkedParentRecord_Fields) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// AsLocationParentOperation returns the union data inside the ReminderLocationOperation as a LocationParentOperation
+func (t ReminderLocationOperation) AsLocationParentOperation() (LocationParentOperation, error) {
+	var body LocationParentOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromLocationParentOperation overwrites any union data inside the ReminderLocationOperation as the provided LocationParentOperation
+func (t *ReminderLocationOperation) FromLocationParentOperation(v LocationParentOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeLocationParentOperation performs a merge with any union data inside the ReminderLocationOperation, using the provided LocationParentOperation
+func (t *ReminderLocationOperation) MergeLocationParentOperation(v LocationParentOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsLocationAlarmOperation returns the union data inside the ReminderLocationOperation as a LocationAlarmOperation
+func (t ReminderLocationOperation) AsLocationAlarmOperation() (LocationAlarmOperation, error) {
+	var body LocationAlarmOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromLocationAlarmOperation overwrites any union data inside the ReminderLocationOperation as the provided LocationAlarmOperation
+func (t *ReminderLocationOperation) FromLocationAlarmOperation(v LocationAlarmOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeLocationAlarmOperation performs a merge with any union data inside the ReminderLocationOperation, using the provided LocationAlarmOperation
+func (t *ReminderLocationOperation) MergeLocationAlarmOperation(v LocationAlarmOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsLocationTriggerOperation returns the union data inside the ReminderLocationOperation as a LocationTriggerOperation
+func (t ReminderLocationOperation) AsLocationTriggerOperation() (LocationTriggerOperation, error) {
+	var body LocationTriggerOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromLocationTriggerOperation overwrites any union data inside the ReminderLocationOperation as the provided LocationTriggerOperation
+func (t *ReminderLocationOperation) FromLocationTriggerOperation(v LocationTriggerOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeLocationTriggerOperation performs a merge with any union data inside the ReminderLocationOperation, using the provided LocationTriggerOperation
+func (t *ReminderLocationOperation) MergeLocationTriggerOperation(v LocationTriggerOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderLocationOperation) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderLocationOperation) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // AsReminderRecurrenceParentOperation returns the union data inside the ReminderRecurrenceCreationRequest_Operations_Item as a ReminderRecurrenceParentOperation
 func (t ReminderRecurrenceCreationRequest_Operations_Item) AsReminderRecurrenceParentOperation() (ReminderRecurrenceParentOperation, error) {
 	var body ReminderRecurrenceParentOperation
@@ -14269,6 +14983,32 @@ func (t *RemindersModificationRequest) FromReminderAttachmentURLCreationRequest(
 
 // MergeReminderAttachmentURLCreationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderAttachmentURLCreationRequest
 func (t *RemindersModificationRequest) MergeReminderAttachmentURLCreationRequest(v ReminderAttachmentURLCreationRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderLocationRequest returns the union data inside the RemindersModificationRequest as a ReminderLocationRequest
+func (t RemindersModificationRequest) AsReminderLocationRequest() (ReminderLocationRequest, error) {
+	var body ReminderLocationRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderLocationRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderLocationRequest
+func (t *RemindersModificationRequest) FromReminderLocationRequest(v ReminderLocationRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderLocationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderLocationRequest
+func (t *RemindersModificationRequest) MergeReminderLocationRequest(v ReminderLocationRequest) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
