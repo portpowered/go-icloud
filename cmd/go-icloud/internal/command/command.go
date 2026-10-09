@@ -106,7 +106,8 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
 			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
 			"reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, reminders, reminder-snapshot, "+
-			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, resume")
+			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, "+
+			"photos-status, photo-albums, resume")
 
 		flags.PrintDefaults()
 	}
@@ -165,14 +166,10 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		"reminders", "reminder-snapshot",
 		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", "reminder-alarms":
 		return readReminders(ctx, client, auth, config)
-	case "account-devices":
-		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
-	case "account-family":
-		return wrap(client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth}))
-	case "account-storage":
-		return wrap(client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth}))
-	case "account-plan":
-		return wrap(client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth}))
+	case "photos-status", "photo-albums":
+		return readPhotos(ctx, client, auth, config.operation)
+	case "account-devices", "account-family", "account-storage", "account-plan":
+		return readAccount(ctx, client, auth, config.operation)
 	case "drive-libraries":
 		return wrap(client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth}))
 	case "drive-node":
@@ -284,6 +281,30 @@ func readReminderRelated(ctx context.Context, client icloud.Client,
 			icloud.ListReminderRecurrenceRulesRequest{Auth: auth, IDs: config.relatedIDs}))
 	case "reminder-alarms":
 		return wrap(client.ListReminderAlarms(ctx, icloud.ListReminderAlarmsRequest{Auth: auth, IDs: config.relatedIDs}))
+	default:
+		return nil, errCommand
+	}
+}
+
+func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthContext, operation string) (any, error) {
+	if operation == "photos-status" {
+		return wrap(client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{Auth: auth}))
+	}
+
+	return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth}))
+}
+
+func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthContext, operation string) (any, error) {
+	switch operation {
+	case "account-devices":
+		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
+	case "account-family":
+		return wrap(client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth}))
+	case "account-storage":
+		return wrap(client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth}))
+	case "account-plan":
+		return wrap(client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth}))
+
 	default:
 		return nil, errCommand
 	}
