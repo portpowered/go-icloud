@@ -8,7 +8,7 @@ import (
 // GetPhoto checks the direct album lookup, then scans album pages until the asset is found.
 // A photo absent from both sources is returned as explicit null with complete response evidence.
 func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "GetPhoto")
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "GetPhoto", request.Library)
 	if err != nil {
 		return nil, err
 	}
@@ -18,7 +18,7 @@ func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhot
 		return nil, err
 	}
 
-	entries, err := projectPhotoAlbums(albums)
+	entries, err := read.projectAlbums(albums)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}
@@ -48,7 +48,7 @@ type photoProjection func(cloudkit.CKRecord, cloudkit.CKRecord) (Photo, error)
 func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, photoID string,
 	project photoProjection,
 ) ([]Photo, error) {
-	spec := photoQuerySpec(entry)
+	spec := read.querySpec(entry)
 
 	response, err := read.sdk.web.PhotosLookupAsset(ctx, read.auth, spec.index, photoID, spec.filters)
 	if err != nil {

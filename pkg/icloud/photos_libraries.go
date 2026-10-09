@@ -10,6 +10,36 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
+// ListPhotoLibraries discovers initialized private and shared databases with caller-owned cursors.
+func (sdk *SDK) ListPhotoLibraries(
+	ctx context.Context,
+	request ListPhotoLibrariesRequest,
+) (*ListPhotoLibrariesResult, error) {
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListPhotoLibraries")
+	if err != nil {
+		return nil, err
+	}
+
+	root := PhotoLibrary{ID: "root", ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue, Shared: false,
+		IsSharedLibrary: false, IndexingState: PhotoLibraryIndexingStateFINISHED,
+		ZoneType: nil, OwnerRecordName: nil, SyncToken: nil}
+	root.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+	root.OwnerRecordName.SetNull()
+	root.SyncToken.SetNull()
+	if read.syncToken != nil {
+		root.SyncToken.Set(*read.syncToken)
+	}
+
+	read.libraries = append(read.libraries, root)
+
+	err = read.discoverPhotoLibraries(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ListPhotoLibrariesResult{Libraries: read.libraries, Responses: read.metadata()}, nil
+}
+
 func (read *photosRead) discoverPhotoLibraries(ctx context.Context) error {
 	seen := map[string]bool{}
 
@@ -51,8 +81,7 @@ func (read *photosRead) initializePhotoScope(ctx context.Context, shared bool, s
 	}
 
 	for _, zone := range *page.Data.Zones {
-		deleted, _ := zone.Deleted.Get()
-		if deleted || (!shared && zone.ZoneID.ZoneName == protocol.PhotosPhotoPrimaryZoneNameValue) {
+		if read.skipLibraryZone(zone, shared) {
 			continue
 		}
 
@@ -97,5 +126,52 @@ func (read *photosRead) initializePhotoLibrary(ctx context.Context, zone cloudki
 		return read.failure(errPhotosIndexing, Unavailable)
 	}
 
+	library := PhotoLibrary{ID: photoLibraryKey(zone.ZoneName, shared), ZoneName: zone.ZoneName,
+		Shared:          shared,
+		IsSharedLibrary: shared || strings.HasPrefix(zone.ZoneName, protocol.PhotosPhotoSharedLibraryZonePrefixValue),
+		IndexingState:   PhotoLibraryIndexingStateFINISHED, ZoneType: zone.ZoneType,
+		OwnerRecordName: zone.OwnerRecordName, SyncToken: response.Data.SyncToken}
+	if !library.ZoneType.IsSpecified() {
+		library.ZoneType.SetNull()
+	}
+
+	if !library.OwnerRecordName.IsSpecified() {
+		library.OwnerRecordName.SetNull()
+	}
+
+	if !library.SyncToken.IsSpecified() {
+		library.SyncToken.SetNull()
+	}
+
+	for index, current := range read.libraries {
+		if current.ID == library.ID {
+			read.libraries[index] = library
+
+			return nil
+		}
+	}
+
+	read.libraries = append(read.libraries, library)
+
 	return nil
+}
+
+func (read *photosRead) skipLibraryZone(zone cloudkit.CKZoneListZone, shared bool) bool {
+	deleted, _ := zone.Deleted.Get()
+	if deleted {
+		return true
+	}
+
+	if shared || zone.ZoneID.ZoneName != protocol.PhotosPhotoPrimaryZoneNameValue {
+		return false
+	}
+
+	if len(read.libraries) != 0 {
+		read.libraries[0].SyncToken = zone.SyncToken
+		if !read.libraries[0].SyncToken.IsSpecified() {
+			read.libraries[0].SyncToken.SetNull()
+		}
+	}
+
+	return true
 }

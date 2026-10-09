@@ -16,7 +16,7 @@ var errPhotoCount = errors.New("photo count is missing or invalid")
 func (sdk *SDK) GetPhotoAlbumCount(
 	ctx context.Context, request GetPhotoAlbumCountRequest,
 ) (*GetPhotoAlbumCountResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "GetPhotoAlbumCount")
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "GetPhotoAlbumCount", request.Library)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (sdk *SDK) GetPhotoAlbumCount(
 		return nil, err
 	}
 
-	albums, err := projectPhotoAlbums(records)
+	albums, err := read.projectAlbums(records)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}

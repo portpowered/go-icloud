@@ -24,7 +24,7 @@ func (client *Client) PhotosAssetQuery(ctx context.Context, auth RequestContext,
 	index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
 	extra []PhotosAssetSelector,
 ) (*PhotosQueryResponse, error) {
-	body, err := photosAssetBody(index, direction, offset, extra)
+	body, err := photosAssetBody(index, direction, offset, extra, auth.PhotoZone)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -33,19 +33,23 @@ func (client *Client) PhotosAssetQuery(ctx context.Context, auth RequestContext,
 }
 
 func photosAssetBody(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
-	extra []PhotosAssetSelector,
+	extra []PhotosAssetSelector, selected ...*cloudkit.CKZoneIDReq,
 ) (string, error) {
-	return photosAssetBodyLimit(index, direction, offset, extra, photosAssetResultsLimit)
+	return photosAssetBodyLimit(index, direction, offset, extra, photosAssetResultsLimit, selected...)
 }
 
 func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
-	extra []PhotosAssetSelector, limit int64,
+	extra []PhotosAssetSelector, limit int64, selected ...*cloudkit.CKZoneIDReq,
 ) (string, error) {
 	filters := []string{}
 
 	for _, selector := range append([]PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldDirection,
 		Value: string(direction)}}, extra...) {
-		value := cloudkit.CKFVString{Type: cloudkit.CKFVStringTypeSTRING, Value: selector.Value, AdditionalProperties: nil}
+		value := cloudkit.CKFVString{
+			Type:                 cloudkit.CKFVStringTypeSTRING,
+			Value:                selector.Value,
+			AdditionalProperties: nil,
+		}
 
 		filter, err := photosAssetFilter(selector.Field, value)
 		if err != nil {
@@ -66,7 +70,18 @@ func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.Phot
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
 
-	identity, err := referenceJSON(zone)
+	if len(selected) > 0 && selected[0] != nil {
+		zone = *selected[0]
+	}
+
+	identity, err := referenceJSONFields(
+		zone,
+		[]string{
+			protocol.PhotosCKZoneIDReqZoneName,
+			protocol.PhotosCKZoneIDReqZoneType,
+			protocol.PhotosCKZoneIDReqOwnerRecordName,
+		},
+	)
 	if err != nil {
 		return "", err
 	}

@@ -120,13 +120,13 @@ func (e FindMyWaitKind) Valid() bool {
 
 // Defines values for GetPhotosStatusResultState.
 const (
-	FINISHED GetPhotosStatusResultState = "FINISHED"
+	GetPhotosStatusResultStateFINISHED GetPhotosStatusResultState = "FINISHED"
 )
 
 // Valid indicates whether the value is a known member of the GetPhotosStatusResultState enum.
 func (e GetPhotosStatusResultState) Valid() bool {
 	switch e {
-	case FINISHED:
+	case GetPhotosStatusResultStateFINISHED:
 		return true
 	default:
 		return false
@@ -145,6 +145,60 @@ func (e PhotoItemType) Valid() bool {
 	case Image:
 		return true
 	case Movie:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumType.
+const (
+	PhotoAlbumTypeAlbum      PhotoAlbumType = 0
+	PhotoAlbumTypeFolder     PhotoAlbumType = 3
+	PhotoAlbumTypeSmartAlbum PhotoAlbumType = 6
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumType enum.
+func (e PhotoAlbumType) Valid() bool {
+	switch e {
+	case PhotoAlbumTypeAlbum:
+		return true
+	case PhotoAlbumTypeFolder:
+		return true
+	case PhotoAlbumTypeSmartAlbum:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoChangeKind.
+const (
+	PhotoDeleted PhotoChangeKind = "deleted"
+	PhotoUpdated PhotoChangeKind = "updated"
+)
+
+// Valid indicates whether the value is a known member of the PhotoChangeKind enum.
+func (e PhotoChangeKind) Valid() bool {
+	switch e {
+	case PhotoDeleted:
+		return true
+	case PhotoUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoLibraryIndexingState.
+const (
+	PhotoLibraryIndexingStateFINISHED PhotoLibraryIndexingState = "FINISHED"
+)
+
+// Valid indicates whether the value is a known member of the PhotoLibraryIndexingState enum.
+func (e PhotoLibraryIndexingState) Valid() bool {
+	switch e {
+	case PhotoLibraryIndexingStateFINISHED:
 		return true
 	default:
 		return false
@@ -364,6 +418,25 @@ type AccountStorageUsage struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// AddPhotoToAlbumRequest AddPhotoToAlbum operation input.
+//
+// Example: {"albumID":"synthetic-album-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset-0"}
+type AddPhotoToAlbumRequest struct {
+	// AlbumID Provider album record identifier.
+	AlbumID string `json:"albumID"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// PhotoID Provider asset identifier.
+	PhotoID string `json:"photoID"`
+}
+
 // ApplySessionResponsesRequest Apply observed response cookie/token updates to a copied native session without making a network request.
 //
 // Example: {"responses":[],"session":{"accountCountryCode":null,"accountData":{},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"requiresTwoFactor":false,"requiresTwoStep":false,"responses":[],"trustToken":"synthetic-trust","trustedSession":true}}
@@ -497,6 +570,30 @@ type CreateDriveFolderResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// CreatePhotoAlbumRequest CreatePhotoAlbum operation input.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"name":"Album"}
+type CreatePhotoAlbumRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Folder Create a folder when true and a regular album when false.
+	Folder bool `json:"folder,omitempty"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// Name Decoded album or folder display name.
+	Name string `json:"name"`
+
+	// Type Source ALBUM, FOLDER, and SMART_ALBUM values.
+	//
+	// Example: 0
+	Type *PhotoAlbumType `json:"type,omitempty"`
+}
+
 // CreateReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"name":"Synthetic tag","reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
 type CreateReminderHashtagRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -537,6 +634,41 @@ type DeleteDriveNodeRequest struct {
 
 // DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DeletePhotoAlbumRequest DeletePhotoAlbum operation input.
+//
+// Example: {"albumID":"synthetic-album-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type DeletePhotoAlbumRequest struct {
+	// AlbumID Provider album record identifier.
+	AlbumID string `json:"albumID"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// DeletePhotoRequest DeletePhoto operation input.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset-0"}
+type DeletePhotoRequest struct {
+	// Album The updated album projection.
+	Album *string `json:"album,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// PhotoID Provider asset identifier.
+	PhotoID string `json:"photoID"`
+}
 
 // DeleteReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
 type DeleteReminderHashtagRequest struct {
@@ -620,6 +752,11 @@ type DownloadPhotoRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 
 	// PhotoID Requested asset identifier.
 	PhotoID string `json:"photoID"`
@@ -1256,6 +1393,11 @@ type GetPhotoAlbumCountRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // GetPhotoAlbumCountResult Nonnegative indexed photo count and every response from initialization, discovery and counting.
@@ -1267,6 +1409,43 @@ type GetPhotoAlbumCountResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// GetPhotoChangesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"since":"synthetic-old"}
+type GetPhotoChangesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// Since Omission reads available initial changes.
+	Since *string `json:"since,omitempty"`
+}
+
+// GetPhotoChangesResult Example: {"changes":[{"deleted":false,"kind":"updated","modified":null,"recordName":"synthetic-asset","recordType":"CPLAsset"}],"responses":[],"syncToken":"synthetic-next"}
+type GetPhotoChangesResult struct {
+	Changes   []PhotoChange             `json:"changes"`
+	Responses []ResponseMetadata        `json:"responses"`
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
+}
+
+// GetPhotoLibraryChangesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"shared":false,"since":"synthetic-old"}
+type GetPhotoLibraryChangesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext `json:"auth"`
+	Shared bool        `json:"shared,omitempty"`
+	Since  *string     `json:"since,omitempty"`
+}
+
+// GetPhotoLibraryChangesResult Example: {"moreComing":false,"responses":[],"syncToken":"synthetic-next","zones":[{"deleted":false,"ownerRecordName":null,"zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}]}
+type GetPhotoLibraryChangesResult struct {
+	MoreComing nullable.Nullable[bool]   `json:"moreComing"`
+	Responses  []ResponseMetadata        `json:"responses"`
+	SyncToken  nullable.Nullable[string] `json:"syncToken"`
+	Zones      []PhotoLibraryChange      `json:"zones"`
+}
+
 // GetPhotoRequest Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.
 //
 // Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset"}
@@ -1276,6 +1455,11 @@ type GetPhotoRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 
 	// PhotoID Requested asset identifier.
 	PhotoID string `json:"photoID"`
@@ -1289,12 +1473,34 @@ type GetPhotoResult struct {
 	Responses []ResponseMetadata       `json:"responses"`
 }
 
+// GetPhotosCursorRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type GetPhotosCursorRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// GetPhotosCursorResult Example: {"responses":[],"syncToken":"synthetic-sync"}
+type GetPhotosCursorResult struct {
+	Responses []ResponseMetadata `json:"responses"`
+	SyncToken string             `json:"syncToken"`
+}
+
 // GetPhotosStatusRequest Check the primary photo library using caller-owned authentication.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
 type GetPhotosStatusRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // GetPhotosStatusResult Ready primary photo library indexing state and current change cursor.
@@ -1388,6 +1594,11 @@ type ListDriveLibrariesResult struct {
 type ListPhotoAlbumsRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListPhotoAlbumsResult Ordered smart and custom albums with response evidence from initialization and every page.
@@ -1408,6 +1619,11 @@ type ListPhotoAssetsRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListPhotoAssetsResult Complete deduplicated photos and every initialization, discovery, count and page response.
@@ -1418,12 +1634,29 @@ type ListPhotoAssetsResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// ListPhotoLibrariesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type ListPhotoLibrariesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListPhotoLibrariesResult Example: {"libraries":[{"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}],"responses":[]}
+type ListPhotoLibrariesResult struct {
+	Libraries []PhotoLibrary     `json:"libraries"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListRecentlyAddedPhotosRequest Enumerate the primary library newest first using the recently-added trailing window index.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
 type ListRecentlyAddedPhotosRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListRecentlyAddedPhotosResult Complete deduplicated newest-first photos and every initialization, library discovery and page response.
@@ -1718,6 +1951,102 @@ type PhotoAlbum struct {
 	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
 }
 
+// PhotoAlbumMutationResult PhotoAlbumMutation operation output.
+//
+// Example: {"album":{"fullName":"Album","id":"synthetic-album-0","name":"Album","recordChangeTag":null},"responses":[]}
+type PhotoAlbumMutationResult struct {
+	// Album The updated album projection.
+	Album nullable.Nullable[PhotoAlbum] `json:"album"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// PhotoAlbumRelationResult PhotoAlbumRelation operation output.
+//
+// Example: {"added":true,"responses":[]}
+type PhotoAlbumRelationResult struct {
+	// Added The provider acknowledged creation of the album relation.
+	Added bool `json:"added"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// PhotoAlbumType Source ALBUM, FOLDER, and SMART_ALBUM values.
+//
+// Example: 0
+type PhotoAlbumType int
+
+// PhotoChange Example: {"deleted":false,"kind":"updated","modified":null,"recordName":"synthetic-asset","recordType":"CPLAsset"}
+type PhotoChange struct {
+	Deleted bool            `json:"deleted"`
+	Kind    PhotoChangeKind `json:"kind"`
+
+	// Modified Provider modification instant.
+	Modified   nullable.Nullable[time.Time] `json:"modified"`
+	RecordName string                       `json:"recordName"`
+	RecordType nullable.Nullable[string]    `json:"recordType"`
+}
+
+// PhotoChangeKind defines model for PhotoChange.Kind.
+type PhotoChangeKind string
+
+// PhotoDeletionResult PhotoDeletion operation output.
+//
+// Example: {"deleted":true,"responses":[]}
+type PhotoDeletionResult struct {
+	// Deleted The provider acknowledged the soft-delete request without per-record rejection.
+	Deleted bool `json:"deleted"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// PhotoLibrary Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+//
+// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+type PhotoLibrary struct {
+	ID string `json:"id"`
+
+	// IndexingState Discovery initialization receipt; omission checks readiness.
+	IndexingState PhotoLibraryIndexingState `json:"indexingState,omitempty"`
+
+	// IsSharedLibrary Shared-library capabilities independent of database scope.
+	IsSharedLibrary bool                      `json:"isSharedLibrary"`
+	OwnerRecordName nullable.Nullable[string] `json:"ownerRecordName"`
+
+	// Shared Selects the shared CloudKit database.
+	Shared    bool                      `json:"shared"`
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
+	ZoneName  string                    `json:"zoneName"`
+	ZoneType  nullable.Nullable[string] `json:"zoneType"`
+}
+
+// PhotoLibraryIndexingState Discovery initialization receipt; omission checks readiness.
+type PhotoLibraryIndexingState string
+
+// PhotoLibraryChange Example: {"deleted":false,"ownerRecordName":null,"zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+type PhotoLibraryChange struct {
+	Deleted         nullable.Nullable[bool]   `json:"deleted"`
+	OwnerRecordName nullable.Nullable[string] `json:"ownerRecordName"`
+	ZoneName        string                    `json:"zoneName"`
+	ZoneType        nullable.Nullable[string] `json:"zoneType"`
+}
+
+// PhotoMutationResult PhotoMutation operation output.
+//
+// Example: {"photo":{"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}},"responses":[]}
+type PhotoMutationResult struct {
+	// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+	//
+	// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+	Photo Photo `json:"photo"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // PhotoResource One downloadable photo/video rendition with nullable provider details.
 //
 // Example: {"checksum":null,"filename":"photo.JPG","height":null,"size":null,"type":null,"url":null,"width":null}
@@ -1748,6 +2077,17 @@ type PhotoResource struct {
 //
 // Example: original
 type PhotoVersion string
+
+// PhotoVisitEvent Owned photo projection and ordered response metadata available before the callback.
+//
+// Example: {"photo":{"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}},"responses":[]}
+type PhotoVisitEvent struct {
+	// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+	//
+	// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+	Photo     Photo              `json:"photo"`
+	Responses []ResponseMetadata `json:"responses"`
+}
 
 // RefreshFindMyRequest Example: {"locate":true}
 type RefreshFindMyRequest struct {
@@ -2142,6 +2482,25 @@ type RenameDriveNodeRequest struct {
 // RenameDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type RenameDriveNodeResult = DriveItemChangeResult
 
+// RenamePhotoAlbumRequest RenamePhotoAlbum operation input.
+//
+// Example: {"albumID":"synthetic-album-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"name":"Album"}
+type RenamePhotoAlbumRequest struct {
+	// AlbumID Provider album record identifier.
+	AlbumID string `json:"albumID"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// Name Decoded album or folder display name.
+	Name string `json:"name"`
+}
+
 // ResponseMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 type ResponseMetadata struct {
 	// CookieScopeURL Request HTTPS origin and escaped path without query credentials; use this URL to apply Set-Cookie host and default-path scope.
@@ -2221,6 +2580,28 @@ type SavedSessionCredentials struct {
 
 	// SetupServiceURL HTTPS setup origin for cookie validation and token login.
 	SetupServiceURL string `json:"setupServiceURL"`
+}
+
+// SetPhotoFavoriteRequest SetPhotoFavorite operation input.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"favorite":true,"photoID":"synthetic-asset-0"}
+type SetPhotoFavoriteRequest struct {
+	// Album The updated album projection.
+	Album *string `json:"album,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Favorite Desired favorite state.
+	Favorite bool `json:"favorite"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// PhotoID Provider asset identifier.
+	PhotoID string `json:"photoID"`
 }
 
 // TrashDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}

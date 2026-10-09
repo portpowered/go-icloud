@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/internal/photosapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
-	"net/http"
 )
 
 // PhotosQueryResponse retains validated CloudKit query records and exact response evidence.
@@ -23,7 +24,11 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
 
-	return client.photosZoneIndexing(ctx, auth, zone, false)
+	if auth.PhotoZone != nil {
+		zone = *auth.PhotoZone
+	}
+
+	return client.photosZoneIndexing(ctx, auth, zone, auth.PhotoShared)
 }
 
 // PhotosLibraryIndexing initializes one discovered library in its advertised database scope.
@@ -65,7 +70,7 @@ func (client *Client) photosZoneIndexing(ctx context.Context, auth RequestContex
 func (client *Client) photosQueryBytes(
 	ctx context.Context, auth RequestContext, body string,
 ) (*PhotosQueryResponse, error) {
-	return client.photosScopedQueryBytes(ctx, auth, body, false)
+	return client.photosScopedQueryBytes(ctx, auth, body, auth.PhotoShared)
 }
 
 func (client *Client) photosScopedQueryBytes(ctx context.Context, auth RequestContext,
@@ -91,7 +96,10 @@ func (client *Client) photosScopedQueryBytes(ctx context.Context, auth RequestCo
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
 		queryPart(protocol.PhotosRemapEnumsName, string(photosapi.PhotosQueryRecordsParamsRemapEnumsTrue)) + "&" +
-		queryPart(protocol.PhotosGetCurrentSyncTokenName, string(photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue))
+		queryPart(
+			protocol.PhotosGetCurrentSyncTokenName,
+			string(photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue),
+		)
 
 	response, err := client.readPrepared(request, successfulContent, auth.Cookies)
 	if err != nil {

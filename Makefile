@@ -41,6 +41,7 @@ endpoint-coverage:
 
 # Schema-owned account, Drive, Find My and Reminders wire models; Photos/auth contracts remain pending.
 generate-api:
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/photosmutations/config.yaml api/external/photos-mutations-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config cmd/go-icloud/internal/referenceconfig/config.yaml cmd/go-icloud/api/reference-login.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/auth/config.yaml api/external/auth-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/authapi/config.yaml api/external/auth.openapi.yaml

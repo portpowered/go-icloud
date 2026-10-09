@@ -42,7 +42,7 @@ func runPhotosStatusSDK(t *testing.T, scenario accountScenario) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.GetPhotosStatus(t.Context(), icloud.GetPhotosStatusRequest{Auth: auth})
+	actual, err := client.GetPhotosStatus(t.Context(), icloud.GetPhotosStatusRequest{Library: nil, Auth: auth})
 	if len(scenario.Error) != 0 {
 		checkPhotosStatusFailure(t, scenario, actual, err)
 	} else {

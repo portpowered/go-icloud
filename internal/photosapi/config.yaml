@@ -7,3 +7,5 @@ output-options:
   nullable-type: true
 import-mapping:
   ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit
+
+  ./photos-mutations-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations

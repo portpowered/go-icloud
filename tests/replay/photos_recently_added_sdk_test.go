@@ -45,7 +45,10 @@ func runRecentlyAddedPhotosSDK(t *testing.T, path string) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.ListRecentlyAddedPhotos(t.Context(), icloud.ListRecentlyAddedPhotosRequest{Auth: auth})
+	actual, err := client.ListRecentlyAddedPhotos(
+		t.Context(),
+		icloud.ListRecentlyAddedPhotosRequest{Library: nil, Auth: auth},
+	)
 	if len(scenario.Error) != 0 {
 		if actual != nil {
 			t.Fatal("photo enumeration returned partial results on failure")

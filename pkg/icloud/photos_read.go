@@ -3,27 +3,62 @@ package icloud
 import (
 	"context"
 	"errors"
+	"strconv"
+
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
-	"strconv"
 )
 
 type photosRead struct {
-	sdk       *SDK
-	auth      webtransport.RequestContext
-	operation string
-	responses []*webtransport.BytesResponse
+	visitor       PhotoVisitor
+	syncToken     *string
+	sdk           *SDK
+	auth          webtransport.RequestContext
+	operation     string
+	responses     []*webtransport.BytesResponse
+	sharedLibrary bool
+	libraries     []PhotoLibrary
 }
 
-func (sdk *SDK) beginPhotosRead(ctx context.Context, auth AuthContext, operation string) (*photosRead, error) {
-	boundary, err := accountRequestContext(auth)
+func (sdk *SDK) beginPhotosRead(
+	ctx context.Context,
+	auth AuthContext,
+	operation string,
+	libraries ...*PhotoLibrary,
+) (*photosRead, error) {
+	err := ctx.Err()
+	if err != nil {
+		return nil, driveContextFailure(operation, err)
+	}
+	library := selectedPhotoLibrary(libraries)
+
+	boundary, err := photosRequestContext(auth, library)
 	if err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
 
 	boundary.Origin = auth.PhotosServiceURL
-	read := &photosRead{sdk: sdk, auth: boundary, operation: operation, responses: []*webtransport.BytesResponse{}}
+
+	read := &photosRead{
+		sdk:           sdk,
+		auth:          boundary,
+		operation:     operation,
+		responses:     []*webtransport.BytesResponse{},
+		sharedLibrary: library != nil && library.IsSharedLibrary,
+		libraries:     []PhotoLibrary{},
+		syncToken:     nil,
+		visitor:       nil,
+	}
+
+	if photoLibraryInitialized(library) {
+		token, tokenErr := library.SyncToken.Get()
+		if tokenErr == nil {
+			read.syncToken = &token
+		}
+
+		return read, nil
+	}
 
 	response, err := sdk.web.PhotosIndexing(ctx, boundary)
 	if err != nil {
@@ -31,6 +66,12 @@ func (sdk *SDK) beginPhotosRead(ctx context.Context, auth AuthContext, operation
 	}
 
 	read.responses = append(read.responses, response.Metadata)
+
+	token, tokenErr := response.Data.SyncToken.Get()
+
+	if tokenErr == nil {
+		read.syncToken = &token
+	}
 
 	state, err := photosIndexingState(response.Data)
 	if err != nil {
@@ -45,6 +86,14 @@ func (sdk *SDK) beginPhotosRead(ctx context.Context, auth AuthContext, operation
 }
 
 func (read *photosRead) albums(ctx context.Context, parent *string) ([]cloudkit.CKRecord, error) {
+	if read.sharedLibrary {
+		return []cloudkit.CKRecord{}, nil
+	}
+
+	return read.privateAlbums(ctx, parent)
+}
+
+func (read *photosRead) privateAlbums(ctx context.Context, parent *string) ([]cloudkit.CKRecord, error) {
 	records := []cloudkit.CKRecord{}
 
 	var continuation *string
@@ -130,4 +179,11 @@ func (read *photosRead) metadata() []ResponseMetadata {
 	}
 
 	return result
+}
+
+func selectedPhotoLibrary(libraries []*PhotoLibrary) *PhotoLibrary {
+	if len(libraries) == 0 {
+		return nil
+	}
+	return libraries[0]
 }

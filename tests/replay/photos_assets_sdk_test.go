@@ -47,7 +47,7 @@ func runPhotoAssetsSDK(t *testing.T, path string) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.ListPhotoAssets(t.Context(), icloud.ListPhotoAssetsRequest{
+	actual, err := client.ListPhotoAssets(t.Context(), icloud.ListPhotoAssetsRequest{Library: nil,
 		Auth: auth, Album: photoCountFixtureAlbum(t, path)})
 	if len(scenario.Error) != 0 {
 		if actual != nil {

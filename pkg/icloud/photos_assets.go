@@ -2,6 +2,7 @@ package icloud
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/portpowered/go-icloud/internal/webtransport"
@@ -12,17 +13,27 @@ const photoSourcePageSize = 100
 
 // ListPhotoAssets enumerates the selected primary album with Source ordering and deduplication.
 func (sdk *SDK) ListPhotoAssets(ctx context.Context, request ListPhotoAssetsRequest) (*ListPhotoAssetsResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListPhotoAssets")
+	return sdk.listPhotoAssets(ctx, request, nil)
+}
+
+func (sdk *SDK) listPhotoAssets(
+	ctx context.Context,
+	request ListPhotoAssetsRequest,
+	visitor PhotoVisitor,
+) (*ListPhotoAssetsResult, error) {
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListPhotoAssets", request.Library)
 	if err != nil {
 		return nil, err
 	}
+
+	read.visitor = visitor
 
 	albums, err := read.albums(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	entries, err := projectPhotoAlbums(albums)
+	entries, err := read.projectAlbums(albums)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}
@@ -66,14 +77,16 @@ func photoQuerySpec(entry photoAlbumEntry) photoAlbumQuerySpec {
 		}
 
 		return photoAlbumQuerySpec{index: cloudkit.CPLContainerRelationLiveByAssetDate, direction: direction,
-			filters: []webtransport.PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldParentId, Value: entry.album.ID}}}
+			filters: []webtransport.PhotosAssetSelector{
+				{Field: cloudkit.PhotoAssetQueryFieldParentId, Value: entry.album.ID},
+			}}
 	}
 
 	return photoSmartQueries()[cloudkit.PhotoSmartAlbumName(entry.album.ID)]
 }
 
 func (read *photosRead) assets(ctx context.Context, entry photoAlbumEntry) ([]Photo, error) {
-	spec := photoQuerySpec(entry)
+	spec := read.querySpec(entry)
 
 	offset, err := read.assetOffset(ctx, entry, spec)
 	if err != nil {
@@ -132,17 +145,17 @@ func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec
 			return nil, read.failure(err, InvalidResponse)
 		}
 
-		projected, err := projectSelectedPhotoPage(page, seen, photoID, project)
+		projected, err := projectSelectedPhotoPage(page, seen, photoID, project, read.photoVisitor())
+		if errors.Is(err, errPhotoVisitStopped) {
+			return append(photos, projected...), nil
+		}
+
 		if err != nil {
 			return nil, read.failure(err, InvalidResponse)
 		}
 
 		photos = append(photos, projected...)
-		if photoID != nil && len(projected) != 0 {
-			return photos, nil
-		}
-
-		if len(page) < photoSourcePageSize/2 {
+		if photoPageFinished(photoID, projected, page) {
 			return photos, nil
 		}
 
@@ -196,7 +209,7 @@ func projectPhotoPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
 }
 
 func projectSelectedPhotoPage(page []photoPair, seen map[string]bool, photoID *string,
-	project photoProjection,
+	project photoProjection, visitors ...func(Photo) (bool, error),
 ) ([]Photo, error) {
 	photos := []Photo{}
 
@@ -216,7 +229,33 @@ func projectSelectedPhotoPage(page []photoPair, seen map[string]bool, photoID *s
 		if photoID != nil {
 			return photos, nil
 		}
+
+		visitErr := visitSelectedPhoto(photo, visitors)
+		if visitErr != nil {
+			return photos, visitErr
+		}
 	}
 
 	return photos, nil
+}
+
+func visitSelectedPhoto(photo Photo, visitors []func(Photo) (bool, error)) error {
+	if len(visitors) == 0 || visitors[0] == nil {
+		return nil
+	}
+
+	advance, err := visitors[0](photo)
+	if err != nil {
+		return err
+	}
+
+	if !advance {
+		return errPhotoVisitStopped
+	}
+
+	return nil
+}
+
+func photoPageFinished(photoID *string, projected []Photo, page []photoPair) bool {
+	return (photoID != nil && len(projected) != 0) || len(page) < photoSourcePageSize/2
 }

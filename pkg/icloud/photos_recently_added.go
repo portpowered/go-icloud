@@ -2,6 +2,7 @@ package icloud
 
 import (
 	"context"
+	"errors"
 	"slices"
 
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
@@ -11,10 +12,20 @@ import (
 func (sdk *SDK) ListRecentlyAddedPhotos(ctx context.Context,
 	request ListRecentlyAddedPhotosRequest,
 ) (*ListRecentlyAddedPhotosResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListRecentlyAddedPhotos")
+	return sdk.listRecentlyAddedPhotos(ctx, request, nil)
+}
+
+func (sdk *SDK) listRecentlyAddedPhotos(
+	ctx context.Context,
+	request ListRecentlyAddedPhotosRequest,
+	visitor PhotoVisitor,
+) (*ListRecentlyAddedPhotosResult, error) {
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListRecentlyAddedPhotos", request.Library)
 	if err != nil {
 		return nil, err
 	}
+
+	read.visitor = visitor
 
 	err = read.discoverPhotoLibraries(ctx)
 	if err != nil {
@@ -54,12 +65,15 @@ func (read *photosRead) recentlyAdded(ctx context.Context) ([]Photo, error) {
 			return nil, read.failure(err, InvalidResponse)
 		}
 
-		window, err := projectSelectedPhotoPage(pairs, seen, nil, projectPhoto)
+		selected := recentPhotoWindow(pairs, seen)
+		window, err := projectSelectedPhotoPage(selected, map[string]bool{}, nil, projectPhoto, read.photoVisitor())
+		if errors.Is(err, errPhotoVisitStopped) {
+			return append(photos, window...), nil
+		}
+
 		if err != nil {
 			return nil, read.failure(err, InvalidResponse)
 		}
-
-		slices.Reverse(window)
 
 		photos = append(photos, window...)
 		if len(window) < photoSourcePageSize {
@@ -68,4 +82,17 @@ func (read *photosRead) recentlyAdded(ctx context.Context) ([]Photo, error) {
 
 		offset += int64(len(window))
 	}
+}
+
+func recentPhotoWindow(pairs []photoPair, seen map[string]bool) []photoPair {
+	selected := []photoPair{}
+	for _, pair := range pairs {
+		if seen[pair.asset.RecordName] {
+			continue
+		}
+		seen[pair.asset.RecordName] = true
+		selected = append(selected, pair)
+	}
+	slices.Reverse(selected)
+	return selected
 }

@@ -47,7 +47,7 @@ func runPhotoLookupSDK(t *testing.T, path string) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	result, err := client.GetPhoto(t.Context(), icloud.GetPhotoRequest{Auth: auth,
+	result, err := client.GetPhoto(t.Context(), icloud.GetPhotoRequest{Library: nil, Auth: auth,
 		Album: photoCountFixtureAlbum(t, path), PhotoID: inputs[0]})
 	if len(scenario.Error) != 0 {
 		if result != nil {
