@@ -59,7 +59,15 @@ inputs. Narrow generated hashtag variants replace their pending endpoint
 fallback; negative controls reject malformed fields, missing required fields,
 non-atomic writes and orphaned parent updates (SCHEMA-11).
 
-Linked-record writes for alarms, attachments and recurrence rules remain separate
-work. Their endpoint variants retain an explicitly scoped fallback pending narrow
-model ports. These milestones do not establish full Reminders, Photos,
-authentication, CLI or template conformance.
+`AddReminderLocationTrigger` creates the parent link, alarm and trigger atomically.
+Attachment methods create URL attachments, update URL or image metadata, and
+atomically unlink and soft-delete attachments. Recurrence methods create, update
+and atomically unlink and soft-delete rules. Fifteen original paired scenarios
+cover these operations; an additional Source-derived scenario verifies deletion
+of an empty attachment ID. Each method preserves caller snapshots, ordered raw
+IDs and duplicates, and validates all acknowledgements before applying matching
+nonempty revisions. Advancing-clock controls verify Source clock order.
+
+All selected Reminder write requests now use narrow generated endpoint variants;
+no generic pending-child fallback remains (SCHEMA-11). These milestones do not
+establish full Photos, authentication, CLI or template conformance.
