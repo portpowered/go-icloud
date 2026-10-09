@@ -353,6 +353,13 @@ type ClientInterface interface {
 	//
 	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/records/query (the `PhotosQueryRecords` operationId).
 	PhotosQueryRecords(ctx context.Context, params *PhotosQueryRecordsParams, body PhotosQueryRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PhotosDownloadContent Download an available photo or video rendition
+	//
+	// Use the preceding selected photo resource URL without appending CloudKit account parameters. Preserve exact bytes including empty content.
+	//
+	// Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
+	PhotosDownloadContent(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // PhotosCountAlbumsWithBody Count photos in an album
@@ -421,6 +428,23 @@ func (c *Client) PhotosQueryRecordsWithBody(ctx context.Context, params *PhotosQ
 // Corresponds with POST /database/1/com.apple.photos.cloud/production/private/records/query (the `PhotosQueryRecords` operationId).
 func (c *Client) PhotosQueryRecords(ctx context.Context, params *PhotosQueryRecordsParams, body PhotosQueryRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPhotosQueryRecordsRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// PhotosDownloadContent Download an available photo or video rendition
+//
+// Use the preceding selected photo resource URL without appending CloudKit account parameters. Preserve exact bytes including empty content.
+//
+// Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
+func (c *Client) PhotosDownloadContent(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPhotosDownloadContentRequest(c.Server, contentPath)
 	if err != nil {
 		return nil, err
 	}
@@ -837,6 +861,40 @@ func NewPhotosQueryRecordsRequestWithBody(server string, params *PhotosQueryReco
 	return req, nil
 }
 
+// NewPhotosDownloadContentRequest constructs an http.Request for the PhotosDownloadContent method
+func NewPhotosDownloadContentRequest(server string, contentPath string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "contentPath", contentPath, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -916,6 +974,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/records/query (the `PhotosQueryRecords` operationId).
 	PhotosQueryRecordsWithResponse(ctx context.Context, params *PhotosQueryRecordsParams, body PhotosQueryRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*PhotosQueryRecordsResponse, error)
+
+	// PhotosDownloadContentWithResponse Download an available photo or video rendition
+	//
+	// Use the preceding selected photo resource URL without appending CloudKit account parameters. Preserve exact bytes including empty content.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
+	PhotosDownloadContentWithResponse(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*PhotosDownloadContentResponse, error)
 }
 
 type PhotosCountAlbumsResponse struct {
@@ -1014,6 +1081,40 @@ func (r PhotosQueryRecordsResponse) ContentType() string {
 	return ""
 }
 
+type PhotosDownloadContentResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// GetBody returns the raw response body bytes
+func (r PhotosDownloadContentResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r PhotosDownloadContentResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PhotosDownloadContentResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r PhotosDownloadContentResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 // PhotosCountAlbumsWithBodyWithResponse Count photos in an album
 //
 // Read the indexed number of photos in a selected album.
@@ -1072,6 +1173,21 @@ func (c *ClientWithResponses) PhotosQueryRecordsWithResponse(ctx context.Context
 		return nil, err
 	}
 	return ParsePhotosQueryRecordsResponse(rsp)
+}
+
+// PhotosDownloadContentWithResponse Download an available photo or video rendition
+//
+// Use the preceding selected photo resource URL without appending CloudKit account parameters. Preserve exact bytes including empty content.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
+func (c *ClientWithResponses) PhotosDownloadContentWithResponse(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*PhotosDownloadContentResponse, error) {
+	rsp, err := c.PhotosDownloadContent(ctx, contentPath, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePhotosDownloadContentResponse(rsp)
 }
 
 // ParsePhotosCountAlbumsResponse parses an HTTP response from a PhotosCountAlbumsWithResponse call
@@ -1147,6 +1263,22 @@ func ParsePhotosQueryRecordsResponse(rsp *http.Response) (*PhotosQueryRecordsRes
 	case rsp.StatusCode == 200:
 		// Content-type (*/*) unsupported
 
+	}
+
+	return response, nil
+}
+
+// ParsePhotosDownloadContentResponse parses an HTTP response from a PhotosDownloadContentWithResponse call
+func ParsePhotosDownloadContentResponse(rsp *http.Response) (*PhotosDownloadContentResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PhotosDownloadContentResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil

@@ -20,6 +20,8 @@ import (
 type Client interface {
 	// GetPhoto finds one album asset by identifier with Source enumeration fallback.
 	GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error)
+	// DownloadPhoto retrieves exact rendition bytes through the photo's provider-issued resource URL.
+	DownloadPhoto(ctx context.Context, request DownloadPhotoRequest) (*DownloadPhotoResult, error)
 	// GetLegacyRemindersSnapshot reads account-discovered legacy startup lists and reminders.
 	GetLegacyRemindersSnapshot(ctx context.Context,
 		request GetLegacyRemindersSnapshotRequest,

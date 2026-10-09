@@ -6,6 +6,30 @@ info:
 paths: {}
 components:
   schemas:
+    DownloadPhotoRequest:
+      type: object
+      description: Download one available rendition through its provider-issued resource URL after album lookup.
+      required: [auth, album, photoID]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library, photoID: synthetic-asset, version: original}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        album: {type: string, description: Album identifier or display/full name.}
+        photoID: {type: string, x-go-name: PhotoID, description: Requested asset identifier.}
+        version: {$ref: '#/components/schemas/PhotoVersion', description: Rendition to download; omission selects original.}
+    PhotoVersion:
+      type: string
+      description: Known photo/video resource key; a rendition unavailable on the selected asset returns null.
+      x-enum-varnames: [PhotoOriginal, PhotoAlternative, PhotoMedium, PhotoThumb, PhotoOriginalVideo, PhotoMediumVideo, PhotoThumbVideo, PhotoSidecar, PhotoThumbImage, PhotoMediumImage]
+      enum: [original, alternative, medium, thumb, original_video, medium_video, thumb_video, sidecar, thumb_image, medium_image]
+      example: original
+    DownloadPhotoResult:
+      type: object
+      description: Exact resource bytes, including an empty file, or explicit null when the rendition URL is unavailable. Every response is retained.
+      required: [content, responses]
+      example: {content: null, responses: []}
+      properties:
+        content: {type: string, format: byte, nullable: true, description: Exact bytes; JSON uses base64. Null means unavailable and empty means an empty file.}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     GetPhotoRequest:
       type: object
       description: Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.

@@ -959,7 +959,20 @@ responses remain available. Twenty-two Source/Go scenarios consume 77 pairs,
 covering smart/custom albums, folders, absent photos, provider failures, paged
 fallback and early termination. A private live lookup replayed seven Photos
 requests through Python and matched the complete Go projection (LIB-09/LIB-12).
-CLI lookup is available below; downloading remains pending.
+CLI lookup and SDK downloading are available below.
+
+### Download a photo rendition
+
+DownloadPhoto locates an asset in a selected album and follows the provider-issued resource URL:
+
+~~~go
+version := icloud.PhotoThumb
+result, err := client.DownloadPhoto(ctx, icloud.DownloadPhotoRequest{
+    Auth: auth, Album: "Library", PhotoID: assetID, Version: &version,
+})
+~~~
+
+Omit Version to select the original. Content is explicitly null when the rendition URL is unavailable; an empty byte slice represents an available empty file. Downloads preserve signed URLs and evaluate resource getters without reading unused capture dates. Twenty-five paired Source/Go cases bind exact bytes, full response/failure evidence and consumption. A private live thumbnail download returned HTTP 200, and Python replay matched all eight download exchanges and the complete bytes. Keep URLs and downloaded account content private. CLI download and broader Photos acceptance remain open.
 
 The CLI supports individual photo lookup with the same private session:
 
