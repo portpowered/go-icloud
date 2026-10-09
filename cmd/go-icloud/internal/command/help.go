@@ -22,6 +22,7 @@ func printUsage(output io.Writer) {
 		"           reminder-recurrence-create, reminder-recurrence-update, reminder-recurrence-delete,",
 		"           reminder-attachment-create, reminder-attachment-update, reminder-attachment-delete",
 		"Photos: photos-status, photo-albums, photo-count, photo-assets, photo, photo-download,",
+		"        photos-sync, photos-watch (generated --request; optional private --save-result),",
 		"        photo-album-create, photo-album-rename, photo-album-delete, photo-album-add, photo-favorite, photo-delete,",
 		"        photo-upload, photo-upload-file, photo-upload-reserve, photo-upload-send, photo-upload-register",
 	} {

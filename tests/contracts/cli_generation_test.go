@@ -17,3 +17,11 @@ func TestCLICommandProjectionGeneration(t *testing.T) {
 		Config: "../../cmd/go-icloud/internal/commandmodels/config.yaml",
 		Output: "../../cmd/go-icloud/internal/commandmodels/models.gen.go"})
 }
+
+func TestCLIPhotosWatchGeneration(t *testing.T) {
+	t.Parallel()
+	loadDriveDocument(t, "../../cmd/go-icloud/api/photo-sync-command.openapi.yaml")
+	verifyGeneration(t, generationArtifact{Schema: "../../cmd/go-icloud/api/photo-sync-command.openapi.yaml",
+		Config: "../../cmd/go-icloud/internal/photosynccommand/config.yaml",
+		Output: "../../cmd/go-icloud/internal/photosynccommand/models.gen.go"})
+}

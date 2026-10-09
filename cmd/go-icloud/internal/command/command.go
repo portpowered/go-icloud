@@ -99,6 +99,10 @@ func RunWithInput(ctx context.Context, client icloud.Client, args []string,
 		return resumeSession(requestContext, client, config, output)
 	}
 
+	if photosSyncCommand(config.operation) {
+		return runPhotosSync(requestContext, client, config, output)
+	}
+
 	auth, err := loadSession(config.session)
 	if err != nil {
 		return err
