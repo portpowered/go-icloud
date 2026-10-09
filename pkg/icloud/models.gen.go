@@ -59,6 +59,7 @@ func (e AuthCookieSameSite) Valid() bool {
 const (
 	AccountLocked          ErrorKind = "account-locked"
 	AuthenticationRequired ErrorKind = "authentication-required"
+	Busy                   ErrorKind = "busy"
 	Canceled               ErrorKind = "canceled"
 	Closed                 ErrorKind = "closed"
 	Configuration          ErrorKind = "configuration"
@@ -83,6 +84,8 @@ func (e ErrorKind) Valid() bool {
 	case AccountLocked:
 		return true
 	case AuthenticationRequired:
+		return true
+	case Busy:
 		return true
 	case Canceled:
 		return true

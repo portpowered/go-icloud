@@ -1341,7 +1341,8 @@
           "no-devices",
           "authentication-required",
           "terms-required",
-          "account-locked"
+          "account-locked",
+          "busy"
         ],
         "type": "string"
       },
