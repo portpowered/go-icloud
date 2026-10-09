@@ -130,6 +130,11 @@ func validateExchange(exchange Exchange) error {
 		return err
 	}
 
+	err = validateRequestFraming(exchange.Request.Headers)
+	if err != nil {
+		return err
+	}
+
 	if (exchange.Response == nil) == (exchange.Error == "") {
 		return fmt.Errorf("%w: exactly one outcome is required", ErrFixture)
 	}
@@ -304,8 +309,9 @@ func matchRequest(request *http.Request, expected Request) error {
 		return err
 	}
 
-	if request.ContentLength != int64(len(body)) {
-		return fmt.Errorf("%w: content length", ErrMismatch)
+	err = matchRequestFraming(request, expected.Headers, len(body))
+	if err != nil {
+		return err
 	}
 
 	if expected.Body.Encoding == multipartEncoding {
@@ -361,7 +367,7 @@ func matchTarget(request *http.Request, expected Request) error {
 
 func unsupportedFraming(request *http.Request) bool {
 	return request.URL.Opaque != "" || request.URL.ForceQuery ||
-		len(request.Trailer) != 0 || len(request.TransferEncoding) != 0 || request.Close
+		len(request.Trailer) != 0 || request.Close
 }
 
 func sameTargetURL(target *url.URL, expected Request) bool {
@@ -432,11 +438,7 @@ func matchHeaders(request *http.Request, expected []Pair, length int, entity Ent
 		want[key] = append(want[key], pair[1])
 	}
 
-	// Go stores HTTP framing separately from the Header map. Bind the recorded
-	// Content-Length to that field and the actual bytes rather than ignoring it.
-	if _, required := want["content-length"]; required && actual["content-length"] == nil {
-		actual["content-length"] = []string{strconv.FormatInt(request.ContentLength, 10)}
-	}
+	addDeclaredFramingHeaders(request, actual, want)
 
 	err := matchFramingLength(actual["content-length"], want, length, entity)
 	if err != nil {
