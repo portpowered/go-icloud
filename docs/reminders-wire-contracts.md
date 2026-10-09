@@ -1,5 +1,29 @@
 # Reminders wire contracts
 
+The Go `ListReminders` implementation is under verification against all thirty-nine
+portable compound query cases. It sends the literal list identifier, completion
+filter, optional page size and continuation marker; consumes all pages; and
+projects complete reminders and supported related records. Per-record failures
+reject the page before projection, with exact HTTP evidence and prior responses.
+Normal records outside the list are still decoded before final relationship
+filtering, matching the pinned Source's behavior.
+
+The initial eight compound reference cases entered every statement and branch exit
+in `_ingest_compound_record` (26/26 statements, 16/16 exits). The synthetic-only
+diagnostic keeps the unchanged overall denominators: 585/905 functions entered,
+3,346/5,398 function-body statements (61.99%) and 1,050/2,076 branch exits covered
+after all thirty-one compound cases and fourteen snapshot facade cases.
+Further Source cases now exercise asset URLs, integer-coercible size metadata,
+byte-backed text, invalid UTF-8 replacement and raw frequency selection. Six more
+cases bind wrapper-sensitive discriminator and URL behavior: bytes are compared
+before model coercion and byte-backed URLs avoid a second decoding step.
+Two strict-decoding cases preserve STRING base64 URLs containing CR or LF.
+Fourteen Source snapshot facade cases now cover public list discovery, explicit
+and empty filters, pagination and replacement across lists. The Go snapshot
+facade port remains in progress.
+Go compound query parity, remaining endpoint ports, live Go verification and
+full migration/release acceptance remain open.
+
 The selected Reminders service uses five CloudKit POST operations: record lookup,
 query, modify, zone changes and zone discovery. It also downloads provider-issued
 membership assets. `api/external/reminders.openapi.yaml` describes these six
@@ -46,8 +70,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 230 implementation-derived synthetic Reminders scenarios contain
-273 paired exchanges: 270 POST pairs and three membership-asset downloads. Contract
+The current 275 implementation-derived synthetic Reminders scenarios contain
+332 paired exchanges: 329 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -118,7 +142,9 @@ uses audit dates after absent or normalized-unset creation/modification fields.
 Nineteen complete semantic replays bind default/full results, ordered related
 IDs, sentinel and fractional dates, document fallbacks, unrelated records,
 alternate success status/cookies, missing records, provider errors and malformed
-replies. Public compound queries, linked-record reads and write encoding remain pending.
+replies. `ListReminders` reuses that complete reminder projection while consuming
+every compound query page and mapping related records. The all-lists snapshot
+facade, linked-record lookup methods and write encoding remain pending.
 
 The public Go `ListReminderZones` operation now passes ten semantic replays,
 including empty, one and multiple zones, provider and schema failures, and
@@ -139,9 +165,11 @@ rejection, numeric/container truthiness and display conversion, embedded asset
 precedence, invalid membership, and empty pagination tokens. An additional nested
 display case binds control-character escaping to the reference. Five malformed
 responses must fail external schema validation as well as Source and Go decoding.
-The remaining public Reminders API must still port compound reminder pagination,
-record/domain mapping, CRDT/protobuf text, linked record writes, receipt/state
-updates, typed errors and all portable functional outcomes. Native authentication,
+The remaining public Reminders API must still port the all-lists snapshot facade,
+linked-record lookup methods, reminder and related-record mutations, CRDT write
+encoding, write receipts/state updates, and their typed failures and portable
+functional outcomes. Implemented query pagination and domain/text decoding are
+covered by the preceding Source/Go cases. Native authentication,
 Photos, CLI/publication/release, complete source/schema/runtime/socket gates and
 both final independent full audits remain open. Wire schema checks alone do not increase
 handwritten SDK replay coverage or establish full migration acceptance (LIB-07).

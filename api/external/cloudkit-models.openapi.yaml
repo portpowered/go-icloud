@@ -2928,6 +2928,272 @@
           }
         ],
         "description": "Source boolean input before coercion."
+      },
+      "CompoundQueryDefaultLimit": {
+        "type": "integer",
+        "enum": [
+          200
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "CompoundQueryIncludeCompleted": {
+        "type": "string",
+        "enum": [
+          "includeCompleted"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "CompoundQueryValidateReference": {
+        "type": "string",
+        "enum": [
+          "LookupValidatingReference"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "AlarmRecordType": {
+        "type": "string",
+        "enum": [
+          "Alarm"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "AlarmTriggerRecordType": {
+        "type": "string",
+        "enum": [
+          "AlarmTrigger"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "AttachmentRecordType": {
+        "type": "string",
+        "enum": [
+          "Attachment"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "HashtagRecordType": {
+        "type": "string",
+        "enum": [
+          "Hashtag"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RecurrenceRuleRecordType": {
+        "type": "string",
+        "enum": [
+          "RecurrenceRule"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "LocationTriggerType": {
+        "type": "string",
+        "enum": [
+          "Location"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "URLAttachmentType": {
+        "type": "string",
+        "enum": [
+          "URL"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "ImageAttachmentType": {
+        "type": "string",
+        "enum": [
+          "Image"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "URLAttachmentUTI": {
+        "type": "string",
+        "enum": [
+          "public.url"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "ImageAttachmentUTI": {
+        "type": "string",
+        "enum": [
+          "public.jpeg"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldReminder": {
+        "type": "string",
+        "enum": [
+          "Reminder"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldAlarm": {
+        "type": "string",
+        "enum": [
+          "Alarm"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldAlarmUID": {
+        "type": "string",
+        "enum": [
+          "AlarmUID"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldTriggerID": {
+        "type": "string",
+        "enum": [
+          "TriggerID"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldType": {
+        "type": "string",
+        "enum": [
+          "Type"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldProximity": {
+        "type": "string",
+        "enum": [
+          "Proximity"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldTitle": {
+        "type": "string",
+        "enum": [
+          "Title"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldAddress": {
+        "type": "string",
+        "enum": [
+          "Address"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldLatitude": {
+        "type": "string",
+        "enum": [
+          "Latitude"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldLongitude": {
+        "type": "string",
+        "enum": [
+          "Longitude"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldRadius": {
+        "type": "string",
+        "enum": [
+          "Radius"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldLocationUID": {
+        "type": "string",
+        "enum": [
+          "LocationUID"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldURL": {
+        "type": "string",
+        "enum": [
+          "URL"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldUTI": {
+        "type": "string",
+        "enum": [
+          "UTI"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldFileAsset": {
+        "type": "string",
+        "enum": [
+          "FileAsset"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldFileName": {
+        "type": "string",
+        "enum": [
+          "FileName"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldFileSize": {
+        "type": "string",
+        "enum": [
+          "FileSize"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldWidth": {
+        "type": "string",
+        "enum": [
+          "Width"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldHeight": {
+        "type": "string",
+        "enum": [
+          "Height"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldName": {
+        "type": "string",
+        "enum": [
+          "Name"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldFrequency": {
+        "type": "string",
+        "enum": [
+          "Frequency"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldInterval": {
+        "type": "string",
+        "enum": [
+          "Interval"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldOccurrenceCount": {
+        "type": "string",
+        "enum": [
+          "OccurrenceCount"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "RelatedFieldFirstDayOfTheWeek": {
+        "type": "string",
+        "enum": [
+          "FirstDayOfTheWeek"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
+      },
+      "CompoundQueryReferenceAction": {
+        "type": "string",
+        "enum": [
+          "VALIDATE"
+        ],
+        "description": "Pinned Source compound reminder query protocol value."
       }
     }
   }
