@@ -9,7 +9,7 @@ import (
 // AddPhotoToAlbum adds a looked-up asset to a custom album as one atomic relation creation.
 func (sdk *SDK) AddPhotoToAlbum(ctx context.Context,
 	request AddPhotoToAlbumRequest) (*PhotoAlbumRelationResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "AddPhotoToAlbum", request.Library)
+	read, err := sdk.beginPhotosMutation(ctx, request.Auth, "AddPhotoToAlbum", request.Library)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (read *photosRead) addPhotoRelation(ctx context.Context, albumID, item stri
 
 // DeletePhoto soft deletes a looked-up photo with its current provider revision.
 func (sdk *SDK) DeletePhoto(ctx context.Context, request DeletePhotoRequest) (*PhotoDeletionResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "DeletePhoto", request.Library)
+	read, err := sdk.beginPhotosMutation(ctx, request.Auth, "DeletePhoto", request.Library)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (sdk *SDK) DeletePhoto(ctx context.Context, request DeletePhotoRequest) (*P
 // SetPhotoFavorite updates favorite state and confirms it from the acknowledged or refreshed asset.
 func (sdk *SDK) SetPhotoFavorite(ctx context.Context,
 	request SetPhotoFavoriteRequest) (*PhotoMutationResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "SetPhotoFavorite", request.Library)
+	read, err := sdk.beginPhotosMutation(ctx, request.Auth, "SetPhotoFavorite", request.Library)
 	if err != nil {
 		return nil, err
 	}

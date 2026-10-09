@@ -173,3 +173,13 @@ func photoAlbumMutationTag(album PhotoAlbum) *string {
 
 	return &value
 }
+
+func (sdk *SDK) beginPhotosMutation(ctx context.Context, auth AuthContext, operation string,
+	library *PhotoLibrary,
+) (*photosRead, error) {
+	err := ctx.Err()
+	if err != nil {
+		return nil, driveContextFailure(operation, err)
+	}
+	return sdk.beginPhotosRead(ctx, auth, operation, library)
+}

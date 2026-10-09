@@ -13,18 +13,15 @@ import (
 // CreatePhotoAlbum creates an album or folder using injected time and entropy.
 func (sdk *SDK) CreatePhotoAlbum(ctx context.Context,
 	request CreatePhotoAlbumRequest) (*PhotoAlbumMutationResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "CreatePhotoAlbum", request.Library)
+	read, err := sdk.beginPhotosMutation(ctx, request.Auth, "CreatePhotoAlbum", request.Library)
 	if err != nil {
 		return nil, err
 	}
 
-	var raw [uuidByteCount]byte
-	_, err = io.ReadFull(sdk.random, raw[:])
+	name, err := sdk.randomPhotoAlbumName()
 	if err != nil {
-		return nil, read.failure(fmt.Errorf("read album identity entropy: %w", err), Configuration)
+		return nil, read.failure(err, Configuration)
 	}
-
-	name := strings.ToUpper(hex.EncodeToString(raw[:]))
 
 	kind := int64(pm.AlbumKind)
 	if request.Folder {
@@ -70,11 +67,11 @@ func (sdk *SDK) CreatePhotoAlbum(ctx context.Context,
 		}
 
 		if present {
-			return &PhotoAlbumMutationResult{Album: entry.album, Responses: read.metadata()}, nil
+			return read.albumMutationResult(&entry.album), nil
 		}
 	}
 
-	return nil, read.failure(errPhotoMutationRejected, InvalidResponse)
+	return read.albumMutationResult(nil), nil
 }
 func photoAlbumName(value string) pm.PhotoMutationEncryptedText {
 	return pm.PhotoMutationEncryptedText{Type: pm.ENCRYPTEDBYTES,
@@ -84,7 +81,7 @@ func photoAlbumName(value string) pm.PhotoMutationEncryptedText {
 // RenamePhotoAlbum looks up the current revision and returns the renamed album.
 func (sdk *SDK) RenamePhotoAlbum(ctx context.Context,
 	request RenamePhotoAlbumRequest) (*PhotoAlbumMutationResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "RenamePhotoAlbum", request.Library)
+	read, err := sdk.beginPhotosMutation(ctx, request.Auth, "RenamePhotoAlbum", request.Library)
 	if err != nil {
 		return nil, err
 	}
@@ -130,13 +127,13 @@ func (sdk *SDK) RenamePhotoAlbum(ctx context.Context,
 	entry.album.FullName = strings.TrimSuffix(entry.album.FullName, entry.album.Name) + request.Name
 	entry.album.Name = request.Name
 
-	return &PhotoAlbumMutationResult{Album: entry.album, Responses: read.metadata()}, nil
+	return read.albumMutationResult(&entry.album), nil
 }
 
 // DeletePhotoAlbum soft deletes a custom album at its discovered current revision.
 func (sdk *SDK) DeletePhotoAlbum(ctx context.Context,
 	request DeletePhotoAlbumRequest) (*PhotoDeletionResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "DeletePhotoAlbum", request.Library)
+	read, err := sdk.beginPhotosMutation(ctx, request.Auth, "DeletePhotoAlbum", request.Library)
 	if err != nil {
 		return nil, err
 	}
@@ -174,4 +171,22 @@ func (sdk *SDK) DeletePhotoAlbum(ctx context.Context,
 	}
 
 	return &PhotoDeletionResult{Deleted: true, Responses: read.metadata()}, nil
+}
+
+func (sdk *SDK) randomPhotoAlbumName() (string, error) {
+	var raw [uuidByteCount]byte
+	_, err := io.ReadFull(sdk.random, raw[:])
+	if err != nil {
+		return "", fmt.Errorf("read album identity entropy: %w", err)
+	}
+	return strings.ToUpper(hex.EncodeToString(raw[:])), nil
+}
+func (read *photosRead) albumMutationResult(album *PhotoAlbum) *PhotoAlbumMutationResult {
+	result := &PhotoAlbumMutationResult{Album: nil, Responses: read.metadata()}
+	if album == nil {
+		result.Album.SetNull()
+	} else {
+		result.Album.Set(*album)
+	}
+	return result
 }

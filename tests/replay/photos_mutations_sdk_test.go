@@ -116,6 +116,53 @@ func callPhotoMutationScenario(t *testing.T, client *icloud.SDK, auth icloud.Aut
 	scenario accountScenario, operation, name string, inputs []json.RawMessage,
 ) ([]icloud.ResponseMetadata, error) {
 	t.Helper()
+	switch operation {
+	case "create_album", "album_rename", "album_delete":
+		return callPhotoAlbumMutation(t, client, auth, scenario, operation, name, inputs)
+	default:
+		return callPhotoAssetMutation(t, client, auth, library, scenario, operation, inputs)
+	}
+}
+
+const (
+	photoMutationAlbumID = "synthetic-album-0"
+	photoMutationAssetID = "synthetic-asset-0"
+)
+
+func discoverPhotoMutationLibrary(t *testing.T, client *icloud.SDK, auth icloud.AuthContext, name string,
+) (*icloud.PhotoLibrary, []icloud.ResponseMetadata) {
+	t.Helper()
+	var library *icloud.PhotoLibrary
+	var prefix []icloud.ResponseMetadata
+
+	if name == "photos-shared-library-favorite-true" || name == "photos-shared-library-favorite-record-error" {
+		discovered, callErr := client.ListPhotoLibraries(t.Context(), icloud.ListPhotoLibrariesRequest{Auth: auth})
+		if callErr != nil {
+			t.Fatal(callErr)
+		}
+
+		prefix = discovered.Responses
+		for _, candidate := range discovered.Libraries {
+			if candidate.IsSharedLibrary {
+				selected := candidate
+				library = &selected
+
+				break
+			}
+		}
+
+		if library == nil {
+			t.Fatal("shared library missing")
+		}
+	}
+
+	return library, prefix
+}
+
+func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthContext,
+	scenario accountScenario, operation, name string, inputs []json.RawMessage,
+) ([]icloud.ResponseMetadata, error) {
+	t.Helper()
 	var metadata []icloud.ResponseMetadata
 	var err error
 
@@ -133,7 +180,7 @@ func callPhotoMutationScenario(t *testing.T, client *icloud.SDK, auth icloud.Aut
 
 		if result != nil {
 			metadata = result.Responses
-			checkPhotoMutationAlbum(t, result.Album, scenario.Result)
+			checkPhotoMutationAlbum(t, result.Album.GetOrEmpty(), scenario.Result)
 		}
 	case "album_rename":
 		var value string
@@ -151,7 +198,7 @@ func callPhotoMutationScenario(t *testing.T, client *icloud.SDK, auth icloud.Aut
 
 			var expected map[string]json.RawMessage
 			authReplayDecode(t, scenario.Result, &expected)
-			checkPhotoMutationAlbum(t, result.Album, expected["album"])
+			checkPhotoMutationAlbum(t, result.Album.GetOrEmpty(), expected["album"])
 		}
 	case "album_delete":
 		result,
@@ -167,6 +214,17 @@ func callPhotoMutationScenario(t *testing.T, client *icloud.SDK, auth icloud.Aut
 				t.Fatal("album not deleted")
 			}
 		}
+	}
+	return metadata, err
+}
+
+func callPhotoAssetMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthContext, library *icloud.PhotoLibrary,
+	scenario accountScenario, operation string, inputs []json.RawMessage,
+) ([]icloud.ResponseMetadata, error) {
+	t.Helper()
+	var metadata []icloud.ResponseMetadata
+	var err error
+	switch operation {
 	case "album_add_photo":
 		result,
 			callErr := client.AddPhotoToAlbum(t.Context(),
@@ -223,41 +281,5 @@ func callPhotoMutationScenario(t *testing.T, client *icloud.SDK, auth icloud.Aut
 	default:
 		t.Fatal("unknown mutation", operation)
 	}
-
 	return metadata, err
-}
-
-const (
-	photoMutationAlbumID = "synthetic-album-0"
-	photoMutationAssetID = "synthetic-asset-0"
-)
-
-func discoverPhotoMutationLibrary(t *testing.T, client *icloud.SDK, auth icloud.AuthContext, name string,
-) (*icloud.PhotoLibrary, []icloud.ResponseMetadata) {
-	t.Helper()
-	var library *icloud.PhotoLibrary
-	var prefix []icloud.ResponseMetadata
-
-	if name == "photos-shared-library-favorite-true" || name == "photos-shared-library-favorite-record-error" {
-		discovered, callErr := client.ListPhotoLibraries(t.Context(), icloud.ListPhotoLibrariesRequest{Auth: auth})
-		if callErr != nil {
-			t.Fatal(callErr)
-		}
-
-		prefix = discovered.Responses
-		for _, candidate := range discovered.Libraries {
-			if candidate.IsSharedLibrary {
-				selected := candidate
-				library = &selected
-
-				break
-			}
-		}
-
-		if library == nil {
-			t.Fatal("shared library missing")
-		}
-	}
-
-	return library, prefix
 }

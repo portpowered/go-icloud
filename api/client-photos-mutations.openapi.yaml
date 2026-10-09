@@ -259,7 +259,8 @@
           "album": {
             "type": "object",
             "x-go-type": "PhotoAlbum",
-            "description": "The updated album projection."
+            "description": "The updated album projection.",
+            "nullable": true
           },
           "responses": {
             "type": "array",
