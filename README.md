@@ -460,6 +460,24 @@ attempt; the earlier authentication exchanges remain in the saved session.
 Raw `AuthContext` files without
 saved-token credentials retain the original authentication failure.
 
+After a read succeeds or fails, `ApplySessionResponses` copies the saved native
+session and applies its response cookies, session token, trust token, and account
+country without issuing another request. Discovery and trust flags remain those
+of the saved authentication result, and response history is appended in order.
+Pass each response once, including a failed retry's metadata, and save the result
+privately. This preserves rotations even when the provider rejects the read:
+
+```go
+updated, err := client.ApplySessionResponses(ctx, icloud.ApplySessionResponsesRequest{
+    Session: *resumed,
+    Responses: readResponses, // ordered success or typed-error metadata
+})
+if err != nil {
+    return err
+}
+savedSession := updated.Session // persist privately; contains credentials
+```
+
 `authentication-required` can require interactive login; `terms-required` requests
 terms acceptance. This operation performs neither. `AllowUntrusted` can return
 paused MFA discovery. The CLI imports existing reference credentials and resumes
@@ -998,6 +1016,22 @@ go-icloud --session <private-go-session.json> --album Library --photo <asset-id>
 ~~~
 
 The result contains the complete photo projection or explicit null after the Source-equivalent direct and paginated fallback searches. Signed resource URLs remain private. A live lookup using saved credentials succeeded.
+
+The primary library also supports `ListRecentlyAddedPhotos`. This reads the
+recently-added index newest first, with trailing rank windows and overlap
+deduplication. It discovers private/shared library zones before paging and does
+not call the album count endpoint. A provider refusal during shared discovery
+is retained in `Responses` while the primary-library read continues, matching
+the reference behavior. Other initialization and paging failures return typed
+errors with the complete preceding response evidence.
+
+```go
+recent, err := client.ListRecentlyAddedPhotos(ctx, icloud.ListRecentlyAddedPhotosRequest{Auth: auth})
+if err != nil {
+    return err
+}
+photos := recent.Photos // newest additions first; keep private
+```
 
 `photo-download` emits a JSON `content` field containing base64 file bytes. An
 available empty file returns an empty string; an unavailable rendition returns

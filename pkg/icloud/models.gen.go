@@ -364,6 +364,24 @@ type AccountStorageUsage struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// ApplySessionResponsesRequest Apply observed response cookie/token updates to a copied native session without making a network request.
+//
+// Example: {"responses":[],"session":{"accountCountryCode":null,"accountData":{},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"requiresTwoFactor":false,"requiresTwoStep":false,"responses":[],"trustToken":"synthetic-trust","trustedSession":true}}
+type ApplySessionResponsesRequest struct {
+	Responses []ResponseMetadata `json:"responses"`
+
+	// Session Copied authentication state and discovered account data. Credential fields are private and must not be printed implicitly.
+	Session ResumeSessionResult `json:"session"`
+}
+
+// ApplySessionResponsesResult Copied native session retaining all observed responses and cookie/token/trust/country rotations, including a failed read.
+//
+// Example: {"session":{"accountCountryCode":null,"accountData":{},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"requiresTwoFactor":false,"requiresTwoStep":false,"responses":[],"trustToken":"synthetic-trust","trustedSession":true}}
+type ApplySessionResponsesResult struct {
+	// Session Copied authentication state and discovered account data. Credential fields are private and must not be printed implicitly.
+	Session ResumeSessionResult `json:"session"`
+}
+
 // AuthContext Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 type AuthContext struct {
 	// AccountID Authenticated account identifier returned by login.
@@ -1322,6 +1340,22 @@ type ListPhotoAssetsRequest struct {
 //
 // Example: {"photos":[],"responses":[]}
 type ListPhotoAssetsResult struct {
+	Photos    []Photo            `json:"photos"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ListRecentlyAddedPhotosRequest Enumerate the primary library newest first using the recently-added trailing window index.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type ListRecentlyAddedPhotosRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListRecentlyAddedPhotosResult Complete deduplicated newest-first photos and every initialization, library discovery and page response.
+//
+// Example: {"photos":[],"responses":[]}
+type ListRecentlyAddedPhotosResult struct {
 	Photos    []Photo            `json:"photos"`
 	Responses []ResponseMetadata `json:"responses"`
 }

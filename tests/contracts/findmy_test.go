@@ -58,7 +58,7 @@ func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 76 || pairs != 154 || len(operations) != 8 {
+	if len(paths) != 77 || pairs != 157 || len(operations) != 8 {
 		t.Fatalf("Find My inventory changed: scenarios=%d pairs=%d operations=%d", len(paths), pairs, len(operations))
 	}
 }

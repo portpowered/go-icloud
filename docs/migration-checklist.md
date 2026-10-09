@@ -483,7 +483,7 @@ review passed; the SDK is merged. CLI lookup is merged below; downloads and
 remaining selected service work remain open.
 
 
-DownloadPhoto now has generated public models, typed rendition selection, provider-issued URL binding and exact binary results. Twenty-five Source-first paired replay cases cover bytes/empty/null, rendition alternatives, HTTP/transport failures, signed escaped paths/repeated queries, lazy unused dates and paged lookup. Contract controls reject changed resource origins, paths and signed queries. Private live Go thumbnail download succeeded; offline Python replay consumed eight exchanges and matched complete bytes. Full local checks, CI and exact-SHA review are pending. CLI downloads, remaining Photos operations and full migration acceptance remain open.
+DownloadPhoto now has generated public models, typed rendition selection, provider-issued URL binding and exact binary results. Twenty-five Source-first paired replay cases cover bytes/empty/null, rendition alternatives, HTTP/transport failures, signed escaped paths/repeated queries, lazy unused dates and paged lookup. Contract controls reject changed resource origins, paths and signed queries. Private live Go thumbnail download succeeded; offline Python replay consumed eight exchanges and matched complete bytes. SDK full local checks, CI and exact-SHA review passed; PR63 is merged. CLI downloads, remaining Photos operations and full migration acceptance remain open.
 
 
 Photo lookup SDK full local checks, blocking CI and exact-SHA review passed; PR60 is merged. The published SDK now powers the photo CLI command. All 22 lookup replay cases and existing photo/native-resume regressions passed under race detection. A private live CLI lookup returned a photo using the same saved credentials. CLI full checks, CI and exact-SHA review passed; PR62 is merged. Downloads and broader Photos acceptance remain open.
@@ -491,9 +491,9 @@ Photo lookup SDK full local checks, blocking CI and exact-SHA review passed; PR6
 
 PR63 download SDK, PR64 download CLI and PR65 saved-token recovery primitive
 passed full checks, blocking CI and independent exact-SHA review and are merged.
-The CLI now composes Find My recovery through the published SDK. Five strict
+The CLI now composes Find My recovery through the published SDK. Six strict
 Source cases cover successful recovery, cookie/token rotation before refresh
-and during the successful read, rejected tokens and one failed retry. Tests compare complete persisted credential snapshots,
+and during successful or rejected reads, rejected tokens and one failed retry. Tests compare complete persisted credential snapshots,
 responses and typed failure evidence; rejected refresh preserves the original
 private file. SDK replay input cookies now retain Python's default HttpOnly
 attribute, matching the complete Source snapshot rather than only cookie names
@@ -506,3 +506,22 @@ Offline Python consumed the three captured Find My/authentication exchanges
 and matched the complete returned devices and refreshed token/trust/country
 values. Captures remain outside Git. This establishes live automatic recovery
 for this account, not a fixed token-expiry schedule or mutation coverage.
+Recently Added now has a generated public request/result and a stateless SDK
+operation. The initial sixteen Source/Go scenarios consumed 61 exchanges and covered empty,
+one/many, overlap, full/partial/duplicate-only windows, and provider failures at
+initialization, zone discovery and initial/later pages. Shared-zone provider
+refusals retain complete response evidence while the root read continues,
+matching Source. Ten Source-first cases added 34 pairs; that milestone's corpus
+was 1,057 HTTP scenarios / 2,354 pairs after merging the verified download CLI
+and saved-token recovery milestones.
+Focused race replay passes; full checks, CI and independent review remain
+pending. The live account most recently reports indexing RUNNING at 0%, so
+successful live Recently Added access remains unverified.
+
+Independent review found an additional shared-discovery fallback boundary.
+Five new Source-first cases prove invalid zone identities, null/object zone
+arrays, array envelopes and malformed JSON are suppressed during shared
+initialization while the root read continues. Go retains each failed HTTP 200
+response and matches the complete Source result. Recently Added now has 21
+scenarios / 81 exchanges; the combined corpus is 1,062 / 2,374 before the
+pending automatic CLI recovery milestone. Full checks and CI are being rerun.
