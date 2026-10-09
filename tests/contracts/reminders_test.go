@@ -63,13 +63,17 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 275, Pairs: 332, Operations: 6, Invalid: 34}
+	want := remindersContractInventory{Scenarios: 302, Pairs: 363, Operations: 6, Invalid: 40}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}
 }
 
 func invalidReminderResponse(name string, index int) bool {
+	if invalidReminderUnionResponse(name) {
+		return index == 0
+	}
+
 	switch name {
 	case "reminders-changes-invalid-json.json", "reminders-changes-invalid-zone.json",
 		"reminders-changes-invalid-record.json", "reminders-sync-invalid-json-fallback.json",
@@ -87,6 +91,11 @@ func invalidReminderResponse(name string, index int) bool {
 			strings.HasPrefix(name, "reminders-lists-schema-") ||
 			strings.HasPrefix(name, "reminders-get-schema-") || name == "reminders-get-no-records.json"
 	}
+}
+
+func invalidReminderUnionResponse(name string) bool {
+	return (strings.HasPrefix(name, "reminders-list-union-") || strings.HasPrefix(name, "reminders-snapshot-union-")) &&
+		(strings.HasSuffix(name, "-wire-validation.json") || strings.HasSuffix(name, "-zone-validation.json"))
 }
 
 func bindRemindersOperation(document *openapi3.T, request replay.Request,
