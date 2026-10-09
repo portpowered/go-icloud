@@ -902,8 +902,8 @@ go-icloud --session <private-session.json> --album Library photo-assets
 ```
 
 The commands call the public SDK, preserve typed failures and suppress response
-metadata from console JSON. The 27 readiness, 41 album and 56 count replay scenarios bind
+metadata from console JSON. The 27 readiness, 41 album, 56 count and 109 asset replay scenarios bind
 complete outputs, error bodies and prior response evidence, with strict exchange
 consumption. Private live CLI resume, readiness and album reads succeeded with the
-stored account, returning 12 albums. Listing photo assets and downloading their
-content remain pending CLI work.
+stored account, returning 12 albums. A private asset enumeration returned 684
+photos using those credentials. Downloading content remains pending CLI work.
