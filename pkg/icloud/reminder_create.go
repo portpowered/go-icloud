@@ -123,9 +123,9 @@ func (sdk *SDK) reminderCreationFields(request CreateReminderRequest) (cloudkit.
 
 	fields := cloudkit.ReminderCreationFields{AllDay: reminderBoolean(request.AllDay),
 		Completed: reminderBoolean(request.Completed), CompletionDate: cloudkit.ReminderOptionalTimestamp{
-			Type: cloudkit.ReminderOptionalTIMESTAMPType, Value: nil}, CreationDate: reminderTimestamp(now),
-		Deleted: reminderWriteInteger(0), Flagged: reminderBoolean(request.Flagged), Imported: reminderWriteInteger(0),
-		LastModifiedDate: reminderTimestamp(now), List: reminderWriteReference(request.ListID),
+			Type: cloudkit.ReminderOptionalTIMESTAMPType, Value: nil}, CreationDate: reminderRequiredTimestamp(now),
+		Deleted: reminderFixedZero(), Flagged: reminderBoolean(request.Flagged), Imported: reminderFixedZero(),
+		LastModifiedDate: reminderRequiredTimestamp(now), List: reminderRequiredReference(request.ListID),
 		NotesDocument: reminderDocument(notes), Priority: reminderWriteInteger(request.Priority),
 		ResolutionTokenMap: resolution, TitleDocument: reminderDocument(title),
 		DueDate: nil, TimeZone: nil, ParentReminder: nil}

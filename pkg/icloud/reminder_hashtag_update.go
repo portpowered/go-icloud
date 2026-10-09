@@ -23,7 +23,7 @@ func (sdk *SDK) UpdateReminderHashtag(ctx context.Context,
 	fields := cloudkit.ReminderHashtagUpdateFields{Name: reminderHashtagName(request.Name), Reminder: nil}
 
 	if child.ReminderID != "" {
-		parent := reminderWriteReference(reminderRecordName(child.ReminderID))
+		parent := reminderRequiredReference(reminderRecordName(child.ReminderID))
 		fields.Reminder = &parent
 	}
 

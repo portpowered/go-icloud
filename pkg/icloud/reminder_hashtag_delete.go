@@ -66,10 +66,10 @@ func (sdk *SDK) reminderHashtagDeletionRequest(reminder Reminder, child Reminder
 		return cloudkit.ReminderHashtagDeletionRequest{}, err
 	}
 
-	fields := cloudkit.ReminderHashtagDeletionFields{Deleted: reminderWriteInteger(1), Reminder: nil}
+	fields := cloudkit.ReminderHashtagDeletionFields{Deleted: reminderFixedOne(), Reminder: nil}
 
 	if child.ReminderID != "" {
-		reference := reminderWriteReference(reminderRecordName(child.ReminderID))
+		reference := reminderRequiredReference(reminderRecordName(child.ReminderID))
 		fields.Reminder = &reference
 	}
 

@@ -77,14 +77,14 @@ func checkReminderClockRequest(t *testing.T, operation string, request *http.Req
 		decodeReminderClockRequest(t, request, &input)
 		fields := input.Operations[0].Record.Fields
 		checkReminderClockFields(t, fields.ResolutionTokenMap.Value,
-			fields.LastModifiedDate.Value.GetOrEmpty(), start, start.Add(time.Second))
+			fields.LastModifiedDate.Value, start, start.Add(time.Second))
 	case reminderUpdateTestOperation:
 		var input cloudkit.ReminderUpdateRequest
 
 		decodeReminderClockRequest(t, request, &input)
 		fields := input.Operations[0].Record.Fields
 		checkReminderClockFields(t, fields.ResolutionTokenMap.Value,
-			fields.LastModifiedDate.Value.GetOrEmpty(), start.Add(time.Second), start)
+			fields.LastModifiedDate.Value, start.Add(time.Second), start)
 	case reminderDeleteTestOperation:
 		var input cloudkit.ReminderDeletionRequest
 

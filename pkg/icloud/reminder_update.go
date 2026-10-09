@@ -143,7 +143,7 @@ func (sdk *SDK) reminderUpdateFields(reminder Reminder, now time.Time) (cloudkit
 		Completed: reminderBoolean(reminder.Completed), CompletionDate: cloudkit.ReminderOptionalTimestamp{
 			Type: cloudkit.ReminderOptionalTIMESTAMPType, Value: nil}, Priority: reminderWriteInteger(reminder.Priority),
 		Flagged: reminderBoolean(reminder.Flagged), AllDay: reminderBoolean(reminder.AllDay),
-		LastModifiedDate: reminderTimestamp(now), DueDate: cloudkit.ReminderOptionalTimestamp{
+		LastModifiedDate: reminderRequiredTimestamp(now), DueDate: cloudkit.ReminderOptionalTimestamp{
 			Type: cloudkit.ReminderOptionalTIMESTAMPType, Value: nil}, TimeZone: cloudkit.ReminderOptionalString{
 			Type: cloudkit.ReminderOptionalSTRINGType, Value: nil},
 		ParentReminder:     reminderWriteReference(reminderRecordName(reminder.ParentReminderID.GetOrEmpty())),

@@ -14,12 +14,29 @@ func reminderWriteInteger(value int64) cloudkit.ReminderWriteInteger {
 	return cloudkit.ReminderWriteInteger{Type: cloudkit.ReminderWriteIntegerTypeINT64, Value: value}
 }
 
-func reminderBoolean(value bool) cloudkit.ReminderWriteInteger {
+func reminderBoolean(value bool) cloudkit.ReminderWriteBoolean {
+	result := cloudkit.ReminderWriteBoolean{Type: cloudkit.ReminderWriteBooleanTypeINT64,
+		Value: cloudkit.ReminderWriteBooleanFalse}
 	if value {
-		return reminderWriteInteger(1)
+		result.Value = cloudkit.ReminderWriteBooleanTrue
 	}
+	return result
+}
 
-	return reminderWriteInteger(0)
+func reminderFixedZero() cloudkit.ReminderRelationZero {
+	return cloudkit.ReminderRelationZero{Type: cloudkit.ReminderRelationZeroTypeINT64,
+		Value: cloudkit.ReminderRelationZero0}
+}
+
+func reminderFixedOne() cloudkit.ReminderRelationOne {
+	return cloudkit.ReminderRelationOne{Type: cloudkit.ReminderRelationOneTypeINT64,
+		Value: cloudkit.ReminderRelationOne1}
+}
+
+func reminderRequiredReference(value string) cloudkit.ReminderRequiredReference {
+	return cloudkit.ReminderRequiredReference{Type: cloudkit.ReminderRequiredReferenceTypeREFERENCE,
+		Value: cloudkit.ReminderWriteReferenceValue{RecordName: value,
+			Action: cloudkit.ReminderWriteReferenceValueActionVALIDATE}}
 }
 
 func reminderString(value string) cloudkit.ReminderOptionalString {

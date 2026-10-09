@@ -3639,6 +3639,36 @@ func (e ReminderRelationDeletedValue) Valid() bool {
 	}
 }
 
+// Defines values for ReminderRelationOneType.
+const (
+	ReminderRelationOneTypeINT64 ReminderRelationOneType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRelationOneType enum.
+func (e ReminderRelationOneType) Valid() bool {
+	switch e {
+	case ReminderRelationOneTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRelationOneValue.
+const (
+	ReminderRelationOne1 ReminderRelationOneValue = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderRelationOneValue enum.
+func (e ReminderRelationOneValue) Valid() bool {
+	switch e {
+	case ReminderRelationOne1:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderRelationZeroType.
 const (
 	ReminderRelationZeroTypeINT64 ReminderRelationZeroType = "INT64"
@@ -3663,6 +3693,21 @@ const (
 func (e ReminderRelationZeroValue) Valid() bool {
 	switch e {
 	case ReminderRelationZero0:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRequiredReferenceType.
+const (
+	ReminderRequiredReferenceTypeREFERENCE ReminderRequiredReferenceType = "REFERENCE"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRequiredReferenceType enum.
+func (e ReminderRequiredReferenceType) Valid() bool {
+	switch e {
+	case ReminderRequiredReferenceTypeREFERENCE:
 		return true
 	default:
 		return false
@@ -3828,6 +3873,39 @@ const (
 func (e ReminderUpdateRecordRecordType) Valid() bool {
 	switch e {
 	case ReminderUpdateRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteBooleanType.
+const (
+	ReminderWriteBooleanTypeINT64 ReminderWriteBooleanType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteBooleanType enum.
+func (e ReminderWriteBooleanType) Valid() bool {
+	switch e {
+	case ReminderWriteBooleanTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderWriteBooleanValue.
+const (
+	ReminderWriteBooleanFalse ReminderWriteBooleanValue = 0
+	ReminderWriteBooleanTrue  ReminderWriteBooleanValue = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderWriteBooleanValue enum.
+func (e ReminderWriteBooleanValue) Valid() bool {
+	switch e {
+	case ReminderWriteBooleanFalse:
+		return true
+	case ReminderWriteBooleanTrue:
 		return true
 	default:
 		return false
@@ -5737,32 +5815,28 @@ type ReminderAttachmentZeroValueValue int64
 
 // ReminderCreationFields Known reminder fields in reference mutation order.
 type ReminderCreationFields struct {
-	// AllDay An integer-valued reminder write field.
-	AllDay ReminderWriteInteger `json:"AllDay"`
+	// AllDay An INT64 boolean wrapper, emitted as zero or one.
+	AllDay ReminderWriteBoolean `json:"AllDay"`
 
-	// Completed An integer-valued reminder write field.
-	Completed ReminderWriteInteger `json:"Completed"`
+	// Completed An INT64 boolean wrapper, emitted as zero or one.
+	Completed ReminderWriteBoolean `json:"Completed"`
 
 	// CompletionDate Optional-value write field; a cleared value is omitted to match the reference serialization.
 	CompletionDate ReminderOptionalTimestamp `json:"CompletionDate"`
 
-	// CreationDate Optional-value write field; a cleared value is omitted to match the reference serialization.
-	CreationDate ReminderOptionalTimestamp `json:"CreationDate"`
+	// CreationDate A required integer-valued reminder write timestamp in Unix milliseconds.
+	CreationDate ReminderWriteTimestamp `json:"CreationDate"`
+	Deleted      ReminderRelationZero   `json:"Deleted"`
 
-	// Deleted An integer-valued reminder write field.
-	Deleted ReminderWriteInteger `json:"Deleted"`
+	// Flagged An INT64 boolean wrapper, emitted as zero or one.
+	Flagged  ReminderWriteBoolean `json:"Flagged"`
+	Imported ReminderRelationZero `json:"Imported"`
 
-	// Flagged An integer-valued reminder write field.
-	Flagged ReminderWriteInteger `json:"Flagged"`
+	// LastModifiedDate A required integer-valued reminder write timestamp in Unix milliseconds.
+	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 
-	// Imported An integer-valued reminder write field.
-	Imported ReminderWriteInteger `json:"Imported"`
-
-	// LastModifiedDate Optional-value write field; a cleared value is omitted to match the reference serialization.
-	LastModifiedDate ReminderOptionalTimestamp `json:"LastModifiedDate"`
-
-	// List Optional record-reference write field.
-	List ReminderWriteReference `json:"List"`
+	// List A required validated record reference; the wrapper value is always present.
+	List ReminderRequiredReference `json:"List"`
 
 	// NotesDocument Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.
 	NotesDocument ReminderDocumentWriteString `json:"NotesDocument"`
@@ -5880,8 +5954,8 @@ type ReminderCreationTokensMap struct {
 
 // ReminderDeletionFields Known fields sent when soft-deleting a reminder.
 type ReminderDeletionFields struct {
-	// Deleted An integer-valued reminder write field.
-	Deleted ReminderWriteInteger `json:"Deleted"`
+	// Deleted The fixed one-valued soft deletion marker.
+	Deleted ReminderRelationOne `json:"Deleted"`
 
 	// ResolutionTokenMap Compact JSON matching the generated ReminderDeletionResolutionMap model.
 	ResolutionTokenMap ReminderWriteString `json:"ResolutionTokenMap"`
@@ -6008,13 +6082,11 @@ type ReminderFieldTitleDocument string
 
 // ReminderHashtagCreationFields defines model for ReminderHashtagCreationFields.
 type ReminderHashtagCreationFields struct {
-	Name ReminderHashtagWriteName `json:"Name"`
+	Name    ReminderHashtagWriteName `json:"Name"`
+	Deleted ReminderRelationZero     `json:"Deleted"`
 
-	// Deleted An integer-valued reminder write field.
-	Deleted ReminderWriteInteger `json:"Deleted"`
-
-	// Reminder Optional record-reference write field.
-	Reminder ReminderWriteReference `json:"Reminder"`
+	// Reminder A required validated record reference; the wrapper value is always present.
+	Reminder ReminderRequiredReference `json:"Reminder"`
 
 	// CreationDate A required integer-valued reminder write timestamp in Unix milliseconds.
 	CreationDate ReminderWriteTimestamp `json:"CreationDate"`
@@ -6065,11 +6137,11 @@ type ReminderHashtagCreationRequestAtomic bool
 
 // ReminderHashtagDeletionFields defines model for ReminderHashtagDeletionFields.
 type ReminderHashtagDeletionFields struct {
-	// Deleted An integer-valued reminder write field.
-	Deleted ReminderWriteInteger `json:"Deleted"`
+	// Deleted The fixed one-valued soft deletion marker.
+	Deleted ReminderRelationOne `json:"Deleted"`
 
-	// Reminder Optional record-reference write field.
-	Reminder *ReminderWriteReference `json:"Reminder,omitempty"`
+	// Reminder A required validated record reference; the wrapper value is always present.
+	Reminder *ReminderRequiredReference `json:"Reminder,omitempty"`
 }
 
 // ReminderHashtagDeletionOperation defines model for ReminderHashtagDeletionOperation.
@@ -6121,15 +6193,18 @@ type ReminderHashtagLinkFields struct {
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
+// ReminderHashtagLinkTokens defines model for ReminderHashtagLinkTokens.
+type ReminderHashtagLinkTokens struct {
+	// HashtagIDs Per-field conflict-resolution token generated for a reminder mutation.
+	HashtagIDs ReminderResolutionToken `json:"hashtagIDs"`
+
+	// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+	LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+}
+
 // ReminderHashtagLinkTokensMap defines model for ReminderHashtagLinkTokensMap.
 type ReminderHashtagLinkTokensMap struct {
-	Map struct {
-		// HashtagIDs Per-field conflict-resolution token generated for a reminder mutation.
-		HashtagIDs ReminderResolutionToken `json:"hashtagIDs"`
-
-		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
-		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
-	} `json:"map"`
+	Map ReminderHashtagLinkTokens `json:"map"`
 }
 
 // ReminderHashtagParentOperation defines model for ReminderHashtagParentOperation.
@@ -6157,8 +6232,8 @@ type ReminderHashtagParentRecordRecordType string
 type ReminderHashtagUpdateFields struct {
 	Name ReminderHashtagWriteName `json:"Name"`
 
-	// Reminder Optional record-reference write field.
-	Reminder *ReminderWriteReference `json:"Reminder,omitempty"`
+	// Reminder A required validated record reference; the wrapper value is always present.
+	Reminder *ReminderRequiredReference `json:"Reminder,omitempty"`
 }
 
 // ReminderHashtagUpdateOperation defines model for ReminderHashtagUpdateOperation.
@@ -6488,6 +6563,18 @@ type ReminderRelationDeletedType string
 // ReminderRelationDeletedValue defines model for ReminderRelationDeleted.Value.
 type ReminderRelationDeletedValue int64
 
+// ReminderRelationOne The fixed one-valued soft deletion marker.
+type ReminderRelationOne struct {
+	Type  ReminderRelationOneType  `json:"type"`
+	Value ReminderRelationOneValue `json:"value"`
+}
+
+// ReminderRelationOneType defines model for ReminderRelationOne.Type.
+type ReminderRelationOneType string
+
+// ReminderRelationOneValue defines model for ReminderRelationOne.Value.
+type ReminderRelationOneValue int64
+
 // ReminderRelationZero defines model for ReminderRelationZero.
 type ReminderRelationZero struct {
 	Type  ReminderRelationZeroType  `json:"type"`
@@ -6499,6 +6586,17 @@ type ReminderRelationZeroType string
 
 // ReminderRelationZeroValue defines model for ReminderRelationZero.Value.
 type ReminderRelationZeroValue int64
+
+// ReminderRequiredReference A required validated record reference; the wrapper value is always present.
+type ReminderRequiredReference struct {
+	Type ReminderRequiredReferenceType `json:"type"`
+
+	// Value A validated named record reference.
+	Value ReminderWriteReferenceValue `json:"value"`
+}
+
+// ReminderRequiredReferenceType defines model for ReminderRequiredReference.Type.
+type ReminderRequiredReferenceType string
 
 // ReminderResolutionToken Per-field conflict-resolution token generated for a reminder mutation.
 type ReminderResolutionToken struct {
@@ -6544,8 +6642,8 @@ type ReminderUpdateFields struct {
 	// NotesDocument Complete base64(zlib(versioned_document.Document containing topotext.String)) payload.
 	NotesDocument ReminderDocumentWriteString `json:"NotesDocument"`
 
-	// Completed An integer-valued reminder write field.
-	Completed ReminderWriteInteger `json:"Completed"`
+	// Completed An INT64 boolean wrapper, emitted as zero or one.
+	Completed ReminderWriteBoolean `json:"Completed"`
 
 	// CompletionDate Optional-value write field; a cleared value is omitted to match the reference serialization.
 	CompletionDate ReminderOptionalTimestamp `json:"CompletionDate"`
@@ -6553,14 +6651,14 @@ type ReminderUpdateFields struct {
 	// Priority An integer-valued reminder write field.
 	Priority ReminderWriteInteger `json:"Priority"`
 
-	// Flagged An integer-valued reminder write field.
-	Flagged ReminderWriteInteger `json:"Flagged"`
+	// Flagged An INT64 boolean wrapper, emitted as zero or one.
+	Flagged ReminderWriteBoolean `json:"Flagged"`
 
-	// AllDay An integer-valued reminder write field.
-	AllDay ReminderWriteInteger `json:"AllDay"`
+	// AllDay An INT64 boolean wrapper, emitted as zero or one.
+	AllDay ReminderWriteBoolean `json:"AllDay"`
 
-	// LastModifiedDate Optional-value write field; a cleared value is omitted to match the reference serialization.
-	LastModifiedDate ReminderOptionalTimestamp `json:"LastModifiedDate"`
+	// LastModifiedDate A required integer-valued reminder write timestamp in Unix milliseconds.
+	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 
 	// DueDate Optional-value write field; a cleared value is omitted to match the reference serialization.
 	DueDate ReminderOptionalTimestamp `json:"DueDate"`
@@ -6654,6 +6752,18 @@ type ReminderUpdateTokensMap struct {
 	// Map Named per-field resolution tokens in reference order.
 	Map ReminderUpdateTokens `json:"map"`
 }
+
+// ReminderWriteBoolean An INT64 boolean wrapper, emitted as zero or one.
+type ReminderWriteBoolean struct {
+	Type  ReminderWriteBooleanType  `json:"type"`
+	Value ReminderWriteBooleanValue `json:"value"`
+}
+
+// ReminderWriteBooleanType defines model for ReminderWriteBoolean.Type.
+type ReminderWriteBooleanType string
+
+// ReminderWriteBooleanValue defines model for ReminderWriteBoolean.Value.
+type ReminderWriteBooleanValue int64
 
 // ReminderWriteInteger An integer-valued reminder write field.
 type ReminderWriteInteger struct {

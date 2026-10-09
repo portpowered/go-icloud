@@ -95,6 +95,6 @@ func reminderHashtagCreationRecord(reminder Reminder, identity, name string,
 		RecordType: cloudkit.ReminderHashtagCreationRecordTypeHashtag, RecordChangeTag: nil, PluginFields: map[string]any{},
 		Parent: cloudkit.CKWriteParent{RecordName: parent, AdditionalProperties: nil},
 		Fields: cloudkit.ReminderHashtagCreationFields{
-			Name: reminderHashtagName(name), Deleted: reminderWriteInteger(0), Reminder: reminderWriteReference(parent),
+			Name: reminderHashtagName(name), Deleted: reminderFixedZero(), Reminder: reminderRequiredReference(parent),
 			CreationDate: reminderRequiredTimestamp(now)}}
 }

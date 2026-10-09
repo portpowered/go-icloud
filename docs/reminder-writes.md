@@ -74,3 +74,30 @@ fifteen paired Source scenarios and an empty attachment ID control exercise thei
 requests and results. The generic pending relation variants have been removed.
 Scoped race and endpoint schema checks pass. These integration milestones still
 require the full repository checks and final standards review before acceptance.
+
+`AddReminderLocationTrigger` creates the parent link, alarm and trigger atomically.
+Attachment methods create URL attachments, update URL or image metadata, and
+atomically unlink and soft-delete attachments. Recurrence methods create, update
+and atomically unlink and soft-delete rules. Fifteen original paired scenarios
+cover these operations; an additional Source-derived scenario verifies deletion
+of an empty attachment ID. Each method preserves caller snapshots, ordered raw
+IDs and duplicates, and validates all acknowledgements before applying matching
+nonempty revisions. Advancing-clock controls verify Source clock order.
+
+All selected Reminder write requests now use narrow generated endpoint variants;
+no generic pending-child fallback remains (SCHEMA-11). These milestones do not
+establish full Photos, authentication, CLI or template conformance.
+
+
+Wire contracts restrict Source booleans to INT64 zero/one, creation markers to
+zero, soft-deletion markers to one, and required creation/modification instants
+to integer timestamps. Required references retain their value even for an empty
+caller ID. Atomic relation arrays require exactly one operation of each kind.
+Endpoint controls exercise those impossible values directly (SCHEMA-11).
+
+Resolution-token strings declare their generated inner JSON schema. Every map
+has a named inner model and decoded negative controls for unexpected keys and
+forged counters. Document strings declare their protobuf owner and base64/zlib
+encoding and reject malformed base64. OpenAPI string validation cannot itself
+decode JSON, compression or protobuf; decoded model/codec checks and serializer
+provenance controls are necessary to establish those embedded contracts.
