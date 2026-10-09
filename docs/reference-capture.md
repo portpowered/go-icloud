@@ -175,7 +175,7 @@ match for every branch. Negative controls verify missing statements and branch
 exits remain visible.
 
 The fresh synthetic-only measurement enters 583/905 functions and covers
-3234/5398 function-body statements (59.91%) and 993/2076 branch exits. This is a
+3235/5398 function-body statements (59.93%) and 994/2076 branch exits. This is a
 diagnostic baseline, not endpoint completeness or release acceptance. The
 measurement runs the canonical HTTP/socket and Reminders text corpora plus
 both reference saved-login corpora. The latter use separate `synthetic:local:`
