@@ -490,12 +490,12 @@ Photo lookup SDK full local checks, blocking CI and exact-SHA review passed; PR6
 
 
 Recently Added now has a generated public request/result and a stateless SDK
-operation. Sixteen Source/Go scenarios consume 61 exchanges and cover empty,
+operation. The initial sixteen Source/Go scenarios consumed 61 exchanges and covered empty,
 one/many, overlap, full/partial/duplicate-only windows, and provider failures at
 initialization, zone discovery and initial/later pages. Shared-zone provider
 refusals retain complete response evidence while the root read continues,
-matching Source. Ten new Source-first cases add 34 pairs; this branch's corpus
-is 1,057 HTTP scenarios / 2,354 pairs after merging the verified download CLI
+matching Source. Ten Source-first cases added 34 pairs; that milestone's corpus
+was 1,057 HTTP scenarios / 2,354 pairs after merging the verified download CLI
 and saved-token recovery milestones.
 Focused race replay passes; full checks, CI and independent review remain
 pending. The live account most recently reports indexing RUNNING at 0%, so
