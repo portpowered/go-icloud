@@ -203,8 +203,9 @@ orphan filtering, unsupported types, raw enum selection, byte-backed text and
 typed asset metadata. Byte-backed record types are skipped before model coercion;
 byte-backed URLs retain their decoded text without a second base64 decoding step.
 STRING base64 URLs with CR or LF retain their original text under strict decoding.
-This API is verified with paired replays; the separate CLI compound query
-command remains pending.
+This API is
+verified with paired replays. The separate CLI `reminders` command executes the
+same thirty-nine scenarios through its published SDK dependency.
 
 Collect reminders across discovered lists, including completed items:
 
@@ -253,7 +254,18 @@ go run . --session C:/private/icloud-auth.json reminder-sync
 go run . --session C:/private/icloud-auth.json reminder-changes
 go run . --session C:/private/icloud-auth.json --since YOUR_SYNC_TOKEN reminder-changes
 go run . --session C:/private/icloud-auth.json --reminder Reminder/synthetic-item reminder
+go run . --session C:/private/icloud-auth.json --list YOUR_LIST_ID reminders
+go run . --session C:/private/icloud-auth.json --list YOUR_LIST_ID --include-completed --page-size 200 reminders
 ```
+
+`reminders` reads every compound query page and prints complete reminders plus
+the related alarm, trigger, attachment, tag and recurrence maps. `--list` sends
+the literal provider list identifier, `--include-completed` defaults to false,
+and omitted `--page-size` uses 200. Failures print no partial result; successful
+console output omits response headers and cookie updates.
+The CLI replays all thirty-nine query scenarios and thirty-seven list-discovery
+scenarios using a published SDK version, including whole-response validation
+before provider errors or list projection.
 
 `reminder-changes` reads all pages and prints ordered change events. Omit `--since`
 for an initial read; supplying `--since=""` sends an explicit empty cursor.
@@ -280,8 +292,7 @@ Use `--reminder <identifier> reminder` to read one complete reminder; identifier
 may be raw or begin with `Reminder/`. Titles, notes, dates, state, related IDs,
 parent and revision are returned using the public SDK projection.
 Both reuse the same private saved session. Response authentication headers are
-omitted from command output. Photos, compound reminder queries and write
-operations are not yet CLI commands.
+omitted from command output. Photos and write operations are not yet CLI commands.
 
 CLI replay tests use the root canonical synthetic fixture tree and public SDK.
 Coverage for every handwritten CLI package under `internal/` is measured
