@@ -46,8 +46,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 110 implementation-derived synthetic Reminders scenarios contain
-119 paired exchanges: 116 POST pairs and three membership-asset downloads. Contract
+The current 111 implementation-derived synthetic Reminders scenarios contain
+120 paired exchanges: 117 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -76,7 +76,7 @@ versioned CRDT title and notes bytes against a separate portable Source corpus.
 The public `GetReminder` mapper decodes title/notes, normalizes invalid UTF-8
 subsequences using the pinned Unicode decoder, maps all 21 domain fields, and
 uses audit dates after absent or normalized-unset creation/modification fields.
-Eighteen complete semantic replays bind default/full results, ordered related
+Nineteen complete semantic replays bind default/full results, ordered related
 IDs, sentinel and fractional dates, document fallbacks, unrelated records,
 alternate success status/cookies, missing records, provider errors and malformed
 replies. Public compound queries, linked-record reads and write encoding remain pending.

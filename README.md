@@ -124,7 +124,7 @@ The result includes decoded title/notes, completion and date fields, ordered
 related identifiers, parent, audit dates and revision. `item.Metadata` exposes
 response headers and cookie updates. Missing records, per-record provider errors
 and invalid response shapes return typed errors with original provider evidence.
-Eighteen synthetic paired Source/Go cases cover defaults, complete projections,
+Nineteen synthetic paired Source/Go cases cover defaults, complete projections,
 date normalization and audit fallback, unreadable/empty documents, invalid UTF-8,
 other records, raw/prefixed IDs, alternate success status and provider failures.
 Further reminder queries, mutations, and live Go verification remain in progress.
@@ -634,7 +634,7 @@ Call `Refresh` explicitly before describing a device when fresh data is needed.
 The [behavior replay notes](docs/findmy-behavior.md) explain the reference getter
 and timed-monitor cases and the remaining acceptance work.
 
-The [Reminders wire contracts](docs/reminders-wire-contracts.md) bind its 110
-reference scenarios/119 paired exchanges to six active operations and shared
+The [Reminders wire contracts](docs/reminders-wire-contracts.md) bind its 111
+reference scenarios/120 paired exchanges to six active operations and shared
 generated CloudKit models. Public Reminders service orchestration and semantic
 SDK replay remain work in progress; these contract checks are a separate layer.

@@ -1,11 +1,11 @@
 # iCloud migration checklist
 
-Latest Go milestone: `GetReminder` passes 18 paired Source/Go cases binding all
+Latest Go milestone: `GetReminder` passes 19 paired Source/Go cases binding all
 21 public fields, versioned title/notes, ordered related IDs, field dates, audit
 fallback after sentinel normalization, unreadable/empty documents, invalid UTF-8,
 raw/prefixed identifiers, unrelated records, alternate success/cookies, missing
-records and provider/schema failures. The portable corpus now contains 548
-scenarios and 1,221 exchanges. Missing-field Source controls remain in place.
+records and provider/schema failures. The portable corpus now contains 549
+scenarios and 1,222 exchanges. Missing-field Source controls remain in place.
 This scoped lookup port does not complete the remaining Reminders operations.
 
 The preceding merged Go milestone implements reminder zone and list reads in

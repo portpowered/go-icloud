@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/webtransport"
@@ -174,6 +175,15 @@ func reminderField(record cloudkit.CKRecord, name string) (json.RawMessage, erro
 	value, err := field.AsCKPassthroughField()
 	if err != nil {
 		return nil, fmt.Errorf("decode reminder field: %w", err)
+	}
+
+	if value.Type == string(cloudkit.CKInt64FieldTypeINT64) {
+		integer, integerErr := reminderWireInteger(value.Value)
+		if integerErr != nil {
+			return nil, integerErr
+		}
+
+		return json.RawMessage(strconv.FormatInt(integer, 10)), nil
 	}
 
 	return value.Value, nil

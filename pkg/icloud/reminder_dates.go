@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/oapi-codegen/nullable"
@@ -99,7 +100,7 @@ func reminderInteger(raw json.RawMessage) (int64, error) {
 
 	var text string
 	if json.Unmarshal(raw, &text) == nil {
-		integer, err := strconv.ParseInt(text, 10, 64)
+		integer, err := strconv.ParseInt(strings.TrimSpace(text), 10, 64)
 		if err != nil {
 			return 0, fmt.Errorf("decode reminder integer: %w", err)
 		}
@@ -113,6 +114,36 @@ func reminderInteger(raw json.RawMessage) (int64, error) {
 func reminderFloatInteger(raw json.RawMessage) (int64, error) {
 	number, err := strconv.ParseFloat(string(raw), 64)
 	if err != nil || math.IsInf(number, 0) || number >= float64(math.MaxInt64) || number < float64(math.MinInt64) {
+		return 0, errReminderList
+	}
+
+	return int64(number), nil
+}
+
+func reminderWireInteger(raw json.RawMessage) (int64, error) {
+	if len(raw) == 0 || string(raw) == jsonNullValue {
+		return 0, errReminderList
+	}
+
+	if string(raw) == "true" || string(raw) == "false" {
+		return reminderInteger(raw)
+	}
+
+	text := string(raw)
+
+	var decoded string
+
+	if json.Unmarshal(raw, &decoded) == nil {
+		text = strings.TrimSpace(decoded)
+	}
+
+	integer, err := strconv.ParseInt(text, 10, 64)
+	if err == nil {
+		return integer, nil
+	}
+
+	number, err := strconv.ParseFloat(text, 64)
+	if err != nil || math.Trunc(number) != number || number >= float64(math.MaxInt64) || number < float64(math.MinInt64) {
 		return 0, errReminderList
 	}
 
