@@ -449,8 +449,8 @@ endpoint returned HTTP 200 with list records and an empty `Reminders` array.
 The modern CloudKit reads still fail on the same account. Login discovery reports
 `tantorMigrated: false`; interpreting that as legacy routing remains an inference
 until compatibility is bound by replay. The successful read and shapes are
-captured outside Git. A legacy compatibility port is next; current CloudKit
-methods do not yet route to that endpoint.
+captured outside Git. The explicit legacy SDK operation is described below; CloudKit
+methods retain their separate endpoint and semantics.
 
 
 Legacy Reminders compatibility now has an explicit `GetLegacyRemindersSnapshot`
