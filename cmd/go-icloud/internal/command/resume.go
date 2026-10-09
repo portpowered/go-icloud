@@ -105,6 +105,15 @@ func saveNativeSession(ctx context.Context, path string, result *icloud.ResumeSe
 		return fmt.Errorf("encode private session: %w", err)
 	}
 
+	return savePrivateData(ctx, path, data)
+}
+
+func savePrivateData(ctx context.Context, path string, data []byte) error {
+	err := ctx.Err()
+	if err != nil {
+		return fmt.Errorf("private session canceled: %w", err)
+	}
+
 	path = filepath.Clean(path)
 
 	err = os.MkdirAll(filepath.Dir(path), privateSessionDirectoryMode)

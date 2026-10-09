@@ -8,15 +8,19 @@ PYTHON ?= .venv/bin/python
 endif
 
 .DEFAULT_GOAL := check
-.PHONY: check lint build test reference-coverage endpoint-coverage generate-api generate-proto sdk-coverage cli-coverage
+.PHONY: check lint build test module-check reference-coverage endpoint-coverage generate-api generate-proto sdk-coverage cli-coverage
 
 # Selected iCloud SDK migration and reference-capture verification.
-check: lint build test endpoint-coverage sdk-coverage cli-coverage
+check: lint module-check build test endpoint-coverage sdk-coverage cli-coverage
+
+# LIB-02, GO-01: audit every tracked shipping module with no local replacements or tidy drift.
+module-check:
+	$(GO) run ./tools/modulecheck
 
 lint:
 	$(GO) vet ./...
 	cd cmd/go-icloud && $(GO) vet ./...
-	$(GOLANGCI_LINT) run --timeout=5m ./...
+	"$(GOLANGCI_LINT)" run --timeout=5m ./...
 	cd cmd/go-icloud && "$(CLI_GOLANGCI_LINT)" run --config ../../.golangci.yml --timeout=5m ./...
 	"$(PYTHON)" -m ruff check tools/reference
 	"$(PYTHON)" -m ruff format --check tools/reference
@@ -35,9 +39,9 @@ test:
 reference-coverage:
 	"$(PYTHON)" tools/reference/measure.py
 
-# Diagnostic route occurrences; completeness/schema/socket gates remain open.
+# HTTP route occurrence gate; source/schema/socket completeness is audited separately.
 endpoint-coverage:
-	$(GO) run ./tools/endpointcoverage -summary
+	$(GO) run ./tools/endpointcoverage -summary -require-covered
 
 # Schema-owned account, Drive, Find My and Reminders wire models; Photos/auth contracts remain pending.
 generate-api:

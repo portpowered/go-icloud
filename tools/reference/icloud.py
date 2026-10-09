@@ -64,7 +64,7 @@ def verify_reference():
         raise RuntimeError("Reference checkout does not match the pinned clean source")
     import pyicloud
 
-    if Path(pyicloud.__file__).resolve().parent != checkout / "pyicloud":
+    if Path(pyicloud.__file__).resolve().parent != (checkout / "pyicloud").resolve():
         raise RuntimeError("Run the CLI using the repository virtual environment")
     return pyicloud.PyiCloudService
 

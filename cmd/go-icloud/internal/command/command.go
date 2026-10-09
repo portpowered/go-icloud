@@ -45,6 +45,11 @@ type options struct {
 	saveSession      string
 	forceRefresh     bool
 	allowUntrusted   bool
+	deviceID         string
+	message          *string
+	subject          *string
+	phoneNumber      string
+	exportSession    string
 }
 
 // Run executes one bounded public SDK operation.
@@ -61,6 +66,10 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 
 	requestContext, cancel := context.WithTimeout(ctx, config.timeout)
 	defer cancel()
+
+	if config.operation == "credentials-export" {
+		return exportCredentials(requestContext, config, output)
+	}
 
 	if config.operation == "resume" {
 		return resumeSession(requestContext, client, config, output)
@@ -89,6 +98,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.StringVar(&config.saveSession, "save-session", "", "Private native-session destination for resume")
 	flags.BoolVar(&config.forceRefresh, "force-refresh", false, "Skip cookie validation during resume")
 	flags.BoolVar(&config.allowUntrusted, "allow-untrusted", false, "Save paused MFA discovery during resume")
+	controlFlags(flags, &config)
 	flags.StringVar(&config.node, "node", "", "Drive node identifier for drive-node")
 	photoFlags(flags, &config)
 	flags.StringVar(&config.reminderID, "reminder", "", "Raw or complete reminder identifier for reminder")
@@ -112,7 +122,8 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 			"reminder-legacy-snapshot, reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, "+
 			"reminders, reminder-snapshot, "+
 			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, "+
-			"photos-status, photo-albums, photo-count, photo-assets, photo, photo-download, resume")
+			"photos-status, photo-albums, photo-count, photo-assets, photo, photo-download, resume, "+
+			"findmy-device, findmy-sound, findmy-message, findmy-lost, findmy-erase, credentials-export")
 
 		flags.PrintDefaults()
 	}
@@ -162,6 +173,10 @@ func loadSession(path string) (icloud.AuthContext, error) {
 		auth = saved.Auth
 	}
 
+	if auth.ClientID == "" {
+		return auth, &SessionError{Cause: errNativeSession}
+	}
+
 	return auth, nil
 }
 
@@ -182,6 +197,8 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		return wrap(client.GetDriveNode(ctx, icloud.GetDriveNodeRequest{Auth: auth, NodeID: config.node, ShareID: nil}))
 	case "findmy":
 		return findMy(ctx, client, auth, config.family)
+	case "findmy-device", "findmy-sound", "findmy-message", "findmy-lost", "findmy-erase":
+		return controlFindMy(ctx, client, auth, config)
 	default:
 		return nil, errCommand
 	}

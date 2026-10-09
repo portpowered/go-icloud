@@ -1,4 +1,4 @@
-name: Verify reference capture bootstrap
+name: Verify library and CLI
 
 on:
   push:
@@ -10,6 +10,32 @@ permissions:
   contents: read
 
 jobs:
+  portable-go:
+    name: Go modules (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      GOWORK: 'off'
+      GOTOOLCHAIN: local
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: false
+      - name: Check all shipping modules, formatting, and dependency checksums
+        run: go run ./tools/modulecheck
+      - name: Verify portable SDK
+        run: go test -race ./...
+      - name: Verify portable CLI
+        working-directory: cmd/go-icloud
+        run: go test -race ./...
+      - name: Build installable CLI module
+        working-directory: cmd/go-icloud
+        run: go build ./...
   verify:
     runs-on: windows-latest
     env:
@@ -73,7 +99,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           go test -race ./...
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          go run ./tools/endpointcoverage -summary
+          go run ./tools/modulecheck
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          go run ./tools/endpointcoverage -summary -require-covered
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .venv/Scripts/python.exe -m ruff check tools/reference
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
