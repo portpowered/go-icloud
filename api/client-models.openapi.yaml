@@ -6,6 +6,29 @@ info:
 paths: {}
 components:
   schemas:
+    PhotoLibrary:
+      type: object
+      required: [id, zoneName, shared, isSharedLibrary, zoneType, ownerRecordName, syncToken]
+      description: Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+      properties:
+        id: {type: string, x-go-name: ID}
+        zoneName: {type: string}
+        zoneType: {type: string, nullable: true}
+        ownerRecordName: {type: string, nullable: true}
+        syncToken: {type: string, nullable: true}
+        shared: {type: boolean, description: Selects the shared CloudKit database.}
+        isSharedLibrary: {type: boolean, description: Shared-library capabilities independent of database scope.}
+    ListPhotoLibrariesRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    ListPhotoLibrariesResult:
+      type: object
+      required: [libraries, responses]
+      properties:
+        libraries: {type: array, items: {$ref: '#/components/schemas/PhotoLibrary'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     CreateReminderRequest:
       example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"listID":"List/synthetic-list","title":"Synthetic title"}
       type: object

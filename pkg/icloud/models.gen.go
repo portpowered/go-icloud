@@ -1390,6 +1390,18 @@ type ListPhotoAssetsResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// ListPhotoLibrariesRequest defines model for ListPhotoLibrariesRequest.
+type ListPhotoLibrariesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListPhotoLibrariesResult defines model for ListPhotoLibrariesResult.
+type ListPhotoLibrariesResult struct {
+	Libraries []PhotoLibrary     `json:"libraries"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListRecentlyAddedPhotosRequest Enumerate the primary library newest first using the recently-added trailing window index.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
@@ -1688,6 +1700,21 @@ type PhotoAlbum struct {
 
 	// RecordChangeTag Provider revision or null when omitted.
 	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+}
+
+// PhotoLibrary Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+type PhotoLibrary struct {
+	ID string `json:"id"`
+
+	// IsSharedLibrary Shared-library capabilities independent of database scope.
+	IsSharedLibrary bool                      `json:"isSharedLibrary"`
+	OwnerRecordName nullable.Nullable[string] `json:"ownerRecordName"`
+
+	// Shared Selects the shared CloudKit database.
+	Shared    bool                      `json:"shared"`
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
+	ZoneName  string                    `json:"zoneName"`
+	ZoneType  nullable.Nullable[string] `json:"zoneType"`
 }
 
 // PhotoResource One downloadable photo/video rendition with nullable provider details.

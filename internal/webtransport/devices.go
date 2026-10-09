@@ -14,6 +14,7 @@ import (
 	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/account"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 // Stage identifies which boundary failed without exposing provider or credential text.
@@ -55,11 +56,14 @@ func (failure *ResponseError) Unwrap() error { return failure.Cause }
 
 // RequestContext is caller-owned request state, never retained by Client.
 type RequestContext struct {
-	DriveToken string
-	Cookies    *CookieState
-	Origin     string
-	Params     accountapi.ListAccountDevicesParams
-	Headers    http.Header
+	// PhotoZone and PhotoShared bind caller-selected Photos requests to one database identity.
+	PhotoZone   *cloudkit.CKZoneIDReq
+	PhotoShared bool
+	DriveToken  string
+	Cookies     *CookieState
+	Origin      string
+	Params      accountapi.ListAccountDevicesParams
+	Headers     http.Header
 }
 
 // DevicesResponse separates decoded wire data from HTTP response metadata.
