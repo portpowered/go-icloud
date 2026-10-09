@@ -299,3 +299,15 @@ controls reject changed expected errors, wrong asset origins, and unused pairs.
 The Go transport instantiates all pairs; public Go Photos service orchestration
 and semantic result parity remain open. This milestone does not complete the
 reference endpoint/function inventory or any release gate.
+
+### Recently Added pagination evidence
+
+Six additional Source-executed scenarios add 27 pairs, bringing the portable
+HTTP inventory to 513 scenarios/1176 pairs. They use the public root library and
+default 100-item windows, preserve newest-first ordering, remove overlapping
+assets, terminate on partial/empty/duplicate-only pages, and avoid count calls.
+Five negative controls reject altered ranks, result ordering, duplicate results,
+and unused exchanges. The fresh reference diagnostic enters 583/905 functions
+and covers 3234/5398 function-body statements (59.91%) and 993/2076 branch exits.
+The Go transport instantiates the pairs; public Go Photos parity and full
+migration/release acceptance remain open.

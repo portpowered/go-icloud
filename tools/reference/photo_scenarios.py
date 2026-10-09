@@ -140,6 +140,8 @@ def execute_photos(service, scenario):
         return execute_upload(service, scenario)
     if operation.startswith("stream_"):
         return execute_stream(service, scenario)
+    if operation == "recently_added_photos":
+        return [photo_result(photo) for photo in service.recently_added().photos]
     if operation == "albums_snapshot":
         return [album_result(album) for album in service.albums]
     if operation == "create_album":
