@@ -164,6 +164,7 @@ func fixtureAuth(t *testing.T, initial json.RawMessage) icloud.AuthContext {
 
 	auth.FindMyServiceURL = origin
 	auth.RemindersServiceURL = origin
+	auth.PhotosServiceURL = origin
 
 	for name, value := range headers {
 		auth.Headers = append(auth.Headers, icloud.Header{Name: name, Value: value})

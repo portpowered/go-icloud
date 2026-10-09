@@ -390,7 +390,8 @@ Use `--reminder <identifier> reminder` to read one complete reminder; identifier
 may be raw or begin with `Reminder/`. Titles, notes, dates, state, related IDs,
 parent and revision are returned using the public SDK projection.
 Both reuse the same private saved session. Response authentication headers are
-omitted from command output. Photos and write operations are not yet CLI commands.
+omitted from command output. The Go CLI also supports `photos-status` and `photo-albums` using the same
+private saved session. Write operations remain pending.
 
 CLI replay tests use the root canonical synthetic fixture tree and public SDK.
 Coverage for every handwritten CLI package under `internal/` is measured
@@ -861,3 +862,20 @@ The [Reminders wire contracts](docs/reminders-wire-contracts.md) bind its 111
 reference scenarios/120 paired exchanges to six active operations and shared
 generated CloudKit models. Public Reminders service orchestration and semantic
 SDK replay remain work in progress; these contract checks are a separate layer.
+
+
+For primary Photos readiness and albums, resume the saved session first to refresh
+service discovery:
+
+```powershell
+go-icloud --session <private-session.json> --save-session <private-session.json> resume
+go-icloud --session <private-session.json> photos-status
+go-icloud --session <private-session.json> photo-albums
+```
+
+The commands call the public SDK, preserve typed failures and suppress response
+metadata from console JSON. The 27 readiness and 41 album replay scenarios bind
+complete outputs, error bodies and prior response evidence, with strict exchange
+consumption. Private live CLI resume, readiness and album reads succeeded with the
+stored account, returning 12 albums. Listing photo assets and downloading their
+content remain pending CLI work.
