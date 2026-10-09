@@ -4,3 +4,4 @@ generate:
 output: cmd/go-icloud/internal/referenceconfig/models.gen.go
 output-options:
   skip-prune: true
+  nullable-type: true

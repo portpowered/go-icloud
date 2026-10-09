@@ -8,6 +8,26 @@
   "paths": {},
   "components": {
     "schemas": {
+      "ReferenceIdentity": {
+        "type": "object",
+        "description": "Private local reference account selection; importing it never modifies the original file.",
+        "required": ["username", "china"],
+        "properties": {
+          "username": {"type": "string"},
+          "china": {"type": "boolean"}
+        }
+      },
+      "ReferenceSessionData": {
+        "type": "object",
+        "description": "Private pinned reference session file. Preserve its underscore keys and missing versus null country.",
+        "required": ["client_id", "session_token"],
+        "properties": {
+          "client_id": {"type": "string", "x-go-name": "ClientID"},
+          "session_token": {"type": "string", "x-go-name": "Token"},
+          "trust_token": {"type": "string", "x-go-name": "Trust", "x-go-type-skip-optional-pointer": true},
+          "account_country": {"type": "string", "nullable": true, "x-go-name": "Country"}
+        }
+      },
       "SetupOrigin": {
         "type": "string",
         "description": "Setup origins used by the pinned reference login.",

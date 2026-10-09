@@ -22,7 +22,7 @@ const reminderCommand = "reminder"
 var (
 	errArguments = errors.New("provide a private session and command, or --reference-state <directory> resume")
 	errSession   = errors.New("cannot access private session data")
-	errCommand   = errors.New("unsupported read command")
+	errCommand   = errors.New("unsupported command")
 	errReminder  = errors.New("provide --reminder <identifier> for reminder")
 )
 
@@ -50,11 +50,31 @@ type options struct {
 	subject          *string
 	phoneNumber      string
 	exportSession    string
+	phoneID          string
+	trustedDeviceID  string
+	secretStdin      bool
+	acceptTerms      bool
+	china            bool
+	keepTrusted      bool
+	allSessions      bool
+	securityKeyID    string
+	requestFile      string
+	contentFile      string
+	saveResult       string
+	authService      string
 }
 
 // Run executes one bounded public SDK operation.
 // Resume saves copied credentials privately; console output omits secret session state.
 func Run(ctx context.Context, client icloud.Client, args []string, output, diagnostic io.Writer) error {
+	return RunWithInput(ctx, client, args, os.Stdin, os.Getenv, output, diagnostic)
+}
+
+// RunWithInput executes one command with explicit secret input and environment seams.
+// A cancelled secret read closes input; its Close must unblock Read.
+func RunWithInput(ctx context.Context, client icloud.Client, args []string,
+	input io.ReadCloser, environment Environment, output, diagnostic io.Writer,
+) error {
 	config, err := parse(args, diagnostic)
 	if errors.Is(err, flag.ErrHelp) {
 		return nil
@@ -66,6 +86,10 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 
 	requestContext, cancel := context.WithTimeout(ctx, config.timeout)
 	defer cancel()
+
+	if authenticationCommand(config.operation) {
+		return authenticateCommand(requestContext, client, config, input, environment, output)
+	}
 
 	if config.operation == "credentials-export" {
 		return exportCredentials(requestContext, config, output)
@@ -80,9 +104,9 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 		return err
 	}
 
-	result, err := read(requestContext, client, auth, config)
+	result, err := executeService(requestContext, client, auth, config)
 	if err != nil {
-		return fmt.Errorf("read service: %w", err)
+		return fmt.Errorf("service operation: %w", err)
 	}
 
 	return writeResult(output, result)
@@ -94,6 +118,10 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags := flag.NewFlagSet("go-icloud", flag.ContinueOnError)
 	flags.SetOutput(diagnostic)
 	flags.StringVar(&config.session, "session", "", "Private JSON containing an icloud.AuthContext")
+	flags.StringVar(&config.requestFile, "request", "", "Private JSON containing the generated request for a named write")
+	flags.StringVar(&config.contentFile, "file", "", "Local content file for a named upload")
+	flags.StringVar(&config.saveResult, "save-result", "", "Explicit private destination for complete generated write results and receipts")
+	authenticationFlags(flags, &config)
 	flags.StringVar(&config.referenceState, "reference-state", "", "Existing reference login directory for resume")
 	flags.StringVar(&config.saveSession, "save-session", "", "Private native-session destination for resume")
 	flags.BoolVar(&config.forceRefresh, "force-refresh", false, "Skip cookie validation during resume")
@@ -117,14 +145,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.DurationVar(&config.timeout, "timeout", defaultTimeout, "Request deadline")
 
 	flags.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
-			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
-			"reminder-legacy-snapshot, reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, "+
-			"reminders, reminder-snapshot, "+
-			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, "+
-			"photos-status, photo-albums, photo-count, photo-assets, photo, photo-download, resume, "+
-			"findmy-device, findmy-sound, findmy-message, findmy-lost, findmy-erase, credentials-export")
-
+		printUsage(diagnostic)
 		flags.PrintDefaults()
 	}
 
@@ -138,6 +159,12 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	}
 
 	config.operation = flags.Arg(0)
+	if config.session == "" && config.referenceState == "" {
+		config.session, err = defaultSessionPath()
+		if err != nil {
+			return config, err
+		}
+	}
 	if config.operation == reminderCommand && config.reminderID == "" {
 		return config, errReminder
 	}

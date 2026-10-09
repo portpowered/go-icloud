@@ -6,6 +6,18 @@ run:
 linters:
   default: all
   settings:
+    # GO-11 permits 120 lines and 200 statements; keep the same analyzer bounds as the standard template.
+    funlen:
+      lines: 120
+      statements: 200
+    cyclop:
+      max-complexity: 25
+    goconst:
+      min-len: 8
+      min-occurrences: 2
+    mnd:
+      checks: [argument, case, condition, operation, return]
+      ignored-numbers: ['0', '1', '2', '10', '64', '100', '0o600']
     depguard:
       rules:
         Main:
@@ -18,6 +30,8 @@ linters:
             - github.com/portpowered/go-icloud
             # Account wire-contract verification uses this pinned schema validator.
             - github.com/getkin/kin-openapi
+            # Blocking wire/source inventory reads the pinned OpenAPI and AsyncAPI YAML contracts.
+            - gopkg.in/yaml.v3
             # Generated nullable values preserve absent and explicit-null metadata.
             - github.com/oapi-codegen/nullable
             # Generated request builders use the pinned OpenAPI runtime.
@@ -49,6 +63,42 @@ linters:
       - path: pkg/photosync/engine\.go
         linters: [revive]
         text: package-comments
+      # GO-15: Parser lexical objects detect aliases and shadowing even in compile-invalid adversarial fixtures.
+      - path: '^tools/wiregate/(requests|requests_ast|requests_clients|requests_maps|requests_maps_tracking|requests_maps_provenance|requests_transport|scan|scan_clients|scan_network|scan_websocket|request_body)\.go$'
+        text: '^SA1019: (go/)?ast\.Object has been deprecated'
+        linters: [staticcheck]
+      # GO-15: Audit clears this immutable schema registry cache before each inventory run.
+      - path: '^tools/wiregate/requests_maps\.go$'
+        text: '^generatedWireRegistryCache is a global variable$'
+        linters: [gochecknoglobals]
+      # GO-15: Missing map origins and optional backing literals are represented by explicit zero values.
+      - path: '^tools/wiregate/requests_maps(_provenance)?\.go$'
+        text: '^wiregate\.(wireMapProvenance|generatedWireKeyRegistry) is missing fields?'
+        linters: [exhaustruct]
+      # GO-15/SCHEMA-16: These named fail-closed AST analyzers enumerate the complete provenance case matrix.
+      - path: '^tools/wiregate/requests_maps_(tracking|provenance)\.go$'
+        text: '^cognitive complexity .* func `\(\*requestWireMapState\)\.(discoverAssignment|mapInfo)`'
+        linters: [gocognit]
+      - path: '^tools/wiregate/requests_maps_provenance\.go$'
+        text: '^cyclomatic complexity .* func `\(\*requestWireMapState\)\.mapInfo`'
+        linters: [gocyclo]
+      - path: '^tools/wiregate/requests_maps_provenance\.go$'
+        text: '^calculated cyclomatic complexity for function mapInfo is '
+        linters: [cyclop]
+      - path: '^tools/wiregate/requests_maps_tracking\.go$'
+        text: '^`if schemaBacked` has complex nested blocks'
+        linters: [nestif]
+      # GO-15: Full AST provenance predicates and schema diagnostic names are kept together in these analyzers.
+      - path: '^tools/wiregate/(requests_maps|requests_maps_tracking|requests_maps_provenance)\.go$'
+        linters: [lll]
+      # GO-15: The named table covers independent query and header escape controls.
+      - path: '^tools/wiregate/adversarial_test\.go$'
+        text: "^Function 'TestGeneratedQueryAndHeaderKeysAreRequiredAcrossAliasesAndMaps' is too long"
+        linters: [funlen]
+      # GO-15: Dynamic adversarial schema files are created exclusively under t.TempDir.
+      - path: '^tools/wiregate/adversarial_test\.go$'
+        text: '^G304: Potential file inclusion via variable$'
+        linters: [gosec]
       # GO-13: the generated sibling owns protocol's package godoc.
       - path: internal/protocol/http_content\.go
         linters: [revive]

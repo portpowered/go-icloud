@@ -12,7 +12,6 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/oapi-codegen/nullable"
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/referenceconfig"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
@@ -32,18 +31,9 @@ type Login struct {
 	SourceFiles []string
 }
 
-type identity struct {
-	Username string `json:"username"`
-	China    bool   `json:"china"`
-}
+type identity = referenceconfig.ReferenceIdentity
 
-//nolint:tagliatelle // The pinned reference's credential file fixes these spellings.
-type sessionData struct {
-	ClientID string                    `json:"client_id"`
-	Token    string                    `json:"session_token"`
-	Trust    string                    `json:"trust_token"`
-	Country  nullable.Nullable[string] `json:"account_country"`
-}
+type sessionData = referenceconfig.ReferenceSessionData
 
 // Load reads the reference's active identity, session JSON and LWP cookie jar.
 // It performs no network requests or updates to the reference files.

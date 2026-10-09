@@ -1,0 +1,6 @@
+package: commandmodels
+generate:
+  models: true
+output: cmd/go-icloud/internal/commandmodels/models.gen.go
+output-options:
+  skip-prune: true

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/commandmodels"
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/savedlogin"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
@@ -17,12 +18,7 @@ const privateSessionDirectoryMode = 0o700
 
 var errNativeSession = errors.New("native saved-session credentials are unavailable")
 
-type resumeSummary struct {
-	SessionFile       string `json:"sessionFile"`
-	Trusted           bool   `json:"trusted"`
-	RequiresTwoFactor bool   `json:"requiresTwoFactor"`
-	RequiresTwoStep   bool   `json:"requiresTwoStep"`
-}
+type resumeSummary = commandmodels.ResumeSummary
 
 func resumeSession(ctx context.Context, client icloud.Client, config options, output io.Writer) error {
 	login, err := resumeInput(config)
