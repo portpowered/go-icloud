@@ -1044,3 +1044,83 @@ serialization and response projection now preserve those bytes using generated
 formats. Three Source-executed canonical controls cover seeded embedded quotes,
 quoted rotation with a subsequent refresh, and explicit-header precedence. The
 old commit af7e7b4 is not approved for merge; revised checks/review/CI are pending.
+
+### Reviewer A — core Reminder writes, scoped commit review
+
+Independent reviewer `standards_audit` reviewed CreateReminder, UpdateReminder,
+DeleteReminder, their generated public/wire contracts, CRDT encoding, and the
+portable compression matcher. Reviewed commit:
+`da6f7a4c004c62a42c80af60328d950fb8ff0153`. HEAD matched that SHA and the tree was
+clean before this review entry. The reviewer did not implement these changes.
+
+Verdict: **no remaining finding in this core Reminder milestone**. All findings
+raised by this reviewer were independently verified as resolved: endpoint-bound
+write variants, nonnullable document/token strings, embedded payload bindings,
+schema examples and negative controls, complete failure response evidence,
+cancellation/entropy preparation failures, and generated CRDT primitive ownership.
+The linked-record fallback escape was reproduced independently before the fix;
+the actual endpoint schema now rejects both removal of required document fields
+and duplicated malformed operations. Caller-owned state remains unchanged.
+
+At the exact reviewed commit the reviewer independently passed targeted race
+tests in `tests/contracts`, `pkg/icloud`, `internal/reminderstext`, and
+`tests/replay`, covering paired Reminder contracts, write variants/examples,
+eleven core write scenarios, HTTP/malformed-response failures, cancellation,
+entropy failures, fractional/pre-epoch timestamps, Source protobuf bytes, and
+compressed payload mutation controls. Full `make check` passing and its coverage
+receipt are implementer-reported, not independently rerun by this reviewer:
+122 Python tests; SDK replay/unit/combined 86.1%/25.8%/87.9%; CLI
+83.3%/54.2%/85.2% (LIB-07).
+
+This verdict covers only core Reminder Create/Update/Delete and their reviewed
+verification infrastructure. Remaining linked-record operations, Photos,
+authentication, complete source/model/socket gates, rendered documentation,
+release checks, full template acceptance and exact-commit CI acceptance remain
+open. This entry does not authorize whole-library sign-off or close item 14.
+
+### Reviewer B — core Reminder writes, scoped commit review
+
+Independent reviewer `parity_audit` reviewed CreateReminder, UpdateReminder,
+DeleteReminder, generated request/result models and endpoint schemas, CRDT
+encoding, paired replay matching, and failure/ownership controls against pinned
+Python source `e2e44ab875d47dab4475096021da60030f26c35e`. Reviewed commit:
+`da6f7a4c004c62a42c80af60328d950fb8ff0153`. HEAD matched that SHA; only this
+review document was modified when the exact-commit checks ran. This reviewer
+did not implement the milestone.
+
+Verdict: **no remaining finding in the scoped core Reminder milestone**. The
+reviewer's earlier findings were independently verified as resolved: create
+and update check cancellation before consuming entropy; fixed CRDT identities,
+protocol primitives and token epoch are generated from schema; the endpoint
+exposes narrow known write variants and embedded token/protobuf ownership.
+The pending linked-record fallback now positively admits complete linked-ID
+parent updates or explicitly named child records. Required-field removal and
+duplicated malformed-operation negatives fail against both the owning variant
+and actual endpoint schema, resolving the previously identified fallback escape
+(library standard 4). Caller-owned credentials, nullable revision fields and
+reminder snapshots remain unchanged; ordered response evidence is retained on
+success and failure (library standards 9 and 15).
+
+At the exact reviewed commit, this reviewer independently passed targeted race
+checks in `pkg/icloud`, `internal/reminderstext`, `tests/replay`, and
+`tests/contracts`. These exercised all eleven existing core write scenarios,
+portable Reminder wire contracts, mutation schema negatives, preparation
+cancellation/entropy failures, twelve HTTP/malformed-response controls,
+fractional/pre-epoch timestamps, complete Source protobuf byte comparisons,
+and compressed-payload mismatch/checksum/trailing-stream controls. Explicit
+`records:null` is rejected while a missing records field retains Source defaults.
+The compression matcher permits encoder byte differences only while requiring
+identical complete decompressed payload bytes and valid emitted framing.
+
+The full `make check` receipt is implementer-reported, not independently rerun
+by this reviewer: 122 Python tests; non-generated SDK replay/unit/combined
+coverage 86.1%/25.8%/87.9%; CLI 83.3%/54.2%/85.2% (LIB-07). Those aggregate
+figures do not establish coverage of every selected operation or full Python
+parity. Exact-commit blocking CI evidence has not been reviewed.
+
+This verdict is limited to the reviewed core Reminder writes and their
+verification infrastructure. Linked-record implementations, Photos, complete
+authentication, full source/model/socket provenance gates, rendered customer
+documentation, release/consumer checks, full template acceptance and final
+CI acceptance remain open. This entry does not sign off the whole library or
+close library standard 14.
