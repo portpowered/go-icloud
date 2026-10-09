@@ -22,6 +22,8 @@ linters:
             - github.com/oapi-codegen/nullable
             # Generated request builders use the pinned OpenAPI runtime.
             - github.com/oapi-codegen/runtime
+            # Source Photos metadata uses binary and XML property lists.
+            - howett.net/plist
             # Generated Reminders CRDT models and decoding use the pinned protobuf runtime.
             - google.golang.org/protobuf
             # Public Reminders text replaces malformed UTF-8 subsequences as Source does.
@@ -29,6 +31,14 @@ linters:
   exclusions:
     generated: strict
     rules:
+      # GO-13: generated materialization models own the package documentation.
+      - path: internal/photomaterialize/exif\.go
+        linters: [revive]
+        text: package-comments
+      # GO-13: generated local sync models own the package documentation.
+      - path: pkg/photosync/engine\.go
+        linters: [revive]
+        text: package-comments
       # GO-13: the generated sibling owns protocol's package godoc.
       - path: internal/protocol/http_content\.go
         linters: [revive]

@@ -1,0 +1,6 @@
+package: photomaterialize
+generate:
+  models: true
+output: internal/photomaterialize/models.gen.go
+output-options:
+  skip-prune: true

@@ -9,6 +9,7 @@ require (
 	github.com/oapi-codegen/runtime v1.7.0
 	golang.org/x/text v0.32.0
 	google.golang.org/protobuf v1.36.11
+	howett.net/plist v1.0.1
 )
 
 require (
