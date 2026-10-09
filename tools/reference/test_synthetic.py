@@ -19,12 +19,12 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 29)
+        self.assertEqual(len(paths), 31)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 30)
+        self.assertEqual(pairs, 32)
         complete = json.loads(
             (FIXTURES / "reminders-query-compound-all-types.json").read_text()
         )["result"]
@@ -39,6 +39,17 @@ class SyntheticTests(unittest.TestCase):
             self.assertEqual(len(complete[name]), count)
 
     def test_reminder_related_wrapper_sensitive_selection(self):
+        for kind, whitespace in [("lf", "\n"), ("cr", "\r")]:
+            scenario = json.loads(
+                (
+                    FIXTURES / f"reminders-query-compound-encoded-url-{kind}.json"
+                ).read_text()
+            )
+            self.assertEqual(
+                scenario["result"]["attachments"]["Attachment/synthetic-url"]["url"],
+                base64.b64encode(b"https://example.invalid/synthetic").decode()
+                + whitespace * 4,
+            )
         for kind in ["bytes", "encrypted-bytes"]:
             scenario = json.loads(
                 (FIXTURES / f"reminders-query-compound-type-{kind}.json").read_text()

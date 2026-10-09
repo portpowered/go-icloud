@@ -1,6 +1,6 @@
 # Reference capture development
 
-The compound reminder reference matrix contains twenty-nine scenarios and thirty
+The compound reminder reference matrix contains thirty-one scenarios and thirty-two
 paired exchanges. It covers all supported related records, defaults, populated
 fields, orphan filtering, unsupported types, duplicate replacement across pages,
 assets, byte-backed text, recurrence selection and validation failures. Complete
@@ -13,13 +13,16 @@ compares their bytes to strings before model coercion. Byte-backed URL fields
 retain their decoded text, even when that text contains a base64-encoded URL;
 STRING URLs can undergo a further base64 decoding step. This is observable
 reference behavior that the Go projection must preserve (LIB-05/LIB-12).
+Two further cases preserve STRING base64 URLs containing LF or CR: the strict
+Source URL decoder rejects those line breaks, while byte-field decoding permits
+them. The two decoding policies must remain distinct.
 
 STRING frequency `"2"` and DOUBLE frequency `2.9` fall back to daily. Asset size
 accepts integer-coercible text for ASSET and ASSETID; its schema preserves integer
 magnitude. Byte-backed ordinary text is UTF-8 decoded, while hashtag text replaces
 invalid UTF-8. Non-strict base64 inputs, tombstones and invalid orphan images also
 have reference cases. These are offline cases; Go compound parity remains open.
-The current portable HTTP corpus contains 697 scenarios and 1,405 exchanges.
+The current portable HTTP corpus contains 699 scenarios and 1,407 exchanges.
 Before the six wrapper-sensitive additions, synthetic-only coverage measured
 584/905 entered functions, 3,336/5,398 body statements and 1,045/2,076 branch exits.
 These fixed denominators include remaining selected-service work (LIB-07).
