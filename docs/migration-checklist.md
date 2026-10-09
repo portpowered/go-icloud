@@ -1,17 +1,25 @@
 # iCloud migration checklist
 
+Primary Photos albums now have a stateless `ListPhotoAlbums` SDK operation,
+schema-generated public projections, recursive folder/page traversal, and 31
+strict Source/Go cases with 71 exchanges. Twenty-six new cases extend the corpus
+to 837 scenarios and 1,600 pairs. Live Go reads returned 12 albums, with saved
+session validation and every Photos request returning HTTP 200. Final checks,
+CI and exact-head review are pending for this milestone. Asset reads and Photos
+CLI commands are next; live reminder contents remain unresolved.
+
 Photos initialization now has generated wire and public models, CloudKit service
 discovery, a stateless `GetPhotosStatus` SDK operation, and 27 strict Source/Go
 cases. Twenty-four new synthetic exchanges extend the corpus to 811 scenarios and
 1,541 pairs. Private live Go validation and the primary indexing query succeed
-with HTTP 200. Album and asset reads are next; full Photos parity remains open.
-Final checks and exact-head independent approval are pending for this milestone.
+with HTTP 200. Initialization passed local checks, CI and exact-head independent review and
+is merged. Full Photos parity remains open.
 
 Current related-read milestone adds forty-six Source-executed synthetic cases
 and fifty-one paired exchanges for hashtag, attachment, recurrence and alarm
 lookup. Go consumes the same artifacts and compares complete ordered results,
-response evidence and failures. The corpus contains 811 HTTP scenarios and
-1,541 paired exchanges. Reminder writes and full Photos SDK parity remain open.
+response evidence and failures. The corpus now contains 837 HTTP scenarios and
+1,600 paired exchanges. Reminder writes and full Photos SDK parity remain open.
 Source synthetic measurement after this addition covers 62.02% of inventoried
 function-body statements and 1,057/2,076 branch exits; this remains a conservative
 diagnostic, not endpoint completeness proof. Related-read checks, CI and

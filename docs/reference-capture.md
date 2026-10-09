@@ -286,3 +286,20 @@ compare complete results and exact response evidence; mutation controls reject
 changed state, cursor, query serialization and unused traffic. Private live
 Go initialization succeeded on the refreshed account and remains outside Git.
 This is not proof of complete album, asset, shared-library or write coverage.
+
+## Primary Photos albums
+
+The public `ListPhotoAlbums` operation consumes 31 Source-executed synthetic
+scenarios and 71 exchanges, including the indexing query. Twenty-six new cases
+cover nested folder pagination, duplicate IDs, parent cycles, encoded and invalid
+names, deletion filtering, empty continuation, cookie rotation, malformed replies,
+and first/later HTTP failures. Full ordered projections, all metadata and error
+body/headers/prior responses are checked; every exchange must be consumed
+(LIB-05). Source mutation controls reject changed names, full names, result order,
+query booleans, unused traffic, failure messages and missing cookies. Wire schema
+checks bind every request/reply and reject Source-invalid query records.
+
+A private live Go read returned 12 albums with successful saved-session validation
+and four HTTP 200 Photos queries. Captured evidence remains outside Git and
+separate from the synthetic corpus (LIB-09/LIB-12). Assets, shared-library album
+reads, downloads and mutations remain pending.
