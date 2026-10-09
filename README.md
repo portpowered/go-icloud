@@ -416,7 +416,7 @@ Use `--reminder <identifier> reminder` to read one complete reminder; identifier
 may be raw or begin with `Reminder/`. Titles, notes, dates, state, related IDs,
 parent and revision are returned using the public SDK projection.
 Both reuse the same private saved session. Response authentication headers are
-omitted from command output. The Go CLI also supports `photos-status`, `photo-albums` and `photo-count` using the same
+omitted from command output. The Go CLI also supports `photos-status`, `photo-albums`, `photo-count` and `photo-assets` using the same
 private saved session. Write operations remain pending.
 
 CLI replay tests use the root canonical synthetic fixture tree and public SDK.
@@ -890,7 +890,7 @@ generated CloudKit models. Public Reminders service orchestration and semantic
 SDK replay remain work in progress; these contract checks are a separate layer.
 
 
-For primary Photos readiness and albums, resume the saved session first to refresh
+For primary Photos readiness, albums, counts and assets, resume the saved session first to refresh
 service discovery:
 
 ```powershell
@@ -898,14 +898,15 @@ go-icloud --session <private-session.json> --save-session <private-session.json>
 go-icloud --session <private-session.json> photos-status
 go-icloud --session <private-session.json> photo-albums
 go-icloud --session <private-session.json> --album Library photo-count
+go-icloud --session <private-session.json> --album Library photo-assets
 ```
 
 The commands call the public SDK, preserve typed failures and suppress response
-metadata from console JSON. The 27 readiness, 41 album and 56 count replay scenarios bind
+metadata from console JSON. The 27 readiness, 41 album, 56 count and 109 asset replay scenarios bind
 complete outputs, error bodies and prior response evidence, with strict exchange
 consumption. Private live CLI resume, readiness and album reads succeeded with the
-stored account, returning 12 albums. Listing photo assets and downloading their
-content remain pending CLI work.
+stored account, returning 12 albums. A private asset enumeration returned 684
+photos using those credentials. Downloading content remains pending CLI work.
 
 ### Legacy Reminders startup
 

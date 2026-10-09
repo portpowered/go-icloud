@@ -15,12 +15,13 @@ import (
 const photoStatusCommand = "photos-status"
 const photoAlbumsCommand = "photo-albums"
 const photoCountCommand = "photo-count"
+const photoAssetsCommand = "photo-assets"
 
 func TestPhotoReadCommands(t *testing.T) {
 	t.Parallel()
 
 	for prefix, operation := range map[string]string{"index": photoStatusCommand,
-		"albums": photoAlbumsCommand, "count": photoCountCommand} {
+		"albums": photoAlbumsCommand, "count": photoCountCommand, "assets": photoAssetsCommand} {
 		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/photos-" + prefix + "-*.json")
 		if err != nil {
 			t.Fatal(err)
@@ -33,6 +34,10 @@ func TestPhotoReadCommands(t *testing.T) {
 
 		if prefix == "count" {
 			want = 56
+		}
+
+		if prefix == "assets" {
+			want = 109
 		}
 
 		if len(paths) != want {
@@ -65,6 +70,12 @@ func checkPhotoCLIOutcome(t *testing.T, operation string, row map[string]json.Ra
 
 	decode(t, output, &actual)
 
+	if operation == photoAssetsCommand {
+		checkPhotoAssetsCLI(t, row, actual)
+
+		return
+	}
+
 	if operation == photoCountCommand {
 		if len(actual) != 1 {
 			t.Fatal("photo count CLI exposed unexpected fields")
@@ -88,6 +99,12 @@ func checkPhotoCLIOutcome(t *testing.T, operation string, row map[string]json.Ra
 
 		return
 	}
+
+	checkPhotoAlbumsCLI(t, row, actual)
+}
+
+func checkPhotoAlbumsCLI(t *testing.T, row, actual map[string]json.RawMessage) {
+	t.Helper()
 
 	if len(actual) != 1 {
 		t.Fatal("photo CLI exposed unexpected fields")

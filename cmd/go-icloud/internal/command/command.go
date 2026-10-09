@@ -109,7 +109,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
 			"reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, reminders, reminder-snapshot, "+
 			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, "+
-			"photos-status, photo-albums, photo-count, resume")
+			"photos-status, photo-albums, photo-count, photo-assets, resume")
 
 		flags.PrintDefaults()
 	}
@@ -168,7 +168,7 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		"reminders", "reminder-snapshot",
 		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", "reminder-alarms":
 		return readReminders(ctx, client, auth, config)
-	case "photos-status", "photo-albums", "photo-count":
+	case "photos-status", "photo-albums", "photo-count", "photo-assets":
 		return readPhotos(ctx, client, auth, config)
 	case "account-devices", "account-family", "account-storage", "account-plan":
 		return readAccount(ctx, client, auth, config.operation)
@@ -289,15 +289,16 @@ func readReminderRelated(ctx context.Context, client icloud.Client,
 }
 
 func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
-	if config.operation == "photos-status" {
+	switch config.operation {
+	case "photos-status":
 		return wrap(client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{Auth: auth}))
-	}
-
-	if config.operation == "photo-count" {
+	case "photo-count":
 		return wrap(client.GetPhotoAlbumCount(ctx, icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: config.album}))
+	case "photo-assets":
+		return wrap(client.ListPhotoAssets(ctx, icloud.ListPhotoAssetsRequest{Auth: auth, Album: config.album}))
+	default:
+		return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth}))
 	}
-
-	return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth}))
 }
 
 func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthContext, operation string) (any, error) {
