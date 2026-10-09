@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+const reminderCLIRevisionField = "recordChangeTag"
+
+const reminderCLISourceRevisionField = "record_change_tag"
+
 func checkReminderCLIReminder(t *testing.T, actual, source json.RawMessage) {
 	t.Helper()
 
@@ -18,7 +22,7 @@ func checkReminderCLIReminder(t *testing.T, actual, source json.RawMessage) {
 		"due_date": "dueDate", "start_date": "startDate", "all_day": "allDay", "time_zone": "timeZone",
 		"alarm_ids": "alarmIDs", "hashtag_ids": "hashtagIDs", "attachment_ids": "attachmentIDs",
 		"recurrence_rule_ids": "recurrenceRuleIDs", "parent_reminder_id": "parentReminderID",
-		"record_change_tag": "recordChangeTag"} {
+		reminderCLISourceRevisionField: reminderCLIRevisionField} {
 		expected[after] = expected[before]
 		delete(expected, before)
 	}
