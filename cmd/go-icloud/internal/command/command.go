@@ -17,15 +17,19 @@ import (
 
 const defaultTimeout = 60 * time.Second
 
+const reminderCommand = "reminder"
+
 var (
 	errArguments = errors.New("provide a private session and command, or --reference-state <directory> resume")
 	errSession   = errors.New("cannot access private session data")
 	errCommand   = errors.New("unsupported read command")
+	errReminder  = errors.New("provide --reminder <identifier> for reminder")
 )
 
 type options struct {
 	session        string
 	node           string
+	reminderID     string
 	family         bool
 	timeout        time.Duration
 	operation      string
@@ -78,12 +82,14 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.BoolVar(&config.forceRefresh, "force-refresh", false, "Skip cookie validation during resume")
 	flags.BoolVar(&config.allowUntrusted, "allow-untrusted", false, "Save paused MFA discovery during resume")
 	flags.StringVar(&config.node, "node", "", "Drive node identifier for drive-node")
+	flags.StringVar(&config.reminderID, "reminder", "", "Raw or complete reminder identifier for reminder")
 	flags.BoolVar(&config.family, "family", false, "Include family devices for findmy")
 	flags.DurationVar(&config.timeout, "timeout", defaultTimeout, "Request deadline")
 
 	flags.Usage = func() {
 		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
-			"account-storage, account-plan, drive-libraries, drive-node, findmy, reminder-zones, reminder-lists, resume")
+			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
+			"reminder-zones, reminder-lists, reminder, resume")
 
 		flags.PrintDefaults()
 	}
@@ -98,6 +104,10 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	}
 
 	config.operation = flags.Arg(0)
+	if config.operation == reminderCommand && config.reminderID == "" {
+		return config, errReminder
+	}
+
 	if config.session == "" && (config.operation != "resume" || config.referenceState == "") {
 		return config, errArguments
 	}
@@ -134,8 +144,8 @@ func loadSession(path string) (icloud.AuthContext, error) {
 
 func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-zones", "reminder-lists":
-		return readReminders(ctx, client, auth, config.operation)
+	case "reminder-zones", "reminder-lists", reminderCommand:
+		return readReminders(ctx, client, auth, config)
 	case "account-devices":
 		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
 	case "account-family":
@@ -155,12 +165,15 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 	}
 }
 
-func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthContext, operation string) (any, error) {
-	if operation == "reminder-zones" {
+func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
+	switch config.operation {
+	case "reminder-zones":
 		return wrap(client.ListReminderZones(ctx, icloud.ListReminderZonesRequest{Auth: auth}))
+	case reminderCommand:
+		return wrap(client.GetReminder(ctx, icloud.GetReminderRequest{Auth: auth, ReminderID: config.reminderID}))
+	default:
+		return wrap(client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth}))
 	}
-
-	return wrap(client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth}))
 }
 
 func findMy(ctx context.Context, client icloud.Client, auth icloud.AuthContext, family bool) (any, error) {
