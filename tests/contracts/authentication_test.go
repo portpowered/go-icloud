@@ -14,7 +14,8 @@ func TestSavedSessionWireContracts(t *testing.T) {
 
 	document := loadDriveDocument(t, "../../api/external/auth.openapi.yaml")
 
-	for _, name := range []string{"auth-authenticate-cached", "auth-authenticate-paused", "auth-authenticate-refresh",
+	for _, name := range []string{"auth-authenticate-cloudkit-discovery",
+		"auth-authenticate-cached", "auth-authenticate-paused", "auth-authenticate-refresh",
 		"auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation",
 		"auth-authenticate-validation-201", "auth-authenticate-refresh-202",
 		"auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh",

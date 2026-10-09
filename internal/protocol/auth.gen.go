@@ -22,6 +22,7 @@ const (
 	AuthTokenLoginRequestExtendedLogin      = "extended_login"
 	AuthTokenLoginRequestTrustToken         = "trustToken"
 	AuthWebServicesAccount                  = "account"
+	AuthWebServicesCkdatabasews             = "ckdatabasews"
 	AuthWebServicesDocws                    = "docws"
 	AuthWebServicesDrivews                  = "drivews"
 	AuthWebServicesFindme                   = "findme"

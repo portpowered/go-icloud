@@ -11,8 +11,9 @@ and unused traffic (LIB-05/LIB-12). The added cases cover overlapping normal,
 error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
-The current portable HTTP corpus contains 786 scenarios and 1,516 pairs, including
+The current portable HTTP corpus contains 787 scenarios and 1,517 pairs, including
 348 Reminders scenarios and 414 pairs. The Go snapshot facade executes all
+
 twenty-eight Source cases; full verification and independent review remain open.
 These cases do not establish live provider behavior or complete Reminders coverage.
 
@@ -267,3 +268,10 @@ tests. They do not contact Apple. The Python tests cover recorder interception,
 redaction, strict matching, transport failure, private storage, CLI login/session
 reuse, command selection, and reference drift. Coverage of Go verification tools
 does not represent iCloud client coverage.
+
+Reminders CloudKit requests use the authenticated `ckdatabasews` service URL.
+The legacy `reminders` URL is a separate service and must not be substituted.
+The synthetic `auth-authenticate-cloudkit-discovery` scenario supplies both with
+distinct origins and binds the pinned Source getter plus Go resume projection.
+Live Go session validation and zone discovery succeeded after this correction;
+this does not establish successful live reminder list/query access.
