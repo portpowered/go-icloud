@@ -922,8 +922,8 @@ snapshot, err := client.GetLegacyRemindersSnapshot(ctx,
 This route returned HTTP 200 for the authenticated account, with list records and
 an empty reminders array. A private offline Python replay consumed the same captured
 request and matched the complete Go list/reminder projection (LIB-09/LIB-12).
-Six synthetic Source/Go scenarios cover empty, one, multiple, authentication/provider
-failure and missing-list responses. The Python reference session executes the HTTP
+Nine synthetic Source/Go scenarios cover empty, one, multiple, authentication/provider
+failure missing-list, alternate successful status/MIME and optional-build responses. The Python reference session executes the HTTP
 request directly; its current Reminders convenience service targets CloudKit.
 Legacy reminder records remain extensible because live nonempty reminder shapes
 have not been captured. Historical backend fixtures do not establish that evidence.

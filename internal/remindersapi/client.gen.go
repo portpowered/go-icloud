@@ -508,6 +508,12 @@ type RemindersListZonesParamsGetCurrentSyncToken string
 type RemindersLegacyStartupParams struct {
 	ClientId RemindersClientId `form:"clientId" json:"clientId"`
 	Dsid     RemindersDsid     `form:"dsid" json:"dsid"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *RemindersClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 }
 
 // RemindersZoneChangesJSONRequestBody defines body for RemindersZoneChanges for application/json ContentType.
@@ -2070,6 +2076,30 @@ func NewRemindersLegacyStartupRequest(server string, params *RemindersLegacyStar
 			}
 		}
 
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -2995,6 +3025,9 @@ func ParseRemindersLegacyStartupResponse(rsp *http.Response) (*RemindersLegacySt
 			return nil, err
 		}
 		response.JSONDefault = &dest
+
+	case rsp.StatusCode == 200:
+		// Content-type (*/*) unsupported
 
 	}
 

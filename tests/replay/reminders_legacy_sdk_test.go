@@ -16,7 +16,7 @@ func TestLegacyRemindersSDKPortableScenarios(t *testing.T) {
 	t.Parallel()
 
 	paths, err := filepath.Glob("fixtures/synthetic/http/reminders-legacy-*.json")
-	if err != nil || len(paths) != 6 {
+	if err != nil || len(paths) != 9 {
 		t.Fatal("legacy reminder scenario inventory changed", err)
 	}
 

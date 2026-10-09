@@ -455,7 +455,7 @@ methods do not yet route to that endpoint.
 
 Legacy Reminders compatibility now has an explicit `GetLegacyRemindersSnapshot`
 SDK operation with separate discovered authentication origin and generated wire/public
-models. Six synthetic Source/Go cases bind requests, full records, failure evidence
+models. Nine synthetic Source/Go cases bind requests, full records, failure evidence
 and consumption. Live Go validation/startup both returned HTTP 200; private Python
 replay of startup matched the full returned list/reminder projection. The observed
 account has lists and an empty startup reminders array; nonempty live reminders,

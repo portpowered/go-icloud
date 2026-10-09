@@ -20,8 +20,8 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_legacy_reminders_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-legacy-*.json"))
-        self.assertEqual(len(paths), 6)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 6)
+        self.assertEqual(len(paths), 9)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 9)
 
     def test_legacy_reminders_results_and_consumption_are_bound(self):
         baseline = json.loads((FIXTURES / "reminders-legacy-1.json").read_text())

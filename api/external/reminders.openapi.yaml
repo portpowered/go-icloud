@@ -541,6 +541,12 @@
           },
           {
             "$ref": "#/components/parameters/RemindersDsid"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/RemindersClientMasteringNumber"
           }
         ],
         "responses": {
@@ -548,6 +554,11 @@
             "description": "Legacy startup snapshot",
             "content": {
               "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegacyRemindersStartup"
+                }
+              },
+              "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/LegacyRemindersStartup"
                 }
@@ -561,6 +572,16 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful legacy startup; the reference decodes JSON independently of MIME type.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LegacyRemindersStartup"
                 }
               }
             }

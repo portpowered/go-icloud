@@ -63,7 +63,7 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 354, Pairs: 420, Operations: 7, Invalid: 51}
+	want := remindersContractInventory{Scenarios: 357, Pairs: 423, Operations: 7, Invalid: 51}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}

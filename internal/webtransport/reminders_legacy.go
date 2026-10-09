@@ -26,7 +26,8 @@ func (client *Client) LegacyRemindersStartup(ctx context.Context,
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	params := remindersapi.RemindersLegacyStartupParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid}
+	params := remindersapi.RemindersLegacyStartupParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid,
+		ClientBuildNumber: auth.Params.ClientBuildNumber, ClientMasteringNumber: auth.Params.ClientMasteringNumber}
 
 	request, err := remindersapi.NewRemindersLegacyStartupRequest(auth.Origin, &params)
 	if err != nil {
