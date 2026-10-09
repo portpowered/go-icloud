@@ -11,6 +11,8 @@ func typedReadCommand(operation string) bool {
 	case "photo-libraries", "photo-cursor", "photo-changes", "photo-library-changes", "photos-recently-added",
 		"shared-photo-albums", "shared-photo-count", "shared-photos", "shared-photo", "shared-photo-download", "photo-upload-status":
 		return true
+	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo", "photo-download":
+		return true
 	default:
 		return false
 	}
@@ -51,6 +53,6 @@ func runTypedRead(ctx context.Context, client icloud.Client, auth icloud.AuthCon
 			return client.GetPhotoUploadStatus(ctx, input)
 		})
 	default:
-		return runSharedPhotoRead(ctx, client, auth, operation, requestPath, resultPath)
+		return runAlbumRead(ctx, client, auth, operation, requestPath, resultPath)
 	}
 }
