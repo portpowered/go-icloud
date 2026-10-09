@@ -25,6 +25,8 @@ func nativeAuthStep(ctx context.Context, client icloud.Client, config options, s
 	case "mfa-security-key":
 		return authResult(client.ConfirmSecurityKey(ctx, icloud.ConfirmSecurityKeyRequest{
 			Auth: state.Auth, State: state, DeviceID: config.securityKeyID}))
+	case "mfa-security-key-assertion":
+		return verifySecurityKeyAssertion(ctx, client, config.requestFile, state)
 	case "mfa-request":
 		phone, err := selectedPhone(state, config.phoneID)
 		if err != nil {
@@ -46,6 +48,18 @@ func nativeAuthStep(ctx context.Context, client icloud.Client, config options, s
 	default:
 		return nil, errCommand
 	}
+}
+
+func verifySecurityKeyAssertion(ctx context.Context, client icloud.Client,
+	path string, state icloud.NativeAuthState,
+) (*icloud.NativeAuthResult, error) {
+	request, err := readWriteRequest[icloud.VerifySecurityKeyRequest](ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	request.Auth = state.Auth
+	request.State = state
+	return authResult(client.VerifySecurityKey(ctx, *request))
 }
 
 func authResult(result *icloud.NativeAuthResult, err error) (*icloud.NativeAuthResult, error) {

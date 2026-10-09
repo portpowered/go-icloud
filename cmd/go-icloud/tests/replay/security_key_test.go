@@ -36,7 +36,7 @@ func (provider *commandSecurityKey) Assert(_ context.Context,
 
 func TestSecurityKeyCommandUsesSelectedDeviceAndSourceAssertion(t *testing.T) {
 	t.Parallel()
-	for _, control := range []string{"accepted", "missing device", "cancelled ceremony"} {
+	for _, control := range []string{"accepted", "caller assertion", "missing device", "cancelled ceremony"} {
 		t.Run(control, func(t *testing.T) {
 			t.Parallel()
 			raw := readObject(t, "../../../../tests/replay/fixtures/synthetic/http/auth-security-key-assertion-accepted.json")
@@ -68,15 +68,15 @@ func TestSecurityKeyCommandUsesSelectedDeviceAndSourceAssertion(t *testing.T) {
 				identifier = "unavailable"
 			}
 			var output, diagnostic bytes.Buffer
-			err = command.RunWithInput(t.Context(), client,
-				[]string{sessionFlag, path, "--security-key", identifier, "mfa-security-key"},
+			arguments := commandKeyArguments(t, control, path, identifier, provider.assertion)
+			err = command.RunWithInput(t.Context(), client, arguments,
 				io.NopCloser(strings.NewReader("")), nil, &output, &diagnostic)
 			commandKeyOutcome(t, control, err, provider, transport)
 			saved, readErr := os.ReadFile(path)
 			if readErr != nil {
 				t.Fatal(readErr)
 			}
-			if control != "accepted" && !bytes.Equal(saved, data) {
+			if control != "accepted" && control != "caller assertion" && !bytes.Equal(saved, data) {
 				t.Fatal("failed hardware ceremony changed saved credentials")
 			}
 			for _, private := range []string{"synthetic-token", "synthetic-trust", "synthetic-cookie", "credentialIDs", "accountData", "responses"} {
@@ -88,11 +88,30 @@ func TestSecurityKeyCommandUsesSelectedDeviceAndSourceAssertion(t *testing.T) {
 	}
 }
 
+func commandKeyArguments(t *testing.T, control, path, identifier string,
+	assertion icloud.SecurityKeyAssertion,
+) []string {
+	t.Helper()
+	if control != "caller assertion" {
+		return []string{sessionFlag, path, "--security-key", identifier, "mfa-security-key"}
+	}
+	data, err := json.Marshal(icloud.VerifySecurityKeyRequest{Auth: icloud.AuthContext{ClientID: "foreign"},
+		State: icloud.NativeAuthState{}, Assertion: assertion})
+	if err != nil {
+		t.Fatal(err)
+	}
+	request := filepath.Join(t.TempDir(), "assertion.json")
+	if err = os.WriteFile(request, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	return []string{sessionFlag, path, "--request", request, "mfa-security-key-assertion"}
+}
+
 func commandKeyOutcome(t *testing.T, control string, err error,
 	provider *commandSecurityKey, transport *replay.HTTPTransport,
 ) {
 	t.Helper()
-	if control != "accepted" {
+	if control != "accepted" && control != "caller assertion" {
 		if err == nil {
 			t.Fatal("invalid hardware ceremony succeeded")
 		}
@@ -107,8 +126,8 @@ func commandKeyOutcome(t *testing.T, control string, err error,
 	if err != nil {
 		t.Fatal(err)
 	}
-	if provider.request == nil || provider.request.DeviceID != "synthetic-device" ||
-		provider.request.Origin != icloud.HttpsappleCom || provider.request.UserVerification != icloud.Discouraged {
+	if control == "accepted" && (provider.request == nil || provider.request.DeviceID != "synthetic-device" ||
+		provider.request.Origin != icloud.HttpsappleCom || provider.request.UserVerification != icloud.Discouraged) {
 		t.Fatal("CLI selected ceremony differs from generated security-key contract")
 	}
 	if err = transport.AssertConsumed(); err != nil {

@@ -13,5 +13,17 @@ func executeService(ctx context.Context, client icloud.Client, auth icloud.AuthC
 	if writeCommand(config.operation) {
 		return runWrite(ctx, client, auth, config.operation, config.requestFile, config.saveResult)
 	}
+	if typedReadCommand(config.operation) && (config.requestFile != "" || !photoFlagCommand(config.operation)) {
+		return runTypedRead(ctx, client, auth, config.operation, config.requestFile, config.saveResult)
+	}
 	return read(ctx, client, auth, config)
+}
+
+func photoFlagCommand(operation string) bool {
+	switch operation {
+	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo", "photo-download":
+		return true
+	default:
+		return false
+	}
 }

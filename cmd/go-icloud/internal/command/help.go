@@ -11,6 +11,7 @@ func printUsage(output io.Writer) {
 		"Authentication: login, renew, auth-status, auth-challenge, trust, logout, pcs-access, resume, credentials-export",
 		"MFA: mfa-request, mfa-verify, mfa-bridge, mfa-existing-code, mfa-security-keys, mfa-security-key, mfa-devices,",
 		"     mfa-send-two-step, mfa-verify-two-step",
+		"     mfa-security-key-assertion (private generated --request)",
 		"Account: account-devices, account-family, account-storage, account-plan",
 		"Drive: drive-libraries, drive-node",
 		"Find My: findmy, findmy-device, findmy-sound, findmy-message, findmy-lost, findmy-erase",
@@ -23,6 +24,9 @@ func printUsage(output io.Writer) {
 		"           reminder-attachment-create, reminder-attachment-update, reminder-attachment-delete",
 		"Photos: photos-status, photo-albums, photo-count, photo-assets, photo, photo-download,",
 		"        photos-sync, photos-watch (generated --request; optional private --save-result),",
+		"        photo-libraries, photo-cursor, photo-changes, photo-library-changes, photos-recently-added,",
+		"        shared-photo-albums, shared-photo-count, shared-photos, shared-photo, shared-photo-download,",
+		"        photo-upload-status (private generated --request)",
 		"        photo-album-create, photo-album-rename, photo-album-delete, photo-album-add, photo-favorite, photo-delete,",
 		"        photo-upload, photo-upload-file, photo-upload-reserve, photo-upload-send, photo-upload-register",
 	} {
