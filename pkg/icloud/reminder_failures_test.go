@@ -12,7 +12,8 @@ func TestReminderWritesPreserveHTTPAndInvalidResponseFailures(t *testing.T) {
 	t.Parallel()
 
 	for _, operation := range []string{reminderCreateTestOperation,
-		reminderUpdateTestOperation, reminderDeleteTestOperation} {
+		reminderUpdateTestOperation, reminderDeleteTestOperation, reminderHashtagCreateTestOperation,
+		reminderHashtagUpdateTestOperation, reminderHashtagDeleteTestOperation} {
 		for name, row := range map[string]struct {
 			body   string
 			status int

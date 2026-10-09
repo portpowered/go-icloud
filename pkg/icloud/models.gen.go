@@ -497,6 +497,18 @@ type CreateDriveFolderResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// CreateReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"name":"Synthetic tag","reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type CreateReminderHashtagRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+	Name string      `json:"name"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
 // CreateReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"listID":"List/synthetic-list","title":"Synthetic title"}
 type CreateReminderRequest struct {
 	AllDay bool `json:"allDay,omitempty"`
@@ -525,6 +537,22 @@ type DeleteDriveNodeRequest struct {
 
 // DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DeleteReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderHashtagRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag ReminderHashtag `json:"hashtag"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
 
 // DeleteReminderRequest Soft-delete a reminder by raw or complete record identifier using its current revision.
 //
@@ -1879,6 +1907,29 @@ type ReminderHashtag struct {
 	ReminderID string `json:"reminderID"`
 }
 
+// ReminderHashtagMutationResult Example: {"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"responses":[]}
+type ReminderHashtagMutationResult struct {
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag   ReminderHashtag    `json:"hashtag"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ReminderHashtagRelationResult Example: {"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderHashtagRelationResult struct {
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag ReminderHashtag `json:"hashtag"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ReminderImageAttachment Image attachment metadata and provider download URL.
 //
 // Example: {"fileAssetURL":"","fileSize":0,"filename":"","height":0,"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","uti":"public.jpeg","width":0}
@@ -2186,6 +2237,18 @@ type TrashDriveNodeResult = DriveItemChangeResult
 
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
+
+// UpdateReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"name":"Synthetic tag"}
+type UpdateReminderHashtagRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag ReminderHashtag `json:"hashtag"`
+	Name    string          `json:"name"`
+}
 
 // UpdateReminderRequest Write the supplied reminder snapshot and return an independent updated snapshot.
 //

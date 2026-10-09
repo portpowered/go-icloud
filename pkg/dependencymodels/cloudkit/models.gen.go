@@ -2367,6 +2367,171 @@ func (e ReminderFieldTitleDocument) Valid() bool {
 	}
 }
 
+// Defines values for ReminderHashtagCreationOperationOperationType.
+const (
+	ReminderHashtagCreationOperationType ReminderHashtagCreationOperationOperationType = "create"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagCreationOperationOperationType enum.
+func (e ReminderHashtagCreationOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderHashtagCreationOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagCreationRecordRecordType.
+const (
+	ReminderHashtagCreationRecordTypeHashtag ReminderHashtagCreationRecordRecordType = "Hashtag"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagCreationRecordRecordType enum.
+func (e ReminderHashtagCreationRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderHashtagCreationRecordTypeHashtag:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagCreationRequestAtomic.
+const (
+	ReminderHashtagCreationRequestAtomicEnabled ReminderHashtagCreationRequestAtomic = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagCreationRequestAtomic enum.
+func (e ReminderHashtagCreationRequestAtomic) Valid() bool {
+	switch e {
+	case ReminderHashtagCreationRequestAtomicEnabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagDeletionOperationOperationType.
+const (
+	ReminderHashtagDeletionOperationType ReminderHashtagDeletionOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagDeletionOperationOperationType enum.
+func (e ReminderHashtagDeletionOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderHashtagDeletionOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagDeletionRecordRecordType.
+const (
+	ReminderHashtagDeletionRecordTypeHashtag ReminderHashtagDeletionRecordRecordType = "Hashtag"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagDeletionRecordRecordType enum.
+func (e ReminderHashtagDeletionRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderHashtagDeletionRecordTypeHashtag:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagDeletionRequestAtomic.
+const (
+	ReminderHashtagDeletionRequestAtomicEnabled ReminderHashtagDeletionRequestAtomic = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagDeletionRequestAtomic enum.
+func (e ReminderHashtagDeletionRequestAtomic) Valid() bool {
+	switch e {
+	case ReminderHashtagDeletionRequestAtomicEnabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagParentOperationOperationType.
+const (
+	ReminderHashtagParentOperationType ReminderHashtagParentOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagParentOperationOperationType enum.
+func (e ReminderHashtagParentOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderHashtagParentOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagParentRecordRecordType.
+const (
+	ReminderHashtagParentRecordTypeReminder ReminderHashtagParentRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagParentRecordRecordType enum.
+func (e ReminderHashtagParentRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderHashtagParentRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagUpdateOperationOperationType.
+const (
+	ReminderHashtagUpdateOperationType ReminderHashtagUpdateOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagUpdateOperationOperationType enum.
+func (e ReminderHashtagUpdateOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderHashtagUpdateOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagUpdateRecordRecordType.
+const (
+	ReminderHashtagUpdateRecordTypeHashtag ReminderHashtagUpdateRecordRecordType = "Hashtag"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagUpdateRecordRecordType enum.
+func (e ReminderHashtagUpdateRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderHashtagUpdateRecordTypeHashtag:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderHashtagWriteNameType.
+const (
+	ReminderHashtagWriteNameTypeEncryptedBytes ReminderHashtagWriteNameType = "ENCRYPTED_BYTES"
+)
+
+// Valid indicates whether the value is a known member of the ReminderHashtagWriteNameType enum.
+func (e ReminderHashtagWriteNameType) Valid() bool {
+	switch e {
+	case ReminderHashtagWriteNameTypeEncryptedBytes:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderIDPrefix.
 const (
 	ReminderIDPrefixReminder ReminderIDPrefix = "Reminder/"
@@ -2480,7 +2645,6 @@ const (
 	ReminderPendingChildOperationRecordRecordTypeAlarm          ReminderPendingChildOperationRecordRecordType = "Alarm"
 	ReminderPendingChildOperationRecordRecordTypeAlarmTrigger   ReminderPendingChildOperationRecordRecordType = "AlarmTrigger"
 	ReminderPendingChildOperationRecordRecordTypeAttachment     ReminderPendingChildOperationRecordRecordType = "Attachment"
-	ReminderPendingChildOperationRecordRecordTypeHashtag        ReminderPendingChildOperationRecordRecordType = "Hashtag"
 	ReminderPendingChildOperationRecordRecordTypeRecurrenceRule ReminderPendingChildOperationRecordRecordType = "RecurrenceRule"
 )
 
@@ -2492,8 +2656,6 @@ func (e ReminderPendingChildOperationRecordRecordType) Valid() bool {
 	case ReminderPendingChildOperationRecordRecordTypeAlarmTrigger:
 		return true
 	case ReminderPendingChildOperationRecordRecordTypeAttachment:
-		return true
-	case ReminderPendingChildOperationRecordRecordTypeHashtag:
 		return true
 	case ReminderPendingChildOperationRecordRecordTypeRecurrenceRule:
 		return true
@@ -4289,6 +4451,112 @@ type ReminderFieldTimeZone string
 // ReminderFieldTitleDocument Pinned Reminder domain mapping protocol value.
 type ReminderFieldTitleDocument string
 
+// ReminderHashtagCreationFields defines model for ReminderHashtagCreationFields.
+type ReminderHashtagCreationFields struct {
+	Name ReminderHashtagWriteName `json:"Name"`
+
+	// Deleted An integer-valued reminder write field.
+	Deleted ReminderWriteInteger `json:"Deleted"`
+
+	// Reminder Optional record-reference write field.
+	Reminder ReminderWriteReference `json:"Reminder"`
+
+	// CreationDate A timestamp-valued reminder write field in Unix milliseconds.
+	CreationDate ReminderWriteTimestamp `json:"CreationDate"`
+}
+
+// ReminderHashtagCreationOperation defines model for ReminderHashtagCreationOperation.
+type ReminderHashtagCreationOperation struct {
+	OperationType ReminderHashtagCreationOperationOperationType `json:"operationType"`
+
+	// Record Known hashtag creation payload.
+	Record ReminderHashtagCreationRecord `json:"record"`
+}
+
+// ReminderHashtagCreationOperationOperationType defines model for ReminderHashtagCreationOperation.OperationType.
+type ReminderHashtagCreationOperationOperationType string
+
+// ReminderHashtagCreationRecord Known hashtag creation payload.
+type ReminderHashtagCreationRecord struct {
+	RecordName      string                                  `json:"recordName"`
+	RecordType      ReminderHashtagCreationRecordRecordType `json:"recordType"`
+	Fields          ReminderHashtagCreationFields           `json:"fields"`
+	PluginFields    map[string]interface{}                  `json:"pluginFields"`
+	RecordChangeTag *string                                 `json:"recordChangeTag,omitempty"`
+
+	// Parent Write-side parent reference embedded under a record.
+	Parent CKWriteParent `json:"parent"`
+}
+
+// ReminderHashtagCreationRecordRecordType defines model for ReminderHashtagCreationRecord.RecordType.
+type ReminderHashtagCreationRecordRecordType string
+
+// ReminderHashtagCreationRequest Example: {"atomic":true,"operations":[{"operationType":"update","record":{"fields":{"HashtagIDs":{"type":"STRING_LIST","value":["00000001-0000-4000-8000-000000000000"]},"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"hashtagIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"}}}"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}},{"operationType":"create","record":{"fields":{"CreationDate":{"type":"TIMESTAMP","value":1700000000000},"Deleted":{"type":"INT64","value":0},"Name":{"type":"ENCRYPTED_BYTES","value":"U3ludGhldGljIHRhZw=="},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}}},"parent":{"recordName":"Reminder/synthetic-item"},"pluginFields":{},"recordName":"Hashtag/00000001-0000-4000-8000-000000000000","recordType":"Hashtag"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderHashtagCreationRequest struct {
+	Operations []ReminderHashtagCreationRequest_Operations_Item `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq                          `json:"zoneID"`
+	Atomic ReminderHashtagCreationRequestAtomic `json:"atomic"`
+}
+
+// ReminderHashtagCreationRequest_Operations_Item defines model for ReminderHashtagCreationRequest.operations.Item.
+type ReminderHashtagCreationRequest_Operations_Item struct {
+	union json.RawMessage
+}
+
+// ReminderHashtagCreationRequestAtomic defines model for ReminderHashtagCreationRequest.Atomic.
+type ReminderHashtagCreationRequestAtomic bool
+
+// ReminderHashtagDeletionFields defines model for ReminderHashtagDeletionFields.
+type ReminderHashtagDeletionFields struct {
+	// Deleted An integer-valued reminder write field.
+	Deleted ReminderWriteInteger `json:"Deleted"`
+
+	// Reminder Optional record-reference write field.
+	Reminder *ReminderWriteReference `json:"Reminder,omitempty"`
+}
+
+// ReminderHashtagDeletionOperation defines model for ReminderHashtagDeletionOperation.
+type ReminderHashtagDeletionOperation struct {
+	OperationType ReminderHashtagDeletionOperationOperationType `json:"operationType"`
+
+	// Record Known hashtag deletion payload.
+	Record ReminderHashtagDeletionRecord `json:"record"`
+}
+
+// ReminderHashtagDeletionOperationOperationType defines model for ReminderHashtagDeletionOperation.OperationType.
+type ReminderHashtagDeletionOperationOperationType string
+
+// ReminderHashtagDeletionRecord Known hashtag deletion payload.
+type ReminderHashtagDeletionRecord struct {
+	RecordName      string                                  `json:"recordName"`
+	RecordType      ReminderHashtagDeletionRecordRecordType `json:"recordType"`
+	Fields          ReminderHashtagDeletionFields           `json:"fields"`
+	PluginFields    map[string]interface{}                  `json:"pluginFields"`
+	RecordChangeTag *string                                 `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderHashtagDeletionRecordRecordType defines model for ReminderHashtagDeletionRecord.RecordType.
+type ReminderHashtagDeletionRecordRecordType string
+
+// ReminderHashtagDeletionRequest Example: {"atomic":true,"operations":[{"operationType":"update","record":{"fields":{"HashtagIDs":{"type":"STRING_LIST","value":["keep-tag"]},"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"hashtagIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"}}}"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}},{"operationType":"update","record":{"fields":{"Deleted":{"type":"INT64","value":1},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Hashtag/synthetic-tag","recordType":"Hashtag"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderHashtagDeletionRequest struct {
+	Operations []ReminderHashtagDeletionRequest_Operations_Item `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq                          `json:"zoneID"`
+	Atomic ReminderHashtagDeletionRequestAtomic `json:"atomic"`
+}
+
+// ReminderHashtagDeletionRequest_Operations_Item defines model for ReminderHashtagDeletionRequest.operations.Item.
+type ReminderHashtagDeletionRequest_Operations_Item struct {
+	union json.RawMessage
+}
+
+// ReminderHashtagDeletionRequestAtomic defines model for ReminderHashtagDeletionRequest.Atomic.
+type ReminderHashtagDeletionRequestAtomic bool
+
 // ReminderHashtagLinkFields defines model for ReminderHashtagLinkFields.
 type ReminderHashtagLinkFields struct {
 	HashtagIDs         ReminderWriteStringList `json:"HashtagIDs"`
@@ -4308,6 +4576,77 @@ type ReminderHashtagLinkTokensMap struct {
 		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
 	} `json:"map"`
 }
+
+// ReminderHashtagParentOperation defines model for ReminderHashtagParentOperation.
+type ReminderHashtagParentOperation struct {
+	OperationType ReminderHashtagParentOperationOperationType `json:"operationType"`
+	Record        ReminderHashtagParentRecord                 `json:"record"`
+}
+
+// ReminderHashtagParentOperationOperationType defines model for ReminderHashtagParentOperation.OperationType.
+type ReminderHashtagParentOperationOperationType string
+
+// ReminderHashtagParentRecord defines model for ReminderHashtagParentRecord.
+type ReminderHashtagParentRecord struct {
+	RecordName      string                                `json:"recordName"`
+	RecordType      ReminderHashtagParentRecordRecordType `json:"recordType"`
+	Fields          ReminderHashtagLinkFields             `json:"fields"`
+	PluginFields    map[string]interface{}                `json:"pluginFields"`
+	RecordChangeTag *string                               `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderHashtagParentRecordRecordType defines model for ReminderHashtagParentRecord.RecordType.
+type ReminderHashtagParentRecordRecordType string
+
+// ReminderHashtagUpdateFields defines model for ReminderHashtagUpdateFields.
+type ReminderHashtagUpdateFields struct {
+	Name ReminderHashtagWriteName `json:"Name"`
+
+	// Reminder Optional record-reference write field.
+	Reminder *ReminderWriteReference `json:"Reminder,omitempty"`
+}
+
+// ReminderHashtagUpdateOperation defines model for ReminderHashtagUpdateOperation.
+type ReminderHashtagUpdateOperation struct {
+	OperationType ReminderHashtagUpdateOperationOperationType `json:"operationType"`
+
+	// Record Known hashtag update payload.
+	Record ReminderHashtagUpdateRecord `json:"record"`
+}
+
+// ReminderHashtagUpdateOperationOperationType defines model for ReminderHashtagUpdateOperation.OperationType.
+type ReminderHashtagUpdateOperationOperationType string
+
+// ReminderHashtagUpdateRecord Known hashtag update payload.
+type ReminderHashtagUpdateRecord struct {
+	RecordName      string                                `json:"recordName"`
+	RecordType      ReminderHashtagUpdateRecordRecordType `json:"recordType"`
+	Fields          ReminderHashtagUpdateFields           `json:"fields"`
+	PluginFields    map[string]interface{}                `json:"pluginFields"`
+	RecordChangeTag *string                               `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderHashtagUpdateRecordRecordType defines model for ReminderHashtagUpdateRecord.RecordType.
+type ReminderHashtagUpdateRecordRecordType string
+
+// ReminderHashtagUpdateRequest Example: {"operations":[{"operationType":"update","record":{"fields":{"Name":{"type":"ENCRYPTED_BYTES","value":"UmVuYW1lZCB0YWc="},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Hashtag/synthetic-tag","recordType":"Hashtag"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderHashtagUpdateRequest struct {
+	Operations []ReminderHashtagUpdateOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
+// ReminderHashtagWriteName defines model for ReminderHashtagWriteName.
+type ReminderHashtagWriteName struct {
+	Type ReminderHashtagWriteNameType `json:"type"`
+
+	// Value Base64 UTF-8 hashtag text, without CRDT or compression.
+	Value []byte `json:"value"`
+}
+
+// ReminderHashtagWriteNameType defines model for ReminderHashtagWriteName.Type.
+type ReminderHashtagWriteNameType string
 
 // ReminderIDPrefix Pinned Reminders list protocol value used by the domain projection.
 type ReminderIDPrefix string
@@ -12455,6 +12794,130 @@ func (t *CKZoneChangesZone_Records_Item) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// AsReminderHashtagParentOperation returns the union data inside the ReminderHashtagCreationRequest_Operations_Item as a ReminderHashtagParentOperation
+func (t ReminderHashtagCreationRequest_Operations_Item) AsReminderHashtagParentOperation() (ReminderHashtagParentOperation, error) {
+	var body ReminderHashtagParentOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagParentOperation overwrites any union data inside the ReminderHashtagCreationRequest_Operations_Item as the provided ReminderHashtagParentOperation
+func (t *ReminderHashtagCreationRequest_Operations_Item) FromReminderHashtagParentOperation(v ReminderHashtagParentOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagParentOperation performs a merge with any union data inside the ReminderHashtagCreationRequest_Operations_Item, using the provided ReminderHashtagParentOperation
+func (t *ReminderHashtagCreationRequest_Operations_Item) MergeReminderHashtagParentOperation(v ReminderHashtagParentOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderHashtagCreationOperation returns the union data inside the ReminderHashtagCreationRequest_Operations_Item as a ReminderHashtagCreationOperation
+func (t ReminderHashtagCreationRequest_Operations_Item) AsReminderHashtagCreationOperation() (ReminderHashtagCreationOperation, error) {
+	var body ReminderHashtagCreationOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagCreationOperation overwrites any union data inside the ReminderHashtagCreationRequest_Operations_Item as the provided ReminderHashtagCreationOperation
+func (t *ReminderHashtagCreationRequest_Operations_Item) FromReminderHashtagCreationOperation(v ReminderHashtagCreationOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagCreationOperation performs a merge with any union data inside the ReminderHashtagCreationRequest_Operations_Item, using the provided ReminderHashtagCreationOperation
+func (t *ReminderHashtagCreationRequest_Operations_Item) MergeReminderHashtagCreationOperation(v ReminderHashtagCreationOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderHashtagCreationRequest_Operations_Item) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderHashtagCreationRequest_Operations_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderHashtagParentOperation returns the union data inside the ReminderHashtagDeletionRequest_Operations_Item as a ReminderHashtagParentOperation
+func (t ReminderHashtagDeletionRequest_Operations_Item) AsReminderHashtagParentOperation() (ReminderHashtagParentOperation, error) {
+	var body ReminderHashtagParentOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagParentOperation overwrites any union data inside the ReminderHashtagDeletionRequest_Operations_Item as the provided ReminderHashtagParentOperation
+func (t *ReminderHashtagDeletionRequest_Operations_Item) FromReminderHashtagParentOperation(v ReminderHashtagParentOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagParentOperation performs a merge with any union data inside the ReminderHashtagDeletionRequest_Operations_Item, using the provided ReminderHashtagParentOperation
+func (t *ReminderHashtagDeletionRequest_Operations_Item) MergeReminderHashtagParentOperation(v ReminderHashtagParentOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderHashtagDeletionOperation returns the union data inside the ReminderHashtagDeletionRequest_Operations_Item as a ReminderHashtagDeletionOperation
+func (t ReminderHashtagDeletionRequest_Operations_Item) AsReminderHashtagDeletionOperation() (ReminderHashtagDeletionOperation, error) {
+	var body ReminderHashtagDeletionOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagDeletionOperation overwrites any union data inside the ReminderHashtagDeletionRequest_Operations_Item as the provided ReminderHashtagDeletionOperation
+func (t *ReminderHashtagDeletionRequest_Operations_Item) FromReminderHashtagDeletionOperation(v ReminderHashtagDeletionOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagDeletionOperation performs a merge with any union data inside the ReminderHashtagDeletionRequest_Operations_Item, using the provided ReminderHashtagDeletionOperation
+func (t *ReminderHashtagDeletionRequest_Operations_Item) MergeReminderHashtagDeletionOperation(v ReminderHashtagDeletionOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderHashtagDeletionRequest_Operations_Item) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderHashtagDeletionRequest_Operations_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // AsReminderAlarmLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderAlarmLinkFields
 func (t ReminderLinkedParentRecord_Fields) AsReminderAlarmLinkFields() (ReminderAlarmLinkFields, error) {
 	var body ReminderAlarmLinkFields
@@ -12471,32 +12934,6 @@ func (t *ReminderLinkedParentRecord_Fields) FromReminderAlarmLinkFields(v Remind
 
 // MergeReminderAlarmLinkFields performs a merge with any union data inside the ReminderLinkedParentRecord_Fields, using the provided ReminderAlarmLinkFields
 func (t *ReminderLinkedParentRecord_Fields) MergeReminderAlarmLinkFields(v ReminderAlarmLinkFields) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsReminderHashtagLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderHashtagLinkFields
-func (t ReminderLinkedParentRecord_Fields) AsReminderHashtagLinkFields() (ReminderHashtagLinkFields, error) {
-	var body ReminderHashtagLinkFields
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromReminderHashtagLinkFields overwrites any union data inside the ReminderLinkedParentRecord_Fields as the provided ReminderHashtagLinkFields
-func (t *ReminderLinkedParentRecord_Fields) FromReminderHashtagLinkFields(v ReminderHashtagLinkFields) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergeReminderHashtagLinkFields performs a merge with any union data inside the ReminderLinkedParentRecord_Fields, using the provided ReminderHashtagLinkFields
-func (t *ReminderLinkedParentRecord_Fields) MergeReminderHashtagLinkFields(v ReminderHashtagLinkFields) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -12663,6 +13100,84 @@ func (t *RemindersModificationRequest) FromRemindersOtherModificationRequest(v R
 
 // MergeRemindersOtherModificationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided RemindersOtherModificationRequest
 func (t *RemindersModificationRequest) MergeRemindersOtherModificationRequest(v RemindersOtherModificationRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderHashtagCreationRequest returns the union data inside the RemindersModificationRequest as a ReminderHashtagCreationRequest
+func (t RemindersModificationRequest) AsReminderHashtagCreationRequest() (ReminderHashtagCreationRequest, error) {
+	var body ReminderHashtagCreationRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagCreationRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderHashtagCreationRequest
+func (t *RemindersModificationRequest) FromReminderHashtagCreationRequest(v ReminderHashtagCreationRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagCreationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderHashtagCreationRequest
+func (t *RemindersModificationRequest) MergeReminderHashtagCreationRequest(v ReminderHashtagCreationRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderHashtagUpdateRequest returns the union data inside the RemindersModificationRequest as a ReminderHashtagUpdateRequest
+func (t RemindersModificationRequest) AsReminderHashtagUpdateRequest() (ReminderHashtagUpdateRequest, error) {
+	var body ReminderHashtagUpdateRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagUpdateRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderHashtagUpdateRequest
+func (t *RemindersModificationRequest) FromReminderHashtagUpdateRequest(v ReminderHashtagUpdateRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagUpdateRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderHashtagUpdateRequest
+func (t *RemindersModificationRequest) MergeReminderHashtagUpdateRequest(v ReminderHashtagUpdateRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderHashtagDeletionRequest returns the union data inside the RemindersModificationRequest as a ReminderHashtagDeletionRequest
+func (t RemindersModificationRequest) AsReminderHashtagDeletionRequest() (ReminderHashtagDeletionRequest, error) {
+	var body ReminderHashtagDeletionRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderHashtagDeletionRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderHashtagDeletionRequest
+func (t *RemindersModificationRequest) FromReminderHashtagDeletionRequest(v ReminderHashtagDeletionRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderHashtagDeletionRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderHashtagDeletionRequest
+func (t *RemindersModificationRequest) MergeReminderHashtagDeletionRequest(v ReminderHashtagDeletionRequest) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err

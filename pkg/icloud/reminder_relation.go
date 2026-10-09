@@ -14,6 +14,19 @@ import (
 
 const reminderLinkedOperationCount = 2
 
+func reminderCopiedNullable[Value any](input nullable.Nullable[Value]) nullable.Nullable[Value] {
+	result := maps.Clone(input)
+	if !result.IsSpecified() {
+		result.SetNull()
+	}
+
+	return result
+}
+
+func reminderCopiedIDs(input []string) []string {
+	return append([]string{}, input...)
+}
+
 func reminderRequiredTimestamp(now time.Time) cloudkit.ReminderWriteTimestamp {
 	return cloudkit.ReminderWriteTimestamp{Type: cloudkit.ReminderWriteTimestampTypeTIMESTAMP,
 		Value: reminderTimestamp(now).Value}

@@ -84,7 +84,7 @@ func checkReminderWriteNegatives(t *testing.T, schema *openapi3.Schema, value an
 
 	fields := reminderWriteFields(t, value)
 	for key, original := range fields {
-		fields[key] = map[string]any{"type": "INVALID", reminderWriteValue: true}
+		fields[key] = map[string]any{reminderContractWrapperType: "INVALID", reminderWriteValue: true}
 
 		if schema.VisitJSON(value) == nil {
 			t.Fatalf("invalid known %s wrapper accepted", key)
@@ -182,8 +182,8 @@ func checkEmbeddedReminderTokens(t *testing.T, document *openapi3.T, variant str
 		t.Fatal(err)
 	}
 
-	for _, invalid := range []any{nil, true, map[string]any{"map": map[string]any{}},
-		map[string]any{"map": tokens, "futureTokens": true}} {
+	for _, invalid := range []any{nil, true, map[string]any{reminderContractTokenMap: map[string]any{}},
+		map[string]any{reminderContractTokenMap: tokens, "futureTokens": true}} {
 		if schema.VisitJSON(invalid) == nil {
 			t.Fatal("invalid embedded token payload accepted")
 		}
