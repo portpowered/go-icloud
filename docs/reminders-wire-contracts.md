@@ -46,12 +46,12 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 98 implementation-derived synthetic Reminders scenarios contain
-107 paired exchanges: 104 POST pairs and three membership-asset downloads. Contract
+The current 111 implementation-derived synthetic Reminders scenarios contain
+120 paired exchanges: 117 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
-Six source-invalid zone/list replies must fail schema validation. Ten sanitized
+Eight source-invalid zone/list/lookup replies must fail schema validation. Ten sanitized
 examples cover each POST request/reply responsibility. These are synthetic
 reference examples, not captured Apple writes (SCHEMA-08, SCHEMA-12).
 
@@ -73,7 +73,13 @@ rule was relaxed and no live operation was performed.
 
 The internal [text protocol adapter](reminders-text-protocol.md) now decodes
 versioned CRDT title and notes bytes against a separate portable Source corpus.
-Public domain conversion and write encoding remain pending.
+The public `GetReminder` mapper decodes title/notes, normalizes invalid UTF-8
+subsequences using the pinned Unicode decoder, maps all 21 domain fields, and
+uses audit dates after absent or normalized-unset creation/modification fields.
+Nineteen complete semantic replays bind default/full results, ordered related
+IDs, sentinel and fractional dates, document fallbacks, unrelated records,
+alternate success status/cookies, missing records, provider errors and malformed
+replies. Public compound queries, linked-record reads and write encoding remain pending.
 
 The public Go `ListReminderZones` operation now passes ten semantic replays,
 including empty, one and multiple zones, provider and schema failures, and

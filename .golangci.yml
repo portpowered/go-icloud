@@ -24,6 +24,8 @@ linters:
             - github.com/oapi-codegen/runtime
             # Generated Reminders CRDT models and decoding use the pinned protobuf runtime.
             - google.golang.org/protobuf
+            # Public Reminders text replaces malformed UTF-8 subsequences as Source does.
+            - golang.org/x/text/encoding/unicode
   exclusions:
     generated: strict
     rules:

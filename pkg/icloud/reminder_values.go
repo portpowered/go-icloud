@@ -10,6 +10,8 @@ import (
 )
 
 const (
+	jsonTrueValue                = "true"
+	jsonFalseValue               = "false"
 	reminderFloatScientificUpper = 1e16
 	reminderFloatScientificLower = 1e-4
 	reminderBMPMaximum           = '\uffff'
@@ -66,9 +68,9 @@ func reminderValueRepresentation(raw json.RawMessage) (string, error) {
 	switch {
 	case string(raw) == jsonNullValue:
 		return "None", nil
-	case string(raw) == "true":
+	case string(raw) == jsonTrueValue:
 		return "True", nil
-	case string(raw) == "false":
+	case string(raw) == jsonFalseValue:
 		return "False", nil
 	case len(raw) == 0:
 		return "", errReminderList

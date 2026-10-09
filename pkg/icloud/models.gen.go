@@ -966,6 +966,26 @@ type GetDriveNodeResult struct {
 	Node DriveNode `json:"node"`
 }
 
+// GetReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"reminderID":"synthetic-reminder"}
+type GetReminderRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// ReminderID Raw identifier or complete Reminder/ record name.
+	ReminderID string `json:"reminderID"`
+}
+
+// GetReminderResult Example: {"metadata":{"headers":[],"statusCode":200},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type GetReminderResult struct {
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
 // Header One HTTP response or caller-owned authentication header value; repeated headers remain separate entries.
 type Header struct {
 	// Name Header name.
@@ -1083,6 +1103,74 @@ type RegisteredDriveDocument struct {
 	// Status Open provider acknowledgement status.
 	Status               *string                     `json:"status,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// Reminder Complete reminder projection with decoded documents and related identifiers.
+//
+// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+type Reminder struct {
+	// AlarmIDs Ordered raw alarm identifiers, preserving duplicates.
+	AlarmIDs []string `json:"alarmIDs"`
+
+	// AllDay Whether the due date is all day.
+	AllDay bool `json:"allDay"`
+
+	// AttachmentIDs Ordered raw attachment identifiers, preserving duplicates.
+	AttachmentIDs []string `json:"attachmentIDs"`
+
+	// Completed Completion state.
+	Completed bool `json:"completed"`
+
+	// CompletedDate Optional completion instant.
+	CompletedDate nullable.Nullable[time.Time] `json:"completedDate"`
+
+	// Created Creation instant from the field or audit metadata.
+	Created nullable.Nullable[time.Time] `json:"created"`
+
+	// Deleted Deletion state.
+	Deleted bool `json:"deleted"`
+
+	// Description Decoded notes; absent or unreadable documents produce empty text.
+	Description string `json:"description"`
+
+	// DueDate Optional due instant.
+	DueDate nullable.Nullable[time.Time] `json:"dueDate"`
+
+	// Flagged Flag state.
+	Flagged bool `json:"flagged"`
+
+	// HashtagIDs Ordered raw hashtag identifiers, preserving duplicates.
+	HashtagIDs []string `json:"hashtagIDs"`
+
+	// ID Complete provider reminder record name.
+	ID string `json:"id"`
+
+	// ListID Containing list record name.
+	ListID string `json:"listID"`
+
+	// Modified Modification instant from the field or audit metadata.
+	Modified nullable.Nullable[time.Time] `json:"modified"`
+
+	// ParentReminderID Optional complete parent reminder record name.
+	ParentReminderID nullable.Nullable[string] `json:"parentReminderID"`
+
+	// Priority Provider priority value; defaults to zero.
+	Priority int64 `json:"priority"`
+
+	// RecordChangeTag Optional provider revision.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// RecurrenceRuleIDs Ordered raw recurrence identifiers, preserving duplicates.
+	RecurrenceRuleIDs []string `json:"recurrenceRuleIDs"`
+
+	// StartDate Optional start instant.
+	StartDate nullable.Nullable[time.Time] `json:"startDate"`
+
+	// TimeZone Optional provider time zone name.
+	TimeZone nullable.Nullable[string] `json:"timeZone"`
+
+	// Title Decoded title; absent text defaults to Untitled and unreadable documents use Error Decoding Title.
+	Title string `json:"title"`
 }
 
 // ReminderList A reminder list snapshot with ordered membership and reference defaults.

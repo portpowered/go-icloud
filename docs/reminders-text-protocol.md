@@ -51,8 +51,10 @@ The document corpus is replay evidence; unit coverage for this adapter is zero.
 The reference's proto2 decoder can return bytes for invalid UTF-8 text. The corpus
 records that source type as well as the exact result bytes. The internal Go
 adapter preserves those bytes in a Go string. It does not claim Python runtime
-type parity. The future Reminders domain mapper must implement the source's
-replacement-character policy when converting such bytes to public text.
+type parity. The public Reminders domain mapper uses the pinned Unicode decoder
+to match the source's replacement-character policy, including one replacement
+for a truncated multibyte sequence. The paired lookup cases bind this conversion
+for both titles and notes.
 
 This milestone ports decoding infrastructure. It does not implement CRDT writes,
 UTF-16 substring lengths, resolution tokens, public Reminders methods or complete

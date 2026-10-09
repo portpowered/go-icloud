@@ -2553,6 +2553,188 @@
           "ReminderIDsAsset"
         ],
         "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ReminderRecordType": {
+        "type": "string",
+        "enum": [
+          "Reminder"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "UntitledReminder": {
+        "type": "string",
+        "enum": [
+          "Untitled"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "UnreadableReminderTitle": {
+        "type": "string",
+        "enum": [
+          "Error Decoding Title"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "AlarmIDPrefix": {
+        "type": "string",
+        "enum": [
+          "Alarm/"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "HashtagIDPrefix": {
+        "type": "string",
+        "enum": [
+          "Hashtag/"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "AttachmentIDPrefix": {
+        "type": "string",
+        "enum": [
+          "Attachment/"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "RecurrenceRuleIDPrefix": {
+        "type": "string",
+        "enum": [
+          "RecurrenceRule/"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldTitleDocument": {
+        "type": "string",
+        "enum": [
+          "TitleDocument"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldNotesDocument": {
+        "type": "string",
+        "enum": [
+          "NotesDocument"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldList": {
+        "type": "string",
+        "enum": [
+          "List"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldDueDate": {
+        "type": "string",
+        "enum": [
+          "DueDate"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldStartDate": {
+        "type": "string",
+        "enum": [
+          "StartDate"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldCompletionDate": {
+        "type": "string",
+        "enum": [
+          "CompletionDate"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldCreationDate": {
+        "type": "string",
+        "enum": [
+          "CreationDate"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldLastModifiedDate": {
+        "type": "string",
+        "enum": [
+          "LastModifiedDate"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldCompleted": {
+        "type": "string",
+        "enum": [
+          "Completed"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldPriority": {
+        "type": "string",
+        "enum": [
+          "Priority"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldFlagged": {
+        "type": "string",
+        "enum": [
+          "Flagged"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldAllDay": {
+        "type": "string",
+        "enum": [
+          "AllDay"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldDeleted": {
+        "type": "string",
+        "enum": [
+          "Deleted"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldTimeZone": {
+        "type": "string",
+        "enum": [
+          "TimeZone"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldAlarmIDs": {
+        "type": "string",
+        "enum": [
+          "AlarmIDs"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldHashtagIDs": {
+        "type": "string",
+        "enum": [
+          "HashtagIDs"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldAttachmentIDs": {
+        "type": "string",
+        "enum": [
+          "AttachmentIDs"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldRecurrenceRuleIDs": {
+        "type": "string",
+        "enum": [
+          "RecurrenceRuleIDs"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "ReminderFieldParentReminder": {
+        "type": "string",
+        "enum": [
+          "ParentReminder"
+        ],
+        "description": "Pinned Reminder domain mapping protocol value."
       }
     }
   }

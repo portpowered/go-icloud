@@ -50,7 +50,9 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 			}
 
 			invalidResponse := filepath.Base(path) == "reminders-zones-schema-error.json" ||
-				strings.HasPrefix(filepath.Base(path), "reminders-lists-schema-")
+				strings.HasPrefix(filepath.Base(path), "reminders-lists-schema-") ||
+				strings.HasPrefix(filepath.Base(path), "reminders-get-schema-") ||
+				filepath.Base(path) == "reminders-get-no-records.json"
 			validateRemindersExchange(t, operation, exchange, invalidResponse)
 
 			if invalidResponse {
@@ -64,7 +66,7 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 98, Pairs: 107, Operations: 6, Invalid: 6}
+	want := remindersContractInventory{Scenarios: 111, Pairs: 120, Operations: 6, Invalid: 8}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}
