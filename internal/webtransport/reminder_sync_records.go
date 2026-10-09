@@ -8,7 +8,14 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
-func validateReminderSyncRecords(records *[]cloudkit.CKQueryResponse_Records_Item) error {
+type reminderSyncRecord interface {
+	json.Marshaler
+	AsCKRecord() (cloudkit.CKRecord, error)
+	AsCKErrorItem() (cloudkit.CKErrorItem, error)
+	AsCKTombstoneRecord() (cloudkit.CKTombstoneRecord, error)
+}
+
+func validateReminderSyncRecords[T reminderSyncRecord](records *[]T) error {
 	if records == nil {
 		return nil
 	}
@@ -24,8 +31,8 @@ func validateReminderSyncRecords(records *[]cloudkit.CKQueryResponse_Records_Ite
 			return err
 		}
 
-		if reminderSyncNormalRecord(item, fields) || reminderSyncErrorRecord(item, fields) ||
-			reminderSyncTombstone(item, fields) {
+		if reminderSyncNormalRecord(fields) || reminderSyncErrorRecord(item, fields) ||
+			reminderSyncTombstone(fields) {
 			continue
 		}
 
@@ -35,23 +42,13 @@ func validateReminderSyncRecords(records *[]cloudkit.CKQueryResponse_Records_Ite
 	return nil
 }
 
-func reminderSyncNormalRecord(item cloudkit.CKQueryResponse_Records_Item,
-	fields map[string]json.RawMessage,
-) bool {
-	if !reminderRequiredValue(fields, protocol.RemindersCKRecordRecordName) ||
-		!reminderRequiredValue(fields, protocol.RemindersCKRecordRecordType) {
-		return false
-	}
+func reminderSyncNormalRecord(fields map[string]json.RawMessage) bool {
+	_, _, err := decodeReminderNormalRecord(fields)
 
-	record, err := item.AsCKRecord()
-	if err != nil {
-		return false
-	}
-
-	return validateReminderSyncFields(record.Fields)
+	return err == nil
 }
 
-func reminderSyncErrorRecord(item cloudkit.CKQueryResponse_Records_Item,
+func reminderSyncErrorRecord(item reminderSyncRecord,
 	fields map[string]json.RawMessage,
 ) bool {
 	if !reminderRequiredValue(fields, protocol.RemindersCKErrorItemServerErrorCode) {
@@ -63,15 +60,8 @@ func reminderSyncErrorRecord(item cloudkit.CKQueryResponse_Records_Item,
 	return err == nil
 }
 
-func reminderSyncTombstone(item cloudkit.CKQueryResponse_Records_Item,
-	fields map[string]json.RawMessage,
-) bool {
-	if !reminderRequiredValue(fields, protocol.RemindersCKTombstoneRecordRecordName) ||
-		string(fields[protocol.RemindersCKTombstoneRecordDeleted]) != "true" {
-		return false
-	}
-
-	_, err := item.AsCKTombstoneRecord()
+func reminderSyncTombstone(fields map[string]json.RawMessage) bool {
+	_, err := decodeReminderTombstone(fields)
 
 	return err == nil
 }

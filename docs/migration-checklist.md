@@ -1,15 +1,26 @@
 # iCloud migration checklist
 
-The reminder change-iteration reference matrix contains 25 Source-executed
-scenarios and 28 paired exchanges. It binds optional cursors, pagination,
+The reminder change-iteration matrix contains 72 Source-executed scenarios and
+75 paired exchanges. It binds optional cursors, pagination,
 multiple zones, ordered duplicate events, unrelated records, tombstones,
 full deleted reminders, provider failures and invalid replies. Negative controls
 reject changed events, order, requests, unused pages and structured error payloads.
-The Source harness now binds payloads for all 32 Reminders API error scenarios,
-including null payloads. Portable HTTP inventory is 621 scenarios and 1,328 pairs;
-the public Go change-iteration port remains pending.
-The current all-evidence Source run enters 592/905 inventoried functions and
-covers 3,331/5,398 body statements (61.71%) and 1,027/2,076 branch exits.
+The Source harness now binds payloads for all 54 Reminders API error scenarios,
+including null payloads. Portable HTTP inventory is 668 scenarios and 1,375 pairs.
+The initial Go change-iteration port passed the original 25 cases, but independent
+review found ambiguous record/error selection did not match Source's smart union.
+47 additional Source cases distinguish preferred alternatives, ties, nested
+metadata, boolean coercion and encrypted-field validity. Independent review found
+missing nested identities and valid metadata coercions omitted by the initial
+matrix. Go now validates nested required identities, coerces metadata, preserves
+arbitrary participant integer magnitude and reproduces audit-date microsecond
+rounding and the pinned Windows runtime's date range. Independent review, full
+verification and exact-commit CI approval
+remain required before merging this public SDK milestone.
+The preceding all-evidence Source run enters 592/905 inventoried functions and
+covers 3,339/5,398 body statements (61.86%) and 1,031/2,076 branch exits. This
+measurement covers the preceding 70-case matrix; the two explicit null-container
+cases were added afterward. Coverage remains a conservative scope diagnostic.
 
 The sync-cursor reference matrix now has 53 Source-executed scenarios and 85
 paired exchanges. Cases cover token defaults, query decode fallback,

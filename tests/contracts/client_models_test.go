@@ -37,7 +37,7 @@ func TestPublicClientModelExamples(t *testing.T) {
 		examples++
 	}
 
-	if examples != 55 {
+	if examples != 58 {
 		t.Fatalf("public model example inventory changed: %d", examples)
 	}
 }

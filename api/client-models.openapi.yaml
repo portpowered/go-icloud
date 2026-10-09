@@ -177,6 +177,32 @@ components:
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}}
       properties:
         auth: {$ref: '#/components/schemas/AuthContext'}
+    ReminderChangeEvent:
+      type: object
+      required: [type, reminderID, reminder]
+      description: One ordered reminder update or deletion; duplicate events remain distinct.
+      example: {type: deleted, reminderID: Reminder/synthetic-deleted, reminder: null}
+      properties:
+        type: {type: string, enum: [updated, deleted], x-enum-varnames: [ReminderChangeUpdated, ReminderChangeDeleted], description: Updated snapshot or deletion.}
+        reminderID: {type: string, x-go-name: ReminderID, description: Complete provider record name.}
+        reminder:
+          allOf: [{$ref: '#/components/schemas/Reminder'}]
+          nullable: true
+          description: Complete snapshot for normal records; null for a tombstone.
+    ListReminderChangesRequest:
+      type: object
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        since: {type: string, description: Opaque starting cursor; omit to read without a starting cursor. An empty string is sent unchanged.}
+    ListReminderChangesResult:
+      type: object
+      required: [changes, responses]
+      example: {changes: [], responses: [{statusCode: 200, headers: []}]}
+      properties:
+        changes: {type: array, items: {$ref: '#/components/schemas/ReminderChangeEvent'}, description: Events in zone and record order across all pages.}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}, description: Every completed page response in request order with cookie updates.}
     GetReminderSyncCursorResult:
       type: object
       required: [syncToken, responses]

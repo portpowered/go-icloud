@@ -117,6 +117,24 @@ func (e FindMyWaitKind) Valid() bool {
 	}
 }
 
+// Defines values for ReminderChangeEventType.
+const (
+	ReminderChangeDeleted ReminderChangeEventType = "deleted"
+	ReminderChangeUpdated ReminderChangeEventType = "updated"
+)
+
+// Valid indicates whether the value is a known member of the ReminderChangeEventType enum.
+func (e ReminderChangeEventType) Valid() bool {
+	switch e {
+	case ReminderChangeDeleted:
+		return true
+	case ReminderChangeUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
 // AccountDevice Known device metadata fields are optional; future provider fields are preserved.
 type AccountDevice struct {
 	Imei *string `json:"imei,omitempty"`
@@ -1029,6 +1047,24 @@ type ListDriveLibrariesResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// ListReminderChangesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
+type ListReminderChangesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Since Opaque starting cursor; omit to read without a starting cursor. An empty string is sent unchanged.
+	Since *string `json:"since,omitempty"`
+}
+
+// ListReminderChangesResult Example: {"changes":[],"responses":[{"headers":[],"statusCode":200}]}
+type ListReminderChangesResult struct {
+	// Changes Events in zone and record order across all pages.
+	Changes []ReminderChangeEvent `json:"changes"`
+
+	// Responses Every completed page response in request order with cookie updates.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListReminderListsRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
 type ListReminderListsRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -1191,6 +1227,23 @@ type Reminder struct {
 	// Title Decoded title; absent text defaults to Untitled and unreadable documents use Error Decoding Title.
 	Title string `json:"title"`
 }
+
+// ReminderChangeEvent One ordered reminder update or deletion; duplicate events remain distinct.
+//
+// Example: {"reminder":null,"reminderID":"Reminder/synthetic-deleted","type":"deleted"}
+type ReminderChangeEvent struct {
+	// Reminder Complete snapshot for normal records; null for a tombstone.
+	Reminder nullable.Nullable[Reminder] `json:"reminder"`
+
+	// ReminderID Complete provider record name.
+	ReminderID string `json:"reminderID"`
+
+	// Type Updated snapshot or deletion.
+	Type ReminderChangeEventType `json:"type"`
+}
+
+// ReminderChangeEventType Updated snapshot or deletion.
+type ReminderChangeEventType string
 
 // ReminderList A reminder list snapshot with ordered membership and reference defaults.
 //

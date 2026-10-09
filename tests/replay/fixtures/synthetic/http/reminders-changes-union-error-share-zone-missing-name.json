@@ -1,0 +1,91 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "iter_changes",
+  "inputs": [],
+  "keyword_inputs": {
+    "since": "synthetic-old-token"
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/changes/zone",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "175"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgImRlc2lyZWRSZWNvcmRUeXBlcyI6IFsiUmVtaW5kZXIiXSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtb2xkLXRva2VuIiwgInJldmVyc2UiOiBmYWxzZX1dfQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtbmV3LXRva2VuIiwgIm1vcmVDb21pbmciOiBmYWxzZSwgInJlY29yZHMiOiBbeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy11bmlvbiIsICJyZWNvcmRUeXBlIjogIlJlbWluZGVyIiwgInNlcnZlckVycm9yQ29kZSI6ICJVTktOT1dOX0lURU0iLCAicmVhc29uIjogInN5bnRoZXRpYyByZWZ1c2FsIiwgInNoYXJlIjogeyJ6b25lSUQiOiB7fX19XX1dfQ=="
+        }
+      }
+    }
+  ],
+  "error": {
+    "type": "RemindersApiError",
+    "message": "Iterating reminder changes failed for Reminder/synthetic-union: UNKNOWN_ITEM (synthetic refusal)"
+  },
+  "error_payload": {
+    "recordName": "Reminder/synthetic-union",
+    "serverErrorCode": "UNKNOWN_ITEM",
+    "reason": "synthetic refusal"
+  }
+}
