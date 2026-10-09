@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"io/fs"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -209,6 +210,10 @@ func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writ
 		if scenario.fixture == "photos-favorite-record-error" && failure.Kind() != icloud.Provider {
 			t.Fatal("Photos per-record error exception lost provider classification")
 		}
+		checkFailedWriteReceipt(t, fixture, failure)
+		if _, err := os.Stat(resultPath); !errors.Is(err, fs.ErrNotExist) {
+			t.Fatal("failed write saved a successful result")
+		}
 		return
 	}
 	if callErr != nil {
@@ -229,6 +234,23 @@ func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writ
 	var responses []icloud.ResponseMetadata
 	decodeWriteFixture(t, saved["responses"], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
+}
+
+func checkFailedWriteReceipt(t *testing.T, fixture writeFixture, failure *icloud.ClientError) {
+	t.Helper()
+	last := fixture.Exchanges[len(fixture.Exchanges)-1]
+	var encoded string
+	decodeWriteFixture(t, last.Response.Body.Value, &encoded)
+	body, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(failure.ResponseBody(), body) {
+		t.Fatal("CLI failure lost paired provider body")
+	}
+	response := icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()}
+	checkWriteResponses(t, []icloud.ResponseMetadata{response}, []replay.Exchange{last})
+	checkWriteResponses(t, failure.PriorResponses(), fixture.Exchanges[:len(fixture.Exchanges)-1])
 }
 
 func checkWriteResponses(t *testing.T, responses []icloud.ResponseMetadata, exchanges []replay.Exchange) {
