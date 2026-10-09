@@ -28,6 +28,10 @@ linters:
             - google.golang.org/protobuf
             # Public Reminders text replaces malformed UTF-8 subsequences as Source does.
             - golang.org/x/text/encoding/unicode
+            # Pinned trusted-device bridge uses scrypt for its SPAKE2 password scalars.
+            - golang.org/x/crypto/scrypt
+            # HTML bootstrap parsing uses the standard maintained HTML tokenizer.
+            - golang.org/x/net/html
   exclusions:
     generated: strict
     rules:
@@ -51,6 +55,11 @@ linters:
       - path: pkg/icloud/account_projection\.go
         linters: [revive]
         text: package-comments
+      # SPAKE2 requires masked point addition; crypto/ecdh cannot expose this operation.
+      # The P-256 standard library implementations provide constant-time scalar multiplication.
+      - path: pkg/dependencies/bridgeprover/(points|prover)\.go
+        linters: [staticcheck]
+        text: SA1019
 
 formatters:
   enable:
