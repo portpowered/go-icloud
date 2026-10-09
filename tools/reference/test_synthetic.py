@@ -18,6 +18,29 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_photo_lookup_matrix(self):
+        paths = sorted(FIXTURES.glob("photos-get-*.json"))
+        self.assertEqual(len(paths), 22)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 77)
+
+    def test_photo_lookup_result_fallback_and_consumption_are_bound(self):
+        baseline = json.loads((FIXTURES / "photos-get-fallback-found.json").read_text())
+        for mutation in ["result", "request", "unused"]:
+            with self.subTest(mutation=mutation), TemporaryDirectory() as directory:
+                scenario = copy.deepcopy(baseline)
+                if mutation == "result":
+                    scenario["result"]["filename"] = "wrong.jpg"
+                elif mutation == "request":
+                    scenario["exchanges"][2]["request"]["path"] = "/wrong"
+                else:
+                    scenario["exchanges"].append(
+                        copy.deepcopy(scenario["exchanges"][-1])
+                    )
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_legacy_reminders_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-legacy-*.json"))
         self.assertEqual(len(paths), 9)

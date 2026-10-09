@@ -941,3 +941,22 @@ go-icloud --session <private-session.json> reminder-legacy-snapshot
 The CLI preserves list/reminder records and omits response metadata from console
 JSON. Nine strict replay cases bind complete output, failures and consumption.
 A private live read succeeded using the saved account after native discovery resume.
+
+### Find one photo
+
+`GetPhoto` selects an album by ID, name or full name and finds an asset by ID:
+
+```go
+result, err := client.GetPhoto(ctx, icloud.GetPhotoRequest{
+    Auth: auth, Album: "Library", PhotoID: assetID,
+})
+```
+
+The result's `Photo` is explicit null when direct lookup and album enumeration
+both miss. Direct misses trigger the reference count/page flow, which stops when
+the requested asset is found. All initialization, discovery, lookup and fallback
+responses remain available. Twenty-two Source/Go scenarios consume 77 pairs,
+covering smart/custom albums, folders, absent photos, provider failures, paged
+fallback and early termination. A private live lookup replayed seven Photos
+requests through Python and matched the complete Go projection (LIB-09/LIB-12).
+CLI lookup and downloading remain pending.
