@@ -105,7 +105,7 @@ func checkLocationClockPayload(t *testing.T, request *http.Request) {
 		t.Fatal(err)
 	}
 
-	if parent.Record.Fields.LastModifiedDate.Value.GetOrEmpty() != 1700000000000 ||
+	if parent.Record.Fields.LastModifiedDate.Value != 1700000000000 ||
 		alarm.Record.Fields.DueDateResolutionTokenAsNonce.Value != "100721692800.25" ||
 		tokens.Map.AlarmIDs.ModificationTime != "721692800.5" ||
 		tokens.Map.LastModifiedDate.ModificationTime != "721692800.5" {

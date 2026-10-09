@@ -5331,7 +5331,7 @@ type ReminderAlarmLinkFields struct {
 	AlarmIDs           ReminderWriteStringList `json:"AlarmIDs"`
 	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
 
-	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	// LastModifiedDate A required integer-valued reminder write timestamp in Unix milliseconds.
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
@@ -5491,7 +5491,7 @@ type ReminderAttachmentLinkFields struct {
 	AttachmentIDs      ReminderWriteStringList `json:"AttachmentIDs"`
 	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
 
-	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	// LastModifiedDate A required integer-valued reminder write timestamp in Unix milliseconds.
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
@@ -5825,7 +5825,7 @@ type ReminderDeletionFields struct {
 	// ResolutionTokenMap Compact JSON matching the generated ReminderDeletionResolutionMap model.
 	ResolutionTokenMap ReminderWriteString `json:"ResolutionTokenMap"`
 
-	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	// LastModifiedDate A required integer-valued reminder write timestamp in Unix milliseconds.
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
@@ -5955,7 +5955,7 @@ type ReminderHashtagCreationFields struct {
 	// Reminder Optional record-reference write field.
 	Reminder ReminderWriteReference `json:"Reminder"`
 
-	// CreationDate A timestamp-valued reminder write field in Unix milliseconds.
+	// CreationDate A required integer-valued reminder write timestamp in Unix milliseconds.
 	CreationDate ReminderWriteTimestamp `json:"CreationDate"`
 }
 
@@ -6056,7 +6056,7 @@ type ReminderHashtagLinkFields struct {
 	HashtagIDs         ReminderWriteStringList `json:"HashtagIDs"`
 	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
 
-	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	// LastModifiedDate A required integer-valued reminder write timestamp in Unix milliseconds.
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
@@ -6288,7 +6288,7 @@ type ReminderRecurrenceLinkFields struct {
 	RecurrenceRuleIDs  ReminderWriteStringList `json:"RecurrenceRuleIDs"`
 	ResolutionTokenMap ReminderWriteString     `json:"ResolutionTokenMap"`
 
-	// LastModifiedDate A timestamp-valued reminder write field in Unix milliseconds.
+	// LastModifiedDate A required integer-valued reminder write timestamp in Unix milliseconds.
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
@@ -6641,10 +6641,10 @@ type ReminderWriteStringList struct {
 // ReminderWriteStringListType defines model for ReminderWriteStringList.Type.
 type ReminderWriteStringListType string
 
-// ReminderWriteTimestamp A timestamp-valued reminder write field in Unix milliseconds.
+// ReminderWriteTimestamp A required integer-valued reminder write timestamp in Unix milliseconds.
 type ReminderWriteTimestamp struct {
 	Type  ReminderWriteTimestampType `json:"type"`
-	Value nullable.Nullable[int64]   `json:"value"`
+	Value int64                      `json:"value"`
 }
 
 // ReminderWriteTimestampType defines model for ReminderWriteTimestamp.Type.

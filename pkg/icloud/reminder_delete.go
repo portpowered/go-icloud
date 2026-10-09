@@ -145,8 +145,8 @@ func (sdk *SDK) reminderDeletionFields(now time.Time) (cloudkit.ReminderDeletion
 		Deleted: cloudkit.ReminderWriteInteger{Type: cloudkit.ReminderWriteIntegerTypeINT64, Value: 1},
 		ResolutionTokenMap: cloudkit.ReminderWriteString{Type: cloudkit.ReminderWriteStringTypeSTRING,
 			Value: string(encoded)},
-		LastModifiedDate: cloudkit.ReminderWriteTimestamp{Type: cloudkit.ReminderWriteTimestampTypeTIMESTAMP, Value: nil}}
-	fields.LastModifiedDate.Value.Set(reminderTimestamp(now).Value.GetOrEmpty())
+		LastModifiedDate: cloudkit.ReminderWriteTimestamp{Type: cloudkit.ReminderWriteTimestampTypeTIMESTAMP,
+			Value: reminderTimestamp(now).Value.GetOrEmpty()}}
 
 	return fields, nil
 }

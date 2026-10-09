@@ -74,7 +74,7 @@ func checkRecurrenceParentClock(t *testing.T, request *http.Request, base time.T
 	}
 
 	fields := parent.Record.Fields
-	if fields.LastModifiedDate.Value.GetOrEmpty() != base.UnixMilli() {
+	if fields.LastModifiedDate.Value != base.UnixMilli() {
 		t.Fatal("incorrect linked modification clock")
 	}
 

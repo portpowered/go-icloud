@@ -29,7 +29,7 @@ func reminderCopiedIDs(input []string) []string {
 
 func reminderRequiredTimestamp(now time.Time) cloudkit.ReminderWriteTimestamp {
 	return cloudkit.ReminderWriteTimestamp{Type: cloudkit.ReminderWriteTimestampTypeTIMESTAMP,
-		Value: reminderTimestamp(now).Value}
+		Value: reminderTimestamp(now).Value.GetOrEmpty()}
 }
 
 func reminderWriteContext(ctx context.Context, input AuthContext,

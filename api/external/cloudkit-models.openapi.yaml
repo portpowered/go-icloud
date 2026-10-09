@@ -3835,7 +3835,7 @@
       },
       "ReminderWriteTimestamp": {
         "type": "object",
-        "description": "A timestamp-valued reminder write field in Unix milliseconds.",
+        "description": "A required integer-valued reminder write timestamp in Unix milliseconds.",
         "properties": {
           "type": {
             "type": "string",
@@ -3850,7 +3850,6 @@
           "value": {
             "type": "integer",
             "format": "int64",
-            "nullable": true,
             "x-order": 2
           }
         },

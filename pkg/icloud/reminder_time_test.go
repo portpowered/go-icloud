@@ -48,7 +48,7 @@ func checkReminderWriteTimestamp(t *testing.T, instant time.Time, millis int64) 
 			}
 
 			if len(payload.Operations) != 1 ||
-				payload.Operations[0].Record.Fields.LastModifiedDate.Value.GetOrEmpty() != millis {
+				payload.Operations[0].Record.Fields.LastModifiedDate.Value != millis {
 				t.Fatal("wire timestamp differs from reference int(seconds * 1000)")
 			}
 
