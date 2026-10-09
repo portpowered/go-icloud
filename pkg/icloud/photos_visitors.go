@@ -27,26 +27,11 @@ func (sdk *SDK) VisitRecentlyAddedPhotos(
 ) (*ListRecentlyAddedPhotosResult, error) {
 	return sdk.listRecentlyAddedPhotos(ctx, request, visitor)
 }
-func visitPhotos(photos []Photo, visitor func(Photo) (bool, error)) ([]Photo, error) {
-	if visitor == nil {
-		return photos, nil
-	}
-	for index, photo := range photos {
-		advance, err := visitor(photo)
-		if err != nil {
-			return nil, err
-		}
-		if !advance {
-			return photos[:index+1], errPhotoVisitStopped
-		}
-	}
-	return photos, nil
-}
-
 func (read *photosRead) photoVisitor() func(Photo) (bool, error) {
 	if read.visitor == nil {
 		return nil
 	}
+
 	return func(photo Photo) (bool, error) {
 		return read.visitor(PhotoVisitEvent{Photo: photo, Responses: read.metadata()})
 	}

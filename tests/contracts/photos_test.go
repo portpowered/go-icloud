@@ -1,10 +1,11 @@
 package contracts_test
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 func TestPhotoAlbumWireContracts(t *testing.T) {
@@ -154,4 +155,11 @@ func photoQueryInvalidReply(path string) bool {
 	}
 
 	return false
+}
+
+func TestPhotosMutationsGenerationHasNoDrift(t *testing.T) {
+	t.Parallel()
+	verifyGeneration(t, generationArtifact{Schema: "../../api/external/photos-mutations-models.openapi.yaml",
+		Config: "../../pkg/dependencymodels/photosmutations/config.yaml",
+		Output: "../../pkg/dependencymodels/photosmutations/models.gen.go"})
 }

@@ -6,7 +6,45 @@ info:
 paths: {}
 components:
   schemas:
+    PhotoAlbumType: {type: integer, enum: [0, 3, 6], x-enum-varnames: [PhotoAlbumTypeAlbum, PhotoAlbumTypeFolder, PhotoAlbumTypeSmartAlbum], example: 0, description: "Source ALBUM, FOLDER, and SMART_ALBUM values."}
+    CreatePhotoAlbumRequest: {"type":"object","additionalProperties":false,"required":["auth","name"],"properties":{"auth":{"$ref":"#/components/schemas/AuthContext","description":"Request-scoped account credentials and response cookie state."},"library":{"$ref":"#/components/schemas/PhotoLibrary","description":"Omission selects the primary library; pass a discovered selection to use a different zone."},"name":{"type":"string","description":"Decoded album or folder display name."},"folder":{"type":"boolean","x-go-type-skip-optional-pointer":true,"description":"Create a folder when true and a regular album when false."},"type":{"$ref":"#/components/schemas/PhotoAlbumType","description":"Explicit Source album kind. Overrides folder when supplied."}},"description":"CreatePhotoAlbum operation input.","example":{"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"name":"Album"}}
+    RenamePhotoAlbumRequest: {"type":"object","additionalProperties":false,"required":["auth","albumID","name"],"properties":{"auth":{"$ref":"#/components/schemas/AuthContext","description":"Request-scoped account credentials and response cookie state."},"library":{"$ref":"#/components/schemas/PhotoLibrary","description":"Omission selects the primary library; pass a discovered selection to use a different zone."},"albumID":{"type":"string","description":"Provider album record identifier."},"name":{"type":"string","description":"Decoded album or folder display name."}},"description":"RenamePhotoAlbum operation input.","example":{"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"albumID":"synthetic-album-0","name":"Album"}}
+    DeletePhotoAlbumRequest: {"type":"object","additionalProperties":false,"required":["auth","albumID"],"properties":{"auth":{"$ref":"#/components/schemas/AuthContext","description":"Request-scoped account credentials and response cookie state."},"library":{"$ref":"#/components/schemas/PhotoLibrary","description":"Omission selects the primary library; pass a discovered selection to use a different zone."},"albumID":{"type":"string","description":"Provider album record identifier."}},"description":"DeletePhotoAlbum operation input.","example":{"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"albumID":"synthetic-album-0"}}
+    AddPhotoToAlbumRequest: {"type":"object","additionalProperties":false,"required":["auth","albumID","photoID"],"properties":{"auth":{"$ref":"#/components/schemas/AuthContext","description":"Request-scoped account credentials and response cookie state."},"library":{"$ref":"#/components/schemas/PhotoLibrary","description":"Omission selects the primary library; pass a discovered selection to use a different zone."},"albumID":{"type":"string","description":"Provider album record identifier."},"photoID":{"type":"string","description":"Provider asset identifier."}},"description":"AddPhotoToAlbum operation input.","example":{"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"albumID":"synthetic-album-0","photoID":"synthetic-asset-0"}}
+    SetPhotoFavoriteRequest: {"type":"object","additionalProperties":false,"required":["auth","photoID","favorite"],"properties":{"auth":{"$ref":"#/components/schemas/AuthContext","description":"Request-scoped account credentials and response cookie state."},"library":{"$ref":"#/components/schemas/PhotoLibrary","description":"Omission selects the primary library; pass a discovered selection to use a different zone."},"photoID":{"type":"string","description":"Provider asset identifier."},"favorite":{"type":"boolean","description":"Desired favorite state."},"album":{"type":"string","description":"The updated album projection."}},"description":"SetPhotoFavorite operation input.","example":{"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"photoID":"synthetic-asset-0","favorite":true}}
+    DeletePhotoRequest: {"type":"object","additionalProperties":false,"required":["auth","photoID"],"properties":{"auth":{"$ref":"#/components/schemas/AuthContext","description":"Request-scoped account credentials and response cookie state."},"library":{"$ref":"#/components/schemas/PhotoLibrary","description":"Omission selects the primary library; pass a discovered selection to use a different zone."},"photoID":{"type":"string","description":"Provider asset identifier."},"album":{"type":"string","description":"The updated album projection."}},"description":"DeletePhoto operation input.","example":{"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"photoID":"synthetic-asset-0"}}
+    PhotoAlbumMutationResult: {"type":"object","additionalProperties":false,"required":["album","responses"],"properties":{"album":{"allOf":[{"$ref":"#/components/schemas/PhotoAlbum"}],"nullable":true,"description":"The updated album projection."},"responses":{"type":"array","items":{"$ref":"#/components/schemas/ResponseMetadata"},"description":"Ordered provider responses including initialization, discovery, writes and refreshes."}},"description":"PhotoAlbumMutation operation output.","example":{"album":{"id":"synthetic-album-0","name":"Album","fullName":"Album","recordChangeTag":null},"responses":[]}}
+    PhotoMutationResult: {"type":"object","additionalProperties":false,"required":["photo","responses"],"properties":{"photo":{"$ref":"#/components/schemas/Photo","description":"The acknowledged or refreshed photo projection."},"responses":{"type":"array","items":{"$ref":"#/components/schemas/ResponseMetadata"},"description":"Ordered provider responses including initialization, discovery, writes and refreshes."}},"description":"PhotoMutation operation output.","example":{"photo":{"id":"synthetic-asset","masterID":"synthetic-master","filename":"photo.jpg","size":null,"dimensions":[null,null],"itemType":"image","isLivePhoto":false,"created":"1970-01-01T00:00:00Z","added":"1970-01-01T00:00:00Z","versions":{},"assetMetadata":{}},"responses":[]}}
+    PhotoDeletionResult: {"type":"object","additionalProperties":false,"required":["deleted","responses"],"properties":{"deleted":{"type":"boolean","description":"The provider acknowledged the soft-delete request without per-record rejection."},"responses":{"type":"array","items":{"$ref":"#/components/schemas/ResponseMetadata"},"description":"Ordered provider responses including initialization, discovery, writes and refreshes."}},"description":"PhotoDeletion operation output.","example":{"deleted":true,"responses":[]}}
+    PhotoAlbumRelationResult: {"type":"object","additionalProperties":false,"required":["added","responses"],"properties":{"added":{"type":"boolean","description":"The provider acknowledged creation of the album relation."},"responses":{"type":"array","items":{"$ref":"#/components/schemas/ResponseMetadata"},"description":"Ordered provider responses including initialization, discovery, writes and refreshes."}},"description":"PhotoAlbumRelation operation output.","example":{"added":true,"responses":[]}}
+    GetPhotoLibraryChangesRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"shared":false,"since":"synthetic-old"}
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        shared: {type: boolean, x-go-type-skip-optional-pointer: true}
+        since: {type: string}
+    PhotoLibraryChange:
+      example: {"zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE","ownerRecordName":null,"deleted":false}
+      type: object
+      required: [zoneName, ownerRecordName, zoneType, deleted]
+      properties:
+        zoneName: {type: string}
+        ownerRecordName: {type: string, nullable: true}
+        zoneType: {type: string, nullable: true}
+        deleted: {type: boolean, nullable: true}
+    GetPhotoLibraryChangesResult:
+      example: {"zones":[{"zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE","ownerRecordName":null,"deleted":false}],"syncToken":"synthetic-next","moreComing":false,"responses":[]}
+      type: object
+      required: [zones, syncToken, moreComing, responses]
+      properties:
+        zones: {type: array, items: {$ref: '#/components/schemas/PhotoLibraryChange'}}
+        syncToken: {type: string, nullable: true}
+        moreComing: {type: boolean, nullable: true}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     PhotoVisitEvent:
+      example: {"photo":{"id":"synthetic-asset","masterID":"synthetic-master","filename":"photo.jpg","size":null,"dimensions":[null,null],"itemType":"image","isLivePhoto":false,"created":"1970-01-01T00:00:00Z","added":"1970-01-01T00:00:00Z","versions":{},"assetMetadata":{}},"responses":[]}
       type: object
       required: [photo, responses]
       description: Owned photo projection and ordered response metadata available before the callback.
@@ -14,18 +52,21 @@ components:
         photo: {$ref: '#/components/schemas/Photo'}
         responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     GetPhotosCursorRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]}}
       type: object
       required: [auth]
       properties:
         auth: {$ref: '#/components/schemas/AuthContext'}
         library: {$ref: '#/components/schemas/PhotoLibrary'}
     GetPhotosCursorResult:
+      example: {"syncToken":"synthetic-sync","responses":[]}
       type: object
       required: [syncToken, responses]
       properties:
         syncToken: {type: string}
         responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     GetPhotoChangesRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]},"since":"synthetic-old"}
       type: object
       required: [auth]
       properties:
@@ -33,6 +74,7 @@ components:
         library: {$ref: '#/components/schemas/PhotoLibrary'}
         since: {type: string, description: Omission reads available initial changes.}
     PhotoChange:
+      example: {"kind":"updated","recordName":"synthetic-asset","recordType":"CPLAsset","deleted":false,"modified":null}
       type: object
       required: [kind, recordName, recordType, deleted, modified]
       properties:
@@ -42,6 +84,7 @@ components:
         deleted: {type: boolean}
         modified: {type: string, format: date-time, nullable: true, description: Provider modification instant.}
     GetPhotoChangesResult:
+      example: {"changes":[{"kind":"updated","recordName":"synthetic-asset","recordType":"CPLAsset","deleted":false,"modified":null}],"syncToken":"synthetic-next","responses":[]}
       type: object
       required: [changes, syncToken, responses]
       properties:
@@ -49,6 +92,7 @@ components:
         syncToken: {type: string, nullable: true}
         responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     PhotoLibrary:
+      example: {"id":"root","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE","ownerRecordName":null,"syncToken":"synthetic-sync","shared":false,"isSharedLibrary":false,"indexingState":"FINISHED"}
       type: object
       required: [id, zoneName, shared, isSharedLibrary, zoneType, ownerRecordName, syncToken]
       description: Caller-owned library identity; SharedSync zones discovered privately retain the private database.
@@ -62,11 +106,13 @@ components:
         isSharedLibrary: {type: boolean, description: Shared-library capabilities independent of database scope.}
         indexingState: {type: string, enum: [FINISHED], x-go-type-skip-optional-pointer: true, description: Discovery initialization receipt; omission checks readiness.}
     ListPhotoLibrariesRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","photosServiceURL":"https://photos.example.invalid","headers":[]}}
       type: object
       required: [auth]
       properties:
         auth: {$ref: '#/components/schemas/AuthContext'}
     ListPhotoLibrariesResult:
+      example: {"libraries":[{"id":"root","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE","ownerRecordName":null,"syncToken":"synthetic-sync","shared":false,"isSharedLibrary":false,"indexingState":"FINISHED"}],"responses":[]}
       type: object
       required: [libraries, responses]
       properties:

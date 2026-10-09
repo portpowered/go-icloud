@@ -65,16 +65,12 @@ func (read *photosRead) recentlyAdded(ctx context.Context) ([]Photo, error) {
 			return nil, read.failure(err, InvalidResponse)
 		}
 
-		window, err := projectSelectedPhotoPage(pairs, seen, nil, projectPhoto)
-		if err != nil {
-			return nil, read.failure(err, InvalidResponse)
-		}
-
-		slices.Reverse(window)
-		window, err = visitPhotos(window, read.photoVisitor())
+		selected := recentPhotoWindow(pairs, seen)
+		window, err := projectSelectedPhotoPage(selected, map[string]bool{}, nil, projectPhoto, read.photoVisitor())
 		if errors.Is(err, errPhotoVisitStopped) {
 			return append(photos, window...), nil
 		}
+
 		if err != nil {
 			return nil, read.failure(err, InvalidResponse)
 		}
@@ -86,4 +82,17 @@ func (read *photosRead) recentlyAdded(ctx context.Context) ([]Photo, error) {
 
 		offset += int64(len(window))
 	}
+}
+
+func recentPhotoWindow(pairs []photoPair, seen map[string]bool) []photoPair {
+	selected := []photoPair{}
+	for _, pair := range pairs {
+		if seen[pair.asset.RecordName] {
+			continue
+		}
+		seen[pair.asset.RecordName] = true
+		selected = append(selected, pair)
+	}
+	slices.Reverse(selected)
+	return selected
 }

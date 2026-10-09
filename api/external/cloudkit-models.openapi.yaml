@@ -5301,6 +5301,129 @@
             }
           }
         ]
+      },
+      "CKDatabaseChangesRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Optional cursor for a single database-level change page. Empty cursors are omitted.",
+        "properties": {
+          "syncToken": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "CKDatabaseChangesZone": {
+        "type": "object",
+        "required": [
+          "zoneID"
+        ],
+        "properties": {
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneID"
+          },
+          "deleted": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        }
+      },
+      "CKDatabaseChangesResponse": {
+        "type": "object",
+        "description": "One database-level page identifies changed or removed zones; retain its cursor for the next request.",
+        "properties": {
+          "zones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CKDatabaseChangesZone"
+            }
+          },
+          "moreComing": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "syncToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        }
+      },
+      "PhotoChangesForward": {
+        "type": "boolean",
+        "enum": [
+          false
+        ],
+        "x-enum-varnames": [
+          "PhotoChangesForwardValue"
+        ],
+        "description": "Photos record changes are read in forward order."
+      },
+      "PhotosChangesZoneRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "zoneID",
+          "reverse"
+        ],
+        "properties": {
+          "zoneID": {
+            "$ref": "#/components/schemas/PhotosChangeZoneIdentity",
+            "x-order": 1
+          },
+          "syncToken": {
+            "type": "string",
+            "x-order": 2
+          },
+          "reverse": {
+            "$ref": "#/components/schemas/PhotoChangesForward",
+            "x-order": 3
+          }
+        }
+      },
+      "PhotosChangesRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "zones"
+        ],
+        "description": "Read forward changes in exactly one selected Photos zone.",
+        "properties": {
+          "zones": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/PhotosChangesZoneRequest"
+            }
+          }
+        }
+      },
+      "PhotosChangeZoneIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "zoneName"
+        ],
+        "properties": {
+          "zoneName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "ownerRecordName": {
+            "type": "string",
+            "x-order": 2
+          },
+          "zoneType": {
+            "type": "string",
+            "x-order": 3
+          }
+        }
       }
     }
   }

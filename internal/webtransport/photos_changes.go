@@ -24,47 +24,10 @@ func (client *Client) PhotosChanges(
 	auth RequestContext,
 	since *string,
 ) (*PhotosChangesResponse, error) {
-	zone := cloudkit.CKZoneIDReq{
-		ZoneName:             protocol.PhotosPhotoPrimaryZoneNameValue,
-		ZoneType:             nil,
-		OwnerRecordName:      nil,
-		AdditionalProperties: nil,
-	}
-	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
-
-	if auth.PhotoZone != nil {
-		zone = *auth.PhotoZone
-	}
-
-	identity, err := referenceJSONFields(
-		zone,
-		[]string{
-			protocol.PhotosCKZoneIDReqZoneName,
-			protocol.PhotosCKZoneIDReqZoneType,
-			protocol.PhotosCKZoneIDReqOwnerRecordName,
-		},
-	)
+	body, err := photosChangesBody(auth, since)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
-
-	body := fmt.Sprintf(
-		"{%q: [{%q: %s",
-		protocol.PhotosCKZoneChangesRequestZones,
-		protocol.PhotosCKZoneChangesZoneReqZoneID,
-		identity,
-	)
-
-	if since != nil {
-		token, tokenErr := referenceJSON(*since)
-		if tokenErr != nil {
-			return nil, failure(Configuration, tokenErr, nil, nil)
-		}
-
-		body += fmt.Sprintf(", %q: %s", protocol.PhotosCKZoneChangesZoneReqSyncToken, token)
-	}
-
-	body += fmt.Sprintf(", %q: false}]}", protocol.PhotosCKZoneChangesZoneReqReverse)
 
 	request, err := photosChangesRequest(auth, body)
 	if err != nil {
@@ -89,19 +52,37 @@ func (client *Client) PhotosChanges(
 	return &PhotosChangesResponse{Data: data, Metadata: response}, nil
 }
 
-func photosChangesRequest(auth RequestContext, body string) (*http.Request, error) {
-	if auth.PhotoShared {
-		params := new(photosapi.PhotosSharedZoneChangesParams)
-		params.ClientId = auth.Params.ClientId
-		params.Dsid = auth.Params.Dsid
-		params.RemapEnums = photosapi.PhotosSharedZoneChangesParamsRemapEnumsTrue
-		params.GetCurrentSyncToken = photosapi.PhotosSharedZoneChangesParamsGetCurrentSyncTokenTrue
+func photosChangesBody(auth RequestContext, since *string) ([]byte, error) {
+	zone := cloudkit.PhotosChangeZoneIdentity{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
+		ZoneType: nil, OwnerRecordName: nil}
+	primaryType := protocol.PhotosPhotoPrimaryZoneTypeValue
+	zone.ZoneType = &primaryType
+	if auth.PhotoZone != nil {
+		zone.ZoneName = auth.PhotoZone.ZoneName
+		zone.ZoneType = nil
+		value, err := auth.PhotoZone.ZoneType.Get()
+		if err == nil {
+			zone.ZoneType = &value
+		}
+		value, err = auth.PhotoZone.OwnerRecordName.Get()
+		if err == nil {
+			zone.OwnerRecordName = &value
+		}
+	}
+	input := cloudkit.PhotosChangesRequest{Zones: []cloudkit.PhotosChangesZoneRequest{
+		{ZoneID: zone, SyncToken: since, Reverse: cloudkit.PhotoChangesForwardValue},
+	}}
+	return referenceJSON(input)
+}
 
+func photosChangesRequest(auth RequestContext, body []byte) (*http.Request, error) {
+	if auth.PhotoShared {
+		params := photosSharedZoneChangesParams(auth)
 		request, err := photosapi.NewPhotosSharedZoneChangesRequestWithBody(
 			auth.Origin,
 			params,
 			protocol.PhotosMediaApplicationJson,
-			bytes.NewBufferString(body),
+			bytes.NewReader(body),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo changes: %w", err)
@@ -110,17 +91,12 @@ func photosChangesRequest(auth RequestContext, body string) (*http.Request, erro
 		return request, nil
 	}
 
-	params := new(photosapi.PhotosZoneChangesParams)
-	params.ClientId = auth.Params.ClientId
-	params.Dsid = auth.Params.Dsid
-	params.RemapEnums = photosapi.PhotosZoneChangesParamsRemapEnumsTrue
-	params.GetCurrentSyncToken = photosapi.PhotosZoneChangesParamsGetCurrentSyncTokenTrue
-
+	params := photosZoneChangesParams(auth)
 	request, err := photosapi.NewPhotosZoneChangesRequestWithBody(
 		auth.Origin,
 		params,
 		protocol.PhotosMediaApplicationJson,
-		bytes.NewBufferString(body),
+		bytes.NewReader(body),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("construct photo changes: %w", err)
@@ -133,6 +109,22 @@ func (client *Client) readPhotosRequest(
 	ctx context.Context,
 	auth RequestContext,
 	request *http.Request,
+) (*BytesResponse, error) {
+	return client.readPhotosPrepared(ctx, auth, request,
+		string(photosapi.PhotosZoneChangesParamsRemapEnumsTrue),
+		string(photosapi.PhotosZoneChangesParamsGetCurrentSyncTokenTrue))
+}
+
+func (client *Client) readPhotosContainerRequest(ctx context.Context, auth RequestContext,
+	request *http.Request,
+) (*BytesResponse, error) {
+	return client.readPhotosPrepared(ctx, auth, request,
+		string(photosapi.PhotosZoneChangesParamsRemapEnumsTrue),
+		string(photosapi.PhotosZoneChangesParamsGetCurrentSyncTokenTrue))
+}
+
+func (client *Client) readPhotosPrepared(ctx context.Context, auth RequestContext,
+	request *http.Request, remap, current string,
 ) (*BytesResponse, error) {
 	err := validateOrigin(auth.Origin)
 	if err != nil {
@@ -151,10 +143,10 @@ func (client *Client) readPhotosRequest(
 		auth.Params,
 	) + "&" + queryPart(
 		protocol.PhotosRemapEnumsName,
-		string(photosapi.PhotosZoneChangesParamsRemapEnumsTrue),
+		remap,
 	) + "&" + queryPart(
 		protocol.PhotosGetCurrentSyncTokenName,
-		string(photosapi.PhotosZoneChangesParamsGetCurrentSyncTokenTrue),
+		current,
 	)
 
 	return client.readPrepared(request, successfulContent, auth.Cookies)
@@ -162,6 +154,7 @@ func (client *Client) readPhotosRequest(
 
 func validatePhotosChangePages(data cloudkit.CKZoneChangesResponse) error {
 	var err error
+
 	if data.Zones != nil {
 		for _, page := range *data.Zones {
 			err = validateReminderSyncRecords(page.Records)
@@ -172,4 +165,24 @@ func validatePhotosChangePages(data cloudkit.CKZoneChangesResponse) error {
 	}
 
 	return nil
+}
+
+func photosSharedZoneChangesParams(auth RequestContext) *photosapi.PhotosSharedZoneChangesParams {
+	params := new(photosapi.PhotosSharedZoneChangesParams)
+	params.ClientId = auth.Params.ClientId
+	params.Dsid = auth.Params.Dsid
+	params.RemapEnums = photosapi.PhotosSharedZoneChangesParamsRemapEnumsTrue
+	params.GetCurrentSyncToken = photosapi.PhotosSharedZoneChangesParamsGetCurrentSyncTokenTrue
+
+	return params
+}
+
+func photosZoneChangesParams(auth RequestContext) *photosapi.PhotosZoneChangesParams {
+	params := new(photosapi.PhotosZoneChangesParams)
+	params.ClientId = auth.Params.ClientId
+	params.Dsid = auth.Params.Dsid
+	params.RemapEnums = photosapi.PhotosZoneChangesParamsRemapEnumsTrue
+	params.GetCurrentSyncToken = photosapi.PhotosZoneChangesParamsGetCurrentSyncTokenTrue
+
+	return params
 }

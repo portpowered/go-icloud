@@ -1,7 +1,0 @@
-package: icloud
-generate:
-  models: true
-output: pkg/icloud/photos_mutations_models.gen.go
-output-options:
-  skip-prune: true
-  nullable-type: true

@@ -20,6 +20,25 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// CreatePhotoAlbum creates a regular album or folder in the selected library.
+	CreatePhotoAlbum(ctx context.Context, request CreatePhotoAlbumRequest) (*PhotoAlbumMutationResult, error)
+	// RenamePhotoAlbum renames the selected provider album.
+	RenamePhotoAlbum(ctx context.Context, request RenamePhotoAlbumRequest) (*PhotoAlbumMutationResult, error)
+	// DeletePhotoAlbum marks the selected provider album deleted.
+	DeletePhotoAlbum(ctx context.Context, request DeletePhotoAlbumRequest) (*PhotoDeletionResult, error)
+	// AddPhotoToAlbum creates an album membership relation for one existing photo.
+	AddPhotoToAlbum(ctx context.Context, request AddPhotoToAlbumRequest) (*PhotoAlbumRelationResult, error)
+	// SetPhotoFavorite sets the selected photo's favorite flag and returns its updated snapshot.
+	SetPhotoFavorite(ctx context.Context, request SetPhotoFavoriteRequest) (*PhotoMutationResult, error)
+	// DeletePhoto soft-deletes the selected photo after validating acknowledgement.
+	DeletePhoto(ctx context.Context, request DeletePhotoRequest) (*PhotoDeletionResult, error)
+
+	// GetPhotoLibraryChanges returns changed/deleted zones and an explicit database cursor.
+	GetPhotoLibraryChanges(
+		ctx context.Context,
+		request GetPhotoLibraryChangesRequest,
+	) (*GetPhotoLibraryChangesResult, error)
+
 	// VisitPhotoAssets visits assets until the visitor returns false.
 	VisitPhotoAssets(
 		ctx context.Context,

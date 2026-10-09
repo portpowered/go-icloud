@@ -127,7 +127,9 @@ func projectPhotoChanges(zone cloudkit.CKZoneChangesZone) ([]PhotoChange, error)
 			value, _ := record.Record.Deleted.Get()
 
 			change.Deleted = value
+
 			modified, modifiedErr := record.Record.Modified.Get()
+
 			if modifiedErr == nil {
 				change.Modified.Set(time.UnixMilli(modified.Timestamp).UTC())
 			}

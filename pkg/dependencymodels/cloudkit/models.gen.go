@@ -927,6 +927,21 @@ func (e PhotoAssetQueryField) Valid() bool {
 	}
 }
 
+// Defines values for PhotoChangesForward.
+const (
+	PhotoChangesForwardValue PhotoChangesForward = false
+)
+
+// Valid indicates whether the value is a known member of the PhotoChangesForward enum.
+func (e PhotoChangesForward) Valid() bool {
+	switch e {
+	case PhotoChangesForwardValue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotoDirection.
 const (
 	ASCENDING  PhotoDirection = "ASCENDING"
@@ -3008,6 +3023,28 @@ type CKChainProtectionInfo struct {
 // CKComparator CloudKit query filter comparison operators.
 type CKComparator string
 
+// CKDatabaseChangesRequest Optional cursor for a single database-level change page. Empty cursors are omitted.
+type CKDatabaseChangesRequest struct {
+	SyncToken *string `json:"syncToken,omitempty"`
+}
+
+// CKDatabaseChangesResponse One database-level page identifies changed or removed zones; retain its cursor for the next request.
+type CKDatabaseChangesResponse struct {
+	MoreComing           nullable.Nullable[bool]   `json:"moreComing,omitempty"`
+	SyncToken            nullable.Nullable[string] `json:"syncToken,omitempty"`
+	Zones                *[]CKDatabaseChangesZone  `json:"zones,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
+}
+
+// CKDatabaseChangesZone defines model for CKDatabaseChangesZone.
+type CKDatabaseChangesZone struct {
+	Deleted nullable.Nullable[bool] `json:"deleted,omitempty"`
+
+	// ZoneID Identifies a CloudKit zone by name, owner, and optional type.
+	ZoneID               CKZoneID                 `json:"zoneID"`
+	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+}
+
 // CKDoubleField Floating-point field wrapper, optionally encrypted (e.g. for location data).
 type CKDoubleField struct {
 	Type                 CKDoubleFieldType                 `json:"type"`
@@ -3749,6 +3786,9 @@ type PhotoAlbumTypeField string
 // PhotoAssetQueryField Known primary photo projection/query value from the pinned reference.
 type PhotoAssetQueryField string
 
+// PhotoChangesForward Photos record changes are read in forward order.
+type PhotoChangesForward bool
+
 // PhotoDirection Known primary photo projection/query value from the pinned reference.
 type PhotoDirection string
 
@@ -3805,6 +3845,27 @@ type PhotoSmartSelector string
 
 // PhotoVersionName Known primary Photos reference projection value.
 type PhotoVersionName string
+
+// PhotosChangeZoneIdentity defines model for PhotosChangeZoneIdentity.
+type PhotosChangeZoneIdentity struct {
+	ZoneName        string  `json:"zoneName"`
+	OwnerRecordName *string `json:"ownerRecordName,omitempty"`
+	ZoneType        *string `json:"zoneType,omitempty"`
+}
+
+// PhotosChangesRequest Read forward changes in exactly one selected Photos zone.
+type PhotosChangesRequest struct {
+	Zones []PhotosChangesZoneRequest `json:"zones"`
+}
+
+// PhotosChangesZoneRequest defines model for PhotosChangesZoneRequest.
+type PhotosChangesZoneRequest struct {
+	ZoneID    PhotosChangeZoneIdentity `json:"zoneID"`
+	SyncToken *string                  `json:"syncToken,omitempty"`
+
+	// Reverse Photos record changes are read in forward order.
+	Reverse PhotoChangesForward `json:"reverse"`
+}
 
 // PhotosCountField Source integer-coercible photo count.
 type PhotosCountField struct {
@@ -5274,6 +5335,185 @@ func (a CKChainProtectionInfo) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'pcsChangeTag': %w", err)
 		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for CKDatabaseChangesResponse. Returns the specified
+// element and whether it was found
+func (a CKDatabaseChangesResponse) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for CKDatabaseChangesResponse
+func (a *CKDatabaseChangesResponse) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for CKDatabaseChangesResponse to handle AdditionalProperties
+func (a *CKDatabaseChangesResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["moreComing"]; found {
+		err = json.Unmarshal(raw, &a.MoreComing)
+		if err != nil {
+			return fmt.Errorf("error reading 'moreComing': %w", err)
+		}
+		delete(object, "moreComing")
+	}
+
+	if raw, found := object["syncToken"]; found {
+		err = json.Unmarshal(raw, &a.SyncToken)
+		if err != nil {
+			return fmt.Errorf("error reading 'syncToken': %w", err)
+		}
+		delete(object, "syncToken")
+	}
+
+	if raw, found := object["zones"]; found {
+		err = json.Unmarshal(raw, &a.Zones)
+		if err != nil {
+			return fmt.Errorf("error reading 'zones': %w", err)
+		}
+		delete(object, "zones")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for CKDatabaseChangesResponse to handle AdditionalProperties
+func (a CKDatabaseChangesResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.MoreComing != nil {
+		object["moreComing"], err = json.Marshal(a.MoreComing)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'moreComing': %w", err)
+		}
+	}
+
+	if a.SyncToken != nil {
+		object["syncToken"], err = json.Marshal(a.SyncToken)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'syncToken': %w", err)
+		}
+	}
+
+	if a.Zones != nil {
+		object["zones"], err = json.Marshal(a.Zones)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'zones': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for CKDatabaseChangesZone. Returns the specified
+// element and whether it was found
+func (a CKDatabaseChangesZone) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for CKDatabaseChangesZone
+func (a *CKDatabaseChangesZone) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for CKDatabaseChangesZone to handle AdditionalProperties
+func (a *CKDatabaseChangesZone) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["deleted"]; found {
+		err = json.Unmarshal(raw, &a.Deleted)
+		if err != nil {
+			return fmt.Errorf("error reading 'deleted': %w", err)
+		}
+		delete(object, "deleted")
+	}
+
+	if raw, found := object["zoneID"]; found {
+		err = json.Unmarshal(raw, &a.ZoneID)
+		if err != nil {
+			return fmt.Errorf("error reading 'zoneID': %w", err)
+		}
+		delete(object, "zoneID")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for CKDatabaseChangesZone to handle AdditionalProperties
+func (a CKDatabaseChangesZone) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Deleted != nil {
+		object["deleted"], err = json.Marshal(a.Deleted)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'deleted': %w", err)
+		}
+	}
+
+	object["zoneID"], err = json.Marshal(a.ZoneID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'zoneID': %w", err)
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

@@ -595,7 +595,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CKZoneChangesRequest"
+                "$ref": "#/components/schemas/PhotosChangesRequest"
               }
             }
           },
@@ -787,7 +787,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CKModifyRequest"
+                "$ref": "./photos-mutations-models.openapi.yaml#/components/schemas/PhotoMutationRequest"
               }
             }
           },
@@ -883,7 +883,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CKZoneChangesRequest"
+                "$ref": "#/components/schemas/PhotosChangesRequest"
               }
             }
           },
@@ -1075,7 +1075,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CKModifyRequest"
+                "$ref": "./photos-mutations-models.openapi.yaml#/components/schemas/PhotoMutationRequest"
               }
             }
           },
@@ -1208,6 +1208,198 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/PhotosCountResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/private/changes/database": {
+      "post": {
+        "operationId": "PhotosDatabaseChanges",
+        "summary": "Read changed photo libraries",
+        "description": "Read one page of changed or deleted zones from the private Photos database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKDatabaseChangesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/changes/database": {
+      "post": {
+        "operationId": "PhotosSharedDatabaseChanges",
+        "summary": "Read changed photo libraries",
+        "description": "Read one page of changed or deleted zones from the shared Photos database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKDatabaseChangesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKDatabaseChangesResponse"
                 }
               }
             },
@@ -1564,6 +1756,21 @@
       },
       "PhotoSharedLibraryKeyPrefix": {
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/PhotoSharedLibraryKeyPrefix"
+      },
+      "CKDatabaseChangesRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKDatabaseChangesRequest"
+      },
+      "CKDatabaseChangesResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKDatabaseChangesResponse"
+      },
+      "CKDatabaseChangesZone": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKDatabaseChangesZone"
+      },
+      "PhotoChangesForward": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/PhotoChangesForward"
+      },
+      "PhotosChangesRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/PhotosChangesRequest"
       }
     }
   }

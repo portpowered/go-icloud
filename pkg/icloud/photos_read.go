@@ -27,10 +27,11 @@ func (sdk *SDK) beginPhotosRead(
 	operation string,
 	libraries ...*PhotoLibrary,
 ) (*photosRead, error) {
-	var library *PhotoLibrary
-	if len(libraries) != 0 {
-		library = libraries[0]
+	err := ctx.Err()
+	if err != nil {
+		return nil, driveContextFailure(operation, err)
 	}
+	library := selectedPhotoLibrary(libraries)
 
 	boundary, err := photosRequestContext(auth, library)
 	if err != nil {
@@ -38,6 +39,7 @@ func (sdk *SDK) beginPhotosRead(
 	}
 
 	boundary.Origin = auth.PhotosServiceURL
+
 	read := &photosRead{
 		sdk:           sdk,
 		auth:          boundary,
@@ -64,7 +66,9 @@ func (sdk *SDK) beginPhotosRead(
 	}
 
 	read.responses = append(read.responses, response.Metadata)
+
 	token, tokenErr := response.Data.SyncToken.Get()
+
 	if tokenErr == nil {
 		read.syncToken = &token
 	}
@@ -175,4 +179,11 @@ func (read *photosRead) metadata() []ResponseMetadata {
 	}
 
 	return result
+}
+
+func selectedPhotoLibrary(libraries []*PhotoLibrary) *PhotoLibrary {
+	if len(libraries) == 0 {
+		return nil
+	}
+	return libraries[0]
 }

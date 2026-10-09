@@ -21,12 +21,17 @@ func (sdk *SDK) ListPhotoLibraries(
 	}
 
 	root := PhotoLibrary{ID: "root", ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue, Shared: false,
-		IsSharedLibrary: false, IndexingState: PhotoLibraryIndexingStateFINISHED, ZoneType: nil, OwnerRecordName: nil, SyncToken: nil}
+		IsSharedLibrary: false, IndexingState: PhotoLibraryIndexingStateFINISHED,
+		ZoneType: nil, OwnerRecordName: nil, SyncToken: nil}
 	root.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
 	root.OwnerRecordName.SetNull()
 	root.SyncToken.SetNull()
+	if read.syncToken != nil {
+		root.SyncToken.Set(*read.syncToken)
+	}
 
 	read.libraries = append(read.libraries, root)
+
 	err = read.discoverPhotoLibraries(ctx)
 	if err != nil {
 		return nil, err
@@ -122,8 +127,10 @@ func (read *photosRead) initializePhotoLibrary(ctx context.Context, zone cloudki
 	}
 
 	library := PhotoLibrary{ID: photoLibraryKey(zone.ZoneName, shared), ZoneName: zone.ZoneName,
-		Shared: shared, IsSharedLibrary: shared || strings.HasPrefix(zone.ZoneName, protocol.PhotosPhotoSharedLibraryZonePrefixValue),
-		IndexingState: PhotoLibraryIndexingStateFINISHED, ZoneType: zone.ZoneType, OwnerRecordName: zone.OwnerRecordName, SyncToken: response.Data.SyncToken}
+		Shared:          shared,
+		IsSharedLibrary: shared || strings.HasPrefix(zone.ZoneName, protocol.PhotosPhotoSharedLibraryZonePrefixValue),
+		IndexingState:   PhotoLibraryIndexingStateFINISHED, ZoneType: zone.ZoneType,
+		OwnerRecordName: zone.OwnerRecordName, SyncToken: response.Data.SyncToken}
 	if !library.ZoneType.IsSpecified() {
 		library.ZoneType.SetNull()
 	}
@@ -161,6 +168,9 @@ func (read *photosRead) skipLibraryZone(zone cloudkit.CKZoneListZone, shared boo
 
 	if len(read.libraries) != 0 {
 		read.libraries[0].SyncToken = zone.SyncToken
+		if !read.libraries[0].SyncToken.IsSpecified() {
+			read.libraries[0].SyncToken.SetNull()
+		}
 	}
 
 	return true

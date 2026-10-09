@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/internal/photosapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
-	"net/http"
 )
 
 // PhotosQueryResponse retains validated CloudKit query records and exact response evidence.
@@ -95,7 +96,10 @@ func (client *Client) photosScopedQueryBytes(ctx context.Context, auth RequestCo
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
 		queryPart(protocol.PhotosRemapEnumsName, string(photosapi.PhotosQueryRecordsParamsRemapEnumsTrue)) + "&" +
-		queryPart(protocol.PhotosGetCurrentSyncTokenName, string(photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue))
+		queryPart(
+			protocol.PhotosGetCurrentSyncTokenName,
+			string(photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue),
+		)
 
 	response, err := client.readPrepared(request, successfulContent, auth.Cookies)
 	if err != nil {

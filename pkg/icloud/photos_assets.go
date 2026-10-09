@@ -122,7 +122,7 @@ func (read *photosRead) assetOffset(ctx context.Context, entry photoAlbumEntry,
 
 func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec, offset int64,
 	photoID *string,
-	project photoProjection, visitors ...func(Photo) (bool, error),
+	project photoProjection,
 ) ([]Photo, error) {
 	photos := []Photo{}
 	seen := map[string]bool{}
@@ -149,16 +149,13 @@ func (read *photosRead) assetPages(ctx context.Context, spec photoAlbumQuerySpec
 		if errors.Is(err, errPhotoVisitStopped) {
 			return append(photos, projected...), nil
 		}
+
 		if err != nil {
 			return nil, read.failure(err, InvalidResponse)
 		}
 
 		photos = append(photos, projected...)
-		if photoID != nil && len(projected) != 0 {
-			return photos, nil
-		}
-
-		if len(page) < photoSourcePageSize/2 {
+		if photoPageFinished(photoID, projected, page) {
 			return photos, nil
 		}
 
@@ -232,11 +229,11 @@ func projectSelectedPhotoPage(page []photoPair, seen map[string]bool, photoID *s
 		if photoID != nil {
 			return photos, nil
 		}
+
 		visitErr := visitSelectedPhoto(photo, visitors)
 		if visitErr != nil {
 			return photos, visitErr
 		}
-
 	}
 
 	return photos, nil
@@ -246,12 +243,19 @@ func visitSelectedPhoto(photo Photo, visitors []func(Photo) (bool, error)) error
 	if len(visitors) == 0 || visitors[0] == nil {
 		return nil
 	}
+
 	advance, err := visitors[0](photo)
 	if err != nil {
 		return err
 	}
+
 	if !advance {
 		return errPhotoVisitStopped
 	}
+
 	return nil
+}
+
+func photoPageFinished(photoID *string, projected []Photo, page []photoPair) bool {
+	return (photoID != nil && len(projected) != 0) || len(page) < photoSourcePageSize/2
 }

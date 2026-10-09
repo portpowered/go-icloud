@@ -39,6 +39,7 @@ func photoChangesInputs(t *testing.T, path string) (string, *string) {
 	}
 
 	var fields map[string]json.RawMessage
+
 	err = json.Unmarshal(data, &fields)
 	if err != nil {
 		t.Fatal(err)
@@ -83,29 +84,7 @@ func runPhotoChangesSDK(t *testing.T, path string, scenario accountScenario) {
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	key, since := photoChangesInputs(t, path)
 
-	var library *icloud.PhotoLibrary
-
-	prior := []icloud.ResponseMetadata{}
-
-	if key != "" {
-		libraries, discoveryErr := client.ListPhotoLibraries(t.Context(), icloud.ListPhotoLibrariesRequest{Auth: auth})
-		if discoveryErr != nil {
-			t.Fatal(discoveryErr)
-		}
-
-		prior = libraries.Responses
-		for _, candidate := range libraries.Libraries {
-			if candidate.ID == key {
-				library = &candidate
-
-				break
-			}
-		}
-
-		if library == nil {
-			t.Fatal("selected library missing")
-		}
-	}
+	library, prior := selectedPhotoChangesLibrary(t, client, auth, key)
 
 	actual, err := client.GetPhotoChanges(
 		t.Context(),
@@ -214,7 +193,9 @@ func checkSelectedPhotoFailure(
 
 func checkPhotoChangesProjection(t *testing.T, actual []icloud.PhotoChange, raw json.RawMessage) {
 	t.Helper()
+
 	var expected []map[string]json.RawMessage
+
 	err := json.Unmarshal(raw, &expected)
 	if err != nil {
 		t.Fatalf("%v / %v / %v", err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
@@ -228,6 +209,7 @@ func checkPhotoChangesProjection(t *testing.T, actual []icloud.PhotoChange, raw 
 
 		if string(change["modified"]) != "null" {
 			var value string
+
 			decodeErr := json.Unmarshal(change["modified"], &value)
 			if decodeErr != nil {
 				t.Fatal(decodeErr)
@@ -251,4 +233,27 @@ func checkPhotoChangesProjection(t *testing.T, actual []icloud.PhotoChange, raw 
 	}
 
 	checkSDKValue(t, actual, encoded)
+}
+
+func selectedPhotoChangesLibrary(
+	t *testing.T,
+	client *icloud.SDK,
+	auth icloud.AuthContext,
+	key string,
+) (*icloud.PhotoLibrary, []icloud.ResponseMetadata) {
+	t.Helper()
+	if key == "" {
+		return nil, []icloud.ResponseMetadata{}
+	}
+	libraries, err := client.ListPhotoLibraries(t.Context(), icloud.ListPhotoLibrariesRequest{Auth: auth})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, library := range libraries.Libraries {
+		if library.ID == key {
+			return &library, libraries.Responses
+		}
+	}
+	t.Fatal("selected library missing")
+	return nil, nil
 }

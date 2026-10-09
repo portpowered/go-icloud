@@ -89,7 +89,7 @@ func photoCountFixtureAlbum(t *testing.T, path string) string {
 		t.Fatal(decodeErr)
 	}
 
-	album := "Library"
+	album := photoLibraryFixtureName
 	if raw, exists := row["album"]; exists {
 		decodeErr := json.Unmarshal(raw, &album)
 		if decodeErr != nil {
@@ -99,3 +99,5 @@ func photoCountFixtureAlbum(t *testing.T, path string) string {
 
 	return album
 }
+
+const photoLibraryFixtureName = "Library"

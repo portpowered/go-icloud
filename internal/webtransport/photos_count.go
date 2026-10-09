@@ -32,6 +32,7 @@ func (client *Client) PhotosAlbumCount(
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
+
 	request, err := photosCountRequest(auth, body)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
@@ -193,11 +194,11 @@ func photosCountBody(auth RequestContext, index string) ([]byte, error) {
 	}
 
 	return bytes.ReplaceAll(body, originalIdentity, orderedIdentity), nil
-
 }
 
 func photosCountRequest(auth RequestContext, body []byte) (*http.Request, error) {
 	var err error
+
 	params := new(photosapi.PhotosCountAlbumsParams)
 	params.ClientId = auth.Params.ClientId
 	params.Dsid = auth.Params.Dsid
