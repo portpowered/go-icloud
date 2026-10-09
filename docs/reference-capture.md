@@ -1,5 +1,15 @@
 # Reference capture development
 
+Twelve additional compound cases bind typed versus untyped asset URLs, byte-backed
+related text and invalid UTF-8 replacement, encoded attachment URLs, raw recurrence
+frequency selection, tombstone skipping, duplicate replacement across pages,
+and validation of an invalid related image before orphan filtering. The complete
+compound reference matrix now has twenty cases and twenty-one paired exchanges.
+STRING frequency `"2"` and DOUBLE frequency `2.9` both fall back to daily; the
+Source does not coerce or truncate these values before enum selection. Byte-backed
+text is decoded before domain projection. These differences are required Go parity
+work, not excluded malformed caller-input behavior (LIB-05/LIB-12).
+
 Eight synthetic compound reminder query cases exercise all supported related
 record types: alarms, location triggers, URL/image attachments, hashtags, and
 recurrence rules. The pinned Source produces the complete portable results,
