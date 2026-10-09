@@ -39,7 +39,7 @@ func (client *Client) PhotosAlbumCount(
 		FilterBy: filter}
 	payload := cloudkit.PhotosCountRequest{Batch: []cloudkit.PhotosCountRequestBatch{{
 		ResultsLimit: cloudkit.PhotosCountRequestBatchResultsLimitN1, Query: query,
-		ZoneWide: cloudkit.True, ZoneID: zone}}}
+		ZoneWide: cloudkit.PhotosCountRequestBatchZoneWideTrue, ZoneID: zone}}}
 
 	body, err := referenceJSON(payload)
 	if err != nil {

@@ -1574,13 +1574,13 @@ func (e PhotosCountRequestBatchResultsLimit) Valid() bool {
 
 // Defines values for PhotosCountRequestBatchZoneWide.
 const (
-	True PhotosCountRequestBatchZoneWide = true
+	PhotosCountRequestBatchZoneWideTrue PhotosCountRequestBatchZoneWide = true
 )
 
 // Valid indicates whether the value is a known member of the PhotosCountRequestBatchZoneWide enum.
 func (e PhotosCountRequestBatchZoneWide) Valid() bool {
 	switch e {
-	case True:
+	case PhotosCountRequestBatchZoneWideTrue:
 		return true
 	default:
 		return false
@@ -2477,11 +2477,10 @@ func (e ReminderPendingChildOperationOperationType) Valid() bool {
 
 // Defines values for ReminderPendingChildOperationRecordRecordType.
 const (
-	ReminderPendingChildOperationRecordRecordTypeAlarm          ReminderPendingChildOperationRecordRecordType = "Alarm"
-	ReminderPendingChildOperationRecordRecordTypeAlarmTrigger   ReminderPendingChildOperationRecordRecordType = "AlarmTrigger"
-	ReminderPendingChildOperationRecordRecordTypeAttachment     ReminderPendingChildOperationRecordRecordType = "Attachment"
-	ReminderPendingChildOperationRecordRecordTypeHashtag        ReminderPendingChildOperationRecordRecordType = "Hashtag"
-	ReminderPendingChildOperationRecordRecordTypeRecurrenceRule ReminderPendingChildOperationRecordRecordType = "RecurrenceRule"
+	ReminderPendingChildOperationRecordRecordTypeAlarm        ReminderPendingChildOperationRecordRecordType = "Alarm"
+	ReminderPendingChildOperationRecordRecordTypeAlarmTrigger ReminderPendingChildOperationRecordRecordType = "AlarmTrigger"
+	ReminderPendingChildOperationRecordRecordTypeAttachment   ReminderPendingChildOperationRecordRecordType = "Attachment"
+	ReminderPendingChildOperationRecordRecordTypeHashtag      ReminderPendingChildOperationRecordRecordType = "Hashtag"
 )
 
 // Valid indicates whether the value is a known member of the ReminderPendingChildOperationRecordRecordType enum.
@@ -2494,8 +2493,6 @@ func (e ReminderPendingChildOperationRecordRecordType) Valid() bool {
 	case ReminderPendingChildOperationRecordRecordTypeAttachment:
 		return true
 	case ReminderPendingChildOperationRecordRecordTypeHashtag:
-		return true
-	case ReminderPendingChildOperationRecordRecordTypeRecurrenceRule:
 		return true
 	default:
 		return false
@@ -2511,6 +2508,315 @@ const (
 func (e ReminderRecordType) Valid() bool {
 	switch e {
 	case ReminderRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceCreationOperationOperationType.
+const (
+	ReminderRecurrenceCreationOperationTypeCreate ReminderRecurrenceCreationOperationOperationType = "create"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceCreationOperationOperationType enum.
+func (e ReminderRecurrenceCreationOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceCreationOperationTypeCreate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceCreationRecordRecordType.
+const (
+	ReminderRecurrenceCreationRecordTypeRecurrenceRule ReminderRecurrenceCreationRecordRecordType = "RecurrenceRule"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceCreationRecordRecordType enum.
+func (e ReminderRecurrenceCreationRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceCreationRecordTypeRecurrenceRule:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceCreationRequestAtomic.
+const (
+	ReminderRecurrenceCreationRequestAtomicTrue ReminderRecurrenceCreationRequestAtomic = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceCreationRequestAtomic enum.
+func (e ReminderRecurrenceCreationRequestAtomic) Valid() bool {
+	switch e {
+	case ReminderRecurrenceCreationRequestAtomicTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceDeletionOperationOperationType.
+const (
+	ReminderRecurrenceDeletionOperationTypeUpdate ReminderRecurrenceDeletionOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceDeletionOperationOperationType enum.
+func (e ReminderRecurrenceDeletionOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceDeletionOperationTypeUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceDeletionRecordRecordType.
+const (
+	ReminderRecurrenceDeletionRecordTypeRecurrenceRule ReminderRecurrenceDeletionRecordRecordType = "RecurrenceRule"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceDeletionRecordRecordType enum.
+func (e ReminderRecurrenceDeletionRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceDeletionRecordTypeRecurrenceRule:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceDeletionRequestAtomic.
+const (
+	ReminderRecurrenceDeletionRequestAtomicTrue ReminderRecurrenceDeletionRequestAtomic = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceDeletionRequestAtomic enum.
+func (e ReminderRecurrenceDeletionRequestAtomic) Valid() bool {
+	switch e {
+	case ReminderRecurrenceDeletionRequestAtomicTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceParentOperationOperationType.
+const (
+	ReminderRecurrenceParentOperationTypeUpdate ReminderRecurrenceParentOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceParentOperationOperationType enum.
+func (e ReminderRecurrenceParentOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceParentOperationTypeUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceParentRecordRecordType.
+const (
+	ReminderRecurrenceParentRecordTypeReminder ReminderRecurrenceParentRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceParentRecordRecordType enum.
+func (e ReminderRecurrenceParentRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceParentRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceReferenceType.
+const (
+	ReminderRecurrenceReferenceTypeREFERENCE ReminderRecurrenceReferenceType = "REFERENCE"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceReferenceType enum.
+func (e ReminderRecurrenceReferenceType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceReferenceTypeREFERENCE:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceUpdateOperationOperationType.
+const (
+	ReminderRecurrenceUpdateOperationTypeUpdate ReminderRecurrenceUpdateOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceUpdateOperationOperationType enum.
+func (e ReminderRecurrenceUpdateOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceUpdateOperationTypeUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceUpdateRecordRecordType.
+const (
+	ReminderRecurrenceUpdateRecordTypeRecurrenceRule ReminderRecurrenceUpdateRecordRecordType = "RecurrenceRule"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceUpdateRecordRecordType enum.
+func (e ReminderRecurrenceUpdateRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceUpdateRecordTypeRecurrenceRule:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceWriteCountType.
+const (
+	ReminderRecurrenceWriteCountTypeINT64 ReminderRecurrenceWriteCountType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceWriteCountType enum.
+func (e ReminderRecurrenceWriteCountType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceWriteCountTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceWriteFrequencyType.
+const (
+	ReminderRecurrenceWriteFrequencyTypeINT64 ReminderRecurrenceWriteFrequencyType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceWriteFrequencyType enum.
+func (e ReminderRecurrenceWriteFrequencyType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceWriteFrequencyTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceWriteFrequencyValue.
+const (
+	ReminderRecurrenceWriteFrequency1 ReminderRecurrenceWriteFrequencyValue = 1
+	ReminderRecurrenceWriteFrequency2 ReminderRecurrenceWriteFrequencyValue = 2
+	ReminderRecurrenceWriteFrequency3 ReminderRecurrenceWriteFrequencyValue = 3
+	ReminderRecurrenceWriteFrequency4 ReminderRecurrenceWriteFrequencyValue = 4
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceWriteFrequencyValue enum.
+func (e ReminderRecurrenceWriteFrequencyValue) Valid() bool {
+	switch e {
+	case ReminderRecurrenceWriteFrequency1:
+		return true
+	case ReminderRecurrenceWriteFrequency2:
+		return true
+	case ReminderRecurrenceWriteFrequency3:
+		return true
+	case ReminderRecurrenceWriteFrequency4:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceWriteIntervalType.
+const (
+	ReminderRecurrenceWriteIntervalTypeINT64 ReminderRecurrenceWriteIntervalType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceWriteIntervalType enum.
+func (e ReminderRecurrenceWriteIntervalType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceWriteIntervalTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceWriteWeekdayType.
+const (
+	ReminderRecurrenceWriteWeekdayTypeINT64 ReminderRecurrenceWriteWeekdayType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceWriteWeekdayType enum.
+func (e ReminderRecurrenceWriteWeekdayType) Valid() bool {
+	switch e {
+	case ReminderRecurrenceWriteWeekdayTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRelationDeletedType.
+const (
+	ReminderRelationDeletedTypeINT64 ReminderRelationDeletedType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRelationDeletedType enum.
+func (e ReminderRelationDeletedType) Valid() bool {
+	switch e {
+	case ReminderRelationDeletedTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRelationDeletedValue.
+const (
+	ReminderRelationDeleted1 ReminderRelationDeletedValue = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderRelationDeletedValue enum.
+func (e ReminderRelationDeletedValue) Valid() bool {
+	switch e {
+	case ReminderRelationDeleted1:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRelationZeroType.
+const (
+	ReminderRelationZeroTypeINT64 ReminderRelationZeroType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRelationZeroType enum.
+func (e ReminderRelationZeroType) Valid() bool {
+	switch e {
+	case ReminderRelationZeroTypeINT64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRelationZeroValue.
+const (
+	ReminderRelationZero0 ReminderRelationZeroValue = 0
+)
+
+// Valid indicates whether the value is a known member of the ReminderRelationZeroValue enum.
+func (e ReminderRelationZeroValue) Valid() bool {
+	switch e {
+	case ReminderRelationZero0:
 		return true
 	default:
 		return false
@@ -4374,6 +4680,104 @@ type ReminderPendingChildOperationRecordRecordType string
 // ReminderRecordType Pinned Reminder domain mapping protocol value.
 type ReminderRecordType string
 
+// ReminderRecurrenceCreationFields defines model for ReminderRecurrenceCreationFields.
+type ReminderRecurrenceCreationFields struct {
+	Reminder          ReminderRecurrenceReference      `json:"Reminder"`
+	Frequency         ReminderRecurrenceWriteFrequency `json:"Frequency"`
+	Interval          ReminderRecurrenceWriteInterval  `json:"Interval"`
+	OccurrenceCount   ReminderRecurrenceWriteCount     `json:"OccurrenceCount"`
+	FirstDayOfTheWeek ReminderRecurrenceWriteWeekday   `json:"FirstDayOfTheWeek"`
+	Imported          ReminderRelationZero             `json:"Imported"`
+	Deleted           ReminderRelationZero             `json:"Deleted"`
+}
+
+// ReminderRecurrenceCreationOperation defines model for ReminderRecurrenceCreationOperation.
+type ReminderRecurrenceCreationOperation struct {
+	OperationType ReminderRecurrenceCreationOperationOperationType `json:"operationType"`
+	Record        ReminderRecurrenceCreationRecord                 `json:"record"`
+}
+
+// ReminderRecurrenceCreationOperationOperationType defines model for ReminderRecurrenceCreationOperation.OperationType.
+type ReminderRecurrenceCreationOperationOperationType string
+
+// ReminderRecurrenceCreationRecord defines model for ReminderRecurrenceCreationRecord.
+type ReminderRecurrenceCreationRecord struct {
+	RecordName      string                                     `json:"recordName"`
+	RecordType      ReminderRecurrenceCreationRecordRecordType `json:"recordType"`
+	Fields          ReminderRecurrenceCreationFields           `json:"fields"`
+	PluginFields    map[string]interface{}                     `json:"pluginFields"`
+	RecordChangeTag *string                                    `json:"recordChangeTag,omitempty"`
+
+	// Parent Write-side parent reference embedded under a record.
+	Parent CKWriteParent `json:"parent"`
+}
+
+// ReminderRecurrenceCreationRecordRecordType defines model for ReminderRecurrenceCreationRecord.RecordType.
+type ReminderRecurrenceCreationRecordRecordType string
+
+// ReminderRecurrenceCreationRequest Example: {"atomic":true,"operations":[{"operationType":"update","record":{"fields":{"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"RecurrenceRuleIDs":{"type":"STRING_LIST","value":["00000001-0000-4000-8000-000000000000"]},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"recurrenceRuleIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"}}}"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}},{"operationType":"create","record":{"fields":{"Deleted":{"type":"INT64","value":0},"FirstDayOfTheWeek":{"type":"INT64","value":1},"Frequency":{"type":"INT64","value":2},"Imported":{"type":"INT64","value":0},"Interval":{"type":"INT64","value":3},"OccurrenceCount":{"type":"INT64","value":8},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}}},"parent":{"recordName":"Reminder/synthetic-item"},"pluginFields":{},"recordName":"RecurrenceRule/00000001-0000-4000-8000-000000000000","recordType":"RecurrenceRule"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderRecurrenceCreationRequest struct {
+	// Operations Exactly one reminder link operation followed by exactly one recurrence child operation.
+	Operations []ReminderRecurrenceCreationRequest_Operations_Item `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq                             `json:"zoneID"`
+	Atomic ReminderRecurrenceCreationRequestAtomic `json:"atomic"`
+}
+
+// ReminderRecurrenceCreationRequest_Operations_Item defines model for ReminderRecurrenceCreationRequest.operations.Item.
+type ReminderRecurrenceCreationRequest_Operations_Item struct {
+	union json.RawMessage
+}
+
+// ReminderRecurrenceCreationRequestAtomic defines model for ReminderRecurrenceCreationRequest.Atomic.
+type ReminderRecurrenceCreationRequestAtomic bool
+
+// ReminderRecurrenceDeletionFields defines model for ReminderRecurrenceDeletionFields.
+type ReminderRecurrenceDeletionFields struct {
+	Deleted  ReminderRelationDeleted      `json:"Deleted"`
+	Reminder *ReminderRecurrenceReference `json:"Reminder,omitempty"`
+}
+
+// ReminderRecurrenceDeletionOperation defines model for ReminderRecurrenceDeletionOperation.
+type ReminderRecurrenceDeletionOperation struct {
+	OperationType ReminderRecurrenceDeletionOperationOperationType `json:"operationType"`
+	Record        ReminderRecurrenceDeletionRecord                 `json:"record"`
+}
+
+// ReminderRecurrenceDeletionOperationOperationType defines model for ReminderRecurrenceDeletionOperation.OperationType.
+type ReminderRecurrenceDeletionOperationOperationType string
+
+// ReminderRecurrenceDeletionRecord defines model for ReminderRecurrenceDeletionRecord.
+type ReminderRecurrenceDeletionRecord struct {
+	RecordName      string                                     `json:"recordName"`
+	RecordType      ReminderRecurrenceDeletionRecordRecordType `json:"recordType"`
+	Fields          ReminderRecurrenceDeletionFields           `json:"fields"`
+	PluginFields    map[string]interface{}                     `json:"pluginFields"`
+	RecordChangeTag *string                                    `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderRecurrenceDeletionRecordRecordType defines model for ReminderRecurrenceDeletionRecord.RecordType.
+type ReminderRecurrenceDeletionRecordRecordType string
+
+// ReminderRecurrenceDeletionRequest Example: {"atomic":true,"operations":[{"operationType":"update","record":{"fields":{"LastModifiedDate":{"type":"TIMESTAMP","value":1700000000000},"RecurrenceRuleIDs":{"type":"STRING_LIST","value":["keep-rule"]},"ResolutionTokenMap":{"type":"STRING","value":"{\"map\":{\"recurrenceRuleIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"}}}"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Reminder/synthetic-item","recordType":"Reminder"}},{"operationType":"update","record":{"fields":{"Deleted":{"type":"INT64","value":1},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"RecurrenceRule/synthetic-rule","recordType":"RecurrenceRule"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderRecurrenceDeletionRequest struct {
+	// Operations Exactly one reminder link operation followed by exactly one recurrence child operation.
+	Operations []ReminderRecurrenceDeletionRequest_Operations_Item `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq                             `json:"zoneID"`
+	Atomic ReminderRecurrenceDeletionRequestAtomic `json:"atomic"`
+}
+
+// ReminderRecurrenceDeletionRequest_Operations_Item defines model for ReminderRecurrenceDeletionRequest.operations.Item.
+type ReminderRecurrenceDeletionRequest_Operations_Item struct {
+	union json.RawMessage
+}
+
+// ReminderRecurrenceDeletionRequestAtomic defines model for ReminderRecurrenceDeletionRequest.Atomic.
+type ReminderRecurrenceDeletionRequestAtomic bool
+
 // ReminderRecurrenceLinkFields defines model for ReminderRecurrenceLinkFields.
 type ReminderRecurrenceLinkFields struct {
 	RecurrenceRuleIDs  ReminderWriteStringList `json:"RecurrenceRuleIDs"`
@@ -4383,16 +4787,152 @@ type ReminderRecurrenceLinkFields struct {
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
+// ReminderRecurrenceLinkTokens defines model for ReminderRecurrenceLinkTokens.
+type ReminderRecurrenceLinkTokens struct {
+	// RecurrenceRuleIDs Per-field conflict-resolution token generated for a reminder mutation.
+	RecurrenceRuleIDs ReminderResolutionToken `json:"recurrenceRuleIDs"`
+
+	// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+	LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+}
+
 // ReminderRecurrenceLinkTokensMap defines model for ReminderRecurrenceLinkTokensMap.
 type ReminderRecurrenceLinkTokensMap struct {
-	Map struct {
-		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
-		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
-
-		// RecurrenceRuleIDs Per-field conflict-resolution token generated for a reminder mutation.
-		RecurrenceRuleIDs ReminderResolutionToken `json:"recurrenceRuleIDs"`
-	} `json:"map"`
+	Map ReminderRecurrenceLinkTokens `json:"map"`
 }
+
+// ReminderRecurrenceParentOperation defines model for ReminderRecurrenceParentOperation.
+type ReminderRecurrenceParentOperation struct {
+	OperationType ReminderRecurrenceParentOperationOperationType `json:"operationType"`
+	Record        ReminderRecurrenceParentRecord                 `json:"record"`
+}
+
+// ReminderRecurrenceParentOperationOperationType defines model for ReminderRecurrenceParentOperation.OperationType.
+type ReminderRecurrenceParentOperationOperationType string
+
+// ReminderRecurrenceParentRecord defines model for ReminderRecurrenceParentRecord.
+type ReminderRecurrenceParentRecord struct {
+	RecordName      string                                   `json:"recordName"`
+	RecordType      ReminderRecurrenceParentRecordRecordType `json:"recordType"`
+	Fields          ReminderRecurrenceLinkFields             `json:"fields"`
+	PluginFields    map[string]interface{}                   `json:"pluginFields"`
+	RecordChangeTag *string                                  `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderRecurrenceParentRecordRecordType defines model for ReminderRecurrenceParentRecord.RecordType.
+type ReminderRecurrenceParentRecordRecordType string
+
+// ReminderRecurrenceReference defines model for ReminderRecurrenceReference.
+type ReminderRecurrenceReference struct {
+	Type ReminderRecurrenceReferenceType `json:"type"`
+
+	// Value A validated named record reference.
+	Value ReminderWriteReferenceValue `json:"value"`
+}
+
+// ReminderRecurrenceReferenceType defines model for ReminderRecurrenceReference.Type.
+type ReminderRecurrenceReferenceType string
+
+// ReminderRecurrenceUpdateFields defines model for ReminderRecurrenceUpdateFields.
+type ReminderRecurrenceUpdateFields struct {
+	Frequency         *ReminderRecurrenceWriteFrequency `json:"Frequency,omitempty"`
+	Interval          *ReminderRecurrenceWriteInterval  `json:"Interval,omitempty"`
+	OccurrenceCount   *ReminderRecurrenceWriteCount     `json:"OccurrenceCount,omitempty"`
+	FirstDayOfTheWeek *ReminderRecurrenceWriteWeekday   `json:"FirstDayOfTheWeek,omitempty"`
+	Reminder          *ReminderRecurrenceReference      `json:"Reminder,omitempty"`
+}
+
+// ReminderRecurrenceUpdateOperation defines model for ReminderRecurrenceUpdateOperation.
+type ReminderRecurrenceUpdateOperation struct {
+	OperationType ReminderRecurrenceUpdateOperationOperationType `json:"operationType"`
+	Record        ReminderRecurrenceUpdateRecord                 `json:"record"`
+}
+
+// ReminderRecurrenceUpdateOperationOperationType defines model for ReminderRecurrenceUpdateOperation.OperationType.
+type ReminderRecurrenceUpdateOperationOperationType string
+
+// ReminderRecurrenceUpdateRecord defines model for ReminderRecurrenceUpdateRecord.
+type ReminderRecurrenceUpdateRecord struct {
+	RecordName      string                                   `json:"recordName"`
+	RecordType      ReminderRecurrenceUpdateRecordRecordType `json:"recordType"`
+	Fields          ReminderRecurrenceUpdateFields           `json:"fields"`
+	PluginFields    map[string]interface{}                   `json:"pluginFields"`
+	RecordChangeTag *string                                  `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderRecurrenceUpdateRecordRecordType defines model for ReminderRecurrenceUpdateRecord.RecordType.
+type ReminderRecurrenceUpdateRecordRecordType string
+
+// ReminderRecurrenceUpdateRequest Example: {"operations":[{"operationType":"update","record":{"fields":{"FirstDayOfTheWeek":{"type":"INT64","value":2},"Frequency":{"type":"INT64","value":3},"Interval":{"type":"INT64","value":2},"OccurrenceCount":{"type":"INT64","value":4},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"RecurrenceRule/synthetic-rule","recordType":"RecurrenceRule"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderRecurrenceUpdateRequest struct {
+	Operations []ReminderRecurrenceUpdateOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
+// ReminderRecurrenceWriteCount defines model for ReminderRecurrenceWriteCount.
+type ReminderRecurrenceWriteCount struct {
+	Type  ReminderRecurrenceWriteCountType `json:"type"`
+	Value int64                            `json:"value"`
+}
+
+// ReminderRecurrenceWriteCountType defines model for ReminderRecurrenceWriteCount.Type.
+type ReminderRecurrenceWriteCountType string
+
+// ReminderRecurrenceWriteFrequency defines model for ReminderRecurrenceWriteFrequency.
+type ReminderRecurrenceWriteFrequency struct {
+	Type  ReminderRecurrenceWriteFrequencyType  `json:"type"`
+	Value ReminderRecurrenceWriteFrequencyValue `json:"value"`
+}
+
+// ReminderRecurrenceWriteFrequencyType defines model for ReminderRecurrenceWriteFrequency.Type.
+type ReminderRecurrenceWriteFrequencyType string
+
+// ReminderRecurrenceWriteFrequencyValue defines model for ReminderRecurrenceWriteFrequency.Value.
+type ReminderRecurrenceWriteFrequencyValue int64
+
+// ReminderRecurrenceWriteInterval defines model for ReminderRecurrenceWriteInterval.
+type ReminderRecurrenceWriteInterval struct {
+	Type  ReminderRecurrenceWriteIntervalType `json:"type"`
+	Value int64                               `json:"value"`
+}
+
+// ReminderRecurrenceWriteIntervalType defines model for ReminderRecurrenceWriteInterval.Type.
+type ReminderRecurrenceWriteIntervalType string
+
+// ReminderRecurrenceWriteWeekday defines model for ReminderRecurrenceWriteWeekday.
+type ReminderRecurrenceWriteWeekday struct {
+	Type  ReminderRecurrenceWriteWeekdayType `json:"type"`
+	Value int64                              `json:"value"`
+}
+
+// ReminderRecurrenceWriteWeekdayType defines model for ReminderRecurrenceWriteWeekday.Type.
+type ReminderRecurrenceWriteWeekdayType string
+
+// ReminderRelationDeleted defines model for ReminderRelationDeleted.
+type ReminderRelationDeleted struct {
+	Type  ReminderRelationDeletedType  `json:"type"`
+	Value ReminderRelationDeletedValue `json:"value"`
+}
+
+// ReminderRelationDeletedType defines model for ReminderRelationDeleted.Type.
+type ReminderRelationDeletedType string
+
+// ReminderRelationDeletedValue defines model for ReminderRelationDeleted.Value.
+type ReminderRelationDeletedValue int64
+
+// ReminderRelationZero defines model for ReminderRelationZero.
+type ReminderRelationZero struct {
+	Type  ReminderRelationZeroType  `json:"type"`
+	Value ReminderRelationZeroValue `json:"value"`
+}
+
+// ReminderRelationZeroType defines model for ReminderRelationZero.Type.
+type ReminderRelationZeroType string
+
+// ReminderRelationZeroValue defines model for ReminderRelationZero.Value.
+type ReminderRelationZeroValue int64
 
 // ReminderResolutionToken Per-field conflict-resolution token generated for a reminder mutation.
 type ReminderResolutionToken struct {
@@ -12533,22 +13073,32 @@ func (t *ReminderLinkedParentRecord_Fields) MergeReminderAttachmentLinkFields(v 
 	return err
 }
 
-// AsReminderRecurrenceLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderRecurrenceLinkFields
-func (t ReminderLinkedParentRecord_Fields) AsReminderRecurrenceLinkFields() (ReminderRecurrenceLinkFields, error) {
-	var body ReminderRecurrenceLinkFields
+func (t ReminderLinkedParentRecord_Fields) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderLinkedParentRecord_Fields) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderRecurrenceParentOperation returns the union data inside the ReminderRecurrenceCreationRequest_Operations_Item as a ReminderRecurrenceParentOperation
+func (t ReminderRecurrenceCreationRequest_Operations_Item) AsReminderRecurrenceParentOperation() (ReminderRecurrenceParentOperation, error) {
+	var body ReminderRecurrenceParentOperation
 	err := json.Unmarshal(t.union, &body)
 	return body, err
 }
 
-// FromReminderRecurrenceLinkFields overwrites any union data inside the ReminderLinkedParentRecord_Fields as the provided ReminderRecurrenceLinkFields
-func (t *ReminderLinkedParentRecord_Fields) FromReminderRecurrenceLinkFields(v ReminderRecurrenceLinkFields) error {
+// FromReminderRecurrenceParentOperation overwrites any union data inside the ReminderRecurrenceCreationRequest_Operations_Item as the provided ReminderRecurrenceParentOperation
+func (t *ReminderRecurrenceCreationRequest_Operations_Item) FromReminderRecurrenceParentOperation(v ReminderRecurrenceParentOperation) error {
 	b, err := json.Marshal(v)
 	t.union = b
 	return err
 }
 
-// MergeReminderRecurrenceLinkFields performs a merge with any union data inside the ReminderLinkedParentRecord_Fields, using the provided ReminderRecurrenceLinkFields
-func (t *ReminderLinkedParentRecord_Fields) MergeReminderRecurrenceLinkFields(v ReminderRecurrenceLinkFields) error {
+// MergeReminderRecurrenceParentOperation performs a merge with any union data inside the ReminderRecurrenceCreationRequest_Operations_Item, using the provided ReminderRecurrenceParentOperation
+func (t *ReminderRecurrenceCreationRequest_Operations_Item) MergeReminderRecurrenceParentOperation(v ReminderRecurrenceParentOperation) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -12559,12 +13109,100 @@ func (t *ReminderLinkedParentRecord_Fields) MergeReminderRecurrenceLinkFields(v 
 	return err
 }
 
-func (t ReminderLinkedParentRecord_Fields) MarshalJSON() ([]byte, error) {
+// AsReminderRecurrenceCreationOperation returns the union data inside the ReminderRecurrenceCreationRequest_Operations_Item as a ReminderRecurrenceCreationOperation
+func (t ReminderRecurrenceCreationRequest_Operations_Item) AsReminderRecurrenceCreationOperation() (ReminderRecurrenceCreationOperation, error) {
+	var body ReminderRecurrenceCreationOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderRecurrenceCreationOperation overwrites any union data inside the ReminderRecurrenceCreationRequest_Operations_Item as the provided ReminderRecurrenceCreationOperation
+func (t *ReminderRecurrenceCreationRequest_Operations_Item) FromReminderRecurrenceCreationOperation(v ReminderRecurrenceCreationOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderRecurrenceCreationOperation performs a merge with any union data inside the ReminderRecurrenceCreationRequest_Operations_Item, using the provided ReminderRecurrenceCreationOperation
+func (t *ReminderRecurrenceCreationRequest_Operations_Item) MergeReminderRecurrenceCreationOperation(v ReminderRecurrenceCreationOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderRecurrenceCreationRequest_Operations_Item) MarshalJSON() ([]byte, error) {
 	b, err := t.union.MarshalJSON()
 	return b, err
 }
 
-func (t *ReminderLinkedParentRecord_Fields) UnmarshalJSON(b []byte) error {
+func (t *ReminderRecurrenceCreationRequest_Operations_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderRecurrenceParentOperation returns the union data inside the ReminderRecurrenceDeletionRequest_Operations_Item as a ReminderRecurrenceParentOperation
+func (t ReminderRecurrenceDeletionRequest_Operations_Item) AsReminderRecurrenceParentOperation() (ReminderRecurrenceParentOperation, error) {
+	var body ReminderRecurrenceParentOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderRecurrenceParentOperation overwrites any union data inside the ReminderRecurrenceDeletionRequest_Operations_Item as the provided ReminderRecurrenceParentOperation
+func (t *ReminderRecurrenceDeletionRequest_Operations_Item) FromReminderRecurrenceParentOperation(v ReminderRecurrenceParentOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderRecurrenceParentOperation performs a merge with any union data inside the ReminderRecurrenceDeletionRequest_Operations_Item, using the provided ReminderRecurrenceParentOperation
+func (t *ReminderRecurrenceDeletionRequest_Operations_Item) MergeReminderRecurrenceParentOperation(v ReminderRecurrenceParentOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderRecurrenceDeletionOperation returns the union data inside the ReminderRecurrenceDeletionRequest_Operations_Item as a ReminderRecurrenceDeletionOperation
+func (t ReminderRecurrenceDeletionRequest_Operations_Item) AsReminderRecurrenceDeletionOperation() (ReminderRecurrenceDeletionOperation, error) {
+	var body ReminderRecurrenceDeletionOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderRecurrenceDeletionOperation overwrites any union data inside the ReminderRecurrenceDeletionRequest_Operations_Item as the provided ReminderRecurrenceDeletionOperation
+func (t *ReminderRecurrenceDeletionRequest_Operations_Item) FromReminderRecurrenceDeletionOperation(v ReminderRecurrenceDeletionOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderRecurrenceDeletionOperation performs a merge with any union data inside the ReminderRecurrenceDeletionRequest_Operations_Item, using the provided ReminderRecurrenceDeletionOperation
+func (t *ReminderRecurrenceDeletionRequest_Operations_Item) MergeReminderRecurrenceDeletionOperation(v ReminderRecurrenceDeletionOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderRecurrenceDeletionRequest_Operations_Item) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderRecurrenceDeletionRequest_Operations_Item) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }
@@ -12663,6 +13301,84 @@ func (t *RemindersModificationRequest) FromRemindersOtherModificationRequest(v R
 
 // MergeRemindersOtherModificationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided RemindersOtherModificationRequest
 func (t *RemindersModificationRequest) MergeRemindersOtherModificationRequest(v RemindersOtherModificationRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderRecurrenceCreationRequest returns the union data inside the RemindersModificationRequest as a ReminderRecurrenceCreationRequest
+func (t RemindersModificationRequest) AsReminderRecurrenceCreationRequest() (ReminderRecurrenceCreationRequest, error) {
+	var body ReminderRecurrenceCreationRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderRecurrenceCreationRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderRecurrenceCreationRequest
+func (t *RemindersModificationRequest) FromReminderRecurrenceCreationRequest(v ReminderRecurrenceCreationRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderRecurrenceCreationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderRecurrenceCreationRequest
+func (t *RemindersModificationRequest) MergeReminderRecurrenceCreationRequest(v ReminderRecurrenceCreationRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderRecurrenceUpdateRequest returns the union data inside the RemindersModificationRequest as a ReminderRecurrenceUpdateRequest
+func (t RemindersModificationRequest) AsReminderRecurrenceUpdateRequest() (ReminderRecurrenceUpdateRequest, error) {
+	var body ReminderRecurrenceUpdateRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderRecurrenceUpdateRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderRecurrenceUpdateRequest
+func (t *RemindersModificationRequest) FromReminderRecurrenceUpdateRequest(v ReminderRecurrenceUpdateRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderRecurrenceUpdateRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderRecurrenceUpdateRequest
+func (t *RemindersModificationRequest) MergeReminderRecurrenceUpdateRequest(v ReminderRecurrenceUpdateRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderRecurrenceDeletionRequest returns the union data inside the RemindersModificationRequest as a ReminderRecurrenceDeletionRequest
+func (t RemindersModificationRequest) AsReminderRecurrenceDeletionRequest() (ReminderRecurrenceDeletionRequest, error) {
+	var body ReminderRecurrenceDeletionRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderRecurrenceDeletionRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderRecurrenceDeletionRequest
+func (t *RemindersModificationRequest) FromReminderRecurrenceDeletionRequest(v ReminderRecurrenceDeletionRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderRecurrenceDeletionRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderRecurrenceDeletionRequest
+func (t *RemindersModificationRequest) MergeReminderRecurrenceDeletionRequest(v ReminderRecurrenceDeletionRequest) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err

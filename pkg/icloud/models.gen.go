@@ -497,6 +497,31 @@ type CreateDriveFolderResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// CreateReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type CreateReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// FirstDayOfWeek Provider weekday index; omission uses zero.
+	FirstDayOfWeek *int64 `json:"firstDayOfWeek,omitempty"`
+
+	// Frequency Daily through yearly recurrence; omission uses daily.
+	Frequency *ReminderRecurrenceRuleFrequency `json:"frequency,omitempty"`
+
+	// Interval Frequency multiplier; omission uses one.
+	Interval *int64 `json:"interval,omitempty"`
+
+	// OccurrenceCount Occurrence count; omission uses zero.
+	OccurrenceCount *int64 `json:"occurrenceCount,omitempty"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
 // CreateReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"listID":"List/synthetic-list","title":"Synthetic title"}
 type CreateReminderRequest struct {
 	AllDay bool `json:"allDay,omitempty"`
@@ -525,6 +550,24 @@ type DeleteDriveNodeRequest struct {
 
 // DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DeleteReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
 
 // DeleteReminderRequest Soft-delete a reminder by raw or complete record identifier using its current revision.
 //
@@ -2030,6 +2073,33 @@ type ReminderRecurrenceRule struct {
 // ReminderRecurrenceRuleFrequency Daily through yearly recurrence; unknown values default to daily.
 type ReminderRecurrenceRuleFrequency int
 
+// ReminderRecurrenceRuleMutationResult Acknowledged recurrence settings and response evidence.
+//
+// Example: {"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"responses":[]}
+type ReminderRecurrenceRuleMutationResult struct {
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+	Responses      []ResponseMetadata     `json:"responses"`
+}
+
+// ReminderRecurrenceRuleRelationResult Acknowledged recurrence settings and response evidence.
+//
+// Example: {"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderRecurrenceRuleRelationResult struct {
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ReminderURLAttachment URL attachment linked to a reminder.
 //
 // Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
@@ -2186,6 +2256,31 @@ type TrashDriveNodeResult = DriveItemChangeResult
 
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
+
+// UpdateReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"interval":2,"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}}
+type UpdateReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// FirstDayOfWeek Provider weekday index; omission uses zero.
+	FirstDayOfWeek *int64 `json:"firstDayOfWeek,omitempty"`
+
+	// Frequency Daily through yearly recurrence; omission uses daily.
+	Frequency *ReminderRecurrenceRuleFrequency `json:"frequency,omitempty"`
+
+	// Interval Frequency multiplier; omission uses one.
+	Interval *int64 `json:"interval,omitempty"`
+
+	// OccurrenceCount Occurrence count; omission uses zero.
+	OccurrenceCount *int64 `json:"occurrenceCount,omitempty"`
+
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+}
 
 // UpdateReminderRequest Write the supplied reminder snapshot and return an independent updated snapshot.
 //

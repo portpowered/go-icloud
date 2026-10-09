@@ -20,6 +20,18 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// CreateReminderRecurrenceRule atomically creates and links a validated rule.
+	CreateReminderRecurrenceRule(ctx context.Context,
+		request CreateReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleRelationResult, error)
+	// UpdateReminderRecurrenceRule writes supplied recurrence settings.
+	UpdateReminderRecurrenceRule(ctx context.Context,
+		request UpdateReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleMutationResult, error)
+	// DeleteReminderRecurrenceRule atomically unlinks and soft-deletes a recurrence rule.
+	DeleteReminderRecurrenceRule(ctx context.Context,
+		request DeleteReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleRelationResult, error)
 	// CreateReminder creates a reminder and hydrates its acknowledged record.
 	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
 	// UpdateReminder writes a snapshot and returns an independent updated snapshot.

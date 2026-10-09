@@ -423,7 +423,7 @@ components:
       properties:
         id: {type: string, x-go-name: ID, description: "Complete provider record name."}
         reminderID: {type: string, x-go-name: ReminderID, description: "Complete parent reminder record name."}
-        frequency: {type: integer, enum: [1, 2, 3, 4], x-enum-varnames: [ReminderDaily, ReminderWeekly, ReminderMonthly, ReminderYearly], description: "Daily through yearly recurrence; unknown values default to daily."}
+        frequency: {$ref: '#/components/schemas/ReminderRecurrenceRuleFrequency'}
         interval: {type: integer, format: int64, minimum: 1, description: "Frequency multiplier; defaults to one."}
         occurrenceCount: {type: integer, format: int64, minimum: 0, description: "Occurrence count; zero means no count limit."}
         firstDayOfWeek: {type: integer, format: int64, minimum: 0, maximum: 6, description: "Provider weekday index from zero through six; defaults to zero."}
@@ -1466,3 +1466,110 @@ components:
         headers: {type: array, items: {$ref: '#/components/schemas/Header'}}
         cookies: {type: array, items: {$ref: '#/components/schemas/AuthCookie'}}
         chinaMainland: {type: boolean, description: Saved account region.}
+
+    ReminderRecurrenceRuleFrequency:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      x-enum-varnames:
+      - ReminderDaily
+      - ReminderWeekly
+      - ReminderMonthly
+      - ReminderYearly
+      description: Daily through yearly recurrence; unknown values default to daily.
+    CreateReminderRecurrenceRuleRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","title":"Untitled","description":"","completed":false,"completedDate":null,"dueDate":null,"startDate":null,"priority":0,"flagged":false,"allDay":false,"deleted":false,"timeZone":null,"alarmIDs":[],"hashtagIDs":[],"attachmentIDs":[],"recurrenceRuleIDs":[],"parentReminderID":null,"created":null,"modified":null,"recordChangeTag":null}}
+      type: object
+      additionalProperties: false
+      required:
+      - auth
+      - reminder
+      properties:
+        auth: &id001
+          $ref: '#/components/schemas/AuthContext'
+        reminder: &id006
+          $ref: '#/components/schemas/Reminder'
+        frequency: &id002
+          allOf:
+          - $ref: '#/components/schemas/ReminderRecurrenceRuleFrequency'
+          description: Daily through yearly recurrence; omission uses daily.
+        interval: &id003
+          type: integer
+          format: int64
+          minimum: 1
+          description: Frequency multiplier; omission uses one.
+        occurrenceCount: &id004
+          type: integer
+          format: int64
+          minimum: 0
+          description: Occurrence count; omission uses zero.
+        firstDayOfWeek: &id005
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 6
+          description: Provider weekday index; omission uses zero.
+      description: Recurrence rule creation, update, or unlink inputs.
+    UpdateReminderRecurrenceRuleRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"recurrenceRule":{"id":"RecurrenceRule/synthetic","reminderID":"Reminder/synthetic","frequency":1,"interval":1,"occurrenceCount":0,"firstDayOfWeek":0,"recordChangeTag":null},"interval":2}
+      minProperties: 3
+      type: object
+      additionalProperties: false
+      required:
+      - auth
+      - recurrenceRule
+      properties:
+        auth: *id001
+        recurrenceRule: &id007
+          $ref: '#/components/schemas/ReminderRecurrenceRule'
+        frequency: *id002
+        interval: *id003
+        occurrenceCount: *id004
+        firstDayOfWeek: *id005
+      description: Recurrence rule creation, update, or unlink inputs.
+    DeleteReminderRecurrenceRuleRequest:
+      example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","title":"Untitled","description":"","completed":false,"completedDate":null,"dueDate":null,"startDate":null,"priority":0,"flagged":false,"allDay":false,"deleted":false,"timeZone":null,"alarmIDs":[],"hashtagIDs":[],"attachmentIDs":[],"recurrenceRuleIDs":[],"parentReminderID":null,"created":null,"modified":null,"recordChangeTag":null},"recurrenceRule":{"id":"RecurrenceRule/synthetic","reminderID":"Reminder/synthetic","frequency":1,"interval":1,"occurrenceCount":0,"firstDayOfWeek":0,"recordChangeTag":null}}
+      type: object
+      additionalProperties: false
+      required:
+      - auth
+      - reminder
+      - recurrenceRule
+      properties:
+        auth: *id001
+        reminder: *id006
+        recurrenceRule: *id007
+      description: Recurrence rule creation, update, or unlink inputs.
+    ReminderRecurrenceRuleMutationResult:
+      example: {"recurrenceRule":{"id":"RecurrenceRule/synthetic","reminderID":"Reminder/synthetic","frequency":1,"interval":1,"occurrenceCount":0,"firstDayOfWeek":0,"recordChangeTag":null},"responses":[]}
+      type: object
+      additionalProperties: false
+      required:
+      - recurrenceRule
+      - responses
+      properties:
+        recurrenceRule: *id007
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseMetadata'
+      description: Acknowledged recurrence settings and response evidence.
+    ReminderRecurrenceRuleRelationResult:
+      example: {"reminder":{"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","title":"Untitled","description":"","completed":false,"completedDate":null,"dueDate":null,"startDate":null,"priority":0,"flagged":false,"allDay":false,"deleted":false,"timeZone":null,"alarmIDs":[],"hashtagIDs":[],"attachmentIDs":[],"recurrenceRuleIDs":[],"parentReminderID":null,"created":null,"modified":null,"recordChangeTag":null},"recurrenceRule":{"id":"RecurrenceRule/synthetic","reminderID":"Reminder/synthetic","frequency":1,"interval":1,"occurrenceCount":0,"firstDayOfWeek":0,"recordChangeTag":null},"responses":[]}
+      type: object
+      additionalProperties: false
+      required:
+      - reminder
+      - recurrenceRule
+      - responses
+      properties:
+        reminder: *id006
+        recurrenceRule: *id007
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseMetadata'
+      description: Acknowledged recurrence settings and response evidence.
