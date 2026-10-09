@@ -2455,6 +2455,104 @@
         "format": "binary",
         "x-go-type": "[]byte",
         "description": "Exact downloaded asset bytes, retained before decoding list membership."
+      },
+      "ListRecordType": {
+        "type": "string",
+        "enum": [
+          "List"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ZoneName": {
+        "type": "string",
+        "enum": [
+          "Reminders"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ZoneType": {
+        "type": "string",
+        "enum": [
+          "REGULAR_CUSTOM_ZONE"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ReminderIDPrefix": {
+        "type": "string",
+        "enum": [
+          "Reminder/"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "UntitledList": {
+        "type": "string",
+        "enum": [
+          "Untitled"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldName": {
+        "type": "string",
+        "enum": [
+          "Name"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldColor": {
+        "type": "string",
+        "enum": [
+          "Color"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldCount": {
+        "type": "string",
+        "enum": [
+          "Count"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldBadgeEmblem": {
+        "type": "string",
+        "enum": [
+          "BadgeEmblem"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldSortingStyle": {
+        "type": "string",
+        "enum": [
+          "SortingStyle"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldIsGroup": {
+        "type": "string",
+        "enum": [
+          "IsGroup"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldDeleted": {
+        "type": "string",
+        "enum": [
+          "Deleted"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldReminderIDs": {
+        "type": "string",
+        "enum": [
+          "ReminderIDs"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
+      },
+      "ListFieldReminderIDsAsset": {
+        "type": "string",
+        "enum": [
+          "ReminderIDsAsset"
+        ],
+        "description": "Pinned Reminders list protocol value used by the domain projection."
       }
     }
   }

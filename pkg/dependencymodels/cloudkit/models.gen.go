@@ -396,6 +396,216 @@ func (e CKUnknownListFieldType) Valid() bool {
 	}
 }
 
+// Defines values for ListFieldBadgeEmblem.
+const (
+	BadgeEmblem ListFieldBadgeEmblem = "BadgeEmblem"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldBadgeEmblem enum.
+func (e ListFieldBadgeEmblem) Valid() bool {
+	switch e {
+	case BadgeEmblem:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldColor.
+const (
+	Color ListFieldColor = "Color"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldColor enum.
+func (e ListFieldColor) Valid() bool {
+	switch e {
+	case Color:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldCount.
+const (
+	Count ListFieldCount = "Count"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldCount enum.
+func (e ListFieldCount) Valid() bool {
+	switch e {
+	case Count:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldDeleted.
+const (
+	Deleted ListFieldDeleted = "Deleted"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldDeleted enum.
+func (e ListFieldDeleted) Valid() bool {
+	switch e {
+	case Deleted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldIsGroup.
+const (
+	IsGroup ListFieldIsGroup = "IsGroup"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldIsGroup enum.
+func (e ListFieldIsGroup) Valid() bool {
+	switch e {
+	case IsGroup:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldName.
+const (
+	Name ListFieldName = "Name"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldName enum.
+func (e ListFieldName) Valid() bool {
+	switch e {
+	case Name:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldReminderIDs.
+const (
+	ReminderIDs ListFieldReminderIDs = "ReminderIDs"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldReminderIDs enum.
+func (e ListFieldReminderIDs) Valid() bool {
+	switch e {
+	case ReminderIDs:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldReminderIDsAsset.
+const (
+	ReminderIDsAsset ListFieldReminderIDsAsset = "ReminderIDsAsset"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldReminderIDsAsset enum.
+func (e ListFieldReminderIDsAsset) Valid() bool {
+	switch e {
+	case ReminderIDsAsset:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFieldSortingStyle.
+const (
+	SortingStyle ListFieldSortingStyle = "SortingStyle"
+)
+
+// Valid indicates whether the value is a known member of the ListFieldSortingStyle enum.
+func (e ListFieldSortingStyle) Valid() bool {
+	switch e {
+	case SortingStyle:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListRecordType.
+const (
+	List ListRecordType = "List"
+)
+
+// Valid indicates whether the value is a known member of the ListRecordType enum.
+func (e ListRecordType) Valid() bool {
+	switch e {
+	case List:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderIDPrefix.
+const (
+	Reminder ReminderIDPrefix = "Reminder/"
+)
+
+// Valid indicates whether the value is a known member of the ReminderIDPrefix enum.
+func (e ReminderIDPrefix) Valid() bool {
+	switch e {
+	case Reminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntitledList.
+const (
+	Untitled UntitledList = "Untitled"
+)
+
+// Valid indicates whether the value is a known member of the UntitledList enum.
+func (e UntitledList) Valid() bool {
+	switch e {
+	case Untitled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ZoneName.
+const (
+	Reminders ZoneName = "Reminders"
+)
+
+// Valid indicates whether the value is a known member of the ZoneName enum.
+func (e ZoneName) Valid() bool {
+	switch e {
+	case Reminders:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ZoneType.
+const (
+	REGULARCUSTOMZONE ZoneType = "REGULAR_CUSTOM_ZONE"
+)
+
+// Valid indicates whether the value is a known member of the ZoneType enum.
+func (e ZoneType) Valid() bool {
+	switch e {
+	case REGULARCUSTOMZONE:
+		return true
+	default:
+		return false
+	}
+}
+
 // CKAssetBytes Exact downloaded asset bytes, retained before decoding list membership.
 type CKAssetBytes = []byte
 
@@ -1097,6 +1307,48 @@ type CKZoneListZone struct {
 
 // JsonValue Arbitrary extensible CloudKit JSON preserved without numeric coercion.
 type JsonValue = json.RawMessage
+
+// ListFieldBadgeEmblem Pinned Reminders list protocol value used by the domain projection.
+type ListFieldBadgeEmblem string
+
+// ListFieldColor Pinned Reminders list protocol value used by the domain projection.
+type ListFieldColor string
+
+// ListFieldCount Pinned Reminders list protocol value used by the domain projection.
+type ListFieldCount string
+
+// ListFieldDeleted Pinned Reminders list protocol value used by the domain projection.
+type ListFieldDeleted string
+
+// ListFieldIsGroup Pinned Reminders list protocol value used by the domain projection.
+type ListFieldIsGroup string
+
+// ListFieldName Pinned Reminders list protocol value used by the domain projection.
+type ListFieldName string
+
+// ListFieldReminderIDs Pinned Reminders list protocol value used by the domain projection.
+type ListFieldReminderIDs string
+
+// ListFieldReminderIDsAsset Pinned Reminders list protocol value used by the domain projection.
+type ListFieldReminderIDsAsset string
+
+// ListFieldSortingStyle Pinned Reminders list protocol value used by the domain projection.
+type ListFieldSortingStyle string
+
+// ListRecordType Pinned Reminders list protocol value used by the domain projection.
+type ListRecordType string
+
+// ReminderIDPrefix Pinned Reminders list protocol value used by the domain projection.
+type ReminderIDPrefix string
+
+// UntitledList Pinned Reminders list protocol value used by the domain projection.
+type UntitledList string
+
+// ZoneName Pinned Reminders list protocol value used by the domain projection.
+type ZoneName string
+
+// ZoneType Pinned Reminders list protocol value used by the domain projection.
+type ZoneType string
 
 // Getter for additional properties for CKAssetField. Returns the specified
 // element and whether it was found

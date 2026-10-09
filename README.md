@@ -87,9 +87,28 @@ for _, zone := range zones.Zones {
 
 Unknown response, zone and identity metadata retains its original JSON values.
 Authentication build parameters retain their supplied values and ordering.
-This operation is verified against ten synthetic reference scenarios. Reminder
-listing and mutation methods, the corresponding Go CLI commands, and live Go
-reminders verification remain in progress.
+Zone discovery is verified against ten synthetic reference scenarios. The
+public list reader consumes all change pages and inline or asset-backed
+membership in reference order:
+
+```go
+lists, err := client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: resumed.Auth})
+if err != nil {
+    return err
+}
+for _, list := range lists.Lists {
+    fmt.Println(list.Title, list.Count, list.ReminderIDs)
+}
+```
+
+`lists.Responses` contains every page and asset response in request order,
+including cookie updates. The complete result is returned after pagination;
+provider record failures return a typed error with the original response bytes.
+Twenty-three list scenarios pass semantic Go replay, including required-field
+failures, reference truthiness and display conversion, embedded membership,
+invalid membership, and an empty pagination token. Individual reminder
+reads, mutations, Go CLI reminders commands, and live Go verification remain
+in progress.
 
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private

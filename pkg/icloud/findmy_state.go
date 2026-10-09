@@ -24,7 +24,7 @@ func (session *FindMySession) Snapshot() (*FindMySnapshot, error) {
 
 	result := &FindMySnapshot{Devices: make([]FindMyDevice, 0), UserInfo: nullable.NewNullNullable[FindMyUserInfo](),
 		ServerContext: nullable.NewNullNullable[json.RawMessage]()}
-	if len(server) != 0 && string(server) != "null" {
+	if len(server) != 0 && string(server) != jsonNullValue {
 		result.ServerContext = nullable.NewNullableWithValue(server)
 	}
 
