@@ -142,11 +142,22 @@ pattern prevents coverage.py 7.16.2 from interpreting an empty pattern as a
 match for every branch. Negative controls verify missing statements and branch
 exits remain visible.
 
-The fresh synthetic-only measurement enters 575/905 functions and covers
-3173/5398 function-body statements (58.78%) and 969/2076 branch exits. This is a
+The fresh synthetic-only measurement enters 578/905 functions and covers
+3195/5398 function-body statements (59.19%) and 977/2076 branch exits. This is a
 diagnostic baseline, not endpoint completeness or release acceptance. The
-measurement runs the canonical HTTP/socket and Reminders text corpora; separate
-CLI/reference restoration tests are not included in this receipt yet.
+measurement runs the canonical HTTP/socket and Reminders text corpora plus
+both reference saved-login corpora. The latter use separate `synthetic:local:`
+contexts and the same strict replay runner as the reference tests: four initial
+resume/read flows consume eight exchanges, and four restore/resume/read/re-resume
+flows consume twelve. They restore global and China login files and compare
+authentication state, cookies, headers, and empty or multiple-device results.
+Negative controls reject changed state, mismatched requests, and unused pairs
+(LIB-05, LIB-07). The 604 dependency-only HTTP content controls remain separate
+from this source-function receipt.
+
+Import-time execution uses `setup:reference-import` and is reported under
+`by_evidence.setup`, alongside separate captured and synthetic results. The
+combined baseline above includes setup; it is not a live-capture coverage figure.
 
 Account reads use the `webservices.account.url` returned by authentication.
 The setup origin used for login is a separate service and is not a substitute
@@ -154,8 +165,10 @@ when account discovery is absent. Four implementation-derived paired flows
 cover restoring global and China reference login files, authenticating, and
 reading empty or multiple-device Account results at a distinct discovered
 origin. The pinned Python reference and the Go SDK consume the same HTTP pairs.
-These offline flows do not establish successful live account access or completed
-Go CLI login support.
+The Go CLI consumes the repeated-resume corpus through its public SDK dependency.
+These offline flows do not establish successful live account access. The CLI
+supports saved-login import and resume; native password login and MFA completion
+remain pending.
 
 After setup, run `make lint` and `make check`. They run the template's blocking
 Go lint/build/race checks over migration tools and Python lint/offline capture

@@ -178,7 +178,9 @@ def summarize(measurement, files, root, policy=None):
     return {
         "format": "portos.reference-function-coverage.v1",
         "source": SOURCE["live"],
-        "evidence": "offline paired replay; captured and synthetic reported separately",
+        "evidence": (
+            "offline paired replay; captured, synthetic and setup reported separately"
+        ),
         "measurement": {
             "tool": "coverage.py",
             "version": coverage.__version__,
@@ -218,6 +220,7 @@ def main():
     measurement.start()
     try:
         # Import after tracing starts, so constructor/import behavior is visible.
+        measurement.switch_context("setup:reference-import")
         from reference_resume import replay_reference_resume
         from reminders_text import replay_reminders_text
         from replay import replay
@@ -322,7 +325,7 @@ def main():
         ),
     }
     report["by_evidence"] = {}
-    for evidence in ["captured", "synthetic"]:
+    for evidence in ["captured", "synthetic", "setup"]:
         measurement.get_data().set_query_contexts(["^" + evidence + ":"])
         report["by_evidence"][evidence] = summarize(measurement, files, root, policy)[
             "summary"
