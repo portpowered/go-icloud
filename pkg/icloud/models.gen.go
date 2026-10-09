@@ -327,6 +327,9 @@ type AuthContext struct {
 	// Headers Account-specific cookie and web headers; an absent Accept value defaults to the reference wildcard.
 	Headers []Header `json:"headers"`
 
+	// PhotosServiceURL HTTPS CloudKit origin from authenticated discovery; required by Photos operations.
+	PhotosServiceURL string `json:"photosServiceURL,omitempty"`
+
 	// RemindersServiceURL HTTPS Reminders origin from authenticated discovery; required by reminders operations.
 	RemindersServiceURL string `json:"remindersServiceURL,omitempty"`
 
@@ -1025,6 +1028,28 @@ type GetDriveNodeResult struct {
 
 	// Node Optional provider node metadata. Folder contents may be absent on a status-only response.
 	Node DriveNode `json:"node"`
+}
+
+// GetPhotosStatusRequest Check the primary photo library using caller-owned authentication.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type GetPhotosStatusRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// GetPhotosStatusResult Ready primary photo library indexing state and current change cursor.
+//
+// Example: {"metadata":{"headers":[],"statusCode":200},"state":"FINISHED","syncToken":null}
+type GetPhotosStatusResult struct {
+	// Metadata Response status and headers, including Set-Cookie values for caller-owned session updates.
+	Metadata ResponseMetadata `json:"metadata"`
+
+	// State Provider indexing state; successful initialization returns FINISHED.
+	State string `json:"state"`
+
+	// SyncToken Current CloudKit change cursor, or null when omitted.
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
 }
 
 // GetReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"reminderID":"synthetic-reminder"}

@@ -6,6 +6,22 @@ info:
 paths: {}
 components:
   schemas:
+    GetPhotosStatusRequest:
+      type: object
+      description: Check the primary photo library using caller-owned authentication.
+      required: [auth]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+    GetPhotosStatusResult:
+      type: object
+      description: Ready primary photo library indexing state and current change cursor.
+      required: [state, syncToken, metadata]
+      example: {state: FINISHED, syncToken: null, metadata: {statusCode: 200, headers: []}}
+      properties:
+        state: {type: string, description: Provider indexing state; successful initialization returns FINISHED.}
+        syncToken: {type: string, nullable: true, description: "Current CloudKit change cursor, or null when omitted."}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
     ListReminderSnapshotRequest:
       type: object
       description: Discover lists and collect complete reminders, or select one literal list record name.
@@ -180,6 +196,7 @@ components:
         accountID: {type: string, minLength: 1, x-go-name: AccountID, description: Authenticated account identifier returned by login.}
         clientID: {type: string, minLength: 1, x-go-name: ClientID, description: Client identifier reused by this account session.}
         accountServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: AccountServiceURL, description: HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.}
+        photosServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: PhotosServiceURL, description: HTTPS CloudKit origin from authenticated discovery; required by Photos operations.}
         remindersServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: RemindersServiceURL, description: HTTPS Reminders origin from authenticated discovery; required by reminders operations.}
         findMyServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: FindMyServiceURL, description: HTTPS Find My origin from authenticated discovery.}
         setupServiceURL: {type: string, format: uri, x-go-type-skip-optional-pointer: true, x-go-name: SetupServiceURL, description: HTTPS setup origin from authentication; required for remote erase token lookup.}

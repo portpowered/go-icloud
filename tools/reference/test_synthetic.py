@@ -1,6 +1,7 @@
 """Portable service parity and fail-closed replay controls."""
 
 import base64
+import copy
 import io
 import json
 import threading
@@ -984,6 +985,33 @@ class SyntheticTests(unittest.TestCase):
                 except AssertionError:
                     pass
         self.assertEqual(before, (time.sleep, time.monotonic))
+
+    def test_photos_initialization_matrix(self):
+        paths = sorted(FIXTURES.glob("photos-index-*.json"))
+        self.assertEqual(len(paths), 22)
+        for path in paths:
+            with self.subTest(path=path.name):
+                self.assertEqual(replay_synthetic(path), 1)
+
+    def test_photos_initialization_results_requests_and_consumption_are_bound(self):
+        baseline = json.loads((FIXTURES / "photos-index-ready.json").read_text())
+        for mutation in ["state", "cursor", "request", "unused"]:
+            with self.subTest(mutation=mutation), TemporaryDirectory() as directory:
+                scenario = copy.deepcopy(baseline)
+                if mutation == "state":
+                    scenario["result"]["state"] = "PENDING"
+                elif mutation == "cursor":
+                    scenario["result"]["sync_token"] = "wrong-cursor"
+                elif mutation == "request":
+                    scenario["exchanges"][0]["request"]["query"][2][1] = "true"
+                else:
+                    scenario["exchanges"].append(
+                        copy.deepcopy(scenario["exchanges"][0])
+                    )
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
 
 
 if __name__ == "__main__":

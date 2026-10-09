@@ -774,6 +774,81 @@ func (e LocationTriggerType) Valid() bool {
 	}
 }
 
+// Defines values for PhotoFinishedState.
+const (
+	FINISHED PhotoFinishedState = "FINISHED"
+)
+
+// Valid indicates whether the value is a known member of the PhotoFinishedState enum.
+func (e PhotoFinishedState) Valid() bool {
+	switch e {
+	case FINISHED:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoIndexingRecordType.
+const (
+	CheckIndexingState PhotoIndexingRecordType = "CheckIndexingState"
+)
+
+// Valid indicates whether the value is a known member of the PhotoIndexingRecordType enum.
+func (e PhotoIndexingRecordType) Valid() bool {
+	switch e {
+	case CheckIndexingState:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoIndexingStateField.
+const (
+	State PhotoIndexingStateField = "state"
+)
+
+// Valid indicates whether the value is a known member of the PhotoIndexingStateField enum.
+func (e PhotoIndexingStateField) Valid() bool {
+	switch e {
+	case State:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoPrimaryZoneName.
+const (
+	PrimarySync PhotoPrimaryZoneName = "PrimarySync"
+)
+
+// Valid indicates whether the value is a known member of the PhotoPrimaryZoneName enum.
+func (e PhotoPrimaryZoneName) Valid() bool {
+	switch e {
+	case PrimarySync:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoPrimaryZoneType.
+const (
+	PhotoPrimaryZoneTypeREGULARCUSTOMZONE PhotoPrimaryZoneType = "REGULAR_CUSTOM_ZONE"
+)
+
+// Valid indicates whether the value is a known member of the PhotoPrimaryZoneType enum.
+func (e PhotoPrimaryZoneType) Valid() bool {
+	switch e {
+	case PhotoPrimaryZoneTypeREGULARCUSTOMZONE:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for RecurrenceRuleIDPrefix.
 const (
 	RecurrenceRuleIDPrefixRecurrenceRule RecurrenceRuleIDPrefix = "RecurrenceRule/"
@@ -1601,13 +1676,13 @@ func (e ZoneName) Valid() bool {
 
 // Defines values for ZoneType.
 const (
-	REGULARCUSTOMZONE ZoneType = "REGULAR_CUSTOM_ZONE"
+	ZoneTypeREGULARCUSTOMZONE ZoneType = "REGULAR_CUSTOM_ZONE"
 )
 
 // Valid indicates whether the value is a known member of the ZoneType enum.
 func (e ZoneType) Valid() bool {
 	switch e {
-	case REGULARCUSTOMZONE:
+	case ZoneTypeREGULARCUSTOMZONE:
 		return true
 	default:
 		return false
@@ -2455,6 +2530,21 @@ type ListRecordType string
 
 // LocationTriggerType Pinned Source compound reminder query protocol value.
 type LocationTriggerType string
+
+// PhotoFinishedState Reference Photos initialization protocol value.
+type PhotoFinishedState string
+
+// PhotoIndexingRecordType Reference Photos initialization protocol value.
+type PhotoIndexingRecordType string
+
+// PhotoIndexingStateField Reference Photos initialization protocol value.
+type PhotoIndexingStateField string
+
+// PhotoPrimaryZoneName Reference Photos initialization protocol value.
+type PhotoPrimaryZoneName string
+
+// PhotoPrimaryZoneType Reference Photos initialization protocol value.
+type PhotoPrimaryZoneType string
 
 // RecurrenceRuleIDPrefix Pinned Reminder domain mapping protocol value.
 type RecurrenceRuleIDPrefix string
