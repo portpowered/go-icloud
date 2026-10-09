@@ -144,6 +144,15 @@ implementation-derived outcomes, not observed account failures. Negative
 controls reject changed error results, wrong asset origins, and unused pairs
 (LIB-05, LIB-12). The fixtures enter the existing Go portable transport replay;
 public Go Photos service orchestration and semantic parity remain pending.
+Recently Added pagination uses six implementation-derived paired scenarios:
+empty, one, many, a full 100-photo window followed by an empty page, overlap
+followed by a partial page, and a duplicate-only next page. They discover the
+root library through the public reference API and use the default page size.
+The Source emits trailing `startRank` windows at 99 and 199, reverses each new
+window, removes repeated assets, and stops without calling the count endpoint.
+The same 27 HTTP pairs instantiate in Go transport replay. Negative controls
+reject changed ranks, wrong result order, duplicate results, and unused pairs
+(LIB-05/LIB-12); public Go Photos orchestration remains pending.
 
 Reference coverage disables coverage.py's default line and partial-branch
 exclusions, including upstream `no cover`, `no branch`, and `TYPE_CHECKING`

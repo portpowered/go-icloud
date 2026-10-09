@@ -6,6 +6,7 @@ import json
 import threading
 import time
 import unittest
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -39,6 +40,54 @@ class SyntheticTests(unittest.TestCase):
                     path.write_text(json.dumps(scenario), encoding="utf-8")
                     with self.assertRaises(AssertionError):
                         replay_synthetic(path)
+
+    def test_recently_added_matrix_preserves_newest_first_without_count_requests(self):
+        paths = sorted(FIXTURES.glob("photos-recently-added-*.json"))
+        self.assertEqual(len(paths), 6)
+        for path in paths:
+            scenario = json.loads(path.read_text(encoding="utf-8"))
+            with self.subTest(case=path.name):
+                dates = [
+                    datetime.fromisoformat(photo["added"])
+                    for photo in scenario["result"]
+                ]
+                self.assertEqual(dates, sorted(dates, reverse=True))
+                ids = [photo["id"] for photo in scenario["result"]]
+                self.assertEqual(len(ids), len(set(ids)))
+                self.assertFalse(
+                    any(
+                        "internal/records/query/batch" in pair["request"]["path"]
+                        for pair in scenario["exchanges"]
+                    )
+                )
+                self.assertEqual(replay_synthetic(path), len(scenario["exchanges"]))
+
+    def test_recently_added_order_rank_and_consumption_are_bound(self):
+        name = "photos-recently-added-overlap-partial-next.json"
+        for change in ["order", "duplicate", "first-rank", "next-rank", "unused"]:
+            scenario = json.loads((FIXTURES / name).read_text(encoding="utf-8"))
+            if change == "order":
+                scenario["result"].reverse()
+            elif change == "duplicate":
+                scenario["result"].append(scenario["result"][0])
+            elif change == "unused":
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            else:
+                index = -2 if change == "first-rank" else -1
+                body = scenario["exchanges"][index]["request"]["body"]
+                payload = json.loads(base64.b64decode(body["value"]))
+                rank = next(
+                    item
+                    for item in payload["query"]["filterBy"]
+                    if item["fieldName"] == "startRank"
+                )
+                rank["fieldValue"]["value"] += 1
+                body["value"] = base64.b64encode(json.dumps(payload).encode()).decode()
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
 
     def test_findmy_acknowledgement_errors_are_bound(self):
         for change in ["reason", "code", "media", "body", "duplicate", "result"]:

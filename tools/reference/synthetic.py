@@ -213,6 +213,7 @@ def execute(api, scenario, observations=None):
             "create_album",
             "album_count",
             "album_photos",
+            "recently_added_photos",
             "album_rename",
             "album_delete",
             "album_add_photo",
