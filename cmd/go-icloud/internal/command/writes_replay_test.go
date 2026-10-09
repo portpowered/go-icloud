@@ -29,6 +29,7 @@ type writeFixture struct {
 	Failure   json.RawMessage
 	Initial   map[string]json.RawMessage
 	Entropy   map[string]json.RawMessage
+	File      map[string]json.RawMessage
 }
 
 type writeReplayCase struct {
@@ -77,11 +78,16 @@ func loadWriteFixture(t *testing.T, name string) writeFixture {
 	}
 	var row map[string]json.RawMessage
 	decodeWriteFixture(t, data, &row)
-	fixture := writeFixture{Exchanges: nil, Inputs: nil, Keywords: nil, Result: nil, Failure: row["error"], Initial: nil, Entropy: nil}
+	fixture := writeFixture{Exchanges: nil, Inputs: nil, Keywords: nil, Result: nil, Failure: row["error"], Initial: nil, Entropy: nil, File: nil}
 	decodeWriteFixture(t, row["exchanges"], &fixture.Exchanges)
 	decodeWriteFixture(t, row["inputs"], &fixture.Inputs)
 	decodeWriteFixture(t, row["initial_state"], &fixture.Initial)
-	decodeWriteFixture(t, row["entropy"], &fixture.Entropy)
+	if len(row["entropy"]) != 0 {
+		decodeWriteFixture(t, row["entropy"], &fixture.Entropy)
+	}
+	if len(row["file"]) != 0 {
+		decodeWriteFixture(t, row["file"], &fixture.File)
+	}
 	if len(row["keyword_inputs"]) != 0 {
 		decodeWriteFixture(t, row["keyword_inputs"], &fixture.Keywords)
 	}
@@ -113,6 +119,9 @@ func fixtureWriteAuthentication(t *testing.T, fixture writeFixture) icloud.AuthC
 	for name, value := range headers {
 		auth.Headers = append(auth.Headers, icloud.Header{Name: name, Value: value})
 	}
+	if value, exists := fixture.Initial["photos_upload_origin"]; exists {
+		decodeWriteFixture(t, value, &auth.PhotosUploadServiceURL)
+	}
 
 	return auth
 }
@@ -121,8 +130,12 @@ func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HT
 	t.Helper()
 	var identities []string
 	var seconds int64
-	decodeWriteFixture(t, fixture.Entropy["uuid4"], &identities)
-	decodeWriteFixture(t, fixture.Entropy["unix_seconds"], &seconds)
+	if value, exists := fixture.Entropy["uuid4"]; exists {
+		decodeWriteFixture(t, value, &identities)
+	}
+	if value, exists := fixture.Entropy["unix_seconds"]; exists {
+		decodeWriteFixture(t, value, &seconds)
+	}
 	var random bytes.Buffer
 	for _, identity := range identities {
 		data, err := hex.DecodeString(strings.ReplaceAll(identity, "-", ""))

@@ -13,6 +13,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/oapi-codegen/nullable"
+
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
@@ -21,10 +23,11 @@ const writeSecret = "synthetic-private-secret"
 
 type writeProbe struct {
 	icloud.Client
-	calls    int
-	received icloud.AuthContext
-	cancel   context.CancelFunc
-	content  io.ReadSeeker
+	calls        int
+	received     icloud.AuthContext
+	cancel       context.CancelFunc
+	content      io.ReadSeeker
+	uploadResult *icloud.UploadPhotoFileResult
 }
 
 func (probe *writeProbe) CreateReminder(_ context.Context, input icloud.CreateReminderRequest) (*icloud.ReminderMutationResult, error) {
@@ -52,6 +55,9 @@ func (probe *writeProbe) UploadPhotoFile(_ context.Context, input icloud.UploadP
 	_, err := io.Copy(io.Discard, input.Content)
 	if err != nil {
 		return nil, err
+	}
+	if probe.uploadResult != nil {
+		return probe.uploadResult, nil
 	}
 
 	return &icloud.UploadPhotoFileResult{}, nil
@@ -135,7 +141,8 @@ func TestCanceledWritePreservesPrivateResult(t *testing.T) {
 	writeProbeFile(t, destination, original)
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	probe := &writeProbe{Client: nil, calls: 0, received: icloud.AuthContext{}, cancel: cancel, content: nil}
+	probe := new(writeProbe)
+	probe.cancel = cancel
 	_, output, err := runWriteProbe(t, ctx, probe, "reminder-create", `{"title":"safe"}`,
 		[]string{"--save-result", destination})
 	if !errors.Is(err, context.Canceled) || output != "" {
@@ -161,6 +168,48 @@ func TestUploadOwnsLocalFile(t *testing.T) {
 	_, err = probe.content.Read(make([]byte, 1))
 	if !errors.Is(err, fs.ErrClosed) {
 		t.Fatal("CLI left its local file open")
+	}
+}
+
+func TestWriteUnknownProviderFieldsOnlyInPrivateResult(t *testing.T) {
+	t.Parallel()
+	var status icloud.PhotoUploadRegistrationStatus
+	status.Status.Set(200)
+	status.ErrorMessage.Set(writeSecret)
+	status.AdditionalProperties = map[string]icloud.UnknownJSONValue{"opaqueStatus": json.RawMessage(`"synthetic-private-secret"`)}
+	var registration icloud.PhotoUploadRegistration
+	registration.Status = nullable.NewNullableWithValue(status)
+	registration.AdditionalProperties = map[string]icloud.UnknownJSONValue{"opaqueReceipt": json.RawMessage(`"synthetic-private-secret"`)}
+	var result icloud.UploadPhotoFileResult
+	result.Registration = registration
+	probe := new(writeProbe)
+	probe.uploadResult = &result
+	before, err := json.Marshal(result)
+	if err != nil {
+		t.Fatal(err)
+	}
+	content := filepath.Join(t.TempDir(), "content.jpg")
+	destination := filepath.Join(t.TempDir(), "private-result.json")
+	writeProbeFile(t, content, []byte("synthetic photo"))
+	_, output, err := runWriteProbe(t, t.Context(), probe, "photo-upload-file",
+		`{"filename":"content.jpg","localTimeZoneID":"UTC","modificationTime":"2023-11-14T22:13:20Z","timeZoneOffset":0}`,
+		[]string{"--file", content, "--save-result", destination})
+	if err != nil {
+		t.Fatal(err)
+	}
+	saved, err := os.ReadFile(destination)
+	if err != nil {
+		t.Fatal(err)
+	}
+	after, err := json.Marshal(result)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(before, after) || !bytes.Equal(before, saved) {
+		t.Fatal("projection changed original generated SDK result")
+	}
+	if strings.Contains(output, writeSecret) || strings.Contains(output, "opaqueStatus") || strings.Contains(output, "opaqueReceipt") {
+		t.Fatal("uninterpreted provider fields leaked into console")
 	}
 }
 

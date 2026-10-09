@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
+
+	"github.com/portpowered/go-icloud/pkg/icloud"
 )
 
 var errWriteResult = errors.New("cannot save private write result")
@@ -39,6 +42,7 @@ func finishWriteResult(ctx context.Context, result any, path string) (any, error
 // Preserve semantic fields while excluding credentials and uninterpreted provider
 // material. This projection is applied before the shared console encoder.
 func safeWriteResult(result any) (any, error) {
+	result = typedWriteProjection(result)
 	data, err := json.Marshal(result)
 	if err != nil {
 		return nil, fmt.Errorf("encode write projection: %w", err)
@@ -77,9 +81,52 @@ func privateWriteField(key string) bool {
 	switch key {
 	case "auth", "accountID", "clientID", "dsid", "cookies", "headers", "metadata", "responses",
 		"assetMetadata", "masterMetadata", "versions", "dimensions", "size", "checksum",
-		"fileAssetURL", "uploadURLs", "receipt", "wrappingKey", "uploadToken", "syncToken":
+		"fileAssetURL", "uploadURLs", "receipt", "wrappingKey", "uploadToken", "syncToken", "errorMessage":
 		return true
 	default:
 		return false
 	}
+}
+
+func typedWriteProjection(result any) any {
+	switch value := result.(type) {
+	case *icloud.RegisterPhotoUploadsResult:
+		if value == nil {
+			return value
+		}
+		copied := *value
+		copied.Registrations = make([]icloud.PhotoUploadRegistration, 0, len(value.Registrations))
+		for _, registration := range value.Registrations {
+			copied.Registrations = append(copied.Registrations, writePhotoRegistration(registration))
+		}
+		return &copied
+	case *icloud.UploadPhotoFileResult:
+		if value == nil {
+			return value
+		}
+		copied := *value
+		copied.Registration = writePhotoRegistration(copied.Registration)
+		return &copied
+	case *icloud.UploadPhotoResult:
+		if value == nil {
+			return value
+		}
+		copied := *value
+		copied.Registration = writePhotoRegistration(copied.Registration)
+		return &copied
+	default:
+		return result
+	}
+}
+
+func writePhotoRegistration(value icloud.PhotoUploadRegistration) icloud.PhotoUploadRegistration {
+	value.AdditionalProperties = nil
+	value.Status = maps.Clone(value.Status)
+	if !value.Status.IsNull() && !value.Status.IsUnspecified() {
+		status := value.Status.GetOrEmpty()
+		status.AdditionalProperties = nil
+		value.Status.Set(status)
+	}
+
+	return value
 }
