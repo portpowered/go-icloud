@@ -11,7 +11,7 @@ and unused traffic (LIB-05/LIB-12). The added cases cover overlapping normal,
 error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
-The current portable HTTP corpus contains 811 scenarios and 1,541 pairs, including
+The current portable HTTP corpus contains 847 scenarios and 1,627 pairs, including
 348 Reminders scenarios and 414 pairs. The Go snapshot facade executes all
 
 twenty-eight Source cases; full verification and independent review remain open.
@@ -286,3 +286,20 @@ compare complete results and exact response evidence; mutation controls reject
 changed state, cursor, query serialization and unused traffic. Private live
 Go initialization succeeded on the refreshed account and remains outside Git.
 This is not proof of complete album, asset, shared-library or write coverage.
+
+## Primary Photos albums
+
+The public `ListPhotoAlbums` operation consumes 41 Source-executed synthetic
+scenarios and 98 exchanges, including the indexing query. Thirty-six new cases
+cover nested folder pagination, duplicate IDs, parent cycles, encoded and invalid
+names, deletion filtering, empty continuation, cookie rotation, malformed replies,
+and first/later HTTP failures. Full ordered projections, all metadata and error
+body/headers/prior responses are checked; every exchange must be consumed
+(LIB-05). Source mutation controls reject changed names, full names, result order,
+query booleans, unused traffic, failure messages and missing cookies. Wire schema
+checks bind every request/reply and reject Source-invalid query records.
+
+A private live Go read returned 12 albums with successful saved-session validation
+and four HTTP 200 Photos queries. Captured evidence remains outside Git and
+separate from the synthetic corpus (LIB-09/LIB-12). Assets, shared-library album
+reads, downloads and mutations remain pending.
