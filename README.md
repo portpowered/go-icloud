@@ -297,9 +297,23 @@ go run . --session C:/private/icloud-auth.json reminder-sync
 go run . --session C:/private/icloud-auth.json reminder-changes
 go run . --session C:/private/icloud-auth.json --since YOUR_SYNC_TOKEN reminder-changes
 go run . --session C:/private/icloud-auth.json --reminder Reminder/synthetic-item reminder
+go run . --session C:/private/icloud-auth.json reminder-snapshot
+go run . --session C:/private/icloud-auth.json --list YOUR_LIST_ID reminder-snapshot
+go run . --session C:/private/icloud-auth.json --related-id YOUR_TAG_ID reminder-tags
+go run . --session C:/private/icloud-auth.json --related-id YOUR_ATTACHMENT_ID reminder-attachments
+go run . --session C:/private/icloud-auth.json --related-id YOUR_RULE_ID reminder-recurrence-rules
+go run . --session C:/private/icloud-auth.json --related-id YOUR_ALARM_ID reminder-alarms
 go run . --session C:/private/icloud-auth.json --list YOUR_LIST_ID reminders
 go run . --session C:/private/icloud-auth.json --list YOUR_LIST_ID --include-completed --page-size 200 reminders
 ```
+
+`reminder-snapshot` discovers all lists, or uses the optional `--list`, and reads
+complete reminders including completed items. Related-record commands accept
+repeatable `--related-id` arguments and retain ordered duplicate results. Omitting
+all IDs returns an empty list without network requests. The CLI replays all
+28 snapshot and 46 related-record cases with complete results and typed failures.
+Native resume and live reminder zone listing succeed with the corrected CloudKit
+service discovery; live reminder contents remain blocked by the reference zone error.
 
 `reminders` reads every compound query page and prints complete reminders plus
 the related alarm, trigger, attachment, tag and recurrence maps. `--list` sends
