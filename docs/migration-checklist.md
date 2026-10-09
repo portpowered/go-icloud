@@ -1,7 +1,7 @@
 # iCloud migration checklist
 
 Primary Photos albums now have a stateless `ListPhotoAlbums` SDK operation,
-schema-generated public projections, recursive folder/page traversal, and 31
+schema-generated public projections, recursive folder/page traversal, and 41
 strict Source/Go cases with 98 exchanges. Thirty-six new cases extend the corpus
 to 847 scenarios and 1,627 pairs. Live Go reads returned 12 albums, with saved
 session validation and every Photos request returning HTTP 200. Final checks,
