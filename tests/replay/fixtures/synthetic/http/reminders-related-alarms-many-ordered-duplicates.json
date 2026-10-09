@@ -1,0 +1,202 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "alarms_for",
+  "inputs": [
+    {
+      "$model": "Reminder",
+      "value": {
+        "id": "Reminder/synthetic-item",
+        "list_id": "List/synthetic-list",
+        "title": "Synthetic",
+        "alarm_ids": [
+          "synthetic-alarm",
+          "Alarm/synthetic-alarm"
+        ]
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/lookup",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "167"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJBbGFybS9zeW50aGV0aWMtYWxhcm0ifSwgeyJyZWNvcmROYW1lIjogIkFsYXJtL3N5bnRoZXRpYy1hbGFybSJ9XSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJBbGFybS9zeW50aGV0aWMtYWxhcm0iLCAicmVjb3JkVHlwZSI6ICJBbGFybSIsICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLXRhZyIsICJmaWVsZHMiOiB7IlJlbWluZGVyIjogeyJ0eXBlIjogIlJFRkVSRU5DRSIsICJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtMCIsICJhY3Rpb24iOiAiVkFMSURBVEUifX0sICJBbGFybVVJRCI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAic3ludGhldGljLWFsYXJtLXVpZCJ9LCAiVHJpZ2dlcklEIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJzeW50aGV0aWMtdHJpZ2dlciJ9fX0sIHsicmVjb3JkTmFtZSI6ICJBbGFybS9zeW50aGV0aWMtYWxhcm0iLCAicmVjb3JkVHlwZSI6ICJBbGFybSIsICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLXRhZyIsICJmaWVsZHMiOiB7IlJlbWluZGVyIjogeyJ0eXBlIjogIlJFRkVSRU5DRSIsICJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtMCIsICJhY3Rpb24iOiAiVkFMSURBVEUifX0sICJBbGFybVVJRCI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAic3ludGhldGljLWFsYXJtLXVpZCJ9LCAiVHJpZ2dlcklEIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICIifX19LCB7InJlY29yZE5hbWUiOiAiQWxhcm0vc3ludGhldGljLWFsYXJtIiwgInJlY29yZFR5cGUiOiAiQWxhcm0iLCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy10YWciLCAiZmllbGRzIjogeyJSZW1pbmRlciI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiUmVtaW5kZXIvc3ludGhldGljLTAiLCAiYWN0aW9uIjogIlZBTElEQVRFIn19LCAiQWxhcm1VSUQiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogInN5bnRoZXRpYy1hbGFybS11aWQifSwgIlRyaWdnZXJJRCI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAic3ludGhldGljLXRyaWdnZXIifX19XX0="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/lookup",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "185"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJBbGFybVRyaWdnZXIvc3ludGhldGljLXRyaWdnZXIifSwgeyJyZWNvcmROYW1lIjogIkFsYXJtVHJpZ2dlci9zeW50aGV0aWMtdHJpZ2dlciJ9XSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJBbGFybVRyaWdnZXIvc3ludGhldGljLXRyaWdnZXIiLCAicmVjb3JkVHlwZSI6ICJBbGFybVRyaWdnZXIiLCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy10YWciLCAiZmllbGRzIjogeyJBbGFybSI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiQWxhcm0vc3ludGhldGljLWFsYXJtIiwgImFjdGlvbiI6ICJWQUxJREFURSJ9fSwgIlR5cGUiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIkxvY2F0aW9uIn0sICJUaXRsZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiU3ludGhldGljIGxvY2F0aW9uIn0sICJBZGRyZXNzIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJTeW50aGV0aWMgYWRkcmVzcyJ9LCAiTGF0aXR1ZGUiOiB7InR5cGUiOiAiRE9VQkxFIiwgInZhbHVlIjogMTIuNX0sICJMb25naXR1ZGUiOiB7InR5cGUiOiAiRE9VQkxFIiwgInZhbHVlIjogLTQ1LjI1fSwgIlJhZGl1cyI6IHsidHlwZSI6ICJET1VCTEUiLCAidmFsdWUiOiAxNTAuNX0sICJQcm94aW1pdHkiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAyfSwgIkxvY2F0aW9uVUlEIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJzeW50aGV0aWMtbG9jYXRpb24ifX19LCB7InJlY29yZE5hbWUiOiAiQWxhcm1UcmlnZ2VyL3N5bnRoZXRpYy10cmlnZ2VyIiwgInJlY29yZFR5cGUiOiAiQWxhcm1UcmlnZ2VyIiwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtdGFnIiwgImZpZWxkcyI6IHsiQWxhcm0iOiB7InR5cGUiOiAiUkVGRVJFTkNFIiwgInZhbHVlIjogeyJyZWNvcmROYW1lIjogIkFsYXJtL3N5bnRoZXRpYy1hbGFybSIsICJhY3Rpb24iOiAiVkFMSURBVEUifX0sICJUeXBlIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJMb2NhdGlvbiJ9LCAiVGl0bGUiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIlN5bnRoZXRpYyByZXBsYWNlbWVudCJ9LCAiQWRkcmVzcyI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiU3ludGhldGljIGFkZHJlc3MifSwgIkxhdGl0dWRlIjogeyJ0eXBlIjogIkRPVUJMRSIsICJ2YWx1ZSI6IDEyLjV9LCAiTG9uZ2l0dWRlIjogeyJ0eXBlIjogIkRPVUJMRSIsICJ2YWx1ZSI6IC00NS4yNX0sICJSYWRpdXMiOiB7InR5cGUiOiAiRE9VQkxFIiwgInZhbHVlIjogMTUwLjV9LCAiUHJveGltaXR5IjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMn0sICJMb2NhdGlvblVJRCI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAic3ludGhldGljLWxvY2F0aW9uIn19fV19"
+        }
+      }
+    }
+  ],
+  "result": [
+    {
+      "alarm": {
+        "id": "Alarm/synthetic-alarm",
+        "alarm_uid": "synthetic-alarm-uid",
+        "reminder_id": "Reminder/synthetic-0",
+        "trigger_id": "synthetic-trigger",
+        "record_change_tag": "synthetic-tag"
+      },
+      "trigger": {
+        "id": "AlarmTrigger/synthetic-trigger",
+        "alarm_id": "Alarm/synthetic-alarm",
+        "title": "Synthetic replacement",
+        "address": "Synthetic address",
+        "latitude": 12.5,
+        "longitude": -45.25,
+        "radius": 150.5,
+        "proximity": 2,
+        "location_uid": "synthetic-location",
+        "record_change_tag": "synthetic-tag"
+      }
+    },
+    {
+      "alarm": {
+        "id": "Alarm/synthetic-alarm",
+        "alarm_uid": "synthetic-alarm-uid",
+        "reminder_id": "Reminder/synthetic-0",
+        "trigger_id": "",
+        "record_change_tag": "synthetic-tag"
+      },
+      "trigger": null
+    },
+    {
+      "alarm": {
+        "id": "Alarm/synthetic-alarm",
+        "alarm_uid": "synthetic-alarm-uid",
+        "reminder_id": "Reminder/synthetic-0",
+        "trigger_id": "synthetic-trigger",
+        "record_change_tag": "synthetic-tag"
+      },
+      "trigger": {
+        "id": "AlarmTrigger/synthetic-trigger",
+        "alarm_id": "Alarm/synthetic-alarm",
+        "title": "Synthetic replacement",
+        "address": "Synthetic address",
+        "latitude": 12.5,
+        "longitude": -45.25,
+        "radius": 150.5,
+        "proximity": 2,
+        "location_uid": "synthetic-location",
+        "record_change_tag": "synthetic-tag"
+      }
+    }
+  ]
+}

@@ -155,7 +155,7 @@ IDs, sentinel and fractional dates, document fallbacks, unrelated records,
 alternate success status/cookies, missing records, provider errors and malformed
 replies. `ListReminders` reuses that complete reminder projection while consuming
 every compound query page and mapping related records. The all-lists snapshot
-facade is implemented; linked-record lookup methods and write encoding remain pending.
+facade and related-record lookup methods are implemented; write encoding remains pending.
 
 The public Go `ListReminderZones` operation now passes ten semantic replays,
 including empty, one and multiple zones, provider and schema failures, and
@@ -177,10 +177,27 @@ precedence, invalid membership, and empty pagination tokens. An additional neste
 display case binds control-character escaping to the reference. Five malformed
 responses must fail external schema validation as well as Source and Go decoding.
 The remaining public Reminders API must still port
-linked-record lookup methods, reminder and related-record mutations, CRDT write
+reminder and related-record mutations, CRDT write
 encoding, write receipts/state updates, and their typed failures and portable
 functional outcomes. Implemented query pagination and domain/text decoding are
 covered by the preceding Source/Go cases. Native authentication,
 Photos, CLI/publication/release, complete source/schema/runtime/socket gates and
 both final independent full audits remain open. Wire schema checks alone do not increase
 handwritten SDK replay coverage or establish full migration acceptance (LIB-07).
+
+## Related lookup projections
+
+`ListReminderTags`, `ListReminderAttachments`, `ListReminderRecurrenceRules`, and
+`ListReminderAlarms` reuse the schema-owned lookup route with ordered record
+names. Forty-six synthetic scenarios, executed through the pinned Python
+reference, contain fifty-one paired exchanges. Each Go replay binds complete
+ordered public results, response metadata, structured failure bodies, prior
+responses and final exchange consumption (LIB-05/LIB-12).
+
+Empty input skips HTTP, while empty replies return allocated empty lists.
+Unrelated records and tombstones are skipped; unsupported attachments and
+triggers are skipped after full wire validation. Provider errors are detected
+before projection, but complete response validation precedes provider errors.
+Alarm trigger IDs preserve duplicates; later duplicate triggers replace earlier
+ones without collapsing the ordered alarm list. Missing triggers are null.
+This is offline reference evidence, not a claim of successful live operations.

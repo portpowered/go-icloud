@@ -19,15 +19,12 @@ import (
 
 // Defines values for PhotosGetCurrentSyncToken.
 const (
-	PhotosGetCurrentSyncTokenFalse PhotosGetCurrentSyncToken = "false"
-	PhotosGetCurrentSyncTokenTrue  PhotosGetCurrentSyncToken = "True"
+	PhotosGetCurrentSyncTokenTrue PhotosGetCurrentSyncToken = "True"
 )
 
 // Valid indicates whether the value is a known member of the PhotosGetCurrentSyncToken enum.
 func (e PhotosGetCurrentSyncToken) Valid() bool {
 	switch e {
-	case PhotosGetCurrentSyncTokenFalse:
-		return true
 	case PhotosGetCurrentSyncTokenTrue:
 		return true
 	default:
@@ -37,15 +34,12 @@ func (e PhotosGetCurrentSyncToken) Valid() bool {
 
 // Defines values for PhotosRemapEnums.
 const (
-	PhotosRemapEnumsFalse PhotosRemapEnums = "false"
-	PhotosRemapEnumsTrue  PhotosRemapEnums = "True"
+	PhotosRemapEnumsTrue PhotosRemapEnums = "True"
 )
 
 // Valid indicates whether the value is a known member of the PhotosRemapEnums enum.
 func (e PhotosRemapEnums) Valid() bool {
 	switch e {
-	case PhotosRemapEnumsFalse:
-		return true
 	case PhotosRemapEnumsTrue:
 		return true
 	default:
@@ -55,15 +49,12 @@ func (e PhotosRemapEnums) Valid() bool {
 
 // Defines values for PhotosQueryRecordsParamsRemapEnums.
 const (
-	PhotosQueryRecordsParamsRemapEnumsFalse PhotosQueryRecordsParamsRemapEnums = "false"
-	PhotosQueryRecordsParamsRemapEnumsTrue  PhotosQueryRecordsParamsRemapEnums = "True"
+	PhotosQueryRecordsParamsRemapEnumsTrue PhotosQueryRecordsParamsRemapEnums = "True"
 )
 
 // Valid indicates whether the value is a known member of the PhotosQueryRecordsParamsRemapEnums enum.
 func (e PhotosQueryRecordsParamsRemapEnums) Valid() bool {
 	switch e {
-	case PhotosQueryRecordsParamsRemapEnumsFalse:
-		return true
 	case PhotosQueryRecordsParamsRemapEnumsTrue:
 		return true
 	default:
@@ -73,15 +64,12 @@ func (e PhotosQueryRecordsParamsRemapEnums) Valid() bool {
 
 // Defines values for PhotosQueryRecordsParamsGetCurrentSyncToken.
 const (
-	PhotosQueryRecordsParamsGetCurrentSyncTokenFalse PhotosQueryRecordsParamsGetCurrentSyncToken = "false"
-	PhotosQueryRecordsParamsGetCurrentSyncTokenTrue  PhotosQueryRecordsParamsGetCurrentSyncToken = "True"
+	PhotosQueryRecordsParamsGetCurrentSyncTokenTrue PhotosQueryRecordsParamsGetCurrentSyncToken = "True"
 )
 
 // Valid indicates whether the value is a known member of the PhotosQueryRecordsParamsGetCurrentSyncToken enum.
 func (e PhotosQueryRecordsParamsGetCurrentSyncToken) Valid() bool {
 	switch e {
-	case PhotosQueryRecordsParamsGetCurrentSyncTokenFalse:
-		return true
 	case PhotosQueryRecordsParamsGetCurrentSyncTokenTrue:
 		return true
 	default:

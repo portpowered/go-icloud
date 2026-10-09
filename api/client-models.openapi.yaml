@@ -22,6 +22,80 @@ components:
         state: {type: string, description: Provider indexing state; successful initialization returns FINISHED.}
         syncToken: {type: string, nullable: true, description: "Current CloudKit change cursor, or null when omitted."}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+    ListReminderTagsRequest:
+      type: object
+      description: Look up ordered hashtags from raw or complete related record identifiers.
+      required: [auth, ids]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}, ids: []}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        ids: {type: array, x-go-name: IDs, items: {type: string}, description: "Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests."}
+    ListReminderTagsResult:
+      type: object
+      description: Ordered hashtags and all response evidence, without deduplication.
+      required: [items, responses]
+      example: {items: [], responses: []}
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/ReminderHashtag'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    ListReminderAttachmentsRequest:
+      type: object
+      description: Look up ordered attachments from raw or complete related record identifiers.
+      required: [auth, ids]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}, ids: []}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        ids: {type: array, x-go-name: IDs, items: {type: string}, description: "Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests."}
+    ListReminderAttachmentsResult:
+      type: object
+      description: Ordered attachments and all response evidence, without deduplication.
+      required: [items, responses]
+      example: {items: [], responses: []}
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/ReminderAttachment'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    ListReminderRecurrenceRulesRequest:
+      type: object
+      description: Look up ordered recurrence rules from raw or complete related record identifiers.
+      required: [auth, ids]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}, ids: []}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        ids: {type: array, x-go-name: IDs, items: {type: string}, description: "Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests."}
+    ListReminderRecurrenceRulesResult:
+      type: object
+      description: Ordered recurrence rules and all response evidence, without deduplication.
+      required: [items, responses]
+      example: {items: [], responses: []}
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/ReminderRecurrenceRule'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    ListReminderAlarmsRequest:
+      type: object
+      description: Look up ordered alarms and optional triggers from raw or complete related record identifiers.
+      required: [auth, ids]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}, ids: []}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        ids: {type: array, x-go-name: IDs, items: {type: string}, description: "Ordered raw or complete related record identifiers, preserving duplicates. Empty input performs no requests."}
+    ListReminderAlarmsResult:
+      type: object
+      description: Ordered alarms and optional triggers and all response evidence, without deduplication.
+      required: [items, responses]
+      example: {items: [], responses: []}
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/ReminderAlarmWithTrigger'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    ReminderAlarmWithTrigger:
+      type: object
+      description: One alarm with its resolved location trigger, or null when absent or unsupported.
+      required: [alarm, trigger]
+      example: {alarm: {id: Alarm/synthetic, reminderID: Reminder/synthetic, alarmUID: synthetic, triggerID: '', recordChangeTag: null}, trigger: null}
+      properties:
+        alarm: {$ref: '#/components/schemas/ReminderAlarm'}
+        trigger:
+          nullable: true
+          allOf: [{$ref: '#/components/schemas/ReminderLocationTrigger'}]
     ListReminderSnapshotRequest:
       type: object
       description: Discover lists and collect complete reminders, or select one literal list record name.

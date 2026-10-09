@@ -4,6 +4,7 @@ package protocol
 const (
 	RemindersAlarmIDPrefixValue                      = "Alarm/"
 	RemindersAlarmRecordTypeValue                    = "Alarm"
+	RemindersAlarmTriggerIDPrefixValue               = "AlarmTrigger/"
 	RemindersAlarmTriggerRecordTypeValue             = "AlarmTrigger"
 	RemindersAttachmentIDPrefixValue                 = "Attachment/"
 	RemindersAttachmentRecordTypeValue               = "Attachment"

@@ -22,6 +22,18 @@ type Client interface {
 	GetPhotosStatus(ctx context.Context, request GetPhotosStatusRequest) (*GetPhotosStatusResult, error)
 	// ListReminderSnapshot collects reminders across discovered lists or one optional list filter.
 	ListReminderSnapshot(ctx context.Context, request ListReminderSnapshotRequest) (*ListReminderSnapshotResult, error)
+	// ListReminderTags reads hashtags using raw or full related identifiers.
+	ListReminderTags(ctx context.Context, request ListReminderTagsRequest) (*ListReminderTagsResult, error)
+	// ListReminderAttachments reads supported URL and image attachments.
+	ListReminderAttachments(ctx context.Context,
+		request ListReminderAttachmentsRequest,
+	) (*ListReminderAttachmentsResult, error)
+	// ListReminderRecurrenceRules reads ordered recurrence rules.
+	ListReminderRecurrenceRules(ctx context.Context,
+		request ListReminderRecurrenceRulesRequest,
+	) (*ListReminderRecurrenceRulesResult, error)
+	// ListReminderAlarms reads ordered alarms and resolves their location triggers.
+	ListReminderAlarms(ctx context.Context, request ListReminderAlarmsRequest) (*ListReminderAlarmsResult, error)
 	// ListReminders reads a complete list snapshot with scoped related records.
 	ListReminders(ctx context.Context, request ListRemindersRequest) (*ListRemindersResult, error)
 	// ListReminderChanges consumes ordered reminder updates and deletions from an optional cursor.

@@ -2688,6 +2688,11 @@
         ],
         "description": "Pinned Reminder domain mapping protocol value."
       },
+      "AlarmTriggerIDPrefix": {
+        "type": "string",
+        "enum": ["AlarmTrigger/"],
+        "description": "Prefix for location trigger identifiers used by alarm lookups."
+      },
       "AlarmIDPrefix": {
         "type": "string",
         "enum": [

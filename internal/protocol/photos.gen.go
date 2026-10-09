@@ -4,6 +4,7 @@ package protocol
 const (
 	PhotosAlarmIDPrefixValue                      = "Alarm/"
 	PhotosAlarmRecordTypeValue                    = "Alarm"
+	PhotosAlarmTriggerIDPrefixValue               = "AlarmTrigger/"
 	PhotosAlarmTriggerRecordTypeValue             = "AlarmTrigger"
 	PhotosAttachmentIDPrefixValue                 = "Attachment/"
 	PhotosAttachmentRecordTypeValue               = "Attachment"

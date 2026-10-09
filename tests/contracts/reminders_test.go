@@ -63,13 +63,17 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 302, Pairs: 363, Operations: 6, Invalid: 40}
+	want := remindersContractInventory{Scenarios: 348, Pairs: 414, Operations: 6, Invalid: 50}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}
 }
 
 func invalidReminderResponse(name string, index int) bool {
+	if strings.HasPrefix(name, "reminders-related-") {
+		return invalidReminderRelatedResponse(name, index)
+	}
+
 	if invalidReminderUnionResponse(name) {
 		return index == 0
 	}
@@ -87,10 +91,19 @@ func invalidReminderResponse(name string, index int) bool {
 			return index == 0
 		}
 
-		return name == "reminders-zones-schema-error.json" ||
-			strings.HasPrefix(name, "reminders-lists-schema-") ||
-			strings.HasPrefix(name, "reminders-get-schema-") || name == "reminders-get-no-records.json"
+		return invalidReminderRequiredFields(name)
 	}
+}
+
+func invalidReminderRequiredFields(name string) bool {
+	return name == "reminders-zones-schema-error.json" ||
+		strings.HasPrefix(name, "reminders-lists-schema-") ||
+		strings.HasPrefix(name, "reminders-get-schema-") || name == "reminders-get-no-records.json"
+}
+
+func invalidReminderRelatedResponse(name string, index int) bool {
+	return (strings.Contains(name, "wire-invalid") || strings.Contains(name, "validation-before-error")) &&
+		(!strings.Contains(name, "alarms-trigger-") || index == 1)
 }
 
 func invalidReminderUnionResponse(name string) bool {
