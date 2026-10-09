@@ -21,7 +21,8 @@ func TestReminderCommands(t *testing.T) {
 	t.Parallel()
 
 	for prefix, operation := range map[string]string{"zones": "reminder-zones",
-		"lists": "reminder-lists", "get": reminderCommand, "sync": reminderSyncCommand} {
+		"lists": "reminder-lists", "get": reminderCommand, "sync": reminderSyncCommand,
+		"changes": reminderChangesCommand} {
 		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/reminders-" + prefix + "-*.json")
 		if err != nil {
 			t.Fatal(err)
@@ -38,6 +39,10 @@ func TestReminderCommands(t *testing.T) {
 
 		if prefix == "sync" {
 			want = 53
+		}
+
+		if prefix == "changes" {
+			want = 72
 		}
 
 		if len(paths) != want {
@@ -86,21 +91,16 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 
 	var output, diagnostic bytes.Buffer
 
-	args := []string{sessionFlag, session}
-
-	if operation == reminderCommand {
-		var inputs []string
-
-		decode(t, row["inputs"], &inputs)
-		args = append(args, "--reminder", inputs[0])
-	}
-
-	args = append(args, operation)
+	args := reminderCLIArgs(t, operation, session, row)
 
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
-	if operation == reminderSyncCommand {
+
+	switch operation {
+	case reminderSyncCommand:
 		checkReminderCLISyncOutcome(t, row, output.Bytes(), err)
-	} else {
+	case reminderChangesCommand:
+		checkReminderCLIChangesOutcome(t, row, output.Bytes(), err)
+	default:
 		checkReminderCommandOutcome(t, operation, row, output.Bytes(), err)
 	}
 
@@ -112,6 +112,25 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func reminderCLIArgs(t *testing.T, operation, session string, row map[string]json.RawMessage) []string {
+	t.Helper()
+
+	args := []string{sessionFlag, session}
+
+	if operation == reminderCommand {
+		var inputs []string
+
+		decode(t, row["inputs"], &inputs)
+		args = append(args, "--reminder", inputs[0])
+	}
+
+	if operation == reminderChangesCommand {
+		args = append(args, reminderCLIChangesArgs(t, row)...)
+	}
+
+	return append(args, operation)
 }
 
 func checkReminderCommandOutcome(t *testing.T, operation string, row map[string]json.RawMessage,
@@ -177,9 +196,7 @@ func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failu
 	last := exchanges[len(exchanges)-1]
 
 	kind := expectedFailureKind(last.Response.Status)
-	if last.Response.Status < 400 && !strings.HasPrefix(sourceError["message"], "Fetch reminder lists failed") &&
-		!strings.HasPrefix(sourceError["message"], "Lookup reminder failed") &&
-		!strings.HasPrefix(sourceError["message"], "Unable to obtain sync token") {
+	if last.Response.Status < 400 && !reminderCLIProviderMessage(sourceError["message"]) {
 		kind = icloud.InvalidResponse
 	}
 
@@ -197,6 +214,17 @@ func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failu
 	if !reflect.DeepEqual(metadata, referenceResponseMetadata(last)) {
 		t.Fatal("CLI lost reminder failure metadata")
 	}
+}
+
+func reminderCLIProviderMessage(message string) bool {
+	for _, prefix := range []string{"Fetch reminder lists failed", "Lookup reminder failed",
+		"Iterating reminder changes failed", "Unable to obtain sync token"} {
+		if strings.HasPrefix(message, prefix) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func checkReminderCLILists(t *testing.T, actual, source json.RawMessage) {

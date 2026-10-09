@@ -172,8 +172,7 @@ including overlapping record/error alternatives, nested metadata coercion,
 arbitrary participant integers and complete audit-date projections. Date handling
 matches the pinned Windows reference runtime's microsecond rounding and range;
 these limits are reference behavior rather than verified Apple date restrictions.
-Compound reminder queries,
-the CLI change command, and live Go verification remain pending.
+Compound reminder queries and live Go verification remain pending.
 
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private
@@ -196,8 +195,17 @@ go run . --session C:/private/icloud-auth.json --family findmy
 go run . --session C:/private/icloud-auth.json reminder-zones
 go run . --session C:/private/icloud-auth.json reminder-lists
 go run . --session C:/private/icloud-auth.json reminder-sync
+go run . --session C:/private/icloud-auth.json reminder-changes
+go run . --session C:/private/icloud-auth.json --since YOUR_SYNC_TOKEN reminder-changes
 go run . --session C:/private/icloud-auth.json --reminder Reminder/synthetic-item reminder
 ```
+
+`reminder-changes` reads all pages and prints ordered change events. Omit `--since`
+for an initial read; supplying `--since=""` sends an explicit empty cursor.
+Deleted tombstones have a null reminder, while other events include the complete
+reminder projection. The CLI omits response headers and cookie updates from
+successful console output, and prints no partial result when a page fails.
+All 72 Source change scenarios also run through the separate CLI replay suite.
 
 `resume` saves a private `ResumeSessionResult` file and prints only its path and
 authentication flags. Without `--save-session`, reference import writes

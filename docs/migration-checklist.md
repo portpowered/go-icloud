@@ -1,5 +1,15 @@
 # iCloud migration checklist
 
+The separate Go CLI now exposes `reminder-changes`, with optional `--since` input
+that preserves the difference between omission and an explicit empty cursor.
+Its 72 Source-derived change cases bind all ordered events, full reminder fields,
+null tombstones, typed failures, prior response evidence and complete exchange
+consumption. Together with existing zones, lists, lookup and sync reads, the CLI
+Reminders matrix contains 178 scenarios. The SDK milestone merged through PR #40
+after successful CI and exact-commit independent approval. The CLI now pins the
+published SDK from that merge and still requires its final checks and approval; live Go
+verification and full migration/release acceptance remain open.
+
 The reminder change-iteration matrix contains 72 Source-executed scenarios and
 75 paired exchanges. It binds optional cursors, pagination,
 multiple zones, ordered duplicate events, unrelated records, tombstones,
@@ -14,9 +24,12 @@ metadata, boolean coercion and encrypted-field validity. Independent review foun
 missing nested identities and valid metadata coercions omitted by the initial
 matrix. Go now validates nested required identities, coerces metadata, preserves
 arbitrary participant integer magnitude and reproduces audit-date microsecond
-rounding and the pinned Windows runtime's date range. Independent review, full
-verification and exact-commit CI approval
-remain required before merging this public SDK milestone.
+rounding and the pinned Windows runtime's date range. This SDK milestone passed
+full local checks and CI at 4ab192f42133110cdaca8fff5cf675ca185d2a7e, received
+independent exact-commit approval, and merged as 08d2b7cbf6695aef587be2eee1131432b99723d2.
+SDK statement coverage for non-generated code is replay 2989/3491 (85.6%), unit
+1202/3491 (34.4%), and combined 3077/3491 (88.1%). This verifies implemented
+behavior; the full selected-service migration remains open.
 The preceding all-evidence Source run enters 592/905 inventoried functions and
 covers 3,339/5,398 body statements (61.86%) and 1,031/2,076 branch exits. This
 measurement covers the preceding 70-case matrix; the two explicit null-container
@@ -29,7 +42,7 @@ of every known CloudKit field tag alongside future tags and nested metadata. Por
 HTTP inventory at the sync-cursor milestone was 600 scenarios and 1,304 paired exchanges. This is reference
 evidence for the public Go `GetReminderSyncCursor` port, which passes all 53
 paired semantic replays with exact tokens, ordered response metadata and prior
-response evidence on failures. Public change iteration remains open. The latest
+response evidence on failures. Public change iteration was pending at that milestone. The latest
 preceding all-evidence Source measurement enters 592/905 inventoried functions and covers
 3,326/5,398 body statements (61.62%) and 1,024/2,076 branch exits. The preceding
 synthetic-only run enters 584 functions and covers 3,278 body statements and

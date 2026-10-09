@@ -24,7 +24,7 @@ func checkReminderCLIReminder(t *testing.T, actual, source json.RawMessage) {
 	}
 	// Bind Source's six fractional digits to the same public RFC3339 instant.
 	for _, name := range []string{"completedDate", "dueDate", "startDate", "created", "modified"} {
-		if string(expected[name]) == "null" {
+		if string(expected[name]) == reminderCLINullValue {
 			continue
 		}
 

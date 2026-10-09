@@ -22,7 +22,7 @@ func checkReminderCLISyncOutcome(t *testing.T, row map[string]json.RawMessage, o
 		}
 
 		checkReminderCLIFailure(t, row, failure)
-		checkReminderCLISyncPrior(t, row, failure)
+		checkReminderCLIPrior(t, row, failure)
 
 		return
 	}
@@ -46,7 +46,7 @@ func checkReminderCLISyncOutcome(t *testing.T, row map[string]json.RawMessage, o
 	checkReminderCLIValue(t, actual["syncToken"], expected)
 }
 
-func checkReminderCLISyncPrior(t *testing.T, row map[string]json.RawMessage, failure *icloud.ClientError) {
+func checkReminderCLIPrior(t *testing.T, row map[string]json.RawMessage, failure *icloud.ClientError) {
 	t.Helper()
 
 	var exchanges []replay.Exchange
