@@ -56,10 +56,12 @@ func checkPhotoCLIOutcome(t *testing.T, operation string, row map[string]json.Ra
 	}
 
 	var actual map[string]json.RawMessage
+
 	decode(t, output, &actual)
 
 	if operation == photoStatusCommand {
 		var expected map[string]json.RawMessage
+
 		decode(t, row["result"], &expected)
 		expected["syncToken"] = expected["sync_token"]
 		delete(expected, "sync_token")
@@ -73,6 +75,7 @@ func checkPhotoCLIOutcome(t *testing.T, operation string, row map[string]json.Ra
 	}
 
 	var expected []map[string]json.RawMessage
+
 	decode(t, row["result"], &expected)
 
 	for _, album := range expected {

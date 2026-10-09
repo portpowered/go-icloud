@@ -168,14 +168,8 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		return readReminders(ctx, client, auth, config)
 	case "photos-status", "photo-albums":
 		return readPhotos(ctx, client, auth, config.operation)
-	case "account-devices":
-		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
-	case "account-family":
-		return wrap(client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth}))
-	case "account-storage":
-		return wrap(client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth}))
-	case "account-plan":
-		return wrap(client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth}))
+	case "account-devices", "account-family", "account-storage", "account-plan":
+		return readAccount(ctx, client, auth, config.operation)
 	case "drive-libraries":
 		return wrap(client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth}))
 	case "drive-node":
@@ -296,5 +290,22 @@ func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthConte
 	if operation == "photos-status" {
 		return wrap(client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{Auth: auth}))
 	}
+
 	return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth}))
+}
+
+func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthContext, operation string) (any, error) {
+	switch operation {
+	case "account-devices":
+		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
+	case "account-family":
+		return wrap(client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth}))
+	case "account-storage":
+		return wrap(client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth}))
+	case "account-plan":
+		return wrap(client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth}))
+
+	default:
+		return nil, errCommand
+	}
 }
