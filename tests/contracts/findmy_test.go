@@ -32,6 +32,13 @@ func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	recoveryPaths, err := filepath.Glob("../replay/fixtures/synthetic/http/session-findmy-autorefresh-*.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	paths = append(paths, recoveryPaths...)
+
 	pairs := 0
 	operations := make(map[string]int)
 

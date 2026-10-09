@@ -19,7 +19,7 @@ from synthetic import execute as execute_scenario
 
 class SyntheticTests(unittest.TestCase):
     def test_findmy_saved_token_recovery_matrix(self):
-        paths = sorted(FIXTURES.glob("findmy-autorefresh-*.json"))
+        paths = sorted(FIXTURES.glob("session-findmy-autorefresh-*.json"))
         self.assertEqual(len(paths), 4)
         self.assertEqual(sum(replay_synthetic(path) for path in paths), 11)
 
@@ -27,7 +27,7 @@ class SyntheticTests(unittest.TestCase):
         for name in ["success", "repeat-450", "cookie-rotation", "token-refused"]:
             for mutation in ["state", "request", "unused"]:
                 scenario = json.loads(
-                    (FIXTURES / f"findmy-autorefresh-{name}.json").read_text(
+                    (FIXTURES / f"session-findmy-autorefresh-{name}.json").read_text(
                         encoding="utf-8"
                     )
                 )

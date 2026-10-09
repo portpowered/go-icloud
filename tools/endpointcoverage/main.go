@@ -7,8 +7,11 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/portpowered/go-icloud/internal/protocol"
 )
 
 const (
@@ -328,10 +331,11 @@ func auditScenario(report *coverageReport, filename string, pin sourcePin) error
 func recordExchange(report *coverageReport, filename string, index int, document scenario, pair exchange) error {
 	report.Exchanges++
 	matched := false
+	service := exchangeService(document.Service, pair.Request)
 
 	for routeIndex := range report.Routes {
 		route := &report.Routes[routeIndex]
-		if route.Endpoint.Service != document.Service || route.Endpoint.Method != pair.Request.Method {
+		if route.Endpoint.Service != service || route.Endpoint.Method != pair.Request.Method {
 			continue
 		}
 
@@ -366,4 +370,14 @@ func recordExchange(report *coverageReport, filename string, index int, document
 	}
 
 	return nil
+}
+
+// Find My's saved-token recovery crosses into the authentication service.
+func exchangeService(service string, request wireRequest) string {
+	if service == "findmy" && request.Method == http.MethodPost &&
+		request.Path == protocol.AuthLoginAuthTokenPath && request.Origin == protocol.AuthAccountServer0 {
+		return "auth"
+	}
+
+	return service
 }
