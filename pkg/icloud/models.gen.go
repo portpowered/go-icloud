@@ -151,6 +151,48 @@ func (e PhotoItemType) Valid() bool {
 	}
 }
 
+// Defines values for PhotoVersion.
+const (
+	PhotoAlternative   PhotoVersion = "alternative"
+	PhotoMedium        PhotoVersion = "medium"
+	PhotoMediumImage   PhotoVersion = "medium_image"
+	PhotoMediumVideo   PhotoVersion = "medium_video"
+	PhotoOriginal      PhotoVersion = "original"
+	PhotoOriginalVideo PhotoVersion = "original_video"
+	PhotoSidecar       PhotoVersion = "sidecar"
+	PhotoThumb         PhotoVersion = "thumb"
+	PhotoThumbImage    PhotoVersion = "thumb_image"
+	PhotoThumbVideo    PhotoVersion = "thumb_video"
+)
+
+// Valid indicates whether the value is a known member of the PhotoVersion enum.
+func (e PhotoVersion) Valid() bool {
+	switch e {
+	case PhotoAlternative:
+		return true
+	case PhotoMedium:
+		return true
+	case PhotoMediumImage:
+		return true
+	case PhotoMediumVideo:
+		return true
+	case PhotoOriginal:
+		return true
+	case PhotoOriginalVideo:
+		return true
+	case PhotoSidecar:
+		return true
+	case PhotoThumb:
+		return true
+	case PhotoThumbImage:
+		return true
+	case PhotoThumbVideo:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderChangeEventType.
 const (
 	ReminderChangeDeleted ReminderChangeEventType = "deleted"
@@ -475,6 +517,34 @@ type DownloadDriveFileResult struct {
 
 	// TokenMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 	TokenMetadata ResponseMetadata `json:"tokenMetadata"`
+}
+
+// DownloadPhotoRequest Download one available rendition through its provider-issued resource URL after album lookup.
+//
+// Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset","version":"original"}
+type DownloadPhotoRequest struct {
+	// Album Album identifier or display/full name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// PhotoID Requested asset identifier.
+	PhotoID string `json:"photoID"`
+
+	// Version Known photo/video resource key; a rendition unavailable on the selected asset returns null.
+	//
+	// Example: original
+	Version *PhotoVersion `json:"version,omitempty"`
+}
+
+// DownloadPhotoResult Exact resource bytes, including an empty file, or explicit null when the rendition URL is unavailable. Every response is retained.
+//
+// Example: {"content":null,"responses":[]}
+type DownloadPhotoResult struct {
+	// Content Exact bytes; JSON uses base64. Null means unavailable and empty means an empty file.
+	Content   nullable.Nullable[[]byte] `json:"content"`
+	Responses []ResponseMetadata        `json:"responses"`
 }
 
 // DriveChildrenRequest defines model for DriveChildrenRequest.
@@ -1565,6 +1635,11 @@ type PhotoResource struct {
 	// Width Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 	Width UnknownJSONValue `json:"width"`
 }
+
+// PhotoVersion Known photo/video resource key; a rendition unavailable on the selected asset returns null.
+//
+// Example: original
+type PhotoVersion string
 
 // RefreshFindMyRequest Example: {"locate":true}
 type RefreshFindMyRequest struct {

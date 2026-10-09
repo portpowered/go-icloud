@@ -202,6 +202,57 @@
           }
         }
       }
+    },
+    "/{contentPath}": {
+      "parameters": [
+        {
+          "name": "contentPath",
+          "in": "path",
+          "required": true,
+          "description": "Provider-issued escaped path, possibly with several segments; bind the exact URL and repeated signed query values to a preceding photo resource.",
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ],
+      "get": {
+        "operationId": "PhotosDownloadContent",
+        "summary": "Download an available photo or video rendition",
+        "description": "Use the preceding selected photo resource URL without appending CloudKit account parameters. Preserve exact bytes including empty content.",
+        "responses": {
+          "200": {
+            "description": "Exact resource content, including an empty file.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKAssetBytes"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful resource content including partial or empty responses.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKAssetBytes"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider refusal; preserve the full status, headers and body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKAssetBytes"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -535,6 +586,13 @@
       },
       "PhotosCountResponse": {
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/PhotosCountResponse"
+      },
+      "HTTPScheme": {
+        "type": "string",
+        "enum": [
+          "https"
+        ],
+        "description": "Secure scheme of provider-issued rendition URLs."
       }
     }
   }
