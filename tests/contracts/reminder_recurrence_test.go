@@ -7,7 +7,11 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-const recurrenceContractType = "type"
+const (
+	recurrenceContractType        = "type"
+	recurrenceContractInvalidType = "INVALID"
+	recurrenceContractStringType  = "STRING"
+)
 
 func TestReminderRecurrenceVariantsBindPairedRequests(t *testing.T) {
 	t.Parallel()
@@ -125,7 +129,7 @@ func checkRecurrenceFieldNegatives(t *testing.T, schema *openapi3.Schema, value 
 	t.Helper()
 
 	for key, original := range fields {
-		fields[key] = map[string]any{recurrenceContractType: "INVALID", reminderWriteValue: false}
+		fields[key] = map[string]any{recurrenceContractType: recurrenceContractInvalidType, reminderWriteValue: false}
 
 		if schema.VisitJSON(value) == nil {
 			t.Fatalf("invalid recurrence wrapper %s accepted", key)
@@ -145,7 +149,9 @@ func checkRecurrenceFieldNegatives(t *testing.T, schema *openapi3.Schema, value 
 		fields["Reminder"] = reference
 	}
 
-	fields["UnknownKnownField"] = map[string]any{recurrenceContractType: "STRING", reminderWriteValue: "invalid"}
+	fields["UnknownKnownField"] = map[string]any{
+		recurrenceContractType: recurrenceContractStringType, reminderWriteValue: "invalid",
+	}
 
 	if schema.VisitJSON(value) == nil {
 		t.Fatal("unregistered recurrence field accepted")

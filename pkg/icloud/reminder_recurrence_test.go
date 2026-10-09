@@ -12,10 +12,14 @@ import (
 )
 
 const (
-	recurrenceTestCreate    = "create"
-	recurrenceTestUpdate    = "update"
-	recurrenceTestDelete    = "delete"
-	recurrenceServiceOrigin = "https://reminders.example.invalid"
+	recurrenceKeepID         = "keep"
+	recurrenceInvalidJSON    = `not JSON`
+	recurrenceInvalidRecords = `{"records":[false]}`
+	recurrenceNullRecords    = `{"records":null}`
+	recurrenceTestCreate     = "create"
+	recurrenceTestUpdate     = "update"
+	recurrenceTestDelete     = "delete"
+	recurrenceServiceOrigin  = "https://reminders.example.invalid"
 )
 
 func recurrenceTestAuth() icloud.AuthContext {
@@ -28,20 +32,25 @@ func recurrenceTestAuth() icloud.AuthContext {
 func TestReminderRecurrenceUnlinkRemovesEmptyIDs(t *testing.T) {
 	t.Parallel()
 	client := sdkForResponse(t, http.StatusOK, `{}`)
+
 	var reminder icloud.Reminder
+
 	reminder.ID = reminderTestRecordName
-	reminder.RecurrenceRuleIDs = []string{"", "RecurrenceRule/keep", "keep", ""}
+	reminder.RecurrenceRuleIDs = []string{"", "RecurrenceRule/keep", recurrenceKeepID, ""}
 	rule := recurrenceTestRule()
 	rule.ID = ""
+
 	result, err := client.DeleteReminderRecurrenceRule(t.Context(), icloud.DeleteReminderRecurrenceRuleRequest{
 		Auth: recurrenceTestAuth(), Reminder: reminder, RecurrenceRule: rule})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !slices.Equal(result.Reminder.RecurrenceRuleIDs, []string{"keep", "keep"}) {
+
+	if !slices.Equal(result.Reminder.RecurrenceRuleIDs, []string{recurrenceKeepID, recurrenceKeepID}) {
 		t.Fatal("empty child unlink lost ordered duplicate IDs", result.Reminder.RecurrenceRuleIDs)
 	}
-	if !slices.Equal(reminder.RecurrenceRuleIDs, []string{"", "RecurrenceRule/keep", "keep", ""}) {
+
+	if !slices.Equal(reminder.RecurrenceRuleIDs, []string{"", "RecurrenceRule/keep", recurrenceKeepID, ""}) {
 		t.Fatal("unlink mutated caller ID list")
 	}
 }
@@ -198,7 +207,7 @@ func TestReminderRecurrenceMalformedResponsesPreserveEvidence(t *testing.T) {
 	t.Parallel()
 
 	for _, operation := range []string{recurrenceTestCreate, recurrenceTestUpdate, recurrenceTestDelete} {
-		for _, body := range []string{`{"records":null}`, `{"records":[false]}`, `not JSON`} {
+		for _, body := range []string{recurrenceNullRecords, recurrenceInvalidRecords, recurrenceInvalidJSON} {
 			t.Run(operation+body, func(t *testing.T) {
 				t.Parallel()
 				err := callRecurrenceMutation(t.Context(), sdkForResponse(t, http.StatusOK, body), operation)
