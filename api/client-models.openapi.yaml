@@ -6,6 +6,21 @@ info:
 paths: {}
 components:
   schemas:
+    ApplySessionResponsesRequest:
+      type: object
+      description: Apply observed response cookie/token updates to a copied native session without making a network request.
+      required: [session, responses]
+      example: {session: {auth: {accountID: synthetic-account, clientID: synthetic-client, headers: []}, accountCountryCode: null, trustToken: synthetic-trust, trustedSession: true, requiresTwoFactor: false, requiresTwoStep: false, accountData: {}, responses: []}, responses: []}
+      properties:
+        session: {$ref: '#/components/schemas/ResumeSessionResult'}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    ApplySessionResponsesResult:
+      type: object
+      description: Copied native session retaining all observed responses and cookie/token/trust/country rotations, including a failed read.
+      required: [session]
+      example: {session: {auth: {accountID: synthetic-account, clientID: synthetic-client, headers: []}, accountCountryCode: null, trustToken: synthetic-trust, trustedSession: true, requiresTwoFactor: false, requiresTwoStep: false, accountData: {}, responses: []}}
+      properties:
+        session: {$ref: '#/components/schemas/ResumeSessionResult'}
     ListRecentlyAddedPhotosRequest:
       type: object
       description: Enumerate the primary library newest first using the recently-added trailing window index.

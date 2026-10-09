@@ -4,6 +4,7 @@ import argparse
 import base64
 import io
 import json
+from contextlib import contextmanager
 from dataclasses import asdict
 from tempfile import TemporaryDirectory
 
@@ -29,16 +30,17 @@ def execute(api, scenario, observations=None):
         from pyicloud.services.findmyiphone import FindMyiPhoneServiceManager
 
         try:
-            manager = FindMyiPhoneServiceManager(
-                state["origin"],
-                state["token_origin"],
-                api.session,
-                params,
-                with_family=state.get("with_family", False),
-                refresh_interval=86400,
-                family_poll_delay=state.get("family_poll_delay", 0.5),
-                family_poll_max_retries=state.get("family_poll_max_retries", 5),
-            )
+            with observe_findmy_refresh(api, scenario, observations):
+                manager = FindMyiPhoneServiceManager(
+                    state["origin"],
+                    state["token_origin"],
+                    api.session,
+                    params,
+                    with_family=state.get("with_family", False),
+                    refresh_interval=86400,
+                    family_poll_delay=state.get("family_poll_delay", 0.5),
+                    family_poll_max_retries=state.get("family_poll_max_retries", 5),
+                )
         finally:
             if (
                 observations is not None
@@ -395,10 +397,38 @@ def replay_synthetic(path):
                     or json.loads(json.dumps(result)) != scenario["result"]
                 ):
                     raise AssertionError("Synthetic semantic result mismatch")
+            if "refresh_auth_state" in scenario and scenario[
+                "refresh_auth_state"
+            ] != observations.get("refresh_auth_state"):
+                raise AssertionError(
+                    "Synthetic pre-retry authentication state mismatch"
+                )
             adapter.assert_consumed()
         finally:
             close_reference(api)
     return len(scenario["exchanges"])
+
+
+@contextmanager
+def observe_findmy_refresh(api, scenario, observations):
+    """Observe Source authentication before the bounded Find My retry."""
+    if "refresh_auth_state" not in scenario or observations is None:
+        yield
+        return
+    from auth_scenarios import auth_state
+
+    original = api.authenticate
+
+    def authenticate(*args, **kwargs):
+        result = original(*args, **kwargs)
+        observations["refresh_auth_state"] = auth_state(api)
+        return result
+
+    api.authenticate = authenticate
+    try:
+        yield
+    finally:
+        api.authenticate = original
 
 
 def main():
