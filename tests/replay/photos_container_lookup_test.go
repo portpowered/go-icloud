@@ -86,8 +86,8 @@ func runPhotosContainerLookup(t *testing.T, path string) {
 	}
 }
 
-// Pydantic includes absent nullable defaults in model_dump. Add only null defaults;
-// every non-null observed field and nested value still compares exactly.
+// Pydantic model_dump includes absent nullable defaults and an empty pluginFields map.
+// Add only those defaults; every observed field and nested value still compares exactly.
 func applySourceNullDefaults(actual, expected any) {
 	switch want := expected.(type) {
 	case map[string]any:
