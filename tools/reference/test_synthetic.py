@@ -17,6 +17,38 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_incomplete_photo_records_skip_orphans_and_preserve_valid_pairs(self):
+        for name, count in [("master-only", 0), ("asset-only", 0), ("mixed", 1)]:
+            path = FIXTURES / f"photos-incomplete-records-{name}.json"
+            scenario = json.loads(path.read_text(encoding="utf-8"))
+            with self.subTest(case=name):
+                self.assertEqual(len(scenario["result"]), count)
+                self.assertEqual(replay_synthetic(path), 4)
+
+    def test_incomplete_photo_records_bind_pairing_and_consumption(self):
+        for change in ["master-reference", "result", "unused"]:
+            scenario = json.loads(
+                (FIXTURES / "photos-incomplete-records-mixed.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            if change == "master-reference":
+                body = scenario["exchanges"][-1]["response"]["body"]
+                payload = json.loads(base64.b64decode(body["value"]))
+                payload["records"][-1]["fields"]["masterRef"]["value"]["recordName"] = (
+                    "synthetic-missing-master"
+                )
+                body["value"] = base64.b64encode(json.dumps(payload).encode()).decode()
+            elif change == "result":
+                scenario["result"] = []
+            else:
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_photo_download_failures_reject_changed_outcomes_and_requests(self):
         for name in [
             "photos-download-refused-429.json",

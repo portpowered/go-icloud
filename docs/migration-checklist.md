@@ -1,5 +1,13 @@
 # iCloud migration checklist
 
+Latest incomplete Photos record milestone: three synthetic public-iterator
+cases and twelve exchanges preserve complete valid results while skipping
+orphan masters and assets. Pairing, omitted-result and unused-traffic negative
+controls pass. The portable corpus contains 516 scenarios and 1,188 exchanges;
+Source diagnostic coverage is 583/905 entered functions, 3,235/5,398 body
+statements (59.93%), and 994/2,076 branch exits. Public Go Photos semantic parity
+and full template acceptance remain open.
+
 Objective: cover every relevant endpoint/function in Photos, Find My/devices,
 Drive, account, and reminders; establish portable reference scenarios; implement
 the equivalent Go library and CLI; publish, verify, and iterate until two fresh

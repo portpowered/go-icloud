@@ -1,5 +1,17 @@
 # Reference capture development
 
+Three synthetic Photos record-pairing cases cover a master without an asset,
+an asset without its master, and a mixed response containing both orphans and
+one valid pair. The pinned reference skips incomplete pairs and preserves the
+full valid photo result. All twelve exchanges are consumed; negative controls
+reject changed master references, omitted public results, and unused traffic.
+The portable HTTP corpus contains 516 scenarios and 1,188 paired exchanges.
+These cases describe reference behavior; public Go Photos parity remains open.
+The fresh synthetic-only diagnostic measures 583/905 entered functions,
+3,235/5,398 function-body statements (59.93%), and 994/2,076 branch exits. Scope
+and denominators are unchanged; this closes the reachable incomplete-master
+skip branch without excluding uncovered code.
+
 This is the first migration stage, not a completed library or release. The
 layout, Go verification tools, all-linters configuration, and contributor
 standards come from `go-third-party-template`. The reusable Go client, generated
@@ -163,7 +175,7 @@ match for every branch. Negative controls verify missing statements and branch
 exits remain visible.
 
 The fresh synthetic-only measurement enters 583/905 functions and covers
-3234/5398 function-body statements (59.91%) and 993/2076 branch exits. This is a
+3235/5398 function-body statements (59.93%) and 994/2076 branch exits. This is a
 diagnostic baseline, not endpoint completeness or release acceptance. The
 measurement runs the canonical HTTP/socket and Reminders text corpora plus
 both reference saved-login corpora. The latter use separate `synthetic:local:`
