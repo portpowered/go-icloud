@@ -10,16 +10,17 @@ filtering, matching the pinned Source's behavior.
 
 The initial eight compound reference cases entered every statement and branch exit
 in `_ingest_compound_record` (26/26 statements, 16/16 exits). The synthetic-only
-diagnostic keeps the unchanged overall denominators: 584/905 functions entered,
-3,339/5,398 function-body statements (61.86%) and 1,046/2,076 branch exits covered
-after all thirty-one compound cases.
+diagnostic keeps the unchanged overall denominators: 585/905 functions entered,
+3,346/5,398 function-body statements (61.99%) and 1,050/2,076 branch exits covered
+after all thirty-one compound cases and fourteen snapshot facade cases.
 Further Source cases now exercise asset URLs, integer-coercible size metadata,
 byte-backed text, invalid UTF-8 replacement and raw frequency selection. Six more
 cases bind wrapper-sensitive discriminator and URL behavior: bytes are compared
 before model coercion and byte-backed URLs avoid a second decoding step.
 Two strict-decoding cases preserve STRING base64 URLs containing CR or LF.
-The all-lists reminder facade
-remains unentered and is not excluded as unreachable.
+Fourteen Source snapshot facade cases now cover public list discovery, explicit
+and empty filters, pagination and replacement across lists. The Go snapshot
+facade port remains in progress.
 Go compound query parity, remaining endpoint ports, live Go verification and
 full migration/release acceptance remain open.
 
@@ -69,8 +70,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 261 implementation-derived synthetic Reminders scenarios contain
-305 paired exchanges: 302 POST pairs and three membership-asset downloads. Contract
+The current 275 implementation-derived synthetic Reminders scenarios contain
+332 paired exchanges: 329 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
