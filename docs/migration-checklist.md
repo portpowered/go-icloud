@@ -8,6 +8,8 @@ reject changed events, order, requests, unused pages and structured error payloa
 The Source harness now binds payloads for all 32 Reminders API error scenarios,
 including null payloads. Portable HTTP inventory is 621 scenarios and 1,328 pairs;
 the public Go change-iteration port remains pending.
+The current all-evidence Source run enters 592/905 inventoried functions and
+covers 3,331/5,398 body statements (61.71%) and 1,027/2,076 branch exits.
 
 The sync-cursor reference matrix now has 53 Source-executed scenarios and 85
 paired exchanges. Cases cover token defaults, query decode fallback,
