@@ -17,6 +17,59 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_reminder_snapshot_discovery_and_replacement(self):
+        paths = sorted(FIXTURES.glob("reminders-snapshot-*.json"))
+        self.assertEqual(len(paths), 14)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 27)
+        for name, count in [
+            ("explicit-0-active", 0),
+            ("explicit-1-active", 1),
+            ("explicit-3-active", 3),
+            ("discovered-many", 3),
+            ("discovered-empty", 0),
+            ("discovered-no-zones", 0),
+        ]:
+            scenario = json.loads(
+                (FIXTURES / f"reminders-snapshot-{name}.json").read_text()
+            )
+            self.assertEqual(len(scenario["result"]), count)
+        replaced = json.loads(
+            (
+                FIXTURES / "reminders-snapshot-discovered-duplicate-replacement.json"
+            ).read_text()
+        )
+        self.assertEqual(len(replaced["result"]), 1)
+        self.assertEqual(replaced["result"][0]["list_id"], "List/synthetic-2")
+
+    def test_reminder_snapshot_binds_results_filters_and_consumption(self):
+        for change in ["result", "filter", "input", "unused", "replacement"]:
+            name = (
+                "discovered-duplicate-replacement"
+                if change == "replacement"
+                else "explicit-1-active"
+            )
+            scenario = json.loads(
+                (FIXTURES / f"reminders-snapshot-{name}.json").read_text()
+            )
+            if change == "result":
+                scenario["result"].clear()
+            elif change == "replacement":
+                scenario["result"][0]["list_id"] = "List/synthetic-0"
+            elif change == "filter":
+                body = scenario["exchanges"][0]["request"]["body"]
+                value = json.loads(base64.b64decode(body["value"]))
+                value["query"]["filterBy"][1]["fieldValue"]["value"] = 0
+                body["value"] = base64.b64encode(json.dumps(value).encode()).decode()
+            elif change == "input":
+                scenario["inputs"][0] = "List/synthetic-other"
+            else:
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
         self.assertEqual(len(paths), 31)

@@ -1,0 +1,82 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "reminders",
+  "inputs": [
+    "List/synthetic-list"
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/query",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "519"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJyZW1pbmRlckxpc3QiLCAiZmlsdGVyQnkiOiBbeyJjb21wYXJhdG9yIjogIkVRVUFMUyIsICJmaWVsZE5hbWUiOiAiTGlzdCIsICJmaWVsZFZhbHVlIjogeyJ0eXBlIjogIlJFRkVSRU5DRSIsICJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJMaXN0L3N5bnRoZXRpYy1saXN0IiwgImFjdGlvbiI6ICJWQUxJREFURSJ9fX0sIHsiY29tcGFyYXRvciI6ICJFUVVBTFMiLCAiZmllbGROYW1lIjogImluY2x1ZGVDb21wbGV0ZWQiLCAiZmllbGRWYWx1ZSI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDF9fSwgeyJjb21wYXJhdG9yIjogIkVRVUFMUyIsICJmaWVsZE5hbWUiOiAiTG9va3VwVmFsaWRhdGluZ1JlZmVyZW5jZSIsICJmaWVsZFZhbHVlIjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMX19XX0sICJ6b25lSUQiOiB7InpvbmVOYW1lIjogIlJlbWluZGVycyIsICJ6b25lVHlwZSI6ICJSRUdVTEFSX0NVU1RPTV9aT05FIn0sICJyZXN1bHRzTGltaXQiOiAyMDB9"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW119"
+        }
+      }
+    }
+  ],
+  "result": []
+}

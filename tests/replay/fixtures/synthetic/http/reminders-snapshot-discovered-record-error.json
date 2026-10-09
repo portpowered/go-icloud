@@ -1,0 +1,90 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "reminders",
+  "inputs": [],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/changes/zone",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "117"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgImRlc2lyZWRSZWNvcmRUeXBlcyI6IFsiTGlzdCJdfV19"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyIsICJtb3JlQ29taW5nIjogZmFsc2UsICJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJMaXN0L3N5bnRoZXRpYy0wIiwgInNlcnZlckVycm9yQ29kZSI6ICJVTktOT1dOX0lURU0iLCAicmVhc29uIjogInN5bnRoZXRpYyBtaXNzaW5nIHJlY29yZCJ9XX1dfQ=="
+        }
+      }
+    }
+  ],
+  "error": {
+    "type": "RemindersApiError",
+    "message": "Fetch reminder lists failed for 1 record(s): List/synthetic-0: UNKNOWN_ITEM (synthetic missing record)"
+  },
+  "error_payload": [
+    {
+      "recordName": "List/synthetic-0",
+      "serverErrorCode": "UNKNOWN_ITEM",
+      "reason": "synthetic missing record"
+    }
+  ]
+}
