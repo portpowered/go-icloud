@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: Local Photos CLI watch request
+  version: 1.0.0
+  description: Generated private request-file input for a bounded or cancellable Photos watch command.
+paths: {}
+components:
+  schemas:
+    PhotosWatchRequest:
+      type: object
+      additionalProperties: false
+      required: [request, watch]
+      description: The saved native session supplies authentication; request.auth is overridden before execution.
+      properties:
+        request: {$ref: '../../../api/photo-sync-models.openapi.yaml#/components/schemas/Request'}
+        watch: {$ref: '../../../api/photo-sync-models.openapi.yaml#/components/schemas/WatchOptions'}
+      example:
+        request:
+          auth: {accountID: synthetic-account, clientID: synthetic-client, headers: []}
+          options:
+            directory: ./photos
+            library: root
+            albums: []
+            size: original
+            livePhotoSize: original
+            folderStructure: none
+            skipVideos: false
+            skipLivePhotos: false
+            alignRaw: as-is
+            xmpSidecar: false
+            setExifDatetime: false
+            onlyPrintFilenames: true
+            dryRun: false
+            autoDelete: false
+        watch: {intervalSeconds: 1, iterations: 2}

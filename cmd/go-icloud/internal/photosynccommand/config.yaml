@@ -1,0 +1,8 @@
+package: photosynccommand
+generate:
+  models: true
+output: cmd/go-icloud/internal/photosynccommand/models.gen.go
+output-options:
+  skip-prune: true
+import-mapping:
+  '../../../api/photo-sync-models.openapi.yaml': github.com/portpowered/go-icloud/pkg/photosync
