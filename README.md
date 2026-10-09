@@ -246,7 +246,29 @@ operation follows the reference's first normal record selection after validating
 the whole reply. Twenty-seven Source/Go initialization cases bind request ordering,
 complete results, cookies and failures. A private live capture confirms trusted
 Go session validation and Photos initialization both return HTTP 200. This is an
-initialization milestone; album, asset, download and mutation SDK parity remain open.
+initialization milestone; asset, download and mutation SDK parity remain open.
+
+List the primary library's smart and custom albums:
+
+```go
+albums, err := client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{
+    Auth: resumed.Auth,
+})
+if err != nil { return err }
+for _, album := range albums.Albums {
+    _ = album.ID
+    _ = album.FullName
+}
+```
+
+`ListPhotoAlbums` checks readiness, consumes all album pages and recursively
+queries folders. Results preserve Source order, duplicate replacement behavior,
+full parent names, and nullable revision tags. `Responses` retains every HTTP
+reply; failures include prior response evidence and return no partial result.
+Forty-one Source/Go scenarios cover complete results, empty custom albums,
+pagination, folders, encoded names, cookies and provider failures. A private
+live read with the saved trusted session returned 12 albums and HTTP 200 for all
+requests. Shared-library album enumeration remains separate pending work.
 
 Fetch related records using the identifiers returned on a reminder:
 

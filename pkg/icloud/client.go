@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ListPhotoAlbums reads all primary-library smart and custom albums.
+	ListPhotoAlbums(ctx context.Context, request ListPhotoAlbumsRequest) (*ListPhotoAlbumsResult, error)
 	// GetPhotosStatus checks primary photo library readiness and its current cursor.
 	GetPhotosStatus(ctx context.Context, request GetPhotosStatusRequest) (*GetPhotosStatusResult, error)
 	// ListReminderSnapshot collects reminders across discovered lists or one optional list filter.

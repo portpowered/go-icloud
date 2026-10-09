@@ -1133,6 +1133,23 @@ type ListDriveLibrariesResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// ListPhotoAlbumsRequest Discover smart and custom albums in the primary photo library.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type ListPhotoAlbumsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListPhotoAlbumsResult Ordered smart and custom albums with response evidence from initialization and every page.
+//
+// Example: {"albums":[],"responses":[]}
+type ListPhotoAlbumsResult struct {
+	// Albums Duplicate IDs retain their last value and first position.
+	Albums    []PhotoAlbum       `json:"albums"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListReminderAlarmsRequest Look up ordered alarms and optional triggers from raw or complete related record identifiers.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"ids":[]}
@@ -1358,6 +1375,23 @@ type PermanentlyDeleteDriveNodeRequest struct {
 
 // PermanentlyDeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type PermanentlyDeleteDriveNodeResult = DriveItemChangeResult
+
+// PhotoAlbum One smart album or custom photo album with its resolved folder path.
+//
+// Example: {"fullName":"Library","id":"Library","name":"Library","recordChangeTag":null}
+type PhotoAlbum struct {
+	// FullName Name including discovered ancestor folders.
+	FullName string `json:"fullName"`
+
+	// ID Provider album record identifier or smart album name.
+	ID string `json:"id"`
+
+	// Name Decoded display name.
+	Name string `json:"name"`
+
+	// RecordChangeTag Provider revision or null when omitted.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+}
 
 // RefreshFindMyRequest Example: {"locate":true}
 type RefreshFindMyRequest struct {
