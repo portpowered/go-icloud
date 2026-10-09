@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"strings"
 
+	"golang.org/x/net/publicsuffix"
+
 	"github.com/fxamacker/cbor/v2"
 	wire "github.com/portpowered/go-icloud/pkg/dependencymodels/securitykey"
 )
@@ -78,6 +80,10 @@ func (channel *channel) assert(ctx context.Context, request Request) (Assertion,
 		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 			return Assertion{}, err
 		}
+		var failure *Error
+		if !errors.As(err, &failure) || !ctapFallbackFailure(failure.Stage) {
+			return Assertion{}, err
+		}
 		// Fido2Client falls back to CTAP1 when CTAP2 initialization fails.
 		return channel.assertU2F(ctx, request)
 	}
@@ -121,6 +127,15 @@ func (channel *channel) assert(ctx context.Context, request Request) (Assertion,
 	}
 }
 
+func ctapFallbackFailure(stage string) bool {
+	switch stage {
+	case "CTAP", "CBOR decode", "CBOR canonical", "CTAP decode", "info":
+		return true
+	default:
+		return false
+	}
+}
+
 func (channel *channel) assertAttempt(ctx context.Context, request Request, data []byte, credentials []wire.Credential, protocol wire.PINProtocol, required, allowUV bool) (Assertion, error) {
 	info, err := channel.info(ctx)
 	if err != nil {
@@ -159,6 +174,10 @@ func clientData(request Request) ([]byte, error) {
 	origin, parseErr := url.Parse(request.Origin)
 	if parseErr != nil || origin.Scheme != "https" || !strings.Contains(request.RelyingPartyID, ".") || (origin.Hostname() != request.RelyingPartyID && !strings.HasSuffix(origin.Hostname(), "."+request.RelyingPartyID)) {
 		return nil, &Error{Stage: "origin binding", Cause: ErrProtocol}
+	}
+	suffix, _ := publicsuffix.PublicSuffix(request.RelyingPartyID)
+	if suffix == request.RelyingPartyID {
+		return nil, &Error{Stage: "relying party suffix", Cause: ErrProtocol}
 	}
 	challenge, err := decodeBase64URL(request.Challenge)
 	if err != nil || len(challenge) == 0 {
@@ -230,7 +249,7 @@ func (channel *channel) selectCredential(ctx context.Context, rp string, credent
 	}
 	filtered := []wire.Credential{}
 	for _, credential := range credentials {
-		if info.MaxCredentialIdLength == nil || len(credential.Id) <= *info.MaxCredentialIdLength {
+		if info.MaxCredentialIdLength == nil || *info.MaxCredentialIdLength == 0 || len(credential.Id) <= *info.MaxCredentialIdLength {
 			filtered = append(filtered, credential)
 		}
 	}

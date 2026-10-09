@@ -41,7 +41,11 @@ The fixtures under `tests/replay/fixtures/securitykey` are explicitly synthetic,
 generated with the pinned Python environment's `fido2.cbor`, `CollectedClientData`
 and PIN/UV protocol implementations. They are paired HID transcripts, with exact
 request frames checked before replies, and separate deterministic cryptographic
-vectors. They contain fixed test scalars and invented assertions, never private
+vectors. `tools/reference/test_security_key_hid.py` also drives the real pinned
+`CtapHidDevice` and `Fido2Client` through all nine transcripts, verifying complete
+message order, credential selection, UV retries and Source PIN refusal. Run it
+with the pinned reference environment's unittest discovery. The fixtures contain
+fixed test scalars and invented assertions, never private
 captures. They verify source compatibility offline; they do not establish that
 an actual authenticator accepted a live Apple challenge. The SDK binds the proof
 to the relying party, requested credential and presence flags; Apple verifies

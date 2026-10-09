@@ -282,6 +282,24 @@ func (e KDFLabel) Valid() bool {
 	}
 }
 
+// Defines values for KeepaliveStatus.
+const (
+	Processing         KeepaliveStatus = 1
+	UserPresenceNeeded KeepaliveStatus = 2
+)
+
+// Valid indicates whether the value is a known member of the KeepaliveStatus enum.
+func (e KeepaliveStatus) Valid() bool {
+	switch e {
+	case Processing:
+		return true
+	case UserPresenceNeeded:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PINCommand.
 const (
 	GetKeyAgreement PINCommand = 2
@@ -456,6 +474,9 @@ type COSEKeyKeyType int
 // CTAPCommand defines model for CTAPCommand.
 type CTAPCommand int
 
+// ChannelID defines model for ChannelID.
+type ChannelID = uint32
+
 // ClientData defines model for ClientData.
 type ClientData struct {
 	Challenge   string         `json:"challenge"`
@@ -469,6 +490,13 @@ type ClientDataTemplate string
 
 // ClientDataType defines model for ClientDataType.
 type ClientDataType string
+
+// ContinuationFrame Big-endian channel ID, seven-bit sequence, and up to 59 payload bytes in a 64-byte report.
+type ContinuationFrame struct {
+	ChannelId ChannelID `json:"channelId"`
+	Payload   []byte    `json:"payload"`
+	Sequence  uint8     `json:"sequence"`
+}
 
 // Credential defines model for Credential.
 type Credential struct {
@@ -502,8 +530,30 @@ type InfoResponse struct {
 // InitResponseSize defines model for InitResponseSize.
 type InitResponseSize int
 
+// InitialFrame Big-endian channel ID, command with initial bit, two-byte payload length, and up to 57 payload bytes in a 64-byte report.
+type InitialFrame struct {
+	ChannelId     ChannelID     `json:"channelId"`
+	Command       PacketByte    `json:"command"`
+	Payload       []byte        `json:"payload"`
+	PayloadLength PayloadLength `json:"payloadLength"`
+}
+
+// InitializationResponse INIT response containing an eight-byte nonce echo, four-byte allocated channel, and five protocol, firmware and capability bytes.
+type InitializationResponse struct {
+	AllocatedChannelId ChannelID  `json:"allocatedChannelId"`
+	BuildVersion       PacketByte `json:"buildVersion"`
+	Capabilities       PacketByte `json:"capabilities"`
+	MajorVersion       PacketByte `json:"majorVersion"`
+	MinorVersion       PacketByte `json:"minorVersion"`
+	Nonce              []byte     `json:"nonce"`
+	ProtocolVersion    PacketByte `json:"protocolVersion"`
+}
+
 // KDFLabel defines model for KDFLabel.
 type KDFLabel string
+
+// KeepaliveStatus defines model for KeepaliveStatus.
+type KeepaliveStatus int
 
 // PINCommand defines model for PINCommand.
 type PINCommand int
@@ -528,6 +578,12 @@ type PINResponse struct {
 	KeyAgreement *COSEKey `cbor:"1,keyasint,omitempty" json:"keyAgreement,omitempty"`
 	Token        *[]byte  `cbor:"2,keyasint,omitempty" json:"token,omitempty"`
 }
+
+// PacketByte defines model for PacketByte.
+type PacketByte = uint8
+
+// PayloadLength defines model for PayloadLength.
+type PayloadLength = uint16
 
 // Status defines model for Status.
 type Status int

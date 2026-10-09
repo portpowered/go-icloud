@@ -28,15 +28,19 @@ func (channel *channel) initialize(ctx context.Context, nonce []byte) error {
 	if err != nil {
 		return err
 	}
-	if len(response) != int(wire.InitResponseBytes) || !bytes.Equal(response[:len(nonce)], nonce) {
+	initialized, err := initializationResponse(response)
+	if err != nil {
+		return err
+	}
+	if !bytes.Equal(initialized.Nonce, nonce) {
 		return &Error{Stage: "initialize", Cause: ErrProtocol}
 	}
-	id := binary.BigEndian.Uint32(response[int(wire.NonceBytes):])
+	id := initialized.AllocatedChannelId
 	if id == 0 || id == uint32(wire.BroadcastChannel) {
 		return &Error{Stage: "channel", Cause: ErrProtocol}
 	}
 	channel.id = id
-	channel.ctap2 = response[len(response)-1]&byte(wire.CBORCapability) != 0
+	channel.ctap2 = initialized.Capabilities&byte(wire.CBORCapability) != 0
 	return nil
 }
 
@@ -75,16 +79,14 @@ func (channel *channel) write(ctx context.Context, command byte, payload []byte)
 	remaining := payload
 	sequence := byte(0)
 	for {
-		packet := make([]byte, int(wire.ReportBytes)+1)
-		binary.BigEndian.PutUint32(packet[1:], channel.id)
+		copied := min(int(wire.ReportBytes)-header, len(remaining))
+		var packet []byte
 		if header == int(wire.InitialHeaderBytes) {
-			packet[5] = command | byte(wire.InitialFlag)
-			binary.BigEndian.PutUint16(packet[6:], uint16(len(payload)))
+			packet = initialReport(wire.InitialFrame{ChannelId: channel.id, Command: command | byte(wire.InitialFlag), PayloadLength: uint16(len(payload)), Payload: remaining[:copied]})
 		} else {
-			packet[5] = sequence
+			packet = continuationReport(wire.ContinuationFrame{ChannelId: channel.id, Sequence: sequence, Payload: remaining[:copied]})
 			sequence++
 		}
-		copied := copy(packet[header+1:], remaining)
 		count, err := channel.connection.Write(ctx, packet)
 		if err != nil {
 			return err
@@ -114,12 +116,15 @@ func (channel *channel) read(ctx context.Context, command byte) ([]byte, error) 
 			return nil, &Error{Stage: "report", Cause: ErrProtocol}
 		}
 		if binary.BigEndian.Uint32(packet) != channel.id {
-			continue
+			return nil, &Error{Stage: "response channel", Cause: ErrProtocol}
 		}
 		if packet[4]&byte(wire.InitialFlag) != 0 {
 			responseCommand := packet[4] &^ byte(wire.InitialFlag)
 			size := int(binary.BigEndian.Uint16(packet[5:]))
 			if responseCommand == byte(wire.KeepaliveCommand) && target == -1 && size == 1 {
+				if !wire.KeepaliveStatus(packet[7]).Valid() {
+					return nil, &Error{Stage: "keepalive status", Cause: ErrProtocol}
+				}
 				continue
 			}
 			if responseCommand == byte(wire.ErrorCommand) && size == 1 {

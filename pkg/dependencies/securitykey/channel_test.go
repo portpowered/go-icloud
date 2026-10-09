@@ -33,10 +33,8 @@ func TestRejectContinuationSequence(test *testing.T) {
 	}
 }
 
-func TestKeepaliveAndUnrelatedChannel(test *testing.T) {
+func TestKeepalive(test *testing.T) {
 	test.Parallel()
-	unrelated := make([]byte, int(wire.ReportBytes))
-	unrelated[0] = 1
 	keepalive := make([]byte, int(wire.ReportBytes))
 	keepalive[4] = byte(wire.KeepaliveCommand) | byte(wire.InitialFlag)
 	keepalive[6] = 1
@@ -45,11 +43,30 @@ func TestKeepaliveAndUnrelatedChannel(test *testing.T) {
 	response[4] = byte(wire.CBORCommand) | byte(wire.InitialFlag)
 	response[6] = 1
 	response[7] = 99
-	connection := &fakeConnection{test: test, reads: [][]byte{unrelated, keepalive, response}}
+	connection := &fakeConnection{test: test, reads: [][]byte{keepalive, response}}
 	channel := &channel{connection: connection}
 	result, err := channel.read(test.Context(), byte(wire.CBORCommand))
 	if err != nil || !bytes.Equal(result, []byte{99}) || len(connection.reads) != 0 {
-		test.Fatalf("keepalive/unrelated channel handling failed: %x, %v", result, err)
+		test.Fatalf("keepalive handling failed: %x, %v", result, err)
+	}
+}
+
+func TestRejectWrongChannelAndKeepaliveStatus(test *testing.T) {
+	test.Parallel()
+	for _, wrongChannel := range []bool{true, false} {
+		packet := make([]byte, int(wire.ReportBytes))
+		packet[4] = byte(wire.KeepaliveCommand) | byte(wire.InitialFlag)
+		packet[6] = 1
+		packet[7] = 3
+		if wrongChannel {
+			packet[0] = 1
+			packet[7] = byte(wire.Processing)
+		}
+		connection := &fakeConnection{test: test, reads: [][]byte{packet}}
+		channel := &channel{connection: connection}
+		if _, err := channel.read(test.Context(), byte(wire.CBORCommand)); !errors.Is(err, ErrProtocol) {
+			test.Fatalf("invalid channel/keepalive accepted: %v", err)
+		}
 	}
 }
 
@@ -108,5 +125,45 @@ func TestRejectInvalidCBOR(test *testing.T) {
 				test.Fatal("invalid CBOR accepted")
 			}
 		})
+	}
+}
+
+func TestU2FHardwareFailurePropagates(test *testing.T) {
+	test.Parallel()
+	fixture := readTranscriptFile(test, "python-u2f-synthetic.json")
+	connection := transcriptConnection(test, transcript{Steps: fixture.Steps[:2]})
+	failure := errors.New("synthetic read failure")
+	connection.readFailure = failure
+	connection.failureAfterReads = 1
+	provider, err := New(fakeBackend{connection: connection}, bytes.NewReader([]byte{0, 1, 2, 3, 4, 5, 6, 7}))
+	if err != nil {
+		test.Fatal(err)
+	}
+	_, err = provider.Assert(test.Context(), Request{DeviceID: "synthetic", RelyingPartyID: "apple.com", Origin: "https://apple.com", Challenge: "AQID", CredentialIDs: []string{"qrvM", "u8zd"}})
+	if !errors.Is(err, failure) || connection.closed != 1 || len(connection.writes) != 0 {
+		test.Fatalf("hardware error converted into credential refusal: %v", err)
+	}
+}
+
+func TestEntropyAndCloseCausesPreserved(test *testing.T) {
+	test.Parallel()
+	closeFailure := errors.New("synthetic close failure")
+	connection := &fakeConnection{test: test, closeFailure: closeFailure}
+	provider, err := New(fakeBackend{connection: connection}, bytes.NewReader(nil))
+	if err != nil {
+		test.Fatal(err)
+	}
+	_, err = provider.Assert(test.Context(), Request{DeviceID: "synthetic", RelyingPartyID: "apple.com", Origin: "https://apple.com", Challenge: "AQID"})
+	if !errors.Is(err, closeFailure) || connection.closed != 1 {
+		test.Fatalf("close failure lost: %v", err)
+	}
+}
+
+func TestRejectPublicSuffixDelegation(test *testing.T) {
+	test.Parallel()
+	for _, rp := range []string{"com", "co.uk", "github.io"} {
+		if _, err := clientData(Request{Origin: "https://example." + rp, RelyingPartyID: rp, Challenge: "AQID"}); !errors.Is(err, ErrProtocol) {
+			test.Fatalf("public suffix accepted: %s, %v", rp, err)
+		}
 	}
 }

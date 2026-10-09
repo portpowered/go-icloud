@@ -35,7 +35,11 @@ func (channel *channel) assertU2F(ctx context.Context, request Request) (Asserti
 			return Assertion{}, err
 		}
 		if err != nil {
-			continue
+			var failure *Error
+			if errors.As(err, &failure) && (failure.Stage == "APDU" || failure.Stage == "CTAP" || failure.Stage == "HID") {
+				continue
+			}
+			return Assertion{}, err
 		}
 		if len(response) <= int(wire.U2FHeaderBytes) {
 			return Assertion{}, &Error{Stage: "U2F signature", Cause: ErrProtocol}

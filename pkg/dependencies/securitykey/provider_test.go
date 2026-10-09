@@ -24,6 +24,7 @@ type transcript struct {
 	CredentialIDs     []string         `json:"credentialIds"`
 	Signature         string           `json:"signature"`
 	Steps             []transcriptStep `json:"steps"`
+	Error             string           `json:"error"`
 }
 
 type fakeBackend struct {
@@ -51,16 +52,19 @@ func (backend fakeBackend) Open(ctx context.Context, id string) (Connection, err
 }
 
 type fakeConnection struct {
-	test             *testing.T
-	writes           [][]byte
-	reads            [][]byte
-	closed           int
-	cancelOnRead     bool
-	cancelAfterReads int
-	readCount        int
+	test              *testing.T
+	writes            [][]byte
+	reads             [][]byte
+	closed            int
+	cancelOnRead      bool
+	cancelAfterReads  int
+	readCount         int
+	readFailure       error
+	failureAfterReads int
+	closeFailure      error
 }
 
-func (connection *fakeConnection) Close() error { connection.closed++; return nil }
+func (connection *fakeConnection) Close() error { connection.closed++; return connection.closeFailure }
 func (connection *fakeConnection) Write(ctx context.Context, packet []byte) (int, error) {
 	if err := ctx.Err(); err != nil {
 		return 0, err
@@ -76,6 +80,9 @@ func (connection *fakeConnection) Write(ctx context.Context, packet []byte) (int
 	return len(packet), nil
 }
 func (connection *fakeConnection) Read(ctx context.Context, packet []byte) (int, error) {
+	if connection.readFailure != nil && connection.readCount >= connection.failureAfterReads {
+		return 0, connection.readFailure
+	}
 	if connection.cancelOnRead || (connection.cancelAfterReads > 0 && connection.readCount >= connection.cancelAfterReads) {
 		return 0, context.Canceled
 	}
@@ -133,7 +140,7 @@ func transcriptConnection(test *testing.T, value transcript) *fakeConnection {
 
 func TestPythonCTAP2Transcript(test *testing.T) {
 	test.Parallel()
-	for _, name := range []string{"python-ctap2-synthetic.json", "python-u2f-synthetic.json", "python-uv1-synthetic.json", "python-uv2-synthetic.json", "python-selection-synthetic.json"} {
+	for _, name := range []string{"python-ctap2-synthetic.json", "python-u2f-synthetic.json", "python-uv1-synthetic.json", "python-uv2-synthetic.json", "python-selection-synthetic.json", "python-zero-limit-synthetic.json", "python-uv-retry-synthetic.json", "python-uv-blocked-synthetic.json", "python-pin-required-synthetic.json"} {
 		test.Run(name, func(test *testing.T) { test.Parallel(); assertPythonTranscript(test, name) })
 	}
 }
@@ -166,6 +173,12 @@ func assertPythonTranscript(test *testing.T, name string) {
 		ids = []string{"qrvM"}
 	}
 	result, err := provider.Assert(test.Context(), Request{DeviceID: devices[0].ID, RelyingPartyID: "apple.com", Origin: "https://apple.com", Challenge: "AQID", CredentialIDs: ids})
+	if fixture.Error == "pinRequired" {
+		if !errors.Is(err, ErrPINRequired) || connection.closed != 1 || len(connection.writes) != 0 || len(connection.reads) != 0 {
+			test.Fatalf("PIN failure differs from Source: %v", err)
+		}
+		return
+	}
 	if err != nil {
 		test.Fatal(err)
 	}
