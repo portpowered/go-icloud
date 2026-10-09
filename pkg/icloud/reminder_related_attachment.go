@@ -120,12 +120,24 @@ func reminderRelatedAssetURL(record cloudkit.CKRecord) (string, error) {
 		return "", nil
 	}
 
-	var asset cloudkit.CKAssetToken
+	var fields map[string]json.RawMessage
 
-	err = json.Unmarshal(wrapper.Value, &asset)
+	err = json.Unmarshal(wrapper.Value, &fields)
 	if err != nil {
 		return "", fmt.Errorf("decode reminder file asset token: %w", err)
 	}
 
-	return asset.DownloadURL.GetOrEmpty(), nil
+	raw := fields[protocol.RemindersCKAssetTokenDownloadURL]
+	if len(raw) == 0 || string(raw) == jsonNullValue {
+		return "", nil
+	}
+
+	var downloadURL string
+
+	err = json.Unmarshal(raw, &downloadURL)
+	if err != nil {
+		return "", fmt.Errorf("decode reminder file asset URL: %w", err)
+	}
+
+	return downloadURL, nil
 }

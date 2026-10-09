@@ -1,6 +1,6 @@
 # Reminders wire contracts
 
-The Go `ListReminders` implementation is under verification against all sixteen
+The Go `ListReminders` implementation is under verification against all thirty-one
 portable compound query cases. It sends the literal list identifier, completion
 filter, optional page size and continuation marker; consumes all pages; and
 projects complete reminders and supported related records. Per-record failures
@@ -12,8 +12,10 @@ The eight new compound reference cases entered every statement and branch exit
 in `_ingest_compound_record` (26/26 statements, 16/16 exits). The synthetic-only
 diagnostic keeps the unchanged overall denominators: 584/905 functions entered,
 3,328/5,398 function-body statements (61.65%) and 1,040/2,076 branch exits covered.
-The attachment mapper still has an unentered asset-download URL branch and the
-all-lists reminder facade remains unentered; neither is excluded as unreachable.
+Further Source cases now exercise asset URLs, integer-coercible size metadata,
+byte-backed text, invalid UTF-8 replacement and raw frequency selection. A fresh
+measurement of the expanded corpus is pending. The all-lists reminder facade
+remains unentered and is not excluded as unreachable.
 Go compound query parity, remaining endpoint ports, live Go verification and
 full migration/release acceptance remain open.
 

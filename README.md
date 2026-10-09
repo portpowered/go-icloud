@@ -197,9 +197,10 @@ for _, reminder := range snapshot.Reminders {
 An omitted page size uses 200; `ResultsLimit` overrides the provider page size,
 while the method still consumes every continuation page. `IncludeCompleted`
 defaults to false. Response evidence and cookie updates remain in `Responses`.
-Sixteen paired Source query scenarios cover empty and multiple results,
+Thirty-one paired Source query scenarios cover empty and multiple results,
 pagination, provider failure, related-record defaults, duplicate replacement,
-orphan filtering, unsupported types and unknown enum fallbacks. This API is
+orphan filtering, unsupported types, raw enum selection, byte-backed text and
+typed asset metadata. This API is
 under verification; the separate CLI compound query command remains pending.
 
 The separate Go CLI module reads account data and resumes an existing saved

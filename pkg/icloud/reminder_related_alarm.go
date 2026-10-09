@@ -65,15 +65,12 @@ func projectReminderRecurrence(record cloudkit.CKRecord) (ReminderRecurrenceRule
 		return *result, err
 	}
 
-	frequency, err := reminderRelatedInteger(record, protocol.RemindersRelatedFieldFrequencyValue, int64(ReminderDaily))
+	frequency, err := reminderRelatedFrequency(record)
 	if err != nil {
 		return *result, err
 	}
 
-	result.Frequency = ReminderRecurrenceRuleFrequency(frequency)
-	if !result.Frequency.Valid() {
-		result.Frequency = ReminderDaily
-	}
+	result.Frequency = frequency
 
 	result.Interval, err = reminderRelatedInteger(record, protocol.RemindersRelatedFieldIntervalValue, 1)
 	if err != nil {

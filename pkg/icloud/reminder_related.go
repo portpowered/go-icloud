@@ -27,7 +27,7 @@ func reminderRelatedTag(record cloudkit.CKRecord) nullable.Nullable[string] {
 
 func reminderRelatedStrings(record cloudkit.CKRecord, destinations map[string]*string) error {
 	for name, destination := range destinations {
-		raw, err := reminderField(record, name)
+		raw, err := reminderRelatedText(record, name, false)
 		if err != nil {
 			return err
 		}
@@ -122,7 +122,7 @@ func projectReminderHashtag(record cloudkit.CKRecord) (ReminderHashtag, error) {
 		return *result, err
 	}
 
-	raw, err := reminderField(record, protocol.RemindersRelatedFieldNameValue)
+	raw, err := reminderRelatedText(record, protocol.RemindersRelatedFieldNameValue, true)
 	if err != nil {
 		return *result, err
 	}

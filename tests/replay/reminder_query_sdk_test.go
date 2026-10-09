@@ -39,7 +39,7 @@ func TestReminderQuerySDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 16 {
+	if len(paths) != 31 {
 		t.Fatal("compound reminder query inventory changed")
 	}
 
@@ -108,7 +108,20 @@ func checkReminderQueryFailure(t *testing.T, scenario reminderQueryScenario,
 	var failure *icloud.ClientError
 
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
-	if result != nil || !errors.As(err, &failure) || failure.Kind() != reminderSyncFailureKind(last.Status) {
+	kind := reminderSyncFailureKind(last.Status)
+
+	var expected map[string]string
+
+	decodeErr := json.Unmarshal(scenario.Error, &expected)
+	if decodeErr != nil {
+		t.Fatal(decodeErr)
+	}
+
+	if expected["type"] == "ValidationError" {
+		kind = icloud.InvalidResponse
+	}
+
+	if result != nil || !errors.As(err, &failure) || failure.Kind() != kind {
 		t.Fatalf("compound query failure classification: %v", err)
 	}
 
