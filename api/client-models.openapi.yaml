@@ -6,6 +6,25 @@ info:
 paths: {}
 components:
   schemas:
+    GetPhotoRequest:
+      type: object
+      description: Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.
+      required: [auth, album, photoID]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library, photoID: synthetic-asset}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        album: {type: string, description: Album identifier or display/full name.}
+        photoID: {type: string, x-go-name: PhotoID, description: Requested asset identifier.}
+    GetPhotoResult:
+      type: object
+      description: Matching photo or explicit null after direct and enumeration lookup, with every response.
+      required: [photo, responses]
+      example: {photo: null, responses: []}
+      properties:
+        photo:
+          nullable: true
+          allOf: [{$ref: '#/components/schemas/Photo'}]
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     ListPhotoAssetsRequest:
       type: object
       description: Enumerate all paired assets of a primary smart/custom album in reference order.

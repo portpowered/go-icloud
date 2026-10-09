@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// GetPhoto finds one album asset by identifier with Source enumeration fallback.
+	GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error)
 	// ListPhotoAssets enumerates paired assets of a primary photo album.
 	ListPhotoAssets(ctx context.Context, request ListPhotoAssetsRequest) (*ListPhotoAssetsResult, error)
 	// GetPhotoAlbumCount reads the indexed count of a primary-library album.

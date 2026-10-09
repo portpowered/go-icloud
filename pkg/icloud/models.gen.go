@@ -1083,6 +1083,28 @@ type GetPhotoAlbumCountResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// GetPhotoRequest Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.
+//
+// Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset"}
+type GetPhotoRequest struct {
+	// Album Album identifier or display/full name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// PhotoID Requested asset identifier.
+	PhotoID string `json:"photoID"`
+}
+
+// GetPhotoResult Matching photo or explicit null after direct and enumeration lookup, with every response.
+//
+// Example: {"photo":null,"responses":[]}
+type GetPhotoResult struct {
+	Photo     nullable.Nullable[Photo] `json:"photo"`
+	Responses []ResponseMetadata       `json:"responses"`
+}
+
 // GetPhotosStatusRequest Check the primary photo library using caller-owned authentication.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}

@@ -439,3 +439,12 @@ and covers 3234/5398 function-body statements (59.91%) and 993/2076 branch exits
 The Go transport instantiates the pairs; public Go Photos parity and full
 migration/release acceptance remain open.
 
+
+
+Primary `GetPhoto` now has schema-generated public models and paired Source/Go
+lookup coverage: 22 scenarios/77 exchanges across smart/custom albums, folders,
+missing results, provider failures, paged fallback and stopping at the first match.
+The SDK retains explicit null absence and complete response evidence. A private
+live lookup succeeded; Python replay of its seven captured Photos exchanges
+matched the full Go result. Full checks, blocking CI and independent review are
+pending. CLI lookup, downloads and remaining selected service work remain open.
