@@ -1,0 +1,247 @@
+package command_test
+
+import (
+	"bytes"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"net/url"
+	"os"
+	"path/filepath"
+	"reflect"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
+	"github.com/portpowered/go-icloud/pkg/icloud"
+	"github.com/portpowered/go-icloud/tests/replay"
+)
+
+const writeFixtureDirectory = "../../../../tests/replay/fixtures/synthetic/http"
+
+type writeFixture struct {
+	Exchanges []replay.Exchange
+	Inputs    []any
+	Keywords  map[string]any
+	Result    any
+	Failure   json.RawMessage
+	Initial   map[string]json.RawMessage
+	Entropy   map[string]json.RawMessage
+}
+
+type writeReplayCase struct {
+	operation string
+	fixture   string
+}
+
+func TestWriteCommandsPairedReferenceReplay(t *testing.T) {
+	t.Parallel()
+	for _, scenario := range writeReplayCases() {
+		t.Run(scenario.fixture, func(t *testing.T) { t.Parallel(); runWriteReplay(t, scenario) })
+	}
+}
+
+func writeReplayCases() []writeReplayCase {
+	return []writeReplayCase{
+		{"reminder-create", "reminders-create-basic"},
+		{"reminder-create", "reminders-create-record-error"},
+		{"reminder-update", "reminders-update-basic"},
+		{"reminder-delete", "reminders-delete-success"},
+		{"reminder-hashtag-create", "reminders-create-hashtag-success"},
+		{"reminder-hashtag-update", "reminders-update-hashtag-success"},
+		{"reminder-hashtag-delete", "reminders-delete-hashtag-success"},
+		{"reminder-recurrence-create", "reminders-create-recurrence-rule-success"},
+		{"reminder-recurrence-update", "reminders-update-recurrence-rule-success"},
+		{"reminder-recurrence-delete", "reminders-delete-recurrence-rule-success"},
+		{"reminder-attachment-create", "reminders-create-url-attachment-success"},
+		{"reminder-attachment-update", "reminders-update-attachment-success"},
+		{"reminder-attachment-delete", "reminders-delete-attachment-success"},
+		{"reminder-location-add", "reminders-add-location-trigger-success"},
+		{"photo-album-create", "photos-create-album"},
+		{"photo-album-rename", "photos-rename-album"},
+		{"photo-album-delete", "photos-delete-album"},
+		{"photo-album-add", "photos-add-to-album"},
+		{"photo-favorite", "photos-favorite-true"},
+		{"photo-delete", "photos-delete-asset"},
+		{"photo-favorite", "photos-favorite-record-error"},
+	}
+}
+
+func loadWriteFixture(t *testing.T, name string) writeFixture {
+	t.Helper()
+	data, err := os.ReadFile(filepath.Join(writeFixtureDirectory, name+".json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var row map[string]json.RawMessage
+	decodeWriteFixture(t, data, &row)
+	fixture := writeFixture{Exchanges: nil, Inputs: nil, Keywords: nil, Result: nil, Failure: row["error"], Initial: nil, Entropy: nil}
+	decodeWriteFixture(t, row["exchanges"], &fixture.Exchanges)
+	decodeWriteFixture(t, row["inputs"], &fixture.Inputs)
+	decodeWriteFixture(t, row["initial_state"], &fixture.Initial)
+	decodeWriteFixture(t, row["entropy"], &fixture.Entropy)
+	if len(row["keyword_inputs"]) != 0 {
+		decodeWriteFixture(t, row["keyword_inputs"], &fixture.Keywords)
+	}
+	if len(row["result"]) != 0 {
+		decodeWriteFixture(t, row["result"], &fixture.Result)
+	}
+
+	return fixture
+}
+
+func decodeWriteFixture(t *testing.T, data []byte, target any) {
+	t.Helper()
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	if err := decoder.Decode(target); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func fixtureWriteAuthentication(t *testing.T, fixture writeFixture) icloud.AuthContext {
+	t.Helper()
+	var params, headers map[string]string
+	var origin string
+	decodeWriteFixture(t, fixture.Initial["params"], &params)
+	decodeWriteFixture(t, fixture.Initial["headers"], &headers)
+	decodeWriteFixture(t, fixture.Initial["origin"], &origin)
+	auth := icloud.AuthContext{AccountID: params["dsid"], ClientID: params["clientId"],
+		RemindersServiceURL: origin, PhotosServiceURL: origin, Headers: nil}
+	for name, value := range headers {
+		auth.Headers = append(auth.Headers, icloud.Header{Name: name, Value: value})
+	}
+
+	return auth
+}
+
+func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HTTPTransport) *icloud.SDK {
+	t.Helper()
+	var identities []string
+	var seconds int64
+	decodeWriteFixture(t, fixture.Entropy["uuid4"], &identities)
+	decodeWriteFixture(t, fixture.Entropy["unix_seconds"], &seconds)
+	var random bytes.Buffer
+	for _, identity := range identities {
+		data, err := hex.DecodeString(strings.ReplaceAll(identity, "-", ""))
+		if err != nil {
+			t.Fatal(err)
+		}
+		random.Write(data)
+	}
+	if data, exists := fixture.Entropy["random_bytes"]; exists {
+		var samples []string
+		decodeWriteFixture(t, data, &samples)
+		for _, sample := range samples {
+			value, err := base64.StdEncoding.DecodeString(sample)
+			if err != nil {
+				t.Fatal(err)
+			}
+			random.Write(value)
+		}
+	}
+	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(&random),
+		icloud.WithClock(func() time.Time { return time.Unix(seconds, 0) }))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return client
+}
+
+func runWriteReplay(t *testing.T, scenario writeReplayCase) {
+	t.Helper()
+	fixture := loadWriteFixture(t, scenario.fixture)
+	transport, err := replay.NewHTTPTransport(fixture.Exchanges)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client := fixtureWriteClient(t, fixture, transport)
+	request := fixtureWriteInput(t, scenario.operation, fixture)
+	// A foreign account in the request must never replace the selected stored session.
+	request["auth"] = map[string]any{"clientID": "foreign", "accountID": "foreign", "headers": []any{}}
+	directory := t.TempDir()
+	session := filepath.Join(directory, "session.json")
+	input := filepath.Join(directory, "request.json")
+	result := filepath.Join(directory, "result.json")
+	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
+	writeFixtureValue(t, input, request)
+	var output, diagnostic bytes.Buffer
+	err = command.Run(t.Context(), client, []string{"--session", session, "--request", input, "--save-result", result, scenario.operation},
+		&output, &diagnostic)
+	checkWriteReplayResult(t, scenario, fixture, output.Bytes(), result, err)
+	if err = transport.AssertConsumed(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func writeFixtureValue(t *testing.T, path string, value any) {
+	t.Helper()
+	data, err := json.Marshal(value)
+	if err != nil {
+		t.Fatal(err)
+	}
+	writeProbeFile(t, path, data)
+}
+
+func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writeFixture, output []byte, resultPath string, callErr error) {
+	t.Helper()
+	if len(fixture.Failure) != 0 || scenario.fixture == "photos-favorite-record-error" {
+		var failure *icloud.ClientError
+		if !errors.As(callErr, &failure) || len(output) != 0 {
+			t.Fatalf("expected paired provider failure: %v", callErr)
+		}
+		if scenario.fixture == "photos-favorite-record-error" && failure.Kind() != icloud.Provider {
+			t.Fatal("Photos per-record error exception lost provider classification")
+		}
+		return
+	}
+	if callErr != nil {
+		t.Fatal(callErr)
+	}
+	expected := fixtureWriteExpected(t, scenario.operation, fixture)
+	var actual any
+	decodeWriteFixture(t, output, &actual)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("Source console projection differs\nwant %#v\ngot %#v", expected, actual)
+	}
+	data, err := os.ReadFile(resultPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var saved map[string]json.RawMessage
+	decodeWriteFixture(t, data, &saved)
+	var responses []icloud.ResponseMetadata
+	decodeWriteFixture(t, saved["responses"], &responses)
+	checkWriteResponses(t, responses, fixture.Exchanges)
+}
+
+func checkWriteResponses(t *testing.T, responses []icloud.ResponseMetadata, exchanges []replay.Exchange) {
+	t.Helper()
+	if len(responses) != len(exchanges) {
+		t.Fatal("private result lost completed response evidence")
+	}
+	for index, response := range responses {
+		paired := exchanges[index]
+		if response.StatusCode != paired.Response.Status {
+			t.Fatal("private response status changed")
+		}
+		headers := make([]icloud.Header, 0, len(paired.Response.Headers))
+		for _, header := range paired.Response.Headers {
+			headers = append(headers, icloud.Header{Name: header[0], Value: header[1]})
+		}
+		if !reflect.DeepEqual(response.Headers, headers) {
+			t.Fatal("private result changed paired response headers")
+		}
+		address, err := url.Parse(paired.Request.Origin + paired.Request.Path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		address.RawQuery = ""
+		if response.CookieScopeURL != address.String() {
+			t.Fatal("private result changed response cookie scope")
+		}
+	}
+}
