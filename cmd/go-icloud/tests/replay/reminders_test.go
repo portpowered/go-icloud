@@ -16,6 +16,12 @@ import (
 )
 
 const reminderCommand = "reminder"
+const reminderCLIAttachmentsField = "attachments"
+const reminderCLIAttachmentsCommand = "reminder-attachments"
+const reminderCLIRecurrenceCommand = "reminder-recurrence-rules"
+const reminderCLITagsCommand = "reminder-tags"
+const reminderCLIAlarmsField = "alarms"
+const reminderCLIAlarmsCommand = "reminder-alarms"
 
 func TestReminderCommands(t *testing.T) {
 	t.Parallel()
@@ -113,6 +119,8 @@ func checkReminderCLIOutcome(t *testing.T, operation string, row map[string]json
 	t.Helper()
 
 	switch operation {
+	case reminderCLITagsCommand, reminderCLIAttachmentsCommand, reminderCLIRecurrenceCommand, reminderCLIAlarmsCommand:
+		checkReminderCLIRelatedOutcome(t, operation, row, output, err)
 	case reminderSyncCommand:
 		checkReminderCLISyncOutcome(t, row, output, err)
 	case reminderChangesCommand:
@@ -154,6 +162,11 @@ func reminderCLIArgs(t *testing.T, operation, session string, row map[string]jso
 		if len(inputs) != 0 {
 			args = append(args, "--list", inputs[0])
 		}
+	}
+
+	switch operation {
+	case reminderCLITagsCommand, reminderCLIAttachmentsCommand, reminderCLIRecurrenceCommand, reminderCLIAlarmsCommand:
+		args = append(args, reminderCLIRelatedArgs(t, row)...)
 	}
 
 	return append(args, operation)
@@ -246,7 +259,9 @@ func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failu
 
 func reminderCLIProviderMessage(message string) bool {
 	for _, prefix := range []string{"Fetch reminder lists failed", "Lookup reminder failed",
-		"Iterating reminder changes failed", "Unable to obtain sync token", "List reminders query failed"} {
+		"Lookup alarms failed", "Lookup alarm triggers failed", "Lookup attachments failed",
+		"Lookup recurrence rules failed", "Lookup hashtags failed", "Iterating reminder changes failed",
+		"Unable to obtain sync token", "List reminders query failed"} {
 		if strings.HasPrefix(message, prefix) {
 			return true
 		}
