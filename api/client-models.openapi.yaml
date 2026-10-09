@@ -6,6 +6,22 @@ info:
 paths: {}
 components:
   schemas:
+    GetPhotoAlbumCountRequest:
+      type: object
+      description: Read the primary photo album count using a smart/custom ID, name or full name.
+      required: [auth, album]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        album: {type: string, description: Album identifier or display/full name from ListPhotoAlbums.}
+    GetPhotoAlbumCountResult:
+      type: object
+      description: Nonnegative indexed photo count and every response from initialization, discovery and counting.
+      required: [count, responses]
+      example: {count: 0, responses: []}
+      properties:
+        count: {type: integer, format: int64, minimum: 0, description: Number of indexed photos.}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     ListPhotoAlbumsRequest:
       type: object
       description: Discover smart and custom albums in the primary photo library.

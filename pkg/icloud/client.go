@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// GetPhotoAlbumCount reads the indexed count of a primary-library album.
+	GetPhotoAlbumCount(ctx context.Context, request GetPhotoAlbumCountRequest) (*GetPhotoAlbumCountResult, error)
 	// ListPhotoAlbums reads all primary-library smart and custom albums.
 	ListPhotoAlbums(ctx context.Context, request ListPhotoAlbumsRequest) (*ListPhotoAlbumsResult, error)
 	// GetPhotosStatus checks primary photo library readiness and its current cursor.

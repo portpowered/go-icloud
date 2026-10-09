@@ -11,7 +11,7 @@ and unused traffic (LIB-05/LIB-12). The added cases cover overlapping normal,
 error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
-The current portable HTTP corpus contains 847 scenarios and 1,627 pairs, including
+The current portable HTTP corpus contains 900 scenarios and 1,779 pairs, including
 348 Reminders scenarios and 414 pairs. The Go snapshot facade executes all
 
 twenty-eight Source cases; full verification and independent review remain open.
@@ -303,3 +303,22 @@ A private live Go read returned 12 albums with successful saved-session validati
 and four HTTP 200 Photos queries. Captured evidence remains outside Git and
 separate from the synthetic corpus (LIB-09/LIB-12). Assets, shared-library album
 reads, downloads and mutations remain pending.
+
+## Primary Photos album counts
+
+`GetPhotoAlbumCount` consumes 56 Source-executed scenarios and 161 paired
+exchanges. Fifty-three new synthetic cases cover each smart index, custom IDs and
+names, full folder paths, ID collisions, cookie reuse, first-value precedence,
+whole-batch validation, Source binary64 rounding of decimal/exponent numbers,
+exact preservation of plain JSON integers, integer input forms, empty/missing/invalid counts,
+initialization failures and HTTP errors. Complete results and final/prior response
+evidence are checked with strict exchange consumption. Source mutation controls
+reject changed results, album selectors, query booleans, error payloads, missing
+cookies and unused traffic (LIB-05). The batch endpoint and its nested models are
+schema-owned; request spacing/order and the Source `plain/text` content type are
+preserved separately from ordinary photo queries.
+
+A private live count used the saved trusted session: validation, library discovery
+and the count request all returned HTTP 200. Captured replies remain outside Git
+and separate from synthetic cases. Asset enumeration, shared counts, downloads
+and mutations remain pending.

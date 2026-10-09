@@ -270,6 +270,25 @@ pagination, folders, encoded names, cookies and provider failures. A private
 live read with the saved trusted session returned 12 albums and HTTP 200 for all
 requests. Shared-library album enumeration remains separate pending work.
 
+Read the indexed count of a primary photo album:
+
+```go
+count, err := client.GetPhotoAlbumCount(ctx, icloud.GetPhotoAlbumCountRequest{
+    Auth: resumed.Auth, Album: "Library",
+})
+if err != nil { return err }
+_ = count.Count
+```
+
+`Album` accepts an ID, name or full folder path from `ListPhotoAlbums`. The SDK
+initializes and discovers albums before querying the selected Hyperion index.
+It returns a nonnegative count with every response; missing albums return
+`NotFound`, and malformed or unusable count replies retain their evidence.
+Forty-nine Source/Go cases bind all smart indexes, custom/folder selection, full
+reply validation, integer coercion, cookies, initialization and HTTP failures.
+A private live primary-library count succeeded with the saved trusted session.
+Photo asset enumeration and shared-library counts remain pending.
+
 Fetch related records using the identifiers returned on a reminder:
 
 ```go

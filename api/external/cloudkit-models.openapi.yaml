@@ -3304,6 +3304,229 @@
           "sortAscending"
         ],
         "description": "Reference album sorting direction flag."
+      },
+      "PhotosCountRequest": {
+        "type": "object",
+        "description": "Photos Hyperion batch count request.",
+        "properties": {
+          "batch": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhotosCountRequestBatch"
+            }
+          }
+        },
+        "required": [
+          "batch"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosCountRequestBatch": {
+        "type": "object",
+        "description": "One count lookup in a primary or shared photo zone.",
+        "properties": {
+          "resultsLimit": {
+            "type": "integer",
+            "enum": [
+              1
+            ],
+            "x-order": 1
+          },
+          "query": {
+            "$ref": "#/components/schemas/PhotosCountQuery",
+            "x-order": 2
+          },
+          "zoneWide": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 4
+          }
+        },
+        "required": [
+          "resultsLimit",
+          "query",
+          "zoneWide",
+          "zoneID"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosCountQuery": {
+        "type": "object",
+        "description": "Hyperion index count query.",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "HyperionIndexCountLookup"
+            ],
+            "x-order": 1
+          },
+          "filterBy": {
+            "$ref": "#/components/schemas/PhotosCountFilter",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "recordType",
+          "filterBy"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosCountFilter": {
+        "type": "object",
+        "description": "Index count membership filter.",
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "enum": [
+              "indexCountID"
+            ],
+            "x-order": 1
+          },
+          "comparator": {
+            "type": "string",
+            "enum": [
+              "IN"
+            ],
+            "x-order": 2
+          },
+          "fieldValue": {
+            "$ref": "#/components/schemas/PhotosCountStringList",
+            "x-order": 3
+          }
+        },
+        "required": [
+          "fieldName",
+          "comparator",
+          "fieldValue"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosCountStringList": {
+        "type": "object",
+        "description": "Photo index identifiers.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING_LIST"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosCountResponse": {
+        "type": "object",
+        "description": "Validated full count batch response.",
+        "properties": {
+          "batch": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhotosCountResponseBatch"
+            }
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        }
+      },
+      "PhotosCountResponseBatch": {
+        "type": "object",
+        "description": "One count result batch.",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhotosCountRecord"
+            }
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        }
+      },
+      "PhotosCountRecord": {
+        "type": "object",
+        "description": "Count record.",
+        "properties": {
+          "fields": {
+            "$ref": "#/components/schemas/PhotosCountFields"
+          }
+        },
+        "required": [
+          "fields"
+        ],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        }
+      },
+      "PhotosCountFields": {
+        "type": "object",
+        "description": "Count record fields.",
+        "properties": {
+          "itemCount": {
+            "$ref": "#/components/schemas/PhotosCountField"
+          }
+        },
+        "required": [
+          "itemCount"
+        ],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        }
+      },
+      "PhotosCountField": {
+        "type": "object",
+        "description": "Source integer-coercible photo count.",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/CKIntegerInput"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CKUnknownJSON"
+        }
+      },
+      "PhotoObjectIndex": {
+        "type": "string",
+        "enum": [
+          "CPLAssetByAssetDateWithoutHiddenOrDeleted",
+          "CPLAssetBurstStackAssetByAssetDate",
+          "CPLAssetDeletedByExpungedDate",
+          "CPLAssetInSmartAlbumByAssetDate:Favorite",
+          "CPLAssetHiddenByAssetDate",
+          "CPLAssetInSmartAlbumByAssetDate:Live",
+          "CPLAssetInSmartAlbumByAssetDate:Panorama",
+          "CPLAssetInSmartAlbumByAssetDate:Screenshot",
+          "CPLAssetInSmartAlbumByAssetDate:Slomo",
+          "CPLAssetInSmartAlbumByAssetDate:Timelapse",
+          "CPLAssetInSmartAlbumByAssetDate:Video",
+          "CPLContainerRelationNotDeletedByAssetDate"
+        ],
+        "description": "Pinned photo count index identifiers."
       }
     }
   }

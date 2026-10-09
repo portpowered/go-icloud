@@ -1045,6 +1045,26 @@ type GetDriveNodeResult struct {
 	Node DriveNode `json:"node"`
 }
 
+// GetPhotoAlbumCountRequest Read the primary photo album count using a smart/custom ID, name or full name.
+//
+// Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type GetPhotoAlbumCountRequest struct {
+	// Album Album identifier or display/full name from ListPhotoAlbums.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// GetPhotoAlbumCountResult Nonnegative indexed photo count and every response from initialization, discovery and counting.
+//
+// Example: {"count":0,"responses":[]}
+type GetPhotoAlbumCountResult struct {
+	// Count Number of indexed photos.
+	Count     int64              `json:"count"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // GetPhotosStatusRequest Check the primary photo library using caller-owned authentication.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
