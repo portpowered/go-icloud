@@ -107,7 +107,7 @@ provider record failures return a typed error with the original response bytes.
 Twenty-four list scenarios pass semantic Go replay, including required-field
 failures, reference truthiness and display conversion, embedded membership,
 invalid membership, nested control-character escaping, and an empty pagination token. Individual reminder
-reads, mutations, Go CLI reminders commands, and live Go verification remain
+reads, mutations, and live Go verification remain
 in progress.
 
 The separate Go CLI module reads account data and resumes an existing saved
@@ -128,6 +128,8 @@ go run . --session C:/private/icloud-auth.json account-plan
 go run . --session C:/private/icloud-auth.json drive-libraries
 go run . --session C:/private/icloud-auth.json --node YOUR_NODE_ID drive-node
 go run . --session C:/private/icloud-auth.json --family findmy
+go run . --session C:/private/icloud-auth.json reminder-zones
+go run . --session C:/private/icloud-auth.json reminder-lists
 ```
 
 `resume` saves a private `ResumeSessionResult` file and prints only its path and
@@ -142,7 +144,10 @@ the public field names, including `accountID`,
 `clientID`, service URLs, `headers`, and `cookies`. Keep this file private and out
 of Git. Commands print service results as JSON, omit response authentication
 metadata, and use a configurable `--timeout` (default one minute). Find My closes
-its session after returning the initial device list. Photos, Reminders and write
+its session after returning the initial device list. `reminder-zones` discovers
+zones and cursors; `reminder-lists` consumes every list page and membership asset.
+Both reuse the same private saved session. Response authentication headers are
+omitted from command output. Photos, individual reminder reads and write
 operations are not yet CLI commands.
 
 CLI replay tests use the root canonical synthetic fixture tree and public SDK.
