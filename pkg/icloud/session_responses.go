@@ -13,7 +13,7 @@ func (sdk *SDK) ApplySessionResponses(ctx context.Context,
 ) (*ApplySessionResponsesResult, error) {
 	err := ctx.Err()
 	if err != nil {
-		return nil, newClientError("ApplySessionResponses", Canceled, 0, nil, nil, err)
+		return nil, driveContextFailure("ApplySessionResponses", err)
 	}
 
 	state := authResumeState{auth: cloneDriveAuth(request.Session.Auth), trustToken: request.Session.TrustToken,
