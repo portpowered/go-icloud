@@ -21,7 +21,7 @@ func TestReminderCommands(t *testing.T) {
 	t.Parallel()
 
 	for prefix, operation := range map[string]string{"zones": "reminder-zones",
-		"lists": "reminder-lists", "get": reminderCommand} {
+		"lists": "reminder-lists", "get": reminderCommand, "sync": reminderSyncCommand} {
 		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/reminders-" + prefix + "-*.json")
 		if err != nil {
 			t.Fatal(err)
@@ -34,6 +34,10 @@ func TestReminderCommands(t *testing.T) {
 
 		if prefix == "get" {
 			want = 19
+		}
+
+		if prefix == "sync" {
+			want = 53
 		}
 
 		if len(paths) != want {
@@ -92,8 +96,13 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 	}
 
 	args = append(args, operation)
+
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
-	checkReminderCommandOutcome(t, operation, row, output.Bytes(), err)
+	if operation == reminderSyncCommand {
+		checkReminderCLISyncOutcome(t, row, output.Bytes(), err)
+	} else {
+		checkReminderCommandOutcome(t, operation, row, output.Bytes(), err)
+	}
 
 	if diagnostic.Len() != 0 {
 		t.Fatal("reminder CLI printed unexpected diagnostics")
@@ -169,7 +178,8 @@ func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failu
 
 	kind := expectedFailureKind(last.Response.Status)
 	if last.Response.Status < 400 && !strings.HasPrefix(sourceError["message"], "Fetch reminder lists failed") &&
-		!strings.HasPrefix(sourceError["message"], "Lookup reminder failed") {
+		!strings.HasPrefix(sourceError["message"], "Lookup reminder failed") &&
+		!strings.HasPrefix(sourceError["message"], "Unable to obtain sync token") {
 		kind = icloud.InvalidResponse
 	}
 

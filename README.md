@@ -170,6 +170,7 @@ go run . --session C:/private/icloud-auth.json --node YOUR_NODE_ID drive-node
 go run . --session C:/private/icloud-auth.json --family findmy
 go run . --session C:/private/icloud-auth.json reminder-zones
 go run . --session C:/private/icloud-auth.json reminder-lists
+go run . --session C:/private/icloud-auth.json reminder-sync
 go run . --session C:/private/icloud-auth.json --reminder Reminder/synthetic-item reminder
 ```
 

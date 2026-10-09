@@ -347,6 +347,10 @@ func expectedFailureKind(status int) icloud.ErrorKind {
 	switch status {
 	case 401:
 		return icloud.Unauthorized
+	case 403:
+		return icloud.Forbidden
+	case 429:
+		return icloud.RateLimited
 	case 503:
 		return icloud.Unavailable
 	default:
