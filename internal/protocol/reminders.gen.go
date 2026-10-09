@@ -222,6 +222,7 @@ const (
 	RemindersReminderFieldTitleDocumentValue         = "TitleDocument"
 	RemindersReminderIDPrefixValue                   = "Reminder/"
 	RemindersReminderRecordTypeValue                 = "Reminder"
+	RemindersReminderSyncQueryRecordTypeValue        = "reminderList"
 	RemindersAcceptEncodingName                      = "Accept-Encoding"
 	RemindersAcceptName                              = "Accept"
 	RemindersClientBuildNumberName                   = "clientBuildNumber"

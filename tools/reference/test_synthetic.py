@@ -1,5 +1,4 @@
 """Portable service parity and fail-closed replay controls."""
-
 import base64
 import io
 import json
@@ -19,7 +18,7 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_reminder_sync_cursor_fallback_and_paging_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-sync-*.json"))
-        self.assertEqual(len(paths), 16)
+        self.assertEqual(len(paths), 18)
         pairs = 0
         for path in paths:
             scenario = json.loads(path.read_text(encoding="utf-8"))
@@ -35,7 +34,7 @@ class SyntheticTests(unittest.TestCase):
                     self.assertEqual(
                         scenario["error"]["type"], "PyiCloudAPIResponseException"
                     )
-        self.assertEqual(pairs, 28)
+        self.assertEqual(pairs, 32)
 
     def test_reminder_sync_cursor_binds_final_token_and_consumption(self):
         for change in ["token", "result", "unused"]:

@@ -986,6 +986,25 @@ type GetReminderResult struct {
 	Reminder Reminder `json:"reminder"`
 }
 
+// GetReminderSyncCursorRequest Discover a usable cursor for subsequent Reminders change reads.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
+type GetReminderSyncCursorRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// GetReminderSyncCursorResult Usable query or last-zone cursor after consuming all required fallback pages.
+//
+// Example: {"responses":[{"headers":[],"statusCode":200}],"syncToken":"synthetic-sync"}
+type GetReminderSyncCursorResult struct {
+	// Responses Every completed query and fallback page response in request order, including cookie updates.
+	Responses []ResponseMetadata `json:"responses"`
+
+	// SyncToken Opaque provider-issued cursor; preserve it unchanged.
+	SyncToken string `json:"syncToken"`
+}
+
 // Header One HTTP response or caller-owned authentication header value; repeated headers remain separate entries.
 type Header struct {
 	// Name Header name.

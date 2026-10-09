@@ -2554,6 +2554,17 @@
         ],
         "description": "Pinned Reminders list protocol value used by the domain projection."
       },
+      "ReminderSyncQueryRecordType": {
+        "type": "string",
+        "enum": ["reminderList"],
+        "description": "Pinned pseudo record type used to discover the current Reminders sync token."
+      },
+      "ReminderSyncQueryLimit": {
+        "type": "integer",
+        "enum": [1],
+        "x-enum-varnames": ["ReminderSyncQueryLimitOne"],
+        "description": "Pinned lightweight current-token query result limit."
+      },
       "ReminderRecordType": {
         "type": "string",
         "enum": [

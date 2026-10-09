@@ -46,24 +46,26 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 125 implementation-derived synthetic Reminders scenarios contain
-145 paired exchanges: 142 POST pairs and three membership-asset downloads. Contract
+The current 127 implementation-derived synthetic Reminders scenarios contain
+149 paired exchanges: 146 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
-Eleven source-invalid zone/list/lookup/query replies must fail JSON or schema validation. Ten sanitized
+Thirteen source-invalid zone/list/lookup/query replies must fail JSON or schema validation. Ten sanitized
 examples cover each POST request/reply responsibility. These are synthetic
 reference examples, not captured Apple writes (SCHEMA-08, SCHEMA-12).
 
-Sixteen Source-executed sync-cursor scenarios bind query tokens, null/empty token
+Eighteen Source-executed sync-cursor scenarios bind query tokens, null/empty token
 fallback, invalid JSON and invalid query records, paginated zone changes,
 last-zone token selection, missing tokens and provider failures. The shared
 session raises HTTP 401, 403, 429 and 503 before CloudKit fallback; those cases
 consume only the query exchange. The two fallback decode failures do consume
 zone changes. These distinguish actual service behavior from the lower-level
 CloudKit client's error handling. Negative controls reject changed final tokens,
-changed public results and unused pages. Public Go sync-cursor orchestration
-remains pending.
+changed public results and unused pages. Public Go `GetReminderSyncCursor`
+executes these same 18 scenarios. It returns the exact usable token and ordered
+response metadata, preserving prior exchanges when a later page fails. Decode
+failures in the query permit fallback; HTTP/session failures stop immediately.
 
 Asset binding checks that the HTTPS origin, escaped path and decoded query occur
 in a prior validated POST List record's ReminderIDsAsset/ASSETID downloadURL. It
@@ -110,7 +112,7 @@ rejection, numeric/container truthiness and display conversion, embedded asset
 precedence, invalid membership, and empty pagination tokens. An additional nested
 display case binds control-character escaping to the reference. Five malformed
 responses must fail external schema validation as well as Source and Go decoding.
-The remaining public Reminders API must still port reminder pagination, sync-token fallback,
+The remaining public Reminders API must still port reminder pagination and change iteration,
 record/domain mapping, CRDT/protobuf text, linked record writes, receipt/state
 updates, typed errors and all portable functional outcomes. Native authentication,
 Photos, CLI/publication/release, complete source/schema/runtime/socket gates and

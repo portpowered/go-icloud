@@ -921,6 +921,36 @@ func (e ReminderRecordType) Valid() bool {
 	}
 }
 
+// Defines values for ReminderSyncQueryLimit.
+const (
+	ReminderSyncQueryLimitOne ReminderSyncQueryLimit = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderSyncQueryLimit enum.
+func (e ReminderSyncQueryLimit) Valid() bool {
+	switch e {
+	case ReminderSyncQueryLimitOne:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderSyncQueryRecordType.
+const (
+	ReminderList ReminderSyncQueryRecordType = "reminderList"
+)
+
+// Valid indicates whether the value is a known member of the ReminderSyncQueryRecordType enum.
+func (e ReminderSyncQueryRecordType) Valid() bool {
+	switch e {
+	case ReminderList:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for UnreadableReminderTitle.
 const (
 	ErrorDecodingTitle UnreadableReminderTitle = "Error Decoding Title"
@@ -1802,6 +1832,12 @@ type ReminderIDPrefix string
 
 // ReminderRecordType Pinned Reminder domain mapping protocol value.
 type ReminderRecordType string
+
+// ReminderSyncQueryLimit Pinned lightweight current-token query result limit.
+type ReminderSyncQueryLimit int
+
+// ReminderSyncQueryRecordType Pinned pseudo record type used to discover the current Reminders sync token.
+type ReminderSyncQueryRecordType string
 
 // UnreadableReminderTitle Pinned Reminder domain mapping protocol value.
 type UnreadableReminderTitle string

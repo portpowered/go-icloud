@@ -129,6 +129,27 @@ date normalization and audit fallback, unreadable/empty documents, invalid UTF-8
 other records, raw/prefixed IDs, alternate success status and provider failures.
 Further reminder queries, mutations, and live Go verification remain in progress.
 
+Discover a cursor for subsequent Reminders change reads:
+
+```go
+cursor, err := client.GetReminderSyncCursor(ctx, icloud.GetReminderSyncCursorRequest{
+    Auth: resumed.Auth,
+})
+if err != nil {
+    return err
+}
+fmt.Println(cursor.SyncToken)
+```
+
+The operation tries the lightweight query, then consumes zone-change pages when
+the query has no token or cannot decode its reply. HTTP authentication, throttling
+and service errors stop the operation. The last zone supplies the cursor; no
+usable token produces a typed provider error. `cursor.Responses` contains query
+and page metadata in request order, including cookie updates. Failed operations
+retain earlier response metadata through `ClientError.PriorResponses()`.
+Eighteen paired Source/Go scenarios bind this discovery behavior; public change
+iteration and compound reminder queries remain pending.
+
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private
 Go session file. Password login and MFA completion are still pending, and live

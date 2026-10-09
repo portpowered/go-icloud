@@ -1,12 +1,18 @@
 # iCloud migration checklist
 
-The sync-cursor reference matrix now has 16 Source-executed scenarios and 28
-paired exchanges. Fourteen new cases cover token defaults, query decode fallback,
+The sync-cursor reference matrix now has 18 Source-executed scenarios and 32
+paired exchanges. Sixteen added cases cover token defaults, query decode fallback,
 provider errors, pagination, multiple zones and missing final tokens. Portable
-HTTP inventory is 563 scenarios and 1,247 paired exchanges. This is reference
-evidence for the next Go port; public Go sync-cursor behavior remains open.
+HTTP inventory is 565 scenarios and 1,251 paired exchanges. This is reference
+evidence for the public Go `GetReminderSyncCursor` port, which passes all 18
+paired semantic replays with exact tokens, ordered response metadata and prior
+response evidence on failures. Public change iteration remains open. The latest
+all-evidence Source measurement enters 592/905 inventoried functions and covers
+3,325/5,398 body statements (61.60%) and 1,023/2,076 branch exits. The separate
+synthetic-only run enters 584 functions and covers 3,278 body statements and
+1,011 branch exits; these evidence categories remain separate.
 
-Latest Go milestone: `GetReminder` passes 19 paired Source/Go cases binding all
+The preceding Go lookup milestone: `GetReminder` passes 19 paired Source/Go cases binding all
 21 public fields, versioned title/notes, ordered related IDs, field dates, audit
 fallback after sentinel normalization, unreadable/empty documents, invalid UTF-8,
 raw/prefixed identifiers, unrelated records, alternate success/cookies, missing

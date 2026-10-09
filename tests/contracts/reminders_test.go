@@ -63,7 +63,7 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 125, Pairs: 145, Operations: 6, Invalid: 11}
+	want := remindersContractInventory{Scenarios: 127, Pairs: 149, Operations: 6, Invalid: 13}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}
@@ -72,6 +72,8 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 func invalidReminderResponse(name string, index int) bool {
 	switch name {
 	case "reminders-sync-invalid-json-fallback.json", "reminders-sync-schema-query-fallback.json":
+		return index == 0
+	case "reminders-sync-schema-record-name.json", "reminders-sync-schema-record-fields.json":
 		return index == 0
 	case "reminders-sync-schema-zone.json":
 		return index == 1
