@@ -82,6 +82,7 @@ func photosIndexingStateText(record cloudkit.CKRecord) (string, error) {
 			if err != nil {
 				return "", fmt.Errorf("decode photo indexing field: %w", err)
 			}
+
 			switch wrapper.Type {
 			case string(cloudkit.BYTES), string(cloudkit.ENCRYPTEDBYTES):
 				// Source converts binary values to Python byte representations, never the text readiness token.
@@ -89,12 +90,15 @@ func photosIndexingStateText(record cloudkit.CKRecord) (string, error) {
 			}
 		}
 	}
+
 	raw, err := reminderField(record, protocol.PhotosPhotoIndexingStateFieldValue)
 	if err != nil {
 		return "", err
 	}
+
 	if len(raw) == 0 || string(raw) == jsonNullValue {
 		return "", nil
 	}
+
 	return reminderDisplayText(raw)
 }
