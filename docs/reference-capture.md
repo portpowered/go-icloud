@@ -134,6 +134,17 @@ because its trusted-device bridge includes uncaptured socket traffic.
 
 ## Verification
 
+Photos download failure scenarios execute the pinned service's indexing,
+album/asset lookup, and asset GET against four paired exchanges per case.
+Synthetic refusals cover HTTP 401, 403, 404, 410, 429, 500, and 503; transport
+cases inject timeout, connection failure, and a chunked-transfer error.
+The reference reports endpoint-gone for 410, connection errors for timeout
+and connection failure, and API errors for the remaining cases. These are
+implementation-derived outcomes, not observed account failures. Negative
+controls reject changed error results, wrong asset origins, and unused pairs
+(LIB-05, LIB-12). The fixtures enter the existing Go portable transport replay;
+public Go Photos service orchestration and semantic parity remain pending.
+
 Reference coverage disables coverage.py's default line and partial-branch
 exclusions, including upstream `no cover`, `no branch`, and `TYPE_CHECKING`
 markers. Named file/function exclusions remain in the audited scope policy.

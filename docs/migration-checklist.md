@@ -288,3 +288,14 @@ credentials and next refresh request, and explicit Cookie-header precedence.
 Cookie pair/separator/quote formats are schema-generated. A private live Go
 saved-session probe returned provider 421; this is a failed authentication
 attempt, not verification of live service behavior or valid saved credentials.
+
+### Photos download failure evidence
+
+Ten additional Source-executed synthetic download scenarios add forty paired
+exchanges, bringing the portable HTTP inventory to 507 scenarios/1149 pairs.
+Provider refusals cover 401, 403, 404, 410, 429, 500, and 503. Transport cases
+inject timeout, connection failure, and chunked-transfer errors. Six negative
+controls reject changed expected errors, wrong asset origins, and unused pairs.
+The Go transport instantiates all pairs; public Go Photos service orchestration
+and semantic result parity remain open. This milestone does not complete the
+reference endpoint/function inventory or any release gate.

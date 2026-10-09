@@ -16,6 +16,30 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_photo_download_failures_reject_changed_outcomes_and_requests(self):
+        for name in [
+            "photos-download-refused-429.json",
+            "photos-download-transport-timeout.json",
+        ]:
+            for change in ["error", "request", "unused"]:
+                scenario = json.loads((FIXTURES / name).read_text(encoding="utf-8"))
+                if change == "error":
+                    scenario["error"]["message"] = "changed failure"
+                elif change == "request":
+                    scenario["exchanges"][-1]["request"]["origin"] = (
+                        "https://wrong-assets.example.invalid"
+                    )
+                else:
+                    scenario["exchanges"].append(scenario["exchanges"][-1])
+                with (
+                    self.subTest(name=name, change=change),
+                    TemporaryDirectory() as directory,
+                ):
+                    path = Path(directory) / "changed.json"
+                    path.write_text(json.dumps(scenario), encoding="utf-8")
+                    with self.assertRaises(AssertionError):
+                        replay_synthetic(path)
+
     def test_findmy_acknowledgement_errors_are_bound(self):
         for change in ["reason", "code", "media", "body", "duplicate", "result"]:
             name = (
