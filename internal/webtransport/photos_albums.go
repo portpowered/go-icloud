@@ -11,7 +11,7 @@ import (
 func (client *Client) PhotosAlbumQuery(ctx context.Context, auth RequestContext,
 	parent, continuation *string,
 ) (*PhotosQueryResponse, error) {
-	body, err := photosAlbumBody(parent, continuation)
+	body, err := photosAlbumBody(parent, continuation, auth.PhotoZone)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -19,7 +19,7 @@ func (client *Client) PhotosAlbumQuery(ctx context.Context, auth RequestContext,
 	return client.photosQueryBytes(ctx, auth, body)
 }
 
-func photosAlbumBody(parent, continuation *string) (string, error) {
+func photosAlbumBody(parent, continuation *string, selected ...*cloudkit.CKZoneIDReq) (string, error) {
 	query := fmt.Sprintf("{%q: %q", protocol.PhotosCKQueryObjectRecordType, protocol.PhotosPhotoAlbumQueryRecordTypeValue)
 
 	if parent != nil && *parent != "" {
@@ -40,6 +40,9 @@ func photosAlbumBody(parent, continuation *string) (string, error) {
 	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+	if len(selected) > 0 && selected[0] != nil {
+		zone = *selected[0]
+	}
 
 	identity, err := referenceJSON(zone)
 	if err != nil {

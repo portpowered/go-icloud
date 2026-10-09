@@ -16,7 +16,7 @@ type photoAlbumEntry struct {
 
 // ListPhotoAlbums initializes the primary library and discovers complete ordered albums.
 func (sdk *SDK) ListPhotoAlbums(ctx context.Context, request ListPhotoAlbumsRequest) (*ListPhotoAlbumsResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListPhotoAlbums")
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListPhotoAlbums", request.Library)
 	if err != nil {
 		return nil, err
 	}

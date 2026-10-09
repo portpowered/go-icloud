@@ -23,7 +23,10 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
 
-	return client.photosZoneIndexing(ctx, auth, zone, false)
+	if auth.PhotoZone != nil {
+		zone = *auth.PhotoZone
+	}
+	return client.photosZoneIndexing(ctx, auth, zone, auth.PhotoShared)
 }
 
 // PhotosLibraryIndexing initializes one discovered library in its advertised database scope.
@@ -65,7 +68,7 @@ func (client *Client) photosZoneIndexing(ctx context.Context, auth RequestContex
 func (client *Client) photosQueryBytes(
 	ctx context.Context, auth RequestContext, body string,
 ) (*PhotosQueryResponse, error) {
-	return client.photosScopedQueryBytes(ctx, auth, body, false)
+	return client.photosScopedQueryBytes(ctx, auth, body, auth.PhotoShared)
 }
 
 func (client *Client) photosScopedQueryBytes(ctx context.Context, auth RequestContext,

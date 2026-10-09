@@ -12,7 +12,7 @@ const photoSourcePageSize = 100
 
 // ListPhotoAssets enumerates the selected primary album with Source ordering and deduplication.
 func (sdk *SDK) ListPhotoAssets(ctx context.Context, request ListPhotoAssetsRequest) (*ListPhotoAssetsResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListPhotoAssets")
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListPhotoAssets", request.Library)
 	if err != nil {
 		return nil, err
 	}

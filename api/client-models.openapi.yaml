@@ -101,6 +101,7 @@ components:
       required: [auth]
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}}
       properties:
+        library: {$ref: '#/components/schemas/PhotoLibrary', description: Omission selects the primary library.}
         auth: {$ref: '#/components/schemas/AuthContext'}
     ListRecentlyAddedPhotosResult:
       type: object
@@ -116,6 +117,7 @@ components:
       required: [auth, album, photoID]
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library, photoID: synthetic-asset, version: original}
       properties:
+        library: {$ref: '#/components/schemas/PhotoLibrary', description: Omission selects the primary library.}
         auth: {$ref: '#/components/schemas/AuthContext'}
         album: {type: string, description: Album identifier or display/full name.}
         photoID: {type: string, x-go-name: PhotoID, description: Requested asset identifier.}
@@ -140,6 +142,7 @@ components:
       required: [auth, album, photoID]
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library, photoID: synthetic-asset}
       properties:
+        library: {$ref: '#/components/schemas/PhotoLibrary', description: Omission selects the primary library.}
         auth: {$ref: '#/components/schemas/AuthContext'}
         album: {type: string, description: Album identifier or display/full name.}
         photoID: {type: string, x-go-name: PhotoID, description: Requested asset identifier.}
@@ -181,6 +184,7 @@ components:
       required: [auth, album]
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library}
       properties:
+        library: {$ref: '#/components/schemas/PhotoLibrary', description: Omission selects the primary library.}
         auth: {$ref: '#/components/schemas/AuthContext'}
         album: {type: string, description: Primary album ID or display/full name.}
     ListPhotoAssetsResult:
@@ -227,6 +231,7 @@ components:
       required: [auth, album]
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library}
       properties:
+        library: {$ref: '#/components/schemas/PhotoLibrary', description: Omission selects the primary library.}
         auth: {$ref: '#/components/schemas/AuthContext'}
         album: {type: string, description: Album identifier or display/full name from ListPhotoAlbums.}
     GetPhotoAlbumCountResult:
@@ -243,6 +248,7 @@ components:
       required: [auth]
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}}
       properties:
+        library: {$ref: '#/components/schemas/PhotoLibrary', description: Omission selects the primary library.}
         auth: {$ref: '#/components/schemas/AuthContext'}
     ListPhotoAlbumsResult:
       type: object
@@ -268,6 +274,7 @@ components:
       required: [auth]
       example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}}
       properties:
+        library: {$ref: '#/components/schemas/PhotoLibrary', description: Omission selects the primary library.}
         auth: {$ref: '#/components/schemas/AuthContext'}
     GetPhotosStatusResult:
       type: object

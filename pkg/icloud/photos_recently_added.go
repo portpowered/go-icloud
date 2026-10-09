@@ -11,7 +11,7 @@ import (
 func (sdk *SDK) ListRecentlyAddedPhotos(ctx context.Context,
 	request ListRecentlyAddedPhotosRequest,
 ) (*ListRecentlyAddedPhotosResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListRecentlyAddedPhotos")
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "ListRecentlyAddedPhotos", request.Library)
 	if err != nil {
 		return nil, err
 	}

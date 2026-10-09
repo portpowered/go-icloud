@@ -8,7 +8,7 @@ import (
 // GetPhoto checks the direct album lookup, then scans album pages until the asset is found.
 // A photo absent from both sources is returned as explicit null with complete response evidence.
 func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "GetPhoto")
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "GetPhoto", request.Library)
 	if err != nil {
 		return nil, err
 	}

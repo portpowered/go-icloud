@@ -16,8 +16,12 @@ type photosRead struct {
 	responses []*webtransport.BytesResponse
 }
 
-func (sdk *SDK) beginPhotosRead(ctx context.Context, auth AuthContext, operation string) (*photosRead, error) {
-	boundary, err := accountRequestContext(auth)
+func (sdk *SDK) beginPhotosRead(ctx context.Context, auth AuthContext, operation string, libraries ...*PhotoLibrary) (*photosRead, error) {
+	var library *PhotoLibrary
+	if len(libraries) != 0 {
+		library = libraries[0]
+	}
+	boundary, err := photosRequestContext(auth, library)
 	if err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}

@@ -24,7 +24,7 @@ func (client *Client) PhotosAssetQuery(ctx context.Context, auth RequestContext,
 	index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
 	extra []PhotosAssetSelector,
 ) (*PhotosQueryResponse, error) {
-	body, err := photosAssetBody(index, direction, offset, extra)
+	body, err := photosAssetBody(index, direction, offset, extra, auth.PhotoZone)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -33,13 +33,13 @@ func (client *Client) PhotosAssetQuery(ctx context.Context, auth RequestContext,
 }
 
 func photosAssetBody(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
-	extra []PhotosAssetSelector,
+	extra []PhotosAssetSelector, selected ...*cloudkit.CKZoneIDReq,
 ) (string, error) {
-	return photosAssetBodyLimit(index, direction, offset, extra, photosAssetResultsLimit)
+	return photosAssetBodyLimit(index, direction, offset, extra, photosAssetResultsLimit, selected...)
 }
 
 func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
-	extra []PhotosAssetSelector, limit int64,
+	extra []PhotosAssetSelector, limit int64, selected ...*cloudkit.CKZoneIDReq,
 ) (string, error) {
 	filters := []string{}
 
@@ -65,6 +65,9 @@ func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.Phot
 	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+	if len(selected) > 0 && selected[0] != nil {
+		zone = *selected[0]
+	}
 
 	identity, err := referenceJSON(zone)
 	if err != nil {

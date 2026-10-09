@@ -541,6 +541,683 @@
           }
         }
       }
+    },
+    "/database/1/com.apple.photos.cloud/production/private/changes/zone": {
+      "post": {
+        "operationId": "PhotosZoneChanges",
+        "summary": "Read photo library changes",
+        "description": "Read photo library changes in the selected private database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKZoneChangesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/private/records/lookup": {
+      "post": {
+        "operationId": "PhotosLookupRecords",
+        "summary": "Look up photo records",
+        "description": "Look up photo records in the selected private database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKLookupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/private/records/modify": {
+      "post": {
+        "operationId": "PhotosModifyRecords",
+        "summary": "Update photo library records",
+        "description": "Update photo library records in the selected private database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKModifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/changes/zone": {
+      "post": {
+        "operationId": "PhotosSharedZoneChanges",
+        "summary": "Read photo library changes",
+        "description": "Read photo library changes in the selected shared database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKZoneChangesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneChangesResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/records/lookup": {
+      "post": {
+        "operationId": "PhotosSharedLookupRecords",
+        "summary": "Look up photo records",
+        "description": "Look up photo records in the selected shared database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKLookupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/records/modify": {
+      "post": {
+        "operationId": "PhotosSharedModifyRecords",
+        "summary": "Update photo library records",
+        "description": "Update photo library records in the selected shared database.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKModifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKModifyResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/internal/records/query/batch": {
+      "post": {
+        "operationId": "PhotosCountSharedAlbums",
+        "summary": "Count photos in an album",
+        "description": "Read the indexed number of photos in a selected album.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosCountRequest"
+              }
+            },
+            "plain/text": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosCountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosCountResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosCountResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosCountResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosCountResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
     }
   },
   "components": {

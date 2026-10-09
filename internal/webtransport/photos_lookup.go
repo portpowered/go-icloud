@@ -22,7 +22,7 @@ func (client *Client) PhotosLookupAsset(ctx context.Context, auth RequestContext
 
 	filters := append([]PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldRecordName, Value: photoID}}, extra...)
 
-	body, err := photosAssetBodyLimit(index, cloudkit.ASCENDING, 0, filters, limit)
+	body, err := photosAssetBodyLimit(index, cloudkit.ASCENDING, 0, filters, limit, auth.PhotoZone)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

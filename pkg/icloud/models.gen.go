@@ -593,6 +593,9 @@ type DownloadPhotoRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
 
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
+
 	// PhotoID Requested asset identifier.
 	PhotoID string `json:"photoID"`
 
@@ -1228,6 +1231,9 @@ type GetPhotoAlbumCountRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // GetPhotoAlbumCountResult Nonnegative indexed photo count and every response from initialization, discovery and counting.
@@ -1249,6 +1255,9 @@ type GetPhotoRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
 
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
+
 	// PhotoID Requested asset identifier.
 	PhotoID string `json:"photoID"`
 }
@@ -1267,6 +1276,9 @@ type GetPhotoResult struct {
 type GetPhotosStatusRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // GetPhotosStatusResult Ready primary photo library indexing state and current change cursor.
@@ -1360,6 +1372,9 @@ type ListDriveLibrariesResult struct {
 type ListPhotoAlbumsRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListPhotoAlbumsResult Ordered smart and custom albums with response evidence from initialization and every page.
@@ -1380,6 +1395,9 @@ type ListPhotoAssetsRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListPhotoAssetsResult Complete deduplicated photos and every initialization, discovery, count and page response.
@@ -1408,6 +1426,9 @@ type ListPhotoLibrariesResult struct {
 type ListRecentlyAddedPhotosRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListRecentlyAddedPhotosResult Complete deduplicated newest-first photos and every initialization, library discovery and page response.

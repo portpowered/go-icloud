@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
@@ -30,6 +31,9 @@ func (client *Client) PhotosAlbumCount(
 	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+	if auth.PhotoZone != nil {
+		zone = *auth.PhotoZone
+	}
 
 	filter := cloudkit.PhotosCountFilter{FieldName: cloudkit.IndexCountID,
 		Comparator: cloudkit.PhotosCountFilterComparatorIN,
@@ -52,8 +56,19 @@ func (client *Client) PhotosAlbumCount(
 	params.RemapEnums = photosapi.PhotosCountAlbumsParamsRemapEnumsTrue
 	params.GetCurrentSyncToken = photosapi.PhotosCountAlbumsParamsGetCurrentSyncTokenTrue
 
-	request, err := photosapi.NewPhotosCountAlbumsRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaPlainText, bytes.NewReader(body))
+	var request *http.Request
+	if auth.PhotoShared {
+		sharedParams := new(photosapi.PhotosCountSharedAlbumsParams)
+		sharedParams.ClientId = auth.Params.ClientId
+		sharedParams.Dsid = auth.Params.Dsid
+		sharedParams.RemapEnums = photosapi.PhotosCountSharedAlbumsParamsRemapEnumsTrue
+		sharedParams.GetCurrentSyncToken = photosapi.PhotosCountSharedAlbumsParamsGetCurrentSyncTokenTrue
+		request, err = photosapi.NewPhotosCountSharedAlbumsRequestWithBody(auth.Origin, sharedParams,
+			protocol.PhotosMediaPlainText, bytes.NewReader(body))
+	} else {
+		request, err = photosapi.NewPhotosCountAlbumsRequestWithBody(auth.Origin, params,
+			protocol.PhotosMediaPlainText, bytes.NewReader(body))
+	}
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
