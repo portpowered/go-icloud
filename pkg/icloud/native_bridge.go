@@ -57,6 +57,8 @@ type NativeBridgeSession struct {
 }
 
 // OpenNativeBridgeSession bootstraps the native prompt after GetAuthenticationChallenge.
+// Failures after bootstrap starts return a closed session that retains credential progress.
+// Inspect that session's State before choosing another delivery route.
 func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeBridgeSessionRequest,
 	options ...NativeBridgeOption,
 ) (*NativeBridgeSession, error) {
@@ -82,7 +84,10 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	connection, err := bridge.Start(ctx, *boot.TwoSV.BridgeInitiateData,
 		owner.bridgeOptions(configuration))
 	if err != nil {
-		return nil, owner.failure(operation, err)
+		failure := owner.failure(operation, err)
+		owner.bridgeFallbackNotice(err)
+
+		return owner, failure
 	}
 	owner.connection = connection
 	owner.state.CodeRequested = true
@@ -92,6 +97,17 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 
 // State returns copied credentials, response metadata, and the current socket challenge.
 func (session *NativeBridgeSession) State() (*NativeBridgeSessionState, error) {
+	if session.connection == nil {
+		session.mutex.Lock()
+		state := cloneNativeAuthState(session.state)
+		responses := cloneDriveResponses(session.responses)
+		session.mutex.Unlock()
+
+		return &NativeBridgeSessionState{State: state, Responses: responses,
+			Active: false, Legacy: false, SessionID: "", NextStep: "",
+			TransactionID: nullable.NewNullNullable[string]()}, nil
+	}
+
 	push, err := session.connection.Snapshot()
 	if err != nil {
 		return nil, session.failure("NativeBridgeSession.State", err)
@@ -120,7 +136,7 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 
 	defer session.busy.Store(false)
 	defer func() { _ = session.Close() }()
-	if !session.connection.Active() {
+	if session.connection == nil || !session.connection.Active() {
 		return nil, session.failure(operation, bridge.ErrClosed)
 	}
 	push, err := session.connection.Snapshot()
@@ -158,6 +174,10 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 
 // Close is idempotent and interrupts an in-flight verification.
 func (session *NativeBridgeSession) Close() error {
+	if session.connection == nil {
+		return nil
+	}
+
 	if err := session.connection.Close(); err != nil {
 		return session.failure("NativeBridgeSession.Close", err)
 	}
@@ -250,14 +270,7 @@ func (session *NativeBridgeSession) result(success bool) (*NativeAuthResult, err
 func (session *NativeBridgeSession) failure(operation string, err error) *ClientError {
 	var client *ClientError
 	if !errors.As(err, &client) {
-		kind := Transport
-		if errors.Is(err, context.Canceled) {
-			kind = Canceled
-		}
-		if errors.Is(err, context.DeadlineExceeded) {
-			kind = Timeout
-		}
-		client = newClientError(operation, kind, 0, nil, nil, err)
+		client = newClientError(operation, nativeBridgeErrorKind(err), 0, nil, nil, err)
 	}
 
 	current := *client
@@ -278,10 +291,46 @@ func (session *NativeBridgeSession) failure(operation string, err error) *Client
 			CookieScopeURL: client.cookieScopeURL, Headers: requestHeaders(client.headers), Body: nil})
 	}
 	session.state = cloneNativeAuthState(progress.state)
+	session.responses = append(session.responses, cloneDriveResponses(progress.responses)...)
 	session.mutex.Unlock()
 
 	client.prior = append(prior, client.prior...)
 	return client
+}
+
+func nativeBridgeErrorKind(err error) ErrorKind {
+	switch {
+	case errors.Is(err, bridge.ErrClosed):
+		return Closed
+	case errors.Is(err, context.Canceled):
+		return Canceled
+	case errors.Is(err, context.DeadlineExceeded):
+		return Timeout
+	default:
+		return Transport
+	}
+}
+
+func (session *NativeBridgeSession) bridgeFallbackNotice(err error) {
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		return
+	}
+
+	session.mutex.Lock()
+	defer session.mutex.Unlock()
+
+	challenge := session.state.Challenge
+	if len(challenge.PhoneNumbers) == 0 {
+		return
+	}
+
+	if challenge.Mode != "" && challenge.Mode != string(auth.Sms) ||
+		challenge.Mode == "" && challenge.PhoneNumbers[0].PushMode != string(auth.Sms) {
+		return
+	}
+
+	notice := protocol.AuthBridgeFallbackNoticeValue
+	session.state.DeliveryNotice = &notice
 }
 
 func bridgeLegacy(push *bridge.Push) bool {

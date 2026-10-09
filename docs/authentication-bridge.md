@@ -17,6 +17,10 @@ until verification or `Close` (API-04, API-13). `State` returns copies of the
 current account credentials, HTTP response metadata, and challenge progress.
 `VerifyCode` returns the final `NativeAuthResult`, including updated credentials.
 Verification and cancellation close the socket; explicit `Close` is idempotent.
+If opening fails after bootstrap starts, the returned closed session retains any
+credential updates and response metadata. Inspect its `State` before requesting
+another delivery route. Supplying a `PhoneNumberID` to `RequestTwoFactorCode`
+selects the available SMS route explicitly.
 
 The modern exchange signs a timestamped nonce with a fresh P-256 key, subscribes
 to the selected APNS topic, acknowledges every received push, and follows HTTP
