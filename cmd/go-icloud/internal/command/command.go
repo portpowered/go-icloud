@@ -18,21 +18,25 @@ import (
 const defaultTimeout = 60 * time.Second
 
 var (
-	errArguments = errors.New("provide --session <private AuthContext JSON> and a read command")
-	errSession   = errors.New("cannot load authentication context")
+	errArguments = errors.New("provide a private session and command, or --reference-state <directory> resume")
+	errSession   = errors.New("cannot access private session data")
 	errCommand   = errors.New("unsupported read command")
 )
 
 type options struct {
-	session   string
-	node      string
-	family    bool
-	timeout   time.Duration
-	operation string
+	session        string
+	node           string
+	family         bool
+	timeout        time.Duration
+	operation      string
+	referenceState string
+	saveSession    string
+	forceRefresh   bool
+	allowUntrusted bool
 }
 
-// Run loads caller-owned authentication and executes one bounded SDK read.
-// It neither stores credentials nor prints response headers or opaque session state.
+// Run executes one bounded public SDK operation.
+// Resume saves copied credentials privately; console output omits secret session state.
 func Run(ctx context.Context, client icloud.Client, args []string, output, diagnostic io.Writer) error {
 	config, err := parse(args, diagnostic)
 	if errors.Is(err, flag.ErrHelp) {
@@ -43,13 +47,17 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 		return err
 	}
 
+	requestContext, cancel := context.WithTimeout(ctx, config.timeout)
+	defer cancel()
+
+	if config.operation == "resume" {
+		return resumeSession(requestContext, client, config, output)
+	}
+
 	auth, err := loadSession(config.session)
 	if err != nil {
 		return err
 	}
-
-	requestContext, cancel := context.WithTimeout(ctx, config.timeout)
-	defer cancel()
 
 	result, err := read(requestContext, client, auth, config)
 	if err != nil {
@@ -65,13 +73,17 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags := flag.NewFlagSet("go-icloud", flag.ContinueOnError)
 	flags.SetOutput(diagnostic)
 	flags.StringVar(&config.session, "session", "", "Private JSON containing an icloud.AuthContext")
+	flags.StringVar(&config.referenceState, "reference-state", "", "Existing reference login directory for resume")
+	flags.StringVar(&config.saveSession, "save-session", "", "Private native-session destination for resume")
+	flags.BoolVar(&config.forceRefresh, "force-refresh", false, "Skip cookie validation during resume")
+	flags.BoolVar(&config.allowUntrusted, "allow-untrusted", false, "Save paused MFA discovery during resume")
 	flags.StringVar(&config.node, "node", "", "Drive node identifier for drive-node")
 	flags.BoolVar(&config.family, "family", false, "Include family devices for findmy")
 	flags.DurationVar(&config.timeout, "timeout", defaultTimeout, "Request deadline")
 
 	flags.Usage = func() {
 		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
-			"account-storage, account-plan, drive-libraries, drive-node, findmy")
+			"account-storage, account-plan, drive-libraries, drive-node, findmy, resume")
 
 		flags.PrintDefaults()
 	}
@@ -81,11 +93,14 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 		return config, fmt.Errorf("parse command: %w", err)
 	}
 
-	if flags.NArg() != 1 || config.session == "" || config.timeout <= 0 {
+	if flags.NArg() != 1 || config.timeout <= 0 {
 		return config, errArguments
 	}
 
 	config.operation = flags.Arg(0)
+	if config.session == "" && (config.operation != "resume" || config.referenceState == "") {
+		return config, errArguments
+	}
 
 	return config, nil
 }
@@ -101,6 +116,17 @@ func loadSession(path string) (icloud.AuthContext, error) {
 	err = json.Unmarshal(data, &auth)
 	if err != nil {
 		return auth, &SessionError{Cause: err}
+	}
+
+	if auth.ClientID == "" {
+		var saved icloud.ResumeSessionResult
+
+		err = json.Unmarshal(data, &saved)
+		if err != nil {
+			return auth, &SessionError{Cause: err}
+		}
+
+		auth = saved.Auth
 	}
 
 	return auth, nil

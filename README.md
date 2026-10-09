@@ -70,14 +70,17 @@ Keep credentials in your private session store.
 
 ## Go account devices
 
-The separate Go CLI module is an initial read-only interface. It currently accepts
-an explicit private `icloud.AuthContext` JSON file; native login and automatic
-reuse of the Python reference login are still pending. It has not yet been
-verified with a live account.
+The separate Go CLI module reads account data and resumes an existing saved
+login. Import the Python reference login once, then reuse the resulting private
+Go session file. Password login and MFA completion are still pending, and live
+Go account access has not yet been verified.
 
 ```powershell
 cd cmd/go-icloud
 go run . --help
+go run . --reference-state "$env:LOCALAPPDATA/go-icloud/reference" --save-session C:/private/icloud-session.json resume
+go run . --session C:/private/icloud-session.json account-devices
+go run . --session C:/private/icloud-session.json resume
 go run . --session C:/private/icloud-auth.json account-devices
 go run . --session C:/private/icloud-auth.json account-family
 go run . --session C:/private/icloud-auth.json account-storage
@@ -87,7 +90,15 @@ go run . --session C:/private/icloud-auth.json --node YOUR_NODE_ID drive-node
 go run . --session C:/private/icloud-auth.json --family findmy
 ```
 
-The JSON uses the public `AuthContext` field names, including `accountID`,
+`resume` saves a private `ResumeSessionResult` file and prints only its path and
+authentication flags. Without `--save-session`, reference import writes
+`go-session.json` beside the original account files; native resume updates its
+input Go session file. The original reference session and cookie files remain
+unchanged. Windows credential files are restricted to the current user; on other
+platforms they use mode `0600`. Use an existing protected directory for storage.
+
+Read commands also accept a private `AuthContext` JSON file. This JSON uses
+the public field names, including `accountID`,
 `clientID`, service URLs, `headers`, and `cookies`. Keep this file private and out
 of Git. Commands print service results as JSON, omit response authentication
 metadata, and use a configurable `--timeout` (default one minute). Find My closes
@@ -95,7 +106,8 @@ its session after returning the initial device list. Photos, Reminders and write
 operations are not yet CLI commands.
 
 CLI replay tests use the root canonical synthetic fixture tree and public SDK.
-Coverage for `internal/command` is measured separately from SDK coverage; the
+Coverage for every handwritten CLI package under `internal/` is measured
+separately from SDK coverage; the
 process entry point is outside that measurement. `make check` verifies both Go
 modules, including their pinned all-linter checks and race tests.
 
@@ -120,9 +132,11 @@ auth := resumed.Auth // credentials: persist privately and do not print
 
 `authentication-required` requests interactive login; `terms-required` requests
 terms acceptance. This operation performs neither. `AllowUntrusted` can return
-paused MFA discovery. The CLI's reference-session importer, password login and
-MFA completion are still pending; native session reuse has offline replay evidence
-and has not yet been verified against a live account.
+paused MFA discovery. The CLI imports existing reference credentials and resumes
+native session files; password login and MFA completion remain pending. Native
+session reuse has offline replay evidence and has not yet been verified against
+a live account. If the reference login has no stored client ID or session token,
+run the reference login command again before importing it.
 
 Use `github.com/portpowered/go-icloud/pkg/icloud`. Authentication context belongs
 to each request. For now, supply the account origin, account/client identifiers

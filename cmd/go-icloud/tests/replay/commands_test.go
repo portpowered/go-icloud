@@ -19,11 +19,21 @@ import (
 
 const driveNodeCommand = "drive-node"
 
+const accountDevicesCommand = "account-devices"
+
+const sessionFlag = "--session"
+
+const referenceStateFlag = "--reference-state"
+
+const saveSessionFlag = "--save-session"
+
+const resumeCommand = "resume"
+
 func TestReadCommands(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string][]string{
-		"account-devices": {
+		accountDevicesCommand: {
 			"account-devices-empty", "account-devices-many", "account-devices-one",
 			"account-devices-error", "account-devices-envelope-reason",
 		},
@@ -63,7 +73,7 @@ func TestAuthenticationRefusal(t *testing.T) {
 
 	raw["exchanges"] = encoded
 	raw["error"] = json.RawMessage(`{"type":"synthetic authentication refusal"}`)
-	runScenario(t, "account-devices", raw)
+	runScenario(t, accountDevicesCommand, raw)
 }
 
 func runFixture(t *testing.T, operation, name string) {
@@ -103,7 +113,7 @@ func runScenario(t *testing.T, operation string, raw map[string]json.RawMessage)
 		t.Fatal(err)
 	}
 
-	args := []string{"--session", session}
+	args := []string{sessionFlag, session}
 
 	if operation == driveNodeCommand {
 		var inputs []string
@@ -223,7 +233,7 @@ func projectResult(t *testing.T, operation string, object map[string]json.RawMes
 	t.Helper()
 
 	fields := map[string]string{
-		"account-devices": "devices", "account-plan": "summary",
+		accountDevicesCommand: "devices", "account-plan": "summary",
 		"drive-libraries": "libraries", driveNodeCommand: "node",
 	}
 	if field, exists := fields[operation]; exists {

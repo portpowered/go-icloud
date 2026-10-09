@@ -1,0 +1,1728 @@
+{
+  "format": "portos.reference-resume-repeat.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "cases": [
+    {
+      "name": "global-empty",
+      "localCase": "syntheticexampleinvalid",
+      "authState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "USA"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "devices": [],
+      "exchanges": [
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "origin": "https://account.example.invalid",
+            "path": "/setup/web/device/getDevices",
+            "query": [
+              [
+                "clientBuildNumber",
+                "2534Project66"
+              ],
+              [
+                "clientMasteringNumber",
+                "2534B22"
+              ],
+              [
+                "clientId",
+                "synthetic-client"
+              ],
+              [
+                "dsid",
+                "synthetic-dsid"
+              ]
+            ],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com/"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": ""
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkZXZpY2VzIjogW119"
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        }
+      ],
+      "restoredAuthState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "USA"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Origin": "https://www.icloud.com",
+        "Referer": "https://www.icloud.com/"
+      },
+      "cookieState": [
+        {
+          "name": "X-APPLE-WEBAUTH-TOKEN",
+          "value": "\"synthetic-cookie\"",
+          "domain": ".icloud.com",
+          "path": "/",
+          "secure": true,
+          "domainSpecified": true,
+          "expires": null,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-future",
+          "value": "future",
+          "domain": ".icloud.com",
+          "path": "/",
+          "secure": false,
+          "domainSpecified": true,
+          "expires": 2208988800,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-host",
+          "value": "synthetic\"quote;comma,back\\slash",
+          "domain": "setup.icloud.com",
+          "path": "/setup/ws/1",
+          "secure": false,
+          "domainSpecified": false,
+          "expires": null,
+          "httpOnly": false
+        }
+      ]
+    },
+    {
+      "name": "global-many",
+      "localCase": "syntheticexampleinvalid",
+      "authState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "USA"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "devices": [
+        {
+          "name": "device-0",
+          "modelDisplayName": "Synthetic Model"
+        },
+        {
+          "name": "device-1",
+          "modelDisplayName": "Synthetic Model"
+        },
+        {
+          "name": "device-2",
+          "modelDisplayName": "Synthetic Model"
+        }
+      ],
+      "exchanges": [
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "origin": "https://account.example.invalid",
+            "path": "/setup/web/device/getDevices",
+            "query": [
+              [
+                "clientBuildNumber",
+                "2534Project66"
+              ],
+              [
+                "clientMasteringNumber",
+                "2534B22"
+              ],
+              [
+                "clientId",
+                "synthetic-client"
+              ],
+              [
+                "dsid",
+                "synthetic-dsid"
+              ]
+            ],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com/"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": ""
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkZXZpY2VzIjogW3sibmFtZSI6ICJkZXZpY2UtMCIsICJtb2RlbERpc3BsYXlOYW1lIjogIlN5bnRoZXRpYyBNb2RlbCJ9LCB7Im5hbWUiOiAiZGV2aWNlLTEiLCAibW9kZWxEaXNwbGF5TmFtZSI6ICJTeW50aGV0aWMgTW9kZWwifSwgeyJuYW1lIjogImRldmljZS0yIiwgIm1vZGVsRGlzcGxheU5hbWUiOiAiU3ludGhldGljIE1vZGVsIn1dfQ=="
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        }
+      ],
+      "restoredAuthState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "USA"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Origin": "https://www.icloud.com",
+        "Referer": "https://www.icloud.com/"
+      },
+      "cookieState": [
+        {
+          "name": "X-APPLE-WEBAUTH-TOKEN",
+          "value": "\"synthetic-cookie\"",
+          "domain": ".icloud.com",
+          "path": "/",
+          "secure": true,
+          "domainSpecified": true,
+          "expires": null,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-future",
+          "value": "future",
+          "domain": ".icloud.com",
+          "path": "/",
+          "secure": false,
+          "domainSpecified": true,
+          "expires": 2208988800,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-host",
+          "value": "synthetic\"quote;comma,back\\slash",
+          "domain": "setup.icloud.com",
+          "path": "/setup/ws/1",
+          "secure": false,
+          "domainSpecified": false,
+          "expires": null,
+          "httpOnly": false
+        }
+      ]
+    },
+    {
+      "name": "china-empty",
+      "localCase": "andr\u00e9_\u216bexampleinvalid",
+      "authState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "CHN"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com.cn",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "devices": [],
+      "exchanges": [
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com.cn",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com.cn"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com.cn/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "origin": "https://account.example.invalid",
+            "path": "/setup/web/device/getDevices",
+            "query": [
+              [
+                "clientBuildNumber",
+                "2534Project66"
+              ],
+              [
+                "clientMasteringNumber",
+                "2534B22"
+              ],
+              [
+                "clientId",
+                "synthetic-client"
+              ],
+              [
+                "dsid",
+                "synthetic-dsid"
+              ]
+            ],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com.cn"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com.cn/"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": ""
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkZXZpY2VzIjogW119"
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com.cn",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com.cn"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com.cn/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        }
+      ],
+      "restoredAuthState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "CHN"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com.cn",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Origin": "https://www.icloud.com.cn",
+        "Referer": "https://www.icloud.com.cn/"
+      },
+      "cookieState": [
+        {
+          "name": "X-APPLE-WEBAUTH-TOKEN",
+          "value": "\"synthetic-cookie\"",
+          "domain": ".icloud.com.cn",
+          "path": "/",
+          "secure": true,
+          "domainSpecified": true,
+          "expires": null,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-future",
+          "value": "future",
+          "domain": ".icloud.com.cn",
+          "path": "/",
+          "secure": false,
+          "domainSpecified": true,
+          "expires": 2208988800,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-host",
+          "value": "synthetic\"quote;comma,back\\slash",
+          "domain": "setup.icloud.com.cn",
+          "path": "/setup/ws/1",
+          "secure": false,
+          "domainSpecified": false,
+          "expires": null,
+          "httpOnly": false
+        }
+      ]
+    },
+    {
+      "name": "china-many",
+      "localCase": "andr\u00e9_\u216bexampleinvalid",
+      "authState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "CHN"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com.cn",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "devices": [
+        {
+          "name": "device-0",
+          "modelDisplayName": "Synthetic Model"
+        },
+        {
+          "name": "device-1",
+          "modelDisplayName": "Synthetic Model"
+        },
+        {
+          "name": "device-2",
+          "modelDisplayName": "Synthetic Model"
+        }
+      ],
+      "exchanges": [
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com.cn",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com.cn"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com.cn/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "origin": "https://account.example.invalid",
+            "path": "/setup/web/device/getDevices",
+            "query": [
+              [
+                "clientBuildNumber",
+                "2534Project66"
+              ],
+              [
+                "clientMasteringNumber",
+                "2534B22"
+              ],
+              [
+                "clientId",
+                "synthetic-client"
+              ],
+              [
+                "dsid",
+                "synthetic-dsid"
+              ]
+            ],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com.cn"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com.cn/"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": ""
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkZXZpY2VzIjogW3sibmFtZSI6ICJkZXZpY2UtMCIsICJtb2RlbERpc3BsYXlOYW1lIjogIlN5bnRoZXRpYyBNb2RlbCJ9LCB7Im5hbWUiOiAiZGV2aWNlLTEiLCAibW9kZWxEaXNwbGF5TmFtZSI6ICJTeW50aGV0aWMgTW9kZWwifSwgeyJuYW1lIjogImRldmljZS0yIiwgIm1vZGVsRGlzcGxheU5hbWUiOiAiU3ludGhldGljIE1vZGVsIn1dfQ=="
+            }
+          }
+        },
+        {
+          "request": {
+            "method": "POST",
+            "origin": "https://setup.icloud.com.cn",
+            "path": "/setup/ws/1/validate",
+            "query": [],
+            "headers": [
+              [
+                "user-agent",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+              ],
+              [
+                "accept-encoding",
+                "gzip, deflate"
+              ],
+              [
+                "accept",
+                "*/*"
+              ],
+              [
+                "connection",
+                "keep-alive"
+              ],
+              [
+                "origin",
+                "https://www.icloud.com.cn"
+              ],
+              [
+                "referer",
+                "https://www.icloud.com.cn/"
+              ],
+              [
+                "cookie",
+                "synthetic-host=synthetic\"quote;comma,back\\slash; X-APPLE-WEBAUTH-TOKEN=\"synthetic-cookie\"; synthetic-future=future"
+              ],
+              [
+                "content-length",
+                "4"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "bnVsbA=="
+            }
+          },
+          "response": {
+            "status": 200,
+            "headers": [
+              [
+                "Content-Type",
+                "application/json"
+              ]
+            ],
+            "body": {
+              "encoding": "base64",
+              "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWRzaWQiLCAiaHNhVmVyc2lvbiI6IDIsICJsYW5ndWFnZUNvZGUiOiAiZW5fVVMifSwgImhzYVRydXN0ZWRCcm93c2VyIjogdHJ1ZSwgIndlYnNlcnZpY2VzIjogeyJwaG90b3MiOiB7InVybCI6ICJodHRwczovL3Bob3Rvcy5leGFtcGxlLmludmFsaWQifSwgImZpbmRtZSI6IHsidXJsIjogImh0dHBzOi8vZmluZG15LmV4YW1wbGUuaW52YWxpZCJ9LCAiZHJpdmV3cyI6IHsidXJsIjogImh0dHBzOi8vZHJpdmUuZXhhbXBsZS5pbnZhbGlkIn0sICJhY2NvdW50IjogeyJ1cmwiOiAiaHR0cHM6Ly9hY2NvdW50LmV4YW1wbGUuaW52YWxpZCJ9fX0="
+            }
+          }
+        }
+      ],
+      "restoredAuthState": {
+        "account": {
+          "dsInfo": {
+            "dsid": "synthetic-dsid",
+            "hsaVersion": 2,
+            "languageCode": "en_US"
+          },
+          "hsaTrustedBrowser": true,
+          "webservices": {
+            "photos": {
+              "url": "https://photos.example.invalid"
+            },
+            "findme": {
+              "url": "https://findmy.example.invalid"
+            },
+            "drivews": {
+              "url": "https://drive.example.invalid"
+            },
+            "account": {
+              "url": "https://account.example.invalid"
+            }
+          }
+        },
+        "params": {
+          "clientBuildNumber": "2534Project66",
+          "clientMasteringNumber": "2534B22",
+          "clientId": "synthetic-client",
+          "dsid": "synthetic-dsid"
+        },
+        "session_data": {
+          "client_id": "synthetic-client",
+          "session_token": "synthetic-token",
+          "trust_token": "synthetic-trust",
+          "account_country": "CHN"
+        },
+        "challenge": {},
+        "requires_mfa": false,
+        "cookies": [
+          {
+            "name": "X-APPLE-WEBAUTH-TOKEN",
+            "value": "\"synthetic-cookie\"",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": true,
+            "expires": null,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-future",
+            "value": "future",
+            "domain": ".icloud.com.cn",
+            "path": "/",
+            "secure": false,
+            "expires": 2208988800,
+            "discard": true,
+            "attributes": {
+              "HttpOnly": "None"
+            }
+          },
+          {
+            "name": "synthetic-host",
+            "value": "synthetic\"quote;comma,back\\slash",
+            "domain": "setup.icloud.com.cn",
+            "path": "/setup/ws/1",
+            "secure": false,
+            "expires": null,
+            "discard": true,
+            "attributes": {}
+          }
+        ],
+        "webservices": {
+          "photos": {
+            "url": "https://photos.example.invalid"
+          },
+          "findme": {
+            "url": "https://findmy.example.invalid"
+          },
+          "drivews": {
+            "url": "https://drive.example.invalid"
+          },
+          "account": {
+            "url": "https://account.example.invalid"
+          }
+        },
+        "requires_2fa": false,
+        "requires_2sa": false,
+        "trusted_session": true,
+        "delivery_method": "unknown",
+        "code_requested": false,
+        "session_file_exists": true,
+        "cookie_file_exists": true
+      },
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Origin": "https://www.icloud.com.cn",
+        "Referer": "https://www.icloud.com.cn/"
+      },
+      "cookieState": [
+        {
+          "name": "X-APPLE-WEBAUTH-TOKEN",
+          "value": "\"synthetic-cookie\"",
+          "domain": ".icloud.com.cn",
+          "path": "/",
+          "secure": true,
+          "domainSpecified": true,
+          "expires": null,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-future",
+          "value": "future",
+          "domain": ".icloud.com.cn",
+          "path": "/",
+          "secure": false,
+          "domainSpecified": true,
+          "expires": 2208988800,
+          "httpOnly": true
+        },
+        {
+          "name": "synthetic-host",
+          "value": "synthetic\"quote;comma,back\\slash",
+          "domain": "setup.icloud.com.cn",
+          "path": "/setup/ws/1",
+          "secure": false,
+          "domainSpecified": false,
+          "expires": null,
+          "httpOnly": false
+        }
+      ]
+    }
+  ]
+}
