@@ -54,26 +54,42 @@ func retryFindMyRead(ctx context.Context, client icloud.Client, original icloud.
 		IncludeFamily: config.family},
 		icloud.WithFindMyMonitorInterval(0))
 	if err != nil {
+		var failure *icloud.ClientError
+
+		if errors.As(err, &failure) && failure.StatusCode() != 0 {
+			responses := append(failure.PriorResponses(), icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
+				Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
+			err = errors.Join(err, persistFindMyResponses(ctx, client, config.session, refreshed, responses))
+		}
+
 		return nil, fmt.Errorf("retry Find My discovery: %w", err)
 	}
 
 	snapshot, snapshotErr := session.Snapshot()
-	finalAuth := session.Authentication()
-	refreshed.Responses = append(refreshed.Responses, session.LastResponses()...)
+	responses := session.LastResponses()
 	closeErr := session.Close()
 
-	err = errors.Join(snapshotErr, closeErr)
+	err = errors.Join(snapshotErr, closeErr, persistFindMyResponses(ctx, client, config.session, refreshed, responses))
 	if err != nil {
 		return nil, fmt.Errorf("finish refreshed Find My session: %w", err)
 	}
 
-	finalAuth.FindMyServiceURL = refreshed.Auth.FindMyServiceURL
-	refreshed.Auth = finalAuth
+	return snapshot.Devices, nil
+}
 
-	err = saveNativeSession(ctx, config.session, refreshed)
+func persistFindMyResponses(ctx context.Context, client icloud.Client, path string,
+	saved *icloud.ResumeSessionResult, responses []icloud.ResponseMetadata,
+) error {
+	updated, err := client.ApplySessionResponses(ctx, icloud.ApplySessionResponsesRequest{
+		Session: *saved, Responses: responses})
 	if err != nil {
-		return nil, &SessionError{Cause: err}
+		return fmt.Errorf("apply Find My response updates: %w", err)
 	}
 
-	return snapshot.Devices, nil
+	err = saveNativeSession(ctx, path, &updated.Session)
+	if err != nil {
+		return &SessionError{Cause: err}
+	}
+
+	return nil
 }

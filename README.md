@@ -452,8 +452,12 @@ tokens before the saved-token account login. Persist the returned credentials
 privately and retry the Find My read once. Offline Source replays cover recovery,
 cookie rotation, a rejected token, and a second 450. The CLI now performs this
 bounded recovery automatically for `findmy` when given a native saved-session
-file. It saves refreshed credentials before retrying and copies successful read
-cookie updates back into the private session. Raw `AuthContext` files without
+file. It saves refreshed credentials before retrying and applies cookie, token,
+trust-token and country updates from both successful and rejected retries to the
+private session. Native response history includes the failed read, login, and
+retry in order. A returned typed error's prior responses belong to its final SDK
+attempt; the earlier authentication exchanges remain in the saved session.
+Raw `AuthContext` files without
 saved-token credentials retain the original authentication failure.
 
 `authentication-required` can require interactive login; `terms-required` requests

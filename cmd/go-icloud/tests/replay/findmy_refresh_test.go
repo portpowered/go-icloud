@@ -20,7 +20,7 @@ func TestFindMyNativeTokenRecoveryCommand(t *testing.T) {
 	t.Parallel()
 
 	paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/session-findmy-autorefresh-*.json")
-	if err != nil || len(paths) != 5 {
+	if err != nil || len(paths) != 6 {
 		t.Fatal("Find My recovery CLI inventory changed", err)
 	}
 
@@ -188,12 +188,10 @@ func checkFindMyRecoveredNativeState(t *testing.T, row map[string]json.RawMessag
 
 	decode(t, row["initial_state"], &initial)
 	stateRaw := row["error_auth_state"]
-	count := 2
 
 	if len(row["error"]) == 0 {
 		decode(t, row["result"], &result)
 		stateRaw = result["auth_state"]
-		count = 3
 	}
 
 	decode(t, stateRaw, &state)
@@ -202,7 +200,7 @@ func checkFindMyRecoveredNativeState(t *testing.T, row map[string]json.RawMessag
 	expected := expectedReferenceSession(t, expectedRow, "authState", exchanges[1])
 
 	expected.Responses = []icloud.ResponseMetadata{}
-	for _, exchange := range exchanges[:count] {
+	for _, exchange := range exchanges {
 		expected.Responses = append(expected.Responses, referenceResponseMetadata(exchange))
 	}
 
