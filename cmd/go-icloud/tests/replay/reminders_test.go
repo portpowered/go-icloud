@@ -98,6 +98,7 @@ func checkReminderCommandOutcome(t *testing.T, operation string, row map[string]
 		if len(output) != 0 || !errors.As(err, &failure) {
 			t.Fatal("CLI lost reminder error or printed partial data")
 		}
+
 		checkReminderCLIFailure(t, row, failure)
 
 		return
@@ -128,19 +129,27 @@ func checkReminderCommandOutcome(t *testing.T, operation string, row map[string]
 
 func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failure *icloud.ClientError) {
 	t.Helper()
-	var exchanges []replay.Exchange
-	var sourceError map[string]string
+
+	var (
+		exchanges   []replay.Exchange
+		sourceError map[string]string
+	)
+
 	decode(t, row["exchanges"], &exchanges)
 	decode(t, row["error"], &sourceError)
+
 	last := exchanges[len(exchanges)-1]
+
 	kind := expectedFailureKind(last.Response.Status)
 	if last.Response.Status < 400 && !strings.HasPrefix(sourceError["message"], "Fetch reminder lists failed") {
 		kind = icloud.InvalidResponse
 	}
+
 	if failure.Kind() != kind || failure.StatusCode() != last.Response.Status ||
 		!bytes.Equal(failure.ResponseBody(), referenceResponseBody(t, last.Response.Body)) {
 		t.Fatal("CLI changed reminder failure class, status or response body")
 	}
+
 	metadata := icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(),
 		CookieScopeURL: failure.CookieScopeURL()}
 	if !reflect.DeepEqual(metadata, referenceResponseMetadata(last)) {
