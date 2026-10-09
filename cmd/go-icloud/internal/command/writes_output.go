@@ -43,6 +43,7 @@ func finishWriteResult(ctx context.Context, result any, path string) (any, error
 // material. This projection is applied before the shared console encoder.
 func safeWriteResult(result any) (any, error) {
 	result = typedWriteProjection(result)
+	result = typedReadProjection(result)
 	data, err := json.Marshal(result)
 	if err != nil {
 		return nil, fmt.Errorf("encode write projection: %w", err)
@@ -81,7 +82,8 @@ func privateWriteField(key string) bool {
 	switch key {
 	case "auth", "accountID", "clientID", "dsid", "cookies", "headers", "metadata", "responses",
 		"assetMetadata", "masterMetadata", "versions", "dimensions", "size", "checksum",
-		"fileAssetURL", "uploadURLs", "receipt", "wrappingKey", "uploadToken", "syncToken", "errorMessage":
+		"fileAssetURL", "uploadURLs", "receipt", "wrappingKey", "uploadToken", "syncToken", "errorMessage",
+		"additionalMetadata", "location", "publicURL", "ownerID", "ownerRecordName":
 		return true
 	default:
 		return false

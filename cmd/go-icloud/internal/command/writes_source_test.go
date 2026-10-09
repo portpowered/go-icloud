@@ -24,6 +24,12 @@ func sourceWriteProjection(value any) any {
 			if model == "Reminder" {
 				defaultWriteReminder(result.(map[string]any))
 			}
+			if model == "URLAttachment" {
+				attachment := result.(map[string]any)
+				if _, exists := attachment["uti"]; !exists {
+					attachment["uti"] = "public.url"
+				}
+			}
 			return result
 		}
 		result := make(map[string]any, len(node))
