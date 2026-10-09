@@ -2007,6 +2007,366 @@ func (e ReminderAppleEpoch) Valid() bool {
 	}
 }
 
+// Defines values for ReminderAttachmentDeletedValueType.
+const (
+	ReminderAttachmentDeletedInteger ReminderAttachmentDeletedValueType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentDeletedValueType enum.
+func (e ReminderAttachmentDeletedValueType) Valid() bool {
+	switch e {
+	case ReminderAttachmentDeletedInteger:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentDeletedValueValue.
+const (
+	ReminderAttachmentDeleted ReminderAttachmentDeletedValueValue = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentDeletedValueValue enum.
+func (e ReminderAttachmentDeletedValueValue) Valid() bool {
+	switch e {
+	case ReminderAttachmentDeleted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentDeletionOperationOperationType.
+const (
+	ReminderAttachmentDeletionOperationType ReminderAttachmentDeletionOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentDeletionOperationOperationType enum.
+func (e ReminderAttachmentDeletionOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderAttachmentDeletionOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentDeletionRecordRecordType.
+const (
+	ReminderAttachmentDeletionRecordTypeAttachment ReminderAttachmentDeletionRecordRecordType = "Attachment"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentDeletionRecordRecordType enum.
+func (e ReminderAttachmentDeletionRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderAttachmentDeletionRecordTypeAttachment:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentDeletionRequestAtomic.
+const (
+	ReminderAttachmentDeletionAtomic ReminderAttachmentDeletionRequestAtomic = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentDeletionRequestAtomic enum.
+func (e ReminderAttachmentDeletionRequestAtomic) Valid() bool {
+	switch e {
+	case ReminderAttachmentDeletionAtomic:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentEncryptedURLType.
+const (
+	ReminderAttachmentURLString ReminderAttachmentEncryptedURLType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentEncryptedURLType enum.
+func (e ReminderAttachmentEncryptedURLType) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLString:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentEncryptedURLIsEncrypted.
+const (
+	ReminderAttachmentURLEncrypted ReminderAttachmentEncryptedURLIsEncrypted = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentEncryptedURLIsEncrypted enum.
+func (e ReminderAttachmentEncryptedURLIsEncrypted) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLEncrypted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentImageTypeType.
+const (
+	ReminderAttachmentImageTypeString ReminderAttachmentImageTypeType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentImageTypeType enum.
+func (e ReminderAttachmentImageTypeType) Valid() bool {
+	switch e {
+	case ReminderAttachmentImageTypeString:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentImageTypeValue.
+const (
+	ReminderAttachmentImageValue ReminderAttachmentImageTypeValue = "Image"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentImageTypeValue enum.
+func (e ReminderAttachmentImageTypeValue) Valid() bool {
+	switch e {
+	case ReminderAttachmentImageValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentImageUpdateOperationOperationType.
+const (
+	ReminderAttachmentImageUpdateOperationType ReminderAttachmentImageUpdateOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentImageUpdateOperationOperationType enum.
+func (e ReminderAttachmentImageUpdateOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderAttachmentImageUpdateOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentImageUpdateRecordRecordType.
+const (
+	ReminderAttachmentImageUpdateRecordTypeAttachment ReminderAttachmentImageUpdateRecordRecordType = "Attachment"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentImageUpdateRecordRecordType enum.
+func (e ReminderAttachmentImageUpdateRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderAttachmentImageUpdateRecordTypeAttachment:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentNonnegativeIntegerType.
+const (
+	ReminderAttachmentNonnegativeIntegerTypeValue ReminderAttachmentNonnegativeIntegerType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentNonnegativeIntegerType enum.
+func (e ReminderAttachmentNonnegativeIntegerType) Valid() bool {
+	switch e {
+	case ReminderAttachmentNonnegativeIntegerTypeValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentParentOperationOperationType.
+const (
+	ReminderAttachmentParentUpdate ReminderAttachmentParentOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentParentOperationOperationType enum.
+func (e ReminderAttachmentParentOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderAttachmentParentUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentParentRecordRecordType.
+const (
+	ReminderAttachmentParentRecordType ReminderAttachmentParentRecordRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentParentRecordRecordType enum.
+func (e ReminderAttachmentParentRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderAttachmentParentRecordType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentReferenceType.
+const (
+	ReminderAttachmentReferenceTypeValue ReminderAttachmentReferenceType = "REFERENCE"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentReferenceType enum.
+func (e ReminderAttachmentReferenceType) Valid() bool {
+	switch e {
+	case ReminderAttachmentReferenceTypeValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentURLCreationOperationOperationType.
+const (
+	ReminderAttachmentURLCreationOperationType ReminderAttachmentURLCreationOperationOperationType = "create"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentURLCreationOperationOperationType enum.
+func (e ReminderAttachmentURLCreationOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLCreationOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentURLCreationRecordRecordType.
+const (
+	ReminderAttachmentURLCreationRecordTypeAttachment ReminderAttachmentURLCreationRecordRecordType = "Attachment"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentURLCreationRecordRecordType enum.
+func (e ReminderAttachmentURLCreationRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLCreationRecordTypeAttachment:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentURLCreationRequestAtomic.
+const (
+	ReminderAttachmentURLCreationAtomic ReminderAttachmentURLCreationRequestAtomic = true
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentURLCreationRequestAtomic enum.
+func (e ReminderAttachmentURLCreationRequestAtomic) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLCreationAtomic:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentURLTypeType.
+const (
+	ReminderAttachmentURLTypeString ReminderAttachmentURLTypeType = "STRING"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentURLTypeType enum.
+func (e ReminderAttachmentURLTypeType) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLTypeString:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentURLTypeValue.
+const (
+	ReminderAttachmentURLValue ReminderAttachmentURLTypeValue = "URL"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentURLTypeValue enum.
+func (e ReminderAttachmentURLTypeValue) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentURLUpdateOperationOperationType.
+const (
+	ReminderAttachmentURLUpdateOperationType ReminderAttachmentURLUpdateOperationOperationType = "update"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentURLUpdateOperationOperationType enum.
+func (e ReminderAttachmentURLUpdateOperationOperationType) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLUpdateOperationType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentURLUpdateRecordRecordType.
+const (
+	ReminderAttachmentURLUpdateRecordTypeAttachment ReminderAttachmentURLUpdateRecordRecordType = "Attachment"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentURLUpdateRecordRecordType enum.
+func (e ReminderAttachmentURLUpdateRecordRecordType) Valid() bool {
+	switch e {
+	case ReminderAttachmentURLUpdateRecordTypeAttachment:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentZeroValueType.
+const (
+	ReminderAttachmentZeroInteger ReminderAttachmentZeroValueType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentZeroValueType enum.
+func (e ReminderAttachmentZeroValueType) Valid() bool {
+	switch e {
+	case ReminderAttachmentZeroInteger:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderAttachmentZeroValueValue.
+const (
+	ReminderAttachmentZero ReminderAttachmentZeroValueValue = 0
+)
+
+// Valid indicates whether the value is a known member of the ReminderAttachmentZeroValueValue enum.
+func (e ReminderAttachmentZeroValueValue) Valid() bool {
+	switch e {
+	case ReminderAttachmentZero:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderCreationOperationOperationType.
 const (
 	ReminderCreationOperationType ReminderCreationOperationOperationType = "create"
@@ -2477,10 +2837,10 @@ func (e ReminderPendingChildOperationOperationType) Valid() bool {
 
 // Defines values for ReminderPendingChildOperationRecordRecordType.
 const (
-	ReminderPendingChildOperationRecordRecordTypeAlarm        ReminderPendingChildOperationRecordRecordType = "Alarm"
-	ReminderPendingChildOperationRecordRecordTypeAlarmTrigger ReminderPendingChildOperationRecordRecordType = "AlarmTrigger"
-	ReminderPendingChildOperationRecordRecordTypeAttachment   ReminderPendingChildOperationRecordRecordType = "Attachment"
-	ReminderPendingChildOperationRecordRecordTypeHashtag      ReminderPendingChildOperationRecordRecordType = "Hashtag"
+	ReminderPendingChildOperationRecordRecordTypeAlarm          ReminderPendingChildOperationRecordRecordType = "Alarm"
+	ReminderPendingChildOperationRecordRecordTypeAlarmTrigger   ReminderPendingChildOperationRecordRecordType = "AlarmTrigger"
+	ReminderPendingChildOperationRecordRecordTypeHashtag        ReminderPendingChildOperationRecordRecordType = "Hashtag"
+	ReminderPendingChildOperationRecordRecordTypeRecurrenceRule ReminderPendingChildOperationRecordRecordType = "RecurrenceRule"
 )
 
 // Valid indicates whether the value is a known member of the ReminderPendingChildOperationRecordRecordType enum.
@@ -2490,9 +2850,9 @@ func (e ReminderPendingChildOperationRecordRecordType) Valid() bool {
 		return true
 	case ReminderPendingChildOperationRecordRecordTypeAlarmTrigger:
 		return true
-	case ReminderPendingChildOperationRecordRecordTypeAttachment:
-		return true
 	case ReminderPendingChildOperationRecordRecordTypeHashtag:
+		return true
+	case ReminderPendingChildOperationRecordRecordTypeRecurrenceRule:
 		return true
 	default:
 		return false
@@ -4304,6 +4664,140 @@ type ReminderAlarmLinkTokensMap struct {
 // ReminderAppleEpoch Pinned resolution-token epoch in Unix seconds (2001-01-01).
 type ReminderAppleEpoch int
 
+// ReminderAttachmentDeletedValue defines model for ReminderAttachmentDeletedValue.
+type ReminderAttachmentDeletedValue struct {
+	Type  ReminderAttachmentDeletedValueType  `json:"type"`
+	Value ReminderAttachmentDeletedValueValue `json:"value"`
+}
+
+// ReminderAttachmentDeletedValueType defines model for ReminderAttachmentDeletedValue.Type.
+type ReminderAttachmentDeletedValueType string
+
+// ReminderAttachmentDeletedValueValue defines model for ReminderAttachmentDeletedValue.Value.
+type ReminderAttachmentDeletedValueValue int64
+
+// ReminderAttachmentDeletionFields defines model for ReminderAttachmentDeletionFields.
+type ReminderAttachmentDeletionFields struct {
+	Deleted ReminderAttachmentDeletedValue `json:"Deleted"`
+
+	// Reminder Attachment parent reference with a required provider record name.
+	Reminder *ReminderAttachmentReference `json:"Reminder,omitempty"`
+}
+
+// ReminderAttachmentDeletionOperation defines model for ReminderAttachmentDeletionOperation.
+type ReminderAttachmentDeletionOperation struct {
+	OperationType ReminderAttachmentDeletionOperationOperationType `json:"operationType"`
+	Record        ReminderAttachmentDeletionRecord                 `json:"record"`
+}
+
+// ReminderAttachmentDeletionOperationOperationType defines model for ReminderAttachmentDeletionOperation.OperationType.
+type ReminderAttachmentDeletionOperationOperationType string
+
+// ReminderAttachmentDeletionRecord defines model for ReminderAttachmentDeletionRecord.
+type ReminderAttachmentDeletionRecord struct {
+	RecordName      string                                     `json:"recordName"`
+	RecordType      ReminderAttachmentDeletionRecordRecordType `json:"recordType"`
+	Fields          ReminderAttachmentDeletionFields           `json:"fields"`
+	PluginFields    map[string]interface{}                     `json:"pluginFields"`
+	RecordChangeTag *string                                    `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderAttachmentDeletionRecordRecordType defines model for ReminderAttachmentDeletionRecord.RecordType.
+type ReminderAttachmentDeletionRecordRecordType string
+
+// ReminderAttachmentDeletionRequest defines model for ReminderAttachmentDeletionRequest.
+type ReminderAttachmentDeletionRequest struct {
+	Operations []ReminderAttachmentDeletionRequest_Operations_Item `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq                             `json:"zoneID"`
+	Atomic ReminderAttachmentDeletionRequestAtomic `json:"atomic"`
+}
+
+// ReminderAttachmentDeletionRequest_Operations_Item defines model for ReminderAttachmentDeletionRequest.operations.Item.
+type ReminderAttachmentDeletionRequest_Operations_Item struct {
+	union json.RawMessage
+}
+
+// ReminderAttachmentDeletionRequestAtomic defines model for ReminderAttachmentDeletionRequest.Atomic.
+type ReminderAttachmentDeletionRequestAtomic bool
+
+// ReminderAttachmentEncryptedURL defines model for ReminderAttachmentEncryptedURL.
+type ReminderAttachmentEncryptedURL struct {
+	Type        ReminderAttachmentEncryptedURLType        `json:"type"`
+	Value       string                                    `json:"value"`
+	IsEncrypted ReminderAttachmentEncryptedURLIsEncrypted `json:"isEncrypted"`
+}
+
+// ReminderAttachmentEncryptedURLType defines model for ReminderAttachmentEncryptedURL.Type.
+type ReminderAttachmentEncryptedURLType string
+
+// ReminderAttachmentEncryptedURLIsEncrypted defines model for ReminderAttachmentEncryptedURL.IsEncrypted.
+type ReminderAttachmentEncryptedURLIsEncrypted bool
+
+// ReminderAttachmentImageType defines model for ReminderAttachmentImageType.
+type ReminderAttachmentImageType struct {
+	Type  ReminderAttachmentImageTypeType  `json:"type"`
+	Value ReminderAttachmentImageTypeValue `json:"value"`
+}
+
+// ReminderAttachmentImageTypeType defines model for ReminderAttachmentImageType.Type.
+type ReminderAttachmentImageTypeType string
+
+// ReminderAttachmentImageTypeValue defines model for ReminderAttachmentImageType.Value.
+type ReminderAttachmentImageTypeValue string
+
+// ReminderAttachmentImageUpdateFields defines model for ReminderAttachmentImageUpdateFields.
+type ReminderAttachmentImageUpdateFields struct {
+	// UTI A string-valued reminder write field.
+	UTI *ReminderWriteString `json:"UTI,omitempty"`
+
+	// FileName A string-valued reminder write field.
+	FileName *ReminderWriteString `json:"FileName,omitempty"`
+
+	// FileSize An integer-valued reminder write field.
+	FileSize *ReminderAttachmentNonnegativeInteger `json:"FileSize,omitempty"`
+
+	// Width An integer-valued reminder write field.
+	Width *ReminderAttachmentNonnegativeInteger `json:"Width,omitempty"`
+
+	// Height An integer-valued reminder write field.
+	Height *ReminderAttachmentNonnegativeInteger `json:"Height,omitempty"`
+	Type   ReminderAttachmentImageType           `json:"Type"`
+
+	// Reminder Attachment parent reference with a required provider record name.
+	Reminder *ReminderAttachmentReference `json:"Reminder,omitempty"`
+}
+
+// ReminderAttachmentImageUpdateOperation defines model for ReminderAttachmentImageUpdateOperation.
+type ReminderAttachmentImageUpdateOperation struct {
+	OperationType ReminderAttachmentImageUpdateOperationOperationType `json:"operationType"`
+	Record        ReminderAttachmentImageUpdateRecord                 `json:"record"`
+}
+
+// ReminderAttachmentImageUpdateOperationOperationType defines model for ReminderAttachmentImageUpdateOperation.OperationType.
+type ReminderAttachmentImageUpdateOperationOperationType string
+
+// ReminderAttachmentImageUpdateRecord defines model for ReminderAttachmentImageUpdateRecord.
+type ReminderAttachmentImageUpdateRecord struct {
+	RecordName      string                                        `json:"recordName"`
+	RecordType      ReminderAttachmentImageUpdateRecordRecordType `json:"recordType"`
+	Fields          ReminderAttachmentImageUpdateFields           `json:"fields"`
+	PluginFields    map[string]interface{}                        `json:"pluginFields"`
+	RecordChangeTag *string                                       `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderAttachmentImageUpdateRecordRecordType defines model for ReminderAttachmentImageUpdateRecord.RecordType.
+type ReminderAttachmentImageUpdateRecordRecordType string
+
+// ReminderAttachmentImageUpdateRequest Example: {"operations":[{"operationType":"update","record":{"fields":{"FileName":{"type":"STRING","value":"new.jpg"},"FileSize":{"type":"INT64","value":456},"Height":{"type":"INT64","value":300},"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}},"Type":{"type":"STRING","value":"Image"},"UTI":{"type":"STRING","value":"public.jpeg"},"Width":{"type":"INT64","value":200}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Attachment/synthetic-image","recordType":"Attachment"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderAttachmentImageUpdateRequest struct {
+	Operations []ReminderAttachmentImageUpdateOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
 // ReminderAttachmentLinkFields defines model for ReminderAttachmentLinkFields.
 type ReminderAttachmentLinkFields struct {
 	AttachmentIDs      ReminderWriteStringList `json:"AttachmentIDs"`
@@ -4313,16 +4807,184 @@ type ReminderAttachmentLinkFields struct {
 	LastModifiedDate ReminderWriteTimestamp `json:"LastModifiedDate"`
 }
 
+// ReminderAttachmentLinkTokens defines model for ReminderAttachmentLinkTokens.
+type ReminderAttachmentLinkTokens struct {
+	// AttachmentIDs Per-field conflict-resolution token generated for a reminder mutation.
+	AttachmentIDs ReminderResolutionToken `json:"attachmentIDs"`
+
+	// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
+	LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
+}
+
 // ReminderAttachmentLinkTokensMap defines model for ReminderAttachmentLinkTokensMap.
 type ReminderAttachmentLinkTokensMap struct {
-	Map struct {
-		// AttachmentIDs Per-field conflict-resolution token generated for a reminder mutation.
-		AttachmentIDs ReminderResolutionToken `json:"attachmentIDs"`
-
-		// LastModifiedDate Per-field conflict-resolution token generated for a reminder mutation.
-		LastModifiedDate ReminderResolutionToken `json:"lastModifiedDate"`
-	} `json:"map"`
+	Map ReminderAttachmentLinkTokens `json:"map"`
 }
+
+// ReminderAttachmentNonnegativeInteger An integer-valued reminder write field.
+type ReminderAttachmentNonnegativeInteger struct {
+	Type  ReminderAttachmentNonnegativeIntegerType `json:"type"`
+	Value int64                                    `json:"value"`
+}
+
+// ReminderAttachmentNonnegativeIntegerType defines model for ReminderAttachmentNonnegativeInteger.Type.
+type ReminderAttachmentNonnegativeIntegerType string
+
+// ReminderAttachmentParentOperation defines model for ReminderAttachmentParentOperation.
+type ReminderAttachmentParentOperation struct {
+	OperationType ReminderAttachmentParentOperationOperationType `json:"operationType"`
+	Record        ReminderAttachmentParentRecord                 `json:"record"`
+}
+
+// ReminderAttachmentParentOperationOperationType defines model for ReminderAttachmentParentOperation.OperationType.
+type ReminderAttachmentParentOperationOperationType string
+
+// ReminderAttachmentParentRecord defines model for ReminderAttachmentParentRecord.
+type ReminderAttachmentParentRecord struct {
+	RecordName      string                                   `json:"recordName"`
+	RecordType      ReminderAttachmentParentRecordRecordType `json:"recordType"`
+	Fields          ReminderAttachmentLinkFields             `json:"fields"`
+	PluginFields    map[string]interface{}                   `json:"pluginFields"`
+	RecordChangeTag *string                                  `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderAttachmentParentRecordRecordType defines model for ReminderAttachmentParentRecord.RecordType.
+type ReminderAttachmentParentRecordRecordType string
+
+// ReminderAttachmentReference Attachment parent reference with a required provider record name.
+type ReminderAttachmentReference struct {
+	Type ReminderAttachmentReferenceType `json:"type"`
+
+	// Value A validated named record reference.
+	Value ReminderWriteReferenceValue `json:"value"`
+}
+
+// ReminderAttachmentReferenceType defines model for ReminderAttachmentReference.Type.
+type ReminderAttachmentReferenceType string
+
+// ReminderAttachmentURLCreationFields defines model for ReminderAttachmentURLCreationFields.
+type ReminderAttachmentURLCreationFields struct {
+	Type ReminderAttachmentURLType `json:"Type"`
+
+	// Reminder Attachment parent reference with a required provider record name.
+	Reminder ReminderAttachmentReference    `json:"Reminder"`
+	URL      ReminderAttachmentEncryptedURL `json:"URL"`
+
+	// UTI A string-valued reminder write field.
+	UTI ReminderWriteString `json:"UTI"`
+
+	// Imported An integer-valued reminder write field.
+	Imported ReminderAttachmentZeroValue `json:"Imported"`
+
+	// Deleted An integer-valued reminder write field.
+	Deleted ReminderAttachmentZeroValue `json:"Deleted"`
+}
+
+// ReminderAttachmentURLCreationOperation defines model for ReminderAttachmentURLCreationOperation.
+type ReminderAttachmentURLCreationOperation struct {
+	OperationType ReminderAttachmentURLCreationOperationOperationType `json:"operationType"`
+	Record        ReminderAttachmentURLCreationRecord                 `json:"record"`
+}
+
+// ReminderAttachmentURLCreationOperationOperationType defines model for ReminderAttachmentURLCreationOperation.OperationType.
+type ReminderAttachmentURLCreationOperationOperationType string
+
+// ReminderAttachmentURLCreationRecord defines model for ReminderAttachmentURLCreationRecord.
+type ReminderAttachmentURLCreationRecord struct {
+	RecordName      string                                        `json:"recordName"`
+	RecordType      ReminderAttachmentURLCreationRecordRecordType `json:"recordType"`
+	Fields          ReminderAttachmentURLCreationFields           `json:"fields"`
+	PluginFields    map[string]interface{}                        `json:"pluginFields"`
+	RecordChangeTag *string                                       `json:"recordChangeTag,omitempty"`
+
+	// Parent Write-side parent reference embedded under a record.
+	Parent CKWriteParent `json:"parent"`
+}
+
+// ReminderAttachmentURLCreationRecordRecordType defines model for ReminderAttachmentURLCreationRecord.RecordType.
+type ReminderAttachmentURLCreationRecordRecordType string
+
+// ReminderAttachmentURLCreationRequest defines model for ReminderAttachmentURLCreationRequest.
+type ReminderAttachmentURLCreationRequest struct {
+	Operations []ReminderAttachmentURLCreationRequest_Operations_Item `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq                                `json:"zoneID"`
+	Atomic ReminderAttachmentURLCreationRequestAtomic `json:"atomic"`
+}
+
+// ReminderAttachmentURLCreationRequest_Operations_Item defines model for ReminderAttachmentURLCreationRequest.operations.Item.
+type ReminderAttachmentURLCreationRequest_Operations_Item struct {
+	union json.RawMessage
+}
+
+// ReminderAttachmentURLCreationRequestAtomic defines model for ReminderAttachmentURLCreationRequest.Atomic.
+type ReminderAttachmentURLCreationRequestAtomic bool
+
+// ReminderAttachmentURLType defines model for ReminderAttachmentURLType.
+type ReminderAttachmentURLType struct {
+	Type  ReminderAttachmentURLTypeType  `json:"type"`
+	Value ReminderAttachmentURLTypeValue `json:"value"`
+}
+
+// ReminderAttachmentURLTypeType defines model for ReminderAttachmentURLType.Type.
+type ReminderAttachmentURLTypeType string
+
+// ReminderAttachmentURLTypeValue defines model for ReminderAttachmentURLType.Value.
+type ReminderAttachmentURLTypeValue string
+
+// ReminderAttachmentURLUpdateFields defines model for ReminderAttachmentURLUpdateFields.
+type ReminderAttachmentURLUpdateFields struct {
+	URL *ReminderAttachmentEncryptedURL `json:"URL,omitempty"`
+
+	// UTI A string-valued reminder write field.
+	UTI  *ReminderWriteString      `json:"UTI,omitempty"`
+	Type ReminderAttachmentURLType `json:"Type"`
+
+	// Reminder Attachment parent reference with a required provider record name.
+	Reminder *ReminderAttachmentReference `json:"Reminder,omitempty"`
+}
+
+// ReminderAttachmentURLUpdateOperation defines model for ReminderAttachmentURLUpdateOperation.
+type ReminderAttachmentURLUpdateOperation struct {
+	OperationType ReminderAttachmentURLUpdateOperationOperationType `json:"operationType"`
+	Record        ReminderAttachmentURLUpdateRecord                 `json:"record"`
+}
+
+// ReminderAttachmentURLUpdateOperationOperationType defines model for ReminderAttachmentURLUpdateOperation.OperationType.
+type ReminderAttachmentURLUpdateOperationOperationType string
+
+// ReminderAttachmentURLUpdateRecord defines model for ReminderAttachmentURLUpdateRecord.
+type ReminderAttachmentURLUpdateRecord struct {
+	RecordName      string                                      `json:"recordName"`
+	RecordType      ReminderAttachmentURLUpdateRecordRecordType `json:"recordType"`
+	Fields          ReminderAttachmentURLUpdateFields           `json:"fields"`
+	PluginFields    map[string]interface{}                      `json:"pluginFields"`
+	RecordChangeTag *string                                     `json:"recordChangeTag,omitempty"`
+}
+
+// ReminderAttachmentURLUpdateRecordRecordType defines model for ReminderAttachmentURLUpdateRecord.RecordType.
+type ReminderAttachmentURLUpdateRecordRecordType string
+
+// ReminderAttachmentURLUpdateRequest Example: {"operations":[{"operationType":"update","record":{"fields":{"Reminder":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"Reminder/synthetic-item"}},"Type":{"type":"STRING","value":"URL"},"URL":{"isEncrypted":true,"type":"STRING","value":"https://example.invalid/new"},"UTI":{"type":"STRING","value":"public.url"}},"pluginFields":{},"recordChangeTag":"synthetic-old-tag","recordName":"Attachment/synthetic-url","recordType":"Attachment"}}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
+type ReminderAttachmentURLUpdateRequest struct {
+	Operations []ReminderAttachmentURLUpdateOperation `json:"operations"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
+// ReminderAttachmentZeroValue An integer-valued reminder write field.
+type ReminderAttachmentZeroValue struct {
+	Type  ReminderAttachmentZeroValueType  `json:"type"`
+	Value ReminderAttachmentZeroValueValue `json:"value"`
+}
+
+// ReminderAttachmentZeroValueType defines model for ReminderAttachmentZeroValue.Type.
+type ReminderAttachmentZeroValueType string
+
+// ReminderAttachmentZeroValueValue defines model for ReminderAttachmentZeroValue.Value.
+type ReminderAttachmentZeroValueValue int64
 
 // ReminderCreationFields Known reminder fields in reference mutation order.
 type ReminderCreationFields struct {
@@ -12995,6 +13657,130 @@ func (t *CKZoneChangesZone_Records_Item) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// AsReminderAttachmentParentOperation returns the union data inside the ReminderAttachmentDeletionRequest_Operations_Item as a ReminderAttachmentParentOperation
+func (t ReminderAttachmentDeletionRequest_Operations_Item) AsReminderAttachmentParentOperation() (ReminderAttachmentParentOperation, error) {
+	var body ReminderAttachmentParentOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentParentOperation overwrites any union data inside the ReminderAttachmentDeletionRequest_Operations_Item as the provided ReminderAttachmentParentOperation
+func (t *ReminderAttachmentDeletionRequest_Operations_Item) FromReminderAttachmentParentOperation(v ReminderAttachmentParentOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentParentOperation performs a merge with any union data inside the ReminderAttachmentDeletionRequest_Operations_Item, using the provided ReminderAttachmentParentOperation
+func (t *ReminderAttachmentDeletionRequest_Operations_Item) MergeReminderAttachmentParentOperation(v ReminderAttachmentParentOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderAttachmentDeletionOperation returns the union data inside the ReminderAttachmentDeletionRequest_Operations_Item as a ReminderAttachmentDeletionOperation
+func (t ReminderAttachmentDeletionRequest_Operations_Item) AsReminderAttachmentDeletionOperation() (ReminderAttachmentDeletionOperation, error) {
+	var body ReminderAttachmentDeletionOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentDeletionOperation overwrites any union data inside the ReminderAttachmentDeletionRequest_Operations_Item as the provided ReminderAttachmentDeletionOperation
+func (t *ReminderAttachmentDeletionRequest_Operations_Item) FromReminderAttachmentDeletionOperation(v ReminderAttachmentDeletionOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentDeletionOperation performs a merge with any union data inside the ReminderAttachmentDeletionRequest_Operations_Item, using the provided ReminderAttachmentDeletionOperation
+func (t *ReminderAttachmentDeletionRequest_Operations_Item) MergeReminderAttachmentDeletionOperation(v ReminderAttachmentDeletionOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderAttachmentDeletionRequest_Operations_Item) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderAttachmentDeletionRequest_Operations_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderAttachmentParentOperation returns the union data inside the ReminderAttachmentURLCreationRequest_Operations_Item as a ReminderAttachmentParentOperation
+func (t ReminderAttachmentURLCreationRequest_Operations_Item) AsReminderAttachmentParentOperation() (ReminderAttachmentParentOperation, error) {
+	var body ReminderAttachmentParentOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentParentOperation overwrites any union data inside the ReminderAttachmentURLCreationRequest_Operations_Item as the provided ReminderAttachmentParentOperation
+func (t *ReminderAttachmentURLCreationRequest_Operations_Item) FromReminderAttachmentParentOperation(v ReminderAttachmentParentOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentParentOperation performs a merge with any union data inside the ReminderAttachmentURLCreationRequest_Operations_Item, using the provided ReminderAttachmentParentOperation
+func (t *ReminderAttachmentURLCreationRequest_Operations_Item) MergeReminderAttachmentParentOperation(v ReminderAttachmentParentOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderAttachmentURLCreationOperation returns the union data inside the ReminderAttachmentURLCreationRequest_Operations_Item as a ReminderAttachmentURLCreationOperation
+func (t ReminderAttachmentURLCreationRequest_Operations_Item) AsReminderAttachmentURLCreationOperation() (ReminderAttachmentURLCreationOperation, error) {
+	var body ReminderAttachmentURLCreationOperation
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentURLCreationOperation overwrites any union data inside the ReminderAttachmentURLCreationRequest_Operations_Item as the provided ReminderAttachmentURLCreationOperation
+func (t *ReminderAttachmentURLCreationRequest_Operations_Item) FromReminderAttachmentURLCreationOperation(v ReminderAttachmentURLCreationOperation) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentURLCreationOperation performs a merge with any union data inside the ReminderAttachmentURLCreationRequest_Operations_Item, using the provided ReminderAttachmentURLCreationOperation
+func (t *ReminderAttachmentURLCreationRequest_Operations_Item) MergeReminderAttachmentURLCreationOperation(v ReminderAttachmentURLCreationOperation) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderAttachmentURLCreationRequest_Operations_Item) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderAttachmentURLCreationRequest_Operations_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // AsReminderAlarmLinkFields returns the union data inside the ReminderLinkedParentRecord_Fields as a ReminderAlarmLinkFields
 func (t ReminderLinkedParentRecord_Fields) AsReminderAlarmLinkFields() (ReminderAlarmLinkFields, error) {
 	var body ReminderAlarmLinkFields
@@ -13379,6 +14165,110 @@ func (t *RemindersModificationRequest) FromReminderRecurrenceDeletionRequest(v R
 
 // MergeReminderRecurrenceDeletionRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderRecurrenceDeletionRequest
 func (t *RemindersModificationRequest) MergeReminderRecurrenceDeletionRequest(v ReminderRecurrenceDeletionRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderAttachmentDeletionRequest returns the union data inside the RemindersModificationRequest as a ReminderAttachmentDeletionRequest
+func (t RemindersModificationRequest) AsReminderAttachmentDeletionRequest() (ReminderAttachmentDeletionRequest, error) {
+	var body ReminderAttachmentDeletionRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentDeletionRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderAttachmentDeletionRequest
+func (t *RemindersModificationRequest) FromReminderAttachmentDeletionRequest(v ReminderAttachmentDeletionRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentDeletionRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderAttachmentDeletionRequest
+func (t *RemindersModificationRequest) MergeReminderAttachmentDeletionRequest(v ReminderAttachmentDeletionRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderAttachmentImageUpdateRequest returns the union data inside the RemindersModificationRequest as a ReminderAttachmentImageUpdateRequest
+func (t RemindersModificationRequest) AsReminderAttachmentImageUpdateRequest() (ReminderAttachmentImageUpdateRequest, error) {
+	var body ReminderAttachmentImageUpdateRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentImageUpdateRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderAttachmentImageUpdateRequest
+func (t *RemindersModificationRequest) FromReminderAttachmentImageUpdateRequest(v ReminderAttachmentImageUpdateRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentImageUpdateRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderAttachmentImageUpdateRequest
+func (t *RemindersModificationRequest) MergeReminderAttachmentImageUpdateRequest(v ReminderAttachmentImageUpdateRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderAttachmentURLUpdateRequest returns the union data inside the RemindersModificationRequest as a ReminderAttachmentURLUpdateRequest
+func (t RemindersModificationRequest) AsReminderAttachmentURLUpdateRequest() (ReminderAttachmentURLUpdateRequest, error) {
+	var body ReminderAttachmentURLUpdateRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentURLUpdateRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderAttachmentURLUpdateRequest
+func (t *RemindersModificationRequest) FromReminderAttachmentURLUpdateRequest(v ReminderAttachmentURLUpdateRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentURLUpdateRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderAttachmentURLUpdateRequest
+func (t *RemindersModificationRequest) MergeReminderAttachmentURLUpdateRequest(v ReminderAttachmentURLUpdateRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderAttachmentURLCreationRequest returns the union data inside the RemindersModificationRequest as a ReminderAttachmentURLCreationRequest
+func (t RemindersModificationRequest) AsReminderAttachmentURLCreationRequest() (ReminderAttachmentURLCreationRequest, error) {
+	var body ReminderAttachmentURLCreationRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderAttachmentURLCreationRequest overwrites any union data inside the RemindersModificationRequest as the provided ReminderAttachmentURLCreationRequest
+func (t *RemindersModificationRequest) FromReminderAttachmentURLCreationRequest(v ReminderAttachmentURLCreationRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderAttachmentURLCreationRequest performs a merge with any union data inside the RemindersModificationRequest, using the provided ReminderAttachmentURLCreationRequest
+func (t *RemindersModificationRequest) MergeReminderAttachmentURLCreationRequest(v ReminderAttachmentURLCreationRequest) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err

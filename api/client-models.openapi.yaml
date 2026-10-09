@@ -1573,3 +1573,230 @@ components:
           items:
             $ref: '#/components/schemas/ResponseMetadata'
       description: Acknowledged recurrence settings and response evidence.
+
+    CreateReminderURLAttachmentRequest:
+      example:
+        auth:
+          accountID: synthetic-account
+          clientID: synthetic-client
+          headers: []
+        reminder:
+          id: Reminder/synthetic-reminder
+          listID: List/synthetic-list
+          title: Untitled
+          description: ''
+          completed: false
+          completedDate: null
+          dueDate: null
+          startDate: null
+          priority: 0
+          flagged: false
+          allDay: false
+          deleted: false
+          timeZone: null
+          alarmIDs: []
+          hashtagIDs: []
+          attachmentIDs: []
+          recurrenceRuleIDs: []
+          parentReminderID: null
+          created: null
+          modified: null
+          recordChangeTag: null
+        url: https://example.invalid/attachment
+      type: object
+      description: Create a URL attachment and atomically link it to the supplied reminder
+        snapshot.
+      required:
+      - auth
+      - reminder
+      - url
+      properties:
+        auth:
+          $ref: '#/components/schemas/AuthContext'
+        reminder:
+          $ref: '#/components/schemas/Reminder'
+        url:
+          type: string
+          x-go-name: URL
+        uti:
+          type: string
+          x-go-name: UTI
+          default: public.url
+
+    ReminderAttachmentMutationResult:
+      example:
+        reminder:
+          id: Reminder/synthetic-reminder
+          listID: List/synthetic-list
+          title: Untitled
+          description: ''
+          completed: false
+          completedDate: null
+          dueDate: null
+          startDate: null
+          priority: 0
+          flagged: false
+          allDay: false
+          deleted: false
+          timeZone: null
+          alarmIDs: []
+          hashtagIDs: []
+          attachmentIDs: []
+          recurrenceRuleIDs: []
+          parentReminderID: null
+          created: null
+          modified: null
+          recordChangeTag: null
+        attachment:
+          id: Attachment/synthetic
+          reminderID: Reminder/synthetic
+          url: ''
+          uti: public.url
+          recordChangeTag: null
+        responses: []
+      type: object
+      description: Acknowledged parent and attachment snapshots with ordered provider
+        evidence.
+      required:
+      - reminder
+      - attachment
+      - responses
+      properties:
+        reminder:
+          $ref: '#/components/schemas/Reminder'
+        attachment:
+          $ref: '#/components/schemas/ReminderAttachment'
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseMetadata'
+
+    UpdateReminderAttachmentRequest:
+      example:
+        auth:
+          accountID: synthetic-account
+          clientID: synthetic-client
+          headers: []
+        attachment:
+          id: Attachment/synthetic
+          reminderID: Reminder/synthetic
+          url: ''
+          uti: public.url
+          recordChangeTag: null
+        url: ''
+      type: object
+      description: Update URL text or image metadata; omitted fields retain their current
+        values.
+      required:
+      - auth
+      - attachment
+      properties:
+        auth:
+          $ref: '#/components/schemas/AuthContext'
+        attachment:
+          $ref: '#/components/schemas/ReminderAttachment'
+        url:
+          type: string
+          x-go-name: URL
+        uti:
+          type: string
+          x-go-name: UTI
+        filename:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+          minimum: 0
+        width:
+          type: integer
+          format: int64
+          minimum: 0
+        height:
+          type: integer
+          format: int64
+          minimum: 0
+
+    UpdateReminderAttachmentResult:
+      example:
+        attachment:
+          id: Attachment/synthetic
+          reminderID: Reminder/synthetic
+          url: ''
+          uti: public.url
+          recordChangeTag: null
+        responses: []
+      type: object
+      description: Updated attachment snapshot and provider response evidence.
+      required:
+      - attachment
+      - responses
+      properties:
+        attachment:
+          $ref: '#/components/schemas/ReminderAttachment'
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseMetadata'
+
+    DeleteReminderAttachmentRequest:
+      example:
+        auth:
+          accountID: synthetic-account
+          clientID: synthetic-client
+          headers: []
+        reminder:
+          id: Reminder/synthetic-reminder
+          listID: List/synthetic-list
+          title: Untitled
+          description: ''
+          completed: false
+          completedDate: null
+          dueDate: null
+          startDate: null
+          priority: 0
+          flagged: false
+          allDay: false
+          deleted: false
+          timeZone: null
+          alarmIDs: []
+          hashtagIDs: []
+          attachmentIDs: []
+          recurrenceRuleIDs: []
+          parentReminderID: null
+          created: null
+          modified: null
+          recordChangeTag: null
+        attachment:
+          id: Attachment/synthetic
+          reminderID: Reminder/synthetic
+          url: ''
+          uti: public.url
+          recordChangeTag: null
+      type: object
+      description: Soft-delete an attachment and atomically remove every matching link
+        from its reminder.
+      required:
+      - auth
+      - reminder
+      - attachment
+      properties:
+        auth:
+          $ref: '#/components/schemas/AuthContext'
+        reminder:
+          $ref: '#/components/schemas/Reminder'
+        attachment:
+          $ref: '#/components/schemas/ReminderAttachment'
+
+    ReminderAttachmentSelection:
+      example:
+        url: ''
+      type: object
+      description: Generated semantic projection used to select the URL or image attachment
+        variant.
+      properties:
+        url:
+          type: string
+          x-go-name: URL
+        fileAssetURL:
+          type: string
+          x-go-name: FileAssetURL

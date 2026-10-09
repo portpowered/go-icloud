@@ -4880,6 +4880,17 @@
                 }
               }
             }
+          },
+          {
+            "not": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderLinkedParentOperation"
+                  }
+                }
+              }
+            }
           }
         ]
       },
@@ -4906,6 +4917,18 @@
           },
           {
             "$ref": "#/components/schemas/ReminderRecurrenceDeletionRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderAttachmentDeletionRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderAttachmentImageUpdateRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderAttachmentURLUpdateRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderAttachmentURLCreationRequest"
           }
         ]
       },
@@ -5107,20 +5130,7 @@
         ],
         "properties": {
           "map": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "attachmentIDs",
-              "lastModifiedDate"
-            ],
-            "properties": {
-              "attachmentIDs": {
-                "$ref": "#/components/schemas/ReminderResolutionToken"
-              },
-              "lastModifiedDate": {
-                "$ref": "#/components/schemas/ReminderResolutionToken"
-              }
-            }
+            "$ref": "#/components/schemas/ReminderAttachmentLinkTokens"
           }
         }
       },
@@ -5289,6 +5299,28 @@
                       "AlarmTrigger",
                       "Hashtag",
                       "Attachment"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "record": {
+                "type": "object",
+                "required": [
+                  "recordType"
+                ],
+                "properties": {
+                  "recordType": {
+                    "type": "string",
+                    "enum": [
+                      "Alarm",
+                      "AlarmTrigger",
+                      "Hashtag",
+                      "RecurrenceRule"
                     ]
                   }
                 }
@@ -6164,6 +6196,1122 @@
           },
           "value": {
             "$ref": "#/components/schemas/ReminderWriteReferenceValue"
+          }
+        }
+      },
+      "ReminderAttachmentEncryptedURL": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentURLString"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "string",
+            "x-order": 2
+          },
+          "isEncrypted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "ReminderAttachmentURLEncrypted"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "value",
+          "isEncrypted"
+        ]
+      },
+      "ReminderAttachmentURLType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentURLTypeString"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "string",
+            "enum": [
+              "URL"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentURLValue"
+            ],
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ReminderAttachmentImageType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentImageTypeString"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "string",
+            "enum": [
+              "Image"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentImageValue"
+            ],
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ReminderAttachmentURLCreationFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Type": {
+            "$ref": "#/components/schemas/ReminderAttachmentURLType",
+            "x-order": 1
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/ReminderAttachmentReference",
+            "x-order": 2
+          },
+          "URL": {
+            "$ref": "#/components/schemas/ReminderAttachmentEncryptedURL",
+            "x-order": 3
+          },
+          "UTI": {
+            "$ref": "#/components/schemas/ReminderWriteString",
+            "x-order": 4
+          },
+          "Imported": {
+            "$ref": "#/components/schemas/ReminderAttachmentZeroValue",
+            "x-order": 5
+          },
+          "Deleted": {
+            "$ref": "#/components/schemas/ReminderAttachmentZeroValue",
+            "x-order": 6
+          }
+        },
+        "required": [
+          "Type",
+          "Reminder",
+          "URL",
+          "UTI",
+          "Imported",
+          "Deleted"
+        ]
+      },
+      "ReminderAttachmentURLCreationRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Attachment"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentURLCreationRecordTypeAttachment"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderAttachmentURLCreationFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CKWriteParent",
+            "x-order": 6
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields",
+          "parent"
+        ]
+      },
+      "ReminderAttachmentURLCreationOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "create"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentURLCreationOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderAttachmentURLCreationRecord",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operationType",
+          "record"
+        ]
+      },
+      "ReminderAttachmentURLCreationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ReminderAttachmentParentOperation"
+                },
+                {
+                  "$ref": "#/components/schemas/ReminderAttachmentURLCreationOperation"
+                }
+              ]
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "atomic": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "ReminderAttachmentURLCreationAtomic"
+            ]
+          }
+        },
+        "required": [
+          "operations",
+          "zoneID",
+          "atomic"
+        ],
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Reminder/synthetic-item",
+                "recordType": "Reminder",
+                "fields": {
+                  "AttachmentIDs": {
+                    "type": "STRING_LIST",
+                    "value": [
+                      "00000001-0000-4000-8000-000000000000"
+                    ]
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"attachmentIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            },
+            {
+              "operationType": "create",
+              "record": {
+                "recordName": "Attachment/00000001-0000-4000-8000-000000000000",
+                "recordType": "Attachment",
+                "fields": {
+                  "Type": {
+                    "type": "STRING",
+                    "value": "URL"
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  },
+                  "URL": {
+                    "type": "STRING",
+                    "value": "https://example.invalid/new",
+                    "isEncrypted": true
+                  },
+                  "UTI": {
+                    "type": "STRING",
+                    "value": "public.url"
+                  },
+                  "Imported": {
+                    "type": "INT64",
+                    "value": 0
+                  },
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 0
+                  }
+                },
+                "pluginFields": {},
+                "parent": {
+                  "recordName": "Reminder/synthetic-item"
+                }
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          },
+          "atomic": true
+        },
+        "allOf": [
+          {
+            "not": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderAttachmentParentOperation"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "not": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderAttachmentURLCreationOperation"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ReminderAttachmentURLUpdateFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "URL": {
+            "$ref": "#/components/schemas/ReminderAttachmentEncryptedURL",
+            "x-order": 1
+          },
+          "UTI": {
+            "$ref": "#/components/schemas/ReminderWriteString",
+            "x-order": 2
+          },
+          "Type": {
+            "$ref": "#/components/schemas/ReminderAttachmentURLType",
+            "x-order": 3
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/ReminderAttachmentReference",
+            "x-order": 4
+          }
+        },
+        "required": [
+          "Type"
+        ],
+        "not": {
+          "allOf": [
+            {
+              "not": {
+                "required": [
+                  "URL"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "UTI"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "ReminderAttachmentURLUpdateRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Attachment"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentURLUpdateRecordTypeAttachment"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderAttachmentURLUpdateFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ]
+      },
+      "ReminderAttachmentURLUpdateOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentURLUpdateOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderAttachmentURLUpdateRecord",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operationType",
+          "record"
+        ]
+      },
+      "ReminderAttachmentURLUpdateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/ReminderAttachmentURLUpdateOperation"
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operations",
+          "zoneID"
+        ],
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Attachment/synthetic-url",
+                "recordType": "Attachment",
+                "fields": {
+                  "URL": {
+                    "type": "STRING",
+                    "value": "https://example.invalid/new",
+                    "isEncrypted": true
+                  },
+                  "UTI": {
+                    "type": "STRING",
+                    "value": "public.url"
+                  },
+                  "Type": {
+                    "type": "STRING",
+                    "value": "URL"
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "ReminderAttachmentImageUpdateFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "UTI": {
+            "$ref": "#/components/schemas/ReminderWriteString",
+            "x-order": 1
+          },
+          "FileName": {
+            "$ref": "#/components/schemas/ReminderWriteString",
+            "x-order": 2
+          },
+          "FileSize": {
+            "$ref": "#/components/schemas/ReminderAttachmentNonnegativeInteger",
+            "x-order": 3
+          },
+          "Width": {
+            "$ref": "#/components/schemas/ReminderAttachmentNonnegativeInteger",
+            "x-order": 4
+          },
+          "Height": {
+            "$ref": "#/components/schemas/ReminderAttachmentNonnegativeInteger",
+            "x-order": 5
+          },
+          "Type": {
+            "$ref": "#/components/schemas/ReminderAttachmentImageType",
+            "x-order": 6
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/ReminderAttachmentReference",
+            "x-order": 7
+          }
+        },
+        "required": [
+          "Type"
+        ],
+        "not": {
+          "allOf": [
+            {
+              "not": {
+                "required": [
+                  "UTI"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "FileName"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "FileSize"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "Width"
+                ]
+              }
+            },
+            {
+              "not": {
+                "required": [
+                  "Height"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "ReminderAttachmentImageUpdateRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Attachment"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentImageUpdateRecordTypeAttachment"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderAttachmentImageUpdateFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ]
+      },
+      "ReminderAttachmentImageUpdateOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentImageUpdateOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderAttachmentImageUpdateRecord",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operationType",
+          "record"
+        ]
+      },
+      "ReminderAttachmentImageUpdateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/ReminderAttachmentImageUpdateOperation"
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operations",
+          "zoneID"
+        ],
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Attachment/synthetic-image",
+                "recordType": "Attachment",
+                "fields": {
+                  "UTI": {
+                    "type": "STRING",
+                    "value": "public.jpeg"
+                  },
+                  "FileName": {
+                    "type": "STRING",
+                    "value": "new.jpg"
+                  },
+                  "FileSize": {
+                    "type": "INT64",
+                    "value": 456
+                  },
+                  "Width": {
+                    "type": "INT64",
+                    "value": 200
+                  },
+                  "Height": {
+                    "type": "INT64",
+                    "value": 300
+                  },
+                  "Type": {
+                    "type": "STRING",
+                    "value": "Image"
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          }
+        }
+      },
+      "ReminderAttachmentDeletionFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Deleted": {
+            "$ref": "#/components/schemas/ReminderAttachmentDeletedValue",
+            "x-order": 1
+          },
+          "Reminder": {
+            "$ref": "#/components/schemas/ReminderAttachmentReference",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "Deleted"
+        ]
+      },
+      "ReminderAttachmentDeletionRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Attachment"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentDeletionRecordTypeAttachment"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderAttachmentDeletionFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        },
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ]
+      },
+      "ReminderAttachmentDeletionOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentDeletionOperationType"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderAttachmentDeletionRecord",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "operationType",
+          "record"
+        ]
+      },
+      "ReminderAttachmentDeletionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ReminderAttachmentParentOperation"
+                },
+                {
+                  "$ref": "#/components/schemas/ReminderAttachmentDeletionOperation"
+                }
+              ]
+            },
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "atomic": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 3,
+            "x-enum-varnames": [
+              "ReminderAttachmentDeletionAtomic"
+            ]
+          }
+        },
+        "required": [
+          "operations",
+          "zoneID",
+          "atomic"
+        ],
+        "example": {
+          "operations": [
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Reminder/synthetic-item",
+                "recordType": "Reminder",
+                "fields": {
+                  "AttachmentIDs": {
+                    "type": "STRING_LIST",
+                    "value": [
+                      "keep-url"
+                    ]
+                  },
+                  "ResolutionTokenMap": {
+                    "type": "STRING",
+                    "value": "{\"map\":{\"attachmentIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"}}}"
+                  },
+                  "LastModifiedDate": {
+                    "type": "TIMESTAMP",
+                    "value": 1700000000000
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            },
+            {
+              "operationType": "update",
+              "record": {
+                "recordName": "Attachment/synthetic-url",
+                "recordType": "Attachment",
+                "fields": {
+                  "Deleted": {
+                    "type": "INT64",
+                    "value": 1
+                  },
+                  "Reminder": {
+                    "type": "REFERENCE",
+                    "value": {
+                      "recordName": "Reminder/synthetic-item",
+                      "action": "VALIDATE"
+                    }
+                  }
+                },
+                "pluginFields": {},
+                "recordChangeTag": "synthetic-old-tag"
+              }
+            }
+          ],
+          "zoneID": {
+            "zoneName": "Reminders",
+            "zoneType": "REGULAR_CUSTOM_ZONE"
+          },
+          "atomic": true
+        },
+        "allOf": [
+          {
+            "not": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderAttachmentParentOperation"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "not": {
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderAttachmentDeletionOperation"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ReminderAttachmentDeletedValue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "value"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INT64"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentDeletedInteger"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "enum": [
+              1
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentDeleted"
+            ],
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderAttachmentParentRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "recordName",
+          "recordType",
+          "fields",
+          "pluginFields"
+        ],
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Reminder"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentParentRecordType"
+            ],
+            "x-order": 2
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ReminderAttachmentLinkFields",
+            "x-order": 3
+          },
+          "pluginFields": {
+            "type": "object",
+            "additionalProperties": false,
+            "x-order": 4
+          },
+          "recordChangeTag": {
+            "type": "string",
+            "x-order": 5
+          }
+        }
+      },
+      "ReminderAttachmentParentOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationType",
+          "record"
+        ],
+        "properties": {
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "update"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentParentUpdate"
+            ],
+            "x-order": 1
+          },
+          "record": {
+            "$ref": "#/components/schemas/ReminderAttachmentParentRecord",
+            "x-order": 2
+          }
+        }
+      },
+      "ReminderAttachmentReference": {
+        "type": "object",
+        "description": "Attachment parent reference with a required provider record name.",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "REFERENCE"
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentReferenceTypeValue"
+            ],
+            "x-order": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/ReminderWriteReferenceValue",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ReminderAttachmentZeroValue": {
+        "type": "object",
+        "description": "An integer-valued reminder write field.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INT64"
+            ],
+            "x-order": 1,
+            "x-enum-varnames": [
+              "ReminderAttachmentZeroInteger"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "x-order": 2,
+            "enum": [
+              0
+            ],
+            "x-enum-varnames": [
+              "ReminderAttachmentZero"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderAttachmentNonnegativeInteger": {
+        "type": "object",
+        "description": "An integer-valued reminder write field.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INT64"
+            ],
+            "x-order": 1,
+            "x-enum-varnames": [
+              "ReminderAttachmentNonnegativeIntegerTypeValue"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "x-order": 2,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "ReminderAttachmentLinkTokens": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "attachmentIDs",
+          "lastModifiedDate"
+        ],
+        "properties": {
+          "attachmentIDs": {
+            "$ref": "#/components/schemas/ReminderResolutionToken"
+          },
+          "lastModifiedDate": {
+            "$ref": "#/components/schemas/ReminderResolutionToken"
           }
         }
       }

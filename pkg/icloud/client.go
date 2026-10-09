@@ -20,6 +20,18 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// CreateReminderURLAttachment creates and atomically links a URL attachment.
+	CreateReminderURLAttachment(ctx context.Context,
+		request CreateReminderURLAttachmentRequest,
+	) (*ReminderAttachmentMutationResult, error)
+	// UpdateReminderAttachment changes URL text or image metadata.
+	UpdateReminderAttachment(ctx context.Context,
+		request UpdateReminderAttachmentRequest,
+	) (*UpdateReminderAttachmentResult, error)
+	// DeleteReminderAttachment soft-deletes an attachment and removes its links.
+	DeleteReminderAttachment(ctx context.Context,
+		request DeleteReminderAttachmentRequest,
+	) (*ReminderAttachmentMutationResult, error)
 	// CreateReminderRecurrenceRule atomically creates and links a validated rule.
 	CreateReminderRecurrenceRule(ctx context.Context,
 		request CreateReminderRecurrenceRuleRequest,

@@ -539,6 +539,21 @@ type CreateReminderRequest struct {
 	Title            string                       `json:"title"`
 }
 
+// CreateReminderURLAttachmentRequest Create a URL attachment and atomically link it to the supplied reminder snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"url":"https://example.invalid/attachment"}
+type CreateReminderURLAttachmentRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+	URL      string   `json:"url"`
+	UTI      *string  `json:"uti,omitempty"`
+}
+
 // DeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
 type DeleteDriveNodeRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -550,6 +565,24 @@ type DeleteDriveNodeRequest struct {
 
 // DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DeleteReminderAttachmentRequest Soft-delete an attachment and atomically remove every matching link from its reminder.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderAttachmentRequest struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
 
 // DeleteReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
 //
@@ -1885,6 +1918,30 @@ type ReminderAttachment struct {
 	union json.RawMessage
 }
 
+// ReminderAttachmentMutationResult Acknowledged parent and attachment snapshots with ordered provider evidence.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderAttachmentMutationResult struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ReminderAttachmentSelection Generated semantic projection used to select the URL or image attachment variant.
+//
+// Example: {"url":""}
+type ReminderAttachmentSelection struct {
+	FileAssetURL *string `json:"fileAssetURL,omitempty"`
+	URL          *string `json:"url,omitempty"`
+}
+
 // ReminderChangeEvent One ordered reminder update or deletion; duplicate events remain distinct.
 //
 // Example: {"reminder":null,"reminderID":"Reminder/synthetic-deleted","type":"deleted"}
@@ -2256,6 +2313,36 @@ type TrashDriveNodeResult = DriveItemChangeResult
 
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
+
+// UpdateReminderAttachmentRequest Update URL text or image metadata; omitted fields retain their current values.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"url":""}
+type UpdateReminderAttachmentRequest struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth     AuthContext `json:"auth"`
+	FileSize *int64      `json:"fileSize,omitempty"`
+	Filename *string     `json:"filename,omitempty"`
+	Height   *int64      `json:"height,omitempty"`
+	URL      *string     `json:"url,omitempty"`
+	UTI      *string     `json:"uti,omitempty"`
+	Width    *int64      `json:"width,omitempty"`
+}
+
+// UpdateReminderAttachmentResult Updated attachment snapshot and provider response evidence.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"responses":[]}
+type UpdateReminderAttachmentResult struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+	Responses  []ResponseMetadata `json:"responses"`
+}
 
 // UpdateReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
 //
