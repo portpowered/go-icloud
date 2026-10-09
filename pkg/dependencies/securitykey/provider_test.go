@@ -26,7 +26,10 @@ type transcript struct {
 	Steps             []transcriptStep `json:"steps"`
 }
 
-type fakeBackend struct{ connection *fakeConnection }
+type fakeBackend struct {
+	connection *fakeConnection
+	discovery  *fakeConnection
+}
 
 func (backend fakeBackend) Devices(ctx context.Context) ([]Device, error) {
 	if err := ctx.Err(); err != nil {
@@ -40,6 +43,9 @@ func (backend fakeBackend) Open(ctx context.Context, id string) (Connection, err
 	}
 	if id != "synthetic" {
 		return nil, ErrProtocol
+	}
+	if backend.discovery != nil && backend.discovery.closed == 0 {
+		return backend.discovery, nil
 	}
 	return backend.connection, nil
 }
@@ -136,10 +142,12 @@ func assertPythonTranscript(test *testing.T, name string) {
 	test.Helper()
 	fixture := readTranscriptFile(test, name)
 	connection := transcriptConnection(test, fixture)
+	discovery := transcriptConnection(test, transcript{Steps: fixture.Steps[:1]})
 	entropy := append([]byte{0, 1, 2, 3, 4, 5, 6, 7}, make([]byte, 31)...)
 	entropy = append(entropy, 1)
+	entropy = append([]byte{0, 1, 2, 3, 4, 5, 6, 7}, entropy...)
 	waits := 0
-	provider, err := New(fakeBackend{connection: connection}, bytes.NewReader(entropy), WithWaiter(func(ctx context.Context, delay time.Duration) error {
+	provider, err := New(fakeBackend{connection: connection, discovery: discovery}, bytes.NewReader(entropy), WithWaiter(func(ctx context.Context, delay time.Duration) error {
 		waits++
 		if delay != presencePollDelay {
 			test.Fatalf("unexpected delay %v", delay)
@@ -166,6 +174,9 @@ func assertPythonTranscript(test *testing.T, name string) {
 	}
 	if connection.closed != 1 || len(connection.writes) != 0 || len(connection.reads) != 0 {
 		test.Fatal("ceremony did not consume transcript or release handle")
+	}
+	if discovery.closed != 1 || len(discovery.writes) != 0 || len(discovery.reads) != 0 {
+		test.Fatal("discovery did not initialize and release its detached handle")
 	}
 	if name == "python-u2f-synthetic.json" && waits != 1 {
 		test.Fatal("U2F presence was not polled")

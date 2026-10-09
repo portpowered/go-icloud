@@ -15,11 +15,12 @@ const busyDelay = 100 * time.Millisecond
 const cancelTimeout = time.Second
 
 type channel struct {
-	connection Connection
-	id         uint32
-	ctap2      bool
-	wait       Waiter
-	entropy    io.Reader
+	connection      Connection
+	id              uint32
+	ctap2           bool
+	wait            Waiter
+	entropy         io.Reader
+	maxMessageBytes int
 }
 
 func (channel *channel) initialize(ctx context.Context, nonce []byte) error {

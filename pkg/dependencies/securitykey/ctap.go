@@ -15,7 +15,6 @@ import (
 	wire "github.com/portpowered/go-icloud/pkg/dependencymodels/securitykey"
 )
 
-const authenticatorHeaderBytes = 37
 const maximumAssertions = 1024
 
 func (channel *channel) call(ctx context.Context, command wire.CTAPCommand, request any, response any) error {
@@ -30,6 +29,9 @@ func (channel *channel) call(ctx context.Context, command wire.CTAPCommand, requ
 			return &Error{Stage: "CBOR encode", Cause: err}
 		}
 		payload = append(payload, encoded...)
+	}
+	if channel.maxMessageBytes > 0 && len(payload) > channel.maxMessageBytes {
+		return &Error{Stage: "CTAP", Status: int(wire.RequestTooLarge), Cause: ErrProtocol}
 	}
 	result, err := channel.exchange(ctx, byte(wire.CBORCommand), payload)
 	if err != nil {
@@ -78,6 +80,13 @@ func (channel *channel) assert(ctx context.Context, request Request) (Assertion,
 		}
 		// Fido2Client falls back to CTAP1 when CTAP2 initialization fails.
 		return channel.assertU2F(ctx, request)
+	}
+	channel.maxMessageBytes = int(wire.DefaultMaxMessageBytes)
+	if info.MaxMsgSize != nil {
+		if *info.MaxMsgSize < 1 {
+			return Assertion{}, &Error{Stage: "info message limit", Cause: ErrProtocol}
+		}
+		channel.maxMessageBytes = *info.MaxMsgSize
 	}
 	data, err := clientData(request)
 	if err != nil {
@@ -140,7 +149,7 @@ func (channel *channel) assertAttempt(ctx context.Context, request Request, data
 		return Assertion{}, err
 	}
 	result, err := projectAssertion(request.RelyingPartyID, data, selected, response)
-	if err == nil && parameters.internalUV && result.AuthenticatorData[sha256.Size]&4 == 0 {
+	if err == nil && parameters.internalUV && result.AuthenticatorData[sha256.Size]&byte(wire.UserVerificationFlag) == 0 {
 		return Assertion{}, &Error{Stage: "UV assertion", Cause: ErrProtocol}
 	}
 	return result, err
@@ -267,7 +276,7 @@ func (channel *channel) selectCredential(ctx context.Context, rp string, credent
 
 func projectAssertion(rp string, data []byte, credential *wire.Credential, response *wire.AssertionResponse) (Assertion, error) {
 	hash := sha256.Sum256([]byte(rp))
-	if len(response.AuthData) < authenticatorHeaderBytes || !bytes.Equal(response.AuthData[:sha256.Size], hash[:]) || response.AuthData[sha256.Size]&1 == 0 || len(response.Signature) == 0 {
+	if len(response.AuthData) < int(wire.AuthenticatorHeaderBytes) || !bytes.Equal(response.AuthData[:sha256.Size], hash[:]) || response.AuthData[sha256.Size]&byte(wire.UserPresenceFlag) == 0 || len(response.Signature) == 0 {
 		return Assertion{}, &Error{Stage: "assertion binding", Cause: ErrProtocol}
 	}
 	selected := response.Credential

@@ -127,7 +127,32 @@ func (provider *Provider) Devices(ctx context.Context) ([]Device, error) {
 	if err != nil {
 		return nil, &Error{Stage: "discovery", Cause: err}
 	}
-	return devices, nil
+	result := make([]Device, 0, len(devices))
+	for _, device := range devices {
+		if err := provider.inspectDevice(ctx, device.ID); err != nil {
+			return nil, err
+		}
+		result = append(result, device)
+	}
+	return result, nil
+}
+
+func (provider *Provider) inspectDevice(ctx context.Context, id string) (failure error) {
+	connection, err := provider.backend.Open(ctx, id)
+	if err != nil {
+		return &Error{Stage: "discovery open", Cause: err}
+	}
+	defer func() {
+		if err := connection.Close(); err != nil {
+			failure = &Error{Stage: "discovery close", Cause: errors.Join(failure, err)}
+		}
+	}()
+	nonce := make([]byte, int(wire.NonceBytes))
+	if _, err := io.ReadFull(provider.entropy, nonce); err != nil {
+		return &Error{Stage: "discovery entropy", Cause: err}
+	}
+	transport := &channel{connection: connection, id: uint32(wire.BroadcastChannel), wait: provider.wait, entropy: provider.entropy}
+	return transport.initialize(ctx, nonce)
 }
 
 // Assert opens the selected device and releases it after the assertion or failure.
@@ -140,8 +165,8 @@ func (provider *Provider) Assert(ctx context.Context, request Request) (result A
 		return result, &Error{Stage: "open", Cause: err}
 	}
 	defer func() {
-		if err := connection.Close(); err != nil && failure == nil {
-			failure = &Error{Stage: "close", Cause: err}
+		if err := connection.Close(); err != nil {
+			failure = errors.Join(failure, &Error{Stage: "close", Cause: err})
 		}
 	}()
 	nonce := make([]byte, int(wire.NonceBytes))

@@ -26,6 +26,18 @@ components:
       type: string
       enum: ['{"type":%s,"challenge":%s,"origin":%s,"crossOrigin":false}']
       x-enum-varnames: [CollectedClientDataTemplate]
+    AuthenticatorHeaderSize:
+      type: integer
+      enum: [37]
+      x-enum-varnames: [AuthenticatorHeaderBytes]
+    AuthenticatorFlag:
+      type: integer
+      enum: [1, 4]
+      x-enum-varnames: [UserPresenceFlag, UserVerificationFlag]
+    DefaultMessageSize:
+      type: integer
+      enum: [1024]
+      x-enum-varnames: [DefaultMaxMessageBytes]
     CTAPCommand:
       type: integer
       enum: [2, 4, 8, 6]
@@ -131,4 +143,5 @@ components:
       properties:
         keyAgreement: { $ref: '#/components/schemas/COSEKey', x-oapi-codegen-extra-tags: { cbor: '1,keyasint,omitempty' } }
         token: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '2,keyasint,omitempty' } }
+
 

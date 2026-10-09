@@ -1,6 +1,9 @@
 # Native security key authentication
 
-`ListSecurityKeyDevices` discovers FIDO HID authenticators. `ConfirmSecurityKey`
+`ListSecurityKeyDevices` discovers and initializes FIDO HID authenticators, then
+closes each discovery handle before returning detached device IDs. Permission
+errors while reading descriptors are skipped; open and initialization failures
+propagate as typed errors. `ConfirmSecurityKey`
 selects the requested device, or the first discovered device, creates the source
 `https://apple.com` WebAuthn assertion, and submits its proof through the existing
 authentication flow. Cancel the request context to interrupt a touch or biometric
