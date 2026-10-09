@@ -300,8 +300,10 @@ func (session *NativeBridgeSession) failure(operation string, err error) *Client
 
 func nativeBridgeErrorKind(err error) ErrorKind {
 	switch {
-	case errors.Is(err, bridge.ErrClosed):
+	case errors.Is(err, bridge.ErrClosed), errors.Is(err, bridgewebsocket.ErrClosed):
 		return Closed
+	case errors.Is(err, bridge.ErrBusy):
+		return Busy
 	case errors.Is(err, context.Canceled):
 		return Canceled
 	case errors.Is(err, context.DeadlineExceeded):
