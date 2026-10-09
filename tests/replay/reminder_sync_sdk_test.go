@@ -21,7 +21,7 @@ func TestReminderSyncSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 18 {
+	if len(paths) != 53 {
 		t.Fatal("reminder sync scenario inventory changed")
 	}
 

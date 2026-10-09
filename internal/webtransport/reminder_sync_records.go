@@ -43,9 +43,12 @@ func reminderSyncNormalRecord(item cloudkit.CKQueryResponse_Records_Item,
 		return false
 	}
 
-	_, err := item.AsCKRecord()
+	record, err := item.AsCKRecord()
+	if err != nil {
+		return false
+	}
 
-	return err == nil
+	return validateReminderSyncFields(record.Fields)
 }
 
 func reminderSyncErrorRecord(item cloudkit.CKQueryResponse_Records_Item,

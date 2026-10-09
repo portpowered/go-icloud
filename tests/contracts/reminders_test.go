@@ -63,7 +63,7 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 127, Pairs: 149, Operations: 6, Invalid: 13}
+	want := remindersContractInventory{Scenarios: 162, Pairs: 202, Operations: 6, Invalid: 31}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}
@@ -78,6 +78,10 @@ func invalidReminderResponse(name string, index int) bool {
 	case "reminders-sync-schema-zone.json":
 		return index == 1
 	default:
+		if strings.HasPrefix(name, "reminders-sync-wrapper-") && strings.HasSuffix(name, "-invalid.json") {
+			return index == 0
+		}
+
 		return name == "reminders-zones-schema-error.json" ||
 			strings.HasPrefix(name, "reminders-lists-schema-") ||
 			strings.HasPrefix(name, "reminders-get-schema-") || name == "reminders-get-no-records.json"

@@ -9,7 +9,7 @@ Dormant database-change helpers are excluded from this active Reminders contract
 ## Canonical models and generation
 
 The model responsibility is shared CloudKit protocol data, separate from public
-Reminders domain projections. Its 64 named schemas include source record/query/
+Reminders domain projections. Its named schemas include source record/query/
 write/error/zone/field-wrapper models and three adapter contracts for arbitrary
 unknown JSON, an empty zone-list request and downloaded bytes. Generation produces
 `pkg/dependencymodels/cloudkit`, imported by `internal/remindersapi`. Protocol
@@ -46,24 +46,28 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 127 implementation-derived synthetic Reminders scenarios contain
-149 paired exchanges: 146 POST pairs and three membership-asset downloads. Contract
+The current 162 implementation-derived synthetic Reminders scenarios contain
+202 paired exchanges: 199 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
-Thirteen source-invalid zone/list/lookup/query replies must fail JSON or schema validation. Ten sanitized
+Thirty-one source-invalid zone/list/lookup/query replies must fail JSON or schema validation. Ten sanitized
 examples cover each POST request/reply responsibility. These are synthetic
 reference examples, not captured Apple writes (SCHEMA-08, SCHEMA-12).
 
-Eighteen Source-executed sync-cursor scenarios bind query tokens, null/empty token
+Fifty-three Source-executed sync-cursor scenarios bind query tokens, null/empty token
 fallback, invalid JSON and invalid query records, paginated zone changes,
 last-zone token selection, missing tokens and provider failures. The shared
 session raises HTTP 401, 403, 429 and 503 before CloudKit fallback; those cases
 consume only the query exchange. The two fallback decode failures do consume
-zone changes. These distinguish actual service behavior from the lower-level
+zone changes. Additional cases exercise valid and invalid values for all fifteen
+known CloudKit field tags, future tags, encryption coercion, downloaded bytes and
+reference zone identity. Known malformed fields cannot escape through the future-tag
+schema branch; accepted Source scalar coercions remain explicit in canonical input
+schemas and runtime validation. These distinguish actual service behavior from the lower-level
 CloudKit client's error handling. Negative controls reject changed final tokens,
 changed public results and unused pages. Public Go `GetReminderSyncCursor`
-executes these same 18 scenarios. It returns the exact usable token and ordered
+executes these same 53 scenarios and 85 paired exchanges. It returns the exact usable token and ordered
 response metadata, preserving prior exchanges when a later page fails. Decode
 failures in the query permit fallback; HTTP/session failures stop immediately.
 
