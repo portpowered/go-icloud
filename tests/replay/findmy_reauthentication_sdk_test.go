@@ -18,7 +18,7 @@ func TestFindMySavedTokenRecoverySDK(t *testing.T) {
 	t.Parallel()
 
 	paths, err := filepath.Glob("fixtures/synthetic/http/session-findmy-autorefresh-*.json")
-	if err != nil || len(paths) != 4 {
+	if err != nil || len(paths) != 5 {
 		t.Fatal("Find My saved-token recovery inventory changed", err)
 	}
 
@@ -62,9 +62,6 @@ func runFindMyTokenRecoverySDK(t *testing.T, path string) {
 	inputRow["keyword_inputs"] = json.RawMessage(`{"force_refresh":true}`)
 
 	request := authReplayRequest(t, inputRow)
-	for index := range request.Auth.Cookies {
-		request.Auth.Cookies[index].HTTPOnly = false
-	}
 
 	request.ResponseUpdates = []icloud.ResponseMetadata{publicFindMyFailure(t, firstErr)}
 	before := marshalFindMyRecovery(t, request)
@@ -105,6 +102,10 @@ func checkFindMyRecoveredRead(t *testing.T, client icloud.Client, row map[string
 
 	if len(row["error"]) != 0 {
 		expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row["error_auth_state"]...), '}')
+	}
+
+	if len(row["refresh_auth_state"]) != 0 {
+		expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row["refresh_auth_state"]...), '}')
 	}
 
 	expected["exchanges"] = marshalFindMyRecovery(t, scenario.Exchanges[:2])

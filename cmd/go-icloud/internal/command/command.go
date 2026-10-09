@@ -73,6 +73,10 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 
 	result, err := read(requestContext, client, auth, config)
 	if err != nil {
+		result, err = recoverFindMyRead(requestContext, client, auth, config, err)
+	}
+
+	if err != nil {
 		return fmt.Errorf("read service: %w", err)
 	}
 

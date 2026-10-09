@@ -44,7 +44,7 @@ func TestReadCommands(t *testing.T) {
 		},
 		"drive-libraries": {"drive-apps-empty", "drive-apps-many", "drive-apps-one-refused-0"},
 		driveNodeCommand:  {"drive-folder-empty", "drive-folder-many", "drive-folder-one-refused-0"},
-		"findmy":          {"findmy-devices-empty", "findmy-devices-many", "findmy-devices-one-refused-0"},
+		findMyCommand:     {"findmy-devices-empty", "findmy-devices-many", "findmy-devices-one-refused-0"},
 	}
 	for operation, fixtures := range cases {
 		for _, name := range fixtures {
