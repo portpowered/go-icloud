@@ -108,6 +108,10 @@ func RunWithInput(ctx context.Context, client icloud.Client, args []string,
 		return err
 	}
 
+	if photoVisitCommand(config.operation) {
+		return runPhotoVisit(requestContext, client, auth, config.operation, config.requestFile, config.saveResult, output)
+	}
+
 	result, err := executeService(requestContext, client, auth, config)
 	if err != nil {
 		return fmt.Errorf("service operation: %w", err)

@@ -27,6 +27,7 @@ func printUsage(output io.Writer) {
 		"        photo-libraries, photo-cursor, photo-changes, photo-library-changes, photos-recently-added,",
 		"        shared-photo-albums, shared-photo-count, shared-photos, shared-photo, shared-photo-download,",
 		"        photo-upload-status (private generated --request)",
+		"        photo-assets-visit, photos-recently-added-visit (generated --request; JSON lines)",
 		"        photo-album-create, photo-album-rename, photo-album-delete, photo-album-add, photo-favorite, photo-delete,",
 		"        photo-upload, photo-upload-file, photo-upload-reserve, photo-upload-send, photo-upload-register",
 	} {
