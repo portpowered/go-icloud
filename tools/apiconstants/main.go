@@ -52,6 +52,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	err = generateExternalConstants("Photos", "cloudkit")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
 	err = generateExternalConstants("Reminders", "cloudkit")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

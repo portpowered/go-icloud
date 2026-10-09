@@ -230,6 +230,24 @@ response evidence and no partial snapshot. Twenty-eight Source/Go cases with
 forty-five paired exchanges cover these paths. Live Go verification and full
 Reminders parity remain open.
 
+Check whether the primary photo library is ready before reading albums or assets:
+
+```go
+status, err := client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{
+    Auth: resumed.Auth,
+})
+```
+
+Authentication discovers `PhotosServiceURL` from the CloudKit service. A ready
+library returns `FINISHED`, its nullable change cursor, and exact response
+metadata. Pending or absent indexing state returns a typed `Unavailable` error;
+malformed replies retain their response evidence in `InvalidResponse`. The
+operation follows the reference's first normal record selection after validating
+the whole reply. Twenty-seven Source/Go initialization cases bind request ordering,
+complete results, cookies and failures. A private live capture confirms trusted
+Go session validation and Photos initialization both return HTTP 200. This is an
+initialization milestone; album, asset, download and mutation SDK parity remain open.
+
 Fetch related records using the identifiers returned on a reminder:
 
 ```go

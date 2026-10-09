@@ -301,13 +301,7 @@ func assertAuthDiscovery(t *testing.T, state map[string]json.RawMessage, result 
 
 	authReplayDecode(t, state["webservices"], &services)
 
-	if result.Auth.DriveServiceURL != services[protocol.AuthWebServicesDrivews][protocol.AuthServiceUrl] ||
-		result.Auth.RemindersServiceURL != services[protocol.AuthWebServicesCkdatabasews][protocol.AuthServiceUrl] ||
-		result.Auth.FindMyServiceURL != services[protocol.AuthWebServicesFindme][protocol.AuthServiceUrl] ||
-		result.Auth.DriveDocumentServiceURL != services[protocol.AuthWebServicesDocws][protocol.AuthServiceUrl] ||
-		result.Auth.AccountServiceURL != services[protocol.AuthWebServicesAccount][protocol.AuthServiceUrl] {
-		t.Fatal("authentication changed service discovery")
-	}
+	assertAuthServiceURLs(t, services, result.Auth)
 
 	var params map[string]string
 
@@ -418,5 +412,18 @@ func assertAuthResponses(t *testing.T, raw map[string]json.RawMessage, result *i
 				t.Fatal("authentication changed response headers")
 			}
 		}
+	}
+}
+
+func assertAuthServiceURLs(t *testing.T, services map[string]map[string]string, auth icloud.AuthContext) {
+	t.Helper()
+
+	if auth.DriveServiceURL != services[protocol.AuthWebServicesDrivews][protocol.AuthServiceUrl] ||
+		auth.RemindersServiceURL != services[protocol.AuthWebServicesCkdatabasews][protocol.AuthServiceUrl] ||
+		auth.PhotosServiceURL != services[protocol.AuthWebServicesCkdatabasews][protocol.AuthServiceUrl] ||
+		auth.FindMyServiceURL != services[protocol.AuthWebServicesFindme][protocol.AuthServiceUrl] ||
+		auth.DriveDocumentServiceURL != services[protocol.AuthWebServicesDocws][protocol.AuthServiceUrl] ||
+		auth.AccountServiceURL != services[protocol.AuthWebServicesAccount][protocol.AuthServiceUrl] {
+		t.Fatal("authentication changed service discovery")
 	}
 }

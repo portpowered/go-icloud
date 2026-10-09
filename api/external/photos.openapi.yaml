@@ -1,0 +1,434 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iCloud Photos wire operations",
+    "version": "0.1.0",
+    "description": "Selected modern Photos CloudKit operations."
+  },
+  "paths": {
+    "/database/1/com.apple.photos.cloud/production/private/records/query": {
+      "post": {
+        "operationId": "PhotosQueryRecords",
+        "summary": "Read photo library indexing state",
+        "description": "Read the primary photo library indexing state and its current change cursor.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKQueryResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "PhotosClientId": {
+        "name": "clientId",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "PhotosDsid": {
+        "name": "dsid",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "PhotosRemapEnums": {
+        "name": "remapEnums",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "True"
+          ],
+          "default": "True"
+        },
+        "description": "Photos initialization forces this query control to the Python boolean text True."
+      },
+      "PhotosGetCurrentSyncToken": {
+        "name": "getCurrentSyncToken",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "True"
+          ],
+          "default": "True"
+        },
+        "description": "Photos initialization forces this query control to the Python boolean text True."
+      },
+      "PhotosAccept": {
+        "name": "Accept",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosCookie": {
+        "name": "Cookie",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosOrigin": {
+        "name": "Origin",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosReferer": {
+        "name": "Referer",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUserAgent": {
+        "name": "User-Agent",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosAcceptEncoding": {
+        "name": "Accept-Encoding",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosConnection": {
+        "name": "Connection",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosClientBuildNumber": {
+        "name": "clientBuildNumber",
+        "in": "query",
+        "required": false,
+        "description": "Optional authentication client build parameter; preserve omission and the exact supplied value.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosClientMasteringNumber": {
+        "name": "clientMasteringNumber",
+        "in": "query",
+        "required": false,
+        "description": "Optional authentication client mastering parameter; preserve omission and the exact supplied value.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "PhotosFailure": {
+        "description": "Provider failure, retaining status, headers and exact response bytes for typed SDK interpretation.",
+        "content": {
+          "*/*": {
+            "schema": {
+              "$ref": "#/components/schemas/CKAssetBytes"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CKLookupDescriptor": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupDescriptor"
+      },
+      "CKZoneIDReq": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneIDReq"
+      },
+      "CKLookupRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupRequest"
+      },
+      "CKErrorItem": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKErrorItem"
+      },
+      "CKTombstoneRecord": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKTombstoneRecord"
+      },
+      "CKZoneID": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneID"
+      },
+      "CKLookupResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupResponse"
+      },
+      "CKModifyOperation": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKModifyOperation"
+      },
+      "CKWriteParent": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKWriteParent"
+      },
+      "CKWriteRecord": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKWriteRecord"
+      },
+      "JsonValue": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+      },
+      "CKModifyRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKModifyRequest"
+      },
+      "CKModifyResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKModifyResponse"
+      },
+      "CKComparator": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKComparator"
+      },
+      "CKFVInt64": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVInt64"
+      },
+      "CKFVReference": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVReference"
+      },
+      "CKFVReferenceList": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVReferenceList"
+      },
+      "CKFVString": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVString"
+      },
+      "CKFVStringList": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFVStringList"
+      },
+      "CKQueryFilterBy": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryFilterBy"
+      },
+      "CKQueryObject": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryObject"
+      },
+      "CKQuerySortBy": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQuerySortBy"
+      },
+      "CKReference": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKReference"
+      },
+      "CKQueryRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryRequest"
+      },
+      "CKQueryResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKQueryResponse"
+      },
+      "CKZoneChangesZoneReq": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesZoneReq"
+      },
+      "CKZoneChangesRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesRequest"
+      },
+      "CKZoneChangesZone": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesZone"
+      },
+      "CKZoneChangesResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneChangesResponse"
+      },
+      "CKZoneListZone": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneListZone"
+      },
+      "CKZoneListResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKZoneListResponse"
+      },
+      "CKAssetField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetField"
+      },
+      "CKAssetIDField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetIDField"
+      },
+      "CKAssetIDListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetIDListField"
+      },
+      "CKAssetToken": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetToken"
+      },
+      "CKAuditInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAuditInfo"
+      },
+      "CKBytesField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKBytesField"
+      },
+      "CKChainProtectionInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKChainProtectionInfo"
+      },
+      "CKDoubleField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKDoubleField"
+      },
+      "CKDoubleListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKDoubleListField"
+      },
+      "CKEncryptedBytesField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKEncryptedBytesField"
+      },
+      "CKFieldOpen": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKFieldOpen"
+      },
+      "CKInt64Field": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKInt64Field"
+      },
+      "CKInt64ListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKInt64ListField"
+      },
+      "CKLookupInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupInfo"
+      },
+      "CKNameComponents": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKNameComponents"
+      },
+      "CKPCSInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKPCSInfo"
+      },
+      "CKParent": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKParent"
+      },
+      "CKParticipant": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKParticipant"
+      },
+      "CKParticipantProtectionInfo": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKParticipantProtectionInfo"
+      },
+      "CKPassthroughField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKPassthroughField"
+      },
+      "CKReferenceField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKReferenceField"
+      },
+      "CKReferenceListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKReferenceListField"
+      },
+      "CKShare": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKShare"
+      },
+      "CKStableUrl": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKStableUrl"
+      },
+      "CKStringField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKStringField"
+      },
+      "CKStringListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKStringListField"
+      },
+      "CKTimestampField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKTimestampField"
+      },
+      "CKUnknownListField": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownListField"
+      },
+      "CKUserIdentity": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUserIdentity"
+      },
+      "CKRecord": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKRecord"
+      },
+      "CKUnknownJSON": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
+      },
+      "CKEmptyRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKEmptyRequest"
+      },
+      "CKAssetBytes": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKAssetBytes"
+      }
+    }
+  }
+}

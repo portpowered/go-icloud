@@ -3199,6 +3199,41 @@
           "VALIDATE"
         ],
         "description": "Pinned Source compound reminder query protocol value."
+      },
+      "PhotoIndexingRecordType": {
+        "type": "string",
+        "enum": [
+          "CheckIndexingState"
+        ],
+        "description": "Reference Photos initialization protocol value."
+      },
+      "PhotoPrimaryZoneName": {
+        "type": "string",
+        "enum": [
+          "PrimarySync"
+        ],
+        "description": "Reference Photos initialization protocol value."
+      },
+      "PhotoPrimaryZoneType": {
+        "type": "string",
+        "enum": [
+          "REGULAR_CUSTOM_ZONE"
+        ],
+        "description": "Reference Photos initialization protocol value."
+      },
+      "PhotoIndexingStateField": {
+        "type": "string",
+        "enum": [
+          "state"
+        ],
+        "description": "Reference Photos initialization protocol value."
+      },
+      "PhotoFinishedState": {
+        "type": "string",
+        "enum": [
+          "FINISHED"
+        ],
+        "description": "Reference Photos initialization protocol value."
       }
     }
   }
