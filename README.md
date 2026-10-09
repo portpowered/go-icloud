@@ -172,7 +172,8 @@ including overlapping record/error alternatives, nested metadata coercion,
 arbitrary participant integers and complete audit-date projections. Date handling
 matches the pinned Windows reference runtime's microsecond rounding and range;
 these limits are reference behavior rather than verified Apple date restrictions.
-Compound reminder queries and live Go verification remain pending.
+The all-lists snapshot facade, linked-record reads, mutations and live Go
+verification remain pending.
 
 `ListReminders` reads every page of a list's compound reminder query and returns
 the complete reminder snapshot together with linked alarms, location triggers,
