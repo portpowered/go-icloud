@@ -8,17 +8,17 @@ reject the page before projection, with exact HTTP evidence and prior responses.
 Normal records outside the list are still decoded before final relationship
 filtering, matching the pinned Source's behavior.
 
-The eight new compound reference cases entered every statement and branch exit
+The initial eight compound reference cases entered every statement and branch exit
 in `_ingest_compound_record` (26/26 statements, 16/16 exits). The synthetic-only
 diagnostic keeps the unchanged overall denominators: 584/905 functions entered,
-3,336/5,398 function-body statements (61.8%) and 1,045/2,076 branch exits covered
-after the first twenty-three compound cases.
+3,339/5,398 function-body statements (61.86%) and 1,046/2,076 branch exits covered
+after all thirty-one compound cases.
 Further Source cases now exercise asset URLs, integer-coercible size metadata,
 byte-backed text, invalid UTF-8 replacement and raw frequency selection. Six more
 cases bind wrapper-sensitive discriminator and URL behavior: bytes are compared
 before model coercion and byte-backed URLs avoid a second decoding step.
 Two strict-decoding cases preserve STRING base64 URLs containing CR or LF.
-A fresh measurement of the expanded corpus is pending. The all-lists reminder facade
+The all-lists reminder facade
 remains unentered and is not excluded as unreachable.
 Go compound query parity, remaining endpoint ports, live Go verification and
 full migration/release acceptance remain open.
@@ -69,8 +69,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 230 implementation-derived synthetic Reminders scenarios contain
-273 paired exchanges: 270 POST pairs and three membership-asset downloads. Contract
+The current 261 implementation-derived synthetic Reminders scenarios contain
+305 paired exchanges: 302 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
