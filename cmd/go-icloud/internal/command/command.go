@@ -89,7 +89,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.Usage = func() {
 		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
 			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
-			"reminder-zones, reminder-lists, reminder, resume")
+			"reminder-zones, reminder-lists, reminder, reminder-sync, resume")
 
 		flags.PrintDefaults()
 	}
@@ -144,7 +144,7 @@ func loadSession(path string) (icloud.AuthContext, error) {
 
 func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-zones", "reminder-lists", reminderCommand:
+	case "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync":
 		return readReminders(ctx, client, auth, config)
 	case "account-devices":
 		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
@@ -171,6 +171,8 @@ func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthCo
 		return wrap(client.ListReminderZones(ctx, icloud.ListReminderZonesRequest{Auth: auth}))
 	case reminderCommand:
 		return wrap(client.GetReminder(ctx, icloud.GetReminderRequest{Auth: auth, ReminderID: config.reminderID}))
+	case "reminder-sync":
+		return wrap(client.GetReminderSyncCursor(ctx, icloud.GetReminderSyncCursorRequest{Auth: auth}))
 	default:
 		return wrap(client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth}))
 	}
