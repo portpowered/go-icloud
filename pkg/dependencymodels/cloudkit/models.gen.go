@@ -414,21 +414,6 @@ func (e CKTimestampFieldType) Valid() bool {
 	}
 }
 
-// Defines values for CKTombstoneRecordDeleted.
-const (
-	True CKTombstoneRecordDeleted = true
-)
-
-// Valid indicates whether the value is a known member of the CKTombstoneRecordDeleted enum.
-func (e CKTombstoneRecordDeleted) Valid() bool {
-	switch e {
-	case True:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for CKUnknownListFieldType.
 const (
 	UNKNOWNLIST CKUnknownListFieldType = "UNKNOWN_LIST"
@@ -438,6 +423,21 @@ const (
 func (e CKUnknownListFieldType) Valid() bool {
 	switch e {
 	case UNKNOWNLIST:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for EncryptedFieldNameSuffix.
+const (
+	Encrypted EncryptedFieldNameSuffix = "Encrypted"
+)
+
+// Valid indicates whether the value is a known member of the EncryptedFieldNameSuffix enum.
+func (e EncryptedFieldNameSuffix) Valid() bool {
+	switch e {
+	case Encrypted:
 		return true
 	default:
 		return false
@@ -1124,6 +1124,9 @@ type CKBooleanInput1 int
 // CKBooleanInputText Source boolean text coercion, case insensitive.
 type CKBooleanInputText = string
 
+// CKBooleanTrueInputText Source boolean text inputs coercing to true.
+type CKBooleanTrueInputText = string
+
 // CKBytesField Raw binary field wrapper as base64-encoded bytes.
 type CKBytesField struct {
 	Type                 CKBytesFieldType         `json:"type"`
@@ -1517,8 +1520,10 @@ type CKQuerySortBy struct {
 
 // CKRecord defines model for CKRecord.
 type CKRecord struct {
-	RecordName             string                                   `json:"recordName"`
-	RecordType             string                                   `json:"recordType"`
+	RecordName string `json:"recordName"`
+	RecordType string `json:"recordType"`
+
+	// Fields Record field wrappers. Names ending in Encrypted require ENCRYPTED_BYTES or STRING with isEncrypted coercing to true; the runtime record validator enforces this cross-field rule.
 	Fields                 *map[string]CKFieldOpen                  `json:"fields,omitempty"`
 	PluginFields           *map[string]JsonValue                    `json:"pluginFields,omitempty"`
 	RecordChangeTag        nullable.Nullable[string]                `json:"recordChangeTag,omitempty"`
@@ -1650,14 +1655,13 @@ type CKTimestampField_Value struct {
 // that a record with `recordName` existed but has since been deleted.
 // Additional server-provided properties will be preserved via CKModel(extra="allow").
 type CKTombstoneRecord struct {
-	RecordName           string                      `json:"recordName"`
-	Deleted              CKTombstoneRecordDeleted    `json:"deleted"`
+	RecordName string `json:"recordName"`
+
+	// Deleted Source Literal true accepts true and numeric one; string boolean forms are rejected.
+	Deleted              bool                        `json:"deleted"`
 	ZoneID               nullable.Nullable[CKZoneID] `json:"zoneID,omitempty"`
 	AdditionalProperties map[string]CKUnknownJSON    `json:"-"`
 }
-
-// CKTombstoneRecordDeleted defines model for CKTombstoneRecord.Deleted.
-type CKTombstoneRecordDeleted bool
 
 // CKUnknownJSON Arbitrary extensible CloudKit JSON preserved without numeric coercion.
 type CKUnknownJSON = json.RawMessage
@@ -1793,6 +1797,9 @@ type CKZoneListZone struct {
 	Deleted              nullable.Nullable[bool]   `json:"deleted,omitempty"`
 	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
 }
+
+// EncryptedFieldNameSuffix Record field-name suffix requiring ENCRYPTED_BYTES or STRING with isEncrypted true.
+type EncryptedFieldNameSuffix string
 
 // HashtagIDPrefix Pinned Reminder domain mapping protocol value.
 type HashtagIDPrefix string

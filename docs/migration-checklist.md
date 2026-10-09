@@ -1,19 +1,24 @@
 # iCloud migration checklist
 
-The reminder change-iteration reference matrix contains 36 Source-executed
-scenarios and 39 paired exchanges. It binds optional cursors, pagination,
+The reminder change-iteration matrix contains 51 Source-executed scenarios and
+54 paired exchanges. Forty-eight currently pass the Go port. It binds optional cursors, pagination,
 multiple zones, ordered duplicate events, unrelated records, tombstones,
 full deleted reminders, provider failures and invalid replies. Negative controls
 reject changed events, order, requests, unused pages and structured error payloads.
-The Source harness now binds payloads for all 36 Reminders API error scenarios,
-including null payloads. Portable HTTP inventory is 632 scenarios and 1,339 pairs.
+The Source harness now binds payloads for all 44 Reminders API error scenarios,
+including null payloads. Portable HTTP inventory is 647 scenarios and 1,354 pairs.
 The initial Go change-iteration port passed the original 25 cases, but independent
 review found ambiguous record/error selection did not match Source's smart union.
-Eleven additional Source cases distinguish preferred alternatives, ties, nested
-metadata and encrypted-field validity; three currently fail in Go. The public
-Go change-iteration milestone remains unmerged until this blocker is resolved.
+Twenty-six additional Source cases distinguish preferred alternatives, ties, nested
+metadata, boolean coercion and encrypted-field validity. Independent review found
+missing nested identities and valid metadata coercions omitted by the initial
+matrix. The Go nested-required-field fix resolves six new error cases; audit
+timestamp text and participant boolean/integer text still fail in Go. These
+corrections, independent review, full verification and exact-commit CI approval
+remain required before merging this public SDK milestone.
 The preceding all-evidence Source run enters 592/905 inventoried functions and
-covers 3,331/5,398 body statements (61.71%) and 1,027/2,076 branch exits.
+covers 3,337/5,398 body statements (61.82%) and 1,031/2,076 branch exits. This
+measurement precedes the eleven newly added nested-metadata scenarios.
 
 The sync-cursor reference matrix now has 53 Source-executed scenarios and 85
 paired exchanges. Cases cover token defaults, query decode fallback,

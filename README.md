@@ -147,8 +147,31 @@ and service errors stop the operation. The last zone supplies the cursor; no
 usable token produces a typed provider error. `cursor.Responses` contains query
 and page metadata in request order, including cookie updates. Failed operations
 retain earlier response metadata through `ClientError.PriorResponses()`.
-Fifty-three paired Source/Go scenarios bind this discovery behavior; public change
-iteration and compound reminder queries remain pending.
+Fifty-three paired Source/Go scenarios bind this discovery behavior.
+
+Read reminder changes since an optional cursor:
+
+```go
+changes, err := client.ListReminderChanges(ctx, icloud.ListReminderChangesRequest{
+    Auth: resumed.Auth, Since: &cursor.SyncToken,
+})
+if err != nil {
+    return err
+}
+for _, change := range changes.Changes {
+    fmt.Println(change.Type, change.ReminderID)
+}
+```
+
+Omit `Since` for the initial change read. The operation consumes every page and
+preserves event order and duplicates. Updated records include the full reminder;
+tombstone deletions have a null reminder. `changes.Responses` contains page
+metadata and cookie updates. Failures return typed errors with response evidence
+and no partial result. Fifty-one synthetic Source cases specify these paths,
+including overlapping record/error alternatives. Forty-eight currently pass
+the Go port; three valid nested metadata coercions remain under development.
+Compound reminder queries,
+the CLI change command, and live Go verification remain pending.
 
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private

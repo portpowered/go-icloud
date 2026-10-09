@@ -3,6 +3,7 @@ package webtransport
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -30,25 +31,34 @@ func DecodeReminderEventRecord(item cloudkit.CKZoneChangesZone_Records_Item) (*R
 	}
 
 	result := new(ReminderEventRecord)
+	best := -1
 
-	if reminderSyncNormalRecord(item, fields) {
-		record, _ := item.AsCKRecord()
+	record, exact, recordErr := decodeReminderNormalRecord(fields)
+	if recordErr == nil {
 		result.Record = &record
-
-		return result, nil
+		best = reminderUnionRank(reflect.TypeOf(record), raw, exact)
 	}
 
-	if reminderSyncTombstone(item, fields) {
-		tombstone, _ := item.AsCKTombstoneRecord()
-		result.Tombstone = &tombstone
-
-		return result, nil
+	tombstone, tombstoneErr := decodeReminderTombstone(fields)
+	if tombstoneErr == nil {
+		score := reminderUnionRank(reflect.TypeOf(tombstone), raw, true)
+		if score > best {
+			result = &ReminderEventRecord{Record: nil, Tombstone: &tombstone, Failure: nil}
+			best = score
+		}
 	}
 
 	if reminderSyncErrorRecord(item, fields) {
 		failure, _ := item.AsCKErrorItem()
-		result.Failure = &failure
 
+		score := reminderUnionRank(reflect.TypeOf(failure), raw, true)
+		if score > best {
+			result = &ReminderEventRecord{Record: nil, Tombstone: nil, Failure: &failure}
+			best = score
+		}
+	}
+
+	if best >= 0 {
 		return result, nil
 	}
 

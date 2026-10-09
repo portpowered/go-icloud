@@ -135,11 +135,13 @@
             "x-order": 1
           },
           "deleted": {
-            "type": "boolean",
             "x-order": 2,
-            "enum": [
-              true
-            ]
+            "anyOf": [
+              {"type": "boolean", "enum": [true]},
+              {"type": "number", "enum": [1]}
+            ],
+            "x-go-type": "bool",
+            "description": "Source Literal true accepts true and numeric one; string boolean forms are rejected."
           },
           "zoneID": {
             "default": null,
@@ -2249,7 +2251,8 @@
               "$ref": "#/components/schemas/CKFieldOpen"
             },
             "type": "object",
-            "x-order": 3
+            "x-order": 3,
+            "description": "Record field wrappers. Names ending in Encrypted require ENCRYPTED_BYTES or STRING with isEncrypted coercing to true; the runtime record validator enforces this cross-field rule."
           },
           "pluginFields": {
             "additionalProperties": {
@@ -2288,7 +2291,8 @@
             "default": null,
             "x-order": 8,
             "nullable": true,
-            "type": "boolean"
+            "allOf": [{"$ref": "#/components/schemas/CKBooleanInput"}],
+            "x-go-type": "bool"
           },
           "zoneID": {
             "default": null,
@@ -2379,7 +2383,8 @@
             "default": null,
             "x-order": 19,
             "nullable": true,
-            "type": "boolean"
+            "allOf": [{"$ref": "#/components/schemas/CKBooleanInput"}],
+            "x-go-type": "bool"
           },
           "owner": {
             "default": null,
@@ -2822,6 +2827,16 @@
         "pattern": "^(?:[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=?[^A-Za-z0-9+/=]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*[A-Za-z0-9+/])*(?:[^A-Za-z0-9+/]*|[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=[^A-Za-z0-9+/=]*=[\\s\\S]*|[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=?[^A-Za-z0-9+/=]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=[\\s\\S]*)$",
         "x-go-type": "string",
         "description": "Source non-strict base64 input: ignores non-alphabet bytes and accepts excess padding or data following completed padding."
+      },
+      "EncryptedFieldNameSuffix": {
+        "type": "string",
+        "enum": ["Encrypted"],
+        "description": "Record field-name suffix requiring ENCRYPTED_BYTES or STRING with isEncrypted true."
+      },
+      "CKBooleanTrueInputText": {
+        "type": "string",
+        "pattern": "(?i)^(?:1|t|true|on|y|yes)$",
+        "description": "Source boolean text inputs coercing to true."
       },
       "CKBooleanInputText": {
         "type": "string",

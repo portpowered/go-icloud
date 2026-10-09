@@ -46,8 +46,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 194 implementation-derived synthetic Reminders scenarios contain
-237 paired exchanges: 234 POST pairs and three membership-asset downloads. Contract
+The current 209 implementation-derived synthetic Reminders scenarios contain
+252 paired exchanges: 249 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -71,16 +71,21 @@ executes these same 53 scenarios and 85 paired exchanges. It returns the exact u
 response metadata, preserving prior exchanges when a later page fails. Decode
 failures in the query permit fallback; HTTP/session failures stop immediately.
 
-Thirty-six Source change-iteration scenarios contain 39 paired exchanges and
+Fifty-one Source change-iteration scenarios contain 54 paired exchanges and
 bind no/null/empty cursors, ordered duplicates, unrelated records, complete deleted
 reminders and tombstones, last-zone cursor selection, later-page failures and
 schema rejection. Source API errors bind their structured payloads as well as
 their type and message, including null payloads. Negative controls reject changed
-events, event order, requests, unused pages and error payloads. Eleven cases bind
+events, event order, requests, unused pages and error payloads. Twenty-six cases bind
 Source's selection among overlapping record, tombstone and error alternatives,
-including ties, nested metadata and encrypted-field validation. These reference
-cases establish the next public Go port's expected behavior; they do not yet
-prove a Go change-iteration implementation.
+including ties, nested metadata, boolean coercion and encrypted-field validation.
+The Go adapter scores supplied declared model fields and strict/coerced matches
+before selecting a valid alternative. The SDK preserves event order, duplicate
+events, complete reminder projections, null tombstones and response metadata.
+Forty-eight cases currently pass Go; valid audit timestamp text, participant
+boolean text and participant integer text remain failing Go cases. The SDK port
+is unmerged pending these corrections and review. This synthetic evidence does
+not establish live Go behavior.
 
 Asset binding checks that the HTTPS origin, escaped path and decoded query occur
 in a prior validated POST List record's ReminderIDsAsset/ASSETID downloadURL. It
@@ -127,7 +132,7 @@ rejection, numeric/container truthiness and display conversion, embedded asset
 precedence, invalid membership, and empty pagination tokens. An additional nested
 display case binds control-character escaping to the reference. Five malformed
 responses must fail external schema validation as well as Source and Go decoding.
-The remaining public Reminders API must still port reminder pagination and change iteration,
+The remaining public Reminders API must still port compound reminder pagination,
 record/domain mapping, CRDT/protobuf text, linked record writes, receipt/state
 updates, typed errors and all portable functional outcomes. Native authentication,
 Photos, CLI/publication/release, complete source/schema/runtime/socket gates and

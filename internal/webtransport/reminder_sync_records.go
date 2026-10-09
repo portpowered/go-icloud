@@ -31,8 +31,8 @@ func validateReminderSyncRecords[T reminderSyncRecord](records *[]T) error {
 			return err
 		}
 
-		if reminderSyncNormalRecord(item, fields) || reminderSyncErrorRecord(item, fields) ||
-			reminderSyncTombstone(item, fields) {
+		if reminderSyncNormalRecord(fields) || reminderSyncErrorRecord(item, fields) ||
+			reminderSyncTombstone(fields) {
 			continue
 		}
 
@@ -42,20 +42,10 @@ func validateReminderSyncRecords[T reminderSyncRecord](records *[]T) error {
 	return nil
 }
 
-func reminderSyncNormalRecord(item reminderSyncRecord,
-	fields map[string]json.RawMessage,
-) bool {
-	if !reminderRequiredValue(fields, protocol.RemindersCKRecordRecordName) ||
-		!reminderRequiredValue(fields, protocol.RemindersCKRecordRecordType) {
-		return false
-	}
+func reminderSyncNormalRecord(fields map[string]json.RawMessage) bool {
+	_, _, err := decodeReminderNormalRecord(fields)
 
-	record, err := item.AsCKRecord()
-	if err != nil {
-		return false
-	}
-
-	return validateReminderSyncFields(record.Fields)
+	return err == nil
 }
 
 func reminderSyncErrorRecord(item reminderSyncRecord,
@@ -70,15 +60,8 @@ func reminderSyncErrorRecord(item reminderSyncRecord,
 	return err == nil
 }
 
-func reminderSyncTombstone(item reminderSyncRecord,
-	fields map[string]json.RawMessage,
-) bool {
-	if !reminderRequiredValue(fields, protocol.RemindersCKTombstoneRecordRecordName) ||
-		string(fields[protocol.RemindersCKTombstoneRecordDeleted]) != "true" {
-		return false
-	}
-
-	_, err := item.AsCKTombstoneRecord()
+func reminderSyncTombstone(fields map[string]json.RawMessage) bool {
+	_, err := decodeReminderTombstone(fields)
 
 	return err == nil
 }

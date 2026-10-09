@@ -12,8 +12,8 @@ func validateReminderSyncFields(fields *map[string]cloudkit.CKFieldOpen) bool {
 		return true
 	}
 
-	for _, field := range *fields {
-		if !validReminderSyncField(field) {
+	for name, field := range *fields {
+		if !validReminderSyncField(field) || !validReminderEncryptedField(name, field) {
 			return false
 		}
 	}
