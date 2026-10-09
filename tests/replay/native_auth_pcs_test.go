@@ -91,7 +91,7 @@ func nativeFlowFixture(t *testing.T, name string) (map[string]json.RawMessage, *
 	boundary.Cookies = resume.Auth.Cookies
 	boundary.Headers = resume.Auth.Headers
 	boundary.SetupServiceURL = resume.Auth.SetupServiceURL
-	state := icloud.NativeAuthState{Auth: boundary, AccountName: "", AccountCountryCode: country,
+	state := icloud.NativeAuthState{Auth: boundary, AccountName: "", AcceptTerms: false, DeliveryNotice: nil, AccountCountryCode: country,
 		AccountData: initial["account_data"], TrustToken: resume.TrustToken, Challenge: icloud.NativeAuthChallenge{
 			Mode: "", AuthInitialRoute: "", HasTrustedDevices: false, PhoneNumbers: []icloud.TrustedPhoneNumber{},
 			AuthFactors: []string{}, SecurityKeyNames: []string{}, BridgeBootstrap: nil, SecurityKeyChallenge: nil, ProviderData: nil},

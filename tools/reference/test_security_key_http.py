@@ -15,3 +15,12 @@ class SecurityKeyHTTPTests(unittest.TestCase):
         self.assertEqual(
             replay_synthetic(FIXTURES / "auth-existing-trusted-device-code.json"), 0
         )
+
+    def test_terms_trust_delivery_state(self):
+        for variant in ("accepted", "untrusted"):
+            with self.subTest(variant=variant):
+                self.assertEqual(
+                    replay_synthetic(
+                        FIXTURES / f"auth-terms-trust-{variant}-notice.json"
+                    ), 5
+                )

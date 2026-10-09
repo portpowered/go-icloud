@@ -112,6 +112,7 @@ func nativeFixtureMFAState(t *testing.T, raw map[string]json.RawMessage, state *
 		authReplayDecode(t, required, &state.RequiresMFA)
 	}
 	if challenge, exists := initial["auth_data"]; exists {
+		state.Challenge.ProviderData = bytes.Clone(challenge)
 		var data auth.AuthChallenge
 		authReplayDecode(t, challenge, &data)
 		if data.Mode != nil {
@@ -176,7 +177,7 @@ func nativeStatusReplay(t *testing.T, name string) {
 	if !reflect.DeepEqual(actual, expectedFlags) {
 		t.Fatalf("auth status differs: actual %v expected %v", actual, value)
 	}
-	nativeFlowResponses(t, raw, result.Responses)
+	nativeAssertState(t, raw, &icloud.NativeAuthResult{State: result.State, TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep, Responses: result.Responses, Success: result.Authenticated})
 	if err = transport.AssertConsumed(); err != nil {
 		t.Fatal(err)
 	}

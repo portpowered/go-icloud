@@ -2276,6 +2276,8 @@ type NativeAuthResult struct {
 
 // NativeAuthState Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
 type NativeAuthState struct {
+	// AcceptTerms Caller authorization to accept provider terms during resumed authentication.
+	AcceptTerms        bool                      `json:"acceptTerms"`
 	AccountCountryCode nullable.Nullable[string] `json:"accountCountryCode"`
 	AccountData        []byte                    `json:"accountData"`
 	AccountName        string                    `json:"accountName"`

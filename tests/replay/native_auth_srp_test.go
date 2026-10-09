@@ -86,6 +86,20 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 	if result.State.RequiresMFA != requires || result.State.CodeRequested != requested || string(result.State.DeliveryMethod) != delivery {
 		t.Fatalf("native challenge status differs: %+v", result.State.Challenge)
 	}
+	provider := result.State.Challenge.ProviderData
+	if len(provider) == 0 {
+		provider = []byte("{}")
+	}
+	if !reflect.DeepEqual(accountJSON(t, provider), accountJSON(t, state["challenge"])) {
+		t.Fatal("native authentication lost normalized challenge metadata")
+	}
+	if notice, exists := state["delivery_notice"]; exists {
+		var expectedNotice string
+		authReplayDecode(t, notice, &expectedNotice)
+		if result.State.DeliveryNotice == nil || *result.State.DeliveryNotice != expectedNotice {
+			t.Fatal("native authentication lost delivery notice")
+		}
+	}
 	projection := icloud.ResumeSessionResult{Auth: result.State.Auth, TrustToken: result.State.TrustToken,
 		AccountCountryCode: result.State.AccountCountryCode, AccountData: result.State.AccountData, Responses: result.Responses,
 		TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep}

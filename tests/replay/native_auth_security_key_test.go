@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/portpowered/go-icloud/pkg/dependencies/securitykey"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
@@ -19,7 +20,7 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 			t.Parallel()
 			raw, transport, state := nativeFlowFixture(t, "auth-security-key-assertion-accepted")
 			assertion := nativeFixtureAssertion(t, raw, &state)
-			provider := &nativeFixtureAuthenticator{devices: []icloud.SecurityKeyDevice{{ID: "synthetic-device", Name: "Synthetic key"}}, assertion: assertion, err: nil, request: nil}
+			provider := &nativeFixtureAuthenticator{devices: []icloud.SecurityKeyDevice{{ID: "synthetic-device", Name: "Synthetic key"}}, assertion: assertion, err: nil, request: nil, mutateInput: true}
 			client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithSecurityKeyAuthenticator(provider))
 			if err != nil {
 				t.Fatal(err)
@@ -75,10 +76,11 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage, state 
 }
 
 type nativeFixtureAuthenticator struct {
-	devices   []icloud.SecurityKeyDevice
-	assertion icloud.SecurityKeyAssertion
-	err       error
-	request   *icloud.SecurityKeyCeremony
+	devices     []icloud.SecurityKeyDevice
+	assertion   icloud.SecurityKeyAssertion
+	err         error
+	request     *icloud.SecurityKeyCeremony
+	mutateInput bool
 }
 
 func (provider *nativeFixtureAuthenticator) Devices(_ context.Context) ([]icloud.SecurityKeyDevice, error) {
@@ -86,6 +88,9 @@ func (provider *nativeFixtureAuthenticator) Devices(_ context.Context) ([]icloud
 }
 func (provider *nativeFixtureAuthenticator) Assert(_ context.Context, request icloud.SecurityKeyCeremony) (icloud.SecurityKeyAssertion, error) {
 	provider.request = &request
+	if provider.mutateInput {
+		request.Challenge.CredentialIDs[0] = "mutation-probe"
+	}
 	return provider.assertion, provider.err
 }
 
@@ -132,4 +137,36 @@ type nativeNoAuthTransport struct{ test *testing.T }
 func (transport nativeNoAuthTransport) RoundTrip(_ *http.Request) (*http.Response, error) {
 	transport.test.Fatal("unexpected authentication HTTP traffic")
 	return nil, errors.ErrUnsupported
+}
+
+func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
+	t.Parallel()
+	for _, control := range []struct {
+		name  string
+		cause error
+		kind  icloud.ErrorKind
+	}{
+		{name: "cancellation", cause: context.Canceled, kind: icloud.Canceled},
+		{name: "deadline", cause: context.DeadlineExceeded, kind: icloud.Timeout},
+		{name: "PIN required", cause: securitykey.ErrPINRequired, kind: icloud.AuthenticationRequired},
+		{name: "unsupported", cause: securitykey.ErrUnsupported, kind: icloud.Configuration},
+		{name: "invalid device proof", cause: securitykey.ErrProtocol, kind: icloud.InvalidResponse},
+		{name: "device access", cause: errors.ErrUnsupported, kind: icloud.Transport},
+	} {
+		t.Run(control.name, func(t *testing.T) {
+			t.Parallel()
+			raw, _, state := nativeFlowFixture(t, "auth-security-key-assertion-accepted")
+			assertion := nativeFixtureAssertion(t, raw, &state)
+			provider := &nativeFixtureAuthenticator{devices: []icloud.SecurityKeyDevice{{ID: "synthetic-device", Name: "Synthetic key"}}, assertion: assertion, err: control.cause, request: nil, mutateInput: false}
+			client, err := icloud.New(icloud.WithHTTPTransport(nativeNoAuthTransport{test: t}), icloud.WithSecurityKeyAuthenticator(provider))
+			if err != nil {
+				t.Fatal(err)
+			}
+			_, err = client.ConfirmSecurityKey(t.Context(), icloud.ConfirmSecurityKeyRequest{Auth: state.Auth, State: state, DeviceID: "synthetic-device"})
+			var failure *icloud.ClientError
+			if !errors.As(err, &failure) || failure.Kind() != control.kind || !errors.Is(err, control.cause) {
+				t.Fatal("security-key error lost class or cause")
+			}
+		})
+	}
 }

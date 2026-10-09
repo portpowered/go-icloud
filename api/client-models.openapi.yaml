@@ -3862,6 +3862,10 @@
       "NativeAuthState": {
         "description": "Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.",
         "properties": {
+          "acceptTerms": {
+            "description": "Caller authorization to accept provider terms during resumed authentication.",
+            "type": "boolean"
+          },
           "accountCountryCode": {
             "nullable": true,
             "type": "string"
@@ -3902,6 +3906,7 @@
         "required": [
           "auth",
           "accountName",
+          "acceptTerms",
           "trustToken",
           "accountCountryCode",
           "accountData",
