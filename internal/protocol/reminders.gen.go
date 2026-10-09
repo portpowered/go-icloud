@@ -228,6 +228,8 @@ const (
 	RemindersPhotoIndexingStateFieldValue            = "state"
 	RemindersPhotoPrimaryZoneNameValue               = "PrimarySync"
 	RemindersPhotoPrimaryZoneTypeValue               = "REGULAR_CUSTOM_ZONE"
+	RemindersPhotoSharedLibraryKeyPrefixValue        = "shared:"
+	RemindersPhotoSharedLibraryZonePrefixValue       = "SharedSync-"
 	RemindersPhotosCountFieldValue                   = "value"
 	RemindersPhotosCountFieldsItemCount              = "itemCount"
 	RemindersPhotosCountFilterComparator             = "comparator"

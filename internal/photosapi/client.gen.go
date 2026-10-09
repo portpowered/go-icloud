@@ -137,6 +137,36 @@ func (e PhotosListPrivateZonesParamsGetCurrentSyncToken) Valid() bool {
 	}
 }
 
+// Defines values for PhotosQuerySharedRecordsParamsRemapEnums.
+const (
+	PhotosQuerySharedRecordsParamsRemapEnumsTrue PhotosQuerySharedRecordsParamsRemapEnums = "True"
+)
+
+// Valid indicates whether the value is a known member of the PhotosQuerySharedRecordsParamsRemapEnums enum.
+func (e PhotosQuerySharedRecordsParamsRemapEnums) Valid() bool {
+	switch e {
+	case PhotosQuerySharedRecordsParamsRemapEnumsTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosQuerySharedRecordsParamsGetCurrentSyncToken.
+const (
+	PhotosQuerySharedRecordsParamsGetCurrentSyncTokenTrue PhotosQuerySharedRecordsParamsGetCurrentSyncToken = "True"
+)
+
+// Valid indicates whether the value is a known member of the PhotosQuerySharedRecordsParamsGetCurrentSyncToken enum.
+func (e PhotosQuerySharedRecordsParamsGetCurrentSyncToken) Valid() bool {
+	switch e {
+	case PhotosQuerySharedRecordsParamsGetCurrentSyncTokenTrue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotosListSharedZonesParamsRemapEnums.
 const (
 	PhotosListSharedZonesParamsRemapEnumsTrue PhotosListSharedZonesParamsRemapEnums = "True"
@@ -340,6 +370,38 @@ type PhotosListPrivateZonesParamsRemapEnums string
 // PhotosListPrivateZonesParamsGetCurrentSyncToken defines parameters for PhotosListPrivateZones.
 type PhotosListPrivateZonesParamsGetCurrentSyncToken string
 
+// PhotosQuerySharedRecordsParams defines parameters for PhotosQuerySharedRecords.
+type PhotosQuerySharedRecordsParams struct {
+	ClientId PhotosClientId `form:"clientId" json:"clientId"`
+	Dsid     PhotosDsid     `form:"dsid" json:"dsid"`
+
+	// RemapEnums Photos initialization forces this query control to the Python boolean text True.
+	RemapEnums PhotosQuerySharedRecordsParamsRemapEnums `form:"remapEnums" json:"remapEnums"`
+
+	// GetCurrentSyncToken Photos initialization forces this query control to the Python boolean text True.
+	GetCurrentSyncToken PhotosQuerySharedRecordsParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *PhotosClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *PhotosClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+	Accept                *PhotosAccept                `json:"Accept,omitempty"`
+	ContentType           *PhotosContentType           `json:"Content-Type,omitempty"`
+	Cookie                *PhotosCookie                `json:"Cookie,omitempty"`
+	Origin                *PhotosOrigin                `json:"Origin,omitempty"`
+	Referer               *PhotosReferer               `json:"Referer,omitempty"`
+	UserAgent             *PhotosUserAgent             `json:"User-Agent,omitempty"`
+	AcceptEncoding        *PhotosAcceptEncoding        `json:"Accept-Encoding,omitempty"`
+	Connection            *PhotosConnection            `json:"Connection,omitempty"`
+}
+
+// PhotosQuerySharedRecordsParamsRemapEnums defines parameters for PhotosQuerySharedRecords.
+type PhotosQuerySharedRecordsParamsRemapEnums string
+
+// PhotosQuerySharedRecordsParamsGetCurrentSyncToken defines parameters for PhotosQuerySharedRecords.
+type PhotosQuerySharedRecordsParamsGetCurrentSyncToken string
+
 // PhotosListSharedZonesParams defines parameters for PhotosListSharedZones.
 type PhotosListSharedZonesParams struct {
 	ClientId PhotosClientId `form:"clientId" json:"clientId"`
@@ -380,6 +442,9 @@ type PhotosQueryRecordsJSONRequestBody = CKQueryRequest
 
 // PhotosListPrivateZonesJSONRequestBody defines body for PhotosListPrivateZones for application/json ContentType.
 type PhotosListPrivateZonesJSONRequestBody = CKEmptyRequest
+
+// PhotosQuerySharedRecordsJSONRequestBody defines body for PhotosQuerySharedRecords for application/json ContentType.
+type PhotosQuerySharedRecordsJSONRequestBody = CKQueryRequest
 
 // PhotosListSharedZonesJSONRequestBody defines body for PhotosListSharedZones for application/json ContentType.
 type PhotosListSharedZonesJSONRequestBody = CKEmptyRequest
@@ -512,6 +577,24 @@ type ClientInterface interface {
 	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/zones/list (the `PhotosListPrivateZones` operationId).
 	PhotosListPrivateZones(ctx context.Context, params *PhotosListPrivateZonesParams, body PhotosListPrivateZonesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// PhotosQuerySharedRecordsWithBody Read shared photo library records
+	//
+	// Read records and initialization state from a discovered shared library zone.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+	PhotosQuerySharedRecordsWithBody(ctx context.Context, params *PhotosQuerySharedRecordsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PhotosQuerySharedRecords Read shared photo library records
+	//
+	// Read records and initialization state from a discovered shared library zone.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+	PhotosQuerySharedRecords(ctx context.Context, params *PhotosQuerySharedRecordsParams, body PhotosQuerySharedRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PhotosListSharedZonesWithBody Discover shared photo libraries
 	//
 	// Read shared library zones while initializing library-scoped photo reads.
@@ -642,6 +725,44 @@ func (c *Client) PhotosListPrivateZonesWithBody(ctx context.Context, params *Pho
 // Corresponds with POST /database/1/com.apple.photos.cloud/production/private/zones/list (the `PhotosListPrivateZones` operationId).
 func (c *Client) PhotosListPrivateZones(ctx context.Context, params *PhotosListPrivateZonesParams, body PhotosListPrivateZonesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPhotosListPrivateZonesRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// PhotosQuerySharedRecordsWithBody Read shared photo library records
+//
+// Read records and initialization state from a discovered shared library zone.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+func (c *Client) PhotosQuerySharedRecordsWithBody(ctx context.Context, params *PhotosQuerySharedRecordsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPhotosQuerySharedRecordsRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// PhotosQuerySharedRecords Read shared photo library records
+//
+// Read records and initialization state from a discovered shared library zone.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+func (c *Client) PhotosQuerySharedRecords(ctx context.Context, params *PhotosQuerySharedRecordsParams, body PhotosQuerySharedRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPhotosQuerySharedRecordsRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1316,6 +1437,209 @@ func NewPhotosListPrivateZonesRequestWithBody(server string, params *PhotosListP
 	return req, nil
 }
 
+// NewPhotosQuerySharedRecordsRequest calls the generic PhotosQuerySharedRecords builder with application/json body
+func NewPhotosQuerySharedRecordsRequest(server string, params *PhotosQuerySharedRecordsParams, body PhotosQuerySharedRecordsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPhotosQuerySharedRecordsRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewPhotosQuerySharedRecordsRequestWithBody constructs an http.Request for the PhotosQuerySharedRecords method, with any body, and a specified content type
+func NewPhotosQuerySharedRecordsRequestWithBody(server string, params *PhotosQuerySharedRecordsParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/database/1/com.apple.photos.cloud/production/shared/records/query")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientId", params.ClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "dsid", params.Dsid, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "remapEnums", params.RemapEnums, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "getCurrentSyncToken", params.GetCurrentSyncToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Accept != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam0)
+		}
+
+		if params.ContentType != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam1)
+		}
+
+		if params.Cookie != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam2)
+		}
+
+		if params.Origin != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "Origin", *params.Origin, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Origin", headerParam3)
+		}
+
+		if params.Referer != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam4)
+		}
+
+		if params.UserAgent != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "User-Agent", *params.UserAgent, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("User-Agent", headerParam5)
+		}
+
+		if params.AcceptEncoding != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "Accept-Encoding", *params.AcceptEncoding, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept-Encoding", headerParam6)
+		}
+
+		if params.Connection != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "Connection", *params.Connection, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Connection", headerParam7)
+		}
+
+	}
+
+	return req, nil
+}
+
 // NewPhotosListSharedZonesRequest calls the generic PhotosListSharedZones builder with application/json body
 func NewPhotosListSharedZonesRequest(server string, params *PhotosListSharedZonesParams, body PhotosListSharedZonesJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -1651,6 +1975,24 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/zones/list (the `PhotosListPrivateZones` operationId).
 	PhotosListPrivateZonesWithResponse(ctx context.Context, params *PhotosListPrivateZonesParams, body PhotosListPrivateZonesJSONRequestBody, reqEditors ...RequestEditorFn) (*PhotosListPrivateZonesResponse, error)
 
+	// PhotosQuerySharedRecordsWithBodyWithResponse Read shared photo library records
+	//
+	// Read records and initialization state from a discovered shared library zone.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+	PhotosQuerySharedRecordsWithBodyWithResponse(ctx context.Context, params *PhotosQuerySharedRecordsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PhotosQuerySharedRecordsResponse, error)
+
+	// PhotosQuerySharedRecordsWithResponse Read shared photo library records
+	//
+	// Read records and initialization state from a discovered shared library zone.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+	PhotosQuerySharedRecordsWithResponse(ctx context.Context, params *PhotosQuerySharedRecordsParams, body PhotosQuerySharedRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*PhotosQuerySharedRecordsResponse, error)
+
 	// PhotosListSharedZonesWithBodyWithResponse Discover shared photo libraries
 	//
 	// Read shared library zones while initializing library-scoped photo reads.
@@ -1817,6 +2159,54 @@ func (r PhotosListPrivateZonesResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r PhotosListPrivateZonesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type PhotosQuerySharedRecordsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *CKQueryResponse
+	// JSON2XX the response for an HTTP 2XX `application/json` response
+	JSON2XX *CKQueryResponse
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r PhotosQuerySharedRecordsResponse) GetJSON200() *CKQueryResponse {
+	return r.JSON200
+}
+
+// GetJSON2XX returns the response for an HTTP 2XX `application/json` response
+func (r PhotosQuerySharedRecordsResponse) GetJSON2XX() *CKQueryResponse {
+	return r.JSON2XX
+}
+
+// GetBody returns the raw response body bytes
+func (r PhotosQuerySharedRecordsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r PhotosQuerySharedRecordsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PhotosQuerySharedRecordsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r PhotosQuerySharedRecordsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -1995,6 +2385,36 @@ func (c *ClientWithResponses) PhotosListPrivateZonesWithResponse(ctx context.Con
 	return ParsePhotosListPrivateZonesResponse(rsp)
 }
 
+// PhotosQuerySharedRecordsWithBodyWithResponse Read shared photo library records
+//
+// Read records and initialization state from a discovered shared library zone.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+func (c *ClientWithResponses) PhotosQuerySharedRecordsWithBodyWithResponse(ctx context.Context, params *PhotosQuerySharedRecordsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PhotosQuerySharedRecordsResponse, error) {
+	rsp, err := c.PhotosQuerySharedRecordsWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePhotosQuerySharedRecordsResponse(rsp)
+}
+
+// PhotosQuerySharedRecordsWithResponse Read shared photo library records
+//
+// Read records and initialization state from a discovered shared library zone.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/shared/records/query (the `PhotosQuerySharedRecords` operationId).
+func (c *ClientWithResponses) PhotosQuerySharedRecordsWithResponse(ctx context.Context, params *PhotosQuerySharedRecordsParams, body PhotosQuerySharedRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*PhotosQuerySharedRecordsResponse, error) {
+	rsp, err := c.PhotosQuerySharedRecords(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePhotosQuerySharedRecordsResponse(rsp)
+}
+
 // PhotosListSharedZonesWithBodyWithResponse Discover shared photo libraries
 //
 // Read shared library zones while initializing library-scoped photo reads.
@@ -2141,6 +2561,45 @@ func ParsePhotosListPrivateZonesResponse(rsp *http.Response) (*PhotosListPrivate
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
 		var dest CKZoneListResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON2XX = &dest
+
+	case rsp.StatusCode/100 == 2:
+	// Content-type (*/*) unsupported
+
+	case rsp.StatusCode == 200:
+		// Content-type (*/*) unsupported
+
+	}
+
+	return response, nil
+}
+
+// ParsePhotosQuerySharedRecordsResponse parses an HTTP response from a PhotosQuerySharedRecordsWithResponse call
+func ParsePhotosQuerySharedRecordsResponse(rsp *http.Response) (*PhotosQuerySharedRecordsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PhotosQuerySharedRecordsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CKQueryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
+		var dest CKQueryResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

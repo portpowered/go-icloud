@@ -508,3 +508,15 @@ initialization while the root read continues. Go retains each failed HTTP 200
 response and matches the complete Source result. Recently Added now has 21
 scenarios / 81 exchanges; the combined corpus is 1,062 / 2,374 before the
 pending automatic CLI recovery milestone. Full checks and CI are being rerun.
+
+PR66 Recently Added SDK passed full checks, blocking CI and exact-SHA review and
+merged. A subsequent private live read exposed nonempty discovered-library
+initialization, which was absent from the original fixtures. Ten Source-first
+cases add 47 pairs for extra private/shared libraries, deletion, duplicate shared
+identity, provider refusal and indexing readiness. Go now matches those requests
+and full results; Recent coverage is 31 scenarios / 128 pairs. Exact owner-bearing
+zone JSON uses schema-owned fields in Source order (LIB-05, SCHEMA-10).
+Private live Python and Go reads succeeded, and Go strict replay consumed all
+five captured Python exchanges and matched the complete photo projection.
+This branch corpus is 1,072 scenarios / 2,421 pairs before the merged session
+updater and pending automatic CLI recovery changes. Full gates are pending.

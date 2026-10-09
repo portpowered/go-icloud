@@ -8,6 +8,7 @@ import (
 	"github.com/portpowered/go-icloud/internal/photosapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
+	"net/http"
 )
 
 // PhotosQueryResponse retains validated CloudKit query records and exact response evidence.
@@ -22,7 +23,34 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
 
-	identity, err := referenceJSON(zone)
+	return client.photosZoneIndexing(ctx, auth, zone, false)
+}
+
+// PhotosLibraryIndexing initializes one discovered library in its advertised database scope.
+func (client *Client) PhotosLibraryIndexing(ctx context.Context, auth RequestContext,
+	identity cloudkit.CKZoneID, shared bool,
+) (*PhotosQueryResponse, error) {
+	zone := cloudkit.CKZoneIDReq{ZoneName: identity.ZoneName, ZoneType: nil,
+		OwnerRecordName: nil, AdditionalProperties: identity.AdditionalProperties}
+
+	value, err := identity.ZoneType.Get()
+	if err == nil {
+		zone.ZoneType.Set(value)
+	}
+
+	value, err = identity.OwnerRecordName.Get()
+	if err == nil {
+		zone.OwnerRecordName.Set(value)
+	}
+
+	return client.photosZoneIndexing(ctx, auth, zone, shared)
+}
+
+func (client *Client) photosZoneIndexing(ctx context.Context, auth RequestContext,
+	zone cloudkit.CKZoneIDReq, shared bool,
+) (*PhotosQueryResponse, error) {
+	identity, err := referenceJSONFields(zone, []string{protocol.PhotosCKZoneIDReqZoneName,
+		protocol.PhotosCKZoneIDReqZoneType, protocol.PhotosCKZoneIDReqOwnerRecordName})
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -31,20 +59,19 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 		protocol.PhotosCKQueryObjectRecordType, protocol.PhotosPhotoIndexingRecordTypeValue,
 		protocol.PhotosCKQueryRequestZoneID, identity, protocol.PhotosCKQueryRequestResultsLimit, 1)
 
-	return client.photosQueryBytes(ctx, auth, body)
+	return client.photosScopedQueryBytes(ctx, auth, body, shared)
 }
 
 func (client *Client) photosQueryBytes(
 	ctx context.Context, auth RequestContext, body string,
 ) (*PhotosQueryResponse, error) {
-	params := new(photosapi.PhotosQueryRecordsParams)
-	params.ClientId = auth.Params.ClientId
-	params.Dsid = auth.Params.Dsid
-	params.RemapEnums = photosapi.PhotosQueryRecordsParamsRemapEnumsTrue
-	params.GetCurrentSyncToken = photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue
+	return client.photosScopedQueryBytes(ctx, auth, body, false)
+}
 
-	request, err := photosapi.NewPhotosQueryRecordsRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
+func (client *Client) photosScopedQueryBytes(ctx context.Context, auth RequestContext,
+	body string, shared bool,
+) (*PhotosQueryResponse, error) {
+	request, err := photosQueryRequest(auth, body, shared)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -63,8 +90,8 @@ func (client *Client) photosQueryBytes(
 	}
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
-		queryPart(protocol.PhotosRemapEnumsName, string(params.RemapEnums)) + "&" +
-		queryPart(protocol.PhotosGetCurrentSyncTokenName, string(params.GetCurrentSyncToken))
+		queryPart(protocol.PhotosRemapEnumsName, string(photosapi.PhotosQueryRecordsParamsRemapEnumsTrue)) + "&" +
+		queryPart(protocol.PhotosGetCurrentSyncTokenName, string(photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue))
 
 	response, err := client.readPrepared(request, successfulContent, auth.Cookies)
 	if err != nil {
@@ -77,4 +104,36 @@ func (client *Client) photosQueryBytes(
 	}
 
 	return &PhotosQueryResponse{Data: data, Metadata: response}, nil
+}
+
+func photosQueryRequest(auth RequestContext, body string, shared bool) (*http.Request, error) {
+	if shared {
+		params := new(photosapi.PhotosQuerySharedRecordsParams)
+		params.ClientId = auth.Params.ClientId
+		params.Dsid = auth.Params.Dsid
+		params.RemapEnums = photosapi.PhotosQuerySharedRecordsParamsRemapEnumsTrue
+		params.GetCurrentSyncToken = photosapi.PhotosQuerySharedRecordsParamsGetCurrentSyncTokenTrue
+
+		request, err := photosapi.NewPhotosQuerySharedRecordsRequestWithBody(auth.Origin, params,
+			protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
+		if err != nil {
+			return nil, fmt.Errorf("construct shared photo query: %w", err)
+		}
+
+		return request, nil
+	}
+
+	params := new(photosapi.PhotosQueryRecordsParams)
+	params.ClientId = auth.Params.ClientId
+	params.Dsid = auth.Params.Dsid
+	params.RemapEnums = photosapi.PhotosQueryRecordsParamsRemapEnumsTrue
+	params.GetCurrentSyncToken = photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue
+
+	request, err := photosapi.NewPhotosQueryRecordsRequestWithBody(auth.Origin, params,
+		protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
+	if err != nil {
+		return nil, fmt.Errorf("construct private photo query: %w", err)
+	}
+
+	return request, nil
 }

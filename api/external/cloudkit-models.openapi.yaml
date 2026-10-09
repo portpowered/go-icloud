@@ -3716,6 +3716,26 @@
         ],
         "x-go-type": "json.RawMessage",
         "description": "Source floating-point inputs before conversion; numeric text and booleans are accepted."
+      },
+      "PhotoSharedLibraryZonePrefix": {
+        "type": "string",
+        "enum": [
+          "SharedSync-"
+        ],
+        "x-enum-varnames": [
+          "PhotoSharedLibraryZonePrefixValue"
+        ],
+        "description": "Pinned Source prefix identifying a shared library zone advertised by the private database."
+      },
+      "PhotoSharedLibraryKeyPrefix": {
+        "type": "string",
+        "enum": [
+          "shared:"
+        ],
+        "x-enum-varnames": [
+          "PhotoSharedLibraryKeyPrefixValue"
+        ],
+        "description": "Pinned Source prefix for discovered shared library identity keys."
       }
     }
   }

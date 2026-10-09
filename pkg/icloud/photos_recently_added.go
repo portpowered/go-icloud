@@ -16,12 +16,9 @@ func (sdk *SDK) ListRecentlyAddedPhotos(ctx context.Context,
 		return nil, err
 	}
 
-	responses, err := sdk.web.PhotosLibraryZones(ctx, read.auth)
-
-	read.responses = append(read.responses, responses...)
-
+	err = read.discoverPhotoLibraries(ctx)
 	if err != nil {
-		return nil, read.failure(err, InvalidResponse)
+		return nil, err
 	}
 
 	photos, err := read.recentlyAdded(ctx)

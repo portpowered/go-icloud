@@ -15,7 +15,7 @@ func TestRecentlyAddedPhotosWireContracts(t *testing.T) {
 	document := loadDriveDocument(t, "../../api/external/photos.openapi.yaml")
 
 	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/photos-recently-added-*.json")
-	if err != nil || len(paths) != 21 {
+	if err != nil || len(paths) != 31 {
 		t.Fatal("recently added contract inventory changed", err)
 	}
 

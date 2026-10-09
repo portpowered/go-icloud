@@ -1362,6 +1362,36 @@ func (e PhotoResourceSuffix) Valid() bool {
 	}
 }
 
+// Defines values for PhotoSharedLibraryKeyPrefix.
+const (
+	PhotoSharedLibraryKeyPrefixValue PhotoSharedLibraryKeyPrefix = "shared:"
+)
+
+// Valid indicates whether the value is a known member of the PhotoSharedLibraryKeyPrefix enum.
+func (e PhotoSharedLibraryKeyPrefix) Valid() bool {
+	switch e {
+	case PhotoSharedLibraryKeyPrefixValue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoSharedLibraryZonePrefix.
+const (
+	PhotoSharedLibraryZonePrefixValue PhotoSharedLibraryZonePrefix = "SharedSync-"
+)
+
+// Valid indicates whether the value is a known member of the PhotoSharedLibraryZonePrefix enum.
+func (e PhotoSharedLibraryZonePrefix) Valid() bool {
+	switch e {
+	case PhotoSharedLibraryZonePrefixValue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotoSmartAlbumName.
 const (
 	Bursts          PhotoSmartAlbumName = "Bursts"
@@ -3325,6 +3355,12 @@ type PhotoResourcePrefix string
 
 // PhotoResourceSuffix Known primary Photos reference projection value.
 type PhotoResourceSuffix string
+
+// PhotoSharedLibraryKeyPrefix Pinned Source prefix for discovered shared library identity keys.
+type PhotoSharedLibraryKeyPrefix string
+
+// PhotoSharedLibraryZonePrefix Pinned Source prefix identifying a shared library zone advertised by the private database.
+type PhotoSharedLibraryZonePrefix string
 
 // PhotoSmartAlbumName Source smart album names in their discovery order.
 type PhotoSmartAlbumName string

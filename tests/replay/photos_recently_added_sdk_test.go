@@ -16,7 +16,7 @@ func TestRecentlyAddedPhotosSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 21 {
+	if len(paths) != 31 {
 		t.Fatal("photo asset scenario inventory changed")
 	}
 

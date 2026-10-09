@@ -719,8 +719,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_recently_added_matrix_preserves_newest_first_without_count_requests(self):
         paths = sorted(FIXTURES.glob("photos-recently-added-*.json"))
-        self.assertEqual(len(paths), 21)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 81)
+        self.assertEqual(len(paths), 31)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 128)
         for path in paths:
             scenario = json.loads(path.read_text(encoding="utf-8"))
             if "error" in scenario:
@@ -740,6 +740,31 @@ class SyntheticTests(unittest.TestCase):
                     )
                 )
                 self.assertEqual(replay_synthetic(path), len(scenario["exchanges"]))
+
+    def test_recently_added_discovered_library_requests_are_bound(self):
+        for name, mutation in [
+            ("private-zone", "identity"),
+            ("shared-zone", "scope"),
+            ("private-zones-many", "unused"),
+        ]:
+            scenario = json.loads(
+                (FIXTURES / f"photos-recently-added-discovery-{name}.json").read_text()
+            )
+            if mutation == "identity":
+                entity = scenario["exchanges"][2]["request"]["body"]
+                value = json.loads(base64.b64decode(entity["value"]))
+                value["zoneID"]["zoneName"] = "ChangedZone"
+                entity["value"] = base64.b64encode(json.dumps(value).encode()).decode()
+            elif mutation == "scope":
+                request = scenario["exchanges"][3]["request"]
+                request["path"] = request["path"].replace("/shared/", "/private/")
+            else:
+                scenario["exchanges"].append(copy.deepcopy(scenario["exchanges"][-1]))
+            with self.subTest(name=name), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
 
     def test_recently_added_order_rank_and_consumption_are_bound(self):
         name = "photos-recently-added-overlap-partial-next.json"

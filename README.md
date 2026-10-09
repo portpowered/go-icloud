@@ -1008,6 +1008,14 @@ if err != nil {
 photos := recent.Photos // newest additions first; keep private
 ```
 
+Discovery initializes additional private libraries before checking shared zones.
+Deleted zones and the existing root are skipped; shared identities already found
+in the private database are initialized once. Private initialization failures
+stop the read, while shared provider/indexing failures retain their response
+evidence and allow the root read to continue. Thirty-one Source/Go cases consume
+128 exchanges. Private live Python and Go reads succeeded; Go replay consumed
+all five captured Python exchanges and matched the complete photo projection.
+
 `photo-download` emits a JSON `content` field containing base64 file bytes. An
 available empty file returns an empty string; an unavailable rendition returns
 null. Omit `--version` for the original, or select a known photo rendition.
