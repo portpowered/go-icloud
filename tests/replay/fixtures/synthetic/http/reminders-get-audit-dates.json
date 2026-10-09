@@ -1,0 +1,120 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "get",
+  "inputs": [
+    "synthetic-item"
+  ],
+  "result": {
+    "id": "Reminder/synthetic-item",
+    "list_id": "List/synthetic-list",
+    "title": "Synthetic title \ud83c\udf0d",
+    "desc": "Synthetic notes\nsecond line",
+    "completed": true,
+    "completed_date": "2023-11-14T22:13:22.123000Z",
+    "due_date": "2023-11-14T22:13:20.123000Z",
+    "start_date": "2023-11-14T22:13:21.123000Z",
+    "priority": 9,
+    "flagged": true,
+    "all_day": true,
+    "deleted": true,
+    "time_zone": "Europe/London",
+    "alarm_ids": [
+      "synthetic-first",
+      "synthetic-second",
+      "synthetic-first"
+    ],
+    "hashtag_ids": [
+      "synthetic-first",
+      "synthetic-second",
+      "synthetic-first"
+    ],
+    "attachment_ids": [
+      "synthetic-first",
+      "synthetic-second",
+      "synthetic-first"
+    ],
+    "recurrence_rule_ids": [
+      "synthetic-first",
+      "synthetic-second",
+      "synthetic-first"
+    ],
+    "parent_reminder_id": "Reminder/synthetic-parent",
+    "created": "2023-11-14T22:14:10Z",
+    "modified": "2023-11-14T22:14:20Z",
+    "record_change_tag": "synthetic-tag"
+  },
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/lookup",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "128"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSJ9XSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtaXRlbSIsICJyZWNvcmRUeXBlIjogIlJlbWluZGVyIiwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtdGFnIiwgImZpZWxkcyI6IHsiTGlzdCI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiTGlzdC9zeW50aGV0aWMtbGlzdCIsICJhY3Rpb24iOiAiVkFMSURBVEUifX0sICJDb21wbGV0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAxfSwgIlByaW9yaXR5IjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogOX0sICJGbGFnZ2VkIjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMX0sICJBbGxEYXkiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAxfSwgIkRlbGV0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAxfSwgIlRpdGxlRG9jdW1lbnQiOiB7InR5cGUiOiAiRU5DUllQVEVEX0JZVEVTIiwgInZhbHVlIjogImVKempZQkNxNG1BUVlKQXFFUklKcnN3cnlVZ3R5VXhXS01rc3lVbFYrREMvcDFkS2dJc0ZKQTlVQWFZMUdNRWlqRUFSSVNrd3JjRWtKY2JGQVpUN0R3VDhRSFZ3dHBJTWx4U1h3SlhzVTArazI5TU85cGErZnh3ejBmV3dFQk9IRUJBemFnRnBBQUtPSHY4PSJ9LCAiTm90ZXNEb2N1bWVudCI6IHsidHlwZSI6ICJFTkNSWVBURURfQllURVMiLCAidmFsdWUiOiAiZUp6allCQnFaT1JnRUdDUXFoYVNEcTdNSzhsSUxjbE1Wc2pMTDBrdDVpcE9UYzdQUzFISXljeExsUkxnWWdFcEF5b0UweHFNWUJGR29JaTBGSmpXWUpJUzQrSUF5djBIQW42Z09qaGJTWVpMaWt2Z1N2YXBKOUx0YVFkN1M5OC9qcG5vZWxpSWlVTWFpQm0xZ0RRQTZPRWd2UT09In0sICJEdWVEYXRlIjogeyJ0eXBlIjogIlRJTUVTVEFNUCIsICJ2YWx1ZSI6IDE3MDAwMDAwMDAxMjN9LCAiU3RhcnREYXRlIjogeyJ0eXBlIjogIlRJTUVTVEFNUCIsICJ2YWx1ZSI6IDE3MDAwMDAwMDExMjN9LCAiQ29tcGxldGlvbkRhdGUiOiB7InR5cGUiOiAiVElNRVNUQU1QIiwgInZhbHVlIjogMTcwMDAwMDAwMjEyM30sICJUaW1lWm9uZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiRXVyb3BlL0xvbmRvbiJ9LCAiUGFyZW50UmVtaW5kZXIiOiB7InR5cGUiOiAiUkVGRVJFTkNFIiwgInZhbHVlIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy1wYXJlbnQiLCAiYWN0aW9uIjogIlZBTElEQVRFIn19LCAiQWxhcm1JRHMiOiB7InR5cGUiOiAiU1RSSU5HX0xJU1QiLCAidmFsdWUiOiBbIkFsYXJtL3N5bnRoZXRpYy1maXJzdCIsICJzeW50aGV0aWMtc2Vjb25kIiwgIkFsYXJtL3N5bnRoZXRpYy1maXJzdCJdfSwgIkhhc2h0YWdJRHMiOiB7InR5cGUiOiAiU1RSSU5HX0xJU1QiLCAidmFsdWUiOiBbIkhhc2h0YWcvc3ludGhldGljLWZpcnN0IiwgInN5bnRoZXRpYy1zZWNvbmQiLCAiSGFzaHRhZy9zeW50aGV0aWMtZmlyc3QiXX0sICJBdHRhY2htZW50SURzIjogeyJ0eXBlIjogIlNUUklOR19MSVNUIiwgInZhbHVlIjogWyJBdHRhY2htZW50L3N5bnRoZXRpYy1maXJzdCIsICJzeW50aGV0aWMtc2Vjb25kIiwgIkF0dGFjaG1lbnQvc3ludGhldGljLWZpcnN0Il19LCAiUmVjdXJyZW5jZVJ1bGVJRHMiOiB7InR5cGUiOiAiU1RSSU5HX0xJU1QiLCAidmFsdWUiOiBbIlJlY3VycmVuY2VSdWxlL3N5bnRoZXRpYy1maXJzdCIsICJzeW50aGV0aWMtc2Vjb25kIiwgIlJlY3VycmVuY2VSdWxlL3N5bnRoZXRpYy1maXJzdCJdfX0sICJjcmVhdGVkIjogeyJ0aW1lc3RhbXAiOiAxNzAwMDAwMDUwMDAwfSwgIm1vZGlmaWVkIjogeyJ0aW1lc3RhbXAiOiAxNzAwMDAwMDYwMDAwfX1dfQ=="
+        }
+      }
+    }
+  ]
+}

@@ -17,6 +17,36 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_reminder_lookup_complete_projection_and_text_fallbacks(self):
+        for name in ["full", "audit-dates", "unreadable-documents"]:
+            path = FIXTURES / f"reminders-get-{name}.json"
+            scenario = json.loads(path.read_text(encoding="utf-8"))
+            with self.subTest(case=name):
+                self.assertEqual(len(scenario["result"]), 21)
+                self.assertEqual(replay_synthetic(path), 1)
+        full = json.loads((FIXTURES / "reminders-get-full.json").read_text())
+        self.assertEqual(full["result"]["title"], "Synthetic title 🌍")
+        self.assertEqual(full["result"]["desc"], "Synthetic notes\nsecond line")
+        self.assertEqual(
+            full["result"]["alarm_ids"],
+            ["synthetic-first", "synthetic-second", "synthetic-first"],
+        )
+        unreadable = json.loads(
+            (FIXTURES / "reminders-get-unreadable-documents.json").read_text()
+        )
+        self.assertEqual(unreadable["result"]["title"], "Error Decoding Title")
+        self.assertEqual(unreadable["result"]["desc"], "")
+
+    def test_reminder_lookup_rejects_missing_public_fields(self):
+        for field in ["created", "modified", "title", "due_date", "alarm_ids"]:
+            scenario = json.loads((FIXTURES / "reminders-get-full.json").read_text())
+            scenario["result"].pop(field)
+            with self.subTest(field=field), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_incomplete_photo_records_skip_orphans_and_preserve_valid_pairs(self):
         for name, count in [("master-only", 0), ("asset-only", 0), ("mixed", 1)]:
             path = FIXTURES / f"photos-incomplete-records-{name}.json"
