@@ -561,6 +561,9 @@ type AuthContext struct {
 	// PhotosServiceURL HTTPS CloudKit origin from authenticated discovery; required by Photos operations.
 	PhotosServiceURL string `json:"photosServiceURL,omitempty"`
 
+	// PhotosUploadServiceURL HTTPS Photos upload origin returned by authenticated service discovery.
+	PhotosUploadServiceURL string `json:"photosUploadServiceURL,omitempty"`
+
 	// RemindersServiceURL HTTPS Reminders origin from authenticated discovery; required by reminders operations.
 	RemindersServiceURL string `json:"remindersServiceURL,omitempty"`
 
@@ -1611,6 +1614,24 @@ type GetPhotoResult struct {
 	Responses []ResponseMetadata       `json:"responses"`
 }
 
+// GetPhotoUploadStatusRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"jobIDs":["synthetic-job"]}
+type GetPhotoUploadStatusRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext `json:"auth"`
+	JobIDs []string    `json:"jobIDs"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// GetPhotoUploadStatusResult Example: {"jobs":{"synthetic-job":{"errorCode":null,"progress":100,"unknown":false}},"responses":[{"headers":[],"statusCode":200}]}
+type GetPhotoUploadStatusResult struct {
+	Jobs      map[string]PhotoUploadStatus `json:"jobs"`
+	Responses []ResponseMetadata           `json:"responses"`
+}
+
 // GetPhotosCursorRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
 type GetPhotosCursorRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -2211,6 +2232,56 @@ type PhotoResource struct {
 	Width UnknownJSONValue `json:"width"`
 }
 
+// PhotoUploadFile defines model for PhotoUploadFile.
+type PhotoUploadFile struct {
+	Filename         string    `json:"filename"`
+	ModificationTime time.Time `json:"modificationTime"`
+
+	// Receipt Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.
+	Receipt PhotoUploadReceipt `json:"receipt"`
+
+	// TimeZoneOffset UTC minus local time, in minutes.
+	TimeZoneOffset int `json:"timeZoneOffset"`
+}
+
+// PhotoUploadReceipt Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.
+type PhotoUploadReceipt struct {
+	FileChecksum         nullable.Nullable[string]   `json:"fileChecksum"`
+	Receipt              nullable.Nullable[string]   `json:"receipt"`
+	ReferenceChecksum    nullable.Nullable[string]   `json:"referenceChecksum"`
+	Size                 nullable.Nullable[int64]    `json:"size"`
+	WrappingKey          nullable.Nullable[string]   `json:"wrappingKey"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// PhotoUploadRegistration defines model for PhotoUploadRegistration.
+type PhotoUploadRegistration struct {
+	Duplicate            bool                                             `json:"duplicate"`
+	JobID                nullable.Nullable[string]                        `json:"jobID"`
+	MasterID             nullable.Nullable[string]                        `json:"masterID"`
+	PhotoID              nullable.Nullable[string]                        `json:"photoID"`
+	Status               nullable.Nullable[PhotoUploadRegistrationStatus] `json:"status"`
+	AdditionalProperties map[string]UnknownJSONValue                      `json:"-"`
+}
+
+// PhotoUploadRegistrationStatus defines model for PhotoUploadRegistrationStatus.
+type PhotoUploadRegistrationStatus struct {
+	ErrorMessage         nullable.Nullable[string]   `json:"errorMessage"`
+	Retryable            nullable.Nullable[bool]     `json:"retryable"`
+	Status               nullable.Nullable[int]      `json:"status"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// PhotoUploadStatus defines model for PhotoUploadStatus.
+type PhotoUploadStatus struct {
+	ErrorCode nullable.Nullable[int] `json:"errorCode"`
+	Progress  nullable.Nullable[int] `json:"progress"`
+
+	// Unknown True when the provider does not recognize this job.
+	Unknown              bool                        `json:"unknown"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
 // PhotoVersion Known photo/video resource key; a rendition unavailable on the selected asset returns null.
 //
 // Example: original
@@ -2231,6 +2302,26 @@ type PhotoVisitEvent struct {
 type RefreshFindMyRequest struct {
 	// Locate Request fresh locations when a provider refresh context exists.
 	Locate bool `json:"locate"`
+}
+
+// RegisterPhotoUploadsRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"files":[{"filename":"synthetic.jpg","modificationTime":"2023-11-14T22:13:20Z","receipt":{"fileChecksum":null,"receipt":"synthetic-receipt","referenceChecksum":null,"size":3,"wrappingKey":null},"timeZoneOffset":0}],"importGroup":"synthetic-import","localTimeZoneID":"UTC"}
+type RegisterPhotoUploadsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth        AuthContext       `json:"auth"`
+	Files       []PhotoUploadFile `json:"files"`
+	ImportGroup string            `json:"importGroup"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library         *PhotoLibrary `json:"library,omitempty"`
+	LocalTimeZoneID string        `json:"localTimeZoneID"`
+}
+
+// RegisterPhotoUploadsResult Example: {"registrations":[{"duplicate":false,"jobID":"synthetic-job","masterID":"synthetic-master","photoID":"synthetic-photo","status":{"errorMessage":null,"retryable":false,"status":200}}],"responses":[{"headers":[],"statusCode":200}]}
+type RegisterPhotoUploadsResult struct {
+	Registrations []PhotoUploadRegistration `json:"registrations"`
+	Responses     []ResponseMetadata        `json:"responses"`
 }
 
 // RegisteredDriveDocument defines model for RegisteredDriveDocument.
@@ -2690,6 +2781,26 @@ type RenamePhotoAlbumRequest struct {
 	Name string `json:"name"`
 }
 
+// ReservePhotoUploadsRequest Example: {"assets":{"synthetic-file":3},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]}}
+type ReservePhotoUploadsRequest struct {
+	// Assets Caller-generated identities mapped to complete byte lengths.
+	Assets map[string]int64 `json:"assets"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// ReservePhotoUploadsResult Example: {"responses":[{"headers":[],"statusCode":200}],"uploadURLs":{"synthetic-file":"https://content.example.invalid/upload?token=synthetic"}}
+type ReservePhotoUploadsResult struct {
+	Responses  []ResponseMetadata `json:"responses"`
+	UploadURLs map[string]string  `json:"uploadURLs"`
+}
+
 // ResponseMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 type ResponseMetadata struct {
 	// CookieScopeURL Request HTTPS origin and escaped path without query credentials; use this URL to apply Set-Cookie host and default-path scope.
@@ -2769,6 +2880,30 @@ type SavedSessionCredentials struct {
 
 	// SetupServiceURL HTTPS setup origin for cookie validation and token login.
 	SetupServiceURL string `json:"setupServiceURL"`
+}
+
+// SendPhotoUploadBytesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"content":"synthetic-bytes","url":"https://content.example.invalid/upload?token=synthetic"}
+type SendPhotoUploadBytesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Content Caller-owned reader; bytes start at its current position. The SDK does not close it.
+	Content io.ReadSeeker `json:"content"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// URL Signed HTTPS URL returned by ReservePhotoUploads.
+	URL string `json:"url"`
+}
+
+// SendPhotoUploadBytesResult Example: {"receipt":{"fileChecksum":null,"receipt":"synthetic-receipt","referenceChecksum":null,"size":3,"wrappingKey":null},"responses":[{"headers":[],"statusCode":200}]}
+type SendPhotoUploadBytesResult struct {
+	// Receipt Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.
+	Receipt   PhotoUploadReceipt `json:"receipt"`
+	Responses []ResponseMetadata `json:"responses"`
 }
 
 // SetPhotoFavoriteRequest SetPhotoFavorite operation input.
@@ -2937,6 +3072,82 @@ type UploadDriveFileResult struct {
 	// UploadToken Secret token used in preparation and registration; returned for caller-owned session parameters.
 	UploadToken  string            `json:"uploadToken"`
 	UploadedFile UploadedDriveFile `json:"uploadedFile"`
+}
+
+// UploadPhotoFileRequest Transfer and register one file through the composable uploader; the result does not wait for CloudKit indexing.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"content":"synthetic-bytes","filename":"synthetic.jpg","localTimeZoneID":"UTC","modificationTime":"2023-11-14T22:13:20Z","timeZoneOffset":0}
+type UploadPhotoFileRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Content Caller-owned seekable file bytes starting at the current cursor.
+	Content     io.ReadSeeker `json:"content"`
+	Filename    string        `json:"filename"`
+	ImportGroup *string       `json:"importGroup,omitempty"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library          *PhotoLibrary `json:"library,omitempty"`
+	LocalTimeZoneID  string        `json:"localTimeZoneID"`
+	ModificationTime time.Time     `json:"modificationTime"`
+
+	// TimeZoneOffset UTC minus local time in minutes.
+	TimeZoneOffset int `json:"timeZoneOffset"`
+}
+
+// UploadPhotoFileResult Provider registration including duplicate acknowledgement and ordered response metadata; background indexing may continue.
+//
+// Example: {"registration":{"duplicate":false,"jobID":"synthetic-job","masterID":"synthetic-master","photoID":"synthetic-photo","status":{"errorMessage":null,"retryable":false,"status":200}},"responses":[{"headers":[],"statusCode":200}]}
+type UploadPhotoFileResult struct {
+	Registration PhotoUploadRegistration `json:"registration"`
+	Responses    []ResponseMetadata      `json:"responses"`
+}
+
+// UploadPhotoRequest Reserve, transfer and register one file. Optional hydration waits for CloudKit indexing; registration remains available when the indexing deadline expires.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"content":"synthetic-bytes","filename":"synthetic.jpg","hydrate":true,"localTimeZoneID":"UTC","modificationTime":"2023-11-14T22:13:20Z","timeZoneOffset":0}
+type UploadPhotoRequest struct {
+	// AlbumID Optional destination album; membership is requested after successful hydration.
+	AlbumID *string `json:"albumID,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Content Caller-owned seekable content; starts from the current cursor.
+	Content  io.ReadSeeker `json:"content"`
+	Filename string        `json:"filename"`
+
+	// Hydrate Retry CloudKit lookup until the photo is indexed or the deadline expires.
+	Hydrate bool `json:"hydrate"`
+
+	// HydrationInterval Initial retry interval; omission uses two seconds, doubling up to eight seconds.
+	HydrationInterval *time.Duration `json:"hydrationInterval,omitempty"`
+
+	// HydrationTimeout Maximum indexing wait; omission uses 60 seconds.
+	HydrationTimeout *time.Duration `json:"hydrationTimeout,omitempty"`
+	ImportGroup      *string        `json:"importGroup,omitempty"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// LocalTimeZoneID IANA time zone; use UTC for a deterministic upload.
+	LocalTimeZoneID  string    `json:"localTimeZoneID"`
+	ModificationTime time.Time `json:"modificationTime"`
+
+	// TimeZoneOffset UTC minus local time in minutes.
+	TimeZoneOffset int `json:"timeZoneOffset"`
+}
+
+// UploadPhotoResult Example: {"indexed":false,"photo":null,"registration":{"duplicate":false,"jobID":"synthetic-job","masterID":"synthetic-master","photoID":"synthetic-photo","status":{"errorMessage":null,"retryable":false,"status":200}},"responses":[{"headers":[],"statusCode":200}]}
+type UploadPhotoResult struct {
+	Indexed      bool                     `json:"indexed"`
+	Photo        nullable.Nullable[Photo] `json:"photo"`
+	Registration PhotoUploadRegistration  `json:"registration"`
+	Responses    []ResponseMetadata       `json:"responses"`
 }
 
 // UploadedDriveFile defines model for UploadedDriveFile.
@@ -6450,6 +6661,426 @@ func (a FindMyUserInfo) MarshalJSON() ([]byte, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'membersInfo': %w", err)
 		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotoUploadReceipt. Returns the specified
+// element and whether it was found
+func (a PhotoUploadReceipt) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadReceipt
+func (a *PhotoUploadReceipt) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadReceipt to handle AdditionalProperties
+func (a *PhotoUploadReceipt) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["fileChecksum"]; found {
+		err = json.Unmarshal(raw, &a.FileChecksum)
+		if err != nil {
+			return fmt.Errorf("error reading 'fileChecksum': %w", err)
+		}
+		delete(object, "fileChecksum")
+	}
+
+	if raw, found := object["receipt"]; found {
+		err = json.Unmarshal(raw, &a.Receipt)
+		if err != nil {
+			return fmt.Errorf("error reading 'receipt': %w", err)
+		}
+		delete(object, "receipt")
+	}
+
+	if raw, found := object["referenceChecksum"]; found {
+		err = json.Unmarshal(raw, &a.ReferenceChecksum)
+		if err != nil {
+			return fmt.Errorf("error reading 'referenceChecksum': %w", err)
+		}
+		delete(object, "referenceChecksum")
+	}
+
+	if raw, found := object["size"]; found {
+		err = json.Unmarshal(raw, &a.Size)
+		if err != nil {
+			return fmt.Errorf("error reading 'size': %w", err)
+		}
+		delete(object, "size")
+	}
+
+	if raw, found := object["wrappingKey"]; found {
+		err = json.Unmarshal(raw, &a.WrappingKey)
+		if err != nil {
+			return fmt.Errorf("error reading 'wrappingKey': %w", err)
+		}
+		delete(object, "wrappingKey")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadReceipt to handle AdditionalProperties
+func (a PhotoUploadReceipt) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["fileChecksum"], err = json.Marshal(a.FileChecksum)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'fileChecksum': %w", err)
+	}
+
+	object["receipt"], err = json.Marshal(a.Receipt)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'receipt': %w", err)
+	}
+
+	object["referenceChecksum"], err = json.Marshal(a.ReferenceChecksum)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'referenceChecksum': %w", err)
+	}
+
+	object["size"], err = json.Marshal(a.Size)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'size': %w", err)
+	}
+
+	object["wrappingKey"], err = json.Marshal(a.WrappingKey)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'wrappingKey': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotoUploadRegistration. Returns the specified
+// element and whether it was found
+func (a PhotoUploadRegistration) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadRegistration
+func (a *PhotoUploadRegistration) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadRegistration to handle AdditionalProperties
+func (a *PhotoUploadRegistration) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["duplicate"]; found {
+		err = json.Unmarshal(raw, &a.Duplicate)
+		if err != nil {
+			return fmt.Errorf("error reading 'duplicate': %w", err)
+		}
+		delete(object, "duplicate")
+	}
+
+	if raw, found := object["jobID"]; found {
+		err = json.Unmarshal(raw, &a.JobID)
+		if err != nil {
+			return fmt.Errorf("error reading 'jobID': %w", err)
+		}
+		delete(object, "jobID")
+	}
+
+	if raw, found := object["masterID"]; found {
+		err = json.Unmarshal(raw, &a.MasterID)
+		if err != nil {
+			return fmt.Errorf("error reading 'masterID': %w", err)
+		}
+		delete(object, "masterID")
+	}
+
+	if raw, found := object["photoID"]; found {
+		err = json.Unmarshal(raw, &a.PhotoID)
+		if err != nil {
+			return fmt.Errorf("error reading 'photoID': %w", err)
+		}
+		delete(object, "photoID")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadRegistration to handle AdditionalProperties
+func (a PhotoUploadRegistration) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["duplicate"], err = json.Marshal(a.Duplicate)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'duplicate': %w", err)
+	}
+
+	object["jobID"], err = json.Marshal(a.JobID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'jobID': %w", err)
+	}
+
+	object["masterID"], err = json.Marshal(a.MasterID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'masterID': %w", err)
+	}
+
+	object["photoID"], err = json.Marshal(a.PhotoID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'photoID': %w", err)
+	}
+
+	object["status"], err = json.Marshal(a.Status)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'status': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotoUploadRegistrationStatus. Returns the specified
+// element and whether it was found
+func (a PhotoUploadRegistrationStatus) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadRegistrationStatus
+func (a *PhotoUploadRegistrationStatus) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadRegistrationStatus to handle AdditionalProperties
+func (a *PhotoUploadRegistrationStatus) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["errorMessage"]; found {
+		err = json.Unmarshal(raw, &a.ErrorMessage)
+		if err != nil {
+			return fmt.Errorf("error reading 'errorMessage': %w", err)
+		}
+		delete(object, "errorMessage")
+	}
+
+	if raw, found := object["retryable"]; found {
+		err = json.Unmarshal(raw, &a.Retryable)
+		if err != nil {
+			return fmt.Errorf("error reading 'retryable': %w", err)
+		}
+		delete(object, "retryable")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadRegistrationStatus to handle AdditionalProperties
+func (a PhotoUploadRegistrationStatus) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["errorMessage"], err = json.Marshal(a.ErrorMessage)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'errorMessage': %w", err)
+	}
+
+	object["retryable"], err = json.Marshal(a.Retryable)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'retryable': %w", err)
+	}
+
+	object["status"], err = json.Marshal(a.Status)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'status': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotoUploadStatus. Returns the specified
+// element and whether it was found
+func (a PhotoUploadStatus) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadStatus
+func (a *PhotoUploadStatus) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadStatus to handle AdditionalProperties
+func (a *PhotoUploadStatus) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["errorCode"]; found {
+		err = json.Unmarshal(raw, &a.ErrorCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'errorCode': %w", err)
+		}
+		delete(object, "errorCode")
+	}
+
+	if raw, found := object["progress"]; found {
+		err = json.Unmarshal(raw, &a.Progress)
+		if err != nil {
+			return fmt.Errorf("error reading 'progress': %w", err)
+		}
+		delete(object, "progress")
+	}
+
+	if raw, found := object["unknown"]; found {
+		err = json.Unmarshal(raw, &a.Unknown)
+		if err != nil {
+			return fmt.Errorf("error reading 'unknown': %w", err)
+		}
+		delete(object, "unknown")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadStatus to handle AdditionalProperties
+func (a PhotoUploadStatus) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["errorCode"], err = json.Marshal(a.ErrorCode)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'errorCode': %w", err)
+	}
+
+	object["progress"], err = json.Marshal(a.Progress)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'progress': %w", err)
+	}
+
+	object["unknown"], err = json.Marshal(a.Unknown)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'unknown': %w", err)
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

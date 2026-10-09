@@ -62,3 +62,17 @@ Source-derived reverse-order context case preserves provider member order while
 clearing theftLoss. These checks follow fixture route sequencing and do not prove
 SDK cache, polling, capability guards or monitor behavior; Find My public SDK
 semantic replay remains 0/37. See [transport evidence](../../docs/findmy-transport.md).
+
+Modern Photos uploads use the pinned Python implementation's reservation,
+signed byte transfer, registration, ingest status and CloudKit hydration flows.
+The 46 selected upload scenarios are synthetic and implementation-derived;
+they do not establish independently captured Apple behavior. The old
+`uploadimagews` endpoint is a historical reference and is not used by these SDK
+operations.
+
+The composable uploader and library-service uploader preserve their different
+query contexts. Upload receipts retain unknown JSON values without converting
+large integers to floating-point values. Explicit byte framing, duplicate
+registration, indexing deadlines, read backoff, cancellation and response
+cookie scope are part of the paired replay boundary. File readers remain
+caller-owned, and uncertain upload writes are never automatically repeated.

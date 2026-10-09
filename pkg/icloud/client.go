@@ -99,6 +99,18 @@ type Client interface {
 	DeleteReminderRecurrenceRule(ctx context.Context,
 		request DeleteReminderRecurrenceRuleRequest,
 	) (*ReminderRecurrenceRuleRelationResult, error)
+	// ReservePhotoUploads reserves signed upload destinations for caller-selected file sizes.
+	ReservePhotoUploads(ctx context.Context, request ReservePhotoUploadsRequest) (*ReservePhotoUploadsResult, error)
+	// SendPhotoUploadBytes sends bytes to a reserved HTTPS destination.
+	SendPhotoUploadBytes(ctx context.Context, request SendPhotoUploadBytesRequest) (*SendPhotoUploadBytesResult, error)
+	// RegisterPhotoUploads registers stored-byte receipts as Photos assets.
+	RegisterPhotoUploads(ctx context.Context, request RegisterPhotoUploadsRequest) (*RegisterPhotoUploadsResult, error)
+	// GetPhotoUploadStatus reports ingest progress separately from CloudKit indexing.
+	GetPhotoUploadStatus(ctx context.Context, request GetPhotoUploadStatusRequest) (*GetPhotoUploadStatusResult, error)
+	// UploadPhoto transfers one file and optionally waits for its indexed photo projection.
+	UploadPhoto(ctx context.Context, request UploadPhotoRequest) (*UploadPhotoResult, error)
+	// UploadPhotoFile reserves and registers a file without waiting for indexing.
+	UploadPhotoFile(ctx context.Context, request UploadPhotoFileRequest) (*UploadPhotoFileResult, error)
 	// CreateReminder creates a reminder and hydrates its acknowledged record.
 	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
 	// UpdateReminder writes a snapshot and returns an independent updated snapshot.
@@ -219,10 +231,12 @@ var (
 )
 
 type configuration struct {
-	transport  http.RoundTripper
-	configured bool
-	clock      func() time.Time
-	random     io.Reader
+	transport        http.RoundTripper
+	configured       bool
+	clock            func() time.Time
+	random           io.Reader
+	photoUploadWait  func(context.Context, time.Duration) error
+	photoUploadClock func() time.Time
 }
 
 // Option configures a reusable client without storing account credentials.
@@ -245,15 +259,18 @@ func WithHTTPTransport(transport http.RoundTripper) Option {
 
 // SDK implements Client with immutable transport configuration.
 type SDK struct {
-	web    *webtransport.Client
-	clock  func() time.Time
-	random io.Reader
+	web              *webtransport.Client
+	clock            func() time.Time
+	random           io.Reader
+	photoUploadWait  func(context.Context, time.Duration) error
+	photoUploadClock func() time.Time
 }
 
 // New creates a reusable stateless client. The caller supplies request deadlines.
 // The default is http.DefaultTransport; automatic redirects are disabled.
 func New(options ...Option) (*SDK, error) {
-	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now, random: rand.Reader}
+	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now, random: rand.Reader,
+		photoUploadWait: waitPhotoUpload, photoUploadClock: time.Now}
 
 	for _, option := range options {
 		if option == nil {
@@ -266,7 +283,8 @@ func New(options ...Option) (*SDK, error) {
 		}
 	}
 
-	return &SDK{web: webtransport.New(config.transport), clock: config.clock, random: config.random}, nil
+	return &SDK{web: webtransport.New(config.transport), clock: config.clock, random: config.random,
+		photoUploadWait: config.photoUploadWait, photoUploadClock: config.photoUploadClock}, nil
 }
 
 // WithRandomSource supplies a concurrency-safe entropy reader for generated identities and authentication.

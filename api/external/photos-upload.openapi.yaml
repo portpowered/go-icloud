@@ -153,6 +153,9 @@
           },
           {
             "$ref": "#/components/parameters/PhotosUploadContentPath"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadTransferEncoding"
           }
         ],
         "requestBody": {
@@ -788,293 +791,58 @@
           "pattern": ".+"
         },
         "description": "Provider-reserved content path. The server origin and query are taken from the HTTPS reservation URL."
+      },
+      "PhotosUploadTransferEncoding": {
+        "schema": {
+          "$ref": "#/components/schemas/PhotosUploadTransferEncoding"
+        },
+        "name": "Transfer-Encoding",
+        "in": "header",
+        "required": false
       }
     },
     "schemas": {
       "PhotosCreateUploadUrlRequest": {
-        "type": "object",
-        "properties": {
-          "zoneName": {
-            "type": "string",
-            "x-order": 1
-          },
-          "assets": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "x-order": 2
-          }
-        },
-        "required": [
-          "zoneName",
-          "assets"
-        ],
-        "additionalProperties": false
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosCreateUploadUrlRequest"
       },
       "PhotosUploadReservationResponse": {
-        "type": "object",
-        "properties": {
-          "uploadUrls": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "default": {},
-            "x-order": 1
-          }
-        },
-        "additionalProperties": {
-          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
-        }
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadReservationResponse"
       },
       "PhotosSingleFileUpload": {
-        "type": "object",
-        "properties": {
-          "referenceChecksum": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 1
-          },
-          "size": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true,
-            "default": null,
-            "x-order": 2
-          },
-          "fileChecksum": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 3
-          },
-          "wrappingKey": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 4
-          },
-          "receipt": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 5
-          }
-        },
-        "additionalProperties": {
-          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
-        },
-        "description": "Stored-byte receipt. Unknown provider fields must be retained when registering the asset. Missing known fields default to null when echoed in registration."
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosSingleFileUpload"
       },
       "PhotosSingleFileUploadResponse": {
-        "type": "object",
-        "properties": {
-          "singleFile": {
-            "$ref": "#/components/schemas/PhotosSingleFileUpload",
-            "x-order": 1
-          }
-        },
-        "required": [
-          "singleFile"
-        ],
-        "additionalProperties": {
-          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
-        }
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosSingleFileUploadResponse"
       },
       "PhotosPutAssetFile": {
-        "type": "object",
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "x-order": 1
-          },
-          "lastModDate": {
-            "type": "integer",
-            "format": "int64",
-            "description": "File modification time in Unix epoch milliseconds.",
-            "x-order": 2
-          },
-          "timeZoneOffset": {
-            "type": "integer",
-            "format": "int64",
-            "description": "UTC minus local timezone offset in minutes.",
-            "x-order": 3
-          },
-          "singleFileUploadRequest": {
-            "$ref": "#/components/schemas/PhotosSingleFileUpload",
-            "x-order": 4
-          }
-        },
-        "required": [
-          "fileName",
-          "lastModDate",
-          "timeZoneOffset",
-          "singleFileUploadRequest"
-        ],
-        "additionalProperties": false
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetFile"
       },
       "PhotosPutAssetRequest": {
-        "type": "object",
-        "properties": {
-          "zoneName": {
-            "type": "string",
-            "x-order": 1
-          },
-          "files": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PhotosPutAssetFile"
-            },
-            "x-order": 2
-          },
-          "localTimeZoneId": {
-            "type": "string",
-            "x-order": 3
-          },
-          "importGroup": {
-            "type": "string",
-            "x-order": 4
-          }
-        },
-        "required": [
-          "zoneName",
-          "files",
-          "localTimeZoneId",
-          "importGroup"
-        ],
-        "additionalProperties": false
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetRequest"
       },
       "PhotosUploadStatusRequest": {
-        "type": "object",
-        "properties": {
-          "uploadJobIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "x-order": 1
-          }
-        },
-        "required": [
-          "uploadJobIds"
-        ],
-        "additionalProperties": false
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadStatusRequest"
       },
       "PhotosUploadStatus": {
-        "type": "object",
-        "properties": {
-          "progress": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true,
-            "default": null,
-            "x-order": 1
-          },
-          "errorCode": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true,
-            "default": null,
-            "x-order": 2
-          }
-        },
-        "additionalProperties": {
-          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
-        }
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadStatus"
       },
       "PhotosUploadStatusEntries": {
-        "type": "object",
-        "additionalProperties": {
-          "$ref": "#/components/schemas/PhotosUploadStatus"
-        }
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadStatusEntries"
       },
       "PhotosPutAssetStatus": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true,
-            "default": null,
-            "x-order": 1
-          },
-          "isRetryable": {
-            "type": "boolean",
-            "nullable": true,
-            "default": null,
-            "x-order": 2
-          },
-          "errorMessage": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 3
-          }
-        },
-        "additionalProperties": {
-          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
-        }
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetStatus"
       },
       "PhotosPutAssetResult": {
-        "type": "object",
-        "properties": {
-          "uploadJobId": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 1
-          },
-          "cplMaster": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 2
-          },
-          "cplAsset": {
-            "type": "string",
-            "nullable": true,
-            "default": null,
-            "x-order": 3
-          },
-          "response": {
-            "$ref": "#/components/schemas/PhotosPutAssetStatus",
-            "nullable": true,
-            "default": null,
-            "x-order": 4
-          }
-        },
-        "additionalProperties": {
-          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKUnknownJSON"
-        }
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetResult"
       },
       "PhotosPutAssetResults": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/PhotosPutAssetResult"
-        }
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetResults"
       },
       "PhotosDuplicateStatus": {
-        "type": "integer",
-        "enum": [
-          409
-        ],
-        "x-enum-varnames": [
-          "PhotosDuplicateStatusValue"
-        ],
-        "description": "Registration status for an existing asset."
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosDuplicateStatus"
       },
       "PhotosUnknownJobErrorCode": {
-        "type": "integer",
-        "enum": [
-          404
-        ],
-        "x-enum-varnames": [
-          "PhotosUnknownJobErrorCodeValue"
-        ],
-        "description": "Upload status error for an unknown job."
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUnknownJobErrorCode"
       },
       "CKLookupRequest": {
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupRequest"
@@ -1083,107 +851,10 @@
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupResponse"
       },
       "PhotosUploadDesiredKey": {
-        "description": "Ordered photo projection fields requested during uploaded asset hydration.",
-        "enum": [
-          "resJPEGFullWidth",
-          "resJPEGFullHeight",
-          "resJPEGFullFileType",
-          "resJPEGFullFingerprint",
-          "resJPEGFullRes",
-          "resJPEGLargeWidth",
-          "resJPEGLargeHeight",
-          "resJPEGLargeFileType",
-          "resJPEGLargeFingerprint",
-          "resJPEGLargeRes",
-          "resJPEGMedWidth",
-          "resJPEGMedHeight",
-          "resJPEGMedFileType",
-          "resJPEGMedFingerprint",
-          "resJPEGMedRes",
-          "resJPEGThumbWidth",
-          "resJPEGThumbHeight",
-          "resJPEGThumbFileType",
-          "resJPEGThumbFingerprint",
-          "resJPEGThumbRes",
-          "resVidFullWidth",
-          "resVidFullHeight",
-          "resVidFullFileType",
-          "resVidFullFingerprint",
-          "resVidFullRes",
-          "resVidMedWidth",
-          "resVidMedHeight",
-          "resVidMedFileType",
-          "resVidMedFingerprint",
-          "resVidMedRes",
-          "resVidSmallWidth",
-          "resVidSmallHeight",
-          "resVidSmallFileType",
-          "resVidSmallFingerprint",
-          "resVidSmallRes",
-          "resSidecarWidth",
-          "resSidecarHeight",
-          "resSidecarFileType",
-          "resSidecarFingerprint",
-          "resSidecarRes",
-          "itemType",
-          "dataClassType",
-          "filenameEnc",
-          "originalOrientation",
-          "resOriginalWidth",
-          "resOriginalHeight",
-          "resOriginalFileType",
-          "resOriginalFingerprint",
-          "resOriginalRes",
-          "resOriginalAltWidth",
-          "resOriginalAltHeight",
-          "resOriginalAltFileType",
-          "resOriginalAltFingerprint",
-          "resOriginalAltRes",
-          "resOriginalVidComplWidth",
-          "resOriginalVidComplHeight",
-          "resOriginalVidComplFileType",
-          "resOriginalVidComplFingerprint",
-          "resOriginalVidComplRes",
-          "isDeleted",
-          "isExpunged",
-          "dateExpunged",
-          "remappedRef",
-          "recordName",
-          "recordType",
-          "recordChangeTag",
-          "masterRef",
-          "adjustmentRenderType",
-          "assetDate",
-          "addedDate",
-          "isFavorite",
-          "isHidden",
-          "orientation",
-          "duration",
-          "assetSubtype",
-          "assetSubtypeV2",
-          "assetHDRType",
-          "burstFlags",
-          "burstFlagsExt",
-          "burstId",
-          "captionEnc",
-          "locationEnc",
-          "locationV2Enc",
-          "locationLatitude",
-          "locationLongitude",
-          "adjustmentType",
-          "timeZoneOffset",
-          "vidComplDurValue",
-          "vidComplDurScale",
-          "vidComplDispValue",
-          "vidComplDispScale",
-          "vidComplVisibilityState",
-          "customRenderedValue",
-          "containerId",
-          "itemId",
-          "position",
-          "isKeyAsset"
-        ],
-        "type": "string"
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadDesiredKey"
+      },
+      "PhotosUploadTransferEncoding": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadTransferEncoding"
       }
     },
     "headers": {

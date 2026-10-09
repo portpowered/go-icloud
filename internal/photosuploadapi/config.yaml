@@ -8,3 +8,4 @@ output-options:
   skip-prune: true
 import-mapping:
   ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit
+  ./photos-upload-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/photosupload

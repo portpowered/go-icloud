@@ -387,6 +387,13 @@
             "x-go-name": "PhotosServiceURL",
             "x-go-type-skip-optional-pointer": true
           },
+          "photosUploadServiceURL": {
+            "description": "HTTPS Photos upload origin returned by authenticated service discovery.",
+            "format": "uri",
+            "type": "string",
+            "x-go-name": "PhotosUploadServiceURL",
+            "x-go-type-skip-optional-pointer": true
+          },
           "remindersServiceURL": {
             "description": "HTTPS Reminders origin from authenticated discovery; required by reminders operations.",
             "format": "uri",
@@ -2915,6 +2922,61 @@
         ],
         "type": "object"
       },
+      "ListPhotoLibrariesRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth"
+        ],
+        "type": "object"
+      },
+      "ListPhotoLibrariesResult": {
+        "example": {
+          "libraries": [
+            {
+              "id": "root",
+              "indexingState": "FINISHED",
+              "isSharedLibrary": false,
+              "ownerRecordName": null,
+              "shared": false,
+              "syncToken": "synthetic-sync",
+              "zoneName": "PrimarySync",
+              "zoneType": "REGULAR_CUSTOM_ZONE"
+            }
+          ],
+          "responses": []
+        },
+        "properties": {
+          "libraries": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoLibrary"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "libraries",
+          "responses"
+        ],
+        "type": "object"
+      },
       "ListRecentlyAddedPhotosRequest": {
         "description": "Enumerate the primary library newest first using the recently-added trailing window index.",
         "example": {
@@ -3775,6 +3837,66 @@
           "name",
           "fullName",
           "recordChangeTag"
+        ],
+        "type": "object"
+      },
+      "PhotoLibrary": {
+        "description": "Caller-owned library identity; SharedSync zones discovered privately retain the private database.",
+        "example": {
+          "id": "root",
+          "indexingState": "FINISHED",
+          "isSharedLibrary": false,
+          "ownerRecordName": null,
+          "shared": false,
+          "syncToken": "synthetic-sync",
+          "zoneName": "PrimarySync",
+          "zoneType": "REGULAR_CUSTOM_ZONE"
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-go-name": "ID"
+          },
+          "indexingState": {
+            "description": "Discovery initialization receipt; omission checks readiness.",
+            "enum": [
+              "FINISHED"
+            ],
+            "type": "string",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "isSharedLibrary": {
+            "description": "Shared-library capabilities independent of database scope.",
+            "type": "boolean"
+          },
+          "ownerRecordName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shared": {
+            "description": "Selects the shared CloudKit database.",
+            "type": "boolean"
+          },
+          "syncToken": {
+            "nullable": true,
+            "type": "string"
+          },
+          "zoneName": {
+            "type": "string"
+          },
+          "zoneType": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "zoneName",
+          "shared",
+          "isSharedLibrary",
+          "zoneType",
+          "ownerRecordName",
+          "syncToken"
         ],
         "type": "object"
       },
@@ -5235,6 +5357,166 @@
         ],
         "type": "object"
       },
+      "AddReminderLocationTriggerRequest": {
+        "description": "Add an atomic location alarm to a revision-aware reminder snapshot.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic",
+            "clientID": "synthetic",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic",
+            "listID": "List/synthetic",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "address": {
+            "default": "",
+            "type": "string",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "latitude": {
+            "default": 0,
+            "format": "double",
+            "type": "number",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "longitude": {
+            "default": 0,
+            "format": "double",
+            "type": "number",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "proximity": {
+            "default": 1,
+            "enum": [
+              1,
+              2
+            ],
+            "type": "integer",
+            "x-enum-varnames": [
+              "LocationArriving",
+              "LocationLeaving"
+            ]
+          },
+          "radius": {
+            "default": 100,
+            "format": "double",
+            "minimum": 0,
+            "type": "number"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "title": {
+            "default": "",
+            "type": "string",
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": [
+          "auth",
+          "reminder"
+        ],
+        "type": "object"
+      },
+      "AddReminderLocationTriggerResult": {
+        "description": "Acknowledged alarm, trigger, independent updated reminder and response evidence.",
+        "example": {
+          "alarm": {
+            "alarmUID": "synthetic",
+            "id": "Alarm/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "triggerID": "synthetic"
+          },
+          "reminder": {
+            "alarmIDs": [
+              "synthetic"
+            ],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic",
+            "listID": "List/synthetic",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "responses": [],
+          "trigger": {
+            "address": "",
+            "alarmID": "Alarm/synthetic",
+            "id": "AlarmTrigger/synthetic",
+            "latitude": 0,
+            "locationUID": "synthetic",
+            "longitude": 0,
+            "proximity": 1,
+            "radius": 100,
+            "recordChangeTag": null,
+            "title": ""
+          }
+        },
+        "properties": {
+          "alarm": {
+            "$ref": "#/components/schemas/ReminderAlarm"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/ReminderLocationTrigger"
+          }
+        },
+        "required": [
+          "reminder",
+          "alarm",
+          "trigger",
+          "responses"
+        ],
+        "type": "object"
+      },
       "CreatePhotoAlbumRequest": {
         "additionalProperties": false,
         "description": "CreatePhotoAlbum operation input.",
@@ -5327,6 +5609,137 @@
         ],
         "type": "object"
       },
+      "CreateReminderRecurrenceRuleRequest": {
+        "additionalProperties": false,
+        "description": "Recurrence rule creation, update, or unlink inputs.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "firstDayOfWeek": {
+            "description": "Provider weekday index; omission uses zero.",
+            "format": "int64",
+            "maximum": 6,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "frequency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderRecurrenceRuleFrequency"
+              }
+            ],
+            "description": "Daily through yearly recurrence; omission uses daily."
+          },
+          "interval": {
+            "description": "Frequency multiplier; omission uses one.",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "occurrenceCount": {
+            "description": "Occurrence count; omission uses zero.",
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder"
+        ],
+        "type": "object"
+      },
+      "CreateReminderURLAttachmentRequest": {
+        "description": "Create a URL attachment and atomically link it to the supplied reminder snapshot.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "url": "https://example.invalid/attachment"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "url": {
+            "type": "string",
+            "x-go-name": "URL"
+          },
+          "uti": {
+            "default": "public.url",
+            "type": "string",
+            "x-go-name": "UTI"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "url"
+        ],
+        "type": "object"
+      },
       "DeletePhotoAlbumRequest": {
         "additionalProperties": false,
         "description": "DeletePhotoAlbum operation input.",
@@ -5395,6 +5808,63 @@
         ],
         "type": "object"
       },
+      "DeleteReminderAttachmentRequest": {
+        "description": "Soft-delete an attachment and atomically remove every matching link from its reminder.",
+        "example": {
+          "attachment": {
+            "id": "Attachment/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "url": "",
+            "uti": "public.url"
+          },
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "attachment": {
+            "$ref": "#/components/schemas/ReminderAttachment"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "attachment"
+        ],
+        "type": "object"
+      },
       "DeleteReminderHashtagRequest": {
         "additionalProperties": false,
         "example": {
@@ -5449,6 +5919,66 @@
           "auth",
           "reminder",
           "hashtag"
+        ],
+        "type": "object"
+      },
+      "DeleteReminderRecurrenceRuleRequest": {
+        "additionalProperties": false,
+        "description": "Recurrence rule creation, update, or unlink inputs.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "recurrenceRule": {
+            "firstDayOfWeek": 0,
+            "frequency": 1,
+            "id": "RecurrenceRule/synthetic",
+            "interval": 1,
+            "occurrenceCount": 0,
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "recurrenceRule": {
+            "$ref": "#/components/schemas/ReminderRecurrenceRule"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "recurrenceRule"
         ],
         "type": "object"
       },
@@ -5634,61 +6164,6 @@
         ],
         "type": "object"
       },
-      "ListPhotoLibrariesRequest": {
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid"
-          }
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          }
-        },
-        "required": [
-          "auth"
-        ],
-        "type": "object"
-      },
-      "ListPhotoLibrariesResult": {
-        "example": {
-          "libraries": [
-            {
-              "id": "root",
-              "indexingState": "FINISHED",
-              "isSharedLibrary": false,
-              "ownerRecordName": null,
-              "shared": false,
-              "syncToken": "synthetic-sync",
-              "zoneName": "PrimarySync",
-              "zoneType": "REGULAR_CUSTOM_ZONE"
-            }
-          ],
-          "responses": []
-        },
-        "properties": {
-          "libraries": {
-            "items": {
-              "$ref": "#/components/schemas/PhotoLibrary"
-            },
-            "type": "array"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "libraries",
-          "responses"
-        ],
-        "type": "object"
-      },
       "PhotoAlbumMutationResult": {
         "additionalProperties": false,
         "description": "PhotoAlbumMutation operation output.",
@@ -5838,66 +6313,6 @@
         ],
         "type": "object"
       },
-      "PhotoLibrary": {
-        "description": "Caller-owned library identity; SharedSync zones discovered privately retain the private database.",
-        "example": {
-          "id": "root",
-          "indexingState": "FINISHED",
-          "isSharedLibrary": false,
-          "ownerRecordName": null,
-          "shared": false,
-          "syncToken": "synthetic-sync",
-          "zoneName": "PrimarySync",
-          "zoneType": "REGULAR_CUSTOM_ZONE"
-        },
-        "properties": {
-          "id": {
-            "type": "string",
-            "x-go-name": "ID"
-          },
-          "indexingState": {
-            "description": "Discovery initialization receipt; omission checks readiness.",
-            "enum": [
-              "FINISHED"
-            ],
-            "type": "string",
-            "x-go-type-skip-optional-pointer": true
-          },
-          "isSharedLibrary": {
-            "description": "Shared-library capabilities independent of database scope.",
-            "type": "boolean"
-          },
-          "ownerRecordName": {
-            "nullable": true,
-            "type": "string"
-          },
-          "shared": {
-            "description": "Selects the shared CloudKit database.",
-            "type": "boolean"
-          },
-          "syncToken": {
-            "nullable": true,
-            "type": "string"
-          },
-          "zoneName": {
-            "type": "string"
-          },
-          "zoneType": {
-            "nullable": true,
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "zoneName",
-          "shared",
-          "isSharedLibrary",
-          "zoneType",
-          "ownerRecordName",
-          "syncToken"
-        ],
-        "type": "object"
-      },
       "PhotoLibraryChange": {
         "example": {
           "deleted": false,
@@ -6009,6 +6424,79 @@
         ],
         "type": "object"
       },
+      "ReminderAttachmentMutationResult": {
+        "description": "Acknowledged parent and attachment snapshots with ordered provider evidence.",
+        "example": {
+          "attachment": {
+            "id": "Attachment/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "url": "",
+            "uti": "public.url"
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "responses": []
+        },
+        "properties": {
+          "attachment": {
+            "$ref": "#/components/schemas/ReminderAttachment"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "reminder",
+          "attachment",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "ReminderAttachmentSelection": {
+        "description": "Generated semantic projection used to select the URL or image attachment variant.",
+        "example": {
+          "url": ""
+        },
+        "properties": {
+          "fileAssetURL": {
+            "type": "string",
+            "x-go-name": "FileAssetURL"
+          },
+          "url": {
+            "type": "string",
+            "x-go-name": "URL"
+          }
+        },
+        "type": "object"
+      },
       "ReminderHashtagMutationResult": {
         "additionalProperties": false,
         "example": {
@@ -6092,602 +6580,6 @@
           "hashtag",
           "responses"
         ],
-        "type": "object"
-      },
-      "RenamePhotoAlbumRequest": {
-        "additionalProperties": false,
-        "description": "RenamePhotoAlbum operation input.",
-        "example": {
-          "albumID": "synthetic-album-0",
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid"
-          },
-          "name": "Album"
-        },
-        "properties": {
-          "albumID": {
-            "description": "Provider album record identifier.",
-            "type": "string"
-          },
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext",
-            "description": "Request-scoped account credentials and response cookie state."
-          },
-          "library": {
-            "$ref": "#/components/schemas/PhotoLibrary",
-            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
-          },
-          "name": {
-            "description": "Decoded album or folder display name.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "auth",
-          "albumID",
-          "name"
-        ],
-        "type": "object"
-      },
-      "SetPhotoFavoriteRequest": {
-        "additionalProperties": false,
-        "description": "SetPhotoFavorite operation input.",
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid"
-          },
-          "favorite": true,
-          "photoID": "synthetic-asset-0"
-        },
-        "properties": {
-          "album": {
-            "description": "The updated album projection.",
-            "type": "string"
-          },
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext",
-            "description": "Request-scoped account credentials and response cookie state."
-          },
-          "favorite": {
-            "description": "Desired favorite state.",
-            "type": "boolean"
-          },
-          "library": {
-            "$ref": "#/components/schemas/PhotoLibrary",
-            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
-          },
-          "photoID": {
-            "description": "Provider asset identifier.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "auth",
-          "photoID",
-          "favorite"
-        ],
-        "type": "object"
-      },
-      "UpdateReminderHashtagRequest": {
-        "additionalProperties": false,
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "hashtag": {
-            "created": null,
-            "id": "Hashtag/synthetic",
-            "name": "synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic"
-          },
-          "name": "Synthetic tag"
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "hashtag": {
-            "$ref": "#/components/schemas/ReminderHashtag"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "auth",
-          "hashtag",
-          "name"
-        ],
-        "type": "object"
-      },
-      "AddReminderLocationTriggerRequest": {
-        "description": "Add an atomic location alarm to a revision-aware reminder snapshot.",
-        "example": {
-          "auth": {
-            "accountID": "synthetic",
-            "clientID": "synthetic",
-            "headers": []
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic",
-            "listID": "List/synthetic",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          }
-        },
-        "properties": {
-          "address": {
-            "default": "",
-            "type": "string",
-            "x-go-type-skip-optional-pointer": true
-          },
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "latitude": {
-            "default": 0,
-            "format": "double",
-            "type": "number",
-            "x-go-type-skip-optional-pointer": true
-          },
-          "longitude": {
-            "default": 0,
-            "format": "double",
-            "type": "number",
-            "x-go-type-skip-optional-pointer": true
-          },
-          "proximity": {
-            "default": 1,
-            "enum": [
-              1,
-              2
-            ],
-            "type": "integer",
-            "x-enum-varnames": [
-              "LocationArriving",
-              "LocationLeaving"
-            ]
-          },
-          "radius": {
-            "default": 100,
-            "format": "double",
-            "minimum": 0,
-            "type": "number"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          },
-          "title": {
-            "default": "",
-            "type": "string",
-            "x-go-type-skip-optional-pointer": true
-          }
-        },
-        "required": [
-          "auth",
-          "reminder"
-        ],
-        "type": "object"
-      },
-      "AddReminderLocationTriggerResult": {
-        "description": "Acknowledged alarm, trigger, independent updated reminder and response evidence.",
-        "example": {
-          "alarm": {
-            "alarmUID": "synthetic",
-            "id": "Alarm/synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic",
-            "triggerID": "synthetic"
-          },
-          "reminder": {
-            "alarmIDs": [
-              "synthetic"
-            ],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic",
-            "listID": "List/synthetic",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          },
-          "responses": [],
-          "trigger": {
-            "address": "",
-            "alarmID": "Alarm/synthetic",
-            "id": "AlarmTrigger/synthetic",
-            "latitude": 0,
-            "locationUID": "synthetic",
-            "longitude": 0,
-            "proximity": 1,
-            "radius": 100,
-            "recordChangeTag": null,
-            "title": ""
-          }
-        },
-        "properties": {
-          "alarm": {
-            "$ref": "#/components/schemas/ReminderAlarm"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          },
-          "trigger": {
-            "$ref": "#/components/schemas/ReminderLocationTrigger"
-          }
-        },
-        "required": [
-          "reminder",
-          "alarm",
-          "trigger",
-          "responses"
-        ],
-        "type": "object"
-      },
-      "CreateReminderRecurrenceRuleRequest": {
-        "additionalProperties": false,
-        "description": "Recurrence rule creation, update, or unlink inputs.",
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          }
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "firstDayOfWeek": {
-            "description": "Provider weekday index; omission uses zero.",
-            "format": "int64",
-            "maximum": 6,
-            "minimum": 0,
-            "type": "integer"
-          },
-          "frequency": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ReminderRecurrenceRuleFrequency"
-              }
-            ],
-            "description": "Daily through yearly recurrence; omission uses daily."
-          },
-          "interval": {
-            "description": "Frequency multiplier; omission uses one.",
-            "format": "int64",
-            "minimum": 1,
-            "type": "integer"
-          },
-          "occurrenceCount": {
-            "description": "Occurrence count; omission uses zero.",
-            "format": "int64",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          }
-        },
-        "required": [
-          "auth",
-          "reminder"
-        ],
-        "type": "object"
-      },
-      "CreateReminderURLAttachmentRequest": {
-        "description": "Create a URL attachment and atomically link it to the supplied reminder snapshot.",
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          },
-          "url": "https://example.invalid/attachment"
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          },
-          "url": {
-            "type": "string",
-            "x-go-name": "URL"
-          },
-          "uti": {
-            "default": "public.url",
-            "type": "string",
-            "x-go-name": "UTI"
-          }
-        },
-        "required": [
-          "auth",
-          "reminder",
-          "url"
-        ],
-        "type": "object"
-      },
-      "DeleteReminderAttachmentRequest": {
-        "description": "Soft-delete an attachment and atomically remove every matching link from its reminder.",
-        "example": {
-          "attachment": {
-            "id": "Attachment/synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic",
-            "url": "",
-            "uti": "public.url"
-          },
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          }
-        },
-        "properties": {
-          "attachment": {
-            "$ref": "#/components/schemas/ReminderAttachment"
-          },
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          }
-        },
-        "required": [
-          "auth",
-          "reminder",
-          "attachment"
-        ],
-        "type": "object"
-      },
-      "DeleteReminderRecurrenceRuleRequest": {
-        "additionalProperties": false,
-        "description": "Recurrence rule creation, update, or unlink inputs.",
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "recurrenceRule": {
-            "firstDayOfWeek": 0,
-            "frequency": 1,
-            "id": "RecurrenceRule/synthetic",
-            "interval": 1,
-            "occurrenceCount": 0,
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic"
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          }
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "recurrenceRule": {
-            "$ref": "#/components/schemas/ReminderRecurrenceRule"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          }
-        },
-        "required": [
-          "auth",
-          "reminder",
-          "recurrenceRule"
-        ],
-        "type": "object"
-      },
-      "ReminderAttachmentMutationResult": {
-        "description": "Acknowledged parent and attachment snapshots with ordered provider evidence.",
-        "example": {
-          "attachment": {
-            "id": "Attachment/synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic",
-            "url": "",
-            "uti": "public.url"
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          },
-          "responses": []
-        },
-        "properties": {
-          "attachment": {
-            "$ref": "#/components/schemas/ReminderAttachment"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "reminder",
-          "attachment",
-          "responses"
-        ],
-        "type": "object"
-      },
-      "ReminderAttachmentSelection": {
-        "description": "Generated semantic projection used to select the URL or image attachment variant.",
-        "example": {
-          "url": ""
-        },
-        "properties": {
-          "fileAssetURL": {
-            "type": "string",
-            "x-go-name": "FileAssetURL"
-          },
-          "url": {
-            "type": "string",
-            "x-go-name": "URL"
-          }
-        },
         "type": "object"
       },
       "ReminderRecurrenceRuleFrequency": {
@@ -6797,6 +6689,86 @@
         ],
         "type": "object"
       },
+      "RenamePhotoAlbumRequest": {
+        "additionalProperties": false,
+        "description": "RenamePhotoAlbum operation input.",
+        "example": {
+          "albumID": "synthetic-album-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid"
+          },
+          "name": "Album"
+        },
+        "properties": {
+          "albumID": {
+            "description": "Provider album record identifier.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary",
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "name": {
+            "description": "Decoded album or folder display name.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "albumID",
+          "name"
+        ],
+        "type": "object"
+      },
+      "SetPhotoFavoriteRequest": {
+        "additionalProperties": false,
+        "description": "SetPhotoFavorite operation input.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid"
+          },
+          "favorite": true,
+          "photoID": "synthetic-asset-0"
+        },
+        "properties": {
+          "album": {
+            "description": "The updated album projection.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "favorite": {
+            "description": "Desired favorite state.",
+            "type": "boolean"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary",
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "photoID": {
+            "description": "Provider asset identifier.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "photoID",
+          "favorite"
+        ],
+        "type": "object"
+      },
       "UpdateReminderAttachmentRequest": {
         "description": "Update URL text or image metadata; omitted fields retain their current values.",
         "example": {
@@ -6883,6 +6855,41 @@
         ],
         "type": "object"
       },
+      "UpdateReminderHashtagRequest": {
+        "additionalProperties": false,
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "hashtag": {
+            "created": null,
+            "id": "Hashtag/synthetic",
+            "name": "synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "name": "Synthetic tag"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "hashtag": {
+            "$ref": "#/components/schemas/ReminderHashtag"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "hashtag",
+          "name"
+        ],
+        "type": "object"
+      },
       "UpdateReminderRecurrenceRuleRequest": {
         "additionalProperties": false,
         "description": "Recurrence rule creation, update, or unlink inputs.",
@@ -6942,6 +6949,682 @@
         "required": [
           "auth",
           "recurrenceRule"
+        ],
+        "type": "object"
+      },
+      "GetPhotoUploadStatusRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "jobIDs": [
+            "synthetic-job"
+          ]
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "jobIDs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "x-go-name": "JobIDs"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          }
+        },
+        "required": [
+          "auth",
+          "jobIDs"
+        ],
+        "type": "object"
+      },
+      "GetPhotoUploadStatusResult": {
+        "example": {
+          "jobs": {
+            "synthetic-job": {
+              "errorCode": null,
+              "progress": 100,
+              "unknown": false
+            }
+          },
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "jobs": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PhotoUploadStatus"
+            },
+            "type": "object"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "jobs",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadFile": {
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "modificationTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/PhotoUploadReceipt"
+          },
+          "timeZoneOffset": {
+            "description": "UTC minus local time, in minutes.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "filename",
+          "modificationTime",
+          "timeZoneOffset",
+          "receipt"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadReceipt": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "description": "Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.",
+        "properties": {
+          "fileChecksum": {
+            "nullable": true,
+            "type": "string"
+          },
+          "receipt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "referenceChecksum": {
+            "nullable": true,
+            "type": "string"
+          },
+          "size": {
+            "format": "int64",
+            "nullable": true,
+            "type": "integer"
+          },
+          "wrappingKey": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "referenceChecksum",
+          "size",
+          "fileChecksum",
+          "wrappingKey",
+          "receipt"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadRegistration": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "properties": {
+          "duplicate": {
+            "type": "boolean"
+          },
+          "jobID": {
+            "nullable": true,
+            "type": "string",
+            "x-go-name": "JobID"
+          },
+          "masterID": {
+            "nullable": true,
+            "type": "string",
+            "x-go-name": "MasterID"
+          },
+          "photoID": {
+            "nullable": true,
+            "type": "string",
+            "x-go-name": "PhotoID"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PhotoUploadRegistrationStatus"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "jobID",
+          "masterID",
+          "photoID",
+          "status",
+          "duplicate"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadRegistrationStatus": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "properties": {
+          "errorMessage": {
+            "nullable": true,
+            "type": "string"
+          },
+          "retryable": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "status": {
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "retryable",
+          "errorMessage"
+        ],
+        "type": "object"
+      },
+      "PhotoUploadStatus": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "properties": {
+          "errorCode": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "progress": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "unknown": {
+            "description": "True when the provider does not recognize this job.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "progress",
+          "errorCode",
+          "unknown"
+        ],
+        "type": "object"
+      },
+      "RegisterPhotoUploadsRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "files": [
+            {
+              "filename": "synthetic.jpg",
+              "modificationTime": "2023-11-14T22:13:20Z",
+              "receipt": {
+                "fileChecksum": null,
+                "receipt": "synthetic-receipt",
+                "referenceChecksum": null,
+                "size": 3,
+                "wrappingKey": null
+              },
+              "timeZoneOffset": 0
+            }
+          ],
+          "importGroup": "synthetic-import",
+          "localTimeZoneID": "UTC"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoUploadFile"
+            },
+            "type": "array"
+          },
+          "importGroup": {
+            "type": "string"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          },
+          "localTimeZoneID": {
+            "type": "string",
+            "x-go-name": "LocalTimeZoneID"
+          }
+        },
+        "required": [
+          "auth",
+          "files",
+          "importGroup",
+          "localTimeZoneID"
+        ],
+        "type": "object"
+      },
+      "RegisterPhotoUploadsResult": {
+        "example": {
+          "registrations": [
+            {
+              "duplicate": false,
+              "jobID": "synthetic-job",
+              "masterID": "synthetic-master",
+              "photoID": "synthetic-photo",
+              "status": {
+                "errorMessage": null,
+                "retryable": false,
+                "status": 200
+              }
+            }
+          ],
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "registrations": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoUploadRegistration"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "registrations",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "ReservePhotoUploadsRequest": {
+        "example": {
+          "assets": {
+            "synthetic-file": 3
+          },
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          }
+        },
+        "properties": {
+          "assets": {
+            "additionalProperties": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "description": "Caller-generated identities mapped to complete byte lengths.",
+            "type": "object"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          }
+        },
+        "required": [
+          "auth",
+          "assets"
+        ],
+        "type": "object"
+      },
+      "ReservePhotoUploadsResult": {
+        "example": {
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ],
+          "uploadURLs": {
+            "synthetic-file": "https://content.example.invalid/upload?token=synthetic"
+          }
+        },
+        "properties": {
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "uploadURLs": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "x-go-name": "UploadURLs"
+          }
+        },
+        "required": [
+          "uploadURLs",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "SendPhotoUploadBytesRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "content": "synthetic-bytes",
+          "url": "https://content.example.invalid/upload?token=synthetic"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "content": {
+            "description": "Caller-owned reader; bytes start at its current position. The SDK does not close it.",
+            "format": "binary",
+            "type": "string",
+            "x-go-type": "io.ReadSeeker"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          },
+          "url": {
+            "description": "Signed HTTPS URL returned by ReservePhotoUploads.",
+            "format": "uri",
+            "type": "string",
+            "x-go-name": "URL"
+          }
+        },
+        "required": [
+          "auth",
+          "url",
+          "content"
+        ],
+        "type": "object"
+      },
+      "SendPhotoUploadBytesResult": {
+        "example": {
+          "receipt": {
+            "fileChecksum": null,
+            "receipt": "synthetic-receipt",
+            "referenceChecksum": null,
+            "size": 3,
+            "wrappingKey": null
+          },
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "receipt": {
+            "$ref": "#/components/schemas/PhotoUploadReceipt"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "receipt",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "UploadPhotoFileRequest": {
+        "description": "Transfer and register one file through the composable uploader; the result does not wait for CloudKit indexing.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "content": "synthetic-bytes",
+          "filename": "synthetic.jpg",
+          "localTimeZoneID": "UTC",
+          "modificationTime": "2023-11-14T22:13:20Z",
+          "timeZoneOffset": 0
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "content": {
+            "description": "Caller-owned seekable file bytes starting at the current cursor.",
+            "format": "binary",
+            "type": "string",
+            "x-go-type": "io.ReadSeeker"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "importGroup": {
+            "type": "string"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          },
+          "localTimeZoneID": {
+            "type": "string",
+            "x-go-name": "LocalTimeZoneID"
+          },
+          "modificationTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "timeZoneOffset": {
+            "description": "UTC minus local time in minutes.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "auth",
+          "filename",
+          "content",
+          "modificationTime",
+          "localTimeZoneID",
+          "timeZoneOffset"
+        ],
+        "type": "object"
+      },
+      "UploadPhotoFileResult": {
+        "description": "Provider registration including duplicate acknowledgement and ordered response metadata; background indexing may continue.",
+        "example": {
+          "registration": {
+            "duplicate": false,
+            "jobID": "synthetic-job",
+            "masterID": "synthetic-master",
+            "photoID": "synthetic-photo",
+            "status": {
+              "errorMessage": null,
+              "retryable": false,
+              "status": 200
+            }
+          },
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "registration": {
+            "$ref": "#/components/schemas/PhotoUploadRegistration"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "registration",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "UploadPhotoRequest": {
+        "description": "Reserve, transfer and register one file. Optional hydration waits for CloudKit indexing; registration remains available when the indexing deadline expires.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "content": "synthetic-bytes",
+          "filename": "synthetic.jpg",
+          "hydrate": true,
+          "localTimeZoneID": "UTC",
+          "modificationTime": "2023-11-14T22:13:20Z",
+          "timeZoneOffset": 0
+        },
+        "properties": {
+          "albumID": {
+            "description": "Optional destination album; membership is requested after successful hydration.",
+            "type": "string",
+            "x-go-name": "AlbumID"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "content": {
+            "description": "Caller-owned seekable content; starts from the current cursor.",
+            "format": "binary",
+            "type": "string",
+            "x-go-type": "io.ReadSeeker"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "hydrate": {
+            "description": "Retry CloudKit lookup until the photo is indexed or the deadline expires.",
+            "type": "boolean"
+          },
+          "hydrationInterval": {
+            "description": "Initial retry interval; omission uses two seconds, doubling up to eight seconds.",
+            "type": "integer",
+            "x-go-type": "time.Duration"
+          },
+          "hydrationTimeout": {
+            "description": "Maximum indexing wait; omission uses 60 seconds.",
+            "type": "integer",
+            "x-go-type": "time.Duration"
+          },
+          "importGroup": {
+            "type": "string"
+          },
+          "library": {
+            "$ref": "#/components/schemas/PhotoLibrary"
+          },
+          "localTimeZoneID": {
+            "description": "IANA time zone; use UTC for a deterministic upload.",
+            "type": "string",
+            "x-go-name": "LocalTimeZoneID"
+          },
+          "modificationTime": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "timeZoneOffset": {
+            "description": "UTC minus local time in minutes.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "auth",
+          "filename",
+          "content",
+          "modificationTime",
+          "localTimeZoneID",
+          "timeZoneOffset",
+          "hydrate"
+        ],
+        "type": "object"
+      },
+      "UploadPhotoResult": {
+        "example": {
+          "indexed": false,
+          "photo": null,
+          "registration": {
+            "duplicate": false,
+            "jobID": "synthetic-job",
+            "masterID": "synthetic-master",
+            "photoID": "synthetic-photo",
+            "status": {
+              "errorMessage": null,
+              "retryable": false,
+              "status": 200
+            }
+          },
+          "responses": [
+            {
+              "headers": [],
+              "statusCode": 200
+            }
+          ]
+        },
+        "properties": {
+          "indexed": {
+            "type": "boolean"
+          },
+          "photo": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Photo"
+              }
+            ],
+            "nullable": true
+          },
+          "registration": {
+            "$ref": "#/components/schemas/PhotoUploadRegistration"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "registration",
+          "photo",
+          "indexed",
+          "responses"
         ],
         "type": "object"
       }

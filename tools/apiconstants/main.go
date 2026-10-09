@@ -76,7 +76,7 @@ func generateExternalConstants(prefix, modelsName string) error {
 
 	if prefix == "Photos" {
 		return generateExternalConstantsFromFiles("PhotosUpload", "api/external/photos-upload.openapi.yaml",
-			"api/external/photos-upload.openapi.yaml")
+			"api/external/photos-upload-models.openapi.yaml")
 	}
 
 	return nil
