@@ -18,6 +18,10 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ListRecentlyAddedPhotos reads the primary library newest first with overlap deduplication.
+	ListRecentlyAddedPhotos(ctx context.Context,
+		request ListRecentlyAddedPhotosRequest,
+	) (*ListRecentlyAddedPhotosResult, error)
 	// GetPhoto finds one album asset by identifier with Source enumeration fallback.
 	GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error)
 	// DownloadPhoto retrieves exact rendition bytes through the photo's provider-issued resource URL.

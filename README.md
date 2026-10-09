@@ -992,6 +992,22 @@ go-icloud --session <private-go-session.json> --album Library --photo <asset-id>
 
 The result contains the complete photo projection or explicit null after the Source-equivalent direct and paginated fallback searches. Signed resource URLs remain private. A live lookup using saved credentials succeeded.
 
+The primary library also supports `ListRecentlyAddedPhotos`. This reads the
+recently-added index newest first, with trailing rank windows and overlap
+deduplication. It discovers private/shared library zones before paging and does
+not call the album count endpoint. A provider refusal during shared discovery
+is retained in `Responses` while the primary-library read continues, matching
+the reference behavior. Other initialization and paging failures return typed
+errors with the complete preceding response evidence.
+
+```go
+recent, err := client.ListRecentlyAddedPhotos(ctx, icloud.ListRecentlyAddedPhotosRequest{Auth: auth})
+if err != nil {
+    return err
+}
+photos := recent.Photos // newest additions first; keep private
+```
+
 `photo-download` emits a JSON `content` field containing base64 file bytes. An
 available empty file returns an empty string; an unavailable rendition returns
 null. Omit `--version` for the original, or select a known photo rendition.

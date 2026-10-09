@@ -253,6 +253,198 @@
           }
         }
       }
+    },
+    "/database/1/com.apple.photos.cloud/production/private/zones/list": {
+      "post": {
+        "operationId": "PhotosListPrivateZones",
+        "summary": "Discover private photo libraries",
+        "description": "Read private library zones while initializing library-scoped photo reads.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKEmptyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/zones/list": {
+      "post": {
+        "operationId": "PhotosListSharedZones",
+        "summary": "Discover shared photo libraries",
+        "description": "Read shared library zones while initializing library-scoped photo reads.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKEmptyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              }
+            },
+            "description": "Typed CloudKit result; records may include successful records, tombstones and per-record errors. The reference parses JSON regardless of advertised media type."
+          },
+          "2XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKZoneListResponse"
+                }
+              }
+            },
+            "description": "Successful CloudKit result with the same payload contract. The reference parses JSON regardless of advertised media type."
+          },
+          "default": {
+            "$ref": "#/components/responses/PhotosFailure"
+          }
+        }
+      }
     }
   },
   "components": {
