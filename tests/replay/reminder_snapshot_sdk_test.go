@@ -24,7 +24,7 @@ func TestReminderSnapshotSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 25 {
+	if len(paths) != 28 {
 		t.Fatal("reminder snapshot inventory changed")
 	}
 

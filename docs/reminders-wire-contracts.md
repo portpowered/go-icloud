@@ -21,8 +21,10 @@ before model coercion and byte-backed URLs avoid a second decoding step.
 Two strict-decoding cases preserve STRING base64 URLs containing CR or LF.
 Twenty-eight Source snapshot facade cases now cover public list discovery, explicit
 and empty filters, pagination, replacement across lists, overlapping record/error/
-tombstone alternatives and discovery-cookie reuse. The Go snapshot
-facade port remains in progress.
+tombstone alternatives and discovery-cookie reuse. The Go `ListReminderSnapshot`
+port executes all twenty-eight scenarios and forty-five paired exchanges with
+complete reminders, ordered response evidence and no partial result on failure.
+Full verification and independent review remain pending.
 Thirteen additional list discovery cases execute both Source and Go. Selection follows
 the Source model union before errors are checked: normal records and tombstones
 can win over error-shaped extra metadata, while a selected error with an empty
@@ -153,7 +155,7 @@ IDs, sentinel and fractional dates, document fallbacks, unrelated records,
 alternate success status/cookies, missing records, provider errors and malformed
 replies. `ListReminders` reuses that complete reminder projection while consuming
 every compound query page and mapping related records. The all-lists snapshot
-facade, linked-record lookup methods and write encoding remain pending.
+facade is implemented; linked-record lookup methods and write encoding remain pending.
 
 The public Go `ListReminderZones` operation now passes ten semantic replays,
 including empty, one and multiple zones, provider and schema failures, and
@@ -174,7 +176,7 @@ rejection, numeric/container truthiness and display conversion, embedded asset
 precedence, invalid membership, and empty pagination tokens. An additional nested
 display case binds control-character escaping to the reference. Five malformed
 responses must fail external schema validation as well as Source and Go decoding.
-The remaining public Reminders API must still port the all-lists snapshot facade,
+The remaining public Reminders API must still port
 linked-record lookup methods, reminder and related-record mutations, CRDT write
 encoding, write receipts/state updates, and their typed failures and portable
 functional outcomes. Implemented query pagination and domain/text decoding are

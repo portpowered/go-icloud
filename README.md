@@ -181,28 +181,6 @@ literally; obtain its complete record name from `ListReminderLists`.
 Related records outside the returned list are filtered after all pages, and
 duplicate IDs retain their last value and original reminder position.
 
-Collect reminders across discovered lists, including completed items:
-
-```go
-snapshot, err := client.ListReminderSnapshot(ctx, icloud.ListReminderSnapshotRequest{
-    Auth: resumed.Auth,
-})
-if err != nil {
-    return err
-}
-for _, reminder := range snapshot.Reminders {
-    fmt.Println(reminder.ID, reminder.Title)
-}
-```
-
-An optional `ListID` selects one literal list record name. Omission or empty text
-discovers every list, consuming membership assets and all list/query pages.
-Queries use page size 200 and include completed items. Duplicate reminder IDs
-retain their last value and first position across lists. `Responses` contains
-all request evidence and cookie updates; failures return typed errors with prior
-response evidence and no partial snapshot. Fourteen paired Source/Go cases cover
-these paths. Live Go verification and full Reminders parity remain open.
-
 ```go
 snapshot, err := client.ListReminders(ctx, icloud.ListRemindersRequest{
     Auth: resumed.Auth,
@@ -227,6 +205,28 @@ byte-backed URLs retain their decoded text without a second base64 decoding step
 STRING base64 URLs with CR or LF retain their original text under strict decoding.
 This API is
 under verification; the separate CLI compound query command remains pending.
+
+Collect reminders across discovered lists, including completed items:
+
+```go
+snapshot, err := client.ListReminderSnapshot(ctx, icloud.ListReminderSnapshotRequest{
+    Auth: resumed.Auth,
+})
+if err != nil {
+    return err
+}
+for _, reminder := range snapshot.Reminders {
+    fmt.Println(reminder.ID, reminder.Title)
+}
+```
+
+An optional `ListID` selects one literal list record name. Omission or empty text
+discovers every list, consuming membership assets and all list/query pages.
+Queries use page size 200 and include completed items. Duplicate reminder IDs
+retain their last value and first position across lists. `Responses` contains
+all request evidence and cookie updates; failures return typed errors with prior
+response evidence and no partial snapshot. Twenty-eight Source/Go cases with forty-five paired exchanges cover
+these paths. Live Go verification and full Reminders parity remain open.
 
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private
