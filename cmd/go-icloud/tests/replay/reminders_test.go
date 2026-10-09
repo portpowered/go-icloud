@@ -15,10 +15,13 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
+const reminderCommand = "reminder"
+
 func TestReminderCommands(t *testing.T) {
 	t.Parallel()
 
-	for prefix, operation := range map[string]string{"zones": "reminder-zones", "lists": "reminder-lists"} {
+	for prefix, operation := range map[string]string{"zones": "reminder-zones",
+		"lists": "reminder-lists", "get": reminderCommand} {
 		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/reminders-" + prefix + "-*.json")
 		if err != nil {
 			t.Fatal(err)
@@ -27,6 +30,10 @@ func TestReminderCommands(t *testing.T) {
 		want := 10
 		if prefix == "lists" {
 			want = 24
+		}
+
+		if prefix == "get" {
+			want = 19
 		}
 
 		if len(paths) != want {
@@ -75,7 +82,17 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 
 	var output, diagnostic bytes.Buffer
 
-	err = command.Run(t.Context(), client, []string{sessionFlag, session, operation}, &output, &diagnostic)
+	args := []string{sessionFlag, session}
+
+	if operation == reminderCommand {
+		var inputs []string
+
+		decode(t, row["inputs"], &inputs)
+		args = append(args, "--reminder", inputs[0])
+	}
+
+	args = append(args, operation)
+	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	checkReminderCommandOutcome(t, operation, row, output.Bytes(), err)
 
 	if diagnostic.Len() != 0 {
@@ -124,6 +141,16 @@ func checkReminderCommandOutcome(t *testing.T, operation string, row map[string]
 		return
 	}
 
+	if operation == reminderCommand {
+		if len(actual) != 1 {
+			t.Fatal("CLI reminder result contains unexpected fields")
+		}
+
+		checkReminderCLIReminder(t, actual["reminder"], row["result"])
+
+		return
+	}
+
 	checkReminderCLIZones(t, actual, row["result"])
 }
 
@@ -141,8 +168,13 @@ func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failu
 	last := exchanges[len(exchanges)-1]
 
 	kind := expectedFailureKind(last.Response.Status)
-	if last.Response.Status < 400 && !strings.HasPrefix(sourceError["message"], "Fetch reminder lists failed") {
+	if last.Response.Status < 400 && !strings.HasPrefix(sourceError["message"], "Fetch reminder lists failed") &&
+		!strings.HasPrefix(sourceError["message"], "Lookup reminder failed") {
 		kind = icloud.InvalidResponse
+	}
+
+	if sourceError["type"] == "LookupError" {
+		kind = icloud.NotFound
 	}
 
 	if failure.Kind() != kind || failure.StatusCode() != last.Response.Status ||

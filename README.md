@@ -149,6 +149,7 @@ go run . --session C:/private/icloud-auth.json --node YOUR_NODE_ID drive-node
 go run . --session C:/private/icloud-auth.json --family findmy
 go run . --session C:/private/icloud-auth.json reminder-zones
 go run . --session C:/private/icloud-auth.json reminder-lists
+go run . --session C:/private/icloud-auth.json --reminder Reminder/synthetic-item reminder
 ```
 
 `resume` saves a private `ResumeSessionResult` file and prints only its path and
@@ -165,8 +166,11 @@ of Git. Commands print service results as JSON, omit response authentication
 metadata, and use a configurable `--timeout` (default one minute). Find My closes
 its session after returning the initial device list. `reminder-zones` discovers
 zones and cursors; `reminder-lists` consumes every list page and membership asset.
+Use `--reminder <identifier> reminder` to read one complete reminder; identifiers
+may be raw or begin with `Reminder/`. Titles, notes, dates, state, related IDs,
+parent and revision are returned using the public SDK projection.
 Both reuse the same private saved session. Response authentication headers are
-omitted from command output. Photos, individual reminder reads and write
+omitted from command output. Photos, compound reminder queries and write
 operations are not yet CLI commands.
 
 CLI replay tests use the root canonical synthetic fixture tree and public SDK.

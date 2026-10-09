@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/oapi-codegen/nullable v1.2.0
-	github.com/portpowered/go-icloud v0.0.0-20261009025018-4ab068e7ba38
+	github.com/portpowered/go-icloud v0.0.0-20261009034656-c0e27fab026c
 )
 
 require (
@@ -12,4 +12,6 @@ require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/oapi-codegen/runtime v1.7.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 )
