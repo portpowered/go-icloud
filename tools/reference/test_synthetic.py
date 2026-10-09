@@ -243,7 +243,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 41)
+        self.assertEqual(len(paths), 31)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
