@@ -50,6 +50,22 @@ Shared streams support these read operations. Their legacy API does not support
 album edits or uploads. CloudKit shared libraries use the regular Photos library
 selection APIs.
 
+To reproduce the Python library inventory, compose `ListPhotoLibraries` for
+CloudKit libraries with `ListSharedPhotoAlbums` for the optional legacy shared
+streams service. The Python `libraries["shared"]` entry represents this separate
+stream library; its albums are returned by `ListSharedPhotoAlbums`. Legacy streams
+have no Source sync operation, so use their enumeration methods to read them.
+
+The pinned Source's shared album `delete` returns false and `rename` returns None.
+Shared stream libraries have no `upload_file` method and shared albums have no
+`upload` method. These inert or absent methods do not define
+supported mutation routes and are excluded from the SDK's writable operations.
+
+The Source's `like_count` annotation does not validate provider values. The SDK
+keeps an integer count contract and returns `InvalidResponse` for null or noninteger
+counts. The `liked` property follows Python truthiness, including nonempty strings
+and empty collections. Missing required dimensions also return `InvalidResponse`.
+
 The wire reference describes [album discovery](/docs/openapi/unknown/SharedAlbums),
 [asset counting](/docs/openapi/unknown/SharedCount), and
 [asset pages](/docs/openapi/unknown/SharedAssets).

@@ -245,8 +245,19 @@
             "$ref": "#/components/schemas/SharedIntegerValue"
           },
           "likedByCaller": {
-            "$ref": "#/components/schemas/SharedBooleanValue"
+            "$ref": "#/components/schemas/SharedJSONValueWrapper"
           }
+        }
+      },
+      "SharedJSONValueWrapper": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/JsonValue"
         }
       },
       "SharedPhotoRecord": {

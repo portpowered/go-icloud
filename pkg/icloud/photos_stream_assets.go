@@ -48,12 +48,7 @@ func (read *photosRead) sharedPages(ctx context.Context, album sharedphotos.Shar
 
 		read.responses = append(read.responses, response.Metadata)
 
-		records, err := photoNormalRecords(response.Data)
-		if err != nil {
-			return nil, read.failure(err, InvalidResponse)
-		}
-
-		pairs, err := projectSharedPairs(records)
+		pairs, err := projectSharedPairs(response.Records)
 		if err != nil {
 			return nil, read.failure(err, InvalidResponse)
 		}
@@ -90,11 +85,11 @@ func projectSharedPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
 		case cloudkit.CPLAsset:
 			value, err := photoFieldValue(record, string(cloudkit.MasterRef))
 			if err != nil {
-				return nil, err
+				continue
 			}
 
 			var reference cloudkit.CKReference
-			if json.Unmarshal(value, &reference) == nil && reference.RecordName != "" {
+			if json.Unmarshal(value, &reference) == nil {
 				assets[reference.RecordName] = record
 			}
 		case cloudkit.CPLMaster:
@@ -248,10 +243,13 @@ func fillSharedPhoto(photo *Photo, pair photoPair) error {
 
 	photo.AssetMetadata = metadata
 
-	photo.Dimensions, err = photoMasterValues(pair.master, []cloudkit.PhotoMasterField{
-		cloudkit.ResOriginalWidth, cloudkit.ResOriginalHeight})
-	if err != nil {
-		return err
+	photo.Dimensions = []json.RawMessage{}
+	for _, name := range []cloudkit.PhotoMasterField{cloudkit.ResOriginalWidth, cloudkit.ResOriginalHeight} {
+		value, valueErr := sharedFieldValue(pair.master, string(name))
+		if valueErr != nil || len(value) == 0 {
+			return errSharedDimensions
+		}
+		photo.Dimensions = append(photo.Dimensions, value)
 	}
 
 	photo.Added = sharedPhotoDate(pair.asset, string(cloudkit.AddedDate))
@@ -259,31 +257,4 @@ func fillSharedPhoto(photo *Photo, pair photoPair) error {
 	photo.Size = sharedPhotoSize(pair.master, string(sharedphotos.ResOriginalFileSize))
 
 	return nil
-}
-
-func sharedPhotoLikes(photo Photo, record cloudkit.CKRecord) (SharedPhoto, error) {
-	plugin := new(sharedphotos.SharedPluginFields)
-
-	if record.PluginFields != nil {
-		encoded, err := json.Marshal(*record.PluginFields)
-		if err != nil {
-			return SharedPhoto{}, fmt.Errorf("encode stream likes: %w", err)
-		}
-
-		err = json.Unmarshal(encoded, plugin)
-		if err != nil {
-			return SharedPhoto{}, fmt.Errorf("decode stream likes: %w", err)
-		}
-	}
-
-	result := SharedPhoto{Photo: photo, LikeCount: 0, Liked: false}
-	if plugin.LikeCount != nil {
-		result.LikeCount = plugin.LikeCount.Value
-	}
-
-	if plugin.LikedByCaller != nil {
-		result.Liked = plugin.LikedByCaller.Value
-	}
-
-	return result, nil
 }

@@ -60,8 +60,8 @@ func TestSharedPhotosRequiredFields(t *testing.T) {
 	}
 
 	if document.Components.Schemas["SharedPluginFields"].Value.VisitJSON(
-		map[string]any{"likedByCaller": map[string]any{"value": "true"}}) == nil {
-		t.Fatal("malformed shared plugin accepted")
+		map[string]any{"likedByCaller": "true"}) == nil {
+		t.Fatal("non-object shared plugin accepted")
 	}
 
 	if document.Components.Schemas["SharedAlbumsRequest"].Value.VisitJSON(

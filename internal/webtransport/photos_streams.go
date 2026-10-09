@@ -13,6 +13,7 @@ import (
 	"github.com/portpowered/go-icloud/internal/photosapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/sharedphotosapi"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/sharedphotos"
 )
 
@@ -25,6 +26,12 @@ type SharedAlbumsResponse struct {
 // SharedCountResponse retains one stream's count and response evidence.
 type SharedCountResponse struct {
 	Data     sharedphotos.SharedCountResponse
+	Metadata *BytesResponse
+}
+
+// SharedAssetsResponse contains only records recognized by the legacy parser.
+type SharedAssetsResponse struct {
+	Records  []cloudkit.CKRecord
 	Metadata *BytesResponse
 }
 
@@ -139,7 +146,7 @@ func decodeSharedAlbums(body []byte, data *sharedphotos.SharedAlbumsResponse) er
 // PhotosSharedAssets reads a page with cumulative limit and offset strings.
 func (client *Client) PhotosSharedAssets(ctx context.Context, auth RequestContext,
 	album sharedphotos.SharedAlbum, offset, pageSize int64,
-) (*PhotosQueryResponse, error) {
+) (*SharedAssetsResponse, error) {
 	body, err := referenceJSONFields(sharedphotos.SharedAssetsRequest{Albumguid: album.Albumguid,
 		Albumctag: album.Albumctag, Limit: strconv.FormatInt(offset+pageSize, 10), Offset: strconv.FormatInt(offset, 10)},
 		[]string{protocol.SharedPhotosSharedAssetsRequestAlbumguid, protocol.SharedPhotosSharedAssetsRequestAlbumctag,
@@ -167,24 +174,61 @@ func (client *Client) PhotosSharedAssets(ctx context.Context, auth RequestContex
 		return nil, err
 	}
 
-	var legacy sharedphotos.SharedRecordsResponse
-
-	err = json.Unmarshal(response.Body, &legacy)
-	if err != nil || string(bytes.TrimSpace(response.Body)) == jsonNullValue {
-		return nil, responseFailure(Decode, err, response)
-	}
-
-	encoded, err := json.Marshal(legacy)
+	records, err := decodeSharedRecords(response.Body)
 	if err != nil {
 		return nil, responseFailure(Decode, err, response)
 	}
 
-	data, err := decodeReminderSyncQuery(encoded)
-	if err != nil {
-		return nil, responseFailure(Decode, err, response)
-	}
+	return &SharedAssetsResponse{Records: records, Metadata: response}, nil
+}
 
-	return &PhotosQueryResponse{Data: data, Metadata: response}, nil
+func decodeSharedRecords(body []byte) ([]cloudkit.CKRecord, error) {
+	var envelope map[string]json.RawMessage
+	if json.Unmarshal(body, &envelope) != nil || envelope == nil {
+		return nil, errPhotosCountShape
+	}
+	var rawRecords []json.RawMessage
+	if json.Unmarshal(envelope[protocol.SharedPhotosSharedRecordsResponseRecords], &rawRecords) != nil {
+		return []cloudkit.CKRecord{}, nil
+	}
+	records := []cloudkit.CKRecord{}
+	for _, raw := range rawRecords {
+		var fields map[string]json.RawMessage
+		if json.Unmarshal(raw, &fields) != nil || fields == nil {
+			continue
+		}
+		var kind cloudkit.PhotoRecordKind
+		_ = json.Unmarshal(fields[protocol.PhotosCKRecordRecordType], &kind)
+		if kind != cloudkit.CPLAsset && kind != cloudkit.CPLMaster {
+			continue
+		}
+		if kind == cloudkit.CPLAsset && !sharedAssetReference(fields[protocol.PhotosCKRecordFields]) {
+			continue
+		}
+		if kind == cloudkit.CPLMaster {
+			var name string
+			if json.Unmarshal(fields[protocol.PhotosCKRecordRecordName], &name) != nil {
+				continue
+			}
+		}
+		var record cloudkit.CKRecord
+		if json.Unmarshal(raw, &record) != nil {
+			return nil, errPhotosCountShape
+		}
+		records = append(records, record)
+	}
+	return records, nil
+}
+
+func sharedAssetReference(raw json.RawMessage) bool {
+	var fields, wrapper, reference map[string]json.RawMessage
+	if json.Unmarshal(raw, &fields) != nil || fields == nil ||
+		json.Unmarshal(fields[protocol.SharedPhotosSharedAssetFieldsMasterRef], &wrapper) != nil || wrapper == nil ||
+		json.Unmarshal(wrapper[protocol.PhotosCKPassthroughFieldValue], &reference) != nil || reference == nil {
+		return false
+	}
+	var name string
+	return json.Unmarshal(reference[protocol.PhotosCKReferenceRecordName], &name) == nil
 }
 
 func (client *Client) readSharedPhotos(ctx context.Context, auth RequestContext,

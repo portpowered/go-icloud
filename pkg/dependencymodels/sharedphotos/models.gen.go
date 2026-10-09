@@ -217,6 +217,13 @@ type SharedIntegerValue struct {
 	Value int64 `json:"value"`
 }
 
+// SharedJSONValueWrapper defines model for SharedJSONValueWrapper.
+type SharedJSONValueWrapper struct {
+	// Value Arbitrary extensible CloudKit JSON preserved without numeric coercion.
+	Value                *externalRef0.JsonValue           `json:"value,omitempty"`
+	AdditionalProperties map[string]externalRef0.JsonValue `json:"-"`
+}
+
 // SharedMasterField defines model for SharedMasterField.
 type SharedMasterField string
 
@@ -292,8 +299,8 @@ type SharedPluginField string
 
 // SharedPluginFields defines model for SharedPluginFields.
 type SharedPluginFields struct {
-	LikeCount     *SharedIntegerValue `json:"likeCount,omitempty"`
-	LikedByCaller *SharedBooleanValue `json:"likedByCaller,omitempty"`
+	LikeCount     *SharedIntegerValue     `json:"likeCount,omitempty"`
+	LikedByCaller *SharedJSONValueWrapper `json:"likedByCaller,omitempty"`
 }
 
 // SharedRecordsResponse defines model for SharedRecordsResponse.
@@ -527,6 +534,74 @@ func (a SharedAssetRecord) MarshalJSON() ([]byte, error) {
 	object["recordType"], err = json.Marshal(a.RecordType)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling 'recordType': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for SharedJSONValueWrapper. Returns the specified
+// element and whether it was found
+func (a SharedJSONValueWrapper) Get(fieldName string) (value externalRef0.JsonValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for SharedJSONValueWrapper
+func (a *SharedJSONValueWrapper) Set(fieldName string, value externalRef0.JsonValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]externalRef0.JsonValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for SharedJSONValueWrapper to handle AdditionalProperties
+func (a *SharedJSONValueWrapper) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["value"]; found {
+		err = json.Unmarshal(raw, &a.Value)
+		if err != nil {
+			return fmt.Errorf("error reading 'value': %w", err)
+		}
+		delete(object, "value")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]externalRef0.JsonValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal externalRef0.JsonValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for SharedJSONValueWrapper to handle AdditionalProperties
+func (a SharedJSONValueWrapper) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Value != nil {
+		object["value"], err = json.Marshal(a.Value)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'value': %w", err)
+		}
 	}
 
 	for fieldName, field := range a.AdditionalProperties {

@@ -54,6 +54,7 @@ const (
 	SharedPhotosSharedCountRequestAlbumguid                   = "albumguid"
 	SharedPhotosSharedCountResponseAlbumassetcount            = "albumassetcount"
 	SharedPhotosSharedIntegerValueValue                       = "value"
+	SharedPhotosSharedJSONValueWrapperValue                   = "value"
 	SharedPhotosSharedMasterFieldsFilenameEnc                 = "filenameEnc"
 	SharedPhotosSharedMasterFieldsItemType                    = "itemType"
 	SharedPhotosSharedMasterFieldsOriginalCreationDate        = "originalCreationDate"

@@ -3,6 +3,7 @@ package replay_test
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"testing"
 	"time"
 
@@ -12,7 +13,9 @@ import (
 
 func TestSharedPhotosLegacyValueRules(t *testing.T) {
 	t.Parallel()
-	for _, mutation := range []string{"filename-text", "invalid-date", "fractional-size"} {
+	for _, mutation := range []string{"filename-text", "invalid-date", "fractional-size", "string-size",
+		"truthy-liked", "empty-liked", "null-likecount", "string-likecount", "missing-width", "missing-height",
+		"ignored-records", "scalar-records", "malformed-master-ref"} {
 		t.Run(mutation, func(t *testing.T) { t.Parallel(); runSharedValueRule(t, mutation) })
 	}
 }
@@ -34,9 +37,31 @@ func runSharedValueRule(t *testing.T, mutation string) {
 		fields["originalCreationDate"] = json.RawMessage(`{"value":1e300}`)
 	case "fractional-size":
 		fields["resOriginalFileSize"] = json.RawMessage(`{"value":1.75}`)
+	case "string-size":
+		fields["resOriginalFileSize"] = json.RawMessage(`{"value":"1.0"}`)
+	case "missing-width":
+		delete(fields, "resOriginalWidth")
+	case "missing-height":
+		delete(fields, "resOriginalHeight")
+	case "truthy-liked":
+		records[1]["pluginFields"] = json.RawMessage(`{"likedByCaller":{"value":"false"}}`)
+	case "empty-liked":
+		records[1]["pluginFields"] = json.RawMessage(`{"likedByCaller":{"value":[]}}`)
+	case "null-likecount":
+		records[1]["pluginFields"] = json.RawMessage(`{"likeCount":{"value":null}}`)
+	case "string-likecount":
+		records[1]["pluginFields"] = json.RawMessage(`{"likeCount":{"value":"many"}}`)
+	case "malformed-master-ref":
+		records[1]["fields"] = json.RawMessage(`{"masterRef":{"value":42}}`)
 	}
 	records[0]["fields"] = sharedValueJSON(t, fields)
 	envelope["records"] = sharedValueJSON(t, records)
+	if mutation == "ignored-records" {
+		envelope["records"] = append(json.RawMessage(`[null,42,"ignored",{"recordType":"future"},{"recordType":"CPLAsset","fields":42},`), envelope["records"][1:]...)
+	}
+	if mutation == "scalar-records" {
+		envelope["records"] = json.RawMessage(`42`)
+	}
 	response.Body.Value = sharedValueJSON(t, base64.StdEncoding.EncodeToString(sharedValueJSON(t, envelope)))
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {
@@ -51,8 +76,32 @@ func runSharedValueRule(t *testing.T, mutation string) {
 	auth.SharedPhotosServiceURL = "https://shared.example.invalid"
 	result, err := client.GetSharedPhoto(t.Context(), icloud.GetSharedPhotoRequest{
 		Auth: auth, Album: "synthetic-stream-0", PhotoID: "synthetic-asset-0"})
+	if mutation == "missing-width" || mutation == "missing-height" ||
+		mutation == "null-likecount" || mutation == "string-likecount" {
+		if err == nil || result != nil {
+			t.Fatal("missing dimensions and malformed typed counts must fail projection")
+		}
+		var failure *icloud.ClientError
+		if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse {
+			t.Fatal("projection failure must be typed InvalidResponse", err)
+		}
+		if consumeErr := transport.AssertConsumed(); consumeErr != nil {
+			t.Fatal(consumeErr)
+		}
+		return
+	}
 	if err != nil {
 		t.Fatal(err)
+	}
+	if mutation == "scalar-records" || mutation == "malformed-master-ref" {
+		if !result.Photo.IsNull() {
+			t.Fatal("Source ignores malformed records")
+		}
+		checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
+		if consumeErr := transport.AssertConsumed(); consumeErr != nil {
+			t.Fatal(consumeErr)
+		}
+		return
 	}
 	photo, err := result.Photo.Get()
 	if err != nil {
@@ -80,6 +129,18 @@ func checkSharedValueRule(t *testing.T, photo icloud.SharedPhoto, mutation strin
 	case "fractional-size":
 		if string(photo.Photo.Size) != "1" {
 			t.Fatal("legacy sizes must truncate like Source int")
+		}
+	case "string-size":
+		if string(photo.Photo.Size) != "0" {
+			t.Fatal("Source int rejects decimal strings")
+		}
+	case "truthy-liked":
+		if !photo.Liked {
+			t.Fatal("Source bool treats nonempty strings as true")
+		}
+	case "empty-liked":
+		if photo.Liked {
+			t.Fatal("Source bool treats empty arrays as false")
 		}
 	}
 }
