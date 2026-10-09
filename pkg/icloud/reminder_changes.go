@@ -61,7 +61,8 @@ func (read *reminderChangesRead) pages(ctx context.Context, since *string) error
 		for _, zone := range *response.Data.Zones {
 			if zone.Records != nil {
 				for _, item := range *zone.Records {
-					if err = read.event(item); err != nil {
+					err = read.event(item)
+					if err != nil {
 						return err
 					}
 				}

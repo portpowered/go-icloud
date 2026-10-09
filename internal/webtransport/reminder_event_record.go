@@ -30,6 +30,7 @@ func DecodeReminderEventRecord(item cloudkit.CKZoneChangesZone_Records_Item) (*R
 	}
 
 	result := new(ReminderEventRecord)
+
 	if reminderSyncNormalRecord(item, fields) {
 		record, _ := item.AsCKRecord()
 		result.Record = &record

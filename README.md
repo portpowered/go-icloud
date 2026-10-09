@@ -147,7 +147,7 @@ and service errors stop the operation. The last zone supplies the cursor; no
 usable token produces a typed provider error. `cursor.Responses` contains query
 and page metadata in request order, including cookie updates. Failed operations
 retain earlier response metadata through `ClientError.PriorResponses()`.
-Eighteen paired Source/Go scenarios bind this discovery behavior; public change
+Fifty-three paired Source/Go scenarios bind this discovery behavior; public change
 iteration and compound reminder queries remain pending.
 
 The separate Go CLI module reads account data and resumes an existing saved

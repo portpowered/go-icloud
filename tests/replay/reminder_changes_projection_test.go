@@ -10,8 +10,11 @@ import (
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
 
+const reminderChangeNullValue = "null"
+
 type sourceReminderChange struct {
-	Type       string          `json:"type"`
+	Type string `json:"type"`
+	//nolint:tagliatelle // LIB-05: portable Source event spelling.
 	ReminderID string          `json:"reminder_id"`
 	Reminder   json.RawMessage `json:"reminder"`
 }
@@ -36,7 +39,7 @@ func checkReminderChangesProjection(t *testing.T, actual []icloud.ReminderChange
 			t.Fatal("change event identity or order differs")
 		}
 
-		if string(value.Reminder) == "null" {
+		if string(value.Reminder) == reminderChangeNullValue {
 			if !event.Reminder.IsNull() {
 				t.Fatal("tombstone reminder is not explicitly null")
 			}

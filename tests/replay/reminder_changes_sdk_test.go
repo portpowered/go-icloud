@@ -13,6 +13,7 @@ import (
 type reminderChangesScenario struct {
 	accountScenario
 
+	//nolint:tagliatelle // LIB-05: portable initial-input spelling.
 	Keywords reminderChangesKeywords `json:"keyword_inputs"`
 }
 
@@ -28,7 +29,7 @@ func TestReminderChangesSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 25 {
+	if len(paths) != 36 {
 		t.Fatal("reminder changes scenario inventory changed")
 	}
 

@@ -42,7 +42,8 @@ func (client *Client) ReminderEventChanges(ctx context.Context, auth RequestCont
 
 	if data.Zones != nil {
 		for _, zone := range *data.Zones {
-			if err = validateReminderSyncRecords(zone.Records); err != nil {
+			err = validateReminderSyncRecords(zone.Records)
+			if err != nil {
 				return nil, responseFailure(Decode, err, response)
 			}
 		}
@@ -64,6 +65,7 @@ func reminderEventChangesBody(syncToken *string) ([]byte, error) {
 
 	body := fmt.Sprintf("{%q: [{%q: %s, %q: %s", protocol.RemindersCKZoneChangesRequestZones,
 		protocol.RemindersCKZoneChangesZoneReqZoneID, zone, protocol.RemindersCKZoneChangesZoneReqDesiredRecordTypes, types)
+
 	if syncToken != nil {
 		token, tokenErr := referenceJSON(syncToken)
 		if tokenErr != nil {

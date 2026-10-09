@@ -41,6 +41,7 @@ func (read *reminderChangesRead) event(item cloudkit.CKZoneChangesZone_Records_I
 
 	event.ReminderID = reminder.ID
 	event.Reminder.Set(reminder)
+
 	if !reminder.Deleted {
 		event.Type = ReminderChangeUpdated
 	}

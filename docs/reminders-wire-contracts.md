@@ -46,8 +46,8 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 183 implementation-derived synthetic Reminders scenarios contain
-226 paired exchanges: 223 POST pairs and three membership-asset downloads. Contract
+The current 194 implementation-derived synthetic Reminders scenarios contain
+237 paired exchanges: 234 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
@@ -71,12 +71,14 @@ executes these same 53 scenarios and 85 paired exchanges. It returns the exact u
 response metadata, preserving prior exchanges when a later page fails. Decode
 failures in the query permit fallback; HTTP/session failures stop immediately.
 
-Twenty-five Source change-iteration scenarios contain 28 paired exchanges and
+Thirty-six Source change-iteration scenarios contain 39 paired exchanges and
 bind no/null/empty cursors, ordered duplicates, unrelated records, complete deleted
 reminders and tombstones, last-zone cursor selection, later-page failures and
 schema rejection. Source API errors bind their structured payloads as well as
 their type and message, including null payloads. Negative controls reject changed
-events, event order, requests, unused pages and error payloads. These reference
+events, event order, requests, unused pages and error payloads. Eleven cases bind
+Source's selection among overlapping record, tombstone and error alternatives,
+including ties, nested metadata and encrypted-field validation. These reference
 cases establish the next public Go port's expected behavior; they do not yet
 prove a Go change-iteration implementation.
 
