@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
@@ -24,6 +25,7 @@ var errFindMyBinding = errors.New("find my exchange has no verified contract bin
 func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 	t.Parallel()
 	document := loadDriveDocument(t, findMySchemaPath)
+	authDocument := loadDriveDocument(t, "../../api/external/auth.openapi.yaml")
 
 	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/findmy-*.json")
 	if err != nil {
@@ -35,7 +37,9 @@ func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 
 	for _, path := range paths {
 		for index, exchange := range accountExchanges(t, path) {
-			operation, err := bindFindMyOperation(document, exchange.Request)
+			selected := findMyRecoveryDocument(t, document, authDocument, exchange.Request)
+
+			operation, err := bindFindMyOperation(selected, exchange.Request)
 			if err != nil {
 				t.Fatalf("%s exchange %d: %v", path, index, err)
 			}
@@ -47,9 +51,23 @@ func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 		}
 	}
 
-	if len(paths) != 71 || pairs != 140 || len(operations) != 7 {
+	if len(paths) != 75 || pairs != 151 || len(operations) != 8 {
 		t.Fatalf("Find My inventory changed: scenarios=%d pairs=%d operations=%d", len(paths), pairs, len(operations))
 	}
+}
+
+func findMyRecoveryDocument(t *testing.T, document, authDocument *openapi3.T, request replay.Request) *openapi3.T {
+	t.Helper()
+
+	if request.Path != protocol.AuthLoginAuthTokenPath {
+		return document
+	}
+
+	if request.Origin != protocol.AuthAccountServer0 || len(request.Query) != 0 {
+		t.Fatal("Find My recovery changed the authenticated setup origin or query")
+	}
+
+	return authDocument
 }
 
 func TestFindMyCommandsPreserveOpaqueReplyContracts(t *testing.T) {

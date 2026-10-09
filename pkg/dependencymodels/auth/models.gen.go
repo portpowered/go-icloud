@@ -41,6 +41,21 @@ func (e AuthClientMasteringNumber) Valid() bool {
 	}
 }
 
+// Defines values for FindMyReauthenticationStatus.
+const (
+	FindMyReauthenticationRequired FindMyReauthenticationStatus = 450
+)
+
+// Valid indicates whether the value is a known member of the FindMyReauthenticationStatus enum.
+func (e FindMyReauthenticationStatus) Valid() bool {
+	switch e {
+	case FindMyReauthenticationRequired:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for WebAuthCookieName.
 const (
 	XAPPLEWEBAUTHTOKEN WebAuthCookieName = "X-APPLE-WEBAUTH-TOKEN"
@@ -123,6 +138,9 @@ type AuthWebServices struct {
 	Reminders            *AuthService           `json:"reminders,omitempty"`
 	AdditionalProperties map[string]AuthService `json:"-"`
 }
+
+// FindMyReauthenticationStatus Find My service response status requiring one saved-token refresh before a bounded retry.
+type FindMyReauthenticationStatus int
 
 // UnknownJSONValue Uninterpreted provider metadata retained without loss.
 type UnknownJSONValue = json.RawMessage

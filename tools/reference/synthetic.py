@@ -28,16 +28,25 @@ def execute(api, scenario, observations=None):
     if scenario["service"] == "findmy":
         from pyicloud.services.findmyiphone import FindMyiPhoneServiceManager
 
-        manager = FindMyiPhoneServiceManager(
-            state["origin"],
-            state["token_origin"],
-            api.session,
-            params,
-            with_family=state.get("with_family", False),
-            refresh_interval=86400,
-            family_poll_delay=state.get("family_poll_delay", 0.5),
-            family_poll_max_retries=state.get("family_poll_max_retries", 5),
-        )
+        try:
+            manager = FindMyiPhoneServiceManager(
+                state["origin"],
+                state["token_origin"],
+                api.session,
+                params,
+                with_family=state.get("with_family", False),
+                refresh_interval=86400,
+                family_poll_delay=state.get("family_poll_delay", 0.5),
+                family_poll_max_retries=state.get("family_poll_max_retries", 5),
+            )
+        finally:
+            if (
+                observations is not None
+                and scenario["operation"] == "devices_with_auth_state"
+            ):
+                from auth_scenarios import auth_state
+
+                observations["auth_state"] = auth_state(api)
         api._devices = manager
         if scenario["operation"] == "monitor_flow":
             from findmy_monitor import execute_monitor
@@ -51,6 +60,13 @@ def execute(api, scenario, observations=None):
             from findmy_scenarios import execute_refresh
 
             return execute_refresh(manager, scenario, observations)
+        if scenario["operation"] == "devices_with_auth_state":
+            from auth_scenarios import auth_state
+
+            return {
+                "devices": [device.data for device in manager.devices.values()],
+                "auth_state": auth_state(api),
+            }
         if scenario["operation"] == "devices":
             return [device.data for device in manager.devices.values()]
         device = manager[scenario["device_id"]]
@@ -338,6 +354,15 @@ def replay_synthetic(path):
                 ) != observations.get("auth_state"):
                     raise AssertionError(
                         "Synthetic auth error state mismatch"
+                    ) from error
+                if (
+                    scenario["service"] == "findmy"
+                    and scenario["operation"] == "devices_with_auth_state"
+                    and scenario.get("error_auth_state")
+                    != observations.get("auth_state")
+                ):
+                    raise AssertionError(
+                        "Synthetic Find My refresh auth state mismatch"
                     ) from error
                 if scenario["service"] == "drive" and scenario.get(
                     "error_drive_state"
