@@ -99,7 +99,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.Usage = func() {
 		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
 			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
-			"reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, reminders, resume")
+			"reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, reminders, reminder-snapshot, resume")
 
 		flags.PrintDefaults()
 	}
@@ -154,7 +154,8 @@ func loadSession(path string) (icloud.AuthContext, error) {
 
 func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync", "reminder-changes", "reminders":
+	case "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync", "reminder-changes",
+		"reminders", "reminder-snapshot":
 		return readReminders(ctx, client, auth, config)
 	case "account-devices":
 		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
@@ -188,6 +189,9 @@ func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthCo
 	case "reminders":
 		return wrap(client.ListReminders(ctx, icloud.ListRemindersRequest{Auth: auth, ListID: config.listID,
 			IncludeCompleted: &config.includeCompleted, ResultsLimit: config.resultsLimit}))
+	case "reminder-snapshot":
+		return wrap(client.ListReminderSnapshot(ctx,
+			icloud.ListReminderSnapshotRequest{Auth: auth, ListID: &config.listID}))
 	default:
 		return wrap(client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth}))
 	}

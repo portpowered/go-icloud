@@ -119,6 +119,8 @@ func checkReminderCLIOutcome(t *testing.T, operation string, row map[string]json
 		checkReminderCLIChangesOutcome(t, row, output, err)
 	case "reminders":
 		checkReminderCLIQueryOutcome(t, row, output, err)
+	case "reminder-snapshot":
+		checkReminderCLISnapshotOutcome(t, row, output, err)
 	default:
 		checkReminderCommandOutcome(t, operation, row, output, err)
 	}
@@ -142,6 +144,16 @@ func reminderCLIArgs(t *testing.T, operation, session string, row map[string]jso
 
 	if operation == "reminders" {
 		args = append(args, reminderCLIQueryArgs(t, row)...)
+	}
+
+	if operation == "reminder-snapshot" {
+		var inputs []string
+
+		decode(t, row["inputs"], &inputs)
+
+		if len(inputs) != 0 {
+			args = append(args, "--list", inputs[0])
+		}
 	}
 
 	return append(args, operation)
