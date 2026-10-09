@@ -87,6 +87,8 @@ func clearedNativeAuthState(state NativeAuthState) NativeAuthState {
 	boundary.SessionToken = nil
 	boundary.Cookies = []AuthCookie{}
 	boundary.PhotosServiceURL = ""
+	boundary.PhotosUploadServiceURL = ""
+	boundary.SharedPhotosServiceURL = ""
 	boundary.DriveServiceURL = ""
 	boundary.FindMyServiceURL = ""
 	boundary.RemindersServiceURL = ""

@@ -122,6 +122,34 @@ type Client interface {
 	// DownloadSharedPhoto reads legacy shared stream data.
 	DownloadSharedPhoto(ctx context.Context, request DownloadSharedPhotoRequest) (*DownloadSharedPhotoResult, error)
 
+	// Authenticate completes native SRP or returns caller-owned MFA progress.
+	Authenticate(ctx context.Context, request AuthenticateRequest) (*NativeAuthResult, error)
+	// GetAuthenticationChallenge reads the current MFA choices and bridge bootstrap.
+	GetAuthenticationChallenge(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
+	// GetAuthenticationStatus probes saved credentials without initiating password login or MFA delivery.
+	GetAuthenticationStatus(ctx context.Context, request NativeAuthRequest) (*AuthenticationStatusResult, error)
+	// RequestTwoFactorCode requests SMS delivery or returns the explicit bridge/security-key route.
+	RequestTwoFactorCode(ctx context.Context, request RequestTwoFactorCodeRequest) (*NativeAuthResult, error)
+	// VerifyTwoFactorCode validates a trusted-device or SMS code and refreshes session trust.
+	VerifyTwoFactorCode(ctx context.Context, request VerifyTwoFactorCodeRequest) (*NativeAuthResult, error)
+	// VerifySecurityKey submits a caller-owned WebAuthn assertion and refreshes session trust.
+	VerifySecurityKey(ctx context.Context, request VerifySecurityKeyRequest) (*NativeAuthResult, error)
+	// ListSecurityKeyDevices enumerates devices through the injected hardware authenticator.
+	ListSecurityKeyDevices(ctx context.Context, request ListSecurityKeyDevicesRequest) (*ListSecurityKeyDevicesResult, error)
+	// ConfirmSecurityKey selects a hardware device and completes its assertion ceremony.
+	ConfirmSecurityKey(ctx context.Context, request ConfirmSecurityKeyRequest) (*NativeAuthResult, error)
+	// TrustSession exchanges session trust and refreshes account service discovery.
+	TrustSession(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
+	// ListTrustedDevices enumerates the provider's two-step authentication devices.
+	ListTrustedDevices(ctx context.Context, request NativeAuthRequest) (*TrustedDevicesResult, error)
+	// SendTwoStepCode requests a code on one caller-selected trusted device.
+	SendTwoStepCode(ctx context.Context, request SendTwoStepCodeRequest) (*NativeAuthResult, error)
+	// VerifyTwoStepCode verifies a selected device's code and refreshes session trust.
+	VerifyTwoStepCode(ctx context.Context, request VerifyTwoStepCodeRequest) (*NativeAuthResult, error)
+	// RequestPCSAccess obtains cancellable provider consent for a service.
+	RequestPCSAccess(ctx context.Context, request RequestPCSAccessRequest) (*NativeAuthResult, error)
+	// Logout terminates remote sessions and returns explicit local credential clearing.
+	Logout(ctx context.Context, request LogoutRequest) (*LogoutResult, error)
 	// CreateReminder creates a reminder and hydrates its acknowledged record.
 	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
 	// UpdateReminder writes a snapshot and returns an independent updated snapshot.
@@ -248,6 +276,8 @@ type configuration struct {
 	random           io.Reader
 	photoUploadWait  func(context.Context, time.Duration) error
 	photoUploadClock func() time.Time
+	authWait         AuthenticationWaiter
+	securityKey      SecurityKeyAuthenticator
 }
 
 // Option configures a reusable client without storing account credentials.
@@ -275,13 +305,15 @@ type SDK struct {
 	random           io.Reader
 	photoUploadWait  func(context.Context, time.Duration) error
 	photoUploadClock func() time.Time
+	authWait         AuthenticationWaiter
+	securityKey      SecurityKeyAuthenticator
 }
 
 // New creates a reusable stateless client. The caller supplies request deadlines.
 // The default is http.DefaultTransport; automatic redirects are disabled.
 func New(options ...Option) (*SDK, error) {
 	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now, random: rand.Reader,
-		photoUploadWait: waitPhotoUpload, photoUploadClock: time.Now}
+		photoUploadWait: waitPhotoUpload, photoUploadClock: time.Now, authWait: authenticationWait, securityKey: nil}
 
 	for _, option := range options {
 		if option == nil {
@@ -295,7 +327,7 @@ func New(options ...Option) (*SDK, error) {
 	}
 
 	return &SDK{web: webtransport.New(config.transport), clock: config.clock, random: config.random,
-		photoUploadWait: config.photoUploadWait, photoUploadClock: config.photoUploadClock}, nil
+		photoUploadWait: config.photoUploadWait, photoUploadClock: config.photoUploadClock, authWait: config.authWait, securityKey: config.securityKey}, nil
 }
 
 // WithRandomSource supplies a concurrency-safe entropy reader for generated identities and authentication.

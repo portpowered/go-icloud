@@ -5,3 +5,5 @@ output: pkg/dependencymodels/auth/models.gen.go
 output-options:
   skip-prune: true
   nullable-type: true
+import-mapping:
+  ./bridge-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/bridge

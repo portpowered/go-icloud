@@ -53,6 +53,22 @@ func (client *Client) LoginAuthToken(ctx context.Context, origin string, headers
 	return client.readAuth(ctx, origin, headers, cookies, request)
 }
 
+// LoginAuthCredentials submits the provider's verified service-specific one-factor request.
+func (client *Client) LoginAuthCredentials(ctx context.Context, origin string, headers http.Header,
+	cookies *CookieState, input auth.AuthCredentialsLoginRequest,
+) (*AuthResponse, error) {
+	body, err := referenceJSON(input)
+	if err != nil {
+		return nil, failure(Configuration, err, nil, nil)
+	}
+	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, protocol.AuthMediaApplicationJson,
+		bytes.NewReader(body))
+	if err != nil {
+		return nil, failure(Configuration, err, nil, nil)
+	}
+	return client.readAuth(ctx, origin, headers, cookies, request)
+}
+
 func (client *Client) readAuth(ctx context.Context, origin string, headers http.Header,
 	cookies *CookieState, request *http.Request,
 ) (*AuthResponse, error) {

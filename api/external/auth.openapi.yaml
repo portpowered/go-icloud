@@ -3,7 +3,7 @@
   "info": {
     "title": "iCloud saved-session authentication wire API",
     "version": "0.1.0",
-    "description": "Cookie validation and saved-token refresh; password and MFA routes are not yet bound here."
+    "description": "Native SRP, MFA, account trust, session refresh, logout, terms and PCS consent HTTP contracts."
   },
   "servers": [
     {
@@ -106,12 +106,26 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
+                "oneOf": [
+                  {
+                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
+                  },
+                  {
+                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthCredentialsLoginRequest"
+                  }
+                ]
               }
             },
             "*/*": {
               "schema": {
-                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
+                "oneOf": [
+                  {
+                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
+                  },
+                  {
+                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthCredentialsLoginRequest"
+                  }
+                ]
               }
             }
           }
@@ -169,6 +183,1233 @@
           }
         }
       }
+    },
+    "/setup/ws/1/listDevices": {
+      "get": {
+        "operationId": "ListAuthTrustedDevices",
+        "summary": "ListAuthTrustedDevices",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTrustedDevicesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/sendVerificationCode": {
+      "post": {
+        "operationId": "SendAuthVerificationCode",
+        "summary": "SendAuthVerificationCode",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTrustedDevice"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/validateVerificationCode": {
+      "post": {
+        "operationId": "ValidateAuthVerificationCode",
+        "summary": "ValidateAuthVerificationCode",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTrustedDevice"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/logout": {
+      "post": {
+        "operationId": "LogoutAuthSession",
+        "summary": "LogoutAuthSession",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthLogoutRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/requestWebAccessState": {
+      "post": {
+        "operationId": "GetAuthWebAccessState",
+        "summary": "GetAuthWebAccessState",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthWebAccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/enableDeviceConsentForPCS": {
+      "post": {
+        "operationId": "EnableAuthPCSConsent",
+        "summary": "EnableAuthPCSConsent",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthWebAccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/requestPCS": {
+      "post": {
+        "operationId": "RequestAuthPCS",
+        "summary": "RequestAuthPCS",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthPCSResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthPCSRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/getTerms": {
+      "get": {
+        "operationId": "GetAuthTerms",
+        "summary": "GetAuthTerms",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTermsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthGetTermsRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/setup/ws/1/repairDone": {
+      "get": {
+        "operationId": "AcceptAuthTerms",
+        "summary": "AcceptAuthTerms",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAcceptTermsRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clientBuildNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientMasteringNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dsid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/appleauth/auth/authorize/signin": {
+      "get": {
+        "operationId": "AuthorizeAuthSignIn",
+        "summary": "AuthorizeAuthSignIn",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "frame_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "iframeid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "response_mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/appleauth/auth/signin/init": {
+      "post": {
+        "operationId": "InitAuthSRP",
+        "summary": "InitAuthSRP",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSRPInitResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSRPInitRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/signin/complete": {
+      "post": {
+        "operationId": "CompleteAuthSRP",
+        "summary": "CompleteAuthSRP",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSRPCompleteRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "isRememberMeEnabled",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/appleauth/auth": {
+      "get": {
+        "operationId": "GetAuthChallenge",
+        "summary": "GetAuthChallenge",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthChallenge"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/verify/phone": {
+      "put": {
+        "operationId": "RequestAuthSMS",
+        "summary": "RequestAuthSMS",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSMSRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/verify/phone/securitycode": {
+      "post": {
+        "operationId": "VerifyAuthSMS",
+        "summary": "VerifyAuthSMS",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthVerificationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSMSVerificationRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/verify/trusteddevice/securitycode": {
+      "post": {
+        "operationId": "VerifyAuthTrustedCode",
+        "summary": "VerifyAuthTrustedCode",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthVerificationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTrustedCodeRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/verify/security/key": {
+      "post": {
+        "operationId": "VerifyAuthSecurityKey",
+        "summary": "VerifyAuthSecurityKey",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthWebAuthnAssertion"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/2sv/trust": {
+      "get": {
+        "operationId": "TrustAuthSession",
+        "summary": "TrustAuthSession",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/bridge/step/0": {
+      "post": {
+        "operationId": "AuthBridgeStep0",
+        "summary": "AuthBridgeStep0",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStartRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/bridge/step/2": {
+      "post": {
+        "operationId": "AuthBridgeStep2",
+        "summary": "AuthBridgeStep2",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStepRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/bridge/step/4": {
+      "post": {
+        "operationId": "AuthBridgeStep4",
+        "summary": "AuthBridgeStep4",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStepRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/bridge/step/6": {
+      "post": {
+        "operationId": "AuthBridgeStep6",
+        "summary": "AuthBridgeStep6",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStepRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appleauth/auth/bridge/code/validate": {
+      "post": {
+        "operationId": "ValidateAuthBridgeCode",
+        "summary": "ValidateAuthBridgeCode",
+        "description": "Native account authentication operation with caller-owned credentials.",
+        "responses": {
+          "2XX": {
+            "description": "Provider result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthVerificationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFailure"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeCodeRequest"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -190,6 +1431,114 @@
           "type": "string"
         },
         "description": "Rotated account country used for later token refresh."
+      },
+      "Accept": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Content-Type": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Referer": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "User-Agent": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-OAuth-Client-Id": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-OAuth-Client-Type": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-OAuth-Redirect-URI": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-OAuth-Require-Grant-Code": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-OAuth-Response-Mode": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-OAuth-Response-Type": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-OAuth-State": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-Widget-Key": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-FD-Client-Info": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-Frame-Id": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "scnt": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-ID-Session-Id": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-Auth-Attributes": {
+        "description": "Authentication request header.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "X-Apple-App-Id": {
+        "description": "Bridge-only source application identity.",
+        "schema": {
+          "type": "string"
+        }
       }
     }
   }

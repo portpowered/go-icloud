@@ -57,6 +57,7 @@ func (e AuthCookieSameSite) Valid() bool {
 
 // Defines values for ErrorKind.
 const (
+	AccountLocked          ErrorKind = "account-locked"
 	AuthenticationRequired ErrorKind = "authentication-required"
 	Canceled               ErrorKind = "canceled"
 	Closed                 ErrorKind = "closed"
@@ -79,6 +80,8 @@ const (
 // Valid indicates whether the value is a known member of the ErrorKind enum.
 func (e ErrorKind) Valid() bool {
 	switch e {
+	case AccountLocked:
+		return true
 	case AuthenticationRequired:
 		return true
 	case Canceled:
@@ -325,6 +328,60 @@ func (e ReminderRecurrenceRuleFrequency) Valid() bool {
 	}
 }
 
+// Defines values for SecurityKeyCeremonyOrigin.
+const (
+	HttpsappleCom SecurityKeyCeremonyOrigin = "https://apple.com"
+)
+
+// Valid indicates whether the value is a known member of the SecurityKeyCeremonyOrigin enum.
+func (e SecurityKeyCeremonyOrigin) Valid() bool {
+	switch e {
+	case HttpsappleCom:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SecurityKeyCeremonyUserVerification.
+const (
+	Discouraged SecurityKeyCeremonyUserVerification = "discouraged"
+)
+
+// Valid indicates whether the value is a known member of the SecurityKeyCeremonyUserVerification enum.
+func (e SecurityKeyCeremonyUserVerification) Valid() bool {
+	switch e {
+	case Discouraged:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TwoFactorDeliveryMethod.
+const (
+	TwoFactorDeliverySMS           TwoFactorDeliveryMethod = "sms"
+	TwoFactorDeliverySecurityKey   TwoFactorDeliveryMethod = "security_key"
+	TwoFactorDeliveryTrustedDevice TwoFactorDeliveryMethod = "trusted_device"
+	TwoFactorDeliveryUnknown       TwoFactorDeliveryMethod = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the TwoFactorDeliveryMethod enum.
+func (e TwoFactorDeliveryMethod) Valid() bool {
+	switch e {
+	case TwoFactorDeliverySMS:
+		return true
+	case TwoFactorDeliverySecurityKey:
+		return true
+	case TwoFactorDeliveryTrustedDevice:
+		return true
+	case TwoFactorDeliveryUnknown:
+		return true
+	default:
+		return false
+	}
+}
+
 // AccountDevice Known device metadata fields are optional; future provider fields are preserved.
 type AccountDevice struct {
 	Imei *string `json:"imei,omitempty"`
@@ -519,7 +576,7 @@ type ApplySessionResponsesResult struct {
 
 // AuthContext Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 type AuthContext struct {
-	// AccountID Authenticated account identifier returned by login.
+	// AccountID Authenticated account identifier returned by login; empty only before authentication completes.
 	AccountID string `json:"accountID"`
 
 	// AccountServiceURL HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.
@@ -561,7 +618,7 @@ type AuthContext struct {
 	// PhotosServiceURL HTTPS CloudKit origin from authenticated discovery; required by Photos operations.
 	PhotosServiceURL string `json:"photosServiceURL,omitempty"`
 
-	// PhotosUploadServiceURL HTTPS Photos upload origin returned by authenticated service discovery.
+	// PhotosUploadServiceURL Account-discovered Photos upload reservation origin.
 	PhotosUploadServiceURL string `json:"photosUploadServiceURL,omitempty"`
 
 	// RemindersServiceURL HTTPS Reminders origin from authenticated discovery; required by reminders operations.
@@ -573,7 +630,7 @@ type AuthContext struct {
 	// SetupServiceURL HTTPS setup origin from authentication; required for remote erase token lookup.
 	SetupServiceURL string `json:"setupServiceURL,omitempty"`
 
-	// SharedPhotosServiceURL Account-discovered shared streams origin.
+	// SharedPhotosServiceURL Account-discovered legacy shared-stream Photos origin.
 	SharedPhotosServiceURL string `json:"sharedPhotosServiceURL,omitempty"`
 }
 
@@ -614,6 +671,48 @@ type AuthCookie struct {
 
 // AuthCookieSameSite Optional browser same-site attribute; native HTTP requests preserve this state without a browser navigation policy.
 type AuthCookieSameSite string
+
+// AuthenticateRequest Authenticate with an optional saved session, otherwise perform native SRP with the supplied password.
+type AuthenticateRequest struct {
+	AcceptTerms        bool                      `json:"acceptTerms,omitempty"`
+	AccountCountryCode nullable.Nullable[string] `json:"accountCountryCode,omitempty"`
+	AccountName        string                    `json:"accountName"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth           AuthContext `json:"auth"`
+	ForceRefresh   bool        `json:"forceRefresh,omitempty"`
+	Password       string      `json:"password"`
+	PauseTwoFactor bool        `json:"pauseTwoFactor,omitempty"`
+
+	// SavedState Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	SavedState *NativeAuthState `json:"savedState,omitempty"`
+
+	// Service Optional provider service for verified one-factor credential login.
+	Service    *string `json:"service,omitempty"`
+	TrustToken string  `json:"trustToken"`
+}
+
+// AuthenticationStatusResult defines model for AuthenticationStatusResult.
+type AuthenticationStatusResult struct {
+	Authenticated     bool               `json:"authenticated"`
+	RequiresTwoFactor bool               `json:"requiresTwoFactor"`
+	RequiresTwoStep   bool               `json:"requiresTwoStep"`
+	Responses         []ResponseMetadata `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State          NativeAuthState `json:"state"`
+	TrustedSession bool            `json:"trustedSession"`
+}
+
+// ConfirmSecurityKeyRequest defines model for ConfirmSecurityKeyRequest.
+type ConfirmSecurityKeyRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth     AuthContext `json:"auth"`
+	DeviceID string      `json:"deviceID,omitempty"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
 
 // CountSharedPhotosRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
 type CountSharedPhotosRequest struct {
@@ -2062,6 +2161,14 @@ type ListRemindersResult struct {
 	Triggers        map[string]ReminderLocationTrigger `json:"triggers"`
 }
 
+// ListSecurityKeyDevicesRequest defines model for ListSecurityKeyDevicesRequest.
+type ListSecurityKeyDevicesRequest = map[string]interface{}
+
+// ListSecurityKeyDevicesResult defines model for ListSecurityKeyDevicesResult.
+type ListSecurityKeyDevicesResult struct {
+	Devices []SecurityKeyDevice `json:"devices"`
+}
+
 // ListSharedPhotoAlbumsRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
 type ListSharedPhotoAlbumsRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -2089,6 +2196,29 @@ type ListSharedPhotosResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// LogoutRequest defines model for LogoutRequest.
+type LogoutRequest struct {
+	AllSessions bool `json:"allSessions,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth                 AuthContext `json:"auth"`
+	KeepTrusted          bool        `json:"keepTrusted,omitempty"`
+	PreserveLocalSession bool        `json:"preserveLocalSession,omitempty"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// LogoutResult defines model for LogoutResult.
+type LogoutResult struct {
+	LocalCleared    bool               `json:"localCleared"`
+	RemoteConfirmed bool               `json:"remoteConfirmed"`
+	Responses       []ResponseMetadata `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
 // MoveDriveNodesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"destinationID":"FOLDER::synthetic::destination","nodes":[]}
 type MoveDriveNodesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -2103,6 +2233,71 @@ type MoveDriveNodesRequest struct {
 
 // MoveDriveNodesResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type MoveDriveNodesResult = DriveItemChangeResult
+
+// NativeAuthChallenge defines model for NativeAuthChallenge.
+type NativeAuthChallenge struct {
+	AuthFactors      []string `json:"authFactors"`
+	AuthInitialRoute string   `json:"authInitialRoute"`
+
+	// BridgeBootstrap Schema-owned bridge bootstrap for the explicit native bridge lifecycle.
+	BridgeBootstrap      []byte                `json:"bridgeBootstrap,omitempty"`
+	HasTrustedDevices    bool                  `json:"hasTrustedDevices"`
+	Mode                 string                `json:"mode"`
+	PhoneNumbers         []TrustedPhoneNumber  `json:"phoneNumbers"`
+	SecurityKeyChallenge *SecurityKeyChallenge `json:"securityKeyChallenge,omitempty"`
+	SecurityKeyNames     []string              `json:"securityKeyNames"`
+}
+
+// NativeAuthRequest defines model for NativeAuthRequest.
+type NativeAuthRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// NativeAuthResult defines model for NativeAuthResult.
+type NativeAuthResult struct {
+	RequiresTwoFactor bool               `json:"requiresTwoFactor"`
+	RequiresTwoStep   bool               `json:"requiresTwoStep"`
+	Responses         []ResponseMetadata `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+
+	// Success Whether the requested authentication step was accepted. Pending MFA remains explicit in state.
+	Success        bool `json:"success"`
+	TrustedSession bool `json:"trustedSession"`
+}
+
+// NativeAuthState Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+type NativeAuthState struct {
+	AccountCountryCode nullable.Nullable[string] `json:"accountCountryCode"`
+	AccountData        []byte                    `json:"accountData"`
+	AccountName        string                    `json:"accountName"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth           AuthContext             `json:"auth"`
+	Challenge      NativeAuthChallenge     `json:"challenge"`
+	CodeRequested  bool                    `json:"codeRequested"`
+	DeliveryMethod TwoFactorDeliveryMethod `json:"deliveryMethod"`
+	RequiresMFA    bool                    `json:"requiresMFA"`
+	TrustToken     string                  `json:"trustToken"`
+}
+
+// NativeBridgeSessionState Detached progress of an explicit trusted-device bridge lifecycle. Values contain secrets.
+type NativeBridgeSessionState struct {
+	Active    bool               `json:"active"`
+	Legacy    bool               `json:"legacy"`
+	NextStep  string             `json:"nextStep"`
+	Responses []ResponseMetadata `json:"responses"`
+	SessionID string             `json:"sessionID"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State         NativeAuthState           `json:"state"`
+	TransactionID nullable.Nullable[string] `json:"transactionID"`
+}
 
 // NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
 type NullableJSONValue = json.RawMessage
@@ -2120,6 +2315,15 @@ type OpenFindMySessionRequest struct {
 
 	// IncludeFamily Include family devices and bounded readiness polling.
 	IncludeFamily bool `json:"includeFamily"`
+}
+
+// OpenNativeBridgeSessionRequest defines model for OpenNativeBridgeSessionRequest.
+type OpenNativeBridgeSessionRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
 }
 
 // PermanentlyDeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
@@ -2863,6 +3067,26 @@ type RenamePhotoAlbumRequest struct {
 	Name string `json:"name"`
 }
 
+// RequestPCSAccessRequest defines model for RequestPCSAccessRequest.
+type RequestPCSAccessRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth    AuthContext `json:"auth"`
+	Service string      `json:"service"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// RequestTwoFactorCodeRequest defines model for RequestTwoFactorCodeRequest.
+type RequestTwoFactorCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth          AuthContext           `json:"auth"`
+	PhoneNumberID *TrustedPhoneNumberID `json:"phoneNumberID,omitempty"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
 // ReservePhotoUploadsRequest Example: {"assets":{"synthetic-file":3},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]}}
 type ReservePhotoUploadsRequest struct {
 	// Assets Caller-generated identities mapped to complete byte lengths.
@@ -2964,6 +3188,42 @@ type SavedSessionCredentials struct {
 	SetupServiceURL string `json:"setupServiceURL"`
 }
 
+// SecurityKeyAssertion defines model for SecurityKeyAssertion.
+type SecurityKeyAssertion struct {
+	AuthenticatorData []byte                    `json:"authenticatorData"`
+	ClientData        []byte                    `json:"clientData"`
+	CredentialID      []byte                    `json:"credentialID"`
+	Signature         []byte                    `json:"signature"`
+	UserHandle        nullable.Nullable[[]byte] `json:"userHandle"`
+}
+
+// SecurityKeyCeremony defines model for SecurityKeyCeremony.
+type SecurityKeyCeremony struct {
+	Challenge        SecurityKeyChallenge                `json:"challenge"`
+	DeviceID         string                              `json:"deviceID"`
+	Origin           SecurityKeyCeremonyOrigin           `json:"origin"`
+	UserVerification SecurityKeyCeremonyUserVerification `json:"userVerification"`
+}
+
+// SecurityKeyCeremonyOrigin defines model for SecurityKeyCeremony.Origin.
+type SecurityKeyCeremonyOrigin string
+
+// SecurityKeyCeremonyUserVerification defines model for SecurityKeyCeremony.UserVerification.
+type SecurityKeyCeremonyUserVerification string
+
+// SecurityKeyChallenge defines model for SecurityKeyChallenge.
+type SecurityKeyChallenge struct {
+	Challenge      string   `json:"challenge"`
+	CredentialIDs  []string `json:"credentialIDs"`
+	RelyingPartyID string   `json:"relyingPartyID"`
+}
+
+// SecurityKeyDevice defines model for SecurityKeyDevice.
+type SecurityKeyDevice struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 // SendPhotoUploadBytesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"content":"synthetic-bytes","url":"https://content.example.invalid/upload?token=synthetic"}
 type SendPhotoUploadBytesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -2986,6 +3246,16 @@ type SendPhotoUploadBytesResult struct {
 	// Receipt Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.
 	Receipt   PhotoUploadReceipt `json:"receipt"`
 	Responses []ResponseMetadata `json:"responses"`
+}
+
+// SendTwoStepCodeRequest defines model for SendTwoStepCodeRequest.
+type SendTwoStepCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext       `json:"auth"`
+	Device TrustedAuthDevice `json:"device"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
 }
 
 // SetPhotoFavoriteRequest SetPhotoFavorite operation input.
@@ -3062,6 +3332,45 @@ type TrashDriveNodeRequest struct {
 
 // TrashDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type TrashDriveNodeResult = DriveItemChangeResult
+
+// TrustedAuthDevice defines model for TrustedAuthDevice.
+type TrustedAuthDevice struct {
+	ID string `json:"id"`
+
+	// Metadata Detached provider device metadata
+	Metadata []byte `json:"metadata"`
+}
+
+// TrustedDevicesResult defines model for TrustedDevicesResult.
+type TrustedDevicesResult struct {
+	Devices   []TrustedAuthDevice `json:"devices"`
+	Responses []ResponseMetadata  `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// TrustedPhoneNumber defines model for TrustedPhoneNumber.
+type TrustedPhoneNumber struct {
+	ID       TrustedPhoneNumberID `json:"id"`
+	NonFTEU  *bool                `json:"nonFTEU,omitempty"`
+	Number   string               `json:"number"`
+	PushMode string               `json:"pushMode"`
+}
+
+// TrustedPhoneNumberID defines model for TrustedPhoneNumberID.
+type TrustedPhoneNumberID struct {
+	union json.RawMessage
+}
+
+// TrustedPhoneNumberID0 defines model for TrustedPhoneNumberID.0.
+type TrustedPhoneNumberID0 = int
+
+// TrustedPhoneNumberID1 defines model for TrustedPhoneNumberID.1.
+type TrustedPhoneNumberID1 = string
+
+// TwoFactorDeliveryMethod defines model for TwoFactorDeliveryMethod.
+type TwoFactorDeliveryMethod string
 
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
@@ -3283,6 +3592,43 @@ type UploadedDriveFile struct {
 	Size                 int64                       `json:"size"`
 	WrappingKey          string                      `json:"wrappingKey"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// VerifyNativeBridgeCodeRequest defines model for VerifyNativeBridgeCodeRequest.
+type VerifyNativeBridgeCodeRequest struct {
+	Code string `json:"code"`
+}
+
+// VerifySecurityKeyRequest defines model for VerifySecurityKeyRequest.
+type VerifySecurityKeyRequest struct {
+	Assertion SecurityKeyAssertion `json:"assertion"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// VerifyTwoFactorCodeRequest defines model for VerifyTwoFactorCodeRequest.
+type VerifyTwoFactorCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+	Code string      `json:"code"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// VerifyTwoStepCodeRequest defines model for VerifyTwoStepCodeRequest.
+type VerifyTwoStepCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext       `json:"auth"`
+	Code   string            `json:"code"`
+	Device TrustedAuthDevice `json:"device"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
 }
 
 // Getter for additional properties for AccountDevice. Returns the specified
@@ -7476,6 +7822,68 @@ func (t ReminderAttachment) MarshalJSON() ([]byte, error) {
 }
 
 func (t *ReminderAttachment) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsTrustedPhoneNumberID0 returns the union data inside the TrustedPhoneNumberID as a TrustedPhoneNumberID0
+func (t TrustedPhoneNumberID) AsTrustedPhoneNumberID0() (TrustedPhoneNumberID0, error) {
+	var body TrustedPhoneNumberID0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTrustedPhoneNumberID0 overwrites any union data inside the TrustedPhoneNumberID as the provided TrustedPhoneNumberID0
+func (t *TrustedPhoneNumberID) FromTrustedPhoneNumberID0(v TrustedPhoneNumberID0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeTrustedPhoneNumberID0 performs a merge with any union data inside the TrustedPhoneNumberID, using the provided TrustedPhoneNumberID0
+func (t *TrustedPhoneNumberID) MergeTrustedPhoneNumberID0(v TrustedPhoneNumberID0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsTrustedPhoneNumberID1 returns the union data inside the TrustedPhoneNumberID as a TrustedPhoneNumberID1
+func (t TrustedPhoneNumberID) AsTrustedPhoneNumberID1() (TrustedPhoneNumberID1, error) {
+	var body TrustedPhoneNumberID1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTrustedPhoneNumberID1 overwrites any union data inside the TrustedPhoneNumberID as the provided TrustedPhoneNumberID1
+func (t *TrustedPhoneNumberID) FromTrustedPhoneNumberID1(v TrustedPhoneNumberID1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeTrustedPhoneNumberID1 performs a merge with any union data inside the TrustedPhoneNumberID, using the provided TrustedPhoneNumberID1
+func (t *TrustedPhoneNumberID) MergeTrustedPhoneNumberID1(v TrustedPhoneNumberID1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t TrustedPhoneNumberID) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *TrustedPhoneNumberID) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }

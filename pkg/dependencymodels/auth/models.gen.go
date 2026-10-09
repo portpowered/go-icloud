@@ -9,7 +9,74 @@ import (
 
 	"github.com/oapi-codegen/nullable"
 	"github.com/oapi-codegen/runtime"
+	externalRef0 "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )
+
+// Defines values for AuthAccept.
+const (
+	ApplicationjsonTextjavascript AuthAccept = "application/json, text/javascript"
+)
+
+// Valid indicates whether the value is a known member of the AuthAccept enum.
+func (e AuthAccept) Valid() bool {
+	switch e {
+	case ApplicationjsonTextjavascript:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthAccountLockedCode.
+const (
+	AccountLockedCode AuthAccountLockedCode = -20209
+)
+
+// Valid indicates whether the value is a known member of the AuthAccountLockedCode enum.
+func (e AuthAccountLockedCode) Valid() bool {
+	switch e {
+	case AccountLockedCode:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthBridgeInitialRoute.
+const (
+	Authbridgestep AuthBridgeInitialRoute = "auth/bridge/step"
+)
+
+// Valid indicates whether the value is a known member of the AuthBridgeInitialRoute enum.
+func (e AuthBridgeInitialRoute) Valid() bool {
+	switch e {
+	case Authbridgestep:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthBridgeStepRequestNextStep.
+const (
+	N2 AuthBridgeStepRequestNextStep = 2
+	N4 AuthBridgeStepRequestNextStep = 4
+	N6 AuthBridgeStepRequestNextStep = 6
+)
+
+// Valid indicates whether the value is a known member of the AuthBridgeStepRequestNextStep enum.
+func (e AuthBridgeStepRequestNextStep) Valid() bool {
+	switch e {
+	case N2:
+		return true
+	case N4:
+		return true
+	case N6:
+		return true
+	default:
+		return false
+	}
+}
 
 // Defines values for AuthClientBuildNumber.
 const (
@@ -41,6 +108,234 @@ func (e AuthClientMasteringNumber) Valid() bool {
 	}
 }
 
+// Defines values for AuthDefaultLocale.
+const (
+	EnUS AuthDefaultLocale = "en_US"
+)
+
+// Valid indicates whether the value is a known member of the AuthDefaultLocale enum.
+func (e AuthDefaultLocale) Valid() bool {
+	switch e {
+	case EnUS:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthFDClientInfo.
+const (
+	UMozilla50MacintoshIntelMacOSX10157AppleWebKit605115KHTMLLikeGeckoVersion1831Safari605115LenUSZGMT0000V11F AuthFDClientInfo = "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+)
+
+// Valid indicates whether the value is a known member of the AuthFDClientInfo enum.
+func (e AuthFDClientInfo) Valid() bool {
+	switch e {
+	case UMozilla50MacintoshIntelMacOSX10157AppleWebKit605115KHTMLLikeGeckoVersion1831Safari605115LenUSZGMT0000V11F:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthHTMLAccept.
+const (
+	Texthtml AuthHTMLAccept = "text/html"
+)
+
+// Valid indicates whether the value is a known member of the AuthHTMLAccept enum.
+func (e AuthHTMLAccept) Valid() bool {
+	switch e {
+	case Texthtml:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthLogoutContentType.
+const (
+	TextplainCharsetUTF8 AuthLogoutContentType = "text/plain;charset=UTF-8"
+)
+
+// Valid indicates whether the value is a known member of the AuthLogoutContentType enum.
+func (e AuthLogoutContentType) Valid() bool {
+	switch e {
+	case TextplainCharsetUTF8:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthPCSSuccessStatus.
+const (
+	Success AuthPCSSuccessStatus = "success"
+)
+
+// Valid indicates whether the value is a known member of the AuthPCSSuccessStatus enum.
+func (e AuthPCSSuccessStatus) Valid() bool {
+	switch e {
+	case Success:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthSMSRequestMode.
+const (
+	Sms AuthSMSRequestMode = "sms"
+)
+
+// Valid indicates whether the value is a known member of the AuthSMSRequestMode enum.
+func (e AuthSMSRequestMode) Valid() bool {
+	switch e {
+	case Sms:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthSRPCompleteRequestRememberMe.
+const (
+	AuthSRPCompleteRequestRememberMeTrue AuthSRPCompleteRequestRememberMe = true
+)
+
+// Valid indicates whether the value is a known member of the AuthSRPCompleteRequestRememberMe enum.
+func (e AuthSRPCompleteRequestRememberMe) Valid() bool {
+	switch e {
+	case AuthSRPCompleteRequestRememberMeTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthSRPCompleteRequestPause2FA.
+const (
+	AuthSRPCompleteRequestPause2FATrue AuthSRPCompleteRequestPause2FA = true
+)
+
+// Valid indicates whether the value is a known member of the AuthSRPCompleteRequestPause2FA enum.
+func (e AuthSRPCompleteRequestPause2FA) Valid() bool {
+	switch e {
+	case AuthSRPCompleteRequestPause2FATrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthSRPProtocol.
+const (
+	S2k   AuthSRPProtocol = "s2k"
+	S2kFo AuthSRPProtocol = "s2k_fo"
+)
+
+// Valid indicates whether the value is a known member of the AuthSRPProtocol enum.
+func (e AuthSRPProtocol) Valid() bool {
+	switch e {
+	case S2k:
+		return true
+	case S2kFo:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthSkVersion.
+const (
+	N7 AuthSkVersion = "7"
+)
+
+// Valid indicates whether the value is a known member of the AuthSkVersion enum.
+func (e AuthSkVersion) Valid() bool {
+	switch e {
+	case N7:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthUserAgent.
+const (
+	Mozilla50MacintoshIntelMacOSX10157AppleWebKit605115KHTMLLikeGeckoVersion1831Safari605115 AuthUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+)
+
+// Valid indicates whether the value is a known member of the AuthUserAgent enum.
+func (e AuthUserAgent) Valid() bool {
+	switch e {
+	case Mozilla50MacintoshIntelMacOSX10157AppleWebKit605115KHTMLLikeGeckoVersion1831Safari605115:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthVersion.
+const (
+	Latest AuthVersion = "latest"
+)
+
+// Valid indicates whether the value is a known member of the AuthVersion enum.
+func (e AuthVersion) Valid() bool {
+	switch e {
+	case Latest:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthWebAuthnClientDataType.
+const (
+	WebauthnGet AuthWebAuthnClientDataType = "webauthn.get"
+)
+
+// Valid indicates whether the value is a known member of the AuthWebAuthnClientDataType enum.
+func (e AuthWebAuthnClientDataType) Valid() bool {
+	switch e {
+	case WebauthnGet:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthWebAuthnOrigin.
+const (
+	HttpsappleCom AuthWebAuthnOrigin = "https://apple.com"
+)
+
+// Valid indicates whether the value is a known member of the AuthWebAuthnOrigin enum.
+func (e AuthWebAuthnOrigin) Valid() bool {
+	switch e {
+	case HttpsappleCom:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthWrongVerificationCode.
+const (
+	WrongVerificationCode AuthWrongVerificationCode = -21669
+)
+
+// Valid indicates whether the value is a known member of the AuthWrongVerificationCode enum.
+func (e AuthWrongVerificationCode) Valid() bool {
+	switch e {
+	case WrongVerificationCode:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for FindMyReauthenticationStatus.
 const (
 	FindMyReauthenticationRequired FindMyReauthenticationStatus = 450
@@ -50,6 +345,186 @@ const (
 func (e FindMyReauthenticationStatus) Valid() bool {
 	switch e {
 	case FindMyReauthenticationRequired:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for HomeChinaOrigin.
+const (
+	HttpswwwIcloudComCn HomeChinaOrigin = "https://www.icloud.com.cn"
+)
+
+// Valid indicates whether the value is a known member of the HomeChinaOrigin enum.
+func (e HomeChinaOrigin) Valid() bool {
+	switch e {
+	case HttpswwwIcloudComCn:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for HomeOrigin.
+const (
+	HttpswwwIcloudCom HomeOrigin = "https://www.icloud.com"
+)
+
+// Valid indicates whether the value is a known member of the HomeOrigin enum.
+func (e HomeOrigin) Valid() bool {
+	switch e {
+	case HttpswwwIcloudCom:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IDMSOrigin.
+const (
+	HttpsidmsaAppleCom IDMSOrigin = "https://idmsa.apple.com"
+)
+
+// Valid indicates whether the value is a known member of the IDMSOrigin enum.
+func (e IDMSOrigin) Valid() bool {
+	switch e {
+	case HttpsidmsaAppleCom:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthClientID.
+const (
+	D39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d OAuthClientID = "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+)
+
+// Valid indicates whether the value is a known member of the OAuthClientID enum.
+func (e OAuthClientID) Valid() bool {
+	switch e {
+	case D39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthClientType.
+const (
+	FirstPartyAuth OAuthClientType = "firstPartyAuth"
+)
+
+// Valid indicates whether the value is a known member of the OAuthClientType enum.
+func (e OAuthClientType) Valid() bool {
+	switch e {
+	case FirstPartyAuth:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthRequireGrantCode.
+const (
+	OAuthRequireGrantCodeTrue OAuthRequireGrantCode = "true"
+)
+
+// Valid indicates whether the value is a known member of the OAuthRequireGrantCode enum.
+func (e OAuthRequireGrantCode) Valid() bool {
+	switch e {
+	case OAuthRequireGrantCodeTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthResponseMode.
+const (
+	WebMessage OAuthResponseMode = "web_message"
+)
+
+// Valid indicates whether the value is a known member of the OAuthResponseMode enum.
+func (e OAuthResponseMode) Valid() bool {
+	switch e {
+	case WebMessage:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthResponseType.
+const (
+	Code OAuthResponseType = "code"
+)
+
+// Valid indicates whether the value is a known member of the OAuthResponseType enum.
+func (e OAuthResponseType) Valid() bool {
+	switch e {
+	case Code:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PCSNoCookies.
+const (
+	CookiesNotAvailableYetOnServer PCSNoCookies = "Cookies not available yet on server."
+)
+
+// Valid indicates whether the value is a known member of the PCSNoCookies enum.
+func (e PCSNoCookies) Valid() bool {
+	switch e {
+	case CookiesNotAvailableYetOnServer:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PCSWaitingCookies.
+const (
+	RequestedTheDeviceToUploadCookies PCSWaitingCookies = "Requested the device to upload cookies."
+)
+
+// Valid indicates whether the value is a known member of the PCSWaitingCookies enum.
+func (e PCSWaitingCookies) Valid() bool {
+	switch e {
+	case RequestedTheDeviceToUploadCookies:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RememberMeQuery.
+const (
+	RememberMeQueryTrue RememberMeQuery = "true"
+)
+
+// Valid indicates whether the value is a known member of the RememberMeQuery enum.
+func (e RememberMeQuery) Valid() bool {
+	switch e {
+	case RememberMeQueryTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SMSAccept.
+const (
+	ApplicationjsonTextplain SMSAccept = "application/json, text/plain"
+)
+
+// Valid indicates whether the value is a known member of the SMSAccept enum.
+func (e SMSAccept) Valid() bool {
+	switch e {
+	case ApplicationjsonTextplain:
 		return true
 	default:
 		return false
@@ -71,14 +546,109 @@ func (e WebAuthCookieName) Valid() bool {
 	}
 }
 
+// AuthWebAuthnChallenge defines model for AuthWebAuthnChallenge.
+type AuthWebAuthnChallenge struct {
+	Challenge            *string                     `json:"challenge,omitempty"`
+	KeyHandles           *[]string                   `json:"keyHandles,omitempty"`
+	RpId                 *string                     `json:"rpId,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthAccept defines model for AuthAccept.
+type AuthAccept string
+
+// AuthAcceptTermsRequest defines model for AuthAcceptTermsRequest.
+type AuthAcceptTermsRequest struct {
+	AcceptedICloudTerms int `json:"acceptedICloudTerms"`
+}
+
+// AuthAccountLockedCode defines model for AuthAccountLockedCode.
+type AuthAccountLockedCode int
+
 // AuthAccountResponse defines model for AuthAccountResponse.
 type AuthAccountResponse struct {
 	DsInfo               *AuthIdentity               `json:"dsInfo,omitempty"`
-	HsaChallengeRequired *bool                       `json:"hsaChallengeRequired,omitempty"`
 	HsaTrustedBrowser    *bool                       `json:"hsaTrustedBrowser,omitempty"`
+	HsaChallengeRequired *bool                       `json:"hsaChallengeRequired,omitempty"`
 	TermsUpdateNeeded    *bool                       `json:"termsUpdateNeeded,omitempty"`
 	Webservices          *AuthWebServices            `json:"webservices,omitempty"`
+	Apps                 *map[string]AuthApp         `json:"apps,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthApp defines model for AuthApp.
+type AuthApp struct {
+	CanLaunchWithOneFactor *bool                       `json:"canLaunchWithOneFactor,omitempty"`
+	AdditionalProperties   map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthBridgeCodeRequest defines model for AuthBridgeCodeRequest.
+type AuthBridgeCodeRequest struct {
+	SessionUUID string `json:"sessionUUID"`
+	Code        string `json:"code"`
+}
+
+// AuthBridgeInitialRoute defines model for AuthBridgeInitialRoute.
+type AuthBridgeInitialRoute string
+
+// AuthBridgeResponse defines model for AuthBridgeResponse.
+type AuthBridgeResponse struct {
+	SessionUUID *string `json:"sessionUUID,omitempty"`
+	Data        *string `json:"data,omitempty"`
+	NextStep    *int    `json:"nextStep,omitempty"`
+	Idmsdata    *string `json:"idmsdata,omitempty"`
+
+	// Akdata Uninterpreted provider metadata retained without loss.
+	Akdata               UnknownJSONValue            `json:"akdata,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthBridgeStartRequest defines model for AuthBridgeStartRequest.
+type AuthBridgeStartRequest struct {
+	SessionUUID string `json:"sessionUUID"`
+	Ptkn        string `json:"ptkn"`
+}
+
+// AuthBridgeStepRequest defines model for AuthBridgeStepRequest.
+type AuthBridgeStepRequest struct {
+	SessionUUID string                        `json:"sessionUUID"`
+	Data        []byte                        `json:"data"`
+	Ptkn        string                        `json:"ptkn"`
+	NextStep    AuthBridgeStepRequestNextStep `json:"nextStep"`
+	Idmsdata    *string                       `json:"idmsdata,omitempty"`
+
+	// Akdata Uninterpreted provider metadata retained without loss.
+	Akdata UnknownJSONValue `json:"akdata,omitempty"`
+}
+
+// AuthBridgeStepRequestNextStep defines model for AuthBridgeStepRequest.NextStep.
+type AuthBridgeStepRequestNextStep int
+
+// AuthChallenge defines model for AuthChallenge.
+type AuthChallenge struct {
+	Mode                    *string                             `json:"mode,omitempty"`
+	FsaChallenge            *AuthWebAuthnChallenge              `json:"fsaChallenge,omitempty"`
+	KeyNames                *[]string                           `json:"keyNames,omitempty"`
+	AuthFactors             *[]string                           `json:"authFactors,omitempty"`
+	AuthInitialRoute        *string                             `json:"authInitialRoute,omitempty"`
+	BridgeInitiateData      *externalRef0.BridgeInitiateData    `json:"bridgeInitiateData,omitempty"`
+	Direct                  *externalRef0.BridgeBootstrapDirect `json:"direct,omitempty"`
+	HasTrustedDevices       *bool                               `json:"hasTrustedDevices,omitempty"`
+	PhoneNumberVerification *AuthPhoneNumberVerification        `json:"phoneNumberVerification,omitempty"`
+	SourceAppId             *AuthChallenge_SourceAppId          `json:"sourceAppId,omitempty"`
+	TrustedPhoneNumber      *AuthTrustedPhoneNumber             `json:"trustedPhoneNumber,omitempty"`
+	AdditionalProperties    map[string]UnknownJSONValue         `json:"-"`
+}
+
+// AuthChallengeSourceAppId0 defines model for AuthChallenge.SourceAppId.0.
+type AuthChallengeSourceAppId0 = string
+
+// AuthChallengeSourceAppId1 defines model for AuthChallenge.SourceAppId.1.
+type AuthChallengeSourceAppId1 = int
+
+// AuthChallenge_SourceAppId defines model for AuthChallenge.SourceAppId.
+type AuthChallenge_SourceAppId struct {
+	union json.RawMessage
 }
 
 // AuthClientBuildNumber Pinned reference default build used after session discovery.
@@ -87,10 +657,24 @@ type AuthClientBuildNumber string
 // AuthClientMasteringNumber Pinned reference default mastering build used after session discovery.
 type AuthClientMasteringNumber string
 
+// AuthCredentialsLoginRequest defines model for AuthCredentialsLoginRequest.
+type AuthCredentialsLoginRequest struct {
+	AppName  nullable.Nullable[string] `json:"appName"`
+	AppleId  string                    `json:"apple_id"`
+	Password string                    `json:"password"`
+}
+
+// AuthDefaultLocale defines model for AuthDefaultLocale.
+type AuthDefaultLocale string
+
+// AuthFDClientInfo defines model for AuthFDClientInfo.
+type AuthFDClientInfo string
+
 // AuthFailure defines model for AuthFailure.
 type AuthFailure struct {
-	ErrorCode            *AuthFailure_ErrorCode      `json:"errorCode,omitempty"`
 	Reason               *string                     `json:"reason,omitempty"`
+	ErrorCode            *AuthFailure_ErrorCode      `json:"errorCode,omitempty"`
+	ServiceErrors        *[]AuthServiceError         `json:"serviceErrors,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
@@ -105,6 +689,14 @@ type AuthFailure_ErrorCode struct {
 	union json.RawMessage
 }
 
+// AuthGetTermsRequest defines model for AuthGetTermsRequest.
+type AuthGetTermsRequest struct {
+	Locale string `json:"locale"`
+}
+
+// AuthHTMLAccept defines model for AuthHTMLAccept.
+type AuthHTMLAccept string
+
 // AuthIdentity defines model for AuthIdentity.
 type AuthIdentity struct {
 	Dsid                 *string                     `json:"dsid,omitempty"`
@@ -113,9 +705,162 @@ type AuthIdentity struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// AuthLogoutContentType defines model for AuthLogoutContentType.
+type AuthLogoutContentType string
+
+// AuthLogoutRequest defines model for AuthLogoutRequest.
+type AuthLogoutRequest struct {
+	TrustBrowser bool `json:"trustBrowser"`
+	AllBrowsers  bool `json:"allBrowsers"`
+}
+
+// AuthPCSRequest defines model for AuthPCSRequest.
+type AuthPCSRequest struct {
+	AppName               string `json:"appName"`
+	DerivedFromUserAction bool   `json:"derivedFromUserAction"`
+}
+
+// AuthPCSResponse defines model for AuthPCSResponse.
+type AuthPCSResponse struct {
+	Status               *string                     `json:"status,omitempty"`
+	Message              *string                     `json:"message,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthPCSSuccessStatus defines model for AuthPCSSuccessStatus.
+type AuthPCSSuccessStatus string
+
+// AuthPhoneID defines model for AuthPhoneID.
+type AuthPhoneID struct {
+	union json.RawMessage
+}
+
+// AuthPhoneID0 defines model for AuthPhoneID.0.
+type AuthPhoneID0 = int
+
+// AuthPhoneID1 defines model for AuthPhoneID.1.
+type AuthPhoneID1 = string
+
+// AuthPhoneNumber defines model for AuthPhoneNumber.
+type AuthPhoneNumber struct {
+	Id                   AuthPhoneID                 `json:"id"`
+	NonFTEU              *bool                       `json:"nonFTEU,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthPhoneNumberVerification defines model for AuthPhoneNumberVerification.
+type AuthPhoneNumberVerification struct {
+	TrustedPhoneNumber   *AuthTrustedPhoneNumber     `json:"trustedPhoneNumber,omitempty"`
+	TrustedPhoneNumbers  *[]AuthTrustedPhoneNumber   `json:"trustedPhoneNumbers,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthSMSRequest defines model for AuthSMSRequest.
+type AuthSMSRequest struct {
+	PhoneNumber AuthPhoneNumber    `json:"phoneNumber"`
+	Mode        AuthSMSRequestMode `json:"mode"`
+}
+
+// AuthSMSRequestMode defines model for AuthSMSRequest.Mode.
+type AuthSMSRequestMode string
+
+// AuthSMSVerificationRequest defines model for AuthSMSVerificationRequest.
+type AuthSMSVerificationRequest struct {
+	PhoneNumber  AuthPhoneNumber  `json:"phoneNumber"`
+	SecurityCode AuthSecurityCode `json:"securityCode"`
+	Mode         string           `json:"mode"`
+}
+
+// AuthSRPCompleteRequest defines model for AuthSRPCompleteRequest.
+type AuthSRPCompleteRequest struct {
+	AccountName string                           `json:"accountName"`
+	C           string                           `json:"c"`
+	M1          []byte                           `json:"m1"`
+	M2          []byte                           `json:"m2"`
+	RememberMe  AuthSRPCompleteRequestRememberMe `json:"rememberMe"`
+	TrustTokens []string                         `json:"trustTokens"`
+	Pause2FA    *AuthSRPCompleteRequestPause2FA  `json:"pause2FA,omitempty"`
+}
+
+// AuthSRPCompleteRequestRememberMe defines model for AuthSRPCompleteRequest.RememberMe.
+type AuthSRPCompleteRequestRememberMe bool
+
+// AuthSRPCompleteRequestPause2FA defines model for AuthSRPCompleteRequest.Pause2FA.
+type AuthSRPCompleteRequestPause2FA bool
+
+// AuthSRPInitRequest defines model for AuthSRPInitRequest.
+type AuthSRPInitRequest struct {
+	A           []byte            `json:"a"`
+	AccountName string            `json:"accountName"`
+	Protocols   []AuthSRPProtocol `json:"protocols"`
+}
+
+// AuthSRPInitResponse defines model for AuthSRPInitResponse.
+type AuthSRPInitResponse struct {
+	Salt                 []byte                      `json:"salt"`
+	B                    []byte                      `json:"b"`
+	C                    string                      `json:"c"`
+	Iteration            int                         `json:"iteration"`
+	Protocol             AuthSRPProtocol             `json:"protocol"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthSRPProtocol defines model for AuthSRPProtocol.
+type AuthSRPProtocol string
+
+// AuthSecurityCode defines model for AuthSecurityCode.
+type AuthSecurityCode struct {
+	Code string `json:"code"`
+}
+
+// AuthSecurityCodeVerdict defines model for AuthSecurityCodeVerdict.
+type AuthSecurityCodeVerdict struct {
+	Valid                *bool                       `json:"valid,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
 // AuthService defines model for AuthService.
 type AuthService struct {
 	Url                  *string                     `json:"url,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthServiceError defines model for AuthServiceError.
+type AuthServiceError struct {
+	Code                 *AuthServiceError_Code      `json:"code,omitempty"`
+	Message              *string                     `json:"message,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthServiceErrorCode0 defines model for AuthServiceError.Code.0.
+type AuthServiceErrorCode0 = string
+
+// AuthServiceErrorCode1 defines model for AuthServiceError.Code.1.
+type AuthServiceErrorCode1 = int
+
+// AuthServiceError_Code defines model for AuthServiceError.Code.
+type AuthServiceError_Code struct {
+	union json.RawMessage
+}
+
+// AuthSkVersion defines model for AuthSkVersion.
+type AuthSkVersion string
+
+// AuthSuccessResponse defines model for AuthSuccessResponse.
+type AuthSuccessResponse struct {
+	Success              *bool                       `json:"success,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthTermsResponse defines model for AuthTermsResponse.
+type AuthTermsResponse struct {
+	ICloudTerms          *AuthTermsVersion           `json:"iCloudTerms,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthTermsVersion defines model for AuthTermsVersion.
+type AuthTermsVersion struct {
+	Version              *int                        `json:"version,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
@@ -127,26 +872,242 @@ type AuthTokenLoginRequest struct {
 	TrustToken         string                    `json:"trustToken"`
 }
 
+// AuthTrustedCodeRequest defines model for AuthTrustedCodeRequest.
+type AuthTrustedCodeRequest struct {
+	SecurityCode AuthSecurityCode `json:"securityCode"`
+}
+
+// AuthTrustedDevice defines model for AuthTrustedDevice.
+type AuthTrustedDevice struct {
+	Id                   *string                     `json:"id,omitempty"`
+	DeviceName           *string                     `json:"deviceName,omitempty"`
+	DeviceType           *string                     `json:"deviceType,omitempty"`
+	PhoneNumber          *string                     `json:"phoneNumber,omitempty"`
+	VerificationCode     *string                     `json:"verificationCode,omitempty"`
+	TrustBrowser         *bool                       `json:"trustBrowser,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthTrustedDevicesResponse defines model for AuthTrustedDevicesResponse.
+type AuthTrustedDevicesResponse struct {
+	Devices              *[]AuthTrustedDevice        `json:"devices,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthTrustedPhoneNumber defines model for AuthTrustedPhoneNumber.
+type AuthTrustedPhoneNumber struct {
+	Id                   *AuthPhoneID                `json:"id,omitempty"`
+	NonFTEU              *bool                       `json:"nonFTEU,omitempty"`
+	NumberWithDialCode   *string                     `json:"numberWithDialCode,omitempty"`
+	PushMode             *string                     `json:"pushMode,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthUserAgent defines model for AuthUserAgent.
+type AuthUserAgent string
+
+// AuthVerificationResponse defines model for AuthVerificationResponse.
+type AuthVerificationResponse struct {
+	SecurityCode         *AuthSecurityCodeVerdict    `json:"securityCode,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthVersion defines model for AuthVersion.
+type AuthVersion string
+
+// AuthWebAccessResponse defines model for AuthWebAccessResponse.
+type AuthWebAccessResponse struct {
+	IsICDRSDisabled                 *bool                       `json:"isICDRSDisabled,omitempty"`
+	IsDeviceConsentedForPCS         *bool                       `json:"isDeviceConsentedForPCS,omitempty"`
+	IsDeviceConsentNotificationSent *bool                       `json:"isDeviceConsentNotificationSent,omitempty"`
+	AdditionalProperties            map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthWebAuthnAssertion defines model for AuthWebAuthnAssertion.
+type AuthWebAuthnAssertion struct {
+	Challenge         string                    `json:"challenge"`
+	ClientData        []byte                    `json:"clientData"`
+	SignatureData     []byte                    `json:"signatureData"`
+	AuthenticatorData []byte                    `json:"authenticatorData"`
+	UserHandle        nullable.Nullable[[]byte] `json:"userHandle"`
+	CredentialID      []byte                    `json:"credentialID"`
+	RpId              string                    `json:"rpId"`
+}
+
+// AuthWebAuthnClientData defines model for AuthWebAuthnClientData.
+type AuthWebAuthnClientData struct {
+	Challenge            string                      `json:"challenge"`
+	CrossOrigin          *bool                       `json:"crossOrigin,omitempty"`
+	Origin               AuthWebAuthnOrigin          `json:"origin"`
+	Type                 AuthWebAuthnClientDataType  `json:"type"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthWebAuthnClientDataType defines model for AuthWebAuthnClientDataType.
+type AuthWebAuthnClientDataType string
+
+// AuthWebAuthnOrigin defines model for AuthWebAuthnOrigin.
+type AuthWebAuthnOrigin string
+
 // AuthWebServices defines model for AuthWebServices.
 type AuthWebServices struct {
 	Account              *AuthService           `json:"account,omitempty"`
-	Ckdatabasews         *AuthService           `json:"ckdatabasews,omitempty"`
-	Docws                *AuthService           `json:"docws,omitempty"`
 	Drivews              *AuthService           `json:"drivews,omitempty"`
+	Docws                *AuthService           `json:"docws,omitempty"`
 	Findme               *AuthService           `json:"findme,omitempty"`
 	Photos               *AuthService           `json:"photos,omitempty"`
+	Ckdatabasews         *AuthService           `json:"ckdatabasews,omitempty"`
 	Reminders            *AuthService           `json:"reminders,omitempty"`
+	Photosupload         *AuthService           `json:"photosupload,omitempty"`
+	Sharedstreams        *AuthService           `json:"sharedstreams,omitempty"`
 	AdditionalProperties map[string]AuthService `json:"-"`
 }
 
+// AuthWrongVerificationCode defines model for AuthWrongVerificationCode.
+type AuthWrongVerificationCode int
+
 // FindMyReauthenticationStatus Find My service response status requiring one saved-token refresh before a bounded retry.
 type FindMyReauthenticationStatus int
+
+// HomeChinaOrigin defines model for HomeChinaOrigin.
+type HomeChinaOrigin string
+
+// HomeOrigin defines model for HomeOrigin.
+type HomeOrigin string
+
+// IDMSOrigin defines model for IDMSOrigin.
+type IDMSOrigin string
+
+// OAuthClientID defines model for OAuthClientID.
+type OAuthClientID string
+
+// OAuthClientType defines model for OAuthClientType.
+type OAuthClientType string
+
+// OAuthRequireGrantCode defines model for OAuthRequireGrantCode.
+type OAuthRequireGrantCode string
+
+// OAuthResponseMode defines model for OAuthResponseMode.
+type OAuthResponseMode string
+
+// OAuthResponseType defines model for OAuthResponseType.
+type OAuthResponseType string
+
+// PCSNoCookies defines model for PCSNoCookies.
+type PCSNoCookies string
+
+// PCSWaitingCookies defines model for PCSWaitingCookies.
+type PCSWaitingCookies string
+
+// RememberMeQuery defines model for RememberMeQuery.
+type RememberMeQuery string
+
+// SMSAccept defines model for SMSAccept.
+type SMSAccept string
 
 // UnknownJSONValue Uninterpreted provider metadata retained without loss.
 type UnknownJSONValue = json.RawMessage
 
 // WebAuthCookieName Cookie required before saved-session validation.
 type WebAuthCookieName string
+
+// Getter for additional properties for AuthWebAuthnChallenge. Returns the specified
+// element and whether it was found
+func (a AuthWebAuthnChallenge) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthWebAuthnChallenge
+func (a *AuthWebAuthnChallenge) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthWebAuthnChallenge to handle AdditionalProperties
+func (a *AuthWebAuthnChallenge) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["challenge"]; found {
+		err = json.Unmarshal(raw, &a.Challenge)
+		if err != nil {
+			return fmt.Errorf("error reading 'challenge': %w", err)
+		}
+		delete(object, "challenge")
+	}
+
+	if raw, found := object["keyHandles"]; found {
+		err = json.Unmarshal(raw, &a.KeyHandles)
+		if err != nil {
+			return fmt.Errorf("error reading 'keyHandles': %w", err)
+		}
+		delete(object, "keyHandles")
+	}
+
+	if raw, found := object["rpId"]; found {
+		err = json.Unmarshal(raw, &a.RpId)
+		if err != nil {
+			return fmt.Errorf("error reading 'rpId': %w", err)
+		}
+		delete(object, "rpId")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthWebAuthnChallenge to handle AdditionalProperties
+func (a AuthWebAuthnChallenge) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Challenge != nil {
+		object["challenge"], err = json.Marshal(a.Challenge)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'challenge': %w", err)
+		}
+	}
+
+	if a.KeyHandles != nil {
+		object["keyHandles"], err = json.Marshal(a.KeyHandles)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'keyHandles': %w", err)
+		}
+	}
+
+	if a.RpId != nil {
+		object["rpId"], err = json.Marshal(a.RpId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'rpId': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
 
 // Getter for additional properties for AuthAccountResponse. Returns the specified
 // element and whether it was found
@@ -181,20 +1142,20 @@ func (a *AuthAccountResponse) UnmarshalJSON(b []byte) error {
 		delete(object, "dsInfo")
 	}
 
-	if raw, found := object["hsaChallengeRequired"]; found {
-		err = json.Unmarshal(raw, &a.HsaChallengeRequired)
-		if err != nil {
-			return fmt.Errorf("error reading 'hsaChallengeRequired': %w", err)
-		}
-		delete(object, "hsaChallengeRequired")
-	}
-
 	if raw, found := object["hsaTrustedBrowser"]; found {
 		err = json.Unmarshal(raw, &a.HsaTrustedBrowser)
 		if err != nil {
 			return fmt.Errorf("error reading 'hsaTrustedBrowser': %w", err)
 		}
 		delete(object, "hsaTrustedBrowser")
+	}
+
+	if raw, found := object["hsaChallengeRequired"]; found {
+		err = json.Unmarshal(raw, &a.HsaChallengeRequired)
+		if err != nil {
+			return fmt.Errorf("error reading 'hsaChallengeRequired': %w", err)
+		}
+		delete(object, "hsaChallengeRequired")
 	}
 
 	if raw, found := object["termsUpdateNeeded"]; found {
@@ -211,6 +1172,14 @@ func (a *AuthAccountResponse) UnmarshalJSON(b []byte) error {
 			return fmt.Errorf("error reading 'webservices': %w", err)
 		}
 		delete(object, "webservices")
+	}
+
+	if raw, found := object["apps"]; found {
+		err = json.Unmarshal(raw, &a.Apps)
+		if err != nil {
+			return fmt.Errorf("error reading 'apps': %w", err)
+		}
+		delete(object, "apps")
 	}
 
 	if len(object) != 0 {
@@ -239,17 +1208,17 @@ func (a AuthAccountResponse) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	if a.HsaChallengeRequired != nil {
-		object["hsaChallengeRequired"], err = json.Marshal(a.HsaChallengeRequired)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'hsaChallengeRequired': %w", err)
-		}
-	}
-
 	if a.HsaTrustedBrowser != nil {
 		object["hsaTrustedBrowser"], err = json.Marshal(a.HsaTrustedBrowser)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'hsaTrustedBrowser': %w", err)
+		}
+	}
+
+	if a.HsaChallengeRequired != nil {
+		object["hsaChallengeRequired"], err = json.Marshal(a.HsaChallengeRequired)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hsaChallengeRequired': %w", err)
 		}
 	}
 
@@ -264,6 +1233,425 @@ func (a AuthAccountResponse) MarshalJSON() ([]byte, error) {
 		object["webservices"], err = json.Marshal(a.Webservices)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'webservices': %w", err)
+		}
+	}
+
+	if a.Apps != nil {
+		object["apps"], err = json.Marshal(a.Apps)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'apps': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthApp. Returns the specified
+// element and whether it was found
+func (a AuthApp) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthApp
+func (a *AuthApp) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthApp to handle AdditionalProperties
+func (a *AuthApp) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["canLaunchWithOneFactor"]; found {
+		err = json.Unmarshal(raw, &a.CanLaunchWithOneFactor)
+		if err != nil {
+			return fmt.Errorf("error reading 'canLaunchWithOneFactor': %w", err)
+		}
+		delete(object, "canLaunchWithOneFactor")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthApp to handle AdditionalProperties
+func (a AuthApp) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.CanLaunchWithOneFactor != nil {
+		object["canLaunchWithOneFactor"], err = json.Marshal(a.CanLaunchWithOneFactor)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'canLaunchWithOneFactor': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthBridgeResponse. Returns the specified
+// element and whether it was found
+func (a AuthBridgeResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthBridgeResponse
+func (a *AuthBridgeResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthBridgeResponse to handle AdditionalProperties
+func (a *AuthBridgeResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["sessionUUID"]; found {
+		err = json.Unmarshal(raw, &a.SessionUUID)
+		if err != nil {
+			return fmt.Errorf("error reading 'sessionUUID': %w", err)
+		}
+		delete(object, "sessionUUID")
+	}
+
+	if raw, found := object["data"]; found {
+		err = json.Unmarshal(raw, &a.Data)
+		if err != nil {
+			return fmt.Errorf("error reading 'data': %w", err)
+		}
+		delete(object, "data")
+	}
+
+	if raw, found := object["nextStep"]; found {
+		err = json.Unmarshal(raw, &a.NextStep)
+		if err != nil {
+			return fmt.Errorf("error reading 'nextStep': %w", err)
+		}
+		delete(object, "nextStep")
+	}
+
+	if raw, found := object["idmsdata"]; found {
+		err = json.Unmarshal(raw, &a.Idmsdata)
+		if err != nil {
+			return fmt.Errorf("error reading 'idmsdata': %w", err)
+		}
+		delete(object, "idmsdata")
+	}
+
+	if raw, found := object["akdata"]; found {
+		err = json.Unmarshal(raw, &a.Akdata)
+		if err != nil {
+			return fmt.Errorf("error reading 'akdata': %w", err)
+		}
+		delete(object, "akdata")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthBridgeResponse to handle AdditionalProperties
+func (a AuthBridgeResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.SessionUUID != nil {
+		object["sessionUUID"], err = json.Marshal(a.SessionUUID)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sessionUUID': %w", err)
+		}
+	}
+
+	if a.Data != nil {
+		object["data"], err = json.Marshal(a.Data)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'data': %w", err)
+		}
+	}
+
+	if a.NextStep != nil {
+		object["nextStep"], err = json.Marshal(a.NextStep)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nextStep': %w", err)
+		}
+	}
+
+	if a.Idmsdata != nil {
+		object["idmsdata"], err = json.Marshal(a.Idmsdata)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'idmsdata': %w", err)
+		}
+	}
+
+	object["akdata"], err = json.Marshal(a.Akdata)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'akdata': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthChallenge. Returns the specified
+// element and whether it was found
+func (a AuthChallenge) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthChallenge
+func (a *AuthChallenge) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthChallenge to handle AdditionalProperties
+func (a *AuthChallenge) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["mode"]; found {
+		err = json.Unmarshal(raw, &a.Mode)
+		if err != nil {
+			return fmt.Errorf("error reading 'mode': %w", err)
+		}
+		delete(object, "mode")
+	}
+
+	if raw, found := object["fsaChallenge"]; found {
+		err = json.Unmarshal(raw, &a.FsaChallenge)
+		if err != nil {
+			return fmt.Errorf("error reading 'fsaChallenge': %w", err)
+		}
+		delete(object, "fsaChallenge")
+	}
+
+	if raw, found := object["keyNames"]; found {
+		err = json.Unmarshal(raw, &a.KeyNames)
+		if err != nil {
+			return fmt.Errorf("error reading 'keyNames': %w", err)
+		}
+		delete(object, "keyNames")
+	}
+
+	if raw, found := object["authFactors"]; found {
+		err = json.Unmarshal(raw, &a.AuthFactors)
+		if err != nil {
+			return fmt.Errorf("error reading 'authFactors': %w", err)
+		}
+		delete(object, "authFactors")
+	}
+
+	if raw, found := object["authInitialRoute"]; found {
+		err = json.Unmarshal(raw, &a.AuthInitialRoute)
+		if err != nil {
+			return fmt.Errorf("error reading 'authInitialRoute': %w", err)
+		}
+		delete(object, "authInitialRoute")
+	}
+
+	if raw, found := object["bridgeInitiateData"]; found {
+		err = json.Unmarshal(raw, &a.BridgeInitiateData)
+		if err != nil {
+			return fmt.Errorf("error reading 'bridgeInitiateData': %w", err)
+		}
+		delete(object, "bridgeInitiateData")
+	}
+
+	if raw, found := object["direct"]; found {
+		err = json.Unmarshal(raw, &a.Direct)
+		if err != nil {
+			return fmt.Errorf("error reading 'direct': %w", err)
+		}
+		delete(object, "direct")
+	}
+
+	if raw, found := object["hasTrustedDevices"]; found {
+		err = json.Unmarshal(raw, &a.HasTrustedDevices)
+		if err != nil {
+			return fmt.Errorf("error reading 'hasTrustedDevices': %w", err)
+		}
+		delete(object, "hasTrustedDevices")
+	}
+
+	if raw, found := object["phoneNumberVerification"]; found {
+		err = json.Unmarshal(raw, &a.PhoneNumberVerification)
+		if err != nil {
+			return fmt.Errorf("error reading 'phoneNumberVerification': %w", err)
+		}
+		delete(object, "phoneNumberVerification")
+	}
+
+	if raw, found := object["sourceAppId"]; found {
+		err = json.Unmarshal(raw, &a.SourceAppId)
+		if err != nil {
+			return fmt.Errorf("error reading 'sourceAppId': %w", err)
+		}
+		delete(object, "sourceAppId")
+	}
+
+	if raw, found := object["trustedPhoneNumber"]; found {
+		err = json.Unmarshal(raw, &a.TrustedPhoneNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'trustedPhoneNumber': %w", err)
+		}
+		delete(object, "trustedPhoneNumber")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthChallenge to handle AdditionalProperties
+func (a AuthChallenge) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Mode != nil {
+		object["mode"], err = json.Marshal(a.Mode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'mode': %w", err)
+		}
+	}
+
+	if a.FsaChallenge != nil {
+		object["fsaChallenge"], err = json.Marshal(a.FsaChallenge)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'fsaChallenge': %w", err)
+		}
+	}
+
+	if a.KeyNames != nil {
+		object["keyNames"], err = json.Marshal(a.KeyNames)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'keyNames': %w", err)
+		}
+	}
+
+	if a.AuthFactors != nil {
+		object["authFactors"], err = json.Marshal(a.AuthFactors)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'authFactors': %w", err)
+		}
+	}
+
+	if a.AuthInitialRoute != nil {
+		object["authInitialRoute"], err = json.Marshal(a.AuthInitialRoute)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'authInitialRoute': %w", err)
+		}
+	}
+
+	if a.BridgeInitiateData != nil {
+		object["bridgeInitiateData"], err = json.Marshal(a.BridgeInitiateData)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'bridgeInitiateData': %w", err)
+		}
+	}
+
+	if a.Direct != nil {
+		object["direct"], err = json.Marshal(a.Direct)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'direct': %w", err)
+		}
+	}
+
+	if a.HasTrustedDevices != nil {
+		object["hasTrustedDevices"], err = json.Marshal(a.HasTrustedDevices)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'hasTrustedDevices': %w", err)
+		}
+	}
+
+	if a.PhoneNumberVerification != nil {
+		object["phoneNumberVerification"], err = json.Marshal(a.PhoneNumberVerification)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'phoneNumberVerification': %w", err)
+		}
+	}
+
+	if a.SourceAppId != nil {
+		object["sourceAppId"], err = json.Marshal(a.SourceAppId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sourceAppId': %w", err)
+		}
+	}
+
+	if a.TrustedPhoneNumber != nil {
+		object["trustedPhoneNumber"], err = json.Marshal(a.TrustedPhoneNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'trustedPhoneNumber': %w", err)
 		}
 	}
 
@@ -301,6 +1689,14 @@ func (a *AuthFailure) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
+	if raw, found := object["reason"]; found {
+		err = json.Unmarshal(raw, &a.Reason)
+		if err != nil {
+			return fmt.Errorf("error reading 'reason': %w", err)
+		}
+		delete(object, "reason")
+	}
+
 	if raw, found := object["errorCode"]; found {
 		err = json.Unmarshal(raw, &a.ErrorCode)
 		if err != nil {
@@ -309,12 +1705,12 @@ func (a *AuthFailure) UnmarshalJSON(b []byte) error {
 		delete(object, "errorCode")
 	}
 
-	if raw, found := object["reason"]; found {
-		err = json.Unmarshal(raw, &a.Reason)
+	if raw, found := object["serviceErrors"]; found {
+		err = json.Unmarshal(raw, &a.ServiceErrors)
 		if err != nil {
-			return fmt.Errorf("error reading 'reason': %w", err)
+			return fmt.Errorf("error reading 'serviceErrors': %w", err)
 		}
-		delete(object, "reason")
+		delete(object, "serviceErrors")
 	}
 
 	if len(object) != 0 {
@@ -336,6 +1732,13 @@ func (a AuthFailure) MarshalJSON() ([]byte, error) {
 	var err error
 	object := make(map[string]json.RawMessage)
 
+	if a.Reason != nil {
+		object["reason"], err = json.Marshal(a.Reason)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'reason': %w", err)
+		}
+	}
+
 	if a.ErrorCode != nil {
 		object["errorCode"], err = json.Marshal(a.ErrorCode)
 		if err != nil {
@@ -343,10 +1746,10 @@ func (a AuthFailure) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	if a.Reason != nil {
-		object["reason"], err = json.Marshal(a.Reason)
+	if a.ServiceErrors != nil {
+		object["serviceErrors"], err = json.Marshal(a.ServiceErrors)
 		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'reason': %w", err)
+			return nil, fmt.Errorf("error marshaling 'serviceErrors': %w", err)
 		}
 	}
 
@@ -457,6 +1860,439 @@ func (a AuthIdentity) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for AuthPCSResponse. Returns the specified
+// element and whether it was found
+func (a AuthPCSResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthPCSResponse
+func (a *AuthPCSResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthPCSResponse to handle AdditionalProperties
+func (a *AuthPCSResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if raw, found := object["message"]; found {
+		err = json.Unmarshal(raw, &a.Message)
+		if err != nil {
+			return fmt.Errorf("error reading 'message': %w", err)
+		}
+		delete(object, "message")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthPCSResponse to handle AdditionalProperties
+func (a AuthPCSResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Status != nil {
+		object["status"], err = json.Marshal(a.Status)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status': %w", err)
+		}
+	}
+
+	if a.Message != nil {
+		object["message"], err = json.Marshal(a.Message)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'message': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthPhoneNumber. Returns the specified
+// element and whether it was found
+func (a AuthPhoneNumber) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthPhoneNumber
+func (a *AuthPhoneNumber) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthPhoneNumber to handle AdditionalProperties
+func (a *AuthPhoneNumber) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["nonFTEU"]; found {
+		err = json.Unmarshal(raw, &a.NonFTEU)
+		if err != nil {
+			return fmt.Errorf("error reading 'nonFTEU': %w", err)
+		}
+		delete(object, "nonFTEU")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthPhoneNumber to handle AdditionalProperties
+func (a AuthPhoneNumber) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["id"], err = json.Marshal(a.Id)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'id': %w", err)
+	}
+
+	if a.NonFTEU != nil {
+		object["nonFTEU"], err = json.Marshal(a.NonFTEU)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nonFTEU': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthPhoneNumberVerification. Returns the specified
+// element and whether it was found
+func (a AuthPhoneNumberVerification) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthPhoneNumberVerification
+func (a *AuthPhoneNumberVerification) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthPhoneNumberVerification to handle AdditionalProperties
+func (a *AuthPhoneNumberVerification) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["trustedPhoneNumber"]; found {
+		err = json.Unmarshal(raw, &a.TrustedPhoneNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'trustedPhoneNumber': %w", err)
+		}
+		delete(object, "trustedPhoneNumber")
+	}
+
+	if raw, found := object["trustedPhoneNumbers"]; found {
+		err = json.Unmarshal(raw, &a.TrustedPhoneNumbers)
+		if err != nil {
+			return fmt.Errorf("error reading 'trustedPhoneNumbers': %w", err)
+		}
+		delete(object, "trustedPhoneNumbers")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthPhoneNumberVerification to handle AdditionalProperties
+func (a AuthPhoneNumberVerification) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.TrustedPhoneNumber != nil {
+		object["trustedPhoneNumber"], err = json.Marshal(a.TrustedPhoneNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'trustedPhoneNumber': %w", err)
+		}
+	}
+
+	if a.TrustedPhoneNumbers != nil {
+		object["trustedPhoneNumbers"], err = json.Marshal(a.TrustedPhoneNumbers)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'trustedPhoneNumbers': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthSRPInitResponse. Returns the specified
+// element and whether it was found
+func (a AuthSRPInitResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthSRPInitResponse
+func (a *AuthSRPInitResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthSRPInitResponse to handle AdditionalProperties
+func (a *AuthSRPInitResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["salt"]; found {
+		err = json.Unmarshal(raw, &a.Salt)
+		if err != nil {
+			return fmt.Errorf("error reading 'salt': %w", err)
+		}
+		delete(object, "salt")
+	}
+
+	if raw, found := object["b"]; found {
+		err = json.Unmarshal(raw, &a.B)
+		if err != nil {
+			return fmt.Errorf("error reading 'b': %w", err)
+		}
+		delete(object, "b")
+	}
+
+	if raw, found := object["c"]; found {
+		err = json.Unmarshal(raw, &a.C)
+		if err != nil {
+			return fmt.Errorf("error reading 'c': %w", err)
+		}
+		delete(object, "c")
+	}
+
+	if raw, found := object["iteration"]; found {
+		err = json.Unmarshal(raw, &a.Iteration)
+		if err != nil {
+			return fmt.Errorf("error reading 'iteration': %w", err)
+		}
+		delete(object, "iteration")
+	}
+
+	if raw, found := object["protocol"]; found {
+		err = json.Unmarshal(raw, &a.Protocol)
+		if err != nil {
+			return fmt.Errorf("error reading 'protocol': %w", err)
+		}
+		delete(object, "protocol")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthSRPInitResponse to handle AdditionalProperties
+func (a AuthSRPInitResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["salt"], err = json.Marshal(a.Salt)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'salt': %w", err)
+	}
+
+	object["b"], err = json.Marshal(a.B)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'b': %w", err)
+	}
+
+	object["c"], err = json.Marshal(a.C)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'c': %w", err)
+	}
+
+	object["iteration"], err = json.Marshal(a.Iteration)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'iteration': %w", err)
+	}
+
+	object["protocol"], err = json.Marshal(a.Protocol)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'protocol': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthSecurityCodeVerdict. Returns the specified
+// element and whether it was found
+func (a AuthSecurityCodeVerdict) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthSecurityCodeVerdict
+func (a *AuthSecurityCodeVerdict) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthSecurityCodeVerdict to handle AdditionalProperties
+func (a *AuthSecurityCodeVerdict) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["valid"]; found {
+		err = json.Unmarshal(raw, &a.Valid)
+		if err != nil {
+			return fmt.Errorf("error reading 'valid': %w", err)
+		}
+		delete(object, "valid")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthSecurityCodeVerdict to handle AdditionalProperties
+func (a AuthSecurityCodeVerdict) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Valid != nil {
+		object["valid"], err = json.Marshal(a.Valid)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'valid': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for AuthService. Returns the specified
 // element and whether it was found
 func (a AuthService) Get(fieldName string) (value UnknownJSONValue, found bool) {
@@ -525,6 +2361,890 @@ func (a AuthService) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for AuthServiceError. Returns the specified
+// element and whether it was found
+func (a AuthServiceError) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthServiceError
+func (a *AuthServiceError) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthServiceError to handle AdditionalProperties
+func (a *AuthServiceError) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["code"]; found {
+		err = json.Unmarshal(raw, &a.Code)
+		if err != nil {
+			return fmt.Errorf("error reading 'code': %w", err)
+		}
+		delete(object, "code")
+	}
+
+	if raw, found := object["message"]; found {
+		err = json.Unmarshal(raw, &a.Message)
+		if err != nil {
+			return fmt.Errorf("error reading 'message': %w", err)
+		}
+		delete(object, "message")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthServiceError to handle AdditionalProperties
+func (a AuthServiceError) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Code != nil {
+		object["code"], err = json.Marshal(a.Code)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'code': %w", err)
+		}
+	}
+
+	if a.Message != nil {
+		object["message"], err = json.Marshal(a.Message)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'message': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthSuccessResponse. Returns the specified
+// element and whether it was found
+func (a AuthSuccessResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthSuccessResponse
+func (a *AuthSuccessResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthSuccessResponse to handle AdditionalProperties
+func (a *AuthSuccessResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["success"]; found {
+		err = json.Unmarshal(raw, &a.Success)
+		if err != nil {
+			return fmt.Errorf("error reading 'success': %w", err)
+		}
+		delete(object, "success")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthSuccessResponse to handle AdditionalProperties
+func (a AuthSuccessResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Success != nil {
+		object["success"], err = json.Marshal(a.Success)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'success': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthTermsResponse. Returns the specified
+// element and whether it was found
+func (a AuthTermsResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthTermsResponse
+func (a *AuthTermsResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthTermsResponse to handle AdditionalProperties
+func (a *AuthTermsResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["iCloudTerms"]; found {
+		err = json.Unmarshal(raw, &a.ICloudTerms)
+		if err != nil {
+			return fmt.Errorf("error reading 'iCloudTerms': %w", err)
+		}
+		delete(object, "iCloudTerms")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthTermsResponse to handle AdditionalProperties
+func (a AuthTermsResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.ICloudTerms != nil {
+		object["iCloudTerms"], err = json.Marshal(a.ICloudTerms)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'iCloudTerms': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthTermsVersion. Returns the specified
+// element and whether it was found
+func (a AuthTermsVersion) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthTermsVersion
+func (a *AuthTermsVersion) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthTermsVersion to handle AdditionalProperties
+func (a *AuthTermsVersion) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["version"]; found {
+		err = json.Unmarshal(raw, &a.Version)
+		if err != nil {
+			return fmt.Errorf("error reading 'version': %w", err)
+		}
+		delete(object, "version")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthTermsVersion to handle AdditionalProperties
+func (a AuthTermsVersion) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Version != nil {
+		object["version"], err = json.Marshal(a.Version)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'version': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthTrustedDevice. Returns the specified
+// element and whether it was found
+func (a AuthTrustedDevice) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthTrustedDevice
+func (a *AuthTrustedDevice) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthTrustedDevice to handle AdditionalProperties
+func (a *AuthTrustedDevice) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["deviceName"]; found {
+		err = json.Unmarshal(raw, &a.DeviceName)
+		if err != nil {
+			return fmt.Errorf("error reading 'deviceName': %w", err)
+		}
+		delete(object, "deviceName")
+	}
+
+	if raw, found := object["deviceType"]; found {
+		err = json.Unmarshal(raw, &a.DeviceType)
+		if err != nil {
+			return fmt.Errorf("error reading 'deviceType': %w", err)
+		}
+		delete(object, "deviceType")
+	}
+
+	if raw, found := object["phoneNumber"]; found {
+		err = json.Unmarshal(raw, &a.PhoneNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'phoneNumber': %w", err)
+		}
+		delete(object, "phoneNumber")
+	}
+
+	if raw, found := object["verificationCode"]; found {
+		err = json.Unmarshal(raw, &a.VerificationCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'verificationCode': %w", err)
+		}
+		delete(object, "verificationCode")
+	}
+
+	if raw, found := object["trustBrowser"]; found {
+		err = json.Unmarshal(raw, &a.TrustBrowser)
+		if err != nil {
+			return fmt.Errorf("error reading 'trustBrowser': %w", err)
+		}
+		delete(object, "trustBrowser")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthTrustedDevice to handle AdditionalProperties
+func (a AuthTrustedDevice) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.DeviceName != nil {
+		object["deviceName"], err = json.Marshal(a.DeviceName)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'deviceName': %w", err)
+		}
+	}
+
+	if a.DeviceType != nil {
+		object["deviceType"], err = json.Marshal(a.DeviceType)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'deviceType': %w", err)
+		}
+	}
+
+	if a.PhoneNumber != nil {
+		object["phoneNumber"], err = json.Marshal(a.PhoneNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'phoneNumber': %w", err)
+		}
+	}
+
+	if a.VerificationCode != nil {
+		object["verificationCode"], err = json.Marshal(a.VerificationCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'verificationCode': %w", err)
+		}
+	}
+
+	if a.TrustBrowser != nil {
+		object["trustBrowser"], err = json.Marshal(a.TrustBrowser)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'trustBrowser': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthTrustedDevicesResponse. Returns the specified
+// element and whether it was found
+func (a AuthTrustedDevicesResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthTrustedDevicesResponse
+func (a *AuthTrustedDevicesResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthTrustedDevicesResponse to handle AdditionalProperties
+func (a *AuthTrustedDevicesResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["devices"]; found {
+		err = json.Unmarshal(raw, &a.Devices)
+		if err != nil {
+			return fmt.Errorf("error reading 'devices': %w", err)
+		}
+		delete(object, "devices")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthTrustedDevicesResponse to handle AdditionalProperties
+func (a AuthTrustedDevicesResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Devices != nil {
+		object["devices"], err = json.Marshal(a.Devices)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'devices': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthTrustedPhoneNumber. Returns the specified
+// element and whether it was found
+func (a AuthTrustedPhoneNumber) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthTrustedPhoneNumber
+func (a *AuthTrustedPhoneNumber) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthTrustedPhoneNumber to handle AdditionalProperties
+func (a *AuthTrustedPhoneNumber) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["nonFTEU"]; found {
+		err = json.Unmarshal(raw, &a.NonFTEU)
+		if err != nil {
+			return fmt.Errorf("error reading 'nonFTEU': %w", err)
+		}
+		delete(object, "nonFTEU")
+	}
+
+	if raw, found := object["numberWithDialCode"]; found {
+		err = json.Unmarshal(raw, &a.NumberWithDialCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'numberWithDialCode': %w", err)
+		}
+		delete(object, "numberWithDialCode")
+	}
+
+	if raw, found := object["pushMode"]; found {
+		err = json.Unmarshal(raw, &a.PushMode)
+		if err != nil {
+			return fmt.Errorf("error reading 'pushMode': %w", err)
+		}
+		delete(object, "pushMode")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthTrustedPhoneNumber to handle AdditionalProperties
+func (a AuthTrustedPhoneNumber) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.NonFTEU != nil {
+		object["nonFTEU"], err = json.Marshal(a.NonFTEU)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nonFTEU': %w", err)
+		}
+	}
+
+	if a.NumberWithDialCode != nil {
+		object["numberWithDialCode"], err = json.Marshal(a.NumberWithDialCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'numberWithDialCode': %w", err)
+		}
+	}
+
+	if a.PushMode != nil {
+		object["pushMode"], err = json.Marshal(a.PushMode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'pushMode': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthVerificationResponse. Returns the specified
+// element and whether it was found
+func (a AuthVerificationResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthVerificationResponse
+func (a *AuthVerificationResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthVerificationResponse to handle AdditionalProperties
+func (a *AuthVerificationResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["securityCode"]; found {
+		err = json.Unmarshal(raw, &a.SecurityCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'securityCode': %w", err)
+		}
+		delete(object, "securityCode")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthVerificationResponse to handle AdditionalProperties
+func (a AuthVerificationResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.SecurityCode != nil {
+		object["securityCode"], err = json.Marshal(a.SecurityCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'securityCode': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthWebAccessResponse. Returns the specified
+// element and whether it was found
+func (a AuthWebAccessResponse) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthWebAccessResponse
+func (a *AuthWebAccessResponse) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthWebAccessResponse to handle AdditionalProperties
+func (a *AuthWebAccessResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["isICDRSDisabled"]; found {
+		err = json.Unmarshal(raw, &a.IsICDRSDisabled)
+		if err != nil {
+			return fmt.Errorf("error reading 'isICDRSDisabled': %w", err)
+		}
+		delete(object, "isICDRSDisabled")
+	}
+
+	if raw, found := object["isDeviceConsentedForPCS"]; found {
+		err = json.Unmarshal(raw, &a.IsDeviceConsentedForPCS)
+		if err != nil {
+			return fmt.Errorf("error reading 'isDeviceConsentedForPCS': %w", err)
+		}
+		delete(object, "isDeviceConsentedForPCS")
+	}
+
+	if raw, found := object["isDeviceConsentNotificationSent"]; found {
+		err = json.Unmarshal(raw, &a.IsDeviceConsentNotificationSent)
+		if err != nil {
+			return fmt.Errorf("error reading 'isDeviceConsentNotificationSent': %w", err)
+		}
+		delete(object, "isDeviceConsentNotificationSent")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthWebAccessResponse to handle AdditionalProperties
+func (a AuthWebAccessResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.IsICDRSDisabled != nil {
+		object["isICDRSDisabled"], err = json.Marshal(a.IsICDRSDisabled)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'isICDRSDisabled': %w", err)
+		}
+	}
+
+	if a.IsDeviceConsentedForPCS != nil {
+		object["isDeviceConsentedForPCS"], err = json.Marshal(a.IsDeviceConsentedForPCS)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'isDeviceConsentedForPCS': %w", err)
+		}
+	}
+
+	if a.IsDeviceConsentNotificationSent != nil {
+		object["isDeviceConsentNotificationSent"], err = json.Marshal(a.IsDeviceConsentNotificationSent)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'isDeviceConsentNotificationSent': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for AuthWebAuthnClientData. Returns the specified
+// element and whether it was found
+func (a AuthWebAuthnClientData) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for AuthWebAuthnClientData
+func (a *AuthWebAuthnClientData) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for AuthWebAuthnClientData to handle AdditionalProperties
+func (a *AuthWebAuthnClientData) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["challenge"]; found {
+		err = json.Unmarshal(raw, &a.Challenge)
+		if err != nil {
+			return fmt.Errorf("error reading 'challenge': %w", err)
+		}
+		delete(object, "challenge")
+	}
+
+	if raw, found := object["crossOrigin"]; found {
+		err = json.Unmarshal(raw, &a.CrossOrigin)
+		if err != nil {
+			return fmt.Errorf("error reading 'crossOrigin': %w", err)
+		}
+		delete(object, "crossOrigin")
+	}
+
+	if raw, found := object["origin"]; found {
+		err = json.Unmarshal(raw, &a.Origin)
+		if err != nil {
+			return fmt.Errorf("error reading 'origin': %w", err)
+		}
+		delete(object, "origin")
+	}
+
+	if raw, found := object["type"]; found {
+		err = json.Unmarshal(raw, &a.Type)
+		if err != nil {
+			return fmt.Errorf("error reading 'type': %w", err)
+		}
+		delete(object, "type")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for AuthWebAuthnClientData to handle AdditionalProperties
+func (a AuthWebAuthnClientData) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["challenge"], err = json.Marshal(a.Challenge)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'challenge': %w", err)
+	}
+
+	if a.CrossOrigin != nil {
+		object["crossOrigin"], err = json.Marshal(a.CrossOrigin)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'crossOrigin': %w", err)
+		}
+	}
+
+	object["origin"], err = json.Marshal(a.Origin)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'origin': %w", err)
+	}
+
+	object["type"], err = json.Marshal(a.Type)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'type': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for AuthWebServices. Returns the specified
 // element and whether it was found
 func (a AuthWebServices) Get(fieldName string) (value AuthService, found bool) {
@@ -558,12 +3278,12 @@ func (a *AuthWebServices) UnmarshalJSON(b []byte) error {
 		delete(object, "account")
 	}
 
-	if raw, found := object["ckdatabasews"]; found {
-		err = json.Unmarshal(raw, &a.Ckdatabasews)
+	if raw, found := object["drivews"]; found {
+		err = json.Unmarshal(raw, &a.Drivews)
 		if err != nil {
-			return fmt.Errorf("error reading 'ckdatabasews': %w", err)
+			return fmt.Errorf("error reading 'drivews': %w", err)
 		}
-		delete(object, "ckdatabasews")
+		delete(object, "drivews")
 	}
 
 	if raw, found := object["docws"]; found {
@@ -572,14 +3292,6 @@ func (a *AuthWebServices) UnmarshalJSON(b []byte) error {
 			return fmt.Errorf("error reading 'docws': %w", err)
 		}
 		delete(object, "docws")
-	}
-
-	if raw, found := object["drivews"]; found {
-		err = json.Unmarshal(raw, &a.Drivews)
-		if err != nil {
-			return fmt.Errorf("error reading 'drivews': %w", err)
-		}
-		delete(object, "drivews")
 	}
 
 	if raw, found := object["findme"]; found {
@@ -598,12 +3310,36 @@ func (a *AuthWebServices) UnmarshalJSON(b []byte) error {
 		delete(object, "photos")
 	}
 
+	if raw, found := object["ckdatabasews"]; found {
+		err = json.Unmarshal(raw, &a.Ckdatabasews)
+		if err != nil {
+			return fmt.Errorf("error reading 'ckdatabasews': %w", err)
+		}
+		delete(object, "ckdatabasews")
+	}
+
 	if raw, found := object["reminders"]; found {
 		err = json.Unmarshal(raw, &a.Reminders)
 		if err != nil {
 			return fmt.Errorf("error reading 'reminders': %w", err)
 		}
 		delete(object, "reminders")
+	}
+
+	if raw, found := object["photosupload"]; found {
+		err = json.Unmarshal(raw, &a.Photosupload)
+		if err != nil {
+			return fmt.Errorf("error reading 'photosupload': %w", err)
+		}
+		delete(object, "photosupload")
+	}
+
+	if raw, found := object["sharedstreams"]; found {
+		err = json.Unmarshal(raw, &a.Sharedstreams)
+		if err != nil {
+			return fmt.Errorf("error reading 'sharedstreams': %w", err)
+		}
+		delete(object, "sharedstreams")
 	}
 
 	if len(object) != 0 {
@@ -632,10 +3368,10 @@ func (a AuthWebServices) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	if a.Ckdatabasews != nil {
-		object["ckdatabasews"], err = json.Marshal(a.Ckdatabasews)
+	if a.Drivews != nil {
+		object["drivews"], err = json.Marshal(a.Drivews)
 		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'ckdatabasews': %w", err)
+			return nil, fmt.Errorf("error marshaling 'drivews': %w", err)
 		}
 	}
 
@@ -643,13 +3379,6 @@ func (a AuthWebServices) MarshalJSON() ([]byte, error) {
 		object["docws"], err = json.Marshal(a.Docws)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'docws': %w", err)
-		}
-	}
-
-	if a.Drivews != nil {
-		object["drivews"], err = json.Marshal(a.Drivews)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'drivews': %w", err)
 		}
 	}
 
@@ -667,10 +3396,31 @@ func (a AuthWebServices) MarshalJSON() ([]byte, error) {
 		}
 	}
 
+	if a.Ckdatabasews != nil {
+		object["ckdatabasews"], err = json.Marshal(a.Ckdatabasews)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'ckdatabasews': %w", err)
+		}
+	}
+
 	if a.Reminders != nil {
 		object["reminders"], err = json.Marshal(a.Reminders)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'reminders': %w", err)
+		}
+	}
+
+	if a.Photosupload != nil {
+		object["photosupload"], err = json.Marshal(a.Photosupload)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'photosupload': %w", err)
+		}
+	}
+
+	if a.Sharedstreams != nil {
+		object["sharedstreams"], err = json.Marshal(a.Sharedstreams)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'sharedstreams': %w", err)
 		}
 	}
 
@@ -681,6 +3431,68 @@ func (a AuthWebServices) MarshalJSON() ([]byte, error) {
 		}
 	}
 	return json.Marshal(object)
+}
+
+// AsAuthChallengeSourceAppId0 returns the union data inside the AuthChallenge_SourceAppId as a AuthChallengeSourceAppId0
+func (t AuthChallenge_SourceAppId) AsAuthChallengeSourceAppId0() (AuthChallengeSourceAppId0, error) {
+	var body AuthChallengeSourceAppId0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthChallengeSourceAppId0 overwrites any union data inside the AuthChallenge_SourceAppId as the provided AuthChallengeSourceAppId0
+func (t *AuthChallenge_SourceAppId) FromAuthChallengeSourceAppId0(v AuthChallengeSourceAppId0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeAuthChallengeSourceAppId0 performs a merge with any union data inside the AuthChallenge_SourceAppId, using the provided AuthChallengeSourceAppId0
+func (t *AuthChallenge_SourceAppId) MergeAuthChallengeSourceAppId0(v AuthChallengeSourceAppId0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsAuthChallengeSourceAppId1 returns the union data inside the AuthChallenge_SourceAppId as a AuthChallengeSourceAppId1
+func (t AuthChallenge_SourceAppId) AsAuthChallengeSourceAppId1() (AuthChallengeSourceAppId1, error) {
+	var body AuthChallengeSourceAppId1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthChallengeSourceAppId1 overwrites any union data inside the AuthChallenge_SourceAppId as the provided AuthChallengeSourceAppId1
+func (t *AuthChallenge_SourceAppId) FromAuthChallengeSourceAppId1(v AuthChallengeSourceAppId1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeAuthChallengeSourceAppId1 performs a merge with any union data inside the AuthChallenge_SourceAppId, using the provided AuthChallengeSourceAppId1
+func (t *AuthChallenge_SourceAppId) MergeAuthChallengeSourceAppId1(v AuthChallengeSourceAppId1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t AuthChallenge_SourceAppId) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *AuthChallenge_SourceAppId) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
 }
 
 // AsAuthFailureErrorCode0 returns the union data inside the AuthFailure_ErrorCode as a AuthFailureErrorCode0
@@ -741,6 +3553,130 @@ func (t AuthFailure_ErrorCode) MarshalJSON() ([]byte, error) {
 }
 
 func (t *AuthFailure_ErrorCode) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsAuthPhoneID0 returns the union data inside the AuthPhoneID as a AuthPhoneID0
+func (t AuthPhoneID) AsAuthPhoneID0() (AuthPhoneID0, error) {
+	var body AuthPhoneID0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthPhoneID0 overwrites any union data inside the AuthPhoneID as the provided AuthPhoneID0
+func (t *AuthPhoneID) FromAuthPhoneID0(v AuthPhoneID0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeAuthPhoneID0 performs a merge with any union data inside the AuthPhoneID, using the provided AuthPhoneID0
+func (t *AuthPhoneID) MergeAuthPhoneID0(v AuthPhoneID0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsAuthPhoneID1 returns the union data inside the AuthPhoneID as a AuthPhoneID1
+func (t AuthPhoneID) AsAuthPhoneID1() (AuthPhoneID1, error) {
+	var body AuthPhoneID1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthPhoneID1 overwrites any union data inside the AuthPhoneID as the provided AuthPhoneID1
+func (t *AuthPhoneID) FromAuthPhoneID1(v AuthPhoneID1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeAuthPhoneID1 performs a merge with any union data inside the AuthPhoneID, using the provided AuthPhoneID1
+func (t *AuthPhoneID) MergeAuthPhoneID1(v AuthPhoneID1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t AuthPhoneID) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *AuthPhoneID) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsAuthServiceErrorCode0 returns the union data inside the AuthServiceError_Code as a AuthServiceErrorCode0
+func (t AuthServiceError_Code) AsAuthServiceErrorCode0() (AuthServiceErrorCode0, error) {
+	var body AuthServiceErrorCode0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthServiceErrorCode0 overwrites any union data inside the AuthServiceError_Code as the provided AuthServiceErrorCode0
+func (t *AuthServiceError_Code) FromAuthServiceErrorCode0(v AuthServiceErrorCode0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeAuthServiceErrorCode0 performs a merge with any union data inside the AuthServiceError_Code, using the provided AuthServiceErrorCode0
+func (t *AuthServiceError_Code) MergeAuthServiceErrorCode0(v AuthServiceErrorCode0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsAuthServiceErrorCode1 returns the union data inside the AuthServiceError_Code as a AuthServiceErrorCode1
+func (t AuthServiceError_Code) AsAuthServiceErrorCode1() (AuthServiceErrorCode1, error) {
+	var body AuthServiceErrorCode1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthServiceErrorCode1 overwrites any union data inside the AuthServiceError_Code as the provided AuthServiceErrorCode1
+func (t *AuthServiceError_Code) FromAuthServiceErrorCode1(v AuthServiceErrorCode1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeAuthServiceErrorCode1 performs a merge with any union data inside the AuthServiceError_Code, using the provided AuthServiceErrorCode1
+func (t *AuthServiceError_Code) MergeAuthServiceErrorCode1(v AuthServiceErrorCode1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t AuthServiceError_Code) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *AuthServiceError_Code) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }

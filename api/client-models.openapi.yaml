@@ -301,8 +301,7 @@
         "description": "Caller-owned account identity and web authentication headers. The reusable client never saves this state.",
         "properties": {
           "accountID": {
-            "description": "Authenticated account identifier returned by login.",
-            "minLength": 1,
+            "description": "Authenticated account identifier returned by login; empty only before authentication completes.",
             "type": "string",
             "x-go-name": "AccountID"
           },
@@ -406,14 +405,14 @@
             "x-go-type-skip-optional-pointer": true
           },
           "photosUploadServiceURL": {
-            "description": "HTTPS Photos upload origin returned by authenticated service discovery.",
+            "description": "Account-discovered Photos upload reservation origin.",
             "format": "uri",
             "type": "string",
             "x-go-name": "PhotosUploadServiceURL",
             "x-go-type-skip-optional-pointer": true
           },
           "sharedPhotosServiceURL": {
-            "description": "Account-discovered shared streams origin.",
+            "description": "Account-discovered legacy shared-stream Photos origin.",
             "format": "uri",
             "type": "string",
             "x-go-name": "SharedPhotosServiceURL",
@@ -1240,7 +1239,8 @@
           "not-in-trash",
           "no-devices",
           "authentication-required",
-          "terms-required"
+          "terms-required",
+          "account-locked"
         ],
         "type": "string"
       },
@@ -5409,6 +5409,55 @@
         ],
         "type": "object"
       },
+      "CountSharedPhotosRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          }
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth",
+          "album"
+        ],
+        "type": "object"
+      },
+      "CountSharedPhotosResult": {
+        "example": {
+          "count": 0,
+          "responses": []
+        },
+        "properties": {
+          "count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "count"
+        ],
+        "type": "object"
+      },
       "CreatePhotoAlbumRequest": {
         "additionalProperties": false,
         "description": "CreatePhotoAlbum operation input.",
@@ -5874,6 +5923,65 @@
         ],
         "type": "object"
       },
+      "DownloadSharedPhotoRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          },
+          "photoID": "synthetic-photo"
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "photoID": {
+            "type": "string",
+            "x-go-name": "PhotoID"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PhotoVersion"
+          }
+        },
+        "required": [
+          "auth",
+          "album",
+          "photoID"
+        ],
+        "type": "object"
+      },
+      "DownloadSharedPhotoResult": {
+        "example": {
+          "content": null,
+          "responses": []
+        },
+        "properties": {
+          "content": {
+            "format": "byte",
+            "nullable": true,
+            "type": "string"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "content"
+        ],
+        "type": "object"
+      },
       "GetPhotoChangesRequest": {
         "example": {
           "auth": {
@@ -6124,6 +6232,65 @@
         ],
         "type": "object"
       },
+      "GetSharedPhotoRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          },
+          "photoID": "synthetic-photo"
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "photoID": {
+            "type": "string",
+            "x-go-name": "PhotoID"
+          }
+        },
+        "required": [
+          "auth",
+          "album",
+          "photoID"
+        ],
+        "type": "object"
+      },
+      "GetSharedPhotoResult": {
+        "example": {
+          "photo": null,
+          "responses": []
+        },
+        "properties": {
+          "photo": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SharedPhoto"
+              }
+            ],
+            "nullable": true
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "photo"
+        ],
+        "type": "object"
+      },
       "ListPhotoLibrariesRequest": {
         "example": {
           "auth": {
@@ -6176,6 +6343,102 @@
         "required": [
           "libraries",
           "responses"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotoAlbumsRequest": {
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotoAlbumsResult": {
+        "example": {
+          "albums": [],
+          "responses": []
+        },
+        "properties": {
+          "albums": {
+            "items": {
+              "$ref": "#/components/schemas/SharedPhotoAlbum"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "albums"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotosRequest": {
+        "example": {
+          "album": "synthetic-stream-0",
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": [],
+            "photosServiceURL": "https://photos.example.invalid",
+            "sharedPhotosServiceURL": "https://shared.example.invalid"
+          }
+        },
+        "properties": {
+          "album": {
+            "description": "Shared stream album ID or name.",
+            "type": "string"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        },
+        "required": [
+          "auth",
+          "album"
+        ],
+        "type": "object"
+      },
+      "ListSharedPhotosResult": {
+        "example": {
+          "photos": [],
+          "responses": []
+        },
+        "properties": {
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/SharedPhoto"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "responses",
+          "photos"
         ],
         "type": "object"
       },
@@ -7228,6 +7491,105 @@
         ],
         "type": "object"
       },
+      "SharedPhoto": {
+        "properties": {
+          "likeCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "liked": {
+            "type": "boolean"
+          },
+          "photo": {
+            "$ref": "#/components/schemas/Photo"
+          }
+        },
+        "required": [
+          "photo",
+          "likeCount",
+          "liked"
+        ],
+        "type": "object"
+      },
+      "SharedPhotoAlbum": {
+        "example": {
+          "allowContributions": false,
+          "changeTag": "synthetic-tag",
+          "created": "1970-01-01T00:00:00Z",
+          "fullName": "Example",
+          "id": "synthetic-stream",
+          "isPublic": false,
+          "isWebUploadSupported": false,
+          "location": "https://shared.example.invalid/album/",
+          "name": "Example",
+          "ownerID": "synthetic-owner",
+          "publicURL": null,
+          "sharingType": "owned"
+        },
+        "properties": {
+          "allowContributions": {
+            "type": "boolean"
+          },
+          "changeTag": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "created": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "fullName": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "id": {
+            "description": "Provider string.",
+            "type": "string",
+            "x-go-name": "ID"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "isWebUploadSupported": {
+            "type": "boolean"
+          },
+          "location": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "ownerID": {
+            "description": "Provider string.",
+            "type": "string"
+          },
+          "publicURL": {
+            "nullable": true,
+            "type": "string"
+          },
+          "sharingType": {
+            "description": "Provider string.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "fullName",
+          "location",
+          "changeTag",
+          "ownerID",
+          "sharingType",
+          "created",
+          "allowContributions",
+          "isPublic",
+          "isWebUploadSupported",
+          "publicURL"
+        ],
+        "type": "object"
+      },
       "UpdateReminderAttachmentRequest": {
         "description": "Update URL text or image metadata; omitted fields retain their current values.",
         "example": {
@@ -7635,365 +7997,702 @@
         ],
         "type": "object"
       },
-      "CountSharedPhotosRequest": {
-        "example": {
-          "album": "synthetic-stream-0",
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid",
-            "sharedPhotosServiceURL": "https://shared.example.invalid"
-          }
-        },
+      "AuthenticateRequest": {
+        "description": "Authenticate with an optional saved session, otherwise perform native SRP with the supplied password.",
         "properties": {
-          "album": {
-            "description": "Shared stream album ID or name.",
+          "acceptTerms": {
+            "type": "boolean",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "accountCountryCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "accountName": {
             "type": "string"
           },
           "auth": {
             "$ref": "#/components/schemas/AuthContext"
+          },
+          "forceRefresh": {
+            "type": "boolean",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "password": {
+            "type": "string"
+          },
+          "pauseTwoFactor": {
+            "type": "boolean",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "savedState": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          },
+          "service": {
+            "description": "Optional provider service for verified one-factor credential login.",
+            "type": "string"
+          },
+          "trustToken": {
+            "type": "string"
           }
         },
         "required": [
           "auth",
-          "album"
+          "accountName",
+          "password",
+          "trustToken"
         ],
         "type": "object"
       },
-      "CountSharedPhotosResult": {
-        "example": {
-          "count": 0,
-          "responses": []
-        },
+      "AuthenticationStatusResult": {
         "properties": {
-          "count": {
-            "format": "int64",
-            "type": "integer"
+          "authenticated": {
+            "type": "boolean"
+          },
+          "requiresTwoFactor": {
+            "type": "boolean"
+          },
+          "requiresTwoStep": {
+            "type": "boolean"
           },
           "responses": {
             "items": {
               "$ref": "#/components/schemas/ResponseMetadata"
             },
             "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          },
+          "trustedSession": {
+            "type": "boolean"
           }
         },
         "required": [
-          "responses",
-          "count"
+          "state",
+          "authenticated",
+          "trustedSession",
+          "requiresTwoFactor",
+          "requiresTwoStep",
+          "responses"
         ],
         "type": "object"
       },
-      "DownloadSharedPhotoRequest": {
-        "example": {
-          "album": "synthetic-stream-0",
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid",
-            "sharedPhotosServiceURL": "https://shared.example.invalid"
-          },
-          "photoID": "synthetic-photo"
-        },
+      "ConfirmSecurityKeyRequest": {
         "properties": {
-          "album": {
-            "description": "Shared stream album ID or name.",
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "deviceID": {
+            "type": "string",
+            "x-go-name": "DeviceID",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state"
+        ],
+        "type": "object"
+      },
+      "ListSecurityKeyDevicesRequest": {
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "ListSecurityKeyDevicesResult": {
+        "properties": {
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/SecurityKeyDevice"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "devices"
+        ],
+        "type": "object"
+      },
+      "LogoutRequest": {
+        "properties": {
+          "allSessions": {
+            "type": "boolean",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "keepTrusted": {
+            "type": "boolean",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "preserveLocalSession": {
+            "type": "boolean",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state"
+        ],
+        "type": "object"
+      },
+      "LogoutResult": {
+        "properties": {
+          "localCleared": {
+            "type": "boolean"
+          },
+          "remoteConfirmed": {
+            "type": "boolean"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "state",
+          "remoteConfirmed",
+          "localCleared",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "NativeAuthChallenge": {
+        "properties": {
+          "authFactors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "authInitialRoute": {
+            "type": "string"
+          },
+          "bridgeBootstrap": {
+            "description": "Schema-owned bridge bootstrap for the explicit native bridge lifecycle.",
+            "format": "byte",
+            "type": "string",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "hasTrustedDevices": {
+            "type": "boolean"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "phoneNumbers": {
+            "items": {
+              "$ref": "#/components/schemas/TrustedPhoneNumber"
+            },
+            "type": "array"
+          },
+          "securityKeyChallenge": {
+            "$ref": "#/components/schemas/SecurityKeyChallenge"
+          },
+          "securityKeyNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "mode",
+          "phoneNumbers",
+          "securityKeyNames",
+          "authInitialRoute",
+          "hasTrustedDevices",
+          "authFactors"
+        ],
+        "type": "object"
+      },
+      "NativeAuthRequest": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state"
+        ],
+        "type": "object"
+      },
+      "NativeAuthResult": {
+        "properties": {
+          "requiresTwoFactor": {
+            "type": "boolean"
+          },
+          "requiresTwoStep": {
+            "type": "boolean"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          },
+          "success": {
+            "description": "Whether the requested authentication step was accepted. Pending MFA remains explicit in state.",
+            "type": "boolean"
+          },
+          "trustedSession": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "state",
+          "trustedSession",
+          "requiresTwoFactor",
+          "requiresTwoStep",
+          "responses",
+          "success"
+        ],
+        "type": "object"
+      },
+      "NativeAuthState": {
+        "description": "Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.",
+        "properties": {
+          "accountCountryCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "accountData": {
+            "format": "byte",
+            "type": "string"
+          },
+          "accountName": {
             "type": "string"
           },
           "auth": {
             "$ref": "#/components/schemas/AuthContext"
           },
-          "photoID": {
-            "type": "string",
-            "x-go-name": "PhotoID"
+          "challenge": {
+            "$ref": "#/components/schemas/NativeAuthChallenge"
           },
-          "version": {
-            "$ref": "#/components/schemas/PhotoVersion"
+          "codeRequested": {
+            "type": "boolean"
+          },
+          "deliveryMethod": {
+            "$ref": "#/components/schemas/TwoFactorDeliveryMethod"
+          },
+          "requiresMFA": {
+            "type": "boolean"
+          },
+          "trustToken": {
+            "type": "string"
           }
         },
         "required": [
           "auth",
-          "album",
-          "photoID"
+          "accountName",
+          "trustToken",
+          "accountCountryCode",
+          "accountData",
+          "challenge",
+          "deliveryMethod",
+          "codeRequested",
+          "requiresMFA"
         ],
         "type": "object"
       },
-      "DownloadSharedPhotoResult": {
-        "example": {
-          "content": null,
-          "responses": []
-        },
+      "NativeBridgeSessionState": {
+        "description": "Detached progress of an explicit trusted-device bridge lifecycle. Values contain secrets.",
         "properties": {
-          "content": {
+          "active": {
+            "type": "boolean"
+          },
+          "legacy": {
+            "type": "boolean"
+          },
+          "nextStep": {
+            "type": "string"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "sessionID": {
+            "type": "string",
+            "x-go-name": "SessionID"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          },
+          "transactionID": {
+            "nullable": true,
+            "type": "string",
+            "x-go-name": "TransactionID"
+          }
+        },
+        "required": [
+          "state",
+          "responses",
+          "active",
+          "legacy",
+          "sessionID",
+          "nextStep",
+          "transactionID"
+        ],
+        "type": "object"
+      },
+      "OpenNativeBridgeSessionRequest": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state"
+        ],
+        "type": "object"
+      },
+      "RequestPCSAccessRequest": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "service": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state",
+          "service"
+        ],
+        "type": "object"
+      },
+      "RequestTwoFactorCodeRequest": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "phoneNumberID": {
+            "$ref": "#/components/schemas/TrustedPhoneNumberID",
+            "x-go-name": "PhoneNumberID"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state"
+        ],
+        "type": "object"
+      },
+      "SecurityKeyAssertion": {
+        "properties": {
+          "authenticatorData": {
+            "format": "byte",
+            "type": "string"
+          },
+          "clientData": {
+            "format": "byte",
+            "type": "string"
+          },
+          "credentialID": {
+            "format": "byte",
+            "type": "string",
+            "x-go-name": "CredentialID"
+          },
+          "signature": {
+            "format": "byte",
+            "type": "string"
+          },
+          "userHandle": {
             "format": "byte",
             "nullable": true,
             "type": "string"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
           }
         },
         "required": [
-          "responses",
-          "content"
+          "clientData",
+          "signature",
+          "authenticatorData",
+          "credentialID",
+          "userHandle"
         ],
         "type": "object"
       },
-      "GetSharedPhotoRequest": {
-        "example": {
-          "album": "synthetic-stream-0",
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid",
-            "sharedPhotosServiceURL": "https://shared.example.invalid"
-          },
-          "photoID": "synthetic-photo"
-        },
+      "SecurityKeyCeremony": {
         "properties": {
-          "album": {
-            "description": "Shared stream album ID or name.",
-            "type": "string"
+          "challenge": {
+            "$ref": "#/components/schemas/SecurityKeyChallenge"
           },
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "photoID": {
+          "deviceID": {
             "type": "string",
-            "x-go-name": "PhotoID"
-          }
-        },
-        "required": [
-          "auth",
-          "album",
-          "photoID"
-        ],
-        "type": "object"
-      },
-      "GetSharedPhotoResult": {
-        "example": {
-          "photo": null,
-          "responses": []
-        },
-        "properties": {
-          "photo": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SharedPhoto"
-              }
+            "x-go-name": "DeviceID"
+          },
+          "origin": {
+            "enum": [
+              "https://apple.com"
             ],
-            "nullable": true
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "responses",
-          "photo"
-        ],
-        "type": "object"
-      },
-      "ListSharedPhotoAlbumsRequest": {
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid",
-            "sharedPhotosServiceURL": "https://shared.example.invalid"
-          }
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          }
-        },
-        "required": [
-          "auth"
-        ],
-        "type": "object"
-      },
-      "ListSharedPhotoAlbumsResult": {
-        "example": {
-          "albums": [],
-          "responses": []
-        },
-        "properties": {
-          "albums": {
-            "items": {
-              "$ref": "#/components/schemas/SharedPhotoAlbum"
-            },
-            "type": "array"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "responses",
-          "albums"
-        ],
-        "type": "object"
-      },
-      "ListSharedPhotosRequest": {
-        "example": {
-          "album": "synthetic-stream-0",
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": [],
-            "photosServiceURL": "https://photos.example.invalid",
-            "sharedPhotosServiceURL": "https://shared.example.invalid"
-          }
-        },
-        "properties": {
-          "album": {
-            "description": "Shared stream album ID or name.",
             "type": "string"
           },
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
+          "userVerification": {
+            "enum": [
+              "discouraged"
+            ],
+            "type": "string"
           }
         },
         "required": [
-          "auth",
-          "album"
+          "deviceID",
+          "challenge",
+          "origin",
+          "userVerification"
         ],
         "type": "object"
       },
-      "ListSharedPhotosResult": {
-        "example": {
-          "photos": [],
-          "responses": []
-        },
+      "SecurityKeyChallenge": {
         "properties": {
-          "photos": {
+          "challenge": {
+            "type": "string"
+          },
+          "credentialIDs": {
             "items": {
-              "$ref": "#/components/schemas/SharedPhoto"
+              "type": "string"
             },
-            "type": "array"
+            "type": "array",
+            "x-go-name": "CredentialIDs"
           },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
+          "relyingPartyID": {
+            "type": "string",
+            "x-go-name": "RelyingPartyID"
           }
         },
         "required": [
-          "responses",
-          "photos"
+          "challenge",
+          "credentialIDs",
+          "relyingPartyID"
         ],
         "type": "object"
       },
-      "SharedPhoto": {
+      "SecurityKeyDevice": {
         "properties": {
-          "likeCount": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "liked": {
-            "type": "boolean"
-          },
-          "photo": {
-            "$ref": "#/components/schemas/Photo"
-          }
-        },
-        "required": [
-          "photo",
-          "likeCount",
-          "liked"
-        ],
-        "type": "object"
-      },
-      "SharedPhotoAlbum": {
-        "example": {
-          "allowContributions": false,
-          "changeTag": "synthetic-tag",
-          "created": "1970-01-01T00:00:00Z",
-          "fullName": "Example",
-          "id": "synthetic-stream",
-          "isPublic": false,
-          "isWebUploadSupported": false,
-          "location": "https://shared.example.invalid/album/",
-          "name": "Example",
-          "ownerID": "synthetic-owner",
-          "publicURL": null,
-          "sharingType": "owned"
-        },
-        "properties": {
-          "allowContributions": {
-            "type": "boolean"
-          },
-          "changeTag": {
-            "description": "Provider string.",
-            "type": "string"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "fullName": {
-            "description": "Provider string.",
-            "type": "string"
-          },
           "id": {
-            "description": "Provider string.",
             "type": "string",
             "x-go-name": "ID"
           },
-          "isPublic": {
-            "type": "boolean"
-          },
-          "isWebUploadSupported": {
-            "type": "boolean"
-          },
-          "location": {
-            "description": "Provider string.",
-            "type": "string"
-          },
           "name": {
-            "description": "Provider string.",
-            "type": "string"
-          },
-          "ownerID": {
-            "description": "Provider string.",
-            "type": "string"
-          },
-          "publicURL": {
-            "nullable": true,
-            "type": "string"
-          },
-          "sharingType": {
-            "description": "Provider string.",
             "type": "string"
           }
         },
         "required": [
           "id",
-          "name",
-          "fullName",
-          "location",
-          "changeTag",
-          "ownerID",
-          "sharingType",
-          "created",
-          "allowContributions",
-          "isPublic",
-          "isWebUploadSupported",
-          "publicURL"
+          "name"
+        ],
+        "type": "object"
+      },
+      "SendTwoStepCodeRequest": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "device": {
+            "$ref": "#/components/schemas/TrustedAuthDevice"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state",
+          "device"
+        ],
+        "type": "object"
+      },
+      "TrustedAuthDevice": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-go-name": "ID"
+          },
+          "metadata": {
+            "description": "Detached provider device metadata",
+            "format": "byte",
+            "including unknown future fields.": null,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "TrustedDevicesResult": {
+        "properties": {
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/TrustedAuthDevice"
+            },
+            "type": "array"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "state",
+          "devices",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "TrustedPhoneNumber": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/TrustedPhoneNumberID",
+            "x-go-name": "ID"
+          },
+          "nonFTEU": {
+            "type": "boolean"
+          },
+          "number": {
+            "type": "string"
+          },
+          "pushMode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "pushMode"
+        ],
+        "type": "object"
+      },
+      "TrustedPhoneNumberID": {
+        "oneOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "TwoFactorDeliveryMethod": {
+        "enum": [
+          "unknown",
+          "sms",
+          "trusted_device",
+          "security_key"
+        ],
+        "type": "string",
+        "x-enum-varnames": [
+          "TwoFactorDeliveryUnknown",
+          "TwoFactorDeliverySMS",
+          "TwoFactorDeliveryTrustedDevice",
+          "TwoFactorDeliverySecurityKey"
+        ]
+      },
+      "VerifyNativeBridgeCodeRequest": {
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "type": "object"
+      },
+      "VerifySecurityKeyRequest": {
+        "properties": {
+          "assertion": {
+            "$ref": "#/components/schemas/SecurityKeyAssertion"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state",
+          "assertion"
+        ],
+        "type": "object"
+      },
+      "VerifyTwoFactorCodeRequest": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "code": {
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state",
+          "code"
+        ],
+        "type": "object"
+      },
+      "VerifyTwoStepCodeRequest": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "code": {
+            "type": "string"
+          },
+          "device": {
+            "$ref": "#/components/schemas/TrustedAuthDevice"
+          },
+          "state": {
+            "$ref": "#/components/schemas/NativeAuthState"
+          }
+        },
+        "required": [
+          "auth",
+          "state",
+          "device",
+          "code"
         ],
         "type": "object"
       }

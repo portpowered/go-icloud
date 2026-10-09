@@ -23,6 +23,8 @@ type responsePolicy uint8
 const (
 	exactOK responsePolicy = iota
 	successfulContent
+	authenticationContent
+	authenticationRawContent
 )
 
 func (client *Client) read(ctx context.Context, auth RequestContext,
@@ -81,7 +83,8 @@ func (client *Client) readPrepared(request *http.Request, policy responsePolicy,
 
 	result := &BytesResponse{CookieScopeURL: cookieScopeURL(request), Body: body, Status: response.StatusCode,
 		Headers: response.Header.Clone()}
-	if responseProviderError(result) {
+	if policy != authenticationRawContent &&
+		(policy != authenticationContent || response.StatusCode < http.StatusMultipleChoices) && responseProviderError(result) {
 		return nil, responseFailure(Provider, errProviderBody, result)
 	}
 
@@ -98,8 +101,9 @@ func orderedRequestQuery(auth RequestContext) string {
 }
 
 func acceptResponseStatus(status int, policy responsePolicy) bool {
-	return status == http.StatusOK ||
-		(policy == successfulContent && status >= http.StatusOK && status < http.StatusMultipleChoices)
+	return policy == authenticationRawContent || status == http.StatusOK ||
+		(policy != exactOK && status >= http.StatusOK && status < http.StatusMultipleChoices) ||
+		(policy == authenticationContent && (status == http.StatusConflict || status == http.StatusPreconditionFailed))
 }
 
 func responseProviderError(response *BytesResponse) bool {
