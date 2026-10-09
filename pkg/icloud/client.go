@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// GetReminderSyncCursor discovers a usable token, consuming fallback pages when required.
+	GetReminderSyncCursor(ctx context.Context, request GetReminderSyncCursorRequest) (*GetReminderSyncCursorResult, error)
 	// GetReminder reads one complete reminder by raw or full record identifier.
 	GetReminder(ctx context.Context, request GetReminderRequest) (*GetReminderResult, error)
 	// ListReminderLists reads the complete ordered list snapshot and membership.

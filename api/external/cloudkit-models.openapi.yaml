@@ -1392,12 +1392,14 @@
             "type": "string"
           },
           "downloadedData": {
-            "default": null,
-            "x-order": 5,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBase64Input"
+              }
+            ],
             "nullable": true,
-            "format": "byte",
-            "type": "string",
-            "x-go-type": "string"
+            "default": null,
+            "x-order": 5
           },
           "size": {
             "default": null,
@@ -1453,10 +1455,12 @@
             ]
           },
           "value": {
-            "format": "byte",
-            "type": "string",
-            "x-order": 2,
-            "x-go-type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBase64Input"
+              }
+            ],
+            "x-order": 2
           }
         },
         "required": [
@@ -1507,10 +1511,14 @@
             "format": "double"
           },
           "isEncrypted": {
-            "default": null,
-            "x-order": 3,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBooleanInput"
+              }
+            ],
             "nullable": true,
-            "type": "boolean"
+            "default": null,
+            "x-order": 3
           }
         },
         "required": [
@@ -1561,10 +1569,12 @@
             ]
           },
           "value": {
-            "format": "byte",
-            "type": "string",
-            "x-order": 2,
-            "x-go-type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBase64Input"
+              }
+            ],
+            "x-order": 2
           }
         },
         "required": [
@@ -1664,9 +1674,12 @@
             ]
           },
           "value": {
-            "type": "integer",
-            "x-order": 2,
-            "format": "int64"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKIntegerInput"
+              }
+            ],
+            "x-order": 2
           }
         },
         "required": [
@@ -1690,8 +1703,7 @@
           },
           "value": {
             "items": {
-              "type": "integer",
-              "format": "int64"
+              "$ref": "#/components/schemas/CKIntegerInput"
             },
             "type": "array",
             "x-order": 2
@@ -1902,11 +1914,30 @@
         "additionalProperties": {
           "$ref": "#/components/schemas/CKUnknownJSON"
         },
-        "description": "Generic field wrapper for unknown or future CloudKit field types.",
+        "description": "Generic field wrapper for unknown or future CloudKit field types. Known tags must validate their discriminated wrapper and cannot use this future-tag branch.",
         "properties": {
           "type": {
             "type": "string",
-            "x-order": 1
+            "x-order": 1,
+            "not": {
+              "enum": [
+                "ASSET",
+                "ASSETID",
+                "ASSETID_LIST",
+                "BYTES",
+                "DOUBLE",
+                "DOUBLE_LIST",
+                "ENCRYPTED_BYTES",
+                "INT64",
+                "INT64_LIST",
+                "REFERENCE",
+                "REFERENCE_LIST",
+                "STRING",
+                "STRING_LIST",
+                "TIMESTAMP",
+                "UNKNOWN_LIST"
+              ]
+            }
           },
           "value": {
             "$ref": "#/components/schemas/JsonValue",
@@ -2058,10 +2089,14 @@
             "type": "string"
           },
           "isEncrypted": {
-            "default": null,
-            "x-order": 3,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBooleanInput"
+              }
+            ],
             "nullable": true,
-            "type": "boolean"
+            "default": null,
+            "x-order": 3
           }
         },
         "required": [
@@ -2111,11 +2146,21 @@
             ]
           },
           "value": {
-            "description": "milliseconds since Unix epoch or null sentinel",
-            "x-order": 2,
+            "anyOf": [
+              {
+                "type": "number",
+                "nullable": true
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ],
             "nullable": true,
-            "type": "integer",
-            "format": "int64"
+            "x-order": 2,
+            "description": "Source accepts millisecond numbers, booleans and text; invalid or ancient text normalizes to an unset date."
           }
         },
         "required": [
@@ -2554,6 +2599,23 @@
         ],
         "description": "Pinned Reminders list protocol value used by the domain projection."
       },
+      "ReminderSyncQueryRecordType": {
+        "type": "string",
+        "enum": [
+          "reminderList"
+        ],
+        "description": "Pinned pseudo record type used to discover the current Reminders sync token."
+      },
+      "ReminderSyncQueryLimit": {
+        "type": "integer",
+        "enum": [
+          1
+        ],
+        "x-enum-varnames": [
+          "ReminderSyncQueryLimitOne"
+        ],
+        "description": "Pinned lightweight current-token query result limit."
+      },
       "ReminderRecordType": {
         "type": "string",
         "enum": [
@@ -2735,6 +2797,54 @@
           "ParentReminder"
         ],
         "description": "Pinned Reminder domain mapping protocol value."
+      },
+      "CKIntegerInputText": {
+        "type": "string",
+        "pattern": "^\\s*[+-]?[0-9](?:_?[0-9])*(?:\\.0+)?\\s*$",
+        "description": "Source-accepted decimal integer text; integral decimal suffixes and digit separators are permitted."
+      },
+      "CKIntegerInput": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "$ref": "#/components/schemas/CKIntegerInputText"
+          }
+        ],
+        "description": "Source integer input before coercion; query validation preserves arbitrary integer magnitude."
+      },
+      "CKBase64Input": {
+        "type": "string",
+        "pattern": "^(?:[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=?[^A-Za-z0-9+/=]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*[A-Za-z0-9+/])*(?:[^A-Za-z0-9+/]*|[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=[^A-Za-z0-9+/=]*=[\\s\\S]*|[^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=?[^A-Za-z0-9+/=]*[A-Za-z0-9+/][^A-Za-z0-9+/=]*=[\\s\\S]*)$",
+        "x-go-type": "string",
+        "description": "Source non-strict base64 input: ignores non-alphabet bytes and accepts excess padding or data following completed padding."
+      },
+      "CKBooleanInputText": {
+        "type": "string",
+        "pattern": "(?i)^(?:0|1|f|t|false|true|off|on|n|no|y|yes)$",
+        "description": "Source boolean text coercion, case insensitive."
+      },
+      "CKBooleanInput": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/CKBooleanInputText"
+          }
+        ],
+        "description": "Source boolean input before coercion."
       }
     }
   }

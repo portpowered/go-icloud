@@ -87,6 +87,24 @@ func (e CKAssetIDListFieldType) Valid() bool {
 	}
 }
 
+// Defines values for CKBooleanInput1.
+const (
+	N0 CKBooleanInput1 = 0
+	N1 CKBooleanInput1 = 1
+)
+
+// Valid indicates whether the value is a known member of the CKBooleanInput1 enum.
+func (e CKBooleanInput1) Valid() bool {
+	switch e {
+	case N0:
+		return true
+	case N1:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CKBytesFieldType.
 const (
 	BYTES CKBytesFieldType = "BYTES"
@@ -921,6 +939,36 @@ func (e ReminderRecordType) Valid() bool {
 	}
 }
 
+// Defines values for ReminderSyncQueryLimit.
+const (
+	ReminderSyncQueryLimitOne ReminderSyncQueryLimit = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderSyncQueryLimit enum.
+func (e ReminderSyncQueryLimit) Valid() bool {
+	switch e {
+	case ReminderSyncQueryLimitOne:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderSyncQueryRecordType.
+const (
+	ReminderList ReminderSyncQueryRecordType = "reminderList"
+)
+
+// Valid indicates whether the value is a known member of the ReminderSyncQueryRecordType enum.
+func (e ReminderSyncQueryRecordType) Valid() bool {
+	switch e {
+	case ReminderList:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for UnreadableReminderTitle.
 const (
 	ErrorDecodingTitle UnreadableReminderTitle = "Error Decoding Title"
@@ -1041,13 +1089,13 @@ type CKAssetIDListFieldType string
 
 // CKAssetToken Asset token with download URL, checksums, and wrapping key.
 type CKAssetToken struct {
-	FileChecksum         nullable.Nullable[string] `json:"fileChecksum,omitempty"`
-	ReferenceChecksum    nullable.Nullable[string] `json:"referenceChecksum,omitempty"`
-	WrappingKey          nullable.Nullable[string] `json:"wrappingKey,omitempty"`
-	DownloadURL          nullable.Nullable[string] `json:"downloadURL,omitempty"`
-	DownloadedData       nullable.Nullable[string] `json:"downloadedData,omitempty"`
-	Size                 nullable.Nullable[int64]  `json:"size,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
+	FileChecksum         nullable.Nullable[string]        `json:"fileChecksum,omitempty"`
+	ReferenceChecksum    nullable.Nullable[string]        `json:"referenceChecksum,omitempty"`
+	WrappingKey          nullable.Nullable[string]        `json:"wrappingKey,omitempty"`
+	DownloadURL          nullable.Nullable[string]        `json:"downloadURL,omitempty"`
+	DownloadedData       nullable.Nullable[CKBase64Input] `json:"downloadedData,omitempty"`
+	Size                 nullable.Nullable[int64]         `json:"size,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON         `json:"-"`
 }
 
 // CKAuditInfo Appears as `created` / `modified` at the record level (response).
@@ -1059,10 +1107,27 @@ type CKAuditInfo struct {
 	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
 }
 
+// CKBase64Input Source non-strict base64 input: ignores non-alphabet bytes and accepts excess padding or data following completed padding.
+type CKBase64Input = string
+
+// CKBooleanInput Source boolean input before coercion.
+type CKBooleanInput struct {
+	union json.RawMessage
+}
+
+// CKBooleanInput0 defines model for CKBooleanInput.0.
+type CKBooleanInput0 = bool
+
+// CKBooleanInput1 defines model for CKBooleanInput.1.
+type CKBooleanInput1 int
+
+// CKBooleanInputText Source boolean text coercion, case insensitive.
+type CKBooleanInputText = string
+
 // CKBytesField Raw binary field wrapper as base64-encoded bytes.
 type CKBytesField struct {
 	Type                 CKBytesFieldType         `json:"type"`
-	Value                string                   `json:"value"`
+	Value                CKBase64Input            `json:"value"`
 	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
 }
 
@@ -1081,10 +1146,10 @@ type CKComparator string
 
 // CKDoubleField Floating-point field wrapper, optionally encrypted (e.g. for location data).
 type CKDoubleField struct {
-	Type                 CKDoubleFieldType        `json:"type"`
-	Value                float64                  `json:"value"`
-	IsEncrypted          nullable.Nullable[bool]  `json:"isEncrypted,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+	Type                 CKDoubleFieldType                 `json:"type"`
+	Value                float64                           `json:"value"`
+	IsEncrypted          nullable.Nullable[CKBooleanInput] `json:"isEncrypted,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON          `json:"-"`
 }
 
 // CKDoubleFieldType defines model for CKDoubleField.Type.
@@ -1108,7 +1173,7 @@ type CKEmptyRequest = map[string]interface{}
 // CKEncryptedBytesField Base64-encoded encrypted binary field wrapper.
 type CKEncryptedBytesField struct {
 	Type                 CKEncryptedBytesFieldType `json:"type"`
-	Value                string                    `json:"value"`
+	Value                CKBase64Input             `json:"value"`
 	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
 }
 
@@ -1194,7 +1259,7 @@ type CKFieldOpen0 struct {
 // CKInt64Field 64-bit signed integer field wrapper.
 type CKInt64Field struct {
 	Type                 CKInt64FieldType         `json:"type"`
-	Value                int64                    `json:"value"`
+	Value                CKIntegerInput           `json:"value"`
 	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
 }
 
@@ -1204,12 +1269,26 @@ type CKInt64FieldType string
 // CKInt64ListField List of 64-bit integer values field wrapper.
 type CKInt64ListField struct {
 	Type                 CKInt64ListFieldType     `json:"type"`
-	Value                []int64                  `json:"value"`
+	Value                []CKIntegerInput         `json:"value"`
 	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
 }
 
 // CKInt64ListFieldType defines model for CKInt64ListField.Type.
 type CKInt64ListFieldType string
+
+// CKIntegerInput Source integer input before coercion; query validation preserves arbitrary integer magnitude.
+type CKIntegerInput struct {
+	union json.RawMessage
+}
+
+// CKIntegerInput0 defines model for CKIntegerInput.0.
+type CKIntegerInput0 = int
+
+// CKIntegerInput1 defines model for CKIntegerInput.1.
+type CKIntegerInput1 = bool
+
+// CKIntegerInputText Source-accepted decimal integer text; integral decimal suffixes and digit separators are permitted.
+type CKIntegerInputText = string
 
 // CKLookupDescriptor Specifies a record to fetch by name.
 type CKLookupDescriptor struct {
@@ -1335,7 +1414,7 @@ type CKParticipantProtectionInfo struct {
 	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
 }
 
-// CKPassthroughField Generic field wrapper for unknown or future CloudKit field types.
+// CKPassthroughField Generic field wrapper for unknown or future CloudKit field types. Known tags must validate their discriminated wrapper and cannot use this future-tag branch.
 type CKPassthroughField struct {
 	Type string `json:"type"`
 
@@ -1521,10 +1600,10 @@ type CKStableUrl struct {
 
 // CKStringField String value field wrapper, optionally encrypted.
 type CKStringField struct {
-	Type                 CKStringFieldType         `json:"type"`
-	Value                nullable.Nullable[string] `json:"value"`
-	IsEncrypted          nullable.Nullable[bool]   `json:"isEncrypted,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
+	Type                 CKStringFieldType                 `json:"type"`
+	Value                nullable.Nullable[string]         `json:"value"`
+	IsEncrypted          nullable.Nullable[CKBooleanInput] `json:"isEncrypted,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON          `json:"-"`
 }
 
 // CKStringFieldType defines model for CKStringField.Type.
@@ -1544,13 +1623,27 @@ type CKStringListFieldType string
 type CKTimestampField struct {
 	Type CKTimestampFieldType `json:"type"`
 
-	// Value milliseconds since Unix epoch or null sentinel
-	Value                nullable.Nullable[int64] `json:"value"`
-	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+	// Value Source accepts millisecond numbers, booleans and text; invalid or ancient text normalizes to an unset date.
+	Value                nullable.Nullable[CKTimestampField_Value] `json:"value"`
+	AdditionalProperties map[string]CKUnknownJSON                  `json:"-"`
 }
 
 // CKTimestampFieldType defines model for CKTimestampField.Type.
 type CKTimestampFieldType string
+
+// CKTimestampFieldValue0 defines model for CKTimestampField.Value.0.
+type CKTimestampFieldValue0 = float32
+
+// CKTimestampFieldValue1 defines model for CKTimestampField.Value.1.
+type CKTimestampFieldValue1 = string
+
+// CKTimestampFieldValue2 defines model for CKTimestampField.Value.2.
+type CKTimestampFieldValue2 = bool
+
+// CKTimestampField_Value Source accepts millisecond numbers, booleans and text; invalid or ancient text normalizes to an unset date.
+type CKTimestampField_Value struct {
+	union json.RawMessage
+}
 
 // CKTombstoneRecord A 'tombstone' entry returned by CloudKit to indicate a deleted record.
 // Tombstones intentionally omit `recordType` and `fields` — they only assert
@@ -1802,6 +1895,12 @@ type ReminderIDPrefix string
 
 // ReminderRecordType Pinned Reminder domain mapping protocol value.
 type ReminderRecordType string
+
+// ReminderSyncQueryLimit Pinned lightweight current-token query result limit.
+type ReminderSyncQueryLimit int
+
+// ReminderSyncQueryRecordType Pinned pseudo record type used to discover the current Reminders sync token.
+type ReminderSyncQueryRecordType string
 
 // UnreadableReminderTitle Pinned Reminder domain mapping protocol value.
 type UnreadableReminderTitle string
@@ -7513,6 +7612,94 @@ func (a CKZoneListZone) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// AsCKBooleanInput0 returns the union data inside the CKBooleanInput as a CKBooleanInput0
+func (t CKBooleanInput) AsCKBooleanInput0() (CKBooleanInput0, error) {
+	var body CKBooleanInput0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKBooleanInput0 overwrites any union data inside the CKBooleanInput as the provided CKBooleanInput0
+func (t *CKBooleanInput) FromCKBooleanInput0(v CKBooleanInput0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKBooleanInput0 performs a merge with any union data inside the CKBooleanInput, using the provided CKBooleanInput0
+func (t *CKBooleanInput) MergeCKBooleanInput0(v CKBooleanInput0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKBooleanInput1 returns the union data inside the CKBooleanInput as a CKBooleanInput1
+func (t CKBooleanInput) AsCKBooleanInput1() (CKBooleanInput1, error) {
+	var body CKBooleanInput1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKBooleanInput1 overwrites any union data inside the CKBooleanInput as the provided CKBooleanInput1
+func (t *CKBooleanInput) FromCKBooleanInput1(v CKBooleanInput1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKBooleanInput1 performs a merge with any union data inside the CKBooleanInput, using the provided CKBooleanInput1
+func (t *CKBooleanInput) MergeCKBooleanInput1(v CKBooleanInput1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKBooleanInputText returns the union data inside the CKBooleanInput as a CKBooleanInputText
+func (t CKBooleanInput) AsCKBooleanInputText() (CKBooleanInputText, error) {
+	var body CKBooleanInputText
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKBooleanInputText overwrites any union data inside the CKBooleanInput as the provided CKBooleanInputText
+func (t *CKBooleanInput) FromCKBooleanInputText(v CKBooleanInputText) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKBooleanInputText performs a merge with any union data inside the CKBooleanInput, using the provided CKBooleanInputText
+func (t *CKBooleanInput) MergeCKBooleanInputText(v CKBooleanInputText) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CKBooleanInput) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CKBooleanInput) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // AsCKFieldOpen0 returns the union data inside the CKFieldOpen as a CKFieldOpen0
 func (t CKFieldOpen) AsCKFieldOpen0() (CKFieldOpen0, error) {
 	var body CKFieldOpen0
@@ -8144,6 +8331,94 @@ func (t *CKFieldOpen0) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// AsCKIntegerInput0 returns the union data inside the CKIntegerInput as a CKIntegerInput0
+func (t CKIntegerInput) AsCKIntegerInput0() (CKIntegerInput0, error) {
+	var body CKIntegerInput0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKIntegerInput0 overwrites any union data inside the CKIntegerInput as the provided CKIntegerInput0
+func (t *CKIntegerInput) FromCKIntegerInput0(v CKIntegerInput0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKIntegerInput0 performs a merge with any union data inside the CKIntegerInput, using the provided CKIntegerInput0
+func (t *CKIntegerInput) MergeCKIntegerInput0(v CKIntegerInput0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKIntegerInput1 returns the union data inside the CKIntegerInput as a CKIntegerInput1
+func (t CKIntegerInput) AsCKIntegerInput1() (CKIntegerInput1, error) {
+	var body CKIntegerInput1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKIntegerInput1 overwrites any union data inside the CKIntegerInput as the provided CKIntegerInput1
+func (t *CKIntegerInput) FromCKIntegerInput1(v CKIntegerInput1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKIntegerInput1 performs a merge with any union data inside the CKIntegerInput, using the provided CKIntegerInput1
+func (t *CKIntegerInput) MergeCKIntegerInput1(v CKIntegerInput1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKIntegerInputText returns the union data inside the CKIntegerInput as a CKIntegerInputText
+func (t CKIntegerInput) AsCKIntegerInputText() (CKIntegerInputText, error) {
+	var body CKIntegerInputText
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKIntegerInputText overwrites any union data inside the CKIntegerInput as the provided CKIntegerInputText
+func (t *CKIntegerInput) FromCKIntegerInputText(v CKIntegerInputText) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKIntegerInputText performs a merge with any union data inside the CKIntegerInput, using the provided CKIntegerInputText
+func (t *CKIntegerInput) MergeCKIntegerInputText(v CKIntegerInputText) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CKIntegerInput) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CKIntegerInput) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // AsCKRecord returns the union data inside the CKLookupResponse_Records_Item as a CKRecord
 func (t CKLookupResponse_Records_Item) AsCKRecord() (CKRecord, error) {
 	var body CKRecord
@@ -8675,6 +8950,94 @@ func (t CKQueryResponse_Records_Item) MarshalJSON() ([]byte, error) {
 }
 
 func (t *CKQueryResponse_Records_Item) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsCKTimestampFieldValue0 returns the union data inside the CKTimestampField_Value as a CKTimestampFieldValue0
+func (t CKTimestampField_Value) AsCKTimestampFieldValue0() (CKTimestampFieldValue0, error) {
+	var body CKTimestampFieldValue0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKTimestampFieldValue0 overwrites any union data inside the CKTimestampField_Value as the provided CKTimestampFieldValue0
+func (t *CKTimestampField_Value) FromCKTimestampFieldValue0(v CKTimestampFieldValue0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKTimestampFieldValue0 performs a merge with any union data inside the CKTimestampField_Value, using the provided CKTimestampFieldValue0
+func (t *CKTimestampField_Value) MergeCKTimestampFieldValue0(v CKTimestampFieldValue0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKTimestampFieldValue1 returns the union data inside the CKTimestampField_Value as a CKTimestampFieldValue1
+func (t CKTimestampField_Value) AsCKTimestampFieldValue1() (CKTimestampFieldValue1, error) {
+	var body CKTimestampFieldValue1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKTimestampFieldValue1 overwrites any union data inside the CKTimestampField_Value as the provided CKTimestampFieldValue1
+func (t *CKTimestampField_Value) FromCKTimestampFieldValue1(v CKTimestampFieldValue1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKTimestampFieldValue1 performs a merge with any union data inside the CKTimestampField_Value, using the provided CKTimestampFieldValue1
+func (t *CKTimestampField_Value) MergeCKTimestampFieldValue1(v CKTimestampFieldValue1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCKTimestampFieldValue2 returns the union data inside the CKTimestampField_Value as a CKTimestampFieldValue2
+func (t CKTimestampField_Value) AsCKTimestampFieldValue2() (CKTimestampFieldValue2, error) {
+	var body CKTimestampFieldValue2
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCKTimestampFieldValue2 overwrites any union data inside the CKTimestampField_Value as the provided CKTimestampFieldValue2
+func (t *CKTimestampField_Value) FromCKTimestampFieldValue2(v CKTimestampFieldValue2) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeCKTimestampFieldValue2 performs a merge with any union data inside the CKTimestampField_Value, using the provided CKTimestampFieldValue2
+func (t *CKTimestampField_Value) MergeCKTimestampFieldValue2(v CKTimestampFieldValue2) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CKTimestampField_Value) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CKTimestampField_Value) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }
