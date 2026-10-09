@@ -95,14 +95,7 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 
-	switch operation {
-	case reminderSyncCommand:
-		checkReminderCLISyncOutcome(t, row, output.Bytes(), err)
-	case reminderChangesCommand:
-		checkReminderCLIChangesOutcome(t, row, output.Bytes(), err)
-	default:
-		checkReminderCommandOutcome(t, operation, row, output.Bytes(), err)
-	}
+	checkReminderCLIOutcome(t, operation, row, output.Bytes(), err)
 
 	if diagnostic.Len() != 0 {
 		t.Fatal("reminder CLI printed unexpected diagnostics")
@@ -111,6 +104,23 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func checkReminderCLIOutcome(t *testing.T, operation string, row map[string]json.RawMessage,
+	output []byte, err error,
+) {
+	t.Helper()
+
+	switch operation {
+	case reminderSyncCommand:
+		checkReminderCLISyncOutcome(t, row, output, err)
+	case reminderChangesCommand:
+		checkReminderCLIChangesOutcome(t, row, output, err)
+	case "reminders":
+		checkReminderCLIQueryOutcome(t, row, output, err)
+	default:
+		checkReminderCommandOutcome(t, operation, row, output, err)
 	}
 }
 
@@ -128,6 +138,10 @@ func reminderCLIArgs(t *testing.T, operation, session string, row map[string]jso
 
 	if operation == reminderChangesCommand {
 		args = append(args, reminderCLIChangesArgs(t, row)...)
+	}
+
+	if operation == "reminders" {
+		args = append(args, reminderCLIQueryArgs(t, row)...)
 	}
 
 	return append(args, operation)
@@ -214,11 +228,13 @@ func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failu
 	if !reflect.DeepEqual(metadata, referenceResponseMetadata(last)) {
 		t.Fatal("CLI lost reminder failure metadata")
 	}
+
+	checkReminderCLIPrior(t, row, failure)
 }
 
 func reminderCLIProviderMessage(message string) bool {
 	for _, prefix := range []string{"Fetch reminder lists failed", "Lookup reminder failed",
-		"Iterating reminder changes failed", "Unable to obtain sync token"} {
+		"Iterating reminder changes failed", "Unable to obtain sync token", "List reminders query failed"} {
 		if strings.HasPrefix(message, prefix) {
 			return true
 		}
@@ -236,7 +252,7 @@ func checkReminderCLILists(t *testing.T, actual, source json.RawMessage) {
 
 	for _, list := range expected {
 		for before, after := range map[string]string{"badge_emblem": "badgeEmblem", "sorting_style": "sortingStyle",
-			"is_group": "isGroup", "reminder_ids": "reminderIDs", "record_change_tag": "recordChangeTag"} {
+			"is_group": "isGroup", "reminder_ids": "reminderIDs", reminderCLISourceRevisionField: reminderCLIRevisionField} {
 			list[after] = list[before]
 			delete(list, before)
 		}

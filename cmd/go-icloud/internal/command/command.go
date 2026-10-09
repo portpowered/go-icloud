@@ -27,17 +27,20 @@ var (
 )
 
 type options struct {
-	session        string
-	node           string
-	reminderID     string
-	since          *string
-	family         bool
-	timeout        time.Duration
-	operation      string
-	referenceState string
-	saveSession    string
-	forceRefresh   bool
-	allowUntrusted bool
+	session          string
+	node             string
+	reminderID       string
+	listID           string
+	includeCompleted bool
+	resultsLimit     *int64
+	since            *string
+	family           bool
+	timeout          time.Duration
+	operation        string
+	referenceState   string
+	saveSession      string
+	forceRefresh     bool
+	allowUntrusted   bool
 }
 
 // Run executes one bounded public SDK operation.
@@ -90,12 +93,13 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 		return nil
 	})
 	flags.BoolVar(&config.family, "family", false, "Include family devices for findmy")
+	reminderQueryFlags(flags, &config)
 	flags.DurationVar(&config.timeout, "timeout", defaultTimeout, "Request deadline")
 
 	flags.Usage = func() {
 		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
 			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
-			"reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, resume")
+			"reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, reminders, resume")
 
 		flags.PrintDefaults()
 	}
@@ -150,7 +154,7 @@ func loadSession(path string) (icloud.AuthContext, error) {
 
 func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync", "reminder-changes":
+	case "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync", "reminder-changes", "reminders":
 		return readReminders(ctx, client, auth, config)
 	case "account-devices":
 		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
@@ -181,6 +185,9 @@ func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthCo
 		return wrap(client.GetReminderSyncCursor(ctx, icloud.GetReminderSyncCursorRequest{Auth: auth}))
 	case "reminder-changes":
 		return wrap(client.ListReminderChanges(ctx, icloud.ListReminderChangesRequest{Auth: auth, Since: config.since}))
+	case "reminders":
+		return wrap(client.ListReminders(ctx, icloud.ListRemindersRequest{Auth: auth, ListID: config.listID,
+			IncludeCompleted: &config.includeCompleted, ResultsLimit: config.resultsLimit}))
 	default:
 		return wrap(client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth}))
 	}
