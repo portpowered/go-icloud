@@ -70,10 +70,8 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 }
 
 func invalidReminderResponse(name string, index int) bool {
-	if strings.HasPrefix(name, "reminders-list-union-") || strings.HasPrefix(name, "reminders-snapshot-union-") {
-		if strings.HasSuffix(name, "-wire-validation.json") || strings.HasSuffix(name, "-zone-validation.json") {
-			return index == 0
-		}
+	if invalidReminderUnionResponse(name) {
+		return index == 0
 	}
 
 	switch name {
@@ -93,6 +91,11 @@ func invalidReminderResponse(name string, index int) bool {
 			strings.HasPrefix(name, "reminders-lists-schema-") ||
 			strings.HasPrefix(name, "reminders-get-schema-") || name == "reminders-get-no-records.json"
 	}
+}
+
+func invalidReminderUnionResponse(name string) bool {
+	return (strings.HasPrefix(name, "reminders-list-union-") || strings.HasPrefix(name, "reminders-snapshot-union-")) &&
+		(strings.HasSuffix(name, "-wire-validation.json") || strings.HasSuffix(name, "-zone-validation.json"))
 }
 
 func bindRemindersOperation(document *openapi3.T, request replay.Request,
