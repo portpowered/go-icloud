@@ -18,7 +18,7 @@ func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhot
 		return nil, err
 	}
 
-	entries, err := projectPhotoAlbums(albums)
+	entries, err := read.projectAlbums(albums)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}
@@ -48,7 +48,7 @@ type photoProjection func(cloudkit.CKRecord, cloudkit.CKRecord) (Photo, error)
 func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, photoID string,
 	project photoProjection,
 ) ([]Photo, error) {
-	spec := photoQuerySpec(entry)
+	spec := read.querySpec(entry)
 
 	response, err := read.sdk.web.PhotosLookupAsset(ctx, read.auth, spec.index, photoID, spec.filters)
 	if err != nil {

@@ -26,7 +26,7 @@ func (sdk *SDK) ListPhotoAlbums(ctx context.Context, request ListPhotoAlbumsRequ
 		return nil, err
 	}
 
-	entries, err := projectPhotoAlbums(records)
+	entries, err := read.projectAlbums(records)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}

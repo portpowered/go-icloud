@@ -120,13 +120,13 @@ func (e FindMyWaitKind) Valid() bool {
 
 // Defines values for GetPhotosStatusResultState.
 const (
-	FINISHED GetPhotosStatusResultState = "FINISHED"
+	GetPhotosStatusResultStateFINISHED GetPhotosStatusResultState = "FINISHED"
 )
 
 // Valid indicates whether the value is a known member of the GetPhotosStatusResultState enum.
 func (e GetPhotosStatusResultState) Valid() bool {
 	switch e {
-	case FINISHED:
+	case GetPhotosStatusResultStateFINISHED:
 		return true
 	default:
 		return false
@@ -145,6 +145,39 @@ func (e PhotoItemType) Valid() bool {
 	case Image:
 		return true
 	case Movie:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoChangeKind.
+const (
+	PhotoDeleted PhotoChangeKind = "deleted"
+	PhotoUpdated PhotoChangeKind = "updated"
+)
+
+// Valid indicates whether the value is a known member of the PhotoChangeKind enum.
+func (e PhotoChangeKind) Valid() bool {
+	switch e {
+	case PhotoDeleted:
+		return true
+	case PhotoUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoLibraryIndexingState.
+const (
+	PhotoLibraryIndexingStateFINISHED PhotoLibraryIndexingState = "FINISHED"
+)
+
+// Valid indicates whether the value is a known member of the PhotoLibraryIndexingState enum.
+func (e PhotoLibraryIndexingState) Valid() bool {
+	switch e {
+	case PhotoLibraryIndexingStateFINISHED:
 		return true
 	default:
 		return false
@@ -1245,6 +1278,25 @@ type GetPhotoAlbumCountResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// GetPhotoChangesRequest defines model for GetPhotoChangesRequest.
+type GetPhotoChangesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// Since Omission reads available initial changes.
+	Since *string `json:"since,omitempty"`
+}
+
+// GetPhotoChangesResult defines model for GetPhotoChangesResult.
+type GetPhotoChangesResult struct {
+	Changes   []PhotoChange             `json:"changes"`
+	Responses []ResponseMetadata        `json:"responses"`
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
+}
+
 // GetPhotoRequest Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.
 //
 // Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset"}
@@ -1268,6 +1320,21 @@ type GetPhotoRequest struct {
 type GetPhotoResult struct {
 	Photo     nullable.Nullable[Photo] `json:"photo"`
 	Responses []ResponseMetadata       `json:"responses"`
+}
+
+// GetPhotosCursorRequest defines model for GetPhotosCursorRequest.
+type GetPhotosCursorRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// GetPhotosCursorResult defines model for GetPhotosCursorResult.
+type GetPhotosCursorResult struct {
+	Responses []ResponseMetadata `json:"responses"`
+	SyncToken string             `json:"syncToken"`
 }
 
 // GetPhotosStatusRequest Check the primary photo library using caller-owned authentication.
@@ -1723,9 +1790,26 @@ type PhotoAlbum struct {
 	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
 }
 
+// PhotoChange defines model for PhotoChange.
+type PhotoChange struct {
+	Deleted bool            `json:"deleted"`
+	Kind    PhotoChangeKind `json:"kind"`
+
+	// Modified Provider modification instant.
+	Modified   nullable.Nullable[time.Time] `json:"modified"`
+	RecordName string                       `json:"recordName"`
+	RecordType nullable.Nullable[string]    `json:"recordType"`
+}
+
+// PhotoChangeKind defines model for PhotoChange.Kind.
+type PhotoChangeKind string
+
 // PhotoLibrary Caller-owned library identity; SharedSync zones discovered privately retain the private database.
 type PhotoLibrary struct {
 	ID string `json:"id"`
+
+	// IndexingState Discovery initialization receipt; omission checks readiness.
+	IndexingState PhotoLibraryIndexingState `json:"indexingState,omitempty"`
 
 	// IsSharedLibrary Shared-library capabilities independent of database scope.
 	IsSharedLibrary bool                      `json:"isSharedLibrary"`
@@ -1737,6 +1821,9 @@ type PhotoLibrary struct {
 	ZoneName  string                    `json:"zoneName"`
 	ZoneType  nullable.Nullable[string] `json:"zoneType"`
 }
+
+// PhotoLibraryIndexingState Discovery initialization receipt; omission checks readiness.
+type PhotoLibraryIndexingState string
 
 // PhotoResource One downloadable photo/video rendition with nullable provider details.
 //
@@ -1768,6 +1855,15 @@ type PhotoResource struct {
 //
 // Example: original
 type PhotoVersion string
+
+// PhotoVisitEvent Owned photo projection and ordered response metadata available before the callback.
+type PhotoVisitEvent struct {
+	// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+	//
+	// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+	Photo     Photo              `json:"photo"`
+	Responses []ResponseMetadata `json:"responses"`
+}
 
 // RefreshFindMyRequest Example: {"locate":true}
 type RefreshFindMyRequest struct {

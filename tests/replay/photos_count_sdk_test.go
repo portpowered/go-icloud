@@ -49,7 +49,10 @@ func runPhotoCountSDK(t *testing.T, path string) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.GetPhotoAlbumCount(t.Context(), icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: album})
+	actual, err := client.GetPhotoAlbumCount(
+		t.Context(),
+		icloud.GetPhotoAlbumCountRequest{Library: nil, Auth: auth, Album: album},
+	)
 	if len(scenario.Error) != 0 {
 		if actual != nil {
 			t.Fatal("photo count returned partial results on failure")

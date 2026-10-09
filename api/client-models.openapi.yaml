@@ -6,6 +6,48 @@ info:
 paths: {}
 components:
   schemas:
+    PhotoVisitEvent:
+      type: object
+      required: [photo, responses]
+      description: Owned photo projection and ordered response metadata available before the callback.
+      properties:
+        photo: {$ref: '#/components/schemas/Photo'}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    GetPhotosCursorRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        library: {$ref: '#/components/schemas/PhotoLibrary'}
+    GetPhotosCursorResult:
+      type: object
+      required: [syncToken, responses]
+      properties:
+        syncToken: {type: string}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    GetPhotoChangesRequest:
+      type: object
+      required: [auth]
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        library: {$ref: '#/components/schemas/PhotoLibrary'}
+        since: {type: string, description: Omission reads available initial changes.}
+    PhotoChange:
+      type: object
+      required: [kind, recordName, recordType, deleted, modified]
+      properties:
+        kind: {type: string, enum: [updated, deleted], x-enum-varnames: [PhotoUpdated, PhotoDeleted]}
+        recordName: {type: string}
+        recordType: {type: string, nullable: true}
+        deleted: {type: boolean}
+        modified: {type: string, format: date-time, nullable: true, description: Provider modification instant.}
+    GetPhotoChangesResult:
+      type: object
+      required: [changes, syncToken, responses]
+      properties:
+        changes: {type: array, items: {$ref: '#/components/schemas/PhotoChange'}}
+        syncToken: {type: string, nullable: true}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     PhotoLibrary:
       type: object
       required: [id, zoneName, shared, isSharedLibrary, zoneType, ownerRecordName, syncToken]
@@ -18,6 +60,7 @@ components:
         syncToken: {type: string, nullable: true}
         shared: {type: boolean, description: Selects the shared CloudKit database.}
         isSharedLibrary: {type: boolean, description: Shared-library capabilities independent of database scope.}
+        indexingState: {type: string, enum: [FINISHED], x-go-type-skip-optional-pointer: true, description: Discovery initialization receipt; omission checks readiness.}
     ListPhotoLibrariesRequest:
       type: object
       required: [auth]

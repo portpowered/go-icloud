@@ -49,8 +49,13 @@ func runPhotoDownloadSDK(t *testing.T, path string) {
 
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
-	request := icloud.DownloadPhotoRequest{Auth: auth, Album: photoCountFixtureAlbum(t, path), PhotoID: inputs[0],
-		Version: nil}
+	request := icloud.DownloadPhotoRequest{
+		Library: nil,
+		Auth:    auth,
+		Album:   photoCountFixtureAlbum(t, path),
+		PhotoID: inputs[0],
+		Version: nil,
+	}
 
 	if len(row["version"]) != 0 {
 		var version icloud.PhotoVersion

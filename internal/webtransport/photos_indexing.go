@@ -26,6 +26,7 @@ func (client *Client) PhotosIndexing(ctx context.Context, auth RequestContext) (
 	if auth.PhotoZone != nil {
 		zone = *auth.PhotoZone
 	}
+
 	return client.photosZoneIndexing(ctx, auth, zone, auth.PhotoShared)
 }
 

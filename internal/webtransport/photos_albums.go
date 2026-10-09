@@ -3,6 +3,7 @@ package webtransport
 import (
 	"context"
 	"fmt"
+
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -20,7 +21,11 @@ func (client *Client) PhotosAlbumQuery(ctx context.Context, auth RequestContext,
 }
 
 func photosAlbumBody(parent, continuation *string, selected ...*cloudkit.CKZoneIDReq) (string, error) {
-	query := fmt.Sprintf("{%q: %q", protocol.PhotosCKQueryObjectRecordType, protocol.PhotosPhotoAlbumQueryRecordTypeValue)
+	query := fmt.Sprintf(
+		"{%q: %q",
+		protocol.PhotosCKQueryObjectRecordType,
+		protocol.PhotosPhotoAlbumQueryRecordTypeValue,
+	)
 
 	if parent != nil && *parent != "" {
 		name, err := referenceJSON(*parent)
@@ -30,9 +35,15 @@ func photosAlbumBody(parent, continuation *string, selected ...*cloudkit.CKZoneI
 
 		value := fmt.Sprintf("{%q: %q, %q: %s}", protocol.PhotosCKFVStringType, cloudkit.CKFVStringTypeSTRING,
 			protocol.PhotosCKFVStringValue, name)
-		filter := fmt.Sprintf("{%q: %q, %q: %q, %q: %s}", protocol.PhotosCKQueryFilterByComparator,
-			cloudkit.CKComparatorEQUALS, protocol.PhotosCKQueryFilterByFieldName, protocol.PhotosPhotoAlbumParentFieldValue,
-			protocol.PhotosCKQueryFilterByFieldValue, value)
+		filter := fmt.Sprintf(
+			"{%q: %q, %q: %q, %q: %s}",
+			protocol.PhotosCKQueryFilterByComparator,
+			cloudkit.CKComparatorEQUALS,
+			protocol.PhotosCKQueryFilterByFieldName,
+			protocol.PhotosPhotoAlbumParentFieldValue,
+			protocol.PhotosCKQueryFilterByFieldValue,
+			value,
+		)
 		query += fmt.Sprintf(", %q: [%s]", protocol.PhotosCKQueryObjectFilterBy, filter)
 	}
 
@@ -40,11 +51,19 @@ func photosAlbumBody(parent, continuation *string, selected ...*cloudkit.CKZoneI
 	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+
 	if len(selected) > 0 && selected[0] != nil {
 		zone = *selected[0]
 	}
 
-	identity, err := referenceJSON(zone)
+	identity, err := referenceJSONFields(
+		zone,
+		[]string{
+			protocol.PhotosCKZoneIDReqZoneName,
+			protocol.PhotosCKZoneIDReqZoneType,
+			protocol.PhotosCKZoneIDReqOwnerRecordName,
+		},
+	)
 	if err != nil {
 		return "", err
 	}

@@ -26,7 +26,7 @@ func (sdk *SDK) GetPhotoAlbumCount(
 		return nil, err
 	}
 
-	albums, err := projectPhotoAlbums(records)
+	albums, err := read.projectAlbums(records)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}

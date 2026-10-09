@@ -20,6 +20,26 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// VisitPhotoAssets visits assets until the visitor returns false.
+	VisitPhotoAssets(
+		ctx context.Context,
+		request ListPhotoAssetsRequest,
+		visitor PhotoVisitor,
+	) (*ListPhotoAssetsResult, error)
+	// VisitRecentlyAddedPhotos visits newest-first assets until the visitor returns false.
+	VisitRecentlyAddedPhotos(
+		ctx context.Context,
+		request ListRecentlyAddedPhotosRequest,
+		visitor PhotoVisitor,
+	) (*ListRecentlyAddedPhotosResult, error)
+
+	// ListPhotoLibraries discovers initialized private and shared photo libraries.
+	ListPhotoLibraries(ctx context.Context, request ListPhotoLibrariesRequest) (*ListPhotoLibrariesResult, error)
+	// GetPhotosCursor resolves the selected library change cursor.
+	GetPhotosCursor(ctx context.Context, request GetPhotosCursorRequest) (*GetPhotosCursorResult, error)
+	// GetPhotoChanges returns ordered updates, tombstones and the final cursor.
+	GetPhotoChanges(ctx context.Context, request GetPhotoChangesRequest) (*GetPhotoChangesResult, error)
+
 	// CreateReminder creates a reminder and hydrates its acknowledged record.
 	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
 	// UpdateReminder writes a snapshot and returns an independent updated snapshot.
@@ -27,7 +47,10 @@ type Client interface {
 	// DeleteReminder soft-deletes a reminder using its supplied revision.
 	DeleteReminder(ctx context.Context, request DeleteReminderRequest) (*DeleteReminderResult, error)
 	// ApplySessionResponses copies a native session and applies response updates without network I/O.
-	ApplySessionResponses(ctx context.Context, request ApplySessionResponsesRequest) (*ApplySessionResponsesResult, error)
+	ApplySessionResponses(
+		ctx context.Context,
+		request ApplySessionResponsesRequest,
+	) (*ApplySessionResponsesResult, error)
 	// ListRecentlyAddedPhotos reads the primary library newest first with overlap deduplication.
 	ListRecentlyAddedPhotos(ctx context.Context,
 		request ListRecentlyAddedPhotosRequest,
@@ -67,7 +90,10 @@ type Client interface {
 	// ListReminderChanges consumes ordered reminder updates and deletions from an optional cursor.
 	ListReminderChanges(ctx context.Context, request ListReminderChangesRequest) (*ListReminderChangesResult, error)
 	// GetReminderSyncCursor discovers a usable token, consuming fallback pages when required.
-	GetReminderSyncCursor(ctx context.Context, request GetReminderSyncCursorRequest) (*GetReminderSyncCursorResult, error)
+	GetReminderSyncCursor(
+		ctx context.Context,
+		request GetReminderSyncCursorRequest,
+	) (*GetReminderSyncCursorResult, error)
 	// GetReminder reads one complete reminder by raw or full record identifier.
 	GetReminder(ctx context.Context, request GetReminderRequest) (*GetReminderResult, error)
 	// ListReminderLists reads the complete ordered list snapshot and membership.
@@ -111,11 +137,17 @@ type Client interface {
 	// GetAccountFamily returns fresh family records.
 	GetAccountFamily(ctx context.Context, request GetAccountFamilyRequest) (*GetAccountFamilyResult, error)
 	// GetAccountMemberPhoto returns exact photo bytes for a member DSID.
-	GetAccountMemberPhoto(ctx context.Context, request GetAccountMemberPhotoRequest) (*GetAccountMemberPhotoResult, error)
+	GetAccountMemberPhoto(
+		ctx context.Context,
+		request GetAccountMemberPhotoRequest,
+	) (*GetAccountMemberPhotoResult, error)
 	// GetAccountStorage returns fresh usage, quota and media metadata.
 	GetAccountStorage(ctx context.Context, request GetAccountStorageRequest) (*GetAccountStorageResult, error)
 	// GetAccountPlanSummary returns opaque JSON from the account's regional gateway.
-	GetAccountPlanSummary(ctx context.Context, request GetAccountPlanSummaryRequest) (*GetAccountPlanSummaryResult, error)
+	GetAccountPlanSummary(
+		ctx context.Context,
+		request GetAccountPlanSummaryRequest,
+	) (*GetAccountPlanSummaryResult, error)
 }
 
 var (
@@ -539,8 +571,15 @@ func accountRequestContext(auth AuthContext) (webtransport.RequestContext, error
 		return boundary, fmt.Errorf("account cookie context: %w", err)
 	}
 
-	boundary = webtransport.RequestContext{Origin: auth.AccountServiceURL, DriveToken: "", Params: *params,
-		Headers: requestHeaders(auth.Headers), Cookies: cookies}
+	boundary = webtransport.RequestContext{
+		PhotoZone:   nil,
+		PhotoShared: false,
+		Origin:      auth.AccountServiceURL,
+		DriveToken:  "",
+		Params:      *params,
+		Headers:     requestHeaders(auth.Headers),
+		Cookies:     cookies,
+	}
 
 	return boundary, nil
 }

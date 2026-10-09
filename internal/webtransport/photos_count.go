@@ -28,47 +28,11 @@ type PhotosCountResponse struct {
 func (client *Client) PhotosAlbumCount(
 	ctx context.Context, auth RequestContext, index string,
 ) (*PhotosCountResponse, error) {
-	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
-		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
-	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
-	if auth.PhotoZone != nil {
-		zone = *auth.PhotoZone
-	}
-
-	filter := cloudkit.PhotosCountFilter{FieldName: cloudkit.IndexCountID,
-		Comparator: cloudkit.PhotosCountFilterComparatorIN,
-		FieldValue: cloudkit.PhotosCountStringList{Type: cloudkit.PhotosCountStringListTypeSTRINGLIST,
-			Value: []string{index}}}
-	query := cloudkit.PhotosCountQuery{RecordType: cloudkit.HyperionIndexCountLookup,
-		FilterBy: filter}
-	payload := cloudkit.PhotosCountRequest{Batch: []cloudkit.PhotosCountRequestBatch{{
-		ResultsLimit: cloudkit.PhotosCountRequestBatchResultsLimitN1, Query: query,
-		ZoneWide: cloudkit.True, ZoneID: zone}}}
-
-	body, err := referenceJSON(payload)
+	body, err := photosCountBody(auth, index)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
-
-	params := new(photosapi.PhotosCountAlbumsParams)
-	params.ClientId = auth.Params.ClientId
-	params.Dsid = auth.Params.Dsid
-	params.RemapEnums = photosapi.PhotosCountAlbumsParamsRemapEnumsTrue
-	params.GetCurrentSyncToken = photosapi.PhotosCountAlbumsParamsGetCurrentSyncTokenTrue
-
-	var request *http.Request
-	if auth.PhotoShared {
-		sharedParams := new(photosapi.PhotosCountSharedAlbumsParams)
-		sharedParams.ClientId = auth.Params.ClientId
-		sharedParams.Dsid = auth.Params.Dsid
-		sharedParams.RemapEnums = photosapi.PhotosCountSharedAlbumsParamsRemapEnumsTrue
-		sharedParams.GetCurrentSyncToken = photosapi.PhotosCountSharedAlbumsParamsGetCurrentSyncTokenTrue
-		request, err = photosapi.NewPhotosCountSharedAlbumsRequestWithBody(auth.Origin, sharedParams,
-			protocol.PhotosMediaPlainText, bytes.NewReader(body))
-	} else {
-		request, err = photosapi.NewPhotosCountAlbumsRequestWithBody(auth.Origin, params,
-			protocol.PhotosMediaPlainText, bytes.NewReader(body))
-	}
+	request, err := photosCountRequest(auth, body)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -82,8 +46,11 @@ func (client *Client) PhotosAlbumCount(
 	request.Header = auth.Headers.Clone()
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaPlainText)
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
-		queryPart(protocol.PhotosRemapEnumsName, string(params.RemapEnums)) + "&" +
-		queryPart(protocol.PhotosGetCurrentSyncTokenName, string(params.GetCurrentSyncToken))
+		queryPart(protocol.PhotosRemapEnumsName, string(photosapi.PhotosCountAlbumsParamsRemapEnumsTrue)) + "&" +
+		queryPart(
+			protocol.PhotosGetCurrentSyncTokenName,
+			string(photosapi.PhotosCountAlbumsParamsGetCurrentSyncTokenTrue),
+		)
 
 	response, err := client.readPrepared(request, successfulContent, auth.Cookies)
 	if err != nil {
@@ -188,4 +155,73 @@ func photosCountNumber(value any) any {
 	}
 
 	return value
+}
+
+func photosCountBody(auth RequestContext, index string) ([]byte, error) {
+	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
+		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
+	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+
+	if auth.PhotoZone != nil {
+		zone = *auth.PhotoZone
+	}
+
+	filter := cloudkit.PhotosCountFilter{FieldName: cloudkit.IndexCountID,
+		Comparator: cloudkit.PhotosCountFilterComparatorIN,
+		FieldValue: cloudkit.PhotosCountStringList{Type: cloudkit.PhotosCountStringListTypeSTRINGLIST,
+			Value: []string{index}}}
+	query := cloudkit.PhotosCountQuery{RecordType: cloudkit.HyperionIndexCountLookup,
+		FilterBy: filter}
+	payload := cloudkit.PhotosCountRequest{Batch: []cloudkit.PhotosCountRequestBatch{{
+		ResultsLimit: cloudkit.PhotosCountRequestBatchResultsLimitN1, Query: query,
+		ZoneWide: cloudkit.True, ZoneID: zone}}}
+
+	body, err := referenceJSON(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	originalIdentity, err := referenceJSON(zone)
+	if err != nil {
+		return nil, err
+	}
+
+	orderedIdentity, err := referenceJSONFields(zone, []string{protocol.PhotosCKZoneIDReqZoneName,
+		protocol.PhotosCKZoneIDReqZoneType, protocol.PhotosCKZoneIDReqOwnerRecordName})
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes.ReplaceAll(body, originalIdentity, orderedIdentity), nil
+
+}
+
+func photosCountRequest(auth RequestContext, body []byte) (*http.Request, error) {
+	var err error
+	params := new(photosapi.PhotosCountAlbumsParams)
+	params.ClientId = auth.Params.ClientId
+	params.Dsid = auth.Params.Dsid
+	params.RemapEnums = photosapi.PhotosCountAlbumsParamsRemapEnumsTrue
+	params.GetCurrentSyncToken = photosapi.PhotosCountAlbumsParamsGetCurrentSyncTokenTrue
+
+	var request *http.Request
+
+	if auth.PhotoShared {
+		sharedParams := new(photosapi.PhotosCountSharedAlbumsParams)
+		sharedParams.ClientId = auth.Params.ClientId
+		sharedParams.Dsid = auth.Params.Dsid
+		sharedParams.RemapEnums = photosapi.PhotosCountSharedAlbumsParamsRemapEnumsTrue
+		sharedParams.GetCurrentSyncToken = photosapi.PhotosCountSharedAlbumsParamsGetCurrentSyncTokenTrue
+		request, err = photosapi.NewPhotosCountSharedAlbumsRequestWithBody(auth.Origin, sharedParams,
+			protocol.PhotosMediaPlainText, bytes.NewReader(body))
+	} else {
+		request, err = photosapi.NewPhotosCountAlbumsRequestWithBody(auth.Origin, params,
+			protocol.PhotosMediaPlainText, bytes.NewReader(body))
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("construct photo count request: %w", err)
+	}
+
+	return request, nil
 }

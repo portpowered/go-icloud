@@ -45,7 +45,11 @@ func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.Phot
 
 	for _, selector := range append([]PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldDirection,
 		Value: string(direction)}}, extra...) {
-		value := cloudkit.CKFVString{Type: cloudkit.CKFVStringTypeSTRING, Value: selector.Value, AdditionalProperties: nil}
+		value := cloudkit.CKFVString{
+			Type:                 cloudkit.CKFVStringTypeSTRING,
+			Value:                selector.Value,
+			AdditionalProperties: nil,
+		}
 
 		filter, err := photosAssetFilter(selector.Field, value)
 		if err != nil {
@@ -65,11 +69,19 @@ func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.Phot
 	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
 		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+
 	if len(selected) > 0 && selected[0] != nil {
 		zone = *selected[0]
 	}
 
-	identity, err := referenceJSON(zone)
+	identity, err := referenceJSONFields(
+		zone,
+		[]string{
+			protocol.PhotosCKZoneIDReqZoneName,
+			protocol.PhotosCKZoneIDReqZoneType,
+			protocol.PhotosCKZoneIDReqOwnerRecordName,
+		},
+	)
 	if err != nil {
 		return "", err
 	}

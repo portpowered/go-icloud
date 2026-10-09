@@ -20,7 +20,7 @@ func (sdk *SDK) DownloadPhoto(ctx context.Context, request DownloadPhotoRequest)
 		return nil, err
 	}
 
-	entries, err := projectPhotoAlbums(albums)
+	entries, err := read.projectAlbums(albums)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}

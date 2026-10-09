@@ -46,7 +46,7 @@ func runPhotoAlbumsSDK(t *testing.T, scenario accountScenario) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.ListPhotoAlbums(t.Context(), icloud.ListPhotoAlbumsRequest{Auth: auth})
+	actual, err := client.ListPhotoAlbums(t.Context(), icloud.ListPhotoAlbumsRequest{Library: nil, Auth: auth})
 	if len(scenario.Error) != 0 {
 		checkPhotoReadFailure(t, scenario, actual, err)
 	} else {
