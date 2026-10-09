@@ -17,6 +17,59 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_reminder_related_lookup_matrix(self):
+        paths = sorted(FIXTURES.glob("reminders-related-*.json"))
+        self.assertEqual(len(paths), 46)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 51)
+        for kind in ["tags", "attachments", "recurrence-rules", "alarms"]:
+            scenario = json.loads(
+                (FIXTURES / f"reminders-related-{kind}-empty-ids.json").read_text()
+            )
+            self.assertEqual(scenario["result"], [])
+            self.assertEqual(scenario["exchanges"], [])
+        alarm = json.loads(
+            (
+                FIXTURES / "reminders-related-alarms-many-ordered-duplicates.json"
+            ).read_text()
+        )["result"]
+        self.assertEqual(len(alarm), 3)
+        self.assertEqual(alarm[0]["trigger"]["title"], "Synthetic replacement")
+        self.assertIsNone(alarm[1]["trigger"])
+        self.assertEqual(alarm[0], alarm[2])
+
+    def test_reminder_related_lookup_results_and_requests_are_bound(self):
+        for change in ["result", "order", "input", "unused", "error", "trigger"]:
+            name = (
+                "alarms-many-ordered-duplicates"
+                if change in {"trigger", "order"}
+                else "tags-many-ordered-duplicates"
+            )
+            if change == "error":
+                name = "tags-provider-error"
+            scenario = json.loads(
+                (FIXTURES / f"reminders-related-{name}.json").read_text()
+            )
+            if change == "result":
+                scenario["result"].clear()
+            elif change == "order":
+                scenario["result"][0], scenario["result"][1] = (
+                    scenario["result"][1],
+                    scenario["result"][0],
+                )
+            elif change == "input":
+                scenario["inputs"][0]["value"]["hashtag_ids"] = ["other"]
+            elif change == "unused":
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            elif change == "error":
+                scenario["error_payload"][0]["serverErrorCode"] = "OTHER"
+            else:
+                scenario["result"][0]["trigger"]["title"] = "Changed"
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_reminder_list_union_selection_and_discovery_cookies(self):
         paths = sorted(FIXTURES.glob("reminders-list-union-*.json"))
         paths += sorted(FIXTURES.glob("reminders-snapshot-union-*.json"))

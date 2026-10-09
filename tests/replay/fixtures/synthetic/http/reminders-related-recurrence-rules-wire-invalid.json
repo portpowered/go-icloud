@@ -1,0 +1,133 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "recurrence_rules_for",
+  "inputs": [
+    {
+      "$model": "Reminder",
+      "value": {
+        "id": "Reminder/synthetic-item",
+        "list_id": "List/synthetic-list",
+        "title": "Synthetic",
+        "recurrence_rule_ids": [
+          "synthetic-rule"
+        ]
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/lookup",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "134"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZWN1cnJlbmNlUnVsZS9zeW50aGV0aWMtcnVsZSJ9XSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZWN1cnJlbmNlUnVsZS9zeW50aGV0aWMtcnVsZSIsICJyZWNvcmRUeXBlIjogIlJlY3VycmVuY2VSdWxlIiwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtdGFnIiwgImZpZWxkcyI6IHsiUmVtaW5kZXIiOiB7InR5cGUiOiAiUkVGRVJFTkNFIiwgInZhbHVlIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy0wIiwgImFjdGlvbiI6ICJWQUxJREFURSJ9fSwgIkZyZXF1ZW5jeSI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDJ9LCAiSW50ZXJ2YWwiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAzfSwgIk9jY3VycmVuY2VDb3VudCI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDR9LCAiRmlyc3REYXlPZlRoZVdlZWsiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAyfSwgIk5hbWUiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogMTIzfX19XX0="
+        }
+      }
+    }
+  ],
+  "error": {
+    "type": "RemindersApiError",
+    "message": "Lookup response validation failed"
+  },
+  "error_payload": {
+    "records": [
+      {
+        "recordName": "RecurrenceRule/synthetic-rule",
+        "recordType": "RecurrenceRule",
+        "recordChangeTag": "synthetic-tag",
+        "fields": {
+          "Reminder": {
+            "type": "REFERENCE",
+            "value": {
+              "recordName": "Reminder/synthetic-0",
+              "action": "VALIDATE"
+            }
+          },
+          "Frequency": {
+            "type": "INT64",
+            "value": 2
+          },
+          "Interval": {
+            "type": "INT64",
+            "value": 3
+          },
+          "OccurrenceCount": {
+            "type": "INT64",
+            "value": 4
+          },
+          "FirstDayOfTheWeek": {
+            "type": "INT64",
+            "value": 2
+          },
+          "Name": {
+            "type": "STRING",
+            "value": 123
+          }
+        }
+      }
+    ]
+  }
+}

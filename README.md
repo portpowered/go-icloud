@@ -227,8 +227,33 @@ Queries use page size 200 and include completed items. Duplicate reminder IDs
 retain their last value and first position across lists. `Responses` contains
 all request evidence and cookie updates; failures return typed errors with prior
 response evidence and no partial snapshot. Twenty-eight Source/Go cases with
-forty-five paired exchanges cover these paths. Live Go verification and full
+forty-six paired exchanges cover these paths. Live Go verification and full
 Reminders parity remain open.
+
+Fetch related records using the identifiers returned on a reminder:
+
+```go
+tags, err := client.ListReminderTags(ctx, icloud.ListReminderTagsRequest{
+    Auth: resumed.Auth, IDs: reminder.HashtagIDs,
+})
+attachments, err := client.ListReminderAttachments(ctx, icloud.ListReminderAttachmentsRequest{
+    Auth: resumed.Auth, IDs: reminder.AttachmentIDs,
+})
+rules, err := client.ListReminderRecurrenceRules(ctx, icloud.ListReminderRecurrenceRulesRequest{
+    Auth: resumed.Auth, IDs: reminder.RecurrenceRuleIDs,
+})
+alarms, err := client.ListReminderAlarms(ctx, icloud.ListReminderAlarmsRequest{
+    Auth: resumed.Auth, IDs: reminder.AlarmIDs,
+})
+```
+
+Each result has ordered `Items` and `Responses`. Raw and complete identifiers
+are accepted; duplicates remain distinct. Empty identifiers perform no network
+requests. Alarm lookups resolve supported location triggers in a second request,
+using the last returned trigger for each identity; missing and unsupported
+triggers become null. Related provider failures return no partial result and
+preserve prior response evidence. These operations pass forty-six paired
+Source/Go scenarios; live successful related-record access remains unverified.
 
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private

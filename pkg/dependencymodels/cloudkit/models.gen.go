@@ -42,15 +42,30 @@ func (e AlarmRecordType) Valid() bool {
 	}
 }
 
+// Defines values for AlarmTriggerIDPrefix.
+const (
+	AlarmTriggerIDPrefixAlarmTrigger AlarmTriggerIDPrefix = "AlarmTrigger/"
+)
+
+// Valid indicates whether the value is a known member of the AlarmTriggerIDPrefix enum.
+func (e AlarmTriggerIDPrefix) Valid() bool {
+	switch e {
+	case AlarmTriggerIDPrefixAlarmTrigger:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AlarmTriggerRecordType.
 const (
-	AlarmTrigger AlarmTriggerRecordType = "AlarmTrigger"
+	AlarmTriggerRecordTypeAlarmTrigger AlarmTriggerRecordType = "AlarmTrigger"
 )
 
 // Valid indicates whether the value is a known member of the AlarmTriggerRecordType enum.
 func (e AlarmTriggerRecordType) Valid() bool {
 	switch e {
-	case AlarmTrigger:
+	case AlarmTriggerRecordTypeAlarmTrigger:
 		return true
 	default:
 		return false
@@ -1619,6 +1634,9 @@ type AlarmIDPrefix string
 
 // AlarmRecordType Pinned Source compound reminder query protocol value.
 type AlarmRecordType string
+
+// AlarmTriggerIDPrefix Prefix for location trigger identifiers used by alarm lookups.
+type AlarmTriggerIDPrefix string
 
 // AlarmTriggerRecordType Pinned Source compound reminder query protocol value.
 type AlarmTriggerRecordType string

@@ -1,0 +1,127 @@
+{
+  "format": "portos.service-scenario.v1",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "evidence": "synthetic; implementation-derived",
+  "service": "reminders",
+  "initial_state": {
+    "origin": "https://reminders.example.invalid",
+    "params": {
+      "clientId": "synthetic-client",
+      "dsid": "synthetic-account"
+    },
+    "headers": {
+      "Accept": "application/json"
+    }
+  },
+  "operation": "attachments_for",
+  "inputs": [
+    {
+      "$model": "Reminder",
+      "value": {
+        "id": "Reminder/synthetic-item",
+        "list_id": "List/synthetic-list",
+        "title": "Synthetic",
+        "attachment_ids": [
+          "synthetic-url",
+          "Attachment/synthetic-url",
+          "synthetic-url"
+        ]
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://reminders.example.invalid",
+        "path": "/database/1/com.apple.reminders/production/private/records/lookup",
+        "query": [
+          [
+            "remapEnums",
+            "true"
+          ],
+          [
+            "getCurrentSyncToken",
+            "true"
+          ],
+          [
+            "clientId",
+            "synthetic-client"
+          ],
+          [
+            "dsid",
+            "synthetic-account"
+          ]
+        ],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "217"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJBdHRhY2htZW50L3N5bnRoZXRpYy11cmwifSwgeyJyZWNvcmROYW1lIjogIkF0dGFjaG1lbnQvc3ludGhldGljLXVybCJ9LCB7InJlY29yZE5hbWUiOiAiQXR0YWNobWVudC9zeW50aGV0aWMtdXJsIn1dLCAiem9uZUlEIjogeyJ6b25lTmFtZSI6ICJSZW1pbmRlcnMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9fQ=="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJBdHRhY2htZW50L3N5bnRoZXRpYy1pbWFnZSIsICJyZWNvcmRUeXBlIjogIkF0dGFjaG1lbnQiLCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy10YWciLCAiZmllbGRzIjogeyJSZW1pbmRlciI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiUmVtaW5kZXIvc3ludGhldGljLTAiLCAiYWN0aW9uIjogIlZBTElEQVRFIn19LCAiVHlwZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiSW1hZ2UifSwgIkZpbGVOYW1lIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJzeW50aGV0aWMucG5nIn0sICJGaWxlU2l6ZSI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDEyMzR9LCAiV2lkdGgiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiA2NDB9LCAiSGVpZ2h0IjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogNDgwfSwgIlVUSSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAicHVibGljLnBuZyJ9fX0sIHsicmVjb3JkTmFtZSI6ICJBdHRhY2htZW50L3N5bnRoZXRpYy11cmwiLCAicmVjb3JkVHlwZSI6ICJBdHRhY2htZW50IiwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtdGFnIiwgImZpZWxkcyI6IHsiUmVtaW5kZXIiOiB7InR5cGUiOiAiUkVGRVJFTkNFIiwgInZhbHVlIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy0wIiwgImFjdGlvbiI6ICJWQUxJREFURSJ9fSwgIlR5cGUiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIlVSTCJ9LCAiVVJMIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJodHRwczovL2V4YW1wbGUuaW52YWxpZC9zeW50aGV0aWMifX19LCB7InJlY29yZE5hbWUiOiAiQXR0YWNobWVudC9zeW50aGV0aWMtdXJsIiwgInJlY29yZFR5cGUiOiAiQXR0YWNobWVudCIsICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLXRhZyIsICJmaWVsZHMiOiB7IlJlbWluZGVyIjogeyJ0eXBlIjogIlJFRkVSRU5DRSIsICJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtMCIsICJhY3Rpb24iOiAiVkFMSURBVEUifX0sICJUeXBlIjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJVUkwifSwgIlVSTCI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiaHR0cHM6Ly9leGFtcGxlLmludmFsaWQvc3ludGhldGljIn19fSwgeyJyZWNvcmROYW1lIjogIkF0dGFjaG1lbnQvc3ludGhldGljLXVybCIsICJyZWNvcmRUeXBlIjogIkF0dGFjaG1lbnQiLCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy10YWciLCAiZmllbGRzIjogeyJSZW1pbmRlciI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiUmVtaW5kZXIvc3ludGhldGljLTAiLCAiYWN0aW9uIjogIlZBTElEQVRFIn19LCAiVHlwZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiVVJMIn0sICJVUkwiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogImh0dHBzOi8vZXhhbXBsZS5pbnZhbGlkL3N5bnRoZXRpYyJ9fX1dfQ=="
+        }
+      }
+    }
+  ],
+  "result": [
+    {
+      "id": "Attachment/synthetic-image",
+      "reminder_id": "Reminder/synthetic-0",
+      "file_asset_url": "",
+      "filename": "synthetic.png",
+      "file_size": 1234,
+      "width": 640,
+      "height": 480,
+      "uti": "public.png",
+      "record_change_tag": "synthetic-tag"
+    },
+    {
+      "id": "Attachment/synthetic-url",
+      "reminder_id": "Reminder/synthetic-0",
+      "url": "https://example.invalid/synthetic",
+      "uti": "public.url",
+      "record_change_tag": "synthetic-tag"
+    },
+    {
+      "id": "Attachment/synthetic-url",
+      "reminder_id": "Reminder/synthetic-0",
+      "url": "https://example.invalid/synthetic",
+      "uti": "public.url",
+      "record_change_tag": "synthetic-tag"
+    },
+    {
+      "id": "Attachment/synthetic-url",
+      "reminder_id": "Reminder/synthetic-0",
+      "url": "https://example.invalid/synthetic",
+      "uti": "public.url",
+      "record_change_tag": "synthetic-tag"
+    }
+  ]
+}
