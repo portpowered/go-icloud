@@ -6,11 +6,57 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from measure import body_lines, definitions, scoped_files, summarize
+from measure import body_lines, create_measurement, definitions, scoped_files, summarize
 from network_guard import forbid_network
 
 
 class MeasurementTests(unittest.TestCase):
+    def test_source_pragmas_do_not_hide_statements_or_branches(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            file = root / "operations.py"
+            source = (
+                "def operation(flag):\n"
+                "    if flag:  # pragma: no cover\n"
+                "        return 1\n"
+                "    if flag:  # pragma: no branch\n"
+                "        return 2\n"
+                "    return 3\n"
+                "TYPE_CHECKING = False\n"
+                "if TYPE_CHECKING:\n"
+                "    hidden_import = 1\n"
+            )
+            file.write_text(source, encoding="utf-8")
+            measurement = create_measurement(root / ".coverage", [file])
+            for option in [
+                "report:exclude_lines",
+                "report:exclude_also",
+                "report:partial_also",
+                "report:partial_branches_always",
+            ]:
+                self.assertEqual(measurement.get_option(option), [])
+            self.assertEqual(
+                measurement.get_option("report:partial_branches"), [r"(?!)"]
+            )
+            measurement.start()
+            try:
+                namespace = {}
+                exec(compile(source, str(file), "exec"), namespace)
+                self.assertEqual(namespace["operation"](False), 3)
+            finally:
+                measurement.stop()
+            _, statements, excluded, missing, _ = measurement.analysis2(str(file))
+            self.assertEqual(excluded, [])
+            self.assertTrue({3, 5, 9} <= set(statements) & set(missing))
+            self.assertEqual(
+                measurement.branch_stats(str(file)), {2: (2, 1), 4: (2, 1), 8: (2, 1)}
+            )
+            report = summarize(measurement, [file], root)
+            self.assertEqual(report["summary"]["function_body_statements"], 5)
+            self.assertEqual(report["summary"]["covered_function_body_statements"], 3)
+            self.assertEqual(report["summary"]["branch_exits"], 4)
+            self.assertEqual(report["summary"]["covered_branch_exits"], 2)
+
     def test_definition_and_docstring_do_not_count_as_a_function_body(self):
         tree = ast.parse('def operation():\n    "doc"\n    return 1\n')
         _, function = next(definitions(tree))

@@ -27,6 +27,30 @@ def scoped_files(root, policy):
     )
 
 
+def create_measurement(data_file, files):
+    measurement = coverage.Coverage(
+        data_file=str(data_file),
+        branch=True,
+        config_file=False,
+        include=[str(file) for file in files],
+        concurrency=["thread"],
+    )
+    # config_file=False still inherits coverage.py's pragma/type-checking and
+    # partial-branch defaults. Scope decisions belong in our audited policy.
+    for option in [
+        "report:exclude_lines",
+        "report:exclude_also",
+        "report:partial_branches",
+        "report:partial_also",
+        "report:partial_branches_always",
+    ]:
+        measurement.set_option(option, [])
+    # An entirely empty partial-pattern list becomes an empty regex in
+    # coverage.py 7.16.2 and incorrectly marks every branch as suppressed.
+    measurement.set_option("report:partial_branches", [r"(?!)"])
+    return measurement
+
+
 def definitions(tree, prefix=""):
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.ClassDef):
@@ -190,13 +214,7 @@ def main():
     output = state_root() / "coverage"
     output.mkdir(exist_ok=True)
     logging.disable(logging.CRITICAL)
-    measurement = coverage.Coverage(
-        data_file=str(output / ".coverage"),
-        branch=True,
-        config_file=False,
-        include=[str(file) for file in files],
-        concurrency=["thread"],
-    )
+    measurement = create_measurement(output / ".coverage", files)
     measurement.start()
     try:
         # Import after tracing starts, so constructor/import behavior is visible.
@@ -279,6 +297,15 @@ def main():
     if not scenarios:
         raise ValueError("No completed scenarios available for coverage")
     report = summarize(measurement, files, root, policy)
+    report["measurement"]["implicit_exclusions"] = {
+        "lines": measurement.get_option("report:exclude_lines"),
+        "additional_lines": measurement.get_option("report:exclude_also"),
+        "partial_branches": measurement.get_option("report:partial_branches"),
+        "additional_partial_branches": measurement.get_option("report:partial_also"),
+        "always_partial_branches": measurement.get_option(
+            "report:partial_branches_always"
+        ),
+    }
     report["by_evidence"] = {}
     for evidence in ["captured", "synthetic"]:
         measurement.get_data().set_query_contexts(["^" + evidence + ":"])

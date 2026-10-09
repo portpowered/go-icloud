@@ -134,6 +134,20 @@ because its trusted-device bridge includes uncaptured socket traffic.
 
 ## Verification
 
+Reference coverage disables coverage.py's default line and partial-branch
+exclusions, including upstream `no cover`, `no branch`, and `TYPE_CHECKING`
+markers. Named file/function exclusions remain in the audited scope policy.
+The report records the effective exclusion patterns; a never-matching partial
+pattern prevents coverage.py 7.16.2 from interpreting an empty pattern as a
+match for every branch. Negative controls verify missing statements and branch
+exits remain visible.
+
+The fresh synthetic-only measurement enters 575/905 functions and covers
+3173/5398 function-body statements (58.78%) and 969/2076 branch exits. This is a
+diagnostic baseline, not endpoint completeness or release acceptance. The
+measurement runs the canonical HTTP/socket and Reminders text corpora; separate
+CLI/reference restoration tests are not included in this receipt yet.
+
 Account reads use the `webservices.account.url` returned by authentication.
 The setup origin used for login is a separate service and is not a substitute
 when account discovery is absent. Four implementation-derived paired flows
