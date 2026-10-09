@@ -71,6 +71,34 @@ type Client interface {
 	// GetPhotoChanges returns ordered updates, tombstones and the final cursor.
 	GetPhotoChanges(ctx context.Context, request GetPhotoChangesRequest) (*GetPhotoChangesResult, error)
 
+	// AddReminderLocationTrigger atomically links a new location alarm to a reminder.
+	AddReminderLocationTrigger(ctx context.Context,
+		request AddReminderLocationTriggerRequest,
+	) (*AddReminderLocationTriggerResult, error)
+	// CreateReminderURLAttachment creates and atomically links a URL attachment.
+	CreateReminderURLAttachment(ctx context.Context,
+		request CreateReminderURLAttachmentRequest,
+	) (*ReminderAttachmentMutationResult, error)
+	// UpdateReminderAttachment changes URL text or image metadata.
+	UpdateReminderAttachment(ctx context.Context,
+		request UpdateReminderAttachmentRequest,
+	) (*UpdateReminderAttachmentResult, error)
+	// DeleteReminderAttachment soft-deletes an attachment and removes its links.
+	DeleteReminderAttachment(ctx context.Context,
+		request DeleteReminderAttachmentRequest,
+	) (*ReminderAttachmentMutationResult, error)
+	// CreateReminderRecurrenceRule atomically creates and links a validated rule.
+	CreateReminderRecurrenceRule(ctx context.Context,
+		request CreateReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleRelationResult, error)
+	// UpdateReminderRecurrenceRule writes supplied recurrence settings.
+	UpdateReminderRecurrenceRule(ctx context.Context,
+		request UpdateReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleMutationResult, error)
+	// DeleteReminderRecurrenceRule atomically unlinks and soft-deletes a recurrence rule.
+	DeleteReminderRecurrenceRule(ctx context.Context,
+		request DeleteReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleRelationResult, error)
 	// CreateReminder creates a reminder and hydrates its acknowledged record.
 	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
 	// UpdateReminder writes a snapshot and returns an independent updated snapshot.

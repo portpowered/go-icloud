@@ -13,6 +13,24 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// Defines values for AddReminderLocationTriggerRequestProximity.
+const (
+	LocationArriving AddReminderLocationTriggerRequestProximity = 1
+	LocationLeaving  AddReminderLocationTriggerRequestProximity = 2
+)
+
+// Valid indicates whether the value is a known member of the AddReminderLocationTriggerRequestProximity enum.
+func (e AddReminderLocationTriggerRequestProximity) Valid() bool {
+	switch e {
+	case LocationArriving:
+		return true
+	case LocationLeaving:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AuthCookieSameSite.
 const (
 	AuthCookieSameSiteDefault AuthCookieSameSite = "default"
@@ -437,6 +455,50 @@ type AddPhotoToAlbumRequest struct {
 	PhotoID string `json:"photoID"`
 }
 
+// AddReminderLocationTriggerRequest Add an atomic location alarm to a revision-aware reminder snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic","clientID":"synthetic","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic","listID":"List/synthetic","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type AddReminderLocationTriggerRequest struct {
+	Address string `json:"address,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth      AuthContext                                 `json:"auth"`
+	Latitude  float64                                     `json:"latitude,omitempty"`
+	Longitude float64                                     `json:"longitude,omitempty"`
+	Proximity *AddReminderLocationTriggerRequestProximity `json:"proximity,omitempty"`
+	Radius    *float64                                    `json:"radius,omitempty"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+	Title    string   `json:"title,omitempty"`
+}
+
+// AddReminderLocationTriggerRequestProximity defines model for AddReminderLocationTriggerRequest.Proximity.
+type AddReminderLocationTriggerRequestProximity int
+
+// AddReminderLocationTriggerResult Acknowledged alarm, trigger, independent updated reminder and response evidence.
+//
+// Example: {"alarm":{"alarmUID":"synthetic","id":"Alarm/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","triggerID":"synthetic"},"reminder":{"alarmIDs":["synthetic"],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic","listID":"List/synthetic","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[],"trigger":{"address":"","alarmID":"Alarm/synthetic","id":"AlarmTrigger/synthetic","latitude":0,"locationUID":"synthetic","longitude":0,"proximity":1,"radius":100,"recordChangeTag":null,"title":""}}
+type AddReminderLocationTriggerResult struct {
+	// Alarm Alarm linked to a reminder and an optional trigger identifier.
+	//
+	// Example: {"alarmUID":"synthetic","id":"Alarm/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","triggerID":"synthetic"}
+	Alarm ReminderAlarm `json:"alarm"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+
+	// Trigger Location alarm geometry and proximity direction.
+	//
+	// Example: {"address":"","alarmID":"Alarm/synthetic","id":"AlarmTrigger/synthetic","latitude":0,"locationUID":"","longitude":0,"proximity":1,"radius":0,"recordChangeTag":null,"title":""}
+	Trigger ReminderLocationTrigger `json:"trigger"`
+}
+
 // ApplySessionResponsesRequest Apply observed response cookie/token updates to a copied native session without making a network request.
 //
 // Example: {"responses":[],"session":{"accountCountryCode":null,"accountData":{},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"requiresTwoFactor":false,"requiresTwoStep":false,"responses":[],"trustToken":"synthetic-trust","trustedSession":true}}
@@ -606,6 +668,31 @@ type CreateReminderHashtagRequest struct {
 	Reminder Reminder `json:"reminder"`
 }
 
+// CreateReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type CreateReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// FirstDayOfWeek Provider weekday index; omission uses zero.
+	FirstDayOfWeek *int64 `json:"firstDayOfWeek,omitempty"`
+
+	// Frequency Daily through yearly recurrence; omission uses daily.
+	Frequency *ReminderRecurrenceRuleFrequency `json:"frequency,omitempty"`
+
+	// Interval Frequency multiplier; omission uses one.
+	Interval *int64 `json:"interval,omitempty"`
+
+	// OccurrenceCount Occurrence count; omission uses zero.
+	OccurrenceCount *int64 `json:"occurrenceCount,omitempty"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
 // CreateReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"listID":"List/synthetic-list","title":"Synthetic title"}
 type CreateReminderRequest struct {
 	AllDay bool `json:"allDay,omitempty"`
@@ -621,6 +708,21 @@ type CreateReminderRequest struct {
 	Priority         int64                        `json:"priority,omitempty"`
 	TimeZone         string                       `json:"timeZone,omitempty"`
 	Title            string                       `json:"title"`
+}
+
+// CreateReminderURLAttachmentRequest Create a URL attachment and atomically link it to the supplied reminder snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"url":"https://example.invalid/attachment"}
+type CreateReminderURLAttachmentRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+	URL      string   `json:"url"`
+	UTI      *string  `json:"uti,omitempty"`
 }
 
 // DeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
@@ -670,6 +772,24 @@ type DeletePhotoRequest struct {
 	PhotoID string `json:"photoID"`
 }
 
+// DeleteReminderAttachmentRequest Soft-delete an attachment and atomically remove every matching link from its reminder.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderAttachmentRequest struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
 // DeleteReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
 type DeleteReminderHashtagRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -679,6 +799,24 @@ type DeleteReminderHashtagRequest struct {
 	//
 	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
 	Hashtag ReminderHashtag `json:"hashtag"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
+// DeleteReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
 
 	// Reminder Complete reminder projection with decoded documents and related identifiers.
 	//
@@ -2210,6 +2348,30 @@ type ReminderAttachment struct {
 	union json.RawMessage
 }
 
+// ReminderAttachmentMutationResult Acknowledged parent and attachment snapshots with ordered provider evidence.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderAttachmentMutationResult struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ReminderAttachmentSelection Generated semantic projection used to select the URL or image attachment variant.
+//
+// Example: {"url":""}
+type ReminderAttachmentSelection struct {
+	FileAssetURL *string `json:"fileAssetURL,omitempty"`
+	URL          *string `json:"url,omitempty"`
+}
+
 // ReminderChangeEvent One ordered reminder update or deletion; duplicate events remain distinct.
 //
 // Example: {"reminder":null,"reminderID":"Reminder/synthetic-deleted","type":"deleted"}
@@ -2421,6 +2583,33 @@ type ReminderRecurrenceRule struct {
 // ReminderRecurrenceRuleFrequency Daily through yearly recurrence; unknown values default to daily.
 type ReminderRecurrenceRuleFrequency int
 
+// ReminderRecurrenceRuleMutationResult Acknowledged recurrence settings and response evidence.
+//
+// Example: {"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"responses":[]}
+type ReminderRecurrenceRuleMutationResult struct {
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+	Responses      []ResponseMetadata     `json:"responses"`
+}
+
+// ReminderRecurrenceRuleRelationResult Acknowledged recurrence settings and response evidence.
+//
+// Example: {"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderRecurrenceRuleRelationResult struct {
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ReminderURLAttachment URL attachment linked to a reminder.
 //
 // Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
@@ -2619,6 +2808,36 @@ type TrashDriveNodeResult = DriveItemChangeResult
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
 
+// UpdateReminderAttachmentRequest Update URL text or image metadata; omitted fields retain their current values.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"url":""}
+type UpdateReminderAttachmentRequest struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth     AuthContext `json:"auth"`
+	FileSize *int64      `json:"fileSize,omitempty"`
+	Filename *string     `json:"filename,omitempty"`
+	Height   *int64      `json:"height,omitempty"`
+	URL      *string     `json:"url,omitempty"`
+	UTI      *string     `json:"uti,omitempty"`
+	Width    *int64      `json:"width,omitempty"`
+}
+
+// UpdateReminderAttachmentResult Updated attachment snapshot and provider response evidence.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"responses":[]}
+type UpdateReminderAttachmentResult struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+	Responses  []ResponseMetadata `json:"responses"`
+}
+
 // UpdateReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"name":"Synthetic tag"}
 type UpdateReminderHashtagRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -2629,6 +2848,31 @@ type UpdateReminderHashtagRequest struct {
 	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
 	Hashtag ReminderHashtag `json:"hashtag"`
 	Name    string          `json:"name"`
+}
+
+// UpdateReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"interval":2,"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}}
+type UpdateReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// FirstDayOfWeek Provider weekday index; omission uses zero.
+	FirstDayOfWeek *int64 `json:"firstDayOfWeek,omitempty"`
+
+	// Frequency Daily through yearly recurrence; omission uses daily.
+	Frequency *ReminderRecurrenceRuleFrequency `json:"frequency,omitempty"`
+
+	// Interval Frequency multiplier; omission uses one.
+	Interval *int64 `json:"interval,omitempty"`
+
+	// OccurrenceCount Occurrence count; omission uses zero.
+	OccurrenceCount *int64 `json:"occurrenceCount,omitempty"`
+
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
 }
 
 // UpdateReminderRequest Write the supplied reminder snapshot and return an independent updated snapshot.

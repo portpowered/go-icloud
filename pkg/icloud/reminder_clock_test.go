@@ -91,7 +91,7 @@ func checkReminderClockRequest(t *testing.T, operation string, request *http.Req
 		decodeReminderClockRequest(t, request, &input)
 		fields := input.Operations[0].Record.Fields
 		checkReminderClockFields(t, fields.ResolutionTokenMap.Value,
-			fields.LastModifiedDate.Value.GetOrEmpty(), start, start.Add(time.Second))
+			fields.LastModifiedDate.Value, start, start.Add(time.Second))
 	default:
 		checkReminderHashtagClock(t, operation, request, start)
 	}
@@ -148,7 +148,7 @@ func checkReminderHashtagClock(t *testing.T, operation string, request *http.Req
 		}
 
 		child, err := input.Operations[1].AsReminderHashtagCreationOperation()
-		if err != nil || child.Record.Fields.CreationDate.Value.GetOrEmpty() != start.UnixMilli() {
+		if err != nil || child.Record.Fields.CreationDate.Value != start.UnixMilli() {
 			t.Fatal("hashtag creation clock differs from Source", err)
 		}
 
@@ -168,5 +168,5 @@ func checkReminderHashtagClock(t *testing.T, operation string, request *http.Req
 
 	fields := parent.Record.Fields
 	checkReminderClockFields(t, fields.ResolutionTokenMap.Value,
-		fields.LastModifiedDate.Value.GetOrEmpty(), fieldTime.Add(time.Second), fieldTime)
+		fields.LastModifiedDate.Value, fieldTime.Add(time.Second), fieldTime)
 }

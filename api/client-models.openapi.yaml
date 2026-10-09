@@ -4564,20 +4564,7 @@
             "type": "integer"
           },
           "frequency": {
-            "description": "Daily through yearly recurrence; unknown values default to daily.",
-            "enum": [
-              1,
-              2,
-              3,
-              4
-            ],
-            "type": "integer",
-            "x-enum-varnames": [
-              "ReminderDaily",
-              "ReminderWeekly",
-              "ReminderMonthly",
-              "ReminderYearly"
-            ]
+            "$ref": "#/components/schemas/ReminderRecurrenceRuleFrequency"
           },
           "id": {
             "description": "Complete provider record name.",
@@ -5210,234 +5197,6 @@
         ],
         "type": "object"
       },
-      "CreateReminderHashtagRequest": {
-        "additionalProperties": false,
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "name": "Synthetic tag",
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          }
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "name": {
-            "type": "string"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          }
-        },
-        "required": [
-          "auth",
-          "reminder",
-          "name"
-        ],
-        "type": "object"
-      },
-      "DeleteReminderHashtagRequest": {
-        "additionalProperties": false,
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "hashtag": {
-            "created": null,
-            "id": "Hashtag/synthetic",
-            "name": "synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic"
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          }
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "hashtag": {
-            "$ref": "#/components/schemas/ReminderHashtag"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          }
-        },
-        "required": [
-          "auth",
-          "reminder",
-          "hashtag"
-        ],
-        "type": "object"
-      },
-      "ReminderHashtagMutationResult": {
-        "additionalProperties": false,
-        "example": {
-          "hashtag": {
-            "created": null,
-            "id": "Hashtag/synthetic",
-            "name": "synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic"
-          },
-          "responses": []
-        },
-        "properties": {
-          "hashtag": {
-            "$ref": "#/components/schemas/ReminderHashtag"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "hashtag",
-          "responses"
-        ],
-        "type": "object"
-      },
-      "ReminderHashtagRelationResult": {
-        "additionalProperties": false,
-        "example": {
-          "hashtag": {
-            "created": null,
-            "id": "Hashtag/synthetic",
-            "name": "synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic"
-          },
-          "reminder": {
-            "alarmIDs": [],
-            "allDay": false,
-            "attachmentIDs": [],
-            "completed": false,
-            "completedDate": null,
-            "created": null,
-            "deleted": false,
-            "description": "",
-            "dueDate": null,
-            "flagged": false,
-            "hashtagIDs": [],
-            "id": "Reminder/synthetic-reminder",
-            "listID": "List/synthetic-list",
-            "modified": null,
-            "parentReminderID": null,
-            "priority": 0,
-            "recordChangeTag": null,
-            "recurrenceRuleIDs": [],
-            "startDate": null,
-            "timeZone": null,
-            "title": "Untitled"
-          },
-          "responses": []
-        },
-        "properties": {
-          "hashtag": {
-            "$ref": "#/components/schemas/ReminderHashtag"
-          },
-          "reminder": {
-            "$ref": "#/components/schemas/Reminder"
-          },
-          "responses": {
-            "items": {
-              "$ref": "#/components/schemas/ResponseMetadata"
-            },
-            "type": "array"
-          }
-        },
-        "required": [
-          "reminder",
-          "hashtag",
-          "responses"
-        ],
-        "type": "object"
-      },
-      "UpdateReminderHashtagRequest": {
-        "additionalProperties": false,
-        "example": {
-          "auth": {
-            "accountID": "synthetic-account",
-            "clientID": "synthetic-client",
-            "headers": []
-          },
-          "hashtag": {
-            "created": null,
-            "id": "Hashtag/synthetic",
-            "name": "synthetic",
-            "recordChangeTag": null,
-            "reminderID": "Reminder/synthetic"
-          },
-          "name": "Synthetic tag"
-        },
-        "properties": {
-          "auth": {
-            "$ref": "#/components/schemas/AuthContext"
-          },
-          "hashtag": {
-            "$ref": "#/components/schemas/ReminderHashtag"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "auth",
-          "hashtag",
-          "name"
-        ],
-        "type": "object"
-      },
       "AddPhotoToAlbumRequest": {
         "additionalProperties": false,
         "description": "AddPhotoToAlbum operation input.",
@@ -5517,6 +5276,57 @@
         ],
         "type": "object"
       },
+      "CreateReminderHashtagRequest": {
+        "additionalProperties": false,
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "name": "Synthetic tag",
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "name": {
+            "type": "string"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "name"
+        ],
+        "type": "object"
+      },
       "DeletePhotoAlbumRequest": {
         "additionalProperties": false,
         "description": "DeletePhotoAlbum operation input.",
@@ -5582,6 +5392,63 @@
         "required": [
           "auth",
           "photoID"
+        ],
+        "type": "object"
+      },
+      "DeleteReminderHashtagRequest": {
+        "additionalProperties": false,
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "hashtag": {
+            "created": null,
+            "id": "Hashtag/synthetic",
+            "name": "synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "hashtag": {
+            "$ref": "#/components/schemas/ReminderHashtag"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "hashtag"
         ],
         "type": "object"
       },
@@ -6142,6 +6009,91 @@
         ],
         "type": "object"
       },
+      "ReminderHashtagMutationResult": {
+        "additionalProperties": false,
+        "example": {
+          "hashtag": {
+            "created": null,
+            "id": "Hashtag/synthetic",
+            "name": "synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "responses": []
+        },
+        "properties": {
+          "hashtag": {
+            "$ref": "#/components/schemas/ReminderHashtag"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "hashtag",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "ReminderHashtagRelationResult": {
+        "additionalProperties": false,
+        "example": {
+          "hashtag": {
+            "created": null,
+            "id": "Hashtag/synthetic",
+            "name": "synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "responses": []
+        },
+        "properties": {
+          "hashtag": {
+            "$ref": "#/components/schemas/ReminderHashtag"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "reminder",
+          "hashtag",
+          "responses"
+        ],
+        "type": "object"
+      },
       "RenamePhotoAlbumRequest": {
         "additionalProperties": false,
         "description": "RenamePhotoAlbum operation input.",
@@ -6219,6 +6171,777 @@
           "auth",
           "photoID",
           "favorite"
+        ],
+        "type": "object"
+      },
+      "UpdateReminderHashtagRequest": {
+        "additionalProperties": false,
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "hashtag": {
+            "created": null,
+            "id": "Hashtag/synthetic",
+            "name": "synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "name": "Synthetic tag"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "hashtag": {
+            "$ref": "#/components/schemas/ReminderHashtag"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "hashtag",
+          "name"
+        ],
+        "type": "object"
+      },
+      "AddReminderLocationTriggerRequest": {
+        "description": "Add an atomic location alarm to a revision-aware reminder snapshot.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic",
+            "clientID": "synthetic",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic",
+            "listID": "List/synthetic",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "address": {
+            "default": "",
+            "type": "string",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "latitude": {
+            "default": 0,
+            "format": "double",
+            "type": "number",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "longitude": {
+            "default": 0,
+            "format": "double",
+            "type": "number",
+            "x-go-type-skip-optional-pointer": true
+          },
+          "proximity": {
+            "default": 1,
+            "enum": [
+              1,
+              2
+            ],
+            "type": "integer",
+            "x-enum-varnames": [
+              "LocationArriving",
+              "LocationLeaving"
+            ]
+          },
+          "radius": {
+            "default": 100,
+            "format": "double",
+            "minimum": 0,
+            "type": "number"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "title": {
+            "default": "",
+            "type": "string",
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": [
+          "auth",
+          "reminder"
+        ],
+        "type": "object"
+      },
+      "AddReminderLocationTriggerResult": {
+        "description": "Acknowledged alarm, trigger, independent updated reminder and response evidence.",
+        "example": {
+          "alarm": {
+            "alarmUID": "synthetic",
+            "id": "Alarm/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "triggerID": "synthetic"
+          },
+          "reminder": {
+            "alarmIDs": [
+              "synthetic"
+            ],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic",
+            "listID": "List/synthetic",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "responses": [],
+          "trigger": {
+            "address": "",
+            "alarmID": "Alarm/synthetic",
+            "id": "AlarmTrigger/synthetic",
+            "latitude": 0,
+            "locationUID": "synthetic",
+            "longitude": 0,
+            "proximity": 1,
+            "radius": 100,
+            "recordChangeTag": null,
+            "title": ""
+          }
+        },
+        "properties": {
+          "alarm": {
+            "$ref": "#/components/schemas/ReminderAlarm"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/ReminderLocationTrigger"
+          }
+        },
+        "required": [
+          "reminder",
+          "alarm",
+          "trigger",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "CreateReminderRecurrenceRuleRequest": {
+        "additionalProperties": false,
+        "description": "Recurrence rule creation, update, or unlink inputs.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "firstDayOfWeek": {
+            "description": "Provider weekday index; omission uses zero.",
+            "format": "int64",
+            "maximum": 6,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "frequency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderRecurrenceRuleFrequency"
+              }
+            ],
+            "description": "Daily through yearly recurrence; omission uses daily."
+          },
+          "interval": {
+            "description": "Frequency multiplier; omission uses one.",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "occurrenceCount": {
+            "description": "Occurrence count; omission uses zero.",
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder"
+        ],
+        "type": "object"
+      },
+      "CreateReminderURLAttachmentRequest": {
+        "description": "Create a URL attachment and atomically link it to the supplied reminder snapshot.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "url": "https://example.invalid/attachment"
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "url": {
+            "type": "string",
+            "x-go-name": "URL"
+          },
+          "uti": {
+            "default": "public.url",
+            "type": "string",
+            "x-go-name": "UTI"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "url"
+        ],
+        "type": "object"
+      },
+      "DeleteReminderAttachmentRequest": {
+        "description": "Soft-delete an attachment and atomically remove every matching link from its reminder.",
+        "example": {
+          "attachment": {
+            "id": "Attachment/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "url": "",
+            "uti": "public.url"
+          },
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "attachment": {
+            "$ref": "#/components/schemas/ReminderAttachment"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "attachment"
+        ],
+        "type": "object"
+      },
+      "DeleteReminderRecurrenceRuleRequest": {
+        "additionalProperties": false,
+        "description": "Recurrence rule creation, update, or unlink inputs.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "recurrenceRule": {
+            "firstDayOfWeek": 0,
+            "frequency": 1,
+            "id": "RecurrenceRule/synthetic",
+            "interval": 1,
+            "occurrenceCount": 0,
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          }
+        },
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "recurrenceRule": {
+            "$ref": "#/components/schemas/ReminderRecurrenceRule"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          }
+        },
+        "required": [
+          "auth",
+          "reminder",
+          "recurrenceRule"
+        ],
+        "type": "object"
+      },
+      "ReminderAttachmentMutationResult": {
+        "description": "Acknowledged parent and attachment snapshots with ordered provider evidence.",
+        "example": {
+          "attachment": {
+            "id": "Attachment/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "url": "",
+            "uti": "public.url"
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "responses": []
+        },
+        "properties": {
+          "attachment": {
+            "$ref": "#/components/schemas/ReminderAttachment"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "reminder",
+          "attachment",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "ReminderAttachmentSelection": {
+        "description": "Generated semantic projection used to select the URL or image attachment variant.",
+        "example": {
+          "url": ""
+        },
+        "properties": {
+          "fileAssetURL": {
+            "type": "string",
+            "x-go-name": "FileAssetURL"
+          },
+          "url": {
+            "type": "string",
+            "x-go-name": "URL"
+          }
+        },
+        "type": "object"
+      },
+      "ReminderRecurrenceRuleFrequency": {
+        "description": "Daily through yearly recurrence; unknown values default to daily.",
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "x-enum-varnames": [
+          "ReminderDaily",
+          "ReminderWeekly",
+          "ReminderMonthly",
+          "ReminderYearly"
+        ]
+      },
+      "ReminderRecurrenceRuleMutationResult": {
+        "additionalProperties": false,
+        "description": "Acknowledged recurrence settings and response evidence.",
+        "example": {
+          "recurrenceRule": {
+            "firstDayOfWeek": 0,
+            "frequency": 1,
+            "id": "RecurrenceRule/synthetic",
+            "interval": 1,
+            "occurrenceCount": 0,
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "responses": []
+        },
+        "properties": {
+          "recurrenceRule": {
+            "$ref": "#/components/schemas/ReminderRecurrenceRule"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "recurrenceRule",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "ReminderRecurrenceRuleRelationResult": {
+        "additionalProperties": false,
+        "description": "Acknowledged recurrence settings and response evidence.",
+        "example": {
+          "recurrenceRule": {
+            "firstDayOfWeek": 0,
+            "frequency": 1,
+            "id": "RecurrenceRule/synthetic",
+            "interval": 1,
+            "occurrenceCount": 0,
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          },
+          "reminder": {
+            "alarmIDs": [],
+            "allDay": false,
+            "attachmentIDs": [],
+            "completed": false,
+            "completedDate": null,
+            "created": null,
+            "deleted": false,
+            "description": "",
+            "dueDate": null,
+            "flagged": false,
+            "hashtagIDs": [],
+            "id": "Reminder/synthetic-reminder",
+            "listID": "List/synthetic-list",
+            "modified": null,
+            "parentReminderID": null,
+            "priority": 0,
+            "recordChangeTag": null,
+            "recurrenceRuleIDs": [],
+            "startDate": null,
+            "timeZone": null,
+            "title": "Untitled"
+          },
+          "responses": []
+        },
+        "properties": {
+          "recurrenceRule": {
+            "$ref": "#/components/schemas/ReminderRecurrenceRule"
+          },
+          "reminder": {
+            "$ref": "#/components/schemas/Reminder"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "reminder",
+          "recurrenceRule",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "UpdateReminderAttachmentRequest": {
+        "description": "Update URL text or image metadata; omitted fields retain their current values.",
+        "example": {
+          "attachment": {
+            "id": "Attachment/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "url": "",
+            "uti": "public.url"
+          },
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "url": ""
+        },
+        "properties": {
+          "attachment": {
+            "$ref": "#/components/schemas/ReminderAttachment"
+          },
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "fileSize": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "height": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "url": {
+            "type": "string",
+            "x-go-name": "URL"
+          },
+          "uti": {
+            "type": "string",
+            "x-go-name": "UTI"
+          },
+          "width": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "auth",
+          "attachment"
+        ],
+        "type": "object"
+      },
+      "UpdateReminderAttachmentResult": {
+        "description": "Updated attachment snapshot and provider response evidence.",
+        "example": {
+          "attachment": {
+            "id": "Attachment/synthetic",
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic",
+            "url": "",
+            "uti": "public.url"
+          },
+          "responses": []
+        },
+        "properties": {
+          "attachment": {
+            "$ref": "#/components/schemas/ReminderAttachment"
+          },
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseMetadata"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "attachment",
+          "responses"
+        ],
+        "type": "object"
+      },
+      "UpdateReminderRecurrenceRuleRequest": {
+        "additionalProperties": false,
+        "description": "Recurrence rule creation, update, or unlink inputs.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "headers": []
+          },
+          "interval": 2,
+          "recurrenceRule": {
+            "firstDayOfWeek": 0,
+            "frequency": 1,
+            "id": "RecurrenceRule/synthetic",
+            "interval": 1,
+            "occurrenceCount": 0,
+            "recordChangeTag": null,
+            "reminderID": "Reminder/synthetic"
+          }
+        },
+        "minProperties": 3,
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/AuthContext"
+          },
+          "firstDayOfWeek": {
+            "description": "Provider weekday index; omission uses zero.",
+            "format": "int64",
+            "maximum": 6,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "frequency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReminderRecurrenceRuleFrequency"
+              }
+            ],
+            "description": "Daily through yearly recurrence; omission uses daily."
+          },
+          "interval": {
+            "description": "Frequency multiplier; omission uses one.",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "occurrenceCount": {
+            "description": "Occurrence count; omission uses zero.",
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "recurrenceRule": {
+            "$ref": "#/components/schemas/ReminderRecurrenceRule"
+          }
+        },
+        "required": [
+          "auth",
+          "recurrenceRule"
         ],
         "type": "object"
       }

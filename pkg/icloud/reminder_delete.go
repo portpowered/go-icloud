@@ -44,7 +44,7 @@ func (sdk *SDK) DeleteReminder(ctx context.Context, request DeleteReminderReques
 		return nil, newClientError(deleteReminderOperation, Configuration, 0, nil, nil, err)
 	}
 
-	now = time.UnixMilli(fields.LastModifiedDate.Value.GetOrEmpty())
+	now = time.UnixMilli(fields.LastModifiedDate.Value)
 
 	input := reminderDeletionRequest(name, request, fields)
 
@@ -147,8 +147,8 @@ func (sdk *SDK) reminderDeletionFields(now time.Time) (cloudkit.ReminderDeletion
 		Deleted: cloudkit.ReminderWriteInteger{Type: cloudkit.ReminderWriteIntegerTypeINT64, Value: 1},
 		ResolutionTokenMap: cloudkit.ReminderWriteString{Type: cloudkit.ReminderWriteStringTypeSTRING,
 			Value: string(encoded)},
-		LastModifiedDate: cloudkit.ReminderWriteTimestamp{Type: cloudkit.ReminderWriteTimestampTypeTIMESTAMP, Value: nil}}
-	fields.LastModifiedDate.Value.Set(reminderTimestamp(sdk.clock()).Value.GetOrEmpty())
+		LastModifiedDate: cloudkit.ReminderWriteTimestamp{Type: cloudkit.ReminderWriteTimestampTypeTIMESTAMP,
+			Value: reminderTimestamp(sdk.clock()).Value.GetOrEmpty()}}
 
 	return fields, nil
 }

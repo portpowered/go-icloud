@@ -68,7 +68,9 @@ non-atomic writes and orphaned parent updates (SCHEMA-11).
 The closed atomic request schemas require exactly one parent operation and one
 child operation; duplicate-parent and duplicate-child requests are rejected.
 
-Linked-record writes for alarms, attachments and recurrence rules remain separate
-work. Their endpoint variants retain an explicitly scoped fallback pending narrow
-model ports. These milestones do not establish full Reminders, Photos,
-authentication, CLI or template conformance.
+Linked-record writes now cover location alarms, URL and image attachments, and
+recurrence rules. Seven public methods use closed generated request variants;
+fifteen paired Source scenarios and an empty attachment ID control exercise their
+requests and results. The generic pending relation variants have been removed.
+Scoped race and endpoint schema checks pass. These integration milestones still
+require the full repository checks and final standards review before acceptance.

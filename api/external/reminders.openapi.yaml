@@ -955,9 +955,6 @@
       "ReminderDeletionRequest": {
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/ReminderDeletionRequest"
       },
-      "RemindersOtherModificationRequest": {
-        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/RemindersOtherModificationRequest"
-      },
       "RemindersModificationRequest": {
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/RemindersModificationRequest"
       }
