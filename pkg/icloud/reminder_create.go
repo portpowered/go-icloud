@@ -27,7 +27,7 @@ func (sdk *SDK) CreateReminder(ctx context.Context, request CreateReminderReques
 
 	auth.Origin = request.Auth.RemindersServiceURL
 
-	input, err := sdk.reminderCreationRequest(request, sdk.clock())
+	input, err := sdk.reminderCreationRequest(request)
 	if err != nil {
 		return nil, newClientError(createReminderOperation, Configuration, 0, nil, nil, err)
 	}
@@ -39,10 +39,9 @@ func (sdk *SDK) CreateReminder(ctx context.Context, request CreateReminderReques
 
 	name := input.Operations[0].Record.RecordName
 
-	_, err = reminderDeletionResult(DeleteReminderRequest{Auth: request.Auth,
-		ReminderID: name, RecordChangeTag: nil}, name, sdk.clock(), response)
+	_, err = reminderAcknowledgements(createReminderOperation, response)
 	if err != nil {
-		return nil, renameReminderFailure(createReminderOperation, err)
+		return nil, err
 	}
 
 	return sdk.hydrateCreatedReminder(ctx, auth, name, response.Metadata)
@@ -81,15 +80,13 @@ func (sdk *SDK) hydrateCreatedReminder(ctx context.Context, auth webtransport.Re
 		Responses: []ResponseMetadata{publicMetadata(prior), publicMetadata(response.Metadata)}}, nil
 }
 
-func (sdk *SDK) reminderCreationRequest(request CreateReminderRequest,
-	now time.Time,
-) (cloudkit.ReminderCreationRequest, error) {
+func (sdk *SDK) reminderCreationRequest(request CreateReminderRequest) (cloudkit.ReminderCreationRequest, error) {
 	identity, err := sdk.randomUUID()
 	if err != nil {
 		return cloudkit.ReminderCreationRequest{}, err
 	}
 
-	fields, err := sdk.reminderCreationFields(request, now)
+	fields, err := sdk.reminderCreationFields(request)
 	if err != nil {
 		return cloudkit.ReminderCreationRequest{}, err
 	}
@@ -102,15 +99,13 @@ func (sdk *SDK) reminderCreationRequest(request CreateReminderRequest,
 		OperationType: cloudkit.ReminderCreationOperationType, Record: record}}, ZoneID: reminderWriteZone()}, nil
 }
 
-func (sdk *SDK) reminderCreationFields(request CreateReminderRequest,
-	now time.Time,
-) (cloudkit.ReminderCreationFields, error) {
+func (sdk *SDK) reminderCreationFields(request CreateReminderRequest) (cloudkit.ReminderCreationFields, error) {
 	title, notes, err := reminderDocuments(request.Title, request.Description)
 	if err != nil {
 		return cloudkit.ReminderCreationFields{}, err
 	}
 
-	tokens, err := sdk.reminderTokens(now, reminderCreationTokenCount)
+	tokens, err := sdk.reminderTokens(sdk.clock(), reminderCreationTokenCount)
 	if err != nil {
 		return cloudkit.ReminderCreationFields{}, err
 	}
@@ -123,6 +118,8 @@ func (sdk *SDK) reminderCreationFields(request CreateReminderRequest,
 	if err != nil {
 		return cloudkit.ReminderCreationFields{}, err
 	}
+
+	now := sdk.clock()
 
 	fields := cloudkit.ReminderCreationFields{AllDay: reminderBoolean(request.AllDay),
 		Completed: reminderBoolean(request.Completed), CompletionDate: cloudkit.ReminderOptionalTimestamp{

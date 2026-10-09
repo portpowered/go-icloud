@@ -126,6 +126,14 @@ func checkHashtagAtomicNegatives(t *testing.T, schema *openapi3.Schema, value an
 		}
 
 		root["atomic"] = true
+		for _, duplicate := range operations {
+			root["operations"] = []any{duplicate, duplicate}
+
+			if schema.VisitJSON(value) == nil {
+				t.Fatal("hashtag relation without exactly one parent and child accepted")
+			}
+		}
+
 		root["operations"] = operations[:1]
 
 		if schema.VisitJSON(value) == nil {

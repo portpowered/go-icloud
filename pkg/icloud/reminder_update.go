@@ -85,12 +85,6 @@ func applyReminderCompletion(reminder *Reminder, now time.Time) {
 		reminder.CompletedDate.SetNull()
 	case !reminder.CompletedDate.IsSpecified() || reminder.CompletedDate.IsNull():
 		reminder.CompletedDate.Set(reminderMutationInstant(now))
-	default:
-		reminder.CompletedDate.Set(reminder.CompletedDate.GetOrEmpty().UTC())
-	}
-
-	if reminder.DueDate.IsSpecified() && !reminder.DueDate.IsNull() {
-		reminder.DueDate.Set(reminder.DueDate.GetOrEmpty().UTC())
 	}
 }
 
@@ -130,7 +124,7 @@ func (sdk *SDK) reminderUpdateFields(reminder Reminder, now time.Time) (cloudkit
 		return cloudkit.ReminderUpdateFields{}, err
 	}
 
-	tokens, err := sdk.reminderTokens(now, reminderUpdateTokenCount)
+	tokens, err := sdk.reminderTokens(sdk.clock(), reminderUpdateTokenCount)
 	if err != nil {
 		return cloudkit.ReminderUpdateFields{}, err
 	}

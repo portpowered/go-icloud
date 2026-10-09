@@ -120,11 +120,19 @@ func reminderRelatedRecordName(name, prefix string) string {
 }
 
 func reminderRelatedIDs(input []string, prefix, removed string) []string {
+	return reminderNormalizedIDs(input, prefix, removed, removed != "")
+}
+
+func reminderUnlinkedIDs(input []string, prefix, removed string) []string {
+	return reminderNormalizedIDs(input, prefix, removed, true)
+}
+
+func reminderNormalizedIDs(input []string, prefix, removed string, unlink bool) []string {
 	result := make([]string, 0, len(input))
 
 	for _, name := range input {
 		raw := strings.TrimPrefix(name, prefix)
-		if removed == "" || raw != removed {
+		if !unlink || raw != removed {
 			result = append(result, raw)
 		}
 	}

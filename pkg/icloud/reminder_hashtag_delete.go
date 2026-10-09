@@ -32,7 +32,7 @@ func (sdk *SDK) DeleteReminderHashtag(ctx context.Context,
 	}
 
 	name := reminderRelatedRecordName(child.ID, protocol.RemindersHashtagIDPrefixValue)
-	ids := reminderRelatedIDs(reminder.HashtagIDs, protocol.RemindersHashtagIDPrefixValue,
+	ids := reminderUnlinkedIDs(reminder.HashtagIDs, protocol.RemindersHashtagIDPrefixValue,
 		strings.TrimPrefix(name, protocol.RemindersHashtagIDPrefixValue))
 
 	input, err := sdk.reminderHashtagDeletionRequest(reminder, child, ids, name)

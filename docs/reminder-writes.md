@@ -26,6 +26,13 @@ transport. Entropy failures return a typed configuration error before any write.
 Millisecond conversion matches the reference's truncation of floating-point
 Unix seconds, including fractional and pre-epoch instants.
 
+Resolution-token and record timestamps use separate clock reads in reference
+order. Advancing-clock controls cover creation, update, deletion and linked
+hashtag writes; a frozen clock alone cannot verify this distinction. Updates
+preserve an explicitly supplied completion or due-date offset in the returned
+snapshot while sending its Unix timestamp. Deleting an empty hashtag identity
+also removes matching empty raw and prefixed parent links.
+
 The provider request variants are generated from
 `api/external/cloudkit-models.openapi.yaml` and bound to the modify operation in
 `api/external/reminders.openapi.yaml`. Resolution-token strings explicitly name
@@ -58,6 +65,8 @@ scenarios verify the complete requests, results, rejection evidence and immutabl
 inputs. Narrow generated hashtag variants replace their pending endpoint
 fallback; negative controls reject malformed fields, missing required fields,
 non-atomic writes and orphaned parent updates (SCHEMA-11).
+The closed atomic request schemas require exactly one parent operation and one
+child operation; duplicate-parent and duplicate-child requests are rejected.
 
 Linked-record writes for alarms, attachments and recurrence rules remain separate
 work. Their endpoint variants retain an explicitly scoped fallback pending narrow

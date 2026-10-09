@@ -19,17 +19,18 @@ func copyReminderHashtag(input ReminderHashtag) ReminderHashtag {
 func (sdk *SDK) reminderHashtagParent(reminder Reminder, ids []string,
 ) (cloudkit.ReminderHashtagParentOperation, error) {
 	now := sdk.clock()
+	tokenTime := sdk.clock()
 
 	var tokens cloudkit.ReminderHashtagLinkTokensMap
 
 	var err error
 
-	tokens.Map.HashtagIDs, err = sdk.reminderResolutionToken(now)
+	tokens.Map.HashtagIDs, err = sdk.reminderResolutionToken(tokenTime)
 	if err != nil {
 		return cloudkit.ReminderHashtagParentOperation{}, err
 	}
 
-	tokens.Map.LastModifiedDate, err = sdk.reminderResolutionToken(now)
+	tokens.Map.LastModifiedDate, err = sdk.reminderResolutionToken(tokenTime)
 	if err != nil {
 		return cloudkit.ReminderHashtagParentOperation{}, err
 	}

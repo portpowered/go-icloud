@@ -5535,6 +5535,34 @@
             "zoneType": "REGULAR_CUSTOM_ZONE"
           },
           "atomic": true
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "operations"
+              ],
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderHashtagParentOperation"
+                  }
+                }
+              }
+            },
+            {
+              "required": [
+                "operations"
+              ],
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderHashtagCreationOperation"
+                  }
+                }
+              }
+            }
+          ]
         }
       },
       "ReminderHashtagUpdateFields": {
@@ -5847,6 +5875,34 @@
             "zoneType": "REGULAR_CUSTOM_ZONE"
           },
           "atomic": true
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "operations"
+              ],
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderHashtagParentOperation"
+                  }
+                }
+              }
+            },
+            {
+              "required": [
+                "operations"
+              ],
+              "properties": {
+                "operations": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReminderHashtagDeletionOperation"
+                  }
+                }
+              }
+            }
+          ]
         }
       },
       "ReminderHashtagParentRecord": {
