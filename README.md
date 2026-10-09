@@ -437,6 +437,7 @@ resumed, err := client.ResumeSession(ctx, icloud.ResumeSessionRequest{
     TrustToken: savedTrustToken,
     ForceRefresh: false,
     AllowUntrusted: false,
+    ResponseUpdates: nil,
 })
 if err != nil {
     return err
@@ -444,12 +445,20 @@ if err != nil {
 auth := resumed.Auth // credentials: persist privately and do not print
 ```
 
-`authentication-required` requests interactive login; `terms-required` requests
+A Find My HTTP 450 is classified as `authentication-required`. To reproduce
+the reference library's recovery, pass the failed response metadata in
+`ResponseUpdates` and set `ForceRefresh: true`; this applies rotated cookies and
+tokens before the saved-token account login. Persist the returned credentials
+privately and retry the Find My read once. Offline Source replays cover recovery,
+cookie rotation, a rejected token, and a second 450. Automatic CLI recovery is
+still pending.
+
+`authentication-required` can require interactive login; `terms-required` requests
 terms acceptance. This operation performs neither. `AllowUntrusted` can return
 paused MFA discovery. The CLI imports existing reference credentials and resumes
 native session files; password login and MFA completion remain pending. Native
-session reuse has offline replay evidence and has not yet been verified against
-a live account. If the reference login has no stored client ID or session token,
+session reuse has offline replay evidence and has been verified with private
+live account reads. If the reference login has no stored client ID or session token,
 run the reference login command again before importing it.
 
 Use `github.com/portpowered/go-icloud/pkg/icloud`. Authentication context belongs
@@ -899,6 +908,7 @@ go-icloud --session <private-session.json> photos-status
 go-icloud --session <private-session.json> photo-albums
 go-icloud --session <private-session.json> --album Library photo-count
 go-icloud --session <private-session.json> --album Library photo-assets
+go-icloud --session <private-session.json> --album Library --photo <asset-id> --version thumb photo-download
 ```
 
 The commands call the public SDK, preserve typed failures and suppress response
@@ -997,3 +1007,10 @@ if err != nil {
 }
 photos := recent.Photos // newest additions first; keep private
 ```
+
+`photo-download` emits a JSON `content` field containing base64 file bytes. An
+available empty file returns an empty string; an unavailable rendition returns
+null. Omit `--version` for the original, or select a known photo rendition.
+Store downloaded content privately. The CLI consumes the published SDK and its
+25 strict Source replays cover exact bytes, signed URLs, fallback lookup, and
+provider and transport errors.

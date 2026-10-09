@@ -1374,6 +1374,7 @@ components:
         trustToken: {type: string, x-go-type-skip-optional-pointer: true, description: Secret saved browser trust token; missing is sent as an empty string.}
         forceRefresh: {type: boolean, description: Skip cookie validation and use the saved session token.}
         allowUntrusted: {type: boolean, description: Return paused MFA discovery; a trusted session is otherwise required.}
+        responseUpdates: {type: array, x-go-type-skip-optional-pointer: true, items: {$ref: '#/components/schemas/ResponseMetadata'}, description: Previously observed service responses applied before resuming authentication; preserves cookie/token rotation and ordered response evidence during recovery.}
     ResumeSessionResult:
       type: object
       required: [auth, accountCountryCode, trustToken, trustedSession, requiresTwoFactor, requiresTwoStep, accountData, responses]

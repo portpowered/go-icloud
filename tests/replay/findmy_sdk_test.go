@@ -105,9 +105,15 @@ func TestFindMySDKPortableScenarios(t *testing.T) {
 	}
 
 	pairs := 0
+	selected := 0
 
 	for _, path := range paths {
 		scenario := readFindMySDKScenario(t, path)
+		if scenario.Operation == "devices_with_auth_state" {
+			continue // The cross-service token lifecycle is bound by TestFindMySavedTokenRecoverySDK.
+		}
+
+		selected++
 		pairs += len(scenario.Exchanges)
 
 		t.Run(filepath.Base(path), func(t *testing.T) {
@@ -116,7 +122,7 @@ func TestFindMySDKPortableScenarios(t *testing.T) {
 		})
 	}
 
-	if len(paths) != 71 || pairs != 140 {
+	if selected != 71 || pairs != 140 {
 		t.Fatal("Find My SDK scenario inventory changed")
 	}
 }

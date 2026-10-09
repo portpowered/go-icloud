@@ -179,6 +179,16 @@
           "2534B22"
         ],
         "description": "Pinned reference default mastering build used after session discovery."
+      },
+      "FindMyReauthenticationStatus": {
+        "description": "Find My service response status requiring one saved-token refresh before a bounded retry.",
+        "type": "integer",
+        "x-enum-varnames": [
+          "FindMyReauthenticationRequired"
+        ],
+        "enum": [
+          450
+        ]
       }
     }
   }

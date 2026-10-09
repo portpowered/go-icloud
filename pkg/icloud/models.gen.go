@@ -2054,6 +2054,9 @@ type ResumeSessionRequest struct {
 	// ForceRefresh Skip cookie validation and use the saved session token.
 	ForceRefresh bool `json:"forceRefresh"`
 
+	// ResponseUpdates Previously observed service responses applied before resuming authentication; preserves cookie/token rotation and ordered response evidence during recovery.
+	ResponseUpdates []ResponseMetadata `json:"responseUpdates,omitempty"`
+
 	// TrustToken Secret saved browser trust token; missing is sent as an empty string.
 	TrustToken string `json:"trustToken,omitempty"`
 }

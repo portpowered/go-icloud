@@ -495,7 +495,8 @@ one/many, overlap, full/partial/duplicate-only windows, and provider failures at
 initialization, zone discovery and initial/later pages. Shared-zone provider
 refusals retain complete response evidence while the root read continues,
 matching Source. Ten new Source-first cases add 34 pairs; this branch's corpus
-is 1,053 HTTP scenarios / 2,343 pairs before other pending milestones merge.
+is 1,057 HTTP scenarios / 2,354 pairs after merging the verified download CLI
+and saved-token recovery milestones.
 Focused race replay passes; full checks, CI and independent review remain
 pending. The live account most recently reports indexing RUNNING at 0%, so
 successful live Recently Added access remains unverified.

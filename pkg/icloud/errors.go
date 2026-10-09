@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
 // ClientError is an inspectable failure with a safe display message.
@@ -121,6 +122,8 @@ func transportKind(failure *webtransport.ResponseError) ErrorKind {
 
 func providerKind(status int) ErrorKind {
 	switch status {
+	case int(auth.FindMyReauthenticationRequired):
+		return AuthenticationRequired
 	case http.StatusUnauthorized:
 		return Unauthorized
 	case http.StatusForbidden:
