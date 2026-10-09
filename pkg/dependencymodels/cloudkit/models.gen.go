@@ -12,6 +12,36 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// Defines values for AlarmIDPrefix.
+const (
+	Alarm AlarmIDPrefix = "Alarm/"
+)
+
+// Valid indicates whether the value is a known member of the AlarmIDPrefix enum.
+func (e AlarmIDPrefix) Valid() bool {
+	switch e {
+	case Alarm:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AttachmentIDPrefix.
+const (
+	Attachment AttachmentIDPrefix = "Attachment/"
+)
+
+// Valid indicates whether the value is a known member of the AttachmentIDPrefix enum.
+func (e AttachmentIDPrefix) Valid() bool {
+	switch e {
+	case Attachment:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CKAssetFieldType.
 const (
 	ASSET CKAssetFieldType = "ASSET"
@@ -396,6 +426,21 @@ func (e CKUnknownListFieldType) Valid() bool {
 	}
 }
 
+// Defines values for HashtagIDPrefix.
+const (
+	Hashtag HashtagIDPrefix = "Hashtag/"
+)
+
+// Valid indicates whether the value is a known member of the HashtagIDPrefix enum.
+func (e HashtagIDPrefix) Valid() bool {
+	switch e {
+	case Hashtag:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ListFieldBadgeEmblem.
 const (
 	BadgeEmblem ListFieldBadgeEmblem = "BadgeEmblem"
@@ -443,13 +488,13 @@ func (e ListFieldCount) Valid() bool {
 
 // Defines values for ListFieldDeleted.
 const (
-	Deleted ListFieldDeleted = "Deleted"
+	ListFieldDeletedDeleted ListFieldDeleted = "Deleted"
 )
 
 // Valid indicates whether the value is a known member of the ListFieldDeleted enum.
 func (e ListFieldDeleted) Valid() bool {
 	switch e {
-	case Deleted:
+	case ListFieldDeletedDeleted:
 		return true
 	default:
 		return false
@@ -533,13 +578,313 @@ func (e ListFieldSortingStyle) Valid() bool {
 
 // Defines values for ListRecordType.
 const (
-	List ListRecordType = "List"
+	ListRecordTypeList ListRecordType = "List"
 )
 
 // Valid indicates whether the value is a known member of the ListRecordType enum.
 func (e ListRecordType) Valid() bool {
 	switch e {
-	case List:
+	case ListRecordTypeList:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RecurrenceRuleIDPrefix.
+const (
+	RecurrenceRule RecurrenceRuleIDPrefix = "RecurrenceRule/"
+)
+
+// Valid indicates whether the value is a known member of the RecurrenceRuleIDPrefix enum.
+func (e RecurrenceRuleIDPrefix) Valid() bool {
+	switch e {
+	case RecurrenceRule:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldAlarmIDs.
+const (
+	AlarmIDs ReminderFieldAlarmIDs = "AlarmIDs"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldAlarmIDs enum.
+func (e ReminderFieldAlarmIDs) Valid() bool {
+	switch e {
+	case AlarmIDs:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldAllDay.
+const (
+	AllDay ReminderFieldAllDay = "AllDay"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldAllDay enum.
+func (e ReminderFieldAllDay) Valid() bool {
+	switch e {
+	case AllDay:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldAttachmentIDs.
+const (
+	AttachmentIDs ReminderFieldAttachmentIDs = "AttachmentIDs"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldAttachmentIDs enum.
+func (e ReminderFieldAttachmentIDs) Valid() bool {
+	switch e {
+	case AttachmentIDs:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldCompleted.
+const (
+	Completed ReminderFieldCompleted = "Completed"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldCompleted enum.
+func (e ReminderFieldCompleted) Valid() bool {
+	switch e {
+	case Completed:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldCompletionDate.
+const (
+	CompletionDate ReminderFieldCompletionDate = "CompletionDate"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldCompletionDate enum.
+func (e ReminderFieldCompletionDate) Valid() bool {
+	switch e {
+	case CompletionDate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldCreationDate.
+const (
+	CreationDate ReminderFieldCreationDate = "CreationDate"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldCreationDate enum.
+func (e ReminderFieldCreationDate) Valid() bool {
+	switch e {
+	case CreationDate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldDeleted.
+const (
+	ReminderFieldDeletedDeleted ReminderFieldDeleted = "Deleted"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldDeleted enum.
+func (e ReminderFieldDeleted) Valid() bool {
+	switch e {
+	case ReminderFieldDeletedDeleted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldDueDate.
+const (
+	DueDate ReminderFieldDueDate = "DueDate"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldDueDate enum.
+func (e ReminderFieldDueDate) Valid() bool {
+	switch e {
+	case DueDate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldFlagged.
+const (
+	Flagged ReminderFieldFlagged = "Flagged"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldFlagged enum.
+func (e ReminderFieldFlagged) Valid() bool {
+	switch e {
+	case Flagged:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldHashtagIDs.
+const (
+	HashtagIDs ReminderFieldHashtagIDs = "HashtagIDs"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldHashtagIDs enum.
+func (e ReminderFieldHashtagIDs) Valid() bool {
+	switch e {
+	case HashtagIDs:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldLastModifiedDate.
+const (
+	LastModifiedDate ReminderFieldLastModifiedDate = "LastModifiedDate"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldLastModifiedDate enum.
+func (e ReminderFieldLastModifiedDate) Valid() bool {
+	switch e {
+	case LastModifiedDate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldList.
+const (
+	ReminderFieldListList ReminderFieldList = "List"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldList enum.
+func (e ReminderFieldList) Valid() bool {
+	switch e {
+	case ReminderFieldListList:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldNotesDocument.
+const (
+	NotesDocument ReminderFieldNotesDocument = "NotesDocument"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldNotesDocument enum.
+func (e ReminderFieldNotesDocument) Valid() bool {
+	switch e {
+	case NotesDocument:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldParentReminder.
+const (
+	ParentReminder ReminderFieldParentReminder = "ParentReminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldParentReminder enum.
+func (e ReminderFieldParentReminder) Valid() bool {
+	switch e {
+	case ParentReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldPriority.
+const (
+	Priority ReminderFieldPriority = "Priority"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldPriority enum.
+func (e ReminderFieldPriority) Valid() bool {
+	switch e {
+	case Priority:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldRecurrenceRuleIDs.
+const (
+	RecurrenceRuleIDs ReminderFieldRecurrenceRuleIDs = "RecurrenceRuleIDs"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldRecurrenceRuleIDs enum.
+func (e ReminderFieldRecurrenceRuleIDs) Valid() bool {
+	switch e {
+	case RecurrenceRuleIDs:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldStartDate.
+const (
+	StartDate ReminderFieldStartDate = "StartDate"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldStartDate enum.
+func (e ReminderFieldStartDate) Valid() bool {
+	switch e {
+	case StartDate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldTimeZone.
+const (
+	TimeZone ReminderFieldTimeZone = "TimeZone"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldTimeZone enum.
+func (e ReminderFieldTimeZone) Valid() bool {
+	switch e {
+	case TimeZone:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderFieldTitleDocument.
+const (
+	TitleDocument ReminderFieldTitleDocument = "TitleDocument"
+)
+
+// Valid indicates whether the value is a known member of the ReminderFieldTitleDocument enum.
+func (e ReminderFieldTitleDocument) Valid() bool {
+	switch e {
+	case TitleDocument:
 		return true
 	default:
 		return false
@@ -548,13 +893,43 @@ func (e ListRecordType) Valid() bool {
 
 // Defines values for ReminderIDPrefix.
 const (
-	Reminder ReminderIDPrefix = "Reminder/"
+	ReminderIDPrefixReminder ReminderIDPrefix = "Reminder/"
 )
 
 // Valid indicates whether the value is a known member of the ReminderIDPrefix enum.
 func (e ReminderIDPrefix) Valid() bool {
 	switch e {
-	case Reminder:
+	case ReminderIDPrefixReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecordType.
+const (
+	ReminderRecordTypeReminder ReminderRecordType = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecordType enum.
+func (e ReminderRecordType) Valid() bool {
+	switch e {
+	case ReminderRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UnreadableReminderTitle.
+const (
+	ErrorDecodingTitle UnreadableReminderTitle = "Error Decoding Title"
+)
+
+// Valid indicates whether the value is a known member of the UnreadableReminderTitle enum.
+func (e UnreadableReminderTitle) Valid() bool {
+	switch e {
+	case ErrorDecodingTitle:
 		return true
 	default:
 		return false
@@ -563,13 +938,28 @@ func (e ReminderIDPrefix) Valid() bool {
 
 // Defines values for UntitledList.
 const (
-	Untitled UntitledList = "Untitled"
+	UntitledListUntitled UntitledList = "Untitled"
 )
 
 // Valid indicates whether the value is a known member of the UntitledList enum.
 func (e UntitledList) Valid() bool {
 	switch e {
-	case Untitled:
+	case UntitledListUntitled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntitledReminder.
+const (
+	UntitledReminderUntitled UntitledReminder = "Untitled"
+)
+
+// Valid indicates whether the value is a known member of the UntitledReminder enum.
+func (e UntitledReminder) Valid() bool {
+	switch e {
+	case UntitledReminderUntitled:
 		return true
 	default:
 		return false
@@ -605,6 +995,12 @@ func (e ZoneType) Valid() bool {
 		return false
 	}
 }
+
+// AlarmIDPrefix Pinned Reminder domain mapping protocol value.
+type AlarmIDPrefix string
+
+// AttachmentIDPrefix Pinned Reminder domain mapping protocol value.
+type AttachmentIDPrefix string
 
 // CKAssetBytes Exact downloaded asset bytes, retained before decoding list membership.
 type CKAssetBytes = []byte
@@ -1305,6 +1701,9 @@ type CKZoneListZone struct {
 	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
 }
 
+// HashtagIDPrefix Pinned Reminder domain mapping protocol value.
+type HashtagIDPrefix string
+
 // JsonValue Arbitrary extensible CloudKit JSON preserved without numeric coercion.
 type JsonValue = json.RawMessage
 
@@ -1338,11 +1737,80 @@ type ListFieldSortingStyle string
 // ListRecordType Pinned Reminders list protocol value used by the domain projection.
 type ListRecordType string
 
+// RecurrenceRuleIDPrefix Pinned Reminder domain mapping protocol value.
+type RecurrenceRuleIDPrefix string
+
+// ReminderFieldAlarmIDs Pinned Reminder domain mapping protocol value.
+type ReminderFieldAlarmIDs string
+
+// ReminderFieldAllDay Pinned Reminder domain mapping protocol value.
+type ReminderFieldAllDay string
+
+// ReminderFieldAttachmentIDs Pinned Reminder domain mapping protocol value.
+type ReminderFieldAttachmentIDs string
+
+// ReminderFieldCompleted Pinned Reminder domain mapping protocol value.
+type ReminderFieldCompleted string
+
+// ReminderFieldCompletionDate Pinned Reminder domain mapping protocol value.
+type ReminderFieldCompletionDate string
+
+// ReminderFieldCreationDate Pinned Reminder domain mapping protocol value.
+type ReminderFieldCreationDate string
+
+// ReminderFieldDeleted Pinned Reminder domain mapping protocol value.
+type ReminderFieldDeleted string
+
+// ReminderFieldDueDate Pinned Reminder domain mapping protocol value.
+type ReminderFieldDueDate string
+
+// ReminderFieldFlagged Pinned Reminder domain mapping protocol value.
+type ReminderFieldFlagged string
+
+// ReminderFieldHashtagIDs Pinned Reminder domain mapping protocol value.
+type ReminderFieldHashtagIDs string
+
+// ReminderFieldLastModifiedDate Pinned Reminder domain mapping protocol value.
+type ReminderFieldLastModifiedDate string
+
+// ReminderFieldList Pinned Reminder domain mapping protocol value.
+type ReminderFieldList string
+
+// ReminderFieldNotesDocument Pinned Reminder domain mapping protocol value.
+type ReminderFieldNotesDocument string
+
+// ReminderFieldParentReminder Pinned Reminder domain mapping protocol value.
+type ReminderFieldParentReminder string
+
+// ReminderFieldPriority Pinned Reminder domain mapping protocol value.
+type ReminderFieldPriority string
+
+// ReminderFieldRecurrenceRuleIDs Pinned Reminder domain mapping protocol value.
+type ReminderFieldRecurrenceRuleIDs string
+
+// ReminderFieldStartDate Pinned Reminder domain mapping protocol value.
+type ReminderFieldStartDate string
+
+// ReminderFieldTimeZone Pinned Reminder domain mapping protocol value.
+type ReminderFieldTimeZone string
+
+// ReminderFieldTitleDocument Pinned Reminder domain mapping protocol value.
+type ReminderFieldTitleDocument string
+
 // ReminderIDPrefix Pinned Reminders list protocol value used by the domain projection.
 type ReminderIDPrefix string
 
+// ReminderRecordType Pinned Reminder domain mapping protocol value.
+type ReminderRecordType string
+
+// UnreadableReminderTitle Pinned Reminder domain mapping protocol value.
+type UnreadableReminderTitle string
+
 // UntitledList Pinned Reminders list protocol value used by the domain projection.
 type UntitledList string
+
+// UntitledReminder Pinned Reminder domain mapping protocol value.
+type UntitledReminder string
 
 // ZoneName Pinned Reminders list protocol value used by the domain projection.
 type ZoneName string

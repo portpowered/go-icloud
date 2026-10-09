@@ -129,6 +129,47 @@ components:
         additionalMetadata: {$ref: '#/components/schemas/ReminderMetadata', x-go-type-skip-optional-pointer: true, description: Unknown fields attached to the response envelope.}
         zones: {type: array, items: {$ref: '#/components/schemas/ReminderZone'}, description: Zones in provider order; an empty list is successful.}
         metadata: {$ref: '#/components/schemas/ResponseMetadata'}
+    Reminder:
+      type: object
+      description: Complete reminder projection with decoded documents and related identifiers.
+      required: [id, listID, title, description, completed, completedDate, dueDate, startDate, priority, flagged, allDay, deleted, timeZone, alarmIDs, hashtagIDs, attachmentIDs, recurrenceRuleIDs, parentReminderID, created, modified, recordChangeTag]
+      example: {"id": "Reminder/synthetic-reminder", "listID": "List/synthetic-list", "title": "Untitled", "description": "", "completed": false, "completedDate": null, "dueDate": null, "startDate": null, "priority": 0, "flagged": false, "allDay": false, "deleted": false, "timeZone": null, "alarmIDs": [], "hashtagIDs": [], "attachmentIDs": [], "recurrenceRuleIDs": [], "parentReminderID": null, "created": null, "modified": null, "recordChangeTag": null}
+      properties:
+        id: {"type": "string", "x-go-name": "ID", "description": "Complete provider reminder record name."}
+        listID: {"type": "string", "description": "Containing list record name.", "x-go-name": "ListID"}
+        title: {"type": "string", "description": "Decoded title; absent text defaults to Untitled and unreadable documents use Error Decoding Title."}
+        description: {"type": "string", "description": "Decoded notes; absent or unreadable documents produce empty text."}
+        completed: {"type": "boolean", "description": "Completion state."}
+        completedDate: {"type": "string", "description": "Optional completion instant.", "format": "date-time", "nullable": true}
+        dueDate: {"type": "string", "description": "Optional due instant.", "format": "date-time", "nullable": true}
+        startDate: {"type": "string", "description": "Optional start instant.", "format": "date-time", "nullable": true}
+        priority: {"type": "integer", "description": "Provider priority value; defaults to zero.", "format": "int64"}
+        flagged: {"type": "boolean", "description": "Flag state."}
+        allDay: {"type": "boolean", "description": "Whether the due date is all day."}
+        deleted: {"type": "boolean", "description": "Deletion state."}
+        timeZone: {"type": "string", "description": "Optional provider time zone name.", "nullable": true}
+        alarmIDs: {"type": "array", "description": "Ordered raw alarm identifiers, preserving duplicates.", "items": {"type": "string"}, "x-go-name": "AlarmIDs"}
+        hashtagIDs: {"type": "array", "description": "Ordered raw hashtag identifiers, preserving duplicates.", "items": {"type": "string"}, "x-go-name": "HashtagIDs"}
+        attachmentIDs: {"type": "array", "description": "Ordered raw attachment identifiers, preserving duplicates.", "items": {"type": "string"}, "x-go-name": "AttachmentIDs"}
+        recurrenceRuleIDs: {"type": "array", "description": "Ordered raw recurrence identifiers, preserving duplicates.", "items": {"type": "string"}, "x-go-name": "RecurrenceRuleIDs"}
+        parentReminderID: {"type": "string", "description": "Optional complete parent reminder record name.", "nullable": true, "x-go-name": "ParentReminderID"}
+        created: {"type": "string", "description": "Creation instant from the field or audit metadata.", "format": "date-time", "nullable": true}
+        modified: {"type": "string", "description": "Modification instant from the field or audit metadata.", "format": "date-time", "nullable": true}
+        recordChangeTag: {"type": "string", "description": "Optional provider revision.", "nullable": true}
+    GetReminderRequest:
+      type: object
+      required: [auth, reminderID]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}, reminderID: synthetic-reminder}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        reminderID: {type: string, x-go-name: ReminderID, description: Raw identifier or complete Reminder/ record name.}
+    GetReminderResult:
+      type: object
+      required: [reminder, metadata]
+      example: {reminder: {"id": "Reminder/synthetic-reminder", "listID": "List/synthetic-list", "title": "Untitled", "description": "", "completed": false, "completedDate": null, "dueDate": null, "startDate": null, "priority": 0, "flagged": false, "allDay": false, "deleted": false, "timeZone": null, "alarmIDs": [], "hashtagIDs": [], "attachmentIDs": [], "recurrenceRuleIDs": [], "parentReminderID": null, "created": null, "modified": null, "recordChangeTag": null}, metadata: {statusCode: 200, headers: []}}
+      properties:
+        reminder: {$ref: '#/components/schemas/Reminder'}
+        metadata: {$ref: '#/components/schemas/ResponseMetadata'}
     ReminderList:
       type: object
       required: [id, title, color, count, badgeEmblem, sortingStyle, isGroup, deleted, reminderIDs, guid, recordChangeTag]
