@@ -32,6 +32,12 @@ linters:
             - golang.org/x/crypto/scrypt
             # HTML bootstrap parsing uses the standard maintained HTML tokenizer.
             - golang.org/x/net/html
+            # Native FIDO discovery uses the pinned cgo-free HID backend.
+            - github.com/telesma-app/hid
+            # Generated CTAP payload models use the pinned canonical CBOR codec.
+            - github.com/fxamacker/cbor/v2
+            # FIDO relying-party delegation follows the maintained suffix list.
+            - golang.org/x/net/publicsuffix
   exclusions:
     generated: strict
     rules:

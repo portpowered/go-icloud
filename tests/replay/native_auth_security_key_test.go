@@ -10,6 +10,7 @@ import (
 
 	"github.com/portpowered/go-icloud/pkg/dependencies/securitykey"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
+	keymodels "github.com/portpowered/go-icloud/pkg/dependencymodels/securitykey"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
 
@@ -151,6 +152,7 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 		{name: "PIN required", cause: securitykey.ErrPINRequired, kind: icloud.AuthenticationRequired},
 		{name: "unsupported", cause: securitykey.ErrUnsupported, kind: icloud.Configuration},
 		{name: "invalid device proof", cause: securitykey.ErrProtocol, kind: icloud.InvalidResponse},
+		{name: "device rejected credential", cause: &securitykey.Error{Stage: "CTAP", Status: int(keymodels.NoCredentials), Cause: securitykey.ErrProtocol}, kind: icloud.Provider},
 		{name: "device access", cause: errors.ErrUnsupported, kind: icloud.Transport},
 	} {
 		t.Run(control.name, func(t *testing.T) {
