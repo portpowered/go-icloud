@@ -134,5 +134,12 @@
         }
       }
     }
+  ],
+  "error_payload": [
+    {
+      "recordName": "Reminder/synthetic-item",
+      "serverErrorCode": "CONFLICT",
+      "reason": "synthetic conflict"
+    }
   ]
 }

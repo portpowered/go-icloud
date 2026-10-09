@@ -1,14 +1,25 @@
 # iCloud migration checklist
 
+The reminder change-iteration reference matrix contains 25 Source-executed
+scenarios and 28 paired exchanges. It binds optional cursors, pagination,
+multiple zones, ordered duplicate events, unrelated records, tombstones,
+full deleted reminders, provider failures and invalid replies. Negative controls
+reject changed events, order, requests, unused pages and structured error payloads.
+The Source harness now binds payloads for all 32 Reminders API error scenarios,
+including null payloads. Portable HTTP inventory is 621 scenarios and 1,328 pairs;
+the public Go change-iteration port remains pending.
+The current all-evidence Source run enters 592/905 inventoried functions and
+covers 3,331/5,398 body statements (61.71%) and 1,027/2,076 branch exits.
+
 The sync-cursor reference matrix now has 53 Source-executed scenarios and 85
 paired exchanges. Cases cover token defaults, query decode fallback,
 provider errors, pagination, multiple zones, missing final tokens and validation
 of every known CloudKit field tag alongside future tags and nested metadata. Portable
-HTTP inventory is 600 scenarios and 1,304 paired exchanges. This is reference
+HTTP inventory at the sync-cursor milestone was 600 scenarios and 1,304 paired exchanges. This is reference
 evidence for the public Go `GetReminderSyncCursor` port, which passes all 53
 paired semantic replays with exact tokens, ordered response metadata and prior
 response evidence on failures. Public change iteration remains open. The latest
-all-evidence Source measurement enters 592/905 inventoried functions and covers
+preceding all-evidence Source measurement enters 592/905 inventoried functions and covers
 3,326/5,398 body statements (61.62%) and 1,024/2,076 branch exits. The preceding
 synthetic-only run enters 584 functions and covers 3,278 body statements and
 1,011 branch exits; these evidence categories remain separate.

@@ -79,5 +79,10 @@
   "error": {
     "type": "RemindersApiError",
     "message": "Changes response validation failed"
+  },
+  "error_payload": {
+    "zones": [
+      {}
+    ]
   }
 }

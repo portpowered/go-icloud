@@ -79,5 +79,18 @@
   "error": {
     "type": "RemindersApiError",
     "message": "Changes response validation failed"
+  },
+  "error_payload": {
+    "zones": [
+      {
+        "zoneID": {
+          "zoneName": "Reminders",
+          "zoneType": "REGULAR_CUSTOM_ZONE"
+        },
+        "syncToken": "synthetic-sync",
+        "moreComing": false,
+        "records": null
+      }
+    ]
   }
 }

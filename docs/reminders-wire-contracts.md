@@ -46,12 +46,12 @@ parsing, error classification or public service orchestration.
 
 ## Evidence and checks
 
-The current 162 implementation-derived synthetic Reminders scenarios contain
-202 paired exchanges: 199 POST pairs and three membership-asset downloads. Contract
+The current 183 implementation-derived synthetic Reminders scenarios contain
+226 paired exchanges: 223 POST pairs and three membership-asset downloads. Contract
 checks bind every pair to an operation and validate required query values,
 requests and replies. Every POST request and every successful valid POST reply
 round-trips through its canonical generated model without changing JSON values.
-Thirty-one source-invalid zone/list/lookup/query replies must fail JSON or schema validation. Ten sanitized
+Thirty-four source-invalid zone/list/lookup/query replies must fail JSON or schema validation. Ten sanitized
 examples cover each POST request/reply responsibility. These are synthetic
 reference examples, not captured Apple writes (SCHEMA-08, SCHEMA-12).
 
@@ -70,6 +70,15 @@ changed public results and unused pages. Public Go `GetReminderSyncCursor`
 executes these same 53 scenarios and 85 paired exchanges. It returns the exact usable token and ordered
 response metadata, preserving prior exchanges when a later page fails. Decode
 failures in the query permit fallback; HTTP/session failures stop immediately.
+
+Twenty-five Source change-iteration scenarios contain 28 paired exchanges and
+bind no/null/empty cursors, ordered duplicates, unrelated records, complete deleted
+reminders and tombstones, last-zone cursor selection, later-page failures and
+schema rejection. Source API errors bind their structured payloads as well as
+their type and message, including null payloads. Negative controls reject changed
+events, event order, requests, unused pages and error payloads. These reference
+cases establish the next public Go port's expected behavior; they do not yet
+prove a Go change-iteration implementation.
 
 Asset binding checks that the HTTPS origin, escaped path and decoded query occur
 in a prior validated POST List record's ReminderIDsAsset/ASSETID downloadURL. It

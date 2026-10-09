@@ -79,5 +79,37 @@
   "error": {
     "type": "RemindersApiError",
     "message": "Changes response validation failed"
+  },
+  "error_payload": {
+    "zones": [
+      {
+        "zoneID": {
+          "zoneName": "Reminders",
+          "zoneType": "REGULAR_CUSTOM_ZONE"
+        },
+        "moreComing": false,
+        "records": [
+          {
+            "recordName": "List/synthetic-0",
+            "recordType": "List",
+            "fields": {
+              "Name": {
+                "type": "STRING",
+                "value": "List 0"
+              },
+              "Color": {
+                "type": "STRING",
+                "value": "blue"
+              },
+              "Count": {
+                "type": "INT64",
+                "value": 0
+              }
+            },
+            "recordChangeTag": "synthetic-tag"
+          }
+        ]
+      }
+    ]
   }
 }

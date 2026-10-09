@@ -6,7 +6,6 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "reminders",
-  "operation": "sync_cursor",
   "initial_state": {
     "origin": "https://reminders.example.invalid",
     "params": {
@@ -17,13 +16,17 @@
       "Accept": "application/json"
     }
   },
+  "operation": "iter_changes",
   "inputs": [],
+  "keyword_inputs": {
+    "since": "synthetic-old-token"
+  },
   "exchanges": [
     {
       "request": {
         "method": "POST",
         "origin": "https://reminders.example.invalid",
-        "path": "/database/1/com.apple.reminders/production/private/records/query",
+        "path": "/database/1/com.apple.reminders/production/private/changes/zone",
         "query": [
           [
             "remapEnums",
@@ -49,7 +52,7 @@
           ],
           [
             "content-length",
-            "132"
+            "175"
           ],
           [
             "content-type",
@@ -58,7 +61,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJxdWVyeSI6IHsicmVjb3JkVHlwZSI6ICJyZW1pbmRlckxpc3QifSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgInJlc3VsdHNMaW1pdCI6IDF9"
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgImRlc2lyZWRSZWNvcmRUeXBlcyI6IFsiUmVtaW5kZXIiXSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtb2xkLXRva2VuIiwgInJldmVyc2UiOiBmYWxzZX1dfQ=="
         }
       },
       "response": {
@@ -71,7 +74,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJyZWNvcmRzIjogW119"
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtcGFnZS1vbmUiLCAibW9yZUNvbWluZyI6IHRydWUsICJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJSZW1pbmRlci9zeW50aGV0aWMtMCIsICJyZWNvcmRUeXBlIjogIlJlbWluZGVyIiwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtdGFnIiwgImZpZWxkcyI6IHsiTGlzdCI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiTGlzdC9zeW50aGV0aWMtbGlzdCIsICJhY3Rpb24iOiAiVkFMSURBVEUifX0sICJDb21wbGV0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAwfSwgIlByaW9yaXR5IjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMH19fV19XX0="
         }
       }
     },
@@ -105,7 +108,7 @@
           ],
           [
             "content-length",
-            "148"
+            "174"
           ],
           [
             "content-type",
@@ -114,7 +117,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgImRlc2lyZWRLZXlzIjogW10sICJkZXNpcmVkUmVjb3JkVHlwZXMiOiBbXSwgInJldmVyc2UiOiBmYWxzZX1dfQ=="
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgImRlc2lyZWRSZWNvcmRUeXBlcyI6IFsiUmVtaW5kZXIiXSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtcGFnZS1vbmUiLCAicmV2ZXJzZSI6IGZhbHNlfV19"
         }
       },
       "response": {
@@ -127,25 +130,43 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgIm1vcmVDb21pbmciOiBmYWxzZSwgInJlY29yZHMiOiBbXX1dfQ=="
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtbmV3LXRva2VuIiwgIm1vcmVDb21pbmciOiBmYWxzZSwgInJlY29yZHMiOiBbeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy1wYWdlLXR3byIsICJkZWxldGVkIjogdHJ1ZX1dfV19"
         }
       }
     }
   ],
-  "error": {
-    "type": "RemindersApiError",
-    "message": "Changes response validation failed"
-  },
-  "error_payload": {
-    "zones": [
-      {
-        "zoneID": {
-          "zoneName": "Reminders",
-          "zoneType": "REGULAR_CUSTOM_ZONE"
-        },
-        "moreComing": false,
-        "records": []
+  "result": [
+    {
+      "type": "updated",
+      "reminder_id": "Reminder/synthetic-0",
+      "reminder": {
+        "id": "Reminder/synthetic-0",
+        "list_id": "List/synthetic-list",
+        "title": "Untitled",
+        "desc": "",
+        "completed": false,
+        "completed_date": null,
+        "due_date": null,
+        "start_date": null,
+        "priority": 0,
+        "flagged": false,
+        "all_day": false,
+        "deleted": false,
+        "time_zone": null,
+        "alarm_ids": [],
+        "hashtag_ids": [],
+        "attachment_ids": [],
+        "recurrence_rule_ids": [],
+        "parent_reminder_id": null,
+        "created": null,
+        "modified": null,
+        "record_change_tag": "synthetic-tag"
       }
-    ]
-  }
+    },
+    {
+      "type": "deleted",
+      "reminder_id": "Reminder/synthetic-page-two",
+      "reminder": null
+    }
+  ]
 }

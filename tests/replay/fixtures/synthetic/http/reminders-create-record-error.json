@@ -103,5 +103,12 @@
         }
       }
     }
+  ],
+  "error_payload": [
+    {
+      "recordName": "Reminder/00000001-0000-4000-8000-000000000000",
+      "serverErrorCode": "CONFLICT",
+      "reason": "synthetic conflict"
+    }
   ]
 }

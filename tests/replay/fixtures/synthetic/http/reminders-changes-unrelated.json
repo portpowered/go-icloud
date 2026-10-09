@@ -6,7 +6,6 @@
   },
   "evidence": "synthetic; implementation-derived",
   "service": "reminders",
-  "operation": "lists",
   "initial_state": {
     "origin": "https://reminders.example.invalid",
     "params": {
@@ -17,7 +16,11 @@
       "Accept": "application/json"
     }
   },
+  "operation": "iter_changes",
   "inputs": [],
+  "keyword_inputs": {
+    "since": "synthetic-old-token"
+  },
   "exchanges": [
     {
       "request": {
@@ -49,7 +52,7 @@
           ],
           [
             "content-length",
-            "117"
+            "175"
           ],
           [
             "content-type",
@@ -58,7 +61,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgImRlc2lyZWRSZWNvcmRUeXBlcyI6IFsiTGlzdCJdfV19"
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgImRlc2lyZWRSZWNvcmRUeXBlcyI6IFsiUmVtaW5kZXIiXSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtb2xkLXRva2VuIiwgInJldmVyc2UiOiBmYWxzZX1dfQ=="
         }
       },
       "response": {
@@ -71,19 +74,10 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtc3luYyIsICJtb3JlQ29taW5nIjogZmFsc2UsICJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJMaXN0L3N5bnRoZXRpYy0wIiwgInJlY29yZFR5cGUiOiAiTGlzdCIsICJmaWVsZHMiOiB7Ik5hbWUiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIkxpc3QgMCJ9LCAiQ29sb3IiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogImJsdWUifSwgIkNvdW50IjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMH0sICJSZW1pbmRlcklEcyI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiW251bGxdIn19LCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy10YWcifV19XX0="
+          "value": "eyJ6b25lcyI6IFt7InpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifSwgInN5bmNUb2tlbiI6ICJzeW50aGV0aWMtbmV3LXRva2VuIiwgIm1vcmVDb21pbmciOiBmYWxzZSwgInJlY29yZHMiOiBbeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy0wIiwgInJlY29yZFR5cGUiOiAiTGlzdCIsICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLXRhZyIsICJmaWVsZHMiOiB7Ikxpc3QiOiB7InR5cGUiOiAiUkVGRVJFTkNFIiwgInZhbHVlIjogeyJyZWNvcmROYW1lIjogIkxpc3Qvc3ludGhldGljLWxpc3QiLCAiYWN0aW9uIjogIlZBTElEQVRFIn19LCAiQ29tcGxldGVkIjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMH0sICJQcmlvcml0eSI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDB9fX1dfV19"
         }
       }
     }
   ],
-  "error": {
-    "type": "RemindersApiError",
-    "message": "List List/synthetic-0 ReminderIDs must contain only string reminder IDs"
-  },
-  "error_payload": {
-    "source": "List List/synthetic-0 ReminderIDs",
-    "payload": [
-      null
-    ]
-  }
+  "result": []
 }

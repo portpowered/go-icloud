@@ -17,6 +17,42 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_reminder_change_iteration_matrix(self):
+        paths = sorted(FIXTURES.glob("reminders-changes-*.json"))
+        self.assertEqual(len(paths), 25)
+        pairs = 0
+        for path in paths:
+            with self.subTest(case=path.name):
+                pairs += replay_synthetic(path)
+        self.assertEqual(pairs, 28)
+        full = json.loads(
+            (FIXTURES / "reminders-changes-full-deleted.json").read_text()
+        )
+        self.assertEqual(full["result"][0]["type"], "deleted")
+        self.assertEqual(len(full["result"][0]["reminder"]), 21)
+
+    def test_reminder_change_iteration_binds_events_requests_and_consumption(self):
+        for change in ["event", "order", "request", "unused", "payload"]:
+            name = "record-error" if change == "payload" else "paged"
+            scenario = json.loads(
+                (FIXTURES / f"reminders-changes-{name}.json").read_text()
+            )
+            if change == "event":
+                scenario["result"][0]["type"] = "deleted"
+            elif change == "order":
+                scenario["result"].reverse()
+            elif change == "request":
+                scenario["keyword_inputs"]["since"] = "synthetic-changed"
+            elif change == "unused":
+                scenario["exchanges"].append(scenario["exchanges"][-1])
+            else:
+                scenario["error_payload"]["recordName"] = "synthetic-changed"
+            with self.subTest(change=change), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_reminder_sync_cursor_fallback_and_paging_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-sync-*.json"))
         self.assertEqual(len(paths), 53)
