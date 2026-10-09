@@ -19,6 +19,13 @@ func photoNormalRecords(data cloudkit.CKQueryResponse) ([]cloudkit.CKRecord, err
 		}
 
 		if record.Record != nil {
+			if record.Record.ExpirationTime.IsSpecified() && !record.Record.ExpirationTime.IsNull() {
+				_, err := photoExpirationValue(record.Record.ExpirationTime.GetOrEmpty())
+				if err != nil {
+					return nil, err
+				}
+			}
+
 			records = append(records, *record.Record)
 		}
 	}

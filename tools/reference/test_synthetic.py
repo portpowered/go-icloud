@@ -18,6 +18,55 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_photo_assets_matrix(self):
+        paths = sorted(FIXTURES.glob("photos-assets-*.json"))
+        self.assertEqual(len(paths), 109)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 427)
+
+    def test_photo_assets_full_projection_and_consumption_are_bound(self):
+        baseline = json.loads((FIXTURES / "photos-assets-1.json").read_text())
+        for mutation in ["filename", "metadata", "resource", "request", "unused"]:
+            with self.subTest(mutation=mutation), TemporaryDirectory() as directory:
+                scenario = copy.deepcopy(baseline)
+                if mutation == "filename":
+                    scenario["result"][0]["filename"] = "different.jpg"
+                elif mutation == "metadata":
+                    scenario["result"][0]["asset"]["recordChangeTag"] = "different"
+                elif mutation == "resource":
+                    scenario["result"][0]["versions"]["original"]["url"] = (
+                        "https://different.example.invalid"
+                    )
+                elif mutation == "request":
+                    scenario["exchanges"][-1]["request"]["query"][2][1] = "true"
+                else:
+                    scenario["exchanges"].append(
+                        copy.deepcopy(scenario["exchanges"][-1])
+                    )
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
+    def test_photo_assets_failure_and_cookie_are_bound(self):
+        for fixture, mutation in [
+            ("photos-assets-invalid-last-record", "payload"),
+            ("photos-assets-pagination-cookie", "cookie"),
+        ]:
+            with self.subTest(mutation=mutation), TemporaryDirectory() as directory:
+                scenario = json.loads((FIXTURES / (fixture + ".json")).read_text())
+                if mutation == "payload":
+                    scenario["error_payload"] = {"wrong": True}
+                else:
+                    scenario["exchanges"][-1]["request"]["headers"] = [
+                        header
+                        for header in scenario["exchanges"][-1]["request"]["headers"]
+                        if header[0].lower() != "cookie"
+                    ]
+                path = Path(directory) / "scenario.json"
+                path.write_text(json.dumps(scenario), encoding="utf-8")
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
+
     def test_photo_count_matrix(self):
         paths = sorted(FIXTURES.glob("photos-count-*.json"))
         self.assertEqual(len(paths), 56)

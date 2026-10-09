@@ -58,6 +58,10 @@ func reminderNestedRequired(model reflect.Type, raw json.RawMessage) bool {
 		model = model.Elem()
 	}
 
+	if model == reflect.TypeFor[json.RawMessage]() {
+		return json.Valid(raw)
+	}
+
 	if model.Kind() == reflect.Slice {
 		return reminderArrayRequired(model.Elem(), raw)
 	}

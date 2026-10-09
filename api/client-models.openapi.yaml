@@ -6,6 +6,52 @@ info:
 paths: {}
 components:
   schemas:
+    ListPhotoAssetsRequest:
+      type: object
+      description: Enumerate all paired assets of a primary smart/custom album in reference order.
+      required: [auth, album]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, photosServiceURL: 'https://photos.example.invalid', headers: []}, album: Library}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        album: {type: string, description: Primary album ID or display/full name.}
+    ListPhotoAssetsResult:
+      type: object
+      description: Complete deduplicated photos and every initialization, discovery, count and page response.
+      required: [photos, responses]
+      example: {photos: [], responses: []}
+      properties:
+        photos: {type: array, items: {$ref: '#/components/schemas/Photo'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
+    Photo:
+      type: object
+      description: Logical photo with downloadable resources and preserved normalized asset metadata.
+      required: [id, masterID, filename, size, dimensions, itemType, isLivePhoto, created, added, versions, assetMetadata]
+      example: {id: synthetic-asset, masterID: synthetic-master, filename: photo.jpg, size: null, dimensions: [null, null], itemType: image, isLivePhoto: false, created: '1970-01-01T00:00:00Z', added: '1970-01-01T00:00:00Z', versions: {}, assetMetadata: {}}
+      properties:
+        id: {type: string, x-go-name: ID, description: Asset identifier.}
+        masterID: {type: string, x-go-name: MasterID, description: Original master identifier.}
+        filename: {type: string, description: Decoded original filename or asset ID fallback.}
+        size: {$ref: '#/components/schemas/UnknownJSONValue', description: Original resource size, normally integer bytes or null; future provider values retained.}
+        dimensions: {type: array, minItems: 2, maxItems: 2, items: {$ref: '#/components/schemas/UnknownJSONValue'}, description: 'Width then height, normally integer pixels or null; provider values retained.'}
+        itemType: {type: string, enum: [image, movie], description: Logical media kind.}
+        isLivePhoto: {type: boolean, description: Image with an accompanying video file type.}
+        created: {type: string, format: date-time, description: Capture time or Unix epoch when unset.}
+        added: {type: string, format: date-time, description: Library insertion time or Unix epoch when unset.}
+        versions: {type: object, additionalProperties: {$ref: '#/components/schemas/PhotoResource'}, description: Available original/alternative/preview/video/sidecar resources.}
+        assetMetadata: {type: object, additionalProperties: true, x-go-type: json.RawMessage, description: Extensible provider asset metadata normalized as the reference model; no dependency type exposed.}
+    PhotoResource:
+      type: object
+      description: One downloadable photo/video rendition with nullable provider details.
+      required: [filename, url, size, type, checksum, width, height]
+      example: {filename: photo.JPG, url: null, size: null, type: null, checksum: null, width: null, height: null}
+      properties:
+        filename: {type: string, description: Resource filename with reference file-type extension.}
+        url: {$ref: '#/components/schemas/UnknownJSONValue', description: Download location, normally string or null; provider values retained.}
+        size: {$ref: '#/components/schemas/UnknownJSONValue', description: Resource size, normally integer bytes or null.}
+        type: {$ref: '#/components/schemas/UnknownJSONValue', description: Resource uniform type identifier or null.}
+        checksum: {$ref: '#/components/schemas/UnknownJSONValue', description: Resource fingerprint or null.}
+        width: {$ref: '#/components/schemas/UnknownJSONValue', description: Width, normally integer pixels or null.}
+        height: {$ref: '#/components/schemas/UnknownJSONValue', description: Height, normally integer pixels or null.}
     GetPhotoAlbumCountRequest:
       type: object
       description: Read the primary photo album count using a smart/custom ID, name or full name.

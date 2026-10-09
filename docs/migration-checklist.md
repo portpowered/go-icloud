@@ -1,11 +1,25 @@
 # iCloud migration checklist
 
+Primary photo asset enumeration now has a stateless `ListPhotoAssets` SDK
+operation and schema-generated photo/resource models. One hundred and nine strict
+Source/Go scenarios consume 427 pairs; one hundred and five new cases bring the HTTP
+corpus to 1,005 scenarios and 2,189 exchanges. Tests compare complete ordered
+projections, normalized known metadata and untouched opaque JSON, all response
+evidence, failure payloads and strict consumption (LIB-05). Source mutation
+controls and wire/public contract checks cover the same operation. A private
+live Go library read returned HTTP 200 for validation and all 13 Photos
+requests; offline Python consumed those 13 captured exchanges and matched the
+complete Go projections. Private evidence remains outside Git (LIB-09/LIB-12).
+Asset SDK full checks, CI and independent review are pending. CLI asset reads,
+downloads, shared libraries and mutations remain next; successful live reminder
+content access remains unresolved.
+
 Primary photo counts now have generated batch wire models and a stateless
 `GetPhotoAlbumCount` SDK operation. Fifty-six Source/Go cases consume 161 pairs;
 fifty-three new cases bring the HTTP corpus to 900 scenarios and 1,779 exchanges.
 Live saved-session validation, album discovery and the count lookup all returned
-HTTP 200. Full local checks, CI and independent review are pending for this
-milestone. Asset enumeration and downloads remain next.
+HTTP 200. Full local checks, CI and exact-head independent review passed, and
+the count SDK and CLI are merged. Asset enumeration and downloads remain next.
 
 Primary Photos albums now have a stateless `ListPhotoAlbums` SDK operation,
 schema-generated public projections, recursive folder/page traversal, and 41

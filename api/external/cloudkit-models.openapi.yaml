@@ -1498,12 +1498,14 @@
         "description": "End-to-end encryption chain protection metadata.",
         "properties": {
           "bytes": {
-            "default": null,
-            "x-order": 1,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBase64Input"
+              }
+            ],
             "nullable": true,
-            "format": "byte",
-            "type": "string",
-            "x-go-type": "string"
+            "default": null,
+            "x-order": 1
           },
           "pcsChangeTag": {
             "default": null,
@@ -1528,9 +1530,12 @@
             ]
           },
           "value": {
-            "type": "number",
-            "x-order": 2,
-            "format": "double"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKDoubleInput"
+              }
+            ],
+            "x-order": 2
           },
           "isEncrypted": {
             "allOf": [
@@ -1564,8 +1569,7 @@
           },
           "value": {
             "items": {
-              "type": "number",
-              "format": "double"
+              "$ref": "#/components/schemas/CKDoubleInput"
             },
             "type": "array",
             "x-order": 2
@@ -1786,12 +1790,14 @@
         "description": "Top-level PCS envelope used by shared-record metadata.",
         "properties": {
           "bytes": {
-            "default": null,
-            "x-order": 1,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBase64Input"
+              }
+            ],
             "nullable": true,
-            "format": "byte",
-            "type": "string",
-            "x-go-type": "string"
+            "default": null,
+            "x-order": 1
           },
           "pcsChangeTag": {
             "default": null,
@@ -1934,12 +1940,14 @@
         "description": "Participant-scoped protectionInfo envelope.",
         "properties": {
           "bytes": {
-            "default": null,
-            "x-order": 1,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKBase64Input"
+              }
+            ],
             "nullable": true,
-            "format": "byte",
-            "type": "string",
-            "x-go-type": "string"
+            "default": null,
+            "x-order": 1
           },
           "pcsChangeTag": {
             "default": null,
@@ -2504,9 +2512,14 @@
             "default": null,
             "x-order": 28,
             "nullable": true,
-            "description": "seconds since Unix epoch",
-            "type": "integer",
-            "format": "int64"
+            "description": "Source seconds-or-milliseconds input, normalized to integer seconds in metadata.",
+            "format": "int64",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CKAuditTimestampInput"
+              }
+            ],
+            "x-go-type": "json.RawMessage"
           }
         },
         "required": [
@@ -3527,6 +3540,182 @@
           "CPLContainerRelationNotDeletedByAssetDate"
         ],
         "description": "Pinned photo count index identifiers."
+      },
+      "PhotoListIndex": {
+        "type": "string",
+        "enum": [
+          "CPLAssetAndMasterByAssetDateWithoutHiddenOrDeleted",
+          "CPLAssetAndMasterByAddedDate",
+          "CPLAssetAndMasterDeletedByExpungedDate",
+          "CPLAssetAndMasterHiddenByAssetDate",
+          "CPLAssetAndMasterInSmartAlbumByAssetDate",
+          "CPLBurstStackAssetAndMasterByAssetDate",
+          "CPLContainerRelationLiveByAssetDate",
+          "CPLContainerRelationLiveByPosition"
+        ],
+        "description": "Known primary photo projection/query value from the pinned reference."
+      },
+      "PhotoDirection": {
+        "type": "string",
+        "enum": [
+          "ASCENDING",
+          "DESCENDING"
+        ],
+        "description": "Known primary photo projection/query value from the pinned reference."
+      },
+      "PhotoAssetQueryField": {
+        "type": "string",
+        "enum": [
+          "direction",
+          "startRank",
+          "smartAlbum",
+          "parentId",
+          "recordName"
+        ],
+        "description": "Known primary photo projection/query value from the pinned reference."
+      },
+      "PhotoMasterField": {
+        "type": "string",
+        "enum": [
+          "filenameEnc",
+          "itemType",
+          "resOriginalFileType",
+          "resOriginalRes",
+          "resOriginalWidth",
+          "resOriginalHeight",
+          "resOriginalVidComplFileType",
+          "masterRef",
+          "assetDate",
+          "addedDate"
+        ],
+        "description": "Known primary photo projection/query value from the pinned reference."
+      },
+      "PhotoResourcePrefix": {
+        "type": "string",
+        "enum": [
+          "resJPEGMed",
+          "resJPEGThumb",
+          "resOriginal",
+          "resOriginalAlt",
+          "resOriginalVidCompl",
+          "resSidecar",
+          "resVidMed",
+          "resVidSmall"
+        ],
+        "description": "Known primary photo projection/query value from the pinned reference."
+      },
+      "PhotoFileType": {
+        "type": "string",
+        "enum": [
+          "public.heic",
+          "public.heif",
+          "public.jpeg",
+          "public.png",
+          "com.apple.quicktime-movie",
+          "public.mpeg-4",
+          "com.apple.m4v-video",
+          "com.adobe.raw-image",
+          "com.canon.cr2-raw-image",
+          "com.canon.cr3-raw-image",
+          "com.canon.crw-raw-image",
+          "com.fuji.raw-image",
+          "com.nikon.nrw-raw-image",
+          "com.nikon.raw-image",
+          "com.olympus.or-raw-image",
+          "com.olympus.raw-image",
+          "com.panasonic.rw2-raw-image",
+          "com.pentax.raw-image",
+          "com.sony.arw-raw-image"
+        ],
+        "description": "Known primary photo projection/query value from the pinned reference."
+      },
+      "PhotoFileExtension": {
+        "type": "string",
+        "enum": [
+          ".ARW",
+          ".CR2",
+          ".CR3",
+          ".CRW",
+          ".DNG",
+          ".HEIC",
+          ".HEIF",
+          ".JPG",
+          ".M4V",
+          ".MOV",
+          ".MP4",
+          ".NEF",
+          ".NRF",
+          ".ORF",
+          ".PEF",
+          ".PNG",
+          ".RAF",
+          ".RW2"
+        ],
+        "description": "Known primary photo projection/query value from the pinned reference."
+      },
+      "PhotoRecordKind": {
+        "type": "string",
+        "enum": [
+          "CPLAsset",
+          "CPLMaster"
+        ],
+        "description": "Known primary Photos reference projection value."
+      },
+      "PhotoResourceSuffix": {
+        "type": "string",
+        "enum": [
+          "Res",
+          "FileType",
+          "Fingerprint",
+          "Width",
+          "Height"
+        ],
+        "description": "Known primary Photos reference projection value."
+      },
+      "PhotoSmartSelector": {
+        "type": "string",
+        "enum": [
+          "TIMELAPSE",
+          "VIDEO",
+          "SLOMO",
+          "FAVORITE",
+          "PANORAMA",
+          "SCREENSHOT",
+          "LIVE"
+        ],
+        "description": "Known primary Photos reference projection value."
+      },
+      "PhotoVersionName": {
+        "type": "string",
+        "enum": [
+          "original",
+          "alternative",
+          "medium",
+          "thumb",
+          "original_video",
+          "medium_video",
+          "thumb_video",
+          "sidecar",
+          "thumb_image",
+          "medium_image"
+        ],
+        "description": "Known primary Photos reference projection value."
+      },
+      "CKDoubleInput": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "string",
+            "pattern": "^\\s*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.[0-9](?:_?[0-9])*)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?\\s*$"
+          }
+        ],
+        "x-go-type": "json.RawMessage",
+        "description": "Source floating-point inputs before conversion; numeric text and booleans are accepted."
       }
     }
   }
