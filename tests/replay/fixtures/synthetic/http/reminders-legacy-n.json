@@ -5,8 +5,8 @@
     "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
   },
   "evidence": "synthetic; implementation-derived",
-  "service": "reminders_legacy",
-  "operation": "startup",
+  "service": "reminders",
+  "operation": "legacy_startup",
   "initial_state": {
     "origin": "https://reminders.example.invalid",
     "params": {

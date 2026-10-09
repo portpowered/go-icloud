@@ -137,7 +137,7 @@ def execute(api, scenario, observations=None):
                 "total_bytes": value.usage.total_storage_in_bytes,
             }
         return value
-    if scenario["service"] == "reminders_legacy":
+    if scenario["service"] == "reminders" and scenario["operation"] == "legacy_startup":
         response = api.session.get(state["origin"] + "/rd/startup", params=params)
         try:
             payload = response.json()
