@@ -12,8 +12,9 @@ error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
 The current portable HTTP corpus contains 740 scenarios and 1,465 pairs, including
-302 Reminders scenarios and 363 pairs. Go snapshot facade parity remains open;
-these cases do not establish live provider behavior or complete Reminders coverage.
+302 Reminders scenarios and 363 pairs. The Go snapshot facade executes all
+twenty-eight Source cases; full verification and independent review remain open.
+These cases do not establish live provider behavior or complete Reminders coverage.
 
 The compound reminder reference matrix contains thirty-one scenarios and thirty-two
 paired exchanges. It covers all supported related records, defaults, populated

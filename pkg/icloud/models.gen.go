@@ -1125,6 +1125,28 @@ type ListReminderListsResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// ListReminderSnapshotRequest Discover lists and collect complete reminders, or select one literal list record name.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
+type ListReminderSnapshotRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// ListID Optional literal list record name; omission or empty text discovers all lists.
+	ListID *string `json:"listID,omitempty"`
+}
+
+// ListReminderSnapshotResult Complete reminders including completed items; duplicate IDs retain their last value and first position across lists.
+//
+// Example: {"reminders":[],"responses":[]}
+type ListReminderSnapshotResult struct {
+	// Reminders Ordered complete reminder projections, without related-record collections.
+	Reminders []Reminder `json:"reminders"`
+
+	// Responses List, membership asset and query response evidence in request order.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListReminderZonesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"}}
 type ListReminderZonesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.

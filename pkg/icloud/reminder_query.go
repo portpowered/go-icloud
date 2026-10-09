@@ -27,10 +27,7 @@ func (sdk *SDK) ListReminders(ctx context.Context, request ListRemindersRequest)
 	}
 
 	auth.Origin = request.Auth.RemindersServiceURL
-	result := &ListRemindersResult{Reminders: []Reminder{}, Alarms: map[string]ReminderAlarm{},
-		Triggers: map[string]ReminderLocationTrigger{}, Attachments: map[string]ReminderAttachment{},
-		Hashtags: map[string]ReminderHashtag{}, RecurrenceRules: map[string]ReminderRecurrenceRule{},
-		Responses: []ResponseMetadata{}}
+	result := newReminderQueryResult()
 	read := reminderQueryRead{sdk: sdk, auth: auth, result: result, positions: map[string]int{}, responses: nil}
 
 	err = read.pages(ctx, request)
@@ -48,6 +45,13 @@ func (sdk *SDK) ListReminders(ctx context.Context, request ListRemindersRequest)
 	}
 
 	return result, nil
+}
+
+func newReminderQueryResult() *ListRemindersResult {
+	return &ListRemindersResult{Reminders: []Reminder{}, Alarms: map[string]ReminderAlarm{},
+		Triggers: map[string]ReminderLocationTrigger{}, Attachments: map[string]ReminderAttachment{},
+		Hashtags: map[string]ReminderHashtag{}, RecurrenceRules: map[string]ReminderRecurrenceRule{},
+		Responses: []ResponseMetadata{}}
 }
 
 func (read *reminderQueryRead) pages(ctx context.Context, request ListRemindersRequest) error {

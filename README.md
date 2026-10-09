@@ -172,8 +172,7 @@ including overlapping record/error alternatives, nested metadata coercion,
 arbitrary participant integers and complete audit-date projections. Date handling
 matches the pinned Windows reference runtime's microsecond rounding and range;
 these limits are reference behavior rather than verified Apple date restrictions.
-The all-lists snapshot facade, linked-record reads, mutations and live Go
-verification remain pending.
+Linked-record reads, mutations and live Go verification remain pending.
 
 `ListReminders` reads every page of a list's compound reminder query and returns
 the complete reminder snapshot together with linked alarms, location triggers,
@@ -207,6 +206,29 @@ STRING base64 URLs with CR or LF retain their original text under strict decodin
 This API is
 verified with paired replays. The separate CLI `reminders` command executes the
 same thirty-nine scenarios through its published SDK dependency.
+
+Collect reminders across discovered lists, including completed items:
+
+```go
+snapshot, err := client.ListReminderSnapshot(ctx, icloud.ListReminderSnapshotRequest{
+    Auth: resumed.Auth,
+})
+if err != nil {
+    return err
+}
+for _, reminder := range snapshot.Reminders {
+    fmt.Println(reminder.ID, reminder.Title)
+}
+```
+
+An optional `ListID` selects one literal list record name. Omission or empty text
+discovers every list, consuming membership assets and all list/query pages.
+Queries use page size 200 and include completed items. Duplicate reminder IDs
+retain their last value and first position across lists. `Responses` contains
+all request evidence and cookie updates; failures return typed errors with prior
+response evidence and no partial snapshot. Twenty-eight Source/Go cases with
+forty-five paired exchanges cover these paths. Live Go verification and full
+Reminders parity remain open.
 
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private
