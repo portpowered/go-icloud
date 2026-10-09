@@ -1196,7 +1196,10 @@
         "enum": [
           37
         ],
-        "description": "WebAuthn authenticator data begins with 32-byte RP hash, flags and 4-byte signature counter."
+        "description": "WebAuthn authenticator data begins with 32-byte RP hash, flags and 4-byte signature counter.",
+        "x-enum-varnames": [
+          "AuthenticatorDataMinimum"
+        ]
       }
     }
   }

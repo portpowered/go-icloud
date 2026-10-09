@@ -338,13 +338,13 @@ func (e AuthWrongVerificationCode) Valid() bool {
 
 // Defines values for AuthenticatorDataMinimumBytes.
 const (
-	N37 AuthenticatorDataMinimumBytes = 37
+	AuthenticatorDataMinimum AuthenticatorDataMinimumBytes = 37
 )
 
 // Valid indicates whether the value is a known member of the AuthenticatorDataMinimumBytes enum.
 func (e AuthenticatorDataMinimumBytes) Valid() bool {
 	switch e {
-	case N37:
+	case AuthenticatorDataMinimum:
 		return true
 	default:
 		return false
