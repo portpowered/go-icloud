@@ -28,23 +28,31 @@ func EncodeBridgeOpaqueData(input any) (json.RawMessage, error) {
 	if input == nil {
 		return nil, nil
 	}
+
 	encoded, err := referenceJSON(input)
 	if err != nil {
 		return nil, err
 	}
+
 	var compact bytes.Buffer
-	if err = json.Compact(&compact, encoded); err != nil {
+
+	err = json.Compact(&compact, encoded)
+	if err != nil {
 		return nil, fmt.Errorf("compact bridge metadata: %w", err)
 	}
+
 	if bytes.Equal(compact.Bytes(), []byte("null")) {
 		return nil, nil
 	}
+
 	if len(compact.Bytes()) > 0 && compact.Bytes()[0] == '{' {
 		encoded, err = referenceJSON(compact.String())
 		if err != nil {
 			return nil, err
 		}
+
 		return encoded, nil
 	}
+
 	return compact.Bytes(), nil
 }

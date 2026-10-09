@@ -61,6 +61,7 @@ func cloneNativeAuthState(state NativeAuthState) NativeAuthState {
 
 	for index := range state.Challenge.PhoneNumbers {
 		phone := &state.Challenge.PhoneNumbers[index]
+
 		phone.ID.union = bytes.Clone(phone.ID.union)
 		if phone.NonFTEU != nil {
 			value := *phone.NonFTEU

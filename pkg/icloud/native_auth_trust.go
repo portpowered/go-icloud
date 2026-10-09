@@ -2,6 +2,8 @@ package icloud
 
 import (
 	"context"
+	"github.com/portpowered/go-icloud/internal/webtransport"
+	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/authapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
@@ -15,7 +17,6 @@ func (sdk *SDK) TrustSession(ctx context.Context, request NativeAuthRequest) (*N
 	}
 
 	err = sdk.nativeTrust(ctx, operation)
-
 	if err != nil {
 		return nil, err
 	}
@@ -27,30 +28,29 @@ func (sdk *SDK) nativeTrust(ctx context.Context, operation *nativeAuthOperation)
 	operation.state.RequiresMFA = false
 
 	request, err := authapi.NewTrustAuthSessionRequest(nativeIDMSOrigin(operation.state))
-
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
 
-	response, err := sdk.nativeAuthExchange(ctx, operation, request, nativeAuthHeaders(operation.state, protocol.AuthAcceptValue))
+	response, err := sdk.nativeAuthExchange(ctx, operation, request,
+		nativeAuthHeaders(operation.state, protocol.AuthAcceptValue))
 	if err != nil {
 		if nativeCanRetry(err) {
 			operation.success = false
+
 			return nil
 		}
 
 		return err
 	}
 
-	err = nativeRequireSuccess(operation, response)
-
-	if err != nil {
+	if !nativeTrustAccepted(response) {
 		operation.success = false
 
 		return nil
 	}
 
-	accepted, err := sdk.nativeLoginToken(ctx, operation, true, false)
+	accepted, err := sdk.nativeLoginToken(ctx, operation, true, operation.state.AcceptTerms)
 	if err != nil && !nativeCanRetry(err) {
 		return err
 	}
@@ -58,4 +58,9 @@ func (sdk *SDK) nativeTrust(ctx context.Context, operation *nativeAuthOperation)
 	operation.success = accepted
 
 	return nil
+}
+
+func nativeTrustAccepted(response *webtransport.BytesResponse) bool {
+	return !nativeLockedBody(response.Body) && response.Status >= http.StatusOK &&
+		response.Status < http.StatusMultipleChoices
 }

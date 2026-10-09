@@ -34,9 +34,11 @@ func authenticationWait(ctx context.Context, interval time.Duration) error {
 	case <-ctx.Done():
 	case <-timer.C:
 	}
+
 	err := ctx.Err()
 	if err != nil {
 		return fmt.Errorf("authentication polling wait: %w", err)
 	}
+
 	return nil
 }

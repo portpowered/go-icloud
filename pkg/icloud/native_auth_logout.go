@@ -42,8 +42,9 @@ func (sdk *SDK) nativeRemoteLogout(ctx context.Context, operation *nativeAuthOpe
 	params := authapi.LogoutAuthSessionParams(nativeAuthParams(operation.state))
 
 	request, err := nativeEncodedRequest(payload, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewLogoutAuthSessionRequestWithBody(operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthLogoutContentTypeValue, body)
+		return nativeGeneratedRequest(authapi.NewLogoutAuthSessionRequestWithBody(
+			operation.state.Auth.SetupServiceURL, &params,
+			protocol.AuthLogoutContentTypeValue, body))
 	})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -62,7 +63,6 @@ func (sdk *SDK) nativeRemoteLogout(ctx context.Context, operation *nativeAuthOpe
 	}
 
 	err = ctx.Err()
-
 	if err != nil {
 		return false, driveContextFailure(operation.name, err)
 	}

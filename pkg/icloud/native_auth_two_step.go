@@ -17,26 +17,36 @@ func (sdk *SDK) ListTrustedDevices(ctx context.Context, request NativeAuthReques
 	if err != nil {
 		return nil, err
 	}
+
 	params := nativeAuthParams(operation.state)
+
 	wire, err := authapi.NewListAuthTrustedDevicesRequest(operation.state.Auth.SetupServiceURL, &params)
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
+
 	response, err := sdk.nativeAuthExchange(ctx, operation, wire, requestHeaders(operation.state.Auth.Headers))
 	if err != nil {
 		return nil, err
 	}
-	if err = nativeRequireSuccess(operation, response); err != nil {
+
+	err = nativeRequireSuccess(operation, response)
+	if err != nil {
 		return nil, err
 	}
+
 	var data auth.AuthTrustedDevicesResponse
-	if err = json.Unmarshal(response.Body, &data); err != nil {
+
+	err = json.Unmarshal(response.Body, &data)
+	if err != nil {
 		return nil, nativeResponseError(operation, response, err, InvalidResponse)
 	}
+
 	devices, err := nativeProjectDevices(data)
 	if err != nil {
 		return nil, nativeResponseError(operation, response, err, InvalidResponse)
 	}
+
 	return &TrustedDevicesResult{State: cloneNativeAuthState(operation.state), Devices: devices,
 		Responses: cloneDriveResponses(operation.responses)}, nil
 }
@@ -47,30 +57,42 @@ func (sdk *SDK) SendTwoStepCode(ctx context.Context, request SendTwoStepCodeRequ
 	if err != nil {
 		return nil, err
 	}
+
 	device, err := nativeDevicePayload(request.Device)
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
+
 	params := authapi.SendAuthVerificationCodeParams(nativeAuthParams(operation.state))
+
 	wire, err := nativeEncodedRequest(device, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewSendAuthVerificationCodeRequestWithBody(operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewSendAuthVerificationCodeRequestWithBody(
+			operation.state.Auth.SetupServiceURL, &params,
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
+
 	response, err := sdk.nativeAuthExchange(ctx, operation, wire, requestHeaders(operation.state.Auth.Headers))
 	if err != nil {
 		return nil, err
 	}
-	if err = nativeRequireSuccess(operation, response); err != nil {
+
+	err = nativeRequireSuccess(operation, response)
+	if err != nil {
 		return nil, err
 	}
+
 	var verdict auth.AuthSuccessResponse
-	if err = json.Unmarshal(response.Body, &verdict); err != nil {
+
+	err = json.Unmarshal(response.Body, &verdict)
+	if err != nil {
 		return nil, nativeResponseError(operation, response, err, InvalidResponse)
 	}
+
 	operation.success = authTrue(verdict.Success)
+
 	return nativeAuthResult(operation)
 }
 
@@ -80,30 +102,40 @@ func (sdk *SDK) VerifyTwoStepCode(ctx context.Context, request VerifyTwoStepCode
 	if err != nil {
 		return nil, err
 	}
+
 	device, err := nativeDevicePayload(request.Device)
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
+
 	device.VerificationCode = &request.Code
 	trust := true
 	device.TrustBrowser = &trust
 	params := authapi.ValidateAuthVerificationCodeParams(nativeAuthParams(operation.state))
+
 	wire, err := nativeEncodedRequest(device, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewValidateAuthVerificationCodeRequestWithBody(operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewValidateAuthVerificationCodeRequestWithBody(
+			operation.state.Auth.SetupServiceURL, &params,
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
+
 	response, err := sdk.nativeAuthExchange(ctx, operation, wire, requestHeaders(operation.state.Auth.Headers))
 	if err != nil {
 		return nativeWrongTwoStepResult(operation, err)
 	}
-	if err = nativeRequireSuccess(operation, response); err != nil {
+
+	err = nativeRequireSuccess(operation, response)
+	if err != nil {
 		return nativeWrongTwoStepResult(operation, err)
 	}
-	if err = sdk.nativeTrust(ctx, operation); err != nil {
+
+	err = sdk.nativeTrust(ctx, operation)
+	if err != nil {
 		return nil, err
 	}
+
 	return nativeAuthResult(operation)
 }

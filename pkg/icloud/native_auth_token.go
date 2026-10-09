@@ -52,19 +52,44 @@ func (sdk *SDK) nativeLoginToken(ctx context.Context, operation *nativeAuthOpera
 			return false, nativeResponseError(operation, response.Response, errUpdatedTerms, TermsRequired)
 		}
 
-		return sdk.nativeAcceptTerms(ctx, operation, input, response.Data)
+		return sdk.nativeTokenTerms(ctx, operation, input, response.Data, requireTrust)
 	}
 
-	if requireTrust && !authTrue(response.Data.HsaTrustedBrowser) {
-		return false, nil
+	return nativeTokenAccepted(operation, response.Data, requireTrust), nil
+}
+
+func (sdk *SDK) nativeTokenTerms(ctx context.Context, operation *nativeAuthOperation,
+	input auth.AuthTokenLoginRequest, account auth.AuthAccountResponse, requireTrust bool,
+) (bool, error) {
+	accepted, err := sdk.nativeAcceptTerms(ctx, operation, input, account)
+	if err != nil || !accepted {
+		return accepted, err
+	}
+
+	var repaired auth.AuthAccountResponse
+
+	err = nativeDecodeAuthObject(operation.state.AccountData, &repaired)
+	if err != nil {
+		return false, nativeResponseError(operation, operation.response, err, InvalidResponse)
+	}
+
+	return nativeTokenAccepted(operation, repaired, requireTrust), nil
+}
+
+func nativeTokenAccepted(operation *nativeAuthOperation, account auth.AuthAccountResponse,
+	requireTrust bool,
+) bool {
+	if requireTrust && !authTrue(account.HsaTrustedBrowser) {
+		return false
 	}
 
 	operation.state.RequiresMFA = false
 	operation.state.CodeRequested = false
 	operation.state.DeliveryMethod = TwoFactorDeliveryUnknown
+	operation.state.DeliveryNotice = nil
 	operation.state.Challenge = emptyNativeAuthChallenge()
 
-	return true, nil
+	return true
 }
 
 func nativeRecordFailure(operation *nativeAuthOperation, err error, ignoreProvider bool) error {
@@ -72,6 +97,7 @@ func nativeRecordFailure(operation *nativeAuthOperation, err error, ignoreProvid
 	if nativeLockedBody(failure.ResponseBody()) {
 		failure.kind = AccountLocked
 	}
+
 	if failure.StatusCode() != 0 {
 		operation.record(&webtransport.BytesResponse{CookieScopeURL: failure.CookieScopeURL(),
 			Status: failure.StatusCode(), Headers: requestHeaders(failure.ResponseHeaders()), Body: failure.ResponseBody()})
@@ -90,9 +116,13 @@ func nativeCanRetry(err error) bool {
 	if !errors.As(err, &failure) || failure.StatusCode() == 0 {
 		return false
 	}
+
 	switch failure.Kind() {
-	case AccountLocked, TermsRequired, InvalidResponse, Canceled, Timeout, Transport, Configuration:
+	case AccountLocked, TermsRequired, InvalidResponse, Canceled, Timeout, Transport, Configuration, Busy:
 		return false
+	case AuthenticationRequired, Closed, Forbidden, NoDevices, NotDirectory, NotFound, NotInTrash,
+		Provider, RateLimited, Unauthorized, Unavailable:
+		return true
 	default:
 		return true
 	}

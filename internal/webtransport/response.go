@@ -64,6 +64,7 @@ func (client *Client) readPrepared(request *http.Request, policy responsePolicy,
 ) (*BytesResponse, error) {
 	cookies.apply(request)
 
+	//nolint:gosec // G704: injected transport uses caller-owned service origins validated by each operation.
 	response, err := client.httpClient.Do(request)
 	if err != nil {
 		return nil, failure(Transport, err, nil, nil)
@@ -84,7 +85,8 @@ func (client *Client) readPrepared(request *http.Request, policy responsePolicy,
 	result := &BytesResponse{CookieScopeURL: cookieScopeURL(request), Body: body, Status: response.StatusCode,
 		Headers: response.Header.Clone()}
 	if policy != authenticationRawContent &&
-		(policy != authenticationContent || response.StatusCode < http.StatusMultipleChoices) && responseProviderError(result) {
+		(policy != authenticationContent || response.StatusCode < http.StatusMultipleChoices) &&
+		responseProviderError(result) {
 		return nil, responseFailure(Provider, errProviderBody, result)
 	}
 

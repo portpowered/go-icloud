@@ -24,19 +24,7 @@ func nativeProjectBootstrap(challenge *NativeAuthChallenge, data *bridgemodels.B
 		challenge.HasTrustedDevices = *data.HasTrustedDevices
 	}
 
-	if data.TwoSV == nil {
-		return nil
-	}
-
-	if data.TwoSV.AuthFactors != nil {
-		challenge.AuthFactors = slices.Clone(*data.TwoSV.AuthFactors)
-	}
-
-	phoneData := data.TwoSV.PhoneNumberVerification
-	if phoneData == nil && data.TwoSV.BridgeInitiateData != nil {
-		phoneData = data.TwoSV.BridgeInitiateData.PhoneNumberVerification
-	}
-
+	phoneData := nativeBootstrapPhones(challenge, data.TwoSV)
 	if phoneData == nil {
 		return nil
 	}
@@ -47,18 +35,41 @@ func nativeProjectBootstrap(challenge *NativeAuthChallenge, data *bridgemodels.B
 	}
 
 	var phones auth.AuthPhoneNumberVerification
+
 	err = json.Unmarshal(encoded, &phones)
 	if err != nil {
 		return fmt.Errorf("decode native phone verification: %w", err)
 	}
 
 	challenge.PhoneNumbers = []TrustedPhoneNumber{}
+
 	return nativeProjectPhones(challenge, nil, &phones)
 }
 
 func nativeProjectPhones(challenge *NativeAuthChallenge, preferred *auth.AuthTrustedPhoneNumber,
 	phones *auth.AuthPhoneNumberVerification,
 ) error {
+	values := nativeTrustedPhones(preferred, phones)
+
+	for _, value := range values {
+		if value.Id == nil {
+			continue
+		}
+
+		phone, err := nativeProjectPhone(value)
+		if err != nil {
+			return err
+		}
+
+		challenge.PhoneNumbers = append(challenge.PhoneNumbers, phone)
+	}
+
+	return nil
+}
+
+func nativeTrustedPhones(preferred *auth.AuthTrustedPhoneNumber,
+	phones *auth.AuthPhoneNumberVerification,
+) []auth.AuthTrustedPhoneNumber {
 	values := []auth.AuthTrustedPhoneNumber{}
 
 	if preferred != nil {
@@ -75,37 +86,56 @@ func nativeProjectPhones(challenge *NativeAuthChallenge, preferred *auth.AuthTru
 		}
 	}
 
-	for _, value := range values {
-		if value.Id == nil {
-			continue
-		}
+	return values
+}
 
-		encoded, err := json.Marshal(value.Id)
-		if err != nil {
-			return fmt.Errorf("copy trusted phone identity: %w", err)
-		}
+func nativeProjectPhone(value auth.AuthTrustedPhoneNumber) (TrustedPhoneNumber, error) {
+	encoded, err := json.Marshal(value.Id)
+	if err != nil {
+		return TrustedPhoneNumber{}, fmt.Errorf("copy trusted phone identity: %w", err)
+	}
 
-		var identifier TrustedPhoneNumberID
-		err = json.Unmarshal(encoded, &identifier)
-		if err != nil {
-			return fmt.Errorf("decode trusted phone identity: %w", err)
-		}
+	var identifier TrustedPhoneNumberID
 
-		phone := TrustedPhoneNumber{ID: identifier, Number: "", PushMode: "", NonFTEU: nil}
-		if value.NumberWithDialCode != nil {
-			phone.Number = *value.NumberWithDialCode
-		}
+	err = json.Unmarshal(encoded, &identifier)
+	if err != nil {
+		return TrustedPhoneNumber{}, fmt.Errorf("decode trusted phone identity: %w", err)
+	}
 
-		if value.PushMode != nil {
-			phone.PushMode = *value.PushMode
-		}
+	phone := TrustedPhoneNumber{ID: identifier, Number: "", PushMode: "", NonFTEU: nil}
+	if value.NumberWithDialCode != nil {
+		phone.Number = *value.NumberWithDialCode
+	}
 
-		if value.NonFTEU != nil {
-			flag := *value.NonFTEU
-			phone.NonFTEU = &flag
-		}
+	if value.PushMode != nil {
+		phone.PushMode = *value.PushMode
+	}
 
-		challenge.PhoneNumbers = append(challenge.PhoneNumbers, phone)
+	if value.NonFTEU != nil {
+		flag := *value.NonFTEU
+		phone.NonFTEU = &flag
+	}
+
+	return phone, nil
+}
+
+func nativeBootstrapPhones(challenge *NativeAuthChallenge,
+	second *bridgemodels.BridgeBootstrapSecondFactor,
+) *map[string]any {
+	if second == nil {
+		return nil
+	}
+
+	if second.AuthFactors != nil {
+		challenge.AuthFactors = slices.Clone(*second.AuthFactors)
+	}
+
+	if second.PhoneNumberVerification != nil {
+		return second.PhoneNumberVerification
+	}
+
+	if second.BridgeInitiateData != nil {
+		return second.BridgeInitiateData.PhoneNumberVerification
 	}
 
 	return nil

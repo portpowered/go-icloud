@@ -12,8 +12,10 @@ import (
 // A pending MFA challenge is returned as caller-owned progress, without retaining the password.
 func (sdk *SDK) Authenticate(ctx context.Context, request AuthenticateRequest) (*NativeAuthResult, error) {
 	const name = "Authenticate"
-	if err := ctx.Err(); err != nil {
-		return nil, driveContextFailure(name, err)
+
+	contextErr := ctx.Err()
+	if contextErr != nil {
+		return nil, driveContextFailure(name, contextErr)
 	}
 
 	state := initialNativeAuthState(request)
@@ -27,7 +29,6 @@ func (sdk *SDK) Authenticate(ctx context.Context, request AuthenticateRequest) (
 	}
 
 	operation, err := newNativeAuthOperation(ctx, name, state.Auth, state)
-
 	if err != nil {
 		return nil, err
 	}
@@ -36,41 +37,20 @@ func (sdk *SDK) Authenticate(ctx context.Context, request AuthenticateRequest) (
 		return nil, newClientError(name, Configuration, 0, nil, nil, errNativeAuthInput)
 	}
 
-	if !request.ForceRefresh && nativeHasToken(operation.state) {
-		reused, reuseErr := sdk.nativeReuseCookie(ctx, operation, request.PauseTwoFactor)
-		if reuseErr != nil {
-			return nil, reuseErr
-		}
-
-		if reused {
-			return nativeAuthResult(operation)
-		}
+	completed, err := sdk.nativeTrySavedAuthentication(ctx, operation, request)
+	if err != nil {
+		return nil, err
 	}
 
-	if request.Service != nil && sdk.nativeOneFactorEligible(operation.state, *request.Service) {
-		accepted, serviceErr := sdk.nativeOneFactor(ctx, operation, request)
-		if serviceErr != nil {
-			return nil, serviceErr
-		}
-
-		if accepted {
-			return nativeAuthResult(operation)
-		}
-	}
-
-	if nativeHasToken(operation.state) {
-		accepted, tokenErr := sdk.nativeLoginToken(ctx, operation, !request.PauseTwoFactor, request.AcceptTerms)
-		if tokenErr != nil && !nativeCanRetry(tokenErr) {
-			return nil, tokenErr
-		}
-
-		if accepted {
-			return nativeAuthResult(operation)
-		}
+	if completed {
+		return nativeAuthResult(operation)
 	}
 
 	if request.Password == "" {
-		return nil, newClientError(name, Unauthorized, 0, nil, nil, errNativeAuthInput)
+		failure := newClientError(name, Unauthorized, 0, nil, nil, errNativeAuthInput)
+		failure.prior = cloneDriveResponses(operation.responses)
+
+		return nil, failure
 	}
 
 	err = sdk.nativePassword(ctx, operation, request)
@@ -85,13 +65,14 @@ func initialNativeAuthState(request AuthenticateRequest) NativeAuthState {
 	state := NativeAuthState{Auth: cloneDriveAuth(request.Auth), AccountName: request.AccountName,
 		TrustToken: request.TrustToken, AccountCountryCode: maps.Clone(request.AccountCountryCode),
 		AccountData: []byte("{}"), Challenge: emptyNativeAuthChallenge(), DeliveryMethod: TwoFactorDeliveryUnknown,
-		CodeRequested: false, RequiresMFA: false}
+		CodeRequested: false, RequiresMFA: false, DeliveryNotice: nil, AcceptTerms: request.AcceptTerms}
 	if request.SavedState != nil {
 		state = cloneNativeAuthState(*request.SavedState)
 		state.Auth = cloneDriveAuth(request.Auth)
 	}
 
 	state.AccountName = request.AccountName
+	state.AcceptTerms = request.AcceptTerms
 	if state.Auth.SetupServiceURL == "" {
 		state.Auth.SetupServiceURL = protocol.AuthAccountServer0
 		if state.Auth.ChinaMainland != nil && *state.Auth.ChinaMainland {
@@ -123,4 +104,55 @@ func emptyNativeAuthChallenge() NativeAuthChallenge {
 	return NativeAuthChallenge{Mode: "", PhoneNumbers: []TrustedPhoneNumber{}, SecurityKeyNames: []string{},
 		AuthInitialRoute: "", HasTrustedDevices: false, AuthFactors: []string{}, BridgeBootstrap: nil,
 		SecurityKeyChallenge: nil, ProviderData: nil}
+}
+
+func (sdk *SDK) nativeTrySavedAuthentication(ctx context.Context, operation *nativeAuthOperation,
+	request AuthenticateRequest,
+) (bool, error) {
+	reused, err := sdk.nativeTryCookieAuthentication(ctx, operation, request)
+	if err != nil || reused {
+		return reused, err
+	}
+
+	accepted, err := sdk.nativeTryServiceAuthentication(ctx, operation, request)
+	if err != nil || accepted {
+		return accepted, err
+	}
+
+	return sdk.nativeTryTokenAuthentication(ctx, operation, request)
+}
+
+func (sdk *SDK) nativeTryCookieAuthentication(ctx context.Context, operation *nativeAuthOperation,
+	request AuthenticateRequest,
+) (bool, error) {
+	if request.ForceRefresh || !nativeHasToken(operation.state) {
+		return false, nil
+	}
+
+	return sdk.nativeReuseCookie(ctx, operation, request.PauseTwoFactor)
+}
+
+func (sdk *SDK) nativeTryServiceAuthentication(ctx context.Context, operation *nativeAuthOperation,
+	request AuthenticateRequest,
+) (bool, error) {
+	if request.Service == nil || !sdk.nativeOneFactorEligible(operation.state, *request.Service) {
+		return false, nil
+	}
+
+	return sdk.nativeOneFactor(ctx, operation, request)
+}
+
+func (sdk *SDK) nativeTryTokenAuthentication(ctx context.Context, operation *nativeAuthOperation,
+	request AuthenticateRequest,
+) (bool, error) {
+	if !nativeHasToken(operation.state) {
+		return false, nil
+	}
+
+	accepted, err := sdk.nativeLoginToken(ctx, operation, !request.PauseTwoFactor, request.AcceptTerms)
+	if err != nil && !nativeCanRetry(err) {
+		return false, err
+	}
+
+	return accepted, nil
 }

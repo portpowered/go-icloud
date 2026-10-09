@@ -2,6 +2,8 @@ package icloud
 
 import (
 	"context"
+	"errors"
+	"github.com/portpowered/go-icloud/pkg/dependencies/securitykey"
 	"io"
 	"net/http"
 	"slices"
@@ -32,11 +34,14 @@ func WithSecurityKeyAuthenticator(provider SecurityKeyAuthenticator) Option {
 }
 
 // ListSecurityKeyDevices enumerates hardware without reading or retaining account credentials.
-func (sdk *SDK) ListSecurityKeyDevices(ctx context.Context, _ ListSecurityKeyDevicesRequest) (*ListSecurityKeyDevicesResult, error) {
+func (sdk *SDK) ListSecurityKeyDevices(ctx context.Context,
+	_ ListSecurityKeyDevicesRequest,
+) (*ListSecurityKeyDevicesResult, error) {
 	const operation = "ListSecurityKeyDevices"
 
-	if err := ctx.Err(); err != nil {
-		return nil, driveContextFailure(operation, err)
+	contextErr := ctx.Err()
+	if contextErr != nil {
+		return nil, driveContextFailure(operation, contextErr)
 	}
 
 	if sdk.securityKey == nil {
@@ -45,7 +50,7 @@ func (sdk *SDK) ListSecurityKeyDevices(ctx context.Context, _ ListSecurityKeyDev
 
 	devices, err := sdk.securityKey.Devices(ctx)
 	if err != nil {
-		return nil, driveContextFailure(operation, err)
+		return nil, nativeSecurityKeyFailure(operation, err)
 	}
 
 	return &ListSecurityKeyDevicesResult{Devices: append([]SecurityKeyDevice{}, devices...)}, nil
@@ -59,8 +64,10 @@ func (sdk *SDK) ConfirmSecurityKey(ctx context.Context, request ConfirmSecurityK
 	if validationErr != nil {
 		return nil, validationErr
 	}
+
 	challenge := progress.state.Challenge.SecurityKeyChallenge
-	if challenge == nil || challenge.Challenge == "" || challenge.RelyingPartyID == "" || len(challenge.CredentialIDs) == 0 {
+	if challenge == nil || challenge.Challenge == "" || challenge.RelyingPartyID == "" ||
+		len(challenge.CredentialIDs) == 0 {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, errNativeAuthInput)
 	}
 
@@ -76,14 +83,16 @@ func (sdk *SDK) ConfirmSecurityKey(ctx context.Context, request ConfirmSecurityK
 
 	challenge.CredentialIDs = slices.Clone(challenge.CredentialIDs)
 
-	ceremony := SecurityKeyCeremony{DeviceID: device.ID, Challenge: *challenge, Origin: HttpsappleCom, UserVerification: Discouraged}
+	ceremony := SecurityKeyCeremony{DeviceID: device.ID, Challenge: *challenge, Origin: HttpsappleCom,
+		UserVerification: Discouraged}
 
 	assertion, err := sdk.securityKey.Assert(ctx, ceremony)
 	if err != nil {
-		return nil, driveContextFailure(operation, err)
+		return nil, nativeSecurityKeyFailure(operation, err)
 	}
 
-	return sdk.VerifySecurityKey(ctx, VerifySecurityKeyRequest{Auth: request.Auth, State: request.State, Assertion: assertion})
+	return sdk.VerifySecurityKey(ctx, VerifySecurityKeyRequest{Auth: request.Auth, State: request.State,
+		Assertion: assertion})
 }
 
 func nativeSelectSecurityKey(devices []SecurityKeyDevice, selected string) (SecurityKeyDevice, error) {
@@ -104,7 +113,6 @@ func (sdk *SDK) VerifySecurityKey(ctx context.Context, request VerifySecurityKey
 	}
 
 	err = nativeValidateAssertion(operation.state.Challenge.SecurityKeyChallenge, request.Assertion)
-
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -112,22 +120,24 @@ func (sdk *SDK) VerifySecurityKey(ctx context.Context, request VerifySecurityKey
 	challenge := operation.state.Challenge.SecurityKeyChallenge
 	input := auth.AuthWebAuthnAssertion{Challenge: challenge.Challenge, ClientData: request.Assertion.ClientData,
 		SignatureData: request.Assertion.Signature, AuthenticatorData: request.Assertion.AuthenticatorData,
-		UserHandle: request.Assertion.UserHandle, CredentialID: request.Assertion.CredentialID, RpId: challenge.RelyingPartyID}
+		UserHandle: request.Assertion.UserHandle, CredentialID: request.Assertion.CredentialID,
+		RpId: challenge.RelyingPartyID}
 
 	wire, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewVerifyAuthSecurityKeyRequestWithBody(nativeIDMSOrigin(operation.state), protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewVerifyAuthSecurityKeyRequestWithBody(nativeIDMSOrigin(operation.state),
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
 
-	response, err := sdk.nativeAuthExchange(ctx, operation, wire, nativeAuthHeaders(operation.state, protocol.AuthMediaApplicationJson))
+	response, err := sdk.nativeAuthExchange(ctx, operation, wire,
+		nativeAuthHeaders(operation.state, protocol.AuthMediaApplicationJson))
 	if err != nil {
 		return nil, err
 	}
 
 	err = nativeRequireSuccess(operation, response)
-
 	if err != nil {
 		return nil, err
 	}
@@ -138,4 +148,26 @@ func (sdk *SDK) VerifySecurityKey(ctx context.Context, request VerifySecurityKey
 	}
 
 	return nativeAuthResult(operation)
+}
+
+func nativeSecurityKeyFailure(operation string, err error) *ClientError {
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		return driveContextFailure(operation, err)
+	}
+
+	kind := Transport
+	var deviceError *securitykey.Error
+
+	switch {
+	case errors.Is(err, securitykey.ErrPINRequired):
+		kind = AuthenticationRequired
+	case errors.Is(err, securitykey.ErrUnsupported):
+		kind = Configuration
+	case errors.As(err, &deviceError) && deviceError.Status != 0:
+		kind = Provider
+	case errors.Is(err, securitykey.ErrProtocol):
+		kind = InvalidResponse
+	}
+
+	return newClientError(operation, kind, 0, nil, nil, err)
 }

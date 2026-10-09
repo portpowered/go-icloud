@@ -32,8 +32,9 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 	input := auth.AuthGetTermsRequest{Locale: locale}
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewGetAuthTermsRequestWithBody(operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewGetAuthTermsRequestWithBody(
+			operation.state.Auth.SetupServiceURL, &params,
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -45,12 +46,12 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 	}
 
 	err = nativeRequireSuccess(operation, response)
-
 	if err != nil {
 		return false, err
 	}
 
 	var terms auth.AuthTermsResponse
+
 	err = nativeDecodeAuthObject(response.Body, &terms)
 	if err != nil {
 		return false, nativeResponseError(operation, response, err, InvalidResponse)
@@ -61,7 +62,6 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 	}
 
 	err = sdk.nativeRepairTerms(ctx, operation, *terms.ICloudTerms.Version)
-
 	if err != nil {
 		return false, err
 	}
@@ -74,8 +74,9 @@ func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOper
 
 	request, err := nativeEncodedRequest(auth.AuthAcceptTermsRequest{AcceptedICloudTerms: version},
 		func(body io.Reader) (*http.Request, error) {
-			return authapi.NewAcceptAuthTermsRequestWithBody(operation.state.Auth.SetupServiceURL, &params,
-				protocol.AuthMediaApplicationJson, body)
+			return nativeGeneratedRequest(authapi.NewAcceptAuthTermsRequestWithBody(
+				operation.state.Auth.SetupServiceURL, &params,
+				protocol.AuthMediaApplicationJson, body))
 		})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -91,8 +92,8 @@ func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOper
 
 func (sdk *SDK) nativeTermsRelogin(ctx context.Context, operation *nativeAuthOperation, login any) (bool, error) {
 	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL,
-			protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL,
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -104,12 +105,12 @@ func (sdk *SDK) nativeTermsRelogin(ctx context.Context, operation *nativeAuthOpe
 	}
 
 	err = nativeRequireSuccess(operation, response)
-
 	if err != nil {
 		return false, err
 	}
 
 	var account auth.AuthAccountResponse
+
 	err = nativeDecodeAuthObject(response.Body, &account)
 	if err != nil {
 		return false, nativeResponseError(operation, response, err, InvalidResponse)
@@ -130,6 +131,7 @@ func (sdk *SDK) nativeOneFactor(ctx context.Context, operation *nativeAuthOperat
 		if nativeCanRetry(err) {
 			return false, nil
 		}
+
 		return false, err
 	}
 
@@ -141,6 +143,7 @@ func (sdk *SDK) nativeOneFactor(ctx context.Context, operation *nativeAuthOperat
 	if err != nil {
 		return false, err
 	}
+
 	return sdk.nativeOneFactorValidate(ctx, operation)
 }
 
@@ -151,6 +154,7 @@ func nativeOneFactorPayload(state NativeAuthState, input AuthenticateRequest) au
 	} else {
 		service.Set(*input.Service)
 	}
+
 	return auth.AuthCredentialsLoginRequest{AppName: service, AppleId: state.AccountName, Password: input.Password}
 }
 
@@ -174,6 +178,7 @@ func (sdk *SDK) nativeOneFactorTerms(ctx context.Context, operation *nativeAuthO
 	}
 
 	_, err := sdk.nativeAcceptTermsLogin(ctx, operation, login, account)
+
 	return err
 }
 
@@ -185,11 +190,13 @@ func (sdk *SDK) nativeOneFactorValidate(ctx context.Context, operation *nativeAu
 		if nativeCanRetry(failure) {
 			return false, nil
 		}
+
 		return false, failure
 	}
 
 	operation.record(validated.Response)
 	sdk.nativeAccountDiscovery(operation, validated)
+
 	return true, nil
 }
 
@@ -197,8 +204,8 @@ func (sdk *SDK) nativeOneFactorLogin(ctx context.Context, operation *nativeAuthO
 	login auth.AuthCredentialsLoginRequest,
 ) (*webtransport.BytesResponse, error) {
 	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL,
-			protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL,
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -210,7 +217,6 @@ func (sdk *SDK) nativeOneFactorLogin(ctx context.Context, operation *nativeAuthO
 	}
 
 	err = nativeRequireSuccess(operation, response)
-
 	if err != nil {
 		return nil, err
 	}

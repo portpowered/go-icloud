@@ -14,7 +14,9 @@ import (
 )
 
 // RequestTwoFactorCode requests SMS delivery or returns a security-key/explicit bridge route.
-func (sdk *SDK) RequestTwoFactorCode(ctx context.Context, request RequestTwoFactorCodeRequest) (*NativeAuthResult, error) {
+func (sdk *SDK) RequestTwoFactorCode(ctx context.Context,
+	request RequestTwoFactorCodeRequest,
+) (*NativeAuthResult, error) {
 	operation, err := newNativeAuthOperation(ctx, "RequestTwoFactorCode", request.Auth, request.State)
 	if err != nil {
 		return nil, err
@@ -32,27 +34,8 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 	selected *TrustedPhoneNumberID,
 ) error {
 	challenge := operation.state.Challenge
-	if challenge.SecurityKeyChallenge != nil || len(challenge.SecurityKeyNames) > 0 {
-		operation.state.DeliveryMethod = TwoFactorDeliverySecurityKey
-		operation.success = false
 
-		return nil
-	}
-
-	if operation.state.CodeRequested {
-		return nil
-	}
-
-	if selected == nil && challenge.AuthInitialRoute == protocol.AuthBridgeInitialRouteValue && challenge.HasTrustedDevices &&
-		len(challenge.BridgeBootstrap) > 0 {
-		operation.state.DeliveryMethod = TwoFactorDeliveryTrustedDevice
-		operation.success = false
-
-		return nil
-	}
-
-	if len(challenge.PhoneNumbers) == 0 && selected == nil {
-		operation.success = false
+	if nativeSkipCodeDelivery(operation, selected) {
 		return nil
 	}
 
@@ -61,7 +44,7 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
 
-	if challenge.Mode != "" && challenge.Mode != string(auth.Sms) || phone.PushMode != string(auth.Sms) && challenge.Mode == "" {
+	if !nativeSMSDelivery(challenge, phone) {
 		operation.success = false
 
 		return nil
@@ -75,13 +58,15 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 	input := auth.AuthSMSRequest{PhoneNumber: data, Mode: auth.Sms}
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewRequestAuthSMSRequestWithBody(nativeIDMSOrigin(operation.state), protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewRequestAuthSMSRequestWithBody(nativeIDMSOrigin(operation.state),
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
 
-	response, err := sdk.nativeAuthExchange(ctx, operation, request, nativeAuthHeaders(operation.state, protocol.AuthMediaApplicationJson))
+	response, err := sdk.nativeAuthExchange(ctx, operation, request,
+		nativeAuthHeaders(operation.state, protocol.AuthMediaApplicationJson))
 	if err != nil {
 		return err
 	}
@@ -91,7 +76,14 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 		return err
 	}
 
-	operation.state.Challenge.PhoneNumbers = nativePrioritizePhone(challenge.PhoneNumbers, phone)
+	prioritized, err := nativePrioritizePhone(challenge.PhoneNumbers, phone)
+	if err != nil {
+		return nativeResponseError(operation, response, err, InvalidResponse)
+	}
+	operation.state.Challenge.PhoneNumbers = prioritized
+	if selected == nil {
+		operation.state.DeliveryNotice = nil
+	}
 	operation.state.DeliveryMethod = TwoFactorDeliverySMS
 	operation.state.CodeRequested = true
 
@@ -133,6 +125,7 @@ func nativePhonePayload(phone TrustedPhoneNumber) (auth.AuthPhoneNumber, error) 
 	}
 
 	var identifier auth.AuthPhoneID
+
 	err = json.Unmarshal(encoded, &identifier)
 	if err != nil {
 		return auth.AuthPhoneNumber{}, fmt.Errorf("decode phone identity: %w", err)
@@ -141,14 +134,62 @@ func nativePhonePayload(phone TrustedPhoneNumber) (auth.AuthPhoneNumber, error) 
 	return auth.AuthPhoneNumber{Id: identifier, NonFTEU: phone.NonFTEU, AdditionalProperties: nil}, nil
 }
 
-func nativePrioritizePhone(phones []TrustedPhoneNumber, selected TrustedPhoneNumber) []TrustedPhoneNumber {
+func nativePrioritizePhone(phones []TrustedPhoneNumber, selected TrustedPhoneNumber) ([]TrustedPhoneNumber, error) {
 	result := []TrustedPhoneNumber{selected}
-	wanted, _ := json.Marshal(selected.ID)
+
+	wanted, err := json.Marshal(selected.ID)
+	if err != nil {
+		return nil, fmt.Errorf("encode selected phone identity: %w", err)
+	}
+
 	for _, phone := range phones {
-		actual, _ := json.Marshal(phone.ID)
+		actual, err := json.Marshal(phone.ID)
+		if err != nil {
+			return nil, fmt.Errorf("encode prioritized phone identity: %w", err)
+		}
+
 		if !bytes.Equal(wanted, actual) {
 			result = append(result, phone)
 		}
 	}
-	return result
+
+	return result, nil
+}
+
+func nativeSkipCodeDelivery(operation *nativeAuthOperation, selected *TrustedPhoneNumberID) bool {
+	challenge := operation.state.Challenge
+	if challenge.SecurityKeyChallenge != nil || len(challenge.SecurityKeyNames) > 0 {
+		operation.state.DeliveryMethod = TwoFactorDeliverySecurityKey
+		operation.state.DeliveryNotice = nil
+		operation.success = false
+
+		return true
+	}
+
+	if operation.state.CodeRequested {
+		return true
+	}
+
+	if selected == nil && challenge.AuthInitialRoute == protocol.AuthBridgeInitialRouteValue &&
+		challenge.HasTrustedDevices &&
+		len(challenge.BridgeBootstrap) > 0 {
+		operation.state.DeliveryMethod = TwoFactorDeliveryTrustedDevice
+		operation.state.DeliveryNotice = nil
+		operation.success = false
+
+		return true
+	}
+
+	if len(challenge.PhoneNumbers) == 0 && selected == nil {
+		operation.success = false
+
+		return true
+	}
+
+	return false
+}
+
+func nativeSMSDelivery(challenge NativeAuthChallenge, phone TrustedPhoneNumber) bool {
+	return (challenge.Mode == "" || challenge.Mode == string(auth.Sms)) &&
+		(phone.PushMode == string(auth.Sms) || challenge.Mode != "")
 }

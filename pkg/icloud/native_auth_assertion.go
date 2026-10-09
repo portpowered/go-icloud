@@ -12,22 +12,19 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
-const minimumAuthenticatorDataBytes = 37
-
 func nativeValidateAssertion(challenge *SecurityKeyChallenge, assertion SecurityKeyAssertion) error {
-	if challenge == nil || challenge.Challenge == "" || challenge.RelyingPartyID == "" || len(assertion.Signature) == 0 ||
-		len(assertion.AuthenticatorData) < minimumAuthenticatorDataBytes {
+	if !nativeAssertionInputPresent(challenge, assertion) {
 		return errNativeAuthInput
 	}
 
 	var data auth.AuthWebAuthnClientData
 
-	if err := json.Unmarshal(assertion.ClientData, &data); err != nil {
-		return fmt.Errorf("decode security-key client data: %w", err)
+	decodeErr := json.Unmarshal(assertion.ClientData, &data)
+	if decodeErr != nil {
+		return fmt.Errorf("decode security-key client data: %w", decodeErr)
 	}
 
-	if string(data.Type) != protocol.AuthWebAuthnClientDataTypeValue || string(data.Origin) != protocol.AuthWebAuthnOriginValue ||
-		data.CrossOrigin != nil && *data.CrossOrigin {
+	if !nativeValidClientData(data) {
 		return errNativeAuthInput
 	}
 
@@ -46,13 +43,17 @@ func nativeValidateAssertion(challenge *SecurityKeyChallenge, assertion Security
 		return errNativeAuthInput
 	}
 
-	for _, identifier := range challenge.CredentialIDs {
+	return nativeMatchCredential(challenge.CredentialIDs, assertion.CredentialID)
+}
+
+func nativeMatchCredential(identifiers []string, credential []byte) error {
+	for _, identifier := range identifiers {
 		allowed, decodeErr := nativeDecodeBase64URL(identifier)
 		if decodeErr != nil {
 			return decodeErr
 		}
 
-		if bytes.Equal(allowed, assertion.CredentialID) && len(allowed) > 0 {
+		if bytes.Equal(allowed, credential) && len(allowed) > 0 {
 			return nil
 		}
 	}
@@ -75,4 +76,15 @@ func nativeDecodeBase64URL(value string) ([]byte, error) {
 	}
 
 	return decoded, nil
+}
+
+func nativeValidClientData(data auth.AuthWebAuthnClientData) bool {
+	return string(data.Type) == protocol.AuthWebAuthnClientDataTypeValue &&
+		string(data.Origin) == protocol.AuthWebAuthnOriginValue &&
+		(data.CrossOrigin == nil || !*data.CrossOrigin)
+}
+
+func nativeAssertionInputPresent(challenge *SecurityKeyChallenge, assertion SecurityKeyAssertion) bool {
+	return challenge != nil && challenge.Challenge != "" && challenge.RelyingPartyID != "" &&
+		len(assertion.Signature) != 0 && len(assertion.AuthenticatorData) >= int(auth.AuthenticatorDataMinimum)
 }

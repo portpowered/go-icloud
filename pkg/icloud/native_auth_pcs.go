@@ -100,6 +100,7 @@ func (sdk *SDK) nativePCSConsent(ctx context.Context, operation *nativeAuthOpera
 	}
 
 	var result auth.AuthWebAccessResponse
+
 	err = nativeDecodeAuthObject(response.Body, &result)
 	if err != nil {
 		return nil, nativeResponseError(operation, response, err, InvalidResponse)
@@ -193,8 +194,9 @@ func (sdk *SDK) nativePCSRequest(ctx context.Context, operation *nativeAuthOpera
 	params := authapi.RequestAuthPCSParams(nativeAuthParams(operation.state))
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return authapi.NewRequestAuthPCSRequestWithBody(operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body)
+		return nativeGeneratedRequest(authapi.NewRequestAuthPCSRequestWithBody(
+			operation.state.Auth.SetupServiceURL, &params,
+			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -211,6 +213,7 @@ func (sdk *SDK) nativePCSRequest(ctx context.Context, operation *nativeAuthOpera
 	}
 
 	var result auth.AuthPCSResponse
+
 	err = nativeDecodeAuthObject(response.Body, &result)
 	if err != nil {
 		return nil, nativeResponseError(operation, response, err, InvalidResponse)

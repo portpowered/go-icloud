@@ -44,9 +44,18 @@ func nativeRequireSuccess(operation *nativeAuthOperation, response *webtransport
 	if nativeLockedBody(response.Body) {
 		return nativeResponseError(operation, response, errNativeAuthInput, AccountLocked)
 	}
+
 	if response.Status < http.StatusOK || response.Status >= http.StatusMultipleChoices {
 		return nativeResponseError(operation, response, errNativeAuthInput, providerKind(response.Status))
 	}
 
 	return nil
+}
+
+func nativeGeneratedRequest(request *http.Request, err error) (*http.Request, error) {
+	if err != nil {
+		return nil, fmt.Errorf("construct generated authentication request: %w", err)
+	}
+
+	return request, nil
 }

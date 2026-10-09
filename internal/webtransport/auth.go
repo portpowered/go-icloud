@@ -61,11 +61,13 @@ func (client *Client) LoginAuthCredentials(ctx context.Context, origin string, h
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
+
 	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, protocol.AuthMediaApplicationJson,
 		bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
+
 	return client.readAuth(ctx, origin, headers, cookies, request)
 }
 

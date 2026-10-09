@@ -81,10 +81,12 @@ func (sdk *SDK) nativeProbeSecurityKey(ctx context.Context, operation *nativeAut
 	}
 
 	var data auth.AuthChallenge
-	if json.Unmarshal(response.Body, &data) != nil {
+	if !nativeOptionalChallenge(response.Body, &data) {
 		return nil
 	}
+
 	nativeProjectSecurityKey(&operation.state.Challenge, data)
+
 	err = nativeRetainSecurityChallenge(&operation.state.Challenge, data)
 	if err != nil {
 		return nativeResponseError(operation, response, err, InvalidResponse)
@@ -175,22 +177,28 @@ func nativeResponseChallenge(body []byte) (NativeAuthChallenge, error) {
 	if err != nil {
 		return emptyNativeAuthChallenge(), err
 	}
+
 	data, err = nativeNormalizeChallenge(data)
 	if err != nil {
 		return emptyNativeAuthChallenge(), err
 	}
+
 	challenge := emptyNativeAuthChallenge()
+
 	err = nativeProjectChallenge(&challenge, data)
 	if err != nil {
 		return emptyNativeAuthChallenge(), err
 	}
+
 	if fromHTML {
 		data.Direct = nil
 	}
+
 	challenge.ProviderData, err = json.Marshal(data)
 	if err != nil {
 		return emptyNativeAuthChallenge(), fmt.Errorf("encode native challenge: %w", err)
 	}
+
 	return challenge, nil
 }
 
@@ -199,30 +207,42 @@ func nativeDecodeChallenge(body []byte) (auth.AuthChallenge, bool, error) {
 	if bytes.HasPrefix(bytes.TrimSpace(body), []byte{'{'}) && json.Unmarshal(body, data) == nil {
 		return *data, false, nil
 	}
+
 	bootstrap, err := bridge.ParseBootstrap(body)
 	if err != nil {
 		return *data, false, fmt.Errorf("parse native challenge bootstrap: %w", err)
 	}
+
 	data = new(auth.AuthChallenge)
 	data.Direct = bootstrap
+
 	return *data, true, nil
 }
 
 func nativeRetainSecurityChallenge(challenge *NativeAuthChallenge, data auth.AuthChallenge) error {
 	var retained auth.AuthChallenge
-	if json.Unmarshal(challenge.ProviderData, &retained) != nil {
+	if !nativeOptionalChallenge(challenge.ProviderData, &retained) {
 		return nil
 	}
+
 	if data.FsaChallenge != nil {
 		retained.FsaChallenge = data.FsaChallenge
 	}
+
 	if data.KeyNames != nil {
 		retained.KeyNames = data.KeyNames
 	}
+
 	encoded, err := json.Marshal(retained)
 	if err != nil {
 		return fmt.Errorf("encode native security challenge: %w", err)
 	}
+
 	challenge.ProviderData = encoded
+
 	return nil
+}
+
+func nativeOptionalChallenge(body []byte, data *auth.AuthChallenge) bool {
+	return json.Unmarshal(body, data) == nil
 }

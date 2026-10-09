@@ -20,13 +20,16 @@ func (client *Client) ExchangeAuthentication(ctx context.Context, request *http.
 		return nil, failure(Configuration, errUnknownAuthRoute, nil, nil)
 	}
 
-	if err := validateOrigin(request.URL.Scheme + "://" + request.URL.Host); err != nil {
-		return nil, failure(Configuration, err, nil, nil)
+	originErr := validateOrigin(request.URL.Scheme + "://" + request.URL.Host)
+	if originErr != nil {
+		return nil, failure(Configuration, originErr, nil, nil)
 	}
 
 	request = request.WithContext(ctx)
 	contentType := request.Header.Get(protocol.AuthHTTPContentTypeName)
+
 	request.Header = headers.Clone()
+
 	if request.Header.Get(protocol.AuthHTTPContentTypeName) == "" && contentType != "" {
 		request.Header.Set(protocol.AuthHTTPContentTypeName, contentType)
 	}
@@ -35,6 +38,7 @@ func (client *Client) ExchangeAuthentication(ctx context.Context, request *http.
 	if authenticationBridgeRoute(request.URL.Path) {
 		policy = authenticationRawContent
 	}
+
 	return client.readPrepared(request, policy, cookies)
 }
 
@@ -50,6 +54,7 @@ func authenticationBridgeRoute(path string) bool {
 
 func knownAuthenticationRoute(request *http.Request) bool {
 	method := request.Method
+
 	switch request.URL.Path {
 	case protocol.AuthorizeAuthSignInPath, protocol.AuthGetAuthChallengePath,
 		protocol.AuthTrustAuthSessionPath, protocol.AuthListAuthTrustedDevicesPath,
