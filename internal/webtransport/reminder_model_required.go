@@ -2,6 +2,7 @@ package webtransport
 
 import (
 	"encoding/json"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	"reflect"
 	"strings"
 )
@@ -45,6 +46,10 @@ func reminderRequiredMember(model reflect.Type, options string, raw json.RawMess
 }
 
 func reminderNestedRequired(model reflect.Type, raw json.RawMessage) bool {
+	if model == reflect.TypeFor[cloudkit.CKIntegerInput]() {
+		return reminderSyncInteger(raw)
+	}
+
 	if string(raw) == jsonNullValue {
 		return true
 	}

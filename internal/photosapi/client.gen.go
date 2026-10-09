@@ -47,6 +47,36 @@ func (e PhotosRemapEnums) Valid() bool {
 	}
 }
 
+// Defines values for PhotosCountAlbumsParamsRemapEnums.
+const (
+	PhotosCountAlbumsParamsRemapEnumsTrue PhotosCountAlbumsParamsRemapEnums = "True"
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountAlbumsParamsRemapEnums enum.
+func (e PhotosCountAlbumsParamsRemapEnums) Valid() bool {
+	switch e {
+	case PhotosCountAlbumsParamsRemapEnumsTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosCountAlbumsParamsGetCurrentSyncToken.
+const (
+	PhotosCountAlbumsParamsGetCurrentSyncTokenTrue PhotosCountAlbumsParamsGetCurrentSyncToken = "True"
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountAlbumsParamsGetCurrentSyncToken enum.
+func (e PhotosCountAlbumsParamsGetCurrentSyncToken) Valid() bool {
+	switch e {
+	case PhotosCountAlbumsParamsGetCurrentSyncTokenTrue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotosQueryRecordsParamsRemapEnums.
 const (
 	PhotosQueryRecordsParamsRemapEnumsTrue PhotosQueryRecordsParamsRemapEnums = "True"
@@ -96,6 +126,12 @@ type CKQueryRequest = externalRef0.CKQueryRequest
 // Example: {"records":[{"fields":{"Completed":{"type":"INT64","value":1},"List":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"List/synthetic-list"}},"Priority":{"type":"INT64","value":0}},"recordChangeTag":"synthetic-tag","recordName":"Reminder/synthetic-0","recordType":"Reminder"},{"fields":{"Completed":{"type":"INT64","value":1},"List":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"List/synthetic-list"}},"Priority":{"type":"INT64","value":1}},"recordChangeTag":"synthetic-tag","recordName":"Reminder/synthetic-1","recordType":"Reminder"},{"fields":{"Completed":{"type":"INT64","value":1},"List":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"List/synthetic-list"}},"Priority":{"type":"INT64","value":2}},"recordChangeTag":"synthetic-tag","recordName":"Reminder/synthetic-2","recordType":"Reminder"}]}
 type CKQueryResponse = externalRef0.CKQueryResponse
 
+// PhotosCountRequest Photos Hyperion batch count request.
+type PhotosCountRequest = externalRef0.PhotosCountRequest
+
+// PhotosCountResponse Validated full count batch response.
+type PhotosCountResponse = externalRef0.PhotosCountResponse
+
 // PhotosAccept defines model for PhotosAccept.
 type PhotosAccept = string
 
@@ -138,6 +174,38 @@ type PhotosRemapEnums string
 // PhotosUserAgent defines model for PhotosUserAgent.
 type PhotosUserAgent = string
 
+// PhotosCountAlbumsParams defines parameters for PhotosCountAlbums.
+type PhotosCountAlbumsParams struct {
+	ClientId PhotosClientId `form:"clientId" json:"clientId"`
+	Dsid     PhotosDsid     `form:"dsid" json:"dsid"`
+
+	// RemapEnums Photos initialization forces this query control to the Python boolean text True.
+	RemapEnums PhotosCountAlbumsParamsRemapEnums `form:"remapEnums" json:"remapEnums"`
+
+	// GetCurrentSyncToken Photos initialization forces this query control to the Python boolean text True.
+	GetCurrentSyncToken PhotosCountAlbumsParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *PhotosClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *PhotosClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+	Accept                *PhotosAccept                `json:"Accept,omitempty"`
+	ContentType           *PhotosContentType           `json:"Content-Type,omitempty"`
+	Cookie                *PhotosCookie                `json:"Cookie,omitempty"`
+	Origin                *PhotosOrigin                `json:"Origin,omitempty"`
+	Referer               *PhotosReferer               `json:"Referer,omitempty"`
+	UserAgent             *PhotosUserAgent             `json:"User-Agent,omitempty"`
+	AcceptEncoding        *PhotosAcceptEncoding        `json:"Accept-Encoding,omitempty"`
+	Connection            *PhotosConnection            `json:"Connection,omitempty"`
+}
+
+// PhotosCountAlbumsParamsRemapEnums defines parameters for PhotosCountAlbums.
+type PhotosCountAlbumsParamsRemapEnums string
+
+// PhotosCountAlbumsParamsGetCurrentSyncToken defines parameters for PhotosCountAlbums.
+type PhotosCountAlbumsParamsGetCurrentSyncToken string
+
 // PhotosQueryRecordsParams defines parameters for PhotosQueryRecords.
 type PhotosQueryRecordsParams struct {
 	ClientId PhotosClientId `form:"clientId" json:"clientId"`
@@ -169,6 +237,9 @@ type PhotosQueryRecordsParamsRemapEnums string
 
 // PhotosQueryRecordsParamsGetCurrentSyncToken defines parameters for PhotosQueryRecords.
 type PhotosQueryRecordsParamsGetCurrentSyncToken string
+
+// PhotosCountAlbumsJSONRequestBody defines body for PhotosCountAlbums for application/json ContentType.
+type PhotosCountAlbumsJSONRequestBody = PhotosCountRequest
 
 // PhotosQueryRecordsJSONRequestBody defines body for PhotosQueryRecords for application/json ContentType.
 type PhotosQueryRecordsJSONRequestBody = CKQueryRequest
@@ -247,6 +318,24 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 // The interface specification for the client above.
 type ClientInterface interface {
 
+	// PhotosCountAlbumsWithBody Count photos in an album
+	//
+	// Read the indexed number of photos in a selected album.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+	PhotosCountAlbumsWithBody(ctx context.Context, params *PhotosCountAlbumsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PhotosCountAlbums Count photos in an album
+	//
+	// Read the indexed number of photos in a selected album.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+	PhotosCountAlbums(ctx context.Context, params *PhotosCountAlbumsParams, body PhotosCountAlbumsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PhotosQueryRecordsWithBody Read photo library indexing state
 	//
 	// Read the primary photo library indexing state and its current change cursor.
@@ -264,6 +353,44 @@ type ClientInterface interface {
 	//
 	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/records/query (the `PhotosQueryRecords` operationId).
 	PhotosQueryRecords(ctx context.Context, params *PhotosQueryRecordsParams, body PhotosQueryRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+// PhotosCountAlbumsWithBody Count photos in an album
+//
+// Read the indexed number of photos in a selected album.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+func (c *Client) PhotosCountAlbumsWithBody(ctx context.Context, params *PhotosCountAlbumsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPhotosCountAlbumsRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// PhotosCountAlbums Count photos in an album
+//
+// Read the indexed number of photos in a selected album.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+func (c *Client) PhotosCountAlbums(ctx context.Context, params *PhotosCountAlbumsParams, body PhotosCountAlbumsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPhotosCountAlbumsRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 // PhotosQueryRecordsWithBody Read photo library indexing state
@@ -302,6 +429,209 @@ func (c *Client) PhotosQueryRecords(ctx context.Context, params *PhotosQueryReco
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewPhotosCountAlbumsRequest calls the generic PhotosCountAlbums builder with application/json body
+func NewPhotosCountAlbumsRequest(server string, params *PhotosCountAlbumsParams, body PhotosCountAlbumsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPhotosCountAlbumsRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewPhotosCountAlbumsRequestWithBody constructs an http.Request for the PhotosCountAlbums method, with any body, and a specified content type
+func NewPhotosCountAlbumsRequestWithBody(server string, params *PhotosCountAlbumsParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/database/1/com.apple.photos.cloud/production/private/internal/records/query/batch")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientId", params.ClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "dsid", params.Dsid, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "remapEnums", params.RemapEnums, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "getCurrentSyncToken", params.GetCurrentSyncToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Accept != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam0)
+		}
+
+		if params.ContentType != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam1)
+		}
+
+		if params.Cookie != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam2)
+		}
+
+		if params.Origin != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "Origin", *params.Origin, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Origin", headerParam3)
+		}
+
+		if params.Referer != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam4)
+		}
+
+		if params.UserAgent != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "User-Agent", *params.UserAgent, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("User-Agent", headerParam5)
+		}
+
+		if params.AcceptEncoding != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "Accept-Encoding", *params.AcceptEncoding, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept-Encoding", headerParam6)
+		}
+
+		if params.Connection != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "Connection", *params.Connection, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Connection", headerParam7)
+		}
+
+	}
+
+	return req, nil
 }
 
 // NewPhotosQueryRecordsRequest calls the generic PhotosQueryRecords builder with application/json body
@@ -551,6 +881,24 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 
+	// PhotosCountAlbumsWithBodyWithResponse Count photos in an album
+	//
+	// Read the indexed number of photos in a selected album.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+	PhotosCountAlbumsWithBodyWithResponse(ctx context.Context, params *PhotosCountAlbumsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PhotosCountAlbumsResponse, error)
+
+	// PhotosCountAlbumsWithResponse Count photos in an album
+	//
+	// Read the indexed number of photos in a selected album.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+	PhotosCountAlbumsWithResponse(ctx context.Context, params *PhotosCountAlbumsParams, body PhotosCountAlbumsJSONRequestBody, reqEditors ...RequestEditorFn) (*PhotosCountAlbumsResponse, error)
+
 	// PhotosQueryRecordsWithBodyWithResponse Read photo library indexing state
 	//
 	// Read the primary photo library indexing state and its current change cursor.
@@ -568,6 +916,54 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/records/query (the `PhotosQueryRecords` operationId).
 	PhotosQueryRecordsWithResponse(ctx context.Context, params *PhotosQueryRecordsParams, body PhotosQueryRecordsJSONRequestBody, reqEditors ...RequestEditorFn) (*PhotosQueryRecordsResponse, error)
+}
+
+type PhotosCountAlbumsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *PhotosCountResponse
+	// JSON2XX the response for an HTTP 2XX `application/json` response
+	JSON2XX *PhotosCountResponse
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r PhotosCountAlbumsResponse) GetJSON200() *PhotosCountResponse {
+	return r.JSON200
+}
+
+// GetJSON2XX returns the response for an HTTP 2XX `application/json` response
+func (r PhotosCountAlbumsResponse) GetJSON2XX() *PhotosCountResponse {
+	return r.JSON2XX
+}
+
+// GetBody returns the raw response body bytes
+func (r PhotosCountAlbumsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r PhotosCountAlbumsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PhotosCountAlbumsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r PhotosCountAlbumsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
 }
 
 type PhotosQueryRecordsResponse struct {
@@ -618,6 +1014,36 @@ func (r PhotosQueryRecordsResponse) ContentType() string {
 	return ""
 }
 
+// PhotosCountAlbumsWithBodyWithResponse Count photos in an album
+//
+// Read the indexed number of photos in a selected album.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+func (c *ClientWithResponses) PhotosCountAlbumsWithBodyWithResponse(ctx context.Context, params *PhotosCountAlbumsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PhotosCountAlbumsResponse, error) {
+	rsp, err := c.PhotosCountAlbumsWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePhotosCountAlbumsResponse(rsp)
+}
+
+// PhotosCountAlbumsWithResponse Count photos in an album
+//
+// Read the indexed number of photos in a selected album.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /database/1/com.apple.photos.cloud/production/private/internal/records/query/batch (the `PhotosCountAlbums` operationId).
+func (c *ClientWithResponses) PhotosCountAlbumsWithResponse(ctx context.Context, params *PhotosCountAlbumsParams, body PhotosCountAlbumsJSONRequestBody, reqEditors ...RequestEditorFn) (*PhotosCountAlbumsResponse, error) {
+	rsp, err := c.PhotosCountAlbums(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePhotosCountAlbumsResponse(rsp)
+}
+
 // PhotosQueryRecordsWithBodyWithResponse Read photo library indexing state
 //
 // Read the primary photo library indexing state and its current change cursor.
@@ -646,6 +1072,45 @@ func (c *ClientWithResponses) PhotosQueryRecordsWithResponse(ctx context.Context
 		return nil, err
 	}
 	return ParsePhotosQueryRecordsResponse(rsp)
+}
+
+// ParsePhotosCountAlbumsResponse parses an HTTP response from a PhotosCountAlbumsWithResponse call
+func ParsePhotosCountAlbumsResponse(rsp *http.Response) (*PhotosCountAlbumsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PhotosCountAlbumsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PhotosCountResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
+		var dest PhotosCountResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON2XX = &dest
+
+	case rsp.StatusCode/100 == 2:
+	// Content-type (*/*) unsupported
+
+	case rsp.StatusCode == 200:
+		// Content-type (*/*) unsupported
+
+	}
+
+	return response, nil
 }
 
 // ParsePhotosQueryRecordsResponse parses an HTTP response from a PhotosQueryRecordsWithResponse call

@@ -31,7 +31,7 @@ func photosAlbumBody(parent, continuation *string) (string, error) {
 		value := fmt.Sprintf("{%q: %q, %q: %s}", protocol.PhotosCKFVStringType, cloudkit.CKFVStringTypeSTRING,
 			protocol.PhotosCKFVStringValue, name)
 		filter := fmt.Sprintf("{%q: %q, %q: %q, %q: %s}", protocol.PhotosCKQueryFilterByComparator,
-			cloudkit.EQUALS, protocol.PhotosCKQueryFilterByFieldName, protocol.PhotosPhotoAlbumParentFieldValue,
+			cloudkit.CKComparatorEQUALS, protocol.PhotosCKQueryFilterByFieldName, protocol.PhotosPhotoAlbumParentFieldValue,
 			protocol.PhotosCKQueryFilterByFieldValue, value)
 		query += fmt.Sprintf(", %q: [%s]", protocol.PhotosCKQueryObjectFilterBy, filter)
 	}

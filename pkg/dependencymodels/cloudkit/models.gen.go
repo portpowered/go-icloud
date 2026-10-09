@@ -182,34 +182,34 @@ func (e CKBytesFieldType) Valid() bool {
 
 // Defines values for CKComparator.
 const (
-	BEGINSWITH          CKComparator = "BEGINS_WITH"
-	CONTAINSANY         CKComparator = "CONTAINS_ANY"
-	EQUALS              CKComparator = "EQUALS"
-	GREATERTHAN         CKComparator = "GREATER_THAN"
-	GREATERTHANOREQUALS CKComparator = "GREATER_THAN_OR_EQUALS"
-	IN                  CKComparator = "IN"
-	LESSTHAN            CKComparator = "LESS_THAN"
-	LESSTHANOREQUALS    CKComparator = "LESS_THAN_OR_EQUALS"
+	CKComparatorBEGINSWITH          CKComparator = "BEGINS_WITH"
+	CKComparatorCONTAINSANY         CKComparator = "CONTAINS_ANY"
+	CKComparatorEQUALS              CKComparator = "EQUALS"
+	CKComparatorGREATERTHAN         CKComparator = "GREATER_THAN"
+	CKComparatorGREATERTHANOREQUALS CKComparator = "GREATER_THAN_OR_EQUALS"
+	CKComparatorIN                  CKComparator = "IN"
+	CKComparatorLESSTHAN            CKComparator = "LESS_THAN"
+	CKComparatorLESSTHANOREQUALS    CKComparator = "LESS_THAN_OR_EQUALS"
 )
 
 // Valid indicates whether the value is a known member of the CKComparator enum.
 func (e CKComparator) Valid() bool {
 	switch e {
-	case BEGINSWITH:
+	case CKComparatorBEGINSWITH:
 		return true
-	case CONTAINSANY:
+	case CKComparatorCONTAINSANY:
 		return true
-	case EQUALS:
+	case CKComparatorEQUALS:
 		return true
-	case GREATERTHAN:
+	case CKComparatorGREATERTHAN:
 		return true
-	case GREATERTHANOREQUALS:
+	case CKComparatorGREATERTHANOREQUALS:
 		return true
-	case IN:
+	case CKComparatorIN:
 		return true
-	case LESSTHAN:
+	case CKComparatorLESSTHAN:
 		return true
-	case LESSTHANOREQUALS:
+	case CKComparatorLESSTHANOREQUALS:
 		return true
 	default:
 		return false
@@ -945,6 +945,54 @@ func (e PhotoIndexingStateField) Valid() bool {
 	}
 }
 
+// Defines values for PhotoObjectIndex.
+const (
+	CPLAssetBurstStackAssetByAssetDate        PhotoObjectIndex = "CPLAssetBurstStackAssetByAssetDate"
+	CPLAssetByAssetDateWithoutHiddenOrDeleted PhotoObjectIndex = "CPLAssetByAssetDateWithoutHiddenOrDeleted"
+	CPLAssetDeletedByExpungedDate             PhotoObjectIndex = "CPLAssetDeletedByExpungedDate"
+	CPLAssetHiddenByAssetDate                 PhotoObjectIndex = "CPLAssetHiddenByAssetDate"
+	CPLAssetInSmartAlbumByAssetDateFavorite   PhotoObjectIndex = "CPLAssetInSmartAlbumByAssetDate:Favorite"
+	CPLAssetInSmartAlbumByAssetDateLive       PhotoObjectIndex = "CPLAssetInSmartAlbumByAssetDate:Live"
+	CPLAssetInSmartAlbumByAssetDatePanorama   PhotoObjectIndex = "CPLAssetInSmartAlbumByAssetDate:Panorama"
+	CPLAssetInSmartAlbumByAssetDateScreenshot PhotoObjectIndex = "CPLAssetInSmartAlbumByAssetDate:Screenshot"
+	CPLAssetInSmartAlbumByAssetDateSlomo      PhotoObjectIndex = "CPLAssetInSmartAlbumByAssetDate:Slomo"
+	CPLAssetInSmartAlbumByAssetDateTimelapse  PhotoObjectIndex = "CPLAssetInSmartAlbumByAssetDate:Timelapse"
+	CPLAssetInSmartAlbumByAssetDateVideo      PhotoObjectIndex = "CPLAssetInSmartAlbumByAssetDate:Video"
+	CPLContainerRelationNotDeletedByAssetDate PhotoObjectIndex = "CPLContainerRelationNotDeletedByAssetDate"
+)
+
+// Valid indicates whether the value is a known member of the PhotoObjectIndex enum.
+func (e PhotoObjectIndex) Valid() bool {
+	switch e {
+	case CPLAssetBurstStackAssetByAssetDate:
+		return true
+	case CPLAssetByAssetDateWithoutHiddenOrDeleted:
+		return true
+	case CPLAssetDeletedByExpungedDate:
+		return true
+	case CPLAssetHiddenByAssetDate:
+		return true
+	case CPLAssetInSmartAlbumByAssetDateFavorite:
+		return true
+	case CPLAssetInSmartAlbumByAssetDateLive:
+		return true
+	case CPLAssetInSmartAlbumByAssetDatePanorama:
+		return true
+	case CPLAssetInSmartAlbumByAssetDateScreenshot:
+		return true
+	case CPLAssetInSmartAlbumByAssetDateSlomo:
+		return true
+	case CPLAssetInSmartAlbumByAssetDateTimelapse:
+		return true
+	case CPLAssetInSmartAlbumByAssetDateVideo:
+		return true
+	case CPLContainerRelationNotDeletedByAssetDate:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotoPrimaryZoneName.
 const (
 	PrimarySync PhotoPrimaryZoneName = "PrimarySync"
@@ -1014,6 +1062,96 @@ func (e PhotoSmartAlbumName) Valid() bool {
 	case TimeLapse:
 		return true
 	case Videos:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosCountFilterFieldName.
+const (
+	IndexCountID PhotosCountFilterFieldName = "indexCountID"
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountFilterFieldName enum.
+func (e PhotosCountFilterFieldName) Valid() bool {
+	switch e {
+	case IndexCountID:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosCountFilterComparator.
+const (
+	PhotosCountFilterComparatorIN PhotosCountFilterComparator = "IN"
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountFilterComparator enum.
+func (e PhotosCountFilterComparator) Valid() bool {
+	switch e {
+	case PhotosCountFilterComparatorIN:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosCountQueryRecordType.
+const (
+	HyperionIndexCountLookup PhotosCountQueryRecordType = "HyperionIndexCountLookup"
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountQueryRecordType enum.
+func (e PhotosCountQueryRecordType) Valid() bool {
+	switch e {
+	case HyperionIndexCountLookup:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosCountRequestBatchResultsLimit.
+const (
+	PhotosCountRequestBatchResultsLimitN1 PhotosCountRequestBatchResultsLimit = 1
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountRequestBatchResultsLimit enum.
+func (e PhotosCountRequestBatchResultsLimit) Valid() bool {
+	switch e {
+	case PhotosCountRequestBatchResultsLimitN1:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosCountRequestBatchZoneWide.
+const (
+	True PhotosCountRequestBatchZoneWide = true
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountRequestBatchZoneWide enum.
+func (e PhotosCountRequestBatchZoneWide) Valid() bool {
+	switch e {
+	case True:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotosCountStringListType.
+const (
+	PhotosCountStringListTypeSTRINGLIST PhotosCountStringListType = "STRING_LIST"
+)
+
+// Valid indicates whether the value is a known member of the PhotosCountStringListType enum.
+func (e PhotosCountStringListType) Valid() bool {
+	switch e {
+	case PhotosCountStringListTypeSTRINGLIST:
 		return true
 	default:
 		return false
@@ -2735,6 +2873,9 @@ type PhotoIndexingRecordType string
 // PhotoIndexingStateField Reference Photos initialization protocol value.
 type PhotoIndexingStateField string
 
+// PhotoObjectIndex Pinned photo count index identifiers.
+type PhotoObjectIndex string
+
 // PhotoPrimaryZoneName Reference Photos initialization protocol value.
 type PhotoPrimaryZoneName string
 
@@ -2743,6 +2884,97 @@ type PhotoPrimaryZoneType string
 
 // PhotoSmartAlbumName Source smart album names in their discovery order.
 type PhotoSmartAlbumName string
+
+// PhotosCountField Source integer-coercible photo count.
+type PhotosCountField struct {
+	// Value Source integer input before coercion; query validation preserves arbitrary integer magnitude.
+	Value                CKIntegerInput           `json:"value"`
+	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+}
+
+// PhotosCountFields Count record fields.
+type PhotosCountFields struct {
+	// ItemCount Source integer-coercible photo count.
+	ItemCount            PhotosCountField         `json:"itemCount"`
+	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+}
+
+// PhotosCountFilter Index count membership filter.
+type PhotosCountFilter struct {
+	FieldName  PhotosCountFilterFieldName  `json:"fieldName"`
+	Comparator PhotosCountFilterComparator `json:"comparator"`
+
+	// FieldValue Photo index identifiers.
+	FieldValue PhotosCountStringList `json:"fieldValue"`
+}
+
+// PhotosCountFilterFieldName defines model for PhotosCountFilter.FieldName.
+type PhotosCountFilterFieldName string
+
+// PhotosCountFilterComparator defines model for PhotosCountFilter.Comparator.
+type PhotosCountFilterComparator string
+
+// PhotosCountQuery Hyperion index count query.
+type PhotosCountQuery struct {
+	RecordType PhotosCountQueryRecordType `json:"recordType"`
+
+	// FilterBy Index count membership filter.
+	FilterBy PhotosCountFilter `json:"filterBy"`
+}
+
+// PhotosCountQueryRecordType defines model for PhotosCountQuery.RecordType.
+type PhotosCountQueryRecordType string
+
+// PhotosCountRecord Count record.
+type PhotosCountRecord struct {
+	// Fields Count record fields.
+	Fields               PhotosCountFields        `json:"fields"`
+	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+}
+
+// PhotosCountRequest Photos Hyperion batch count request.
+type PhotosCountRequest struct {
+	Batch []PhotosCountRequestBatch `json:"batch"`
+}
+
+// PhotosCountRequestBatch One count lookup in a primary or shared photo zone.
+type PhotosCountRequestBatch struct {
+	ResultsLimit PhotosCountRequestBatchResultsLimit `json:"resultsLimit"`
+
+	// Query Hyperion index count query.
+	Query    PhotosCountQuery                `json:"query"`
+	ZoneWide PhotosCountRequestBatchZoneWide `json:"zoneWide"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+}
+
+// PhotosCountRequestBatchResultsLimit defines model for PhotosCountRequestBatch.ResultsLimit.
+type PhotosCountRequestBatchResultsLimit int
+
+// PhotosCountRequestBatchZoneWide defines model for PhotosCountRequestBatch.ZoneWide.
+type PhotosCountRequestBatchZoneWide bool
+
+// PhotosCountResponse Validated full count batch response.
+type PhotosCountResponse struct {
+	Batch                *[]PhotosCountResponseBatch `json:"batch,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON    `json:"-"`
+}
+
+// PhotosCountResponseBatch One count result batch.
+type PhotosCountResponseBatch struct {
+	Records              *[]PhotosCountRecord     `json:"records,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+}
+
+// PhotosCountStringList Photo index identifiers.
+type PhotosCountStringList struct {
+	Type  PhotosCountStringListType `json:"type"`
+	Value []string                  `json:"value"`
+}
+
+// PhotosCountStringListType defines model for PhotosCountStringList.Type.
+type PhotosCountStringListType string
 
 // RecurrenceRuleIDPrefix Pinned Reminder domain mapping protocol value.
 type RecurrenceRuleIDPrefix string
@@ -8595,6 +8827,340 @@ func (a CKZoneListZone) MarshalJSON() ([]byte, error) {
 		object["deleted"], err = json.Marshal(a.Deleted)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'deleted': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotosCountField. Returns the specified
+// element and whether it was found
+func (a PhotosCountField) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotosCountField
+func (a *PhotosCountField) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotosCountField to handle AdditionalProperties
+func (a *PhotosCountField) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["value"]; found {
+		err = json.Unmarshal(raw, &a.Value)
+		if err != nil {
+			return fmt.Errorf("error reading 'value': %w", err)
+		}
+		delete(object, "value")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotosCountField to handle AdditionalProperties
+func (a PhotosCountField) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["value"], err = json.Marshal(a.Value)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'value': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotosCountFields. Returns the specified
+// element and whether it was found
+func (a PhotosCountFields) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotosCountFields
+func (a *PhotosCountFields) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotosCountFields to handle AdditionalProperties
+func (a *PhotosCountFields) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["itemCount"]; found {
+		err = json.Unmarshal(raw, &a.ItemCount)
+		if err != nil {
+			return fmt.Errorf("error reading 'itemCount': %w", err)
+		}
+		delete(object, "itemCount")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotosCountFields to handle AdditionalProperties
+func (a PhotosCountFields) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["itemCount"], err = json.Marshal(a.ItemCount)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'itemCount': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotosCountRecord. Returns the specified
+// element and whether it was found
+func (a PhotosCountRecord) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotosCountRecord
+func (a *PhotosCountRecord) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotosCountRecord to handle AdditionalProperties
+func (a *PhotosCountRecord) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["fields"]; found {
+		err = json.Unmarshal(raw, &a.Fields)
+		if err != nil {
+			return fmt.Errorf("error reading 'fields': %w", err)
+		}
+		delete(object, "fields")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotosCountRecord to handle AdditionalProperties
+func (a PhotosCountRecord) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["fields"], err = json.Marshal(a.Fields)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'fields': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotosCountResponse. Returns the specified
+// element and whether it was found
+func (a PhotosCountResponse) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotosCountResponse
+func (a *PhotosCountResponse) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotosCountResponse to handle AdditionalProperties
+func (a *PhotosCountResponse) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["batch"]; found {
+		err = json.Unmarshal(raw, &a.Batch)
+		if err != nil {
+			return fmt.Errorf("error reading 'batch': %w", err)
+		}
+		delete(object, "batch")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotosCountResponse to handle AdditionalProperties
+func (a PhotosCountResponse) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Batch != nil {
+		object["batch"], err = json.Marshal(a.Batch)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'batch': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotosCountResponseBatch. Returns the specified
+// element and whether it was found
+func (a PhotosCountResponseBatch) Get(fieldName string) (value CKUnknownJSON, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotosCountResponseBatch
+func (a *PhotosCountResponseBatch) Set(fieldName string, value CKUnknownJSON) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotosCountResponseBatch to handle AdditionalProperties
+func (a *PhotosCountResponseBatch) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["records"]; found {
+		err = json.Unmarshal(raw, &a.Records)
+		if err != nil {
+			return fmt.Errorf("error reading 'records': %w", err)
+		}
+		delete(object, "records")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]CKUnknownJSON)
+		for fieldName, fieldBuf := range object {
+			var fieldVal CKUnknownJSON
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotosCountResponseBatch to handle AdditionalProperties
+func (a PhotosCountResponseBatch) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Records != nil {
+		object["records"], err = json.Marshal(a.Records)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'records': %w", err)
 		}
 	}
 

@@ -48,7 +48,7 @@ func runPhotoAlbumsSDK(t *testing.T, scenario accountScenario) {
 
 	actual, err := client.ListPhotoAlbums(t.Context(), icloud.ListPhotoAlbumsRequest{Auth: auth})
 	if len(scenario.Error) != 0 {
-		checkPhotoAlbumsFailure(t, scenario, actual, err)
+		checkPhotoReadFailure(t, scenario, actual, err)
 	} else {
 		if err != nil {
 			t.Fatal(err)
@@ -83,15 +83,30 @@ func runPhotoAlbumsSDK(t *testing.T, scenario accountScenario) {
 	}
 }
 
-func checkPhotoAlbumsFailure(t *testing.T, scenario accountScenario, actual *icloud.ListPhotoAlbumsResult, err error) {
+func checkPhotoReadFailure(t *testing.T, scenario accountScenario, actual *icloud.ListPhotoAlbumsResult, err error) {
 	t.Helper()
 
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
+
+	var expected map[string]string
+
+	decodeErr := json.Unmarshal(scenario.Error, &expected)
+	if decodeErr != nil {
+		t.Fatal(decodeErr)
+	}
 
 	kind := reminderSyncFailureKind(last.Status)
 
 	if last.Status < 400 {
 		kind = icloud.InvalidResponse
+	}
+
+	if expected["type"] == "KeyError" {
+		kind = icloud.NotFound
+	}
+
+	if expected["type"] == "PyiCloudServiceNotActivatedException" {
+		kind = icloud.Unavailable
 	}
 
 	var failure *icloud.ClientError

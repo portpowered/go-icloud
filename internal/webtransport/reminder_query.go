@@ -90,7 +90,7 @@ func reminderCompoundBody(listID string, completed bool, limit int64, continuati
 
 func reminderCompoundFilter(name, value string) string {
 	return fmt.Sprintf("{%q: %q, %q: %q, %q: %s}", protocol.RemindersCKQueryFilterByComparator,
-		cloudkit.EQUALS, protocol.RemindersCKQueryFilterByFieldName, name,
+		cloudkit.CKComparatorEQUALS, protocol.RemindersCKQueryFilterByFieldName, name,
 		protocol.RemindersCKQueryFilterByFieldValue, value)
 }
 

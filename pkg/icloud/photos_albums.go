@@ -8,6 +8,7 @@ import (
 )
 
 type photoAlbumEntry struct {
+	index      string
 	album      PhotoAlbum
 	parent     *string
 	descending bool
@@ -49,7 +50,7 @@ func projectPhotoAlbums(records []cloudkit.CKRecord) ([]photoAlbumEntry, error) 
 		album.RecordChangeTag.SetNull()
 
 		positions[album.ID] = len(entries)
-		entries = append(entries, photoAlbumEntry{album: album, parent: nil, descending: false})
+		entries = append(entries, photoAlbumEntry{album: album, parent: nil, descending: false, index: photoSmartIndex(name)})
 	}
 
 	for _, record := range records {
@@ -110,7 +111,8 @@ func photoAlbumFromRecord(record cloudkit.CKRecord) (photoAlbumEntry, bool, erro
 
 func photoAlbumDetails(record cloudkit.CKRecord, name string) (photoAlbumEntry, error) {
 	entry := photoAlbumEntry{album: PhotoAlbum{ID: record.RecordName, Name: name, FullName: name,
-		RecordChangeTag: record.RecordChangeTag}, parent: nil, descending: false}
+		RecordChangeTag: record.RecordChangeTag}, parent: nil, descending: false,
+		index: string(cloudkit.CPLContainerRelationNotDeletedByAssetDate) + ":" + record.RecordName}
 	if !entry.album.RecordChangeTag.IsSpecified() {
 		entry.album.RecordChangeTag.SetNull()
 	}
