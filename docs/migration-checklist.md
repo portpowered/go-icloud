@@ -1,5 +1,14 @@
 # iCloud migration checklist
 
+The separate Go CLI now exposes `reminder-changes`, with optional `--since` input
+that preserves the difference between omission and an explicit empty cursor.
+Its 72 Source-derived change cases bind all ordered events, full reminder fields,
+null tombstones, typed failures, prior response evidence and complete exchange
+consumption. Together with existing zones, lists, lookup and sync reads, the CLI
+Reminders matrix contains 178 scenarios. The SDK and CLI milestones still require
+successful CI and exact-commit independent approval before merging; live Go
+verification and full migration/release acceptance remain open.
+
 The reminder change-iteration matrix contains 72 Source-executed scenarios and
 75 paired exchanges. It binds optional cursors, pagination,
 multiple zones, ordered duplicate events, unrelated records, tombstones,
