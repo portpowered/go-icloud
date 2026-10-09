@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
@@ -25,6 +26,20 @@ func DecodeReminderEventRecord(item cloudkit.CKZoneChangesZone_Records_Item) (*R
 		return nil, fmt.Errorf("encode reminder event record: %w", err)
 	}
 
+	return decodeReminderEventJSON(raw)
+}
+
+// DecodeReminderQueryRecord selects the Source model alternative for a compound record.
+func DecodeReminderQueryRecord(item cloudkit.CKQueryResponse_Records_Item) (*ReminderEventRecord, error) {
+	raw, err := json.Marshal(item)
+	if err != nil {
+		return nil, fmt.Errorf("encode reminder query record: %w", err)
+	}
+
+	return decodeReminderEventJSON(raw)
+}
+
+func decodeReminderEventJSON(raw []byte) (*ReminderEventRecord, error) {
 	fields, err := accountFields(raw)
 	if err != nil {
 		return nil, err
@@ -48,9 +63,10 @@ func DecodeReminderEventRecord(item cloudkit.CKZoneChangesZone_Records_Item) (*R
 		}
 	}
 
-	if reminderSyncErrorRecord(item, fields) {
-		failure, _ := item.AsCKErrorItem()
+	var failure cloudkit.CKErrorItem
 
+	failureErr := json.Unmarshal(raw, &failure)
+	if failureErr == nil && reminderRequiredValue(fields, protocol.RemindersCKErrorItemServerErrorCode) {
 		score := reminderUnionRank(reflect.TypeOf(failure), raw, true)
 		if score > best {
 			result = &ReminderEventRecord{Record: nil, Tombstone: nil, Failure: &failure}

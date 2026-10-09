@@ -174,6 +174,34 @@ matches the pinned Windows reference runtime's microsecond rounding and range;
 these limits are reference behavior rather than verified Apple date restrictions.
 Compound reminder queries and live Go verification remain pending.
 
+`ListReminders` reads every page of a list's compound reminder query and returns
+the complete reminder snapshot together with linked alarms, location triggers,
+URL/image attachments, hashtags and recurrence rules. The list ID is sent
+literally; obtain its complete record name from `ListReminderLists`.
+Related records outside the returned list are filtered after all pages, and
+duplicate IDs retain their last value and original reminder position.
+
+```go
+snapshot, err := client.ListReminders(ctx, icloud.ListRemindersRequest{
+    Auth: resumed.Auth,
+    ListID: "List/synthetic-list",
+})
+if err != nil {
+    return err
+}
+for _, reminder := range snapshot.Reminders {
+    fmt.Println(reminder.ID, reminder.Title)
+}
+```
+
+An omitted page size uses 200; `ResultsLimit` overrides the provider page size,
+while the method still consumes every continuation page. `IncludeCompleted`
+defaults to false. Response evidence and cookie updates remain in `Responses`.
+Sixteen paired Source query scenarios cover empty and multiple results,
+pagination, provider failure, related-record defaults, duplicate replacement,
+orphan filtering, unsupported types and unknown enum fallbacks. This API is
+under verification; the separate CLI compound query command remains pending.
+
 The separate Go CLI module reads account data and resumes an existing saved
 login. Import the Python reference login once, then reuse the resulting private
 Go session file. Password login and MFA completion are still pending, and live

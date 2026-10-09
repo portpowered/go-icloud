@@ -6,6 +6,112 @@ info:
 paths: {}
 components:
   schemas:
+    ReminderAlarm:
+      type: object
+      description: Alarm linked to a reminder and an optional trigger identifier.
+      required: [id, reminderID, alarmUID, triggerID, recordChangeTag]
+      example: {id: Alarm/synthetic, reminderID: Reminder/synthetic, alarmUID: synthetic, triggerID: synthetic, recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: "Complete provider record name."}
+        reminderID: {type: string, x-go-name: ReminderID, description: "Complete parent reminder record name."}
+        alarmUID: {type: string, x-go-name: AlarmUID, description: "Alarm unique identifier; absent values produce empty text."}
+        triggerID: {type: string, x-go-name: TriggerID, description: "Trigger identifier; absent values produce empty text."}
+        recordChangeTag: {type: string, nullable: true, description: "Provider revision; omitted revisions become explicit null."}
+    ReminderLocationTrigger:
+      type: object
+      description: Location alarm geometry and proximity direction.
+      required: [id, alarmID, title, address, latitude, longitude, radius, proximity, locationUID, recordChangeTag]
+      example: {id: AlarmTrigger/synthetic, alarmID: Alarm/synthetic, title: '', address: '', latitude: 0, longitude: 0, radius: 0, proximity: 1, locationUID: '', recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: "Complete provider record name."}
+        alarmID: {type: string, x-go-name: AlarmID, description: "Complete parent alarm record name."}
+        title: {type: string, description: "Location label; absent values produce empty text."}
+        address: {type: string, description: "Location address; absent values produce empty text."}
+        latitude: {type: number, format: double, description: "Latitude in degrees; absent values produce zero."}
+        longitude: {type: number, format: double, description: "Longitude in degrees; absent values produce zero."}
+        radius: {type: number, format: double, minimum: 0, description: "Geofence radius in meters; must be nonnegative."}
+        proximity: {type: integer, enum: [1, 2], x-enum-varnames: [ReminderArriving, ReminderLeaving], description: "Arrival or departure direction; unknown values default to arrival."}
+        locationUID: {type: string, x-go-name: LocationUID, description: "Location unique identifier; absent values produce empty text."}
+        recordChangeTag: {type: string, nullable: true, description: "Provider revision; omitted revisions become explicit null."}
+    ReminderURLAttachment:
+      type: object
+      description: URL attachment linked to a reminder.
+      required: [id, reminderID, url, uti, recordChangeTag]
+      example: {id: Attachment/synthetic, reminderID: Reminder/synthetic, url: '', uti: public.url, recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: "Complete provider record name."}
+        reminderID: {type: string, x-go-name: ReminderID, description: "Complete parent reminder record name."}
+        url: {type: string, x-go-name: URL, description: "Decoded attachment URL or the original text when decoding fails."}
+        uti: {type: string, x-go-name: UTI, description: "Uniform type identifier; defaults to the attachment type."}
+        recordChangeTag: {type: string, nullable: true, description: "Provider revision; omitted revisions become explicit null."}
+    ReminderImageAttachment:
+      type: object
+      description: Image attachment metadata and provider download URL.
+      required: [id, reminderID, fileAssetURL, filename, fileSize, width, height, uti, recordChangeTag]
+      example: {id: Attachment/synthetic, reminderID: Reminder/synthetic, fileAssetURL: '', filename: '', fileSize: 0, width: 0, height: 0, uti: public.jpeg, recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: "Complete provider record name."}
+        reminderID: {type: string, x-go-name: ReminderID, description: "Complete parent reminder record name."}
+        fileAssetURL: {type: string, x-go-name: FileAssetURL, description: "Provider download URL; empty when no typed asset supplies it."}
+        filename: {type: string, description: "Attachment filename; absent values produce empty text."}
+        fileSize: {type: integer, format: int64, minimum: 0, description: "Attachment size in bytes; defaults to zero."}
+        width: {type: integer, format: int64, minimum: 0, description: "Image width in pixels; defaults to zero."}
+        height: {type: integer, format: int64, minimum: 0, description: "Image height in pixels; defaults to zero."}
+        uti: {type: string, x-go-name: UTI, description: "Uniform type identifier; defaults to the attachment type."}
+        recordChangeTag: {type: string, nullable: true, description: "Provider revision; omitted revisions become explicit null."}
+    ReminderAttachment:
+      description: Complete URL or image attachment projection.
+      oneOf:
+        - {$ref: '#/components/schemas/ReminderURLAttachment'}
+        - {$ref: '#/components/schemas/ReminderImageAttachment'}
+      example: {id: Attachment/synthetic, reminderID: Reminder/synthetic, url: '', uti: public.url, recordChangeTag: null}
+    ReminderHashtag:
+      type: object
+      description: Hashtag text and optional creation instant.
+      required: [id, reminderID, name, created, recordChangeTag]
+      example: {id: Hashtag/synthetic, reminderID: Reminder/synthetic, name: synthetic, created: null, recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: "Complete provider record name."}
+        reminderID: {type: string, x-go-name: ReminderID, description: "Complete parent reminder record name."}
+        name: {type: string, description: "Decoded hashtag text; absent values produce empty text."}
+        created: {type: string, format: date-time, nullable: true, description: "Optional hashtag creation instant."}
+        recordChangeTag: {type: string, nullable: true, description: "Provider revision; omitted revisions become explicit null."}
+    ReminderRecurrenceRule:
+      type: object
+      description: Recurrence frequency and count settings; unknown frequencies default to daily.
+      required: [id, reminderID, frequency, interval, occurrenceCount, firstDayOfWeek, recordChangeTag]
+      example: {id: RecurrenceRule/synthetic, reminderID: Reminder/synthetic, frequency: 1, interval: 1, occurrenceCount: 0, firstDayOfWeek: 0, recordChangeTag: null}
+      properties:
+        id: {type: string, x-go-name: ID, description: "Complete provider record name."}
+        reminderID: {type: string, x-go-name: ReminderID, description: "Complete parent reminder record name."}
+        frequency: {type: integer, enum: [1, 2, 3, 4], x-enum-varnames: [ReminderDaily, ReminderWeekly, ReminderMonthly, ReminderYearly], description: "Daily through yearly recurrence; unknown values default to daily."}
+        interval: {type: integer, format: int64, minimum: 1, description: "Frequency multiplier; defaults to one."}
+        occurrenceCount: {type: integer, format: int64, minimum: 0, description: "Occurrence count; zero means no count limit."}
+        firstDayOfWeek: {type: integer, format: int64, minimum: 0, maximum: 6, description: "Provider weekday index from zero through six; defaults to zero."}
+        recordChangeTag: {type: string, nullable: true, description: "Provider revision; omitted revisions become explicit null."}
+    ListRemindersRequest:
+      type: object
+      description: Compound reminder query for the literal supplied list record name.
+      required: [auth, listID]
+      example: {auth: {accountID: synthetic-account, clientID: synthetic-client, remindersServiceURL: 'https://reminders.example.invalid', headers: []}, listID: List/synthetic, includeCompleted: false, resultsLimit: 200}
+      properties:
+        auth: {$ref: '#/components/schemas/AuthContext'}
+        listID: {type: string, x-go-name: ListID, description: "Literal list record name used in the provider query and final scope."}
+        includeCompleted: {type: boolean, default: false, description: "Whether completed reminders are included; omission sends false."}
+        resultsLimit: {type: integer, format: int64, description: Optional provider page size; omission uses 200. All pages are consumed.}
+    ListRemindersResult:
+      type: object
+      description: Complete scoped reminder snapshot and related records; duplicate IDs retain their last value and first position.
+      required: [reminders, alarms, triggers, attachments, hashtags, recurrenceRules, responses]
+      example: {reminders: [], alarms: {}, triggers: {}, attachments: {}, hashtags: {}, recurrenceRules: {}, responses: []}
+      properties:
+        reminders: {type: array, items: {$ref: '#/components/schemas/Reminder'}}
+        alarms: {type: object, additionalProperties: {$ref: '#/components/schemas/ReminderAlarm'}}
+        triggers: {type: object, additionalProperties: {$ref: '#/components/schemas/ReminderLocationTrigger'}}
+        attachments: {type: object, additionalProperties: {$ref: '#/components/schemas/ReminderAttachment'}}
+        hashtags: {type: object, additionalProperties: {$ref: '#/components/schemas/ReminderHashtag'}}
+        recurrenceRules: {type: object, additionalProperties: {$ref: '#/components/schemas/ReminderRecurrenceRule'}}
+        responses: {type: array, items: {$ref: '#/components/schemas/ResponseMetadata'}}
     UnknownJSONValue:
       description: Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
       anyOf:

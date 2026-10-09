@@ -14,13 +14,43 @@ import (
 
 // Defines values for AlarmIDPrefix.
 const (
-	Alarm AlarmIDPrefix = "Alarm/"
+	AlarmIDPrefixAlarm AlarmIDPrefix = "Alarm/"
 )
 
 // Valid indicates whether the value is a known member of the AlarmIDPrefix enum.
 func (e AlarmIDPrefix) Valid() bool {
 	switch e {
-	case Alarm:
+	case AlarmIDPrefixAlarm:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AlarmRecordType.
+const (
+	AlarmRecordTypeAlarm AlarmRecordType = "Alarm"
+)
+
+// Valid indicates whether the value is a known member of the AlarmRecordType enum.
+func (e AlarmRecordType) Valid() bool {
+	switch e {
+	case AlarmRecordTypeAlarm:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AlarmTriggerRecordType.
+const (
+	AlarmTrigger AlarmTriggerRecordType = "AlarmTrigger"
+)
+
+// Valid indicates whether the value is a known member of the AlarmTriggerRecordType enum.
+func (e AlarmTriggerRecordType) Valid() bool {
+	switch e {
+	case AlarmTrigger:
 		return true
 	default:
 		return false
@@ -29,13 +59,28 @@ func (e AlarmIDPrefix) Valid() bool {
 
 // Defines values for AttachmentIDPrefix.
 const (
-	Attachment AttachmentIDPrefix = "Attachment/"
+	AttachmentIDPrefixAttachment AttachmentIDPrefix = "Attachment/"
 )
 
 // Valid indicates whether the value is a known member of the AttachmentIDPrefix enum.
 func (e AttachmentIDPrefix) Valid() bool {
 	switch e {
-	case Attachment:
+	case AttachmentIDPrefixAttachment:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AttachmentRecordType.
+const (
+	AttachmentRecordTypeAttachment AttachmentRecordType = "Attachment"
+)
+
+// Valid indicates whether the value is a known member of the AttachmentRecordType enum.
+func (e AttachmentRecordType) Valid() bool {
+	switch e {
+	case AttachmentRecordTypeAttachment:
 		return true
 	default:
 		return false
@@ -429,6 +474,66 @@ func (e CKUnknownListFieldType) Valid() bool {
 	}
 }
 
+// Defines values for CompoundQueryDefaultLimit.
+const (
+	N200 CompoundQueryDefaultLimit = 200
+)
+
+// Valid indicates whether the value is a known member of the CompoundQueryDefaultLimit enum.
+func (e CompoundQueryDefaultLimit) Valid() bool {
+	switch e {
+	case N200:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CompoundQueryIncludeCompleted.
+const (
+	IncludeCompleted CompoundQueryIncludeCompleted = "includeCompleted"
+)
+
+// Valid indicates whether the value is a known member of the CompoundQueryIncludeCompleted enum.
+func (e CompoundQueryIncludeCompleted) Valid() bool {
+	switch e {
+	case IncludeCompleted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CompoundQueryReferenceAction.
+const (
+	VALIDATE CompoundQueryReferenceAction = "VALIDATE"
+)
+
+// Valid indicates whether the value is a known member of the CompoundQueryReferenceAction enum.
+func (e CompoundQueryReferenceAction) Valid() bool {
+	switch e {
+	case VALIDATE:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CompoundQueryValidateReference.
+const (
+	LookupValidatingReference CompoundQueryValidateReference = "LookupValidatingReference"
+)
+
+// Valid indicates whether the value is a known member of the CompoundQueryValidateReference enum.
+func (e CompoundQueryValidateReference) Valid() bool {
+	switch e {
+	case LookupValidatingReference:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for EncryptedFieldNameSuffix.
 const (
 	Encrypted EncryptedFieldNameSuffix = "Encrypted"
@@ -446,13 +551,58 @@ func (e EncryptedFieldNameSuffix) Valid() bool {
 
 // Defines values for HashtagIDPrefix.
 const (
-	Hashtag HashtagIDPrefix = "Hashtag/"
+	HashtagIDPrefixHashtag HashtagIDPrefix = "Hashtag/"
 )
 
 // Valid indicates whether the value is a known member of the HashtagIDPrefix enum.
 func (e HashtagIDPrefix) Valid() bool {
 	switch e {
-	case Hashtag:
+	case HashtagIDPrefixHashtag:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for HashtagRecordType.
+const (
+	HashtagRecordTypeHashtag HashtagRecordType = "Hashtag"
+)
+
+// Valid indicates whether the value is a known member of the HashtagRecordType enum.
+func (e HashtagRecordType) Valid() bool {
+	switch e {
+	case HashtagRecordTypeHashtag:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ImageAttachmentType.
+const (
+	Image ImageAttachmentType = "Image"
+)
+
+// Valid indicates whether the value is a known member of the ImageAttachmentType enum.
+func (e ImageAttachmentType) Valid() bool {
+	switch e {
+	case Image:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ImageAttachmentUTI.
+const (
+	PublicJpeg ImageAttachmentUTI = "public.jpeg"
+)
+
+// Valid indicates whether the value is a known member of the ImageAttachmentUTI enum.
+func (e ImageAttachmentUTI) Valid() bool {
+	switch e {
+	case PublicJpeg:
 		return true
 	default:
 		return false
@@ -536,13 +686,13 @@ func (e ListFieldIsGroup) Valid() bool {
 
 // Defines values for ListFieldName.
 const (
-	Name ListFieldName = "Name"
+	ListFieldNameName ListFieldName = "Name"
 )
 
 // Valid indicates whether the value is a known member of the ListFieldName enum.
 func (e ListFieldName) Valid() bool {
 	switch e {
-	case Name:
+	case ListFieldNameName:
 		return true
 	default:
 		return false
@@ -609,15 +759,405 @@ func (e ListRecordType) Valid() bool {
 	}
 }
 
+// Defines values for LocationTriggerType.
+const (
+	Location LocationTriggerType = "Location"
+)
+
+// Valid indicates whether the value is a known member of the LocationTriggerType enum.
+func (e LocationTriggerType) Valid() bool {
+	switch e {
+	case Location:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for RecurrenceRuleIDPrefix.
 const (
-	RecurrenceRule RecurrenceRuleIDPrefix = "RecurrenceRule/"
+	RecurrenceRuleIDPrefixRecurrenceRule RecurrenceRuleIDPrefix = "RecurrenceRule/"
 )
 
 // Valid indicates whether the value is a known member of the RecurrenceRuleIDPrefix enum.
 func (e RecurrenceRuleIDPrefix) Valid() bool {
 	switch e {
-	case RecurrenceRule:
+	case RecurrenceRuleIDPrefixRecurrenceRule:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RecurrenceRuleRecordType.
+const (
+	RecurrenceRuleRecordTypeRecurrenceRule RecurrenceRuleRecordType = "RecurrenceRule"
+)
+
+// Valid indicates whether the value is a known member of the RecurrenceRuleRecordType enum.
+func (e RecurrenceRuleRecordType) Valid() bool {
+	switch e {
+	case RecurrenceRuleRecordTypeRecurrenceRule:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldAddress.
+const (
+	Address RelatedFieldAddress = "Address"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldAddress enum.
+func (e RelatedFieldAddress) Valid() bool {
+	switch e {
+	case Address:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldAlarm.
+const (
+	RelatedFieldAlarmAlarm RelatedFieldAlarm = "Alarm"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldAlarm enum.
+func (e RelatedFieldAlarm) Valid() bool {
+	switch e {
+	case RelatedFieldAlarmAlarm:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldAlarmUID.
+const (
+	AlarmUID RelatedFieldAlarmUID = "AlarmUID"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldAlarmUID enum.
+func (e RelatedFieldAlarmUID) Valid() bool {
+	switch e {
+	case AlarmUID:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldFileAsset.
+const (
+	FileAsset RelatedFieldFileAsset = "FileAsset"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldFileAsset enum.
+func (e RelatedFieldFileAsset) Valid() bool {
+	switch e {
+	case FileAsset:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldFileName.
+const (
+	FileName RelatedFieldFileName = "FileName"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldFileName enum.
+func (e RelatedFieldFileName) Valid() bool {
+	switch e {
+	case FileName:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldFileSize.
+const (
+	FileSize RelatedFieldFileSize = "FileSize"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldFileSize enum.
+func (e RelatedFieldFileSize) Valid() bool {
+	switch e {
+	case FileSize:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldFirstDayOfTheWeek.
+const (
+	FirstDayOfTheWeek RelatedFieldFirstDayOfTheWeek = "FirstDayOfTheWeek"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldFirstDayOfTheWeek enum.
+func (e RelatedFieldFirstDayOfTheWeek) Valid() bool {
+	switch e {
+	case FirstDayOfTheWeek:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldFrequency.
+const (
+	Frequency RelatedFieldFrequency = "Frequency"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldFrequency enum.
+func (e RelatedFieldFrequency) Valid() bool {
+	switch e {
+	case Frequency:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldHeight.
+const (
+	Height RelatedFieldHeight = "Height"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldHeight enum.
+func (e RelatedFieldHeight) Valid() bool {
+	switch e {
+	case Height:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldInterval.
+const (
+	Interval RelatedFieldInterval = "Interval"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldInterval enum.
+func (e RelatedFieldInterval) Valid() bool {
+	switch e {
+	case Interval:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldLatitude.
+const (
+	Latitude RelatedFieldLatitude = "Latitude"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldLatitude enum.
+func (e RelatedFieldLatitude) Valid() bool {
+	switch e {
+	case Latitude:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldLocationUID.
+const (
+	LocationUID RelatedFieldLocationUID = "LocationUID"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldLocationUID enum.
+func (e RelatedFieldLocationUID) Valid() bool {
+	switch e {
+	case LocationUID:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldLongitude.
+const (
+	Longitude RelatedFieldLongitude = "Longitude"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldLongitude enum.
+func (e RelatedFieldLongitude) Valid() bool {
+	switch e {
+	case Longitude:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldName.
+const (
+	RelatedFieldNameName RelatedFieldName = "Name"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldName enum.
+func (e RelatedFieldName) Valid() bool {
+	switch e {
+	case RelatedFieldNameName:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldOccurrenceCount.
+const (
+	OccurrenceCount RelatedFieldOccurrenceCount = "OccurrenceCount"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldOccurrenceCount enum.
+func (e RelatedFieldOccurrenceCount) Valid() bool {
+	switch e {
+	case OccurrenceCount:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldProximity.
+const (
+	Proximity RelatedFieldProximity = "Proximity"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldProximity enum.
+func (e RelatedFieldProximity) Valid() bool {
+	switch e {
+	case Proximity:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldRadius.
+const (
+	Radius RelatedFieldRadius = "Radius"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldRadius enum.
+func (e RelatedFieldRadius) Valid() bool {
+	switch e {
+	case Radius:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldReminder.
+const (
+	RelatedFieldReminderReminder RelatedFieldReminder = "Reminder"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldReminder enum.
+func (e RelatedFieldReminder) Valid() bool {
+	switch e {
+	case RelatedFieldReminderReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldTitle.
+const (
+	Title RelatedFieldTitle = "Title"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldTitle enum.
+func (e RelatedFieldTitle) Valid() bool {
+	switch e {
+	case Title:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldTriggerID.
+const (
+	TriggerID RelatedFieldTriggerID = "TriggerID"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldTriggerID enum.
+func (e RelatedFieldTriggerID) Valid() bool {
+	switch e {
+	case TriggerID:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldType.
+const (
+	Type RelatedFieldType = "Type"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldType enum.
+func (e RelatedFieldType) Valid() bool {
+	switch e {
+	case Type:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldURL.
+const (
+	RelatedFieldURLURL RelatedFieldURL = "URL"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldURL enum.
+func (e RelatedFieldURL) Valid() bool {
+	switch e {
+	case RelatedFieldURLURL:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldUTI.
+const (
+	UTI RelatedFieldUTI = "UTI"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldUTI enum.
+func (e RelatedFieldUTI) Valid() bool {
+	switch e {
+	case UTI:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RelatedFieldWidth.
+const (
+	Width RelatedFieldWidth = "Width"
+)
+
+// Valid indicates whether the value is a known member of the RelatedFieldWidth enum.
+func (e RelatedFieldWidth) Valid() bool {
+	switch e {
+	case Width:
 		return true
 	default:
 		return false
@@ -969,6 +1509,36 @@ func (e ReminderSyncQueryRecordType) Valid() bool {
 	}
 }
 
+// Defines values for URLAttachmentType.
+const (
+	URLAttachmentTypeURL URLAttachmentType = "URL"
+)
+
+// Valid indicates whether the value is a known member of the URLAttachmentType enum.
+func (e URLAttachmentType) Valid() bool {
+	switch e {
+	case URLAttachmentTypeURL:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for URLAttachmentUTI.
+const (
+	PublicUrl URLAttachmentUTI = "public.url"
+)
+
+// Valid indicates whether the value is a known member of the URLAttachmentUTI enum.
+func (e URLAttachmentUTI) Valid() bool {
+	switch e {
+	case PublicUrl:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for UnreadableReminderTitle.
 const (
 	ErrorDecodingTitle UnreadableReminderTitle = "Error Decoding Title"
@@ -1047,8 +1617,17 @@ func (e ZoneType) Valid() bool {
 // AlarmIDPrefix Pinned Reminder domain mapping protocol value.
 type AlarmIDPrefix string
 
+// AlarmRecordType Pinned Source compound reminder query protocol value.
+type AlarmRecordType string
+
+// AlarmTriggerRecordType Pinned Source compound reminder query protocol value.
+type AlarmTriggerRecordType string
+
 // AttachmentIDPrefix Pinned Reminder domain mapping protocol value.
 type AttachmentIDPrefix string
+
+// AttachmentRecordType Pinned Source compound reminder query protocol value.
+type AttachmentRecordType string
 
 // CKAssetBytes Exact downloaded asset bytes, retained before decoding list membership.
 type CKAssetBytes = []byte
@@ -1814,11 +2393,32 @@ type CKZoneListZone struct {
 	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
 }
 
+// CompoundQueryDefaultLimit Pinned Source compound reminder query protocol value.
+type CompoundQueryDefaultLimit int
+
+// CompoundQueryIncludeCompleted Pinned Source compound reminder query protocol value.
+type CompoundQueryIncludeCompleted string
+
+// CompoundQueryReferenceAction Pinned Source compound reminder query protocol value.
+type CompoundQueryReferenceAction string
+
+// CompoundQueryValidateReference Pinned Source compound reminder query protocol value.
+type CompoundQueryValidateReference string
+
 // EncryptedFieldNameSuffix Record field-name suffix requiring ENCRYPTED_BYTES or STRING with isEncrypted true.
 type EncryptedFieldNameSuffix string
 
 // HashtagIDPrefix Pinned Reminder domain mapping protocol value.
 type HashtagIDPrefix string
+
+// HashtagRecordType Pinned Source compound reminder query protocol value.
+type HashtagRecordType string
+
+// ImageAttachmentType Pinned Source compound reminder query protocol value.
+type ImageAttachmentType string
+
+// ImageAttachmentUTI Pinned Source compound reminder query protocol value.
+type ImageAttachmentUTI string
 
 // JsonValue Arbitrary extensible CloudKit JSON preserved without numeric coercion.
 type JsonValue = json.RawMessage
@@ -1853,8 +2453,86 @@ type ListFieldSortingStyle string
 // ListRecordType Pinned Reminders list protocol value used by the domain projection.
 type ListRecordType string
 
+// LocationTriggerType Pinned Source compound reminder query protocol value.
+type LocationTriggerType string
+
 // RecurrenceRuleIDPrefix Pinned Reminder domain mapping protocol value.
 type RecurrenceRuleIDPrefix string
+
+// RecurrenceRuleRecordType Pinned Source compound reminder query protocol value.
+type RecurrenceRuleRecordType string
+
+// RelatedFieldAddress Pinned Source compound reminder query protocol value.
+type RelatedFieldAddress string
+
+// RelatedFieldAlarm Pinned Source compound reminder query protocol value.
+type RelatedFieldAlarm string
+
+// RelatedFieldAlarmUID Pinned Source compound reminder query protocol value.
+type RelatedFieldAlarmUID string
+
+// RelatedFieldFileAsset Pinned Source compound reminder query protocol value.
+type RelatedFieldFileAsset string
+
+// RelatedFieldFileName Pinned Source compound reminder query protocol value.
+type RelatedFieldFileName string
+
+// RelatedFieldFileSize Pinned Source compound reminder query protocol value.
+type RelatedFieldFileSize string
+
+// RelatedFieldFirstDayOfTheWeek Pinned Source compound reminder query protocol value.
+type RelatedFieldFirstDayOfTheWeek string
+
+// RelatedFieldFrequency Pinned Source compound reminder query protocol value.
+type RelatedFieldFrequency string
+
+// RelatedFieldHeight Pinned Source compound reminder query protocol value.
+type RelatedFieldHeight string
+
+// RelatedFieldInterval Pinned Source compound reminder query protocol value.
+type RelatedFieldInterval string
+
+// RelatedFieldLatitude Pinned Source compound reminder query protocol value.
+type RelatedFieldLatitude string
+
+// RelatedFieldLocationUID Pinned Source compound reminder query protocol value.
+type RelatedFieldLocationUID string
+
+// RelatedFieldLongitude Pinned Source compound reminder query protocol value.
+type RelatedFieldLongitude string
+
+// RelatedFieldName Pinned Source compound reminder query protocol value.
+type RelatedFieldName string
+
+// RelatedFieldOccurrenceCount Pinned Source compound reminder query protocol value.
+type RelatedFieldOccurrenceCount string
+
+// RelatedFieldProximity Pinned Source compound reminder query protocol value.
+type RelatedFieldProximity string
+
+// RelatedFieldRadius Pinned Source compound reminder query protocol value.
+type RelatedFieldRadius string
+
+// RelatedFieldReminder Pinned Source compound reminder query protocol value.
+type RelatedFieldReminder string
+
+// RelatedFieldTitle Pinned Source compound reminder query protocol value.
+type RelatedFieldTitle string
+
+// RelatedFieldTriggerID Pinned Source compound reminder query protocol value.
+type RelatedFieldTriggerID string
+
+// RelatedFieldType Pinned Source compound reminder query protocol value.
+type RelatedFieldType string
+
+// RelatedFieldURL Pinned Source compound reminder query protocol value.
+type RelatedFieldURL string
+
+// RelatedFieldUTI Pinned Source compound reminder query protocol value.
+type RelatedFieldUTI string
+
+// RelatedFieldWidth Pinned Source compound reminder query protocol value.
+type RelatedFieldWidth string
 
 // ReminderFieldAlarmIDs Pinned Reminder domain mapping protocol value.
 type ReminderFieldAlarmIDs string
@@ -1924,6 +2602,12 @@ type ReminderSyncQueryLimit int
 
 // ReminderSyncQueryRecordType Pinned pseudo record type used to discover the current Reminders sync token.
 type ReminderSyncQueryRecordType string
+
+// URLAttachmentType Pinned Source compound reminder query protocol value.
+type URLAttachmentType string
+
+// URLAttachmentUTI Pinned Source compound reminder query protocol value.
+type URLAttachmentUTI string
 
 // UnreadableReminderTitle Pinned Reminder domain mapping protocol value.
 type UnreadableReminderTitle string

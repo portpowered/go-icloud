@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/oapi-codegen/nullable"
+	"github.com/oapi-codegen/runtime"
 )
 
 // Defines values for AuthCookieSameSite.
@@ -129,6 +130,48 @@ func (e ReminderChangeEventType) Valid() bool {
 	case ReminderChangeDeleted:
 		return true
 	case ReminderChangeUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderLocationTriggerProximity.
+const (
+	ReminderArriving ReminderLocationTriggerProximity = 1
+	ReminderLeaving  ReminderLocationTriggerProximity = 2
+)
+
+// Valid indicates whether the value is a known member of the ReminderLocationTriggerProximity enum.
+func (e ReminderLocationTriggerProximity) Valid() bool {
+	switch e {
+	case ReminderArriving:
+		return true
+	case ReminderLeaving:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderRecurrenceRuleFrequency.
+const (
+	ReminderDaily   ReminderRecurrenceRuleFrequency = 1
+	ReminderMonthly ReminderRecurrenceRuleFrequency = 3
+	ReminderWeekly  ReminderRecurrenceRuleFrequency = 2
+	ReminderYearly  ReminderRecurrenceRuleFrequency = 4
+)
+
+// Valid indicates whether the value is a known member of the ReminderRecurrenceRuleFrequency enum.
+func (e ReminderRecurrenceRuleFrequency) Valid() bool {
+	switch e {
+	case ReminderDaily:
+		return true
+	case ReminderMonthly:
+		return true
+	case ReminderWeekly:
+		return true
+	case ReminderYearly:
 		return true
 	default:
 		return false
@@ -1100,6 +1143,36 @@ type ListReminderZonesResult struct {
 	Zones []ReminderZone `json:"zones"`
 }
 
+// ListRemindersRequest Compound reminder query for the literal supplied list record name.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"includeCompleted":false,"listID":"List/synthetic","resultsLimit":200}
+type ListRemindersRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// IncludeCompleted Whether completed reminders are included; omission sends false.
+	IncludeCompleted *bool `json:"includeCompleted,omitempty"`
+
+	// ListID Literal list record name used in the provider query and final scope.
+	ListID string `json:"listID"`
+
+	// ResultsLimit Optional provider page size; omission uses 200. All pages are consumed.
+	ResultsLimit *int64 `json:"resultsLimit,omitempty"`
+}
+
+// ListRemindersResult Complete scoped reminder snapshot and related records; duplicate IDs retain their last value and first position.
+//
+// Example: {"alarms":{},"attachments":{},"hashtags":{},"recurrenceRules":{},"reminders":[],"responses":[],"triggers":{}}
+type ListRemindersResult struct {
+	Alarms          map[string]ReminderAlarm           `json:"alarms"`
+	Attachments     map[string]ReminderAttachment      `json:"attachments"`
+	Hashtags        map[string]ReminderHashtag         `json:"hashtags"`
+	RecurrenceRules map[string]ReminderRecurrenceRule  `json:"recurrenceRules"`
+	Reminders       []Reminder                         `json:"reminders"`
+	Responses       []ResponseMetadata                 `json:"responses"`
+	Triggers        map[string]ReminderLocationTrigger `json:"triggers"`
+}
+
 // MoveDriveNodesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"destinationID":"FOLDER::synthetic::destination","nodes":[]}
 type MoveDriveNodesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -1228,6 +1301,33 @@ type Reminder struct {
 	Title string `json:"title"`
 }
 
+// ReminderAlarm Alarm linked to a reminder and an optional trigger identifier.
+//
+// Example: {"alarmUID":"synthetic","id":"Alarm/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","triggerID":"synthetic"}
+type ReminderAlarm struct {
+	// AlarmUID Alarm unique identifier; absent values produce empty text.
+	AlarmUID string `json:"alarmUID"`
+
+	// ID Complete provider record name.
+	ID string `json:"id"`
+
+	// RecordChangeTag Provider revision; omitted revisions become explicit null.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderID Complete parent reminder record name.
+	ReminderID string `json:"reminderID"`
+
+	// TriggerID Trigger identifier; absent values produce empty text.
+	TriggerID string `json:"triggerID"`
+}
+
+// ReminderAttachment Complete URL or image attachment projection.
+//
+// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+type ReminderAttachment struct {
+	union json.RawMessage
+}
+
 // ReminderChangeEvent One ordered reminder update or deletion; duplicate events remain distinct.
 //
 // Example: {"reminder":null,"reminderID":"Reminder/synthetic-deleted","type":"deleted"}
@@ -1244,6 +1344,58 @@ type ReminderChangeEvent struct {
 
 // ReminderChangeEventType Updated snapshot or deletion.
 type ReminderChangeEventType string
+
+// ReminderHashtag Hashtag text and optional creation instant.
+//
+// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+type ReminderHashtag struct {
+	// Created Optional hashtag creation instant.
+	Created nullable.Nullable[time.Time] `json:"created"`
+
+	// ID Complete provider record name.
+	ID string `json:"id"`
+
+	// Name Decoded hashtag text; absent values produce empty text.
+	Name string `json:"name"`
+
+	// RecordChangeTag Provider revision; omitted revisions become explicit null.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderID Complete parent reminder record name.
+	ReminderID string `json:"reminderID"`
+}
+
+// ReminderImageAttachment Image attachment metadata and provider download URL.
+//
+// Example: {"fileAssetURL":"","fileSize":0,"filename":"","height":0,"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","uti":"public.jpeg","width":0}
+type ReminderImageAttachment struct {
+	// FileAssetURL Provider download URL; empty when no typed asset supplies it.
+	FileAssetURL string `json:"fileAssetURL"`
+
+	// FileSize Attachment size in bytes; defaults to zero.
+	FileSize int64 `json:"fileSize"`
+
+	// Filename Attachment filename; absent values produce empty text.
+	Filename string `json:"filename"`
+
+	// Height Image height in pixels; defaults to zero.
+	Height int64 `json:"height"`
+
+	// ID Complete provider record name.
+	ID string `json:"id"`
+
+	// RecordChangeTag Provider revision; omitted revisions become explicit null.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderID Complete parent reminder record name.
+	ReminderID string `json:"reminderID"`
+
+	// UTI Uniform type identifier; defaults to the attachment type.
+	UTI string `json:"uti"`
+
+	// Width Image width in pixels; defaults to zero.
+	Width int64 `json:"width"`
+}
 
 // ReminderList A reminder list snapshot with ordered membership and reference defaults.
 //
@@ -1283,8 +1435,95 @@ type ReminderList struct {
 	Title string `json:"title"`
 }
 
+// ReminderLocationTrigger Location alarm geometry and proximity direction.
+//
+// Example: {"address":"","alarmID":"Alarm/synthetic","id":"AlarmTrigger/synthetic","latitude":0,"locationUID":"","longitude":0,"proximity":1,"radius":0,"recordChangeTag":null,"title":""}
+type ReminderLocationTrigger struct {
+	// Address Location address; absent values produce empty text.
+	Address string `json:"address"`
+
+	// AlarmID Complete parent alarm record name.
+	AlarmID string `json:"alarmID"`
+
+	// ID Complete provider record name.
+	ID string `json:"id"`
+
+	// Latitude Latitude in degrees; absent values produce zero.
+	Latitude float64 `json:"latitude"`
+
+	// LocationUID Location unique identifier; absent values produce empty text.
+	LocationUID string `json:"locationUID"`
+
+	// Longitude Longitude in degrees; absent values produce zero.
+	Longitude float64 `json:"longitude"`
+
+	// Proximity Arrival or departure direction; unknown values default to arrival.
+	Proximity ReminderLocationTriggerProximity `json:"proximity"`
+
+	// Radius Geofence radius in meters; must be nonnegative.
+	Radius float64 `json:"radius"`
+
+	// RecordChangeTag Provider revision; omitted revisions become explicit null.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// Title Location label; absent values produce empty text.
+	Title string `json:"title"`
+}
+
+// ReminderLocationTriggerProximity Arrival or departure direction; unknown values default to arrival.
+type ReminderLocationTriggerProximity int
+
 // ReminderMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
 type ReminderMetadata map[string]UnknownJSONValue
+
+// ReminderRecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+//
+// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+type ReminderRecurrenceRule struct {
+	// FirstDayOfWeek Provider weekday index from zero through six; defaults to zero.
+	FirstDayOfWeek int64 `json:"firstDayOfWeek"`
+
+	// Frequency Daily through yearly recurrence; unknown values default to daily.
+	Frequency ReminderRecurrenceRuleFrequency `json:"frequency"`
+
+	// ID Complete provider record name.
+	ID string `json:"id"`
+
+	// Interval Frequency multiplier; defaults to one.
+	Interval int64 `json:"interval"`
+
+	// OccurrenceCount Occurrence count; zero means no count limit.
+	OccurrenceCount int64 `json:"occurrenceCount"`
+
+	// RecordChangeTag Provider revision; omitted revisions become explicit null.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderID Complete parent reminder record name.
+	ReminderID string `json:"reminderID"`
+}
+
+// ReminderRecurrenceRuleFrequency Daily through yearly recurrence; unknown values default to daily.
+type ReminderRecurrenceRuleFrequency int
+
+// ReminderURLAttachment URL attachment linked to a reminder.
+//
+// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+type ReminderURLAttachment struct {
+	// ID Complete provider record name.
+	ID string `json:"id"`
+
+	// RecordChangeTag Provider revision; omitted revisions become explicit null.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderID Complete parent reminder record name.
+	ReminderID string `json:"reminderID"`
+
+	// URL Decoded attachment URL or the original text when decoding fails.
+	URL string `json:"url"`
+
+	// UTI Uniform type identifier; defaults to the attachment type.
+	UTI string `json:"uti"`
+}
 
 // ReminderZone Reminder storage zone identity and current change cursor.
 //
@@ -5194,4 +5433,66 @@ func (a UploadedDriveFile) MarshalJSON() ([]byte, error) {
 		}
 	}
 	return json.Marshal(object)
+}
+
+// AsReminderURLAttachment returns the union data inside the ReminderAttachment as a ReminderURLAttachment
+func (t ReminderAttachment) AsReminderURLAttachment() (ReminderURLAttachment, error) {
+	var body ReminderURLAttachment
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderURLAttachment overwrites any union data inside the ReminderAttachment as the provided ReminderURLAttachment
+func (t *ReminderAttachment) FromReminderURLAttachment(v ReminderURLAttachment) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderURLAttachment performs a merge with any union data inside the ReminderAttachment, using the provided ReminderURLAttachment
+func (t *ReminderAttachment) MergeReminderURLAttachment(v ReminderURLAttachment) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderImageAttachment returns the union data inside the ReminderAttachment as a ReminderImageAttachment
+func (t ReminderAttachment) AsReminderImageAttachment() (ReminderImageAttachment, error) {
+	var body ReminderImageAttachment
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderImageAttachment overwrites any union data inside the ReminderAttachment as the provided ReminderImageAttachment
+func (t *ReminderAttachment) FromReminderImageAttachment(v ReminderImageAttachment) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderImageAttachment performs a merge with any union data inside the ReminderAttachment, using the provided ReminderImageAttachment
+func (t *ReminderAttachment) MergeReminderImageAttachment(v ReminderImageAttachment) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderAttachment) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderAttachment) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
 }

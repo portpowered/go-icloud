@@ -1,5 +1,22 @@
 # Reminders wire contracts
 
+The Go `ListReminders` implementation is under verification against all sixteen
+portable compound query cases. It sends the literal list identifier, completion
+filter, optional page size and continuation marker; consumes all pages; and
+projects complete reminders and supported related records. Per-record failures
+reject the page before projection, with exact HTTP evidence and prior responses.
+Normal records outside the list are still decoded before final relationship
+filtering, matching the pinned Source's behavior.
+
+The eight new compound reference cases entered every statement and branch exit
+in `_ingest_compound_record` (26/26 statements, 16/16 exits). The synthetic-only
+diagnostic keeps the unchanged overall denominators: 584/905 functions entered,
+3,328/5,398 function-body statements (61.65%) and 1,040/2,076 branch exits covered.
+The attachment mapper still has an unentered asset-download URL branch and the
+all-lists reminder facade remains unentered; neither is excluded as unreachable.
+Go compound query parity, remaining endpoint ports, live Go verification and
+full migration/release acceptance remain open.
+
 The selected Reminders service uses five CloudKit POST operations: record lookup,
 query, modify, zone changes and zone discovery. It also downloads provider-issued
 membership assets. `api/external/reminders.openapi.yaml` describes these six
