@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
@@ -19,13 +20,11 @@ func verifyBridge(ctx context.Context, client icloud.Client, config options,
 	if session == nil {
 		return fmt.Errorf("open trusted-device bridge: %w", errors.Join(errBridgeMissing, openErr))
 	}
-	defer func() { resultErr = errors.Join(resultErr, session.Close()) }()
-	progress, err := session.State()
-	if err != nil {
-		return errors.Join(openErr, fmt.Errorf("trusted-device bridge state: %w", err))
-	}
-	if err = saveNativeAuthentication(ctx, config.session, progress.State); err != nil {
-		return err
+	defer func() {
+		resultErr = errors.Join(resultErr, persistBridgeAuthentication(ctx, config.session, session), session.Close())
+	}()
+	if err := persistBridgeAuthentication(ctx, config.session, session); err != nil {
+		return errors.Join(openErr, err)
 	}
 	if openErr != nil {
 		return fmt.Errorf("open trusted-device bridge: %w", openErr)
@@ -39,4 +38,16 @@ func verifyBridge(ctx context.Context, client icloud.Client, config options,
 		return fmt.Errorf("verify trusted-device bridge: %w", err)
 	}
 	return storeAuthenticationResult(ctx, config.session, result, output)
+}
+
+// Persist rotated credentials even when the command deadline or hardware input has failed.
+// Local persistence has its own short bound; socket operations retain the command context.
+func persistBridgeAuthentication(ctx context.Context, path string, session *icloud.NativeBridgeSession) error {
+	progress, err := session.State()
+	if err != nil {
+		return fmt.Errorf("trusted-device bridge persistence state: %w", err)
+	}
+	persistContext, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+	defer cancel()
+	return saveNativeAuthentication(persistContext, path, progress.State)
 }
