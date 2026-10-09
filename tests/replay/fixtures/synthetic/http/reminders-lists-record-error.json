@@ -79,5 +79,12 @@
   "error": {
     "type": "RemindersApiError",
     "message": "Fetch reminder lists failed for 1 record(s): List/synthetic-0: UNKNOWN_ITEM (synthetic missing record)"
-  }
+  },
+  "error_payload": [
+    {
+      "recordName": "List/synthetic-0",
+      "serverErrorCode": "UNKNOWN_ITEM",
+      "reason": "synthetic missing record"
+    }
+  ]
 }

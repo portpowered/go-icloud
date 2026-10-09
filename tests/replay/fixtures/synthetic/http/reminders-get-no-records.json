@@ -81,5 +81,6 @@
   "error": {
     "type": "RemindersApiError",
     "message": "Lookup response validation failed"
-  }
+  },
+  "error_payload": {}
 }

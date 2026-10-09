@@ -81,5 +81,113 @@
   "error": {
     "type": "RemindersApiError",
     "message": "Lookup response validation failed"
+  },
+  "error_payload": {
+    "records": [
+      {
+        "recordType": "Reminder",
+        "recordChangeTag": "synthetic-tag",
+        "fields": {
+          "List": {
+            "type": "REFERENCE",
+            "value": {
+              "recordName": "List/synthetic-list",
+              "action": "VALIDATE"
+            }
+          },
+          "Completed": {
+            "type": "INT64",
+            "value": 1
+          },
+          "Priority": {
+            "type": "INT64",
+            "value": 9
+          },
+          "Flagged": {
+            "type": "INT64",
+            "value": 1
+          },
+          "AllDay": {
+            "type": "INT64",
+            "value": 1
+          },
+          "Deleted": {
+            "type": "INT64",
+            "value": 1
+          },
+          "TitleDocument": {
+            "type": "ENCRYPTED_BYTES",
+            "value": "eJzjYBCq4mAQYJAqERIJrswryUgtyUxWKMksyUlV+DC/p1dKgIsFJA9UAaY1GMEijEARISkwrcEkJcbFAZT7DwT8QHVwtpIMlxSXwJXsU0+k29MO9pa+fxwz0fWwEBOHEBAzagFpAAKOHv8="
+          },
+          "NotesDocument": {
+            "type": "ENCRYPTED_BYTES",
+            "value": "eJzjYBBqZORgEGCQqhaSDq7MK8lILclMVsjLL0kt5ipOTc7PS1HIycxLlRLgYgEpAyoE0xqMYBFGoIi0FJjWYJIS4+IAyv0HAn6gOjhbSYZLikvgSvapJ9LtaQd7S98/jpnoeliIiUMaiBm1gDQA6OEgvQ=="
+          },
+          "DueDate": {
+            "type": "TIMESTAMP",
+            "value": 1700000000123
+          },
+          "StartDate": {
+            "type": "TIMESTAMP",
+            "value": 1700000001123
+          },
+          "CompletionDate": {
+            "type": "TIMESTAMP",
+            "value": 1700000002123
+          },
+          "CreationDate": {
+            "type": "TIMESTAMP",
+            "value": 1700000003123
+          },
+          "LastModifiedDate": {
+            "type": "TIMESTAMP",
+            "value": 1700000004123
+          },
+          "TimeZone": {
+            "type": "STRING",
+            "value": "Europe/London"
+          },
+          "ParentReminder": {
+            "type": "REFERENCE",
+            "value": {
+              "recordName": "Reminder/synthetic-parent",
+              "action": "VALIDATE"
+            }
+          },
+          "AlarmIDs": {
+            "type": "STRING_LIST",
+            "value": [
+              "Alarm/synthetic-first",
+              "synthetic-second",
+              "Alarm/synthetic-first"
+            ]
+          },
+          "HashtagIDs": {
+            "type": "STRING_LIST",
+            "value": [
+              "Hashtag/synthetic-first",
+              "synthetic-second",
+              "Hashtag/synthetic-first"
+            ]
+          },
+          "AttachmentIDs": {
+            "type": "STRING_LIST",
+            "value": [
+              "Attachment/synthetic-first",
+              "synthetic-second",
+              "Attachment/synthetic-first"
+            ]
+          },
+          "RecurrenceRuleIDs": {
+            "type": "STRING_LIST",
+            "value": [
+              "RecurrenceRule/synthetic-first",
+              "synthetic-second",
+              "RecurrenceRule/synthetic-first"
+            ]
+          }
+        }
+      }
+    ]
   }
 }

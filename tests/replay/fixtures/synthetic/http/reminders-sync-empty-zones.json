@@ -135,5 +135,6 @@
   "error": {
     "type": "RemindersApiError",
     "message": "Unable to obtain sync token for Reminders zone"
-  }
+  },
+  "error_payload": null
 }

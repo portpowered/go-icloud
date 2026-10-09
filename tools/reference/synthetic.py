@@ -291,11 +291,12 @@ def replay_synthetic(path):
                 raise
             except Exception as error:
                 from pyicloud.common.cloudkit.client import CloudKitApiError
+                from pyicloud.services.reminders.client import RemindersApiError
 
                 expected = scenario.get("error")
                 if expected != {"type": type(error).__name__, "message": str(error)}:
                     raise AssertionError("Synthetic semantic error mismatch") from error
-                if isinstance(error, CloudKitApiError) and (
+                if isinstance(error, (CloudKitApiError, RemindersApiError)) and (
                     "error_payload" not in scenario
                     or scenario["error_payload"] != project(error.payload)
                 ):
