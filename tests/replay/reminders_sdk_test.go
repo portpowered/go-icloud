@@ -20,7 +20,7 @@ func TestReminderZonesSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 9 {
+	if len(paths) != 10 {
 		t.Fatal("reminder zone scenario inventory changed")
 	}
 

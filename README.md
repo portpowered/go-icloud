@@ -86,7 +86,8 @@ for _, zone := range zones.Zones {
 ```
 
 Unknown response, zone and identity metadata retains its original JSON values.
-This operation is verified against nine synthetic reference scenarios. Reminder
+Authentication build parameters retain their supplied values and ordering.
+This operation is verified against ten synthetic reference scenarios. Reminder
 listing and mutation methods, the corresponding Go CLI commands, and live Go
 reminders verification remain in progress.
 

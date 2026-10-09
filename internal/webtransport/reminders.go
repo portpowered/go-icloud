@@ -50,8 +50,7 @@ func (client *Client) ListReminderZones(ctx context.Context, auth RequestContext
 
 	request.URL.RawQuery = queryPart(protocol.RemindersRemapEnumsName, string(params.RemapEnums)) + "&" +
 		queryPart(protocol.RemindersGetCurrentSyncTokenName, string(params.GetCurrentSyncToken)) + "&" +
-		queryPart(protocol.RemindersClientIdName, auth.Params.ClientId) + "&" +
-		queryPart(protocol.RemindersDsidName, auth.Params.Dsid)
+		orderedAccountQuery(auth.Params)
 
 	response, err := client.readPrepared(request, successfulContent, auth.Cookies)
 	if err != nil {

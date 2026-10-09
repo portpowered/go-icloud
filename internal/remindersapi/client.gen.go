@@ -298,8 +298,14 @@ type RemindersAccept = string
 // RemindersAcceptEncoding defines model for RemindersAcceptEncoding.
 type RemindersAcceptEncoding = string
 
+// RemindersClientBuildNumber defines model for RemindersClientBuildNumber.
+type RemindersClientBuildNumber = string
+
 // RemindersClientId defines model for RemindersClientId.
 type RemindersClientId = string
+
+// RemindersClientMasteringNumber defines model for RemindersClientMasteringNumber.
+type RemindersClientMasteringNumber = string
 
 // RemindersConnection defines model for RemindersConnection.
 type RemindersConnection = string
@@ -338,14 +344,20 @@ type RemindersZoneChangesParams struct {
 
 	// GetCurrentSyncToken Reminders CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it.
 	GetCurrentSyncToken RemindersZoneChangesParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
-	Accept              *RemindersAccept                              `json:"Accept,omitempty"`
-	ContentType         *RemindersContentType                         `json:"Content-Type,omitempty"`
-	Cookie              *RemindersCookie                              `json:"Cookie,omitempty"`
-	Origin              *RemindersOrigin                              `json:"Origin,omitempty"`
-	Referer             *RemindersReferer                             `json:"Referer,omitempty"`
-	UserAgent           *RemindersUserAgent                           `json:"User-Agent,omitempty"`
-	AcceptEncoding      *RemindersAcceptEncoding                      `json:"Accept-Encoding,omitempty"`
-	Connection          *RemindersConnection                          `json:"Connection,omitempty"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *RemindersClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+	Accept                *RemindersAccept                `json:"Accept,omitempty"`
+	ContentType           *RemindersContentType           `json:"Content-Type,omitempty"`
+	Cookie                *RemindersCookie                `json:"Cookie,omitempty"`
+	Origin                *RemindersOrigin                `json:"Origin,omitempty"`
+	Referer               *RemindersReferer               `json:"Referer,omitempty"`
+	UserAgent             *RemindersUserAgent             `json:"User-Agent,omitempty"`
+	AcceptEncoding        *RemindersAcceptEncoding        `json:"Accept-Encoding,omitempty"`
+	Connection            *RemindersConnection            `json:"Connection,omitempty"`
 }
 
 // RemindersZoneChangesParamsRemapEnums defines parameters for RemindersZoneChanges.
@@ -364,14 +376,20 @@ type RemindersLookupRecordsParams struct {
 
 	// GetCurrentSyncToken Reminders CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it.
 	GetCurrentSyncToken RemindersLookupRecordsParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
-	Accept              *RemindersAccept                                `json:"Accept,omitempty"`
-	ContentType         *RemindersContentType                           `json:"Content-Type,omitempty"`
-	Cookie              *RemindersCookie                                `json:"Cookie,omitempty"`
-	Origin              *RemindersOrigin                                `json:"Origin,omitempty"`
-	Referer             *RemindersReferer                               `json:"Referer,omitempty"`
-	UserAgent           *RemindersUserAgent                             `json:"User-Agent,omitempty"`
-	AcceptEncoding      *RemindersAcceptEncoding                        `json:"Accept-Encoding,omitempty"`
-	Connection          *RemindersConnection                            `json:"Connection,omitempty"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *RemindersClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+	Accept                *RemindersAccept                `json:"Accept,omitempty"`
+	ContentType           *RemindersContentType           `json:"Content-Type,omitempty"`
+	Cookie                *RemindersCookie                `json:"Cookie,omitempty"`
+	Origin                *RemindersOrigin                `json:"Origin,omitempty"`
+	Referer               *RemindersReferer               `json:"Referer,omitempty"`
+	UserAgent             *RemindersUserAgent             `json:"User-Agent,omitempty"`
+	AcceptEncoding        *RemindersAcceptEncoding        `json:"Accept-Encoding,omitempty"`
+	Connection            *RemindersConnection            `json:"Connection,omitempty"`
 }
 
 // RemindersLookupRecordsParamsRemapEnums defines parameters for RemindersLookupRecords.
@@ -390,14 +408,20 @@ type RemindersModifyRecordsParams struct {
 
 	// GetCurrentSyncToken Reminders CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it.
 	GetCurrentSyncToken RemindersModifyRecordsParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
-	Accept              *RemindersAccept                                `json:"Accept,omitempty"`
-	ContentType         *RemindersContentType                           `json:"Content-Type,omitempty"`
-	Cookie              *RemindersCookie                                `json:"Cookie,omitempty"`
-	Origin              *RemindersOrigin                                `json:"Origin,omitempty"`
-	Referer             *RemindersReferer                               `json:"Referer,omitempty"`
-	UserAgent           *RemindersUserAgent                             `json:"User-Agent,omitempty"`
-	AcceptEncoding      *RemindersAcceptEncoding                        `json:"Accept-Encoding,omitempty"`
-	Connection          *RemindersConnection                            `json:"Connection,omitempty"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *RemindersClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+	Accept                *RemindersAccept                `json:"Accept,omitempty"`
+	ContentType           *RemindersContentType           `json:"Content-Type,omitempty"`
+	Cookie                *RemindersCookie                `json:"Cookie,omitempty"`
+	Origin                *RemindersOrigin                `json:"Origin,omitempty"`
+	Referer               *RemindersReferer               `json:"Referer,omitempty"`
+	UserAgent             *RemindersUserAgent             `json:"User-Agent,omitempty"`
+	AcceptEncoding        *RemindersAcceptEncoding        `json:"Accept-Encoding,omitempty"`
+	Connection            *RemindersConnection            `json:"Connection,omitempty"`
 }
 
 // RemindersModifyRecordsParamsRemapEnums defines parameters for RemindersModifyRecords.
@@ -416,14 +440,20 @@ type RemindersQueryRecordsParams struct {
 
 	// GetCurrentSyncToken Reminders CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it.
 	GetCurrentSyncToken RemindersQueryRecordsParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
-	Accept              *RemindersAccept                               `json:"Accept,omitempty"`
-	ContentType         *RemindersContentType                          `json:"Content-Type,omitempty"`
-	Cookie              *RemindersCookie                               `json:"Cookie,omitempty"`
-	Origin              *RemindersOrigin                               `json:"Origin,omitempty"`
-	Referer             *RemindersReferer                              `json:"Referer,omitempty"`
-	UserAgent           *RemindersUserAgent                            `json:"User-Agent,omitempty"`
-	AcceptEncoding      *RemindersAcceptEncoding                       `json:"Accept-Encoding,omitempty"`
-	Connection          *RemindersConnection                           `json:"Connection,omitempty"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *RemindersClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+	Accept                *RemindersAccept                `json:"Accept,omitempty"`
+	ContentType           *RemindersContentType           `json:"Content-Type,omitempty"`
+	Cookie                *RemindersCookie                `json:"Cookie,omitempty"`
+	Origin                *RemindersOrigin                `json:"Origin,omitempty"`
+	Referer               *RemindersReferer               `json:"Referer,omitempty"`
+	UserAgent             *RemindersUserAgent             `json:"User-Agent,omitempty"`
+	AcceptEncoding        *RemindersAcceptEncoding        `json:"Accept-Encoding,omitempty"`
+	Connection            *RemindersConnection            `json:"Connection,omitempty"`
 }
 
 // RemindersQueryRecordsParamsRemapEnums defines parameters for RemindersQueryRecords.
@@ -442,14 +472,20 @@ type RemindersListZonesParams struct {
 
 	// GetCurrentSyncToken Reminders CloudKit serializes this boolean control as lowercase text; the constructor enables it by default and base parameters may override it.
 	GetCurrentSyncToken RemindersListZonesParamsGetCurrentSyncToken `form:"getCurrentSyncToken" json:"getCurrentSyncToken"`
-	Accept              *RemindersAccept                            `json:"Accept,omitempty"`
-	ContentType         *RemindersContentType                       `json:"Content-Type,omitempty"`
-	Cookie              *RemindersCookie                            `json:"Cookie,omitempty"`
-	Origin              *RemindersOrigin                            `json:"Origin,omitempty"`
-	Referer             *RemindersReferer                           `json:"Referer,omitempty"`
-	UserAgent           *RemindersUserAgent                         `json:"User-Agent,omitempty"`
-	AcceptEncoding      *RemindersAcceptEncoding                    `json:"Accept-Encoding,omitempty"`
-	Connection          *RemindersConnection                        `json:"Connection,omitempty"`
+
+	// ClientBuildNumber Optional authentication client build parameter; preserve omission and the exact supplied value.
+	ClientBuildNumber *RemindersClientBuildNumber `form:"clientBuildNumber,omitempty" json:"clientBuildNumber,omitempty"`
+
+	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
+	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+	Accept                *RemindersAccept                `json:"Accept,omitempty"`
+	ContentType           *RemindersContentType           `json:"Content-Type,omitempty"`
+	Cookie                *RemindersCookie                `json:"Cookie,omitempty"`
+	Origin                *RemindersOrigin                `json:"Origin,omitempty"`
+	Referer               *RemindersReferer               `json:"Referer,omitempty"`
+	UserAgent             *RemindersUserAgent             `json:"User-Agent,omitempty"`
+	AcceptEncoding        *RemindersAcceptEncoding        `json:"Accept-Encoding,omitempty"`
+	Connection            *RemindersConnection            `json:"Connection,omitempty"`
 }
 
 // RemindersListZonesParamsRemapEnums defines parameters for RemindersListZones.
@@ -923,6 +959,30 @@ func NewRemindersZoneChangesRequestWithBody(server string, params *RemindersZone
 			}
 		}
 
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -1100,6 +1160,30 @@ func NewRemindersLookupRecordsRequestWithBody(server string, params *RemindersLo
 			for _, qp := range strings.Split(queryFrag, "&") {
 				rawQueryFragments = append(rawQueryFragments, qp)
 			}
+		}
+
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
 		}
 
 		if encoded := queryValues.Encode(); encoded != "" {
@@ -1281,6 +1365,30 @@ func NewRemindersModifyRecordsRequestWithBody(server string, params *RemindersMo
 			}
 		}
 
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -1460,6 +1568,30 @@ func NewRemindersQueryRecordsRequestWithBody(server string, params *RemindersQue
 			}
 		}
 
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -1637,6 +1769,30 @@ func NewRemindersListZonesRequestWithBody(server string, params *RemindersListZo
 			for _, qp := range strings.Split(queryFrag, "&") {
 				rawQueryFragments = append(rawQueryFragments, qp)
 			}
+		}
+
+		if params.ClientBuildNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientBuildNumber", *params.ClientBuildNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ClientMasteringNumber != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "clientMasteringNumber", *params.ClientMasteringNumber, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
 		}
 
 		if encoded := queryValues.Encode(); encoded != "" {
