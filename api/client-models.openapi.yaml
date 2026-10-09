@@ -3626,7 +3626,9 @@
       },
       "ListSecurityKeyDevicesRequest": {
         "additionalProperties": false,
-        "type": "object"
+        "properties": {},
+        "type": "object",
+        "x-go-type": "struct{}"
       },
       "ListSecurityKeyDevicesResult": {
         "properties": {
@@ -3761,7 +3763,10 @@
             "description": "Schema-owned bridge bootstrap for the explicit native bridge lifecycle.",
             "format": "byte",
             "type": "string",
-            "x-go-type-skip-optional-pointer": true
+            "x-go-type-skip-optional-pointer": true,
+            "x-string-content-schema": {
+              "$ref": "./external/bridge-models.openapi.yaml#/components/schemas/BridgeBootstrapDirect"
+            }
           },
           "hasTrustedDevices": {
             "type": "boolean"
@@ -3779,7 +3784,10 @@
             "description": "Detached normalized provider authentication options.",
             "format": "byte",
             "type": "string",
-            "x-go-type-skip-optional-pointer": true
+            "x-go-type-skip-optional-pointer": true,
+            "x-string-content-schema": {
+              "$ref": "./external/auth-models.openapi.yaml#/components/schemas/AuthChallenge"
+            }
           },
           "securityKeyChallenge": {
             "$ref": "#/components/schemas/SecurityKeyChallenge"
@@ -3860,7 +3868,10 @@
           },
           "accountData": {
             "format": "byte",
-            "type": "string"
+            "type": "string",
+            "x-string-content-schema": {
+              "$ref": "./external/auth-models.openapi.yaml#/components/schemas/AuthAccountResponse"
+            }
           },
           "accountName": {
             "type": "string"
@@ -5567,7 +5578,10 @@
             "description": "Detached provider device metadata",
             "format": "byte",
             "including unknown future fields.": null,
-            "type": "string"
+            "type": "string",
+            "x-string-content-schema": {
+              "$ref": "./external/auth-models.openapi.yaml#/components/schemas/AuthTrustedDevice"
+            }
           }
         },
         "required": [

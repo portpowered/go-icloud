@@ -2162,7 +2162,7 @@ type ListRemindersResult struct {
 }
 
 // ListSecurityKeyDevicesRequest defines model for ListSecurityKeyDevicesRequest.
-type ListSecurityKeyDevicesRequest = map[string]interface{}
+type ListSecurityKeyDevicesRequest = struct{}
 
 // ListSecurityKeyDevicesResult defines model for ListSecurityKeyDevicesResult.
 type ListSecurityKeyDevicesResult struct {
