@@ -121,7 +121,7 @@ func nativeProjectPhone(value auth.AuthTrustedPhoneNumber) (TrustedPhoneNumber, 
 
 func nativeBootstrapPhones(challenge *NativeAuthChallenge,
 	second *bridgemodels.BridgeBootstrapSecondFactor,
-) *map[string]any {
+) *bridgemodels.BridgePhoneNumberVerification {
 	if second == nil {
 		return nil
 	}
