@@ -5,9 +5,54 @@ import (
 	"fmt"
 	"unicode/utf8"
 
+	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	"golang.org/x/text/encoding/unicode"
 )
+
+func reminderRelatedBytes(record cloudkit.CKRecord, name string) (bool, error) {
+	if record.Fields == nil {
+		return false, nil
+	}
+
+	field, exists := (*record.Fields)[name]
+	if !exists {
+		return false, nil
+	}
+
+	wrapper, err := field.AsCKPassthroughField()
+	if err != nil {
+		return false, fmt.Errorf("decode related field wrapper: %w", err)
+	}
+
+	return wrapper.Type == string(cloudkit.BYTES) || wrapper.Type == string(cloudkit.ENCRYPTEDBYTES), nil
+}
+
+func reminderRelatedKind(record cloudkit.CKRecord) (string, error) {
+	bytes, err := reminderRelatedBytes(record, protocol.RemindersRelatedFieldTypeValue)
+	if err != nil || bytes {
+		return "", err
+	}
+
+	raw, err := reminderField(record, protocol.RemindersRelatedFieldTypeValue)
+	if err != nil {
+		return "", err
+	}
+
+	// Source compares the uncoerced field to a string before constructing its model.
+	if len(raw) == 0 || raw[0] != '"' {
+		return "", nil
+	}
+
+	var kind string
+
+	err = json.Unmarshal(raw, &kind)
+	if err != nil {
+		return "", fmt.Errorf("decode related record type: %w", err)
+	}
+
+	return kind, nil
+}
 
 func reminderRelatedText(record cloudkit.CKRecord, name string, replaceInvalid bool) (json.RawMessage, error) {
 	raw, err := reminderField(record, name)

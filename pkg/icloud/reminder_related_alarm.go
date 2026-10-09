@@ -6,9 +6,7 @@ import (
 )
 
 func projectReminderTrigger(record cloudkit.CKRecord) (*ReminderLocationTrigger, error) {
-	kind := ""
-
-	err := reminderRelatedStrings(record, map[string]*string{protocol.RemindersRelatedFieldTypeValue: &kind})
+	kind, err := reminderRelatedKind(record)
 	if err != nil || kind != protocol.RemindersLocationTriggerTypeValue {
 		return nil, err
 	}

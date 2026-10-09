@@ -10,9 +10,7 @@ import (
 
 //nolint:nilnil // Source intentionally skips unsupported attachment types without failing the query.
 func projectReminderAttachment(record cloudkit.CKRecord) (*ReminderAttachment, error) {
-	kind := ""
-
-	err := reminderRelatedStrings(record, map[string]*string{protocol.RemindersRelatedFieldTypeValue: &kind})
+	kind, err := reminderRelatedKind(record)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +59,14 @@ func projectReminderURLAttachment(record cloudkit.CKRecord) (ReminderURLAttachme
 	err = reminderRelatedStrings(record, map[string]*string{
 		protocol.RemindersRelatedFieldURLValue: &result.URL,
 		protocol.RemindersRelatedFieldUTIValue: &result.UTI})
-	result.URL = reminderAttachmentURL(result.URL)
+	if err != nil {
+		return *result, err
+	}
+
+	bytes, err := reminderRelatedBytes(record, protocol.RemindersRelatedFieldURLValue)
+	if !bytes {
+		result.URL = reminderAttachmentURL(result.URL)
+	}
 
 	return *result, err
 }
