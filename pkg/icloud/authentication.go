@@ -202,8 +202,9 @@ func projectAuthResult(state AuthContext, trustToken string, response *webtransp
 		state.AccountID = *data.DsInfo.Dsid
 	}
 
-	state.AccountServiceURL = state.SetupServiceURL
+	state.AccountServiceURL = ""
 	if data.Webservices != nil {
+		state.AccountServiceURL = authServiceURL(data.Webservices.Account)
 		state.DriveServiceURL = authServiceURL(data.Webservices.Drivews)
 		state.DriveDocumentServiceURL = authServiceURL(data.Webservices.Docws)
 		state.FindMyServiceURL = authServiceURL(data.Webservices.Findme)

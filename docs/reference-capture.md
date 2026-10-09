@@ -134,6 +134,15 @@ because its trusted-device bridge includes uncaptured socket traffic.
 
 ## Verification
 
+Account reads use the `webservices.account.url` returned by authentication.
+The setup origin used for login is a separate service and is not a substitute
+when account discovery is absent. Four implementation-derived paired flows
+cover restoring global and China reference login files, authenticating, and
+reading empty or multiple-device Account results at a distinct discovered
+origin. The pinned Python reference and the Go SDK consume the same HTTP pairs.
+These offline flows do not establish successful live account access or completed
+Go CLI login support.
+
 After setup, run `make lint` and `make check`. They run the template's blocking
 Go lint/build/race checks over migration tools and Python lint/offline capture
 tests. They do not contact Apple. The Python tests cover recorder interception,
