@@ -140,7 +140,7 @@ func transcriptConnection(test *testing.T, value transcript) *fakeConnection {
 
 func TestPythonCTAP2Transcript(test *testing.T) {
 	test.Parallel()
-	for _, name := range []string{"python-ctap2-synthetic.json", "python-u2f-synthetic.json", "python-uv1-synthetic.json", "python-uv2-synthetic.json", "python-selection-synthetic.json", "python-zero-limit-synthetic.json", "python-uv-retry-synthetic.json", "python-uv-blocked-synthetic.json", "python-pin-required-synthetic.json"} {
+	for _, name := range []string{"python-ctap2-synthetic.json", "python-u2f-synthetic.json", "python-fallback-synthetic.json", "python-uv1-synthetic.json", "python-uv2-synthetic.json", "python-selection-synthetic.json", "python-zero-limit-synthetic.json", "python-uv-retry-synthetic.json", "python-uv-blocked-synthetic.json", "python-pin-required-synthetic.json"} {
 		test.Run(name, func(test *testing.T) { test.Parallel(); assertPythonTranscript(test, name) })
 	}
 }

@@ -72,6 +72,7 @@ class SecurityKeyHIDTests(unittest.TestCase):
         names = (
             "python-ctap2-synthetic.json",
             "python-u2f-synthetic.json",
+            "python-fallback-synthetic.json",
             "python-uv1-synthetic.json",
             "python-uv2-synthetic.json",
             "python-selection-synthetic.json",

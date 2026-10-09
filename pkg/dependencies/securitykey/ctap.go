@@ -129,7 +129,7 @@ func (channel *channel) assert(ctx context.Context, request Request) (Assertion,
 
 func ctapFallbackFailure(stage string) bool {
 	switch stage {
-	case "CTAP", "CBOR decode", "CBOR canonical", "CTAP decode", "info":
+	case "CTAP", "HID", "CBOR decode", "CBOR canonical", "CTAP decode", "info":
 		return true
 	default:
 		return false
