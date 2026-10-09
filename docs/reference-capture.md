@@ -1,5 +1,13 @@
 # Reference capture development
 
+Three synthetic Photos record-pairing cases cover a master without an asset,
+an asset without its master, and a mixed response containing both orphans and
+one valid pair. The pinned reference skips incomplete pairs and preserves the
+full valid photo result. All twelve exchanges are consumed; negative controls
+reject changed master references, omitted public results, and unused traffic.
+The portable HTTP corpus contains 516 scenarios and 1,188 paired exchanges.
+These cases describe reference behavior; public Go Photos parity remains open.
+
 This is the first migration stage, not a completed library or release. The
 layout, Go verification tools, all-linters configuration, and contributor
 standards come from `go-third-party-template`. The reusable Go client, generated
