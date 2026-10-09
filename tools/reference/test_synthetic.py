@@ -19,12 +19,12 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 23)
+        self.assertEqual(len(paths), 29)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 24)
+        self.assertEqual(pairs, 30)
         complete = json.loads(
             (FIXTURES / "reminders-query-compound-all-types.json").read_text()
         )["result"]
@@ -37,6 +37,29 @@ class SyntheticTests(unittest.TestCase):
             "recurrence_rules": 1,
         }.items():
             self.assertEqual(len(complete[name]), count)
+
+    def test_reminder_related_wrapper_sensitive_selection(self):
+        for kind in ["bytes", "encrypted-bytes"]:
+            scenario = json.loads(
+                (FIXTURES / f"reminders-query-compound-type-{kind}.json").read_text()
+            )
+            self.assertEqual(scenario["result"]["triggers"], {})
+            self.assertEqual(scenario["result"]["attachments"], {})
+            for form in ["plain", "encoded"]:
+                scenario = json.loads(
+                    (
+                        FIXTURES / f"reminders-query-compound-url-{form}-{kind}.json"
+                    ).read_text()
+                )
+                value = b"https://example.invalid/synthetic"
+                if form == "encoded":
+                    value = base64.b64encode(value)
+                self.assertEqual(
+                    scenario["result"]["attachments"]["Attachment/synthetic-url"][
+                        "url"
+                    ],
+                    value.decode(),
+                )
 
     def test_reminder_related_field_decoding_and_frequency_selection(self):
         for name in ["numeric-text", "fractional-frequency"]:

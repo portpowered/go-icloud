@@ -1,30 +1,28 @@
 # Reference capture development
 
-Three further reference cases bind integral text asset sizes for both ASSET and
-ASSETID, and the Source's non-strict base64 decoding of byte-backed related text.
-The compound matrix contains twenty-three cases and twenty-four pairs. The shared
-asset size schema now describes the Source's integer-coercible inputs and preserves
-integer magnitude in its generated model. Go URL extraction must not reject valid
-metadata that is unrelated to the projected URL (SCHEMA-04/SCHEMA-16).
+The compound reminder reference matrix contains twenty-nine scenarios and thirty
+paired exchanges. It covers all supported related records, defaults, populated
+fields, orphan filtering, unsupported types, duplicate replacement across pages,
+assets, byte-backed text, recurrence selection and validation failures. Complete
+results come from the pinned Source; negative controls reject changed relationships,
+omitted results, stale replacement values, changed inputs and unused traffic.
 
-Twelve additional compound cases bind typed versus untyped asset URLs, byte-backed
-related text and invalid UTF-8 replacement, encoded attachment URLs, raw recurrence
-frequency selection, tombstone skipping, duplicate replacement across pages,
-and validation of an invalid related image before orphan filtering. The complete
-compound reference matrix now has twenty cases and twenty-one paired exchanges.
-STRING frequency `"2"` and DOUBLE frequency `2.9` both fall back to daily; the
-Source does not coerce or truncate these values before enum selection. Byte-backed
-text is decoded before domain projection. These differences are required Go parity
-work, not excluded malformed caller-input behavior (LIB-05/LIB-12).
+Six wrapper-sensitive cases bind BYTES and ENCRYPTED_BYTES discriminator and URL
+behavior. The Source skips byte-backed attachment and trigger types because it
+compares their bytes to strings before model coercion. Byte-backed URL fields
+retain their decoded text, even when that text contains a base64-encoded URL;
+STRING URLs can undergo a further base64 decoding step. This is observable
+reference behavior that the Go projection must preserve (LIB-05/LIB-12).
 
-Eight synthetic compound reminder query cases exercise all supported related
-record types: alarms, location triggers, URL/image attachments, hashtags, and
-recurrence rules. The pinned Source produces the complete portable results,
-including default values, populated fields, unknown enum fallbacks, unsupported
-types, orphan filtering, out-of-order records, and duplicate replacement.
-Negative controls reject altered relationships, omitted related results, stale
-duplicate values, changed list inputs, and unused traffic (LIB-05/LIB-12).
-These are offline reference cases; Go compound query parity remains open.
+STRING frequency `"2"` and DOUBLE frequency `2.9` fall back to daily. Asset size
+accepts integer-coercible text for ASSET and ASSETID; its schema preserves integer
+magnitude. Byte-backed ordinary text is UTF-8 decoded, while hashtag text replaces
+invalid UTF-8. Non-strict base64 inputs, tombstones and invalid orphan images also
+have reference cases. These are offline cases; Go compound parity remains open.
+The current portable HTTP corpus contains 697 scenarios and 1,405 exchanges.
+Before the six wrapper-sensitive additions, synthetic-only coverage measured
+584/905 entered functions, 3,336/5,398 body statements and 1,045/2,076 branch exits.
+These fixed denominators include remaining selected-service work (LIB-07).
 
 Three synthetic Photos record-pairing cases cover a master without an asset,
 an asset without its master, and a mixed response containing both orphans and
