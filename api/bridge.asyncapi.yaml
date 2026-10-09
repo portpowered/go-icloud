@@ -1,0 +1,34 @@
+asyncapi: 2.6.0
+info:
+  title: Apple trusted device bridge
+  version: 0.1.0
+  description: Source-matched synthetic APNS webcourier bootstrap, subscription and push acknowledgement protocol.
+servers:
+  production:
+    url: websocket.push.apple.com
+    protocol: wss
+  sandbox:
+    url: websocket.sandbox.push.apple.com
+    protocol: wss
+channels:
+  /v2/{connection}:
+    parameters:
+      connection:
+        description: Hex protobuf ClientMessage connection request with signed nonce.
+        schema: {type: string, pattern: '^[0-9a-f]+$'}
+    publish:
+      message:
+        name: ClientMessage
+        contentType: application/x-protobuf
+        schemaFormat: application/vnd.google.protobuf;version=2
+        payload:
+          $ref: './external/bridge-proto/bridge.proto'
+        x-protobuf-message: icloud.bridge.ClientMessage
+    subscribe:
+      message:
+        name: ServerMessage
+        contentType: application/x-protobuf
+        schemaFormat: application/vnd.google.protobuf;version=2
+        payload:
+          $ref: './external/bridge-proto/bridge.proto'
+        x-protobuf-message: icloud.bridge.ServerMessage

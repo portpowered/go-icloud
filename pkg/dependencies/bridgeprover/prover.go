@@ -3,13 +3,13 @@
 package bridgeprover
 
 import (
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/elliptic"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/base64"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -50,7 +50,17 @@ func New(entropy io.Reader) *Prover {
 
 // Init derives password scalars and clears any previous verification state.
 func (p *Prover) Init(saltBase64, code string) error {
-	salt, err := base64.StdEncoding.DecodeString(saltBase64)
+	return p.InitContext(context.Background(), saltBase64, code)
+}
+
+// InitContext also cancels entropy rejection retries and checks password derivation.
+func (p *Prover) InitContext(ctx context.Context, saltBase64, code string) error {
+	contextError := ctx.Err()
+	if contextError != nil {
+		return fmt.Errorf("bridge initialization: %w", contextError)
+	}
+
+	salt, err := decodeBase64(saltBase64)
 	if err != nil {
 		return fmt.Errorf("bridge salt: %w", err)
 	}
@@ -63,13 +73,13 @@ func (p *Prover) Init(saltBase64, code string) error {
 		return fmt.Errorf("bridge password derivation: %w", err)
 	}
 
-	scalar, err := randomScalar(p.entropy)
+	scalar, err := randomScalar(ctx, p.entropy)
 	if err != nil {
 		return err
 	}
 
 	p.x = scalar
-	midpoint := int(model.BridgeKeyLength)
+	midpoint := int(model.PasswordScalarBytes)
 	p.w0 = new(big.Int).SetBytes(key[:midpoint])
 	p.w1 = new(big.Int).SetBytes(key[midpoint:])
 	p.shareP, p.shareV = nil, nil
@@ -79,8 +89,13 @@ func (p *Prover) Init(saltBase64, code string) error {
 	return nil
 }
 
-func randomScalar(entropy io.Reader) (*big.Int, error) {
+func randomScalar(ctx context.Context, entropy io.Reader) (*big.Int, error) {
 	for {
+		contextError := ctx.Err()
+		if contextError != nil {
+			return nil, fmt.Errorf("bridge entropy: %w", contextError)
+		}
+
 		scalar, err := rand.Int(entropy, elliptic.P256().Params().N)
 		if err != nil {
 			return nil, fmt.Errorf("bridge entropy: %w", err)
@@ -125,8 +140,8 @@ func (p *Prover) ProcessMessage1(message string) (string, error) {
 	}
 
 	digest := sha256.Sum256(transcript)
-	confirmations := derive(digest[:], string(model.ConfirmationInfo), int(model.PasswordKeyLength))
-	midpoint := int(model.BridgeKeyLength)
+	confirmations := derive(digest[:], string(model.ConfirmationInfo), int(model.ConfirmationKeyBytes))
+	midpoint := int(model.ConfirmationHalfBytes)
 	p.confirmationClient, p.confirmationServer = confirmations[:midpoint], confirmations[midpoint:]
 	p.sharedKey = derive(digest[:], string(model.SharedInfo), int(model.BridgeKeyLength))
 
@@ -177,7 +192,7 @@ func (p *Prover) DecryptMessage(message string) (string, error) {
 		return "", ErrState
 	}
 
-	payload, err := base64.StdEncoding.DecodeString(message)
+	payload, err := decodeBase64(message)
 	if err != nil {
 		return "", fmt.Errorf("bridge ciphertext: %w", err)
 	}

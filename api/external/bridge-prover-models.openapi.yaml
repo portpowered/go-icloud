@@ -73,3 +73,15 @@ components:
       type: string
       enum: ['03d8bbd6c639c62937b04d997f38c3770719c629d7014d49a24b4f98baa1292b49']
       x-enum-varnames: [SPAKEN]
+    PasswordScalarLength:
+      type: integer
+      enum: [32]
+      x-enum-varnames: [PasswordScalarBytes]
+    ConfirmationLength:
+      type: integer
+      enum: [64]
+      x-enum-varnames: [ConfirmationKeyBytes]
+    ConfirmationHalfLength:
+      type: integer
+      enum: [32]
+      x-enum-varnames: [ConfirmationHalfBytes]

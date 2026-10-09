@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Trusted device bridge WebSocket upgrade
+  version: 1.0.0
+paths:
+  /v2/{connection}:
+    get:
+      operationId: upgradeBridge
+      description: Upgrade a configured trusted device bridge connection to WebSocket.
+      parameters:
+        - name: connection
+          in: path
+          required: true
+          schema: {type: string, pattern: '^[a-f0-9]+$'}
+        - {name: Origin, in: header, required: true, schema: {type: string}}
+        - {name: User-Agent, in: header, required: true, schema: {type: string}}
+        - {name: Upgrade, in: header, required: true, schema: {type: string, enum: [websocket]}}
+        - {name: Connection, in: header, required: true, schema: {type: string, enum: [Upgrade]}}
+        - {name: Sec-WebSocket-Version, in: header, required: true, schema: {type: string, enum: ['13']}}
+        - {name: Sec-WebSocket-Key, in: header, required: true, schema: {type: string, format: byte}}
+      responses:
+        '101':
+          description: An authenticated WebSocket upgrade.
+          headers:
+            Sec-WebSocket-Accept: {schema: {type: string, format: byte}}
+components:
+  schemas:
+    RequestLine:
+      type: string
+      enum: ['GET %s HTTP/1.1']
+      x-enum-varnames: [UpgradeRequestLine]
+    HeaderLine:
+      type: string
+      enum: ['Host: %s', 'Upgrade: websocket', 'Connection: Upgrade', 'Origin: %s', 'User-Agent: %s', 'Sec-WebSocket-Version: 13', 'Sec-WebSocket-Key: %s']
+      x-enum-varnames: [HostLine, UpgradeLine, ConnectionLine, OriginLine, UserAgentLine, VersionLine, KeyLine]
+    LineSeparator:
+      type: integer
+      enum: [13,10]
+      x-enum-varnames: [CarriageReturn, LineFeed]
+    AcceptHeader:
+      type: string
+      enum: [Sec-WebSocket-Accept]
+      x-enum-varnames: [UpgradeAcceptHeader]
+    Scheme:
+      type: string
+      enum: [wss]
+      x-enum-varnames: [SecureScheme]
+    OpcodeMask:
+      type: integer
+      enum: [15]
+      x-enum-varnames: [FrameOpcodeMask]
+    ExtensionLengths:
+      type: integer
+      enum: [2,8]
+      x-enum-varnames: [MediumLengthBytes,LongLengthBytes]
+    DefaultPort:
+      type: string
+      enum: ['443']
+      x-enum-varnames: [SecurePort]
+    Frame:
+      type: object
+      required: [opcode, finished, payload]
+      properties:
+        opcode:
+          type: integer
+          minimum: 0
+          maximum: 15
+          x-go-type: bridgepb.Opcode
+          x-go-type-import:
+            path: github.com/portpowered/go-icloud/pkg/dependencymodels/bridgepb
+            name: bridgepb
+        finished:
+          type: boolean
+        payload:
+          type: string
+          format: byte

@@ -1,0 +1,75 @@
+syntax = "proto2";
+package icloud.bridge;
+option go_package = "github.com/portpowered/go-icloud/pkg/dependencymodels/bridgepb";
+
+// Source-matched APNS webcourier binary field inventory. This is reconstructed
+// from the pinned Python encoder/decoder, not a provider-published protocol.
+message Expiration { optional uint32 seconds = 1 [default = 86400]; }
+message ConnectionRequest {
+  // Uncompressed SEC1 P-256 point: 0x04 followed by 32-byte big-endian X and Y.
+  optional bytes public_key = 1;
+  // One zero version byte, eight-byte unsigned big-endian Unix milliseconds,
+  // and eight bytes of cryptographic entropy. Signature authenticates all bytes.
+  optional bytes nonce = 2;
+  // Two-byte 0x0103 prefix followed by ASN.1 DER ECDSA(SHA-256(nonce)).
+  optional bytes signature = 3;
+  optional Expiration expiration = 5;
+}
+message SubscriptionRequest { repeated string topics = 1; }
+message Acknowledgement {
+  optional bytes topic = 1;
+  optional uint64 message_id = 2;
+  optional uint64 delivery_status = 3;
+}
+message ClientMessage {
+  optional ConnectionRequest connection = 1;
+  optional Acknowledgement acknowledgement = 2;
+  optional SubscriptionRequest subscription = 3;
+}
+message ConnectionResponse {
+  optional bytes push_token_base64 = 1;
+  optional uint64 status = 2;
+  optional uint64 server_timestamp_seconds = 3;
+}
+message PushMessage {
+  optional bytes topic = 1;
+  optional uint64 message_id = 2;
+  // UTF-8 JSON BridgePushPayload from bridge-models.openapi.yaml, optionally
+  // prefixed/suffixed by transport framing bytes. Preserve unknown JSON members.
+  optional bytes payload = 4;
+}
+message AppSubscriptionResponse { optional bytes topic = 1; }
+message SubscriptionPayload { repeated AppSubscriptionResponse apps = 1; }
+message SubscriptionResponse {
+  optional SubscriptionPayload payload = 1;
+  optional uint64 message_id = 2;
+  optional uint64 status = 3;
+  optional uint64 retry_interval_seconds = 4;
+}
+message ServerMessage {
+  optional ConnectionResponse connection = 1;
+  optional PushMessage push = 2;
+  optional SubscriptionResponse subscription = 3;
+  optional Acknowledgement acknowledgement = 7;
+}
+enum Status { STATUS_OK = 0; STATUS_INVALID_NONCE = 2; }
+enum Opcode {
+  OPCODE_CONTINUATION = 0;
+  OPCODE_TEXT = 1;
+  OPCODE_BINARY = 2;
+  OPCODE_CLOSE = 8;
+  OPCODE_PING = 9;
+  OPCODE_PONG = 10;
+}
+enum Framing {
+  FRAMING_UNSPECIFIED = 0;
+  FRAMING_NONCE_VERSION = 0;
+  FRAMING_NONCE_ENTROPY_BYTES = 8;
+  FRAMING_MASK_BYTES = 4;
+  FRAMING_KEY_BYTES = 16;
+  FRAMING_FIN_MASK = 128;
+  FRAMING_SHORT_LIMIT = 126;
+  FRAMING_LONG_MARKER = 127;
+  FRAMING_MEDIUM_LIMIT = 65536;
+  option allow_alias = true;
+}

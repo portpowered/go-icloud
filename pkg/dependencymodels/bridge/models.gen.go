@@ -25,19 +25,37 @@ func (e BridgeCompletionData) Valid() bool {
 	}
 }
 
+// Defines values for BridgeProofPartCount.
+const (
+	ProofPartCount BridgeProofPartCount = 2
+)
+
+// Valid indicates whether the value is a known member of the BridgeProofPartCount enum.
+func (e BridgeProofPartCount) Valid() bool {
+	switch e {
+	case ProofPartCount:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for BridgeProtocolString.
 const (
-	BootClassAttribute    BridgeProtocolString = "class"
-	BootScriptClass       BridgeProtocolString = "boot_args"
-	BootScriptTag         BridgeProtocolString = "script"
-	DefaultTopic          BridgeProtocolString = "com.apple.idms"
-	ProductionEnvironment BridgeProtocolString = "prod"
-	ProductionHost        BridgeProtocolString = "websocket.push.apple.com"
-	SandboxEnvironment    BridgeProtocolString = "sandbox"
-	SandboxHost           BridgeProtocolString = "websocket.sandbox.push.apple.com"
-	SignaturePrefixHex    BridgeProtocolString = "0103"
-	SocketURLTemplate     BridgeProtocolString = "wss://%s/v2/%s"
-	WebSocketGUID         BridgeProtocolString = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+	BootClassAttribute        BridgeProtocolString = "class"
+	BootScriptClass           BridgeProtocolString = "boot_args"
+	BootScriptTag             BridgeProtocolString = "script"
+	DefaultTopic              BridgeProtocolString = "com.apple.idms"
+	LegacyTransactionSuffix   BridgeProtocolString = "_W"
+	ProductionEnvironment     BridgeProtocolString = "prod"
+	ProductionHost            BridgeProtocolString = "websocket.push.apple.com"
+	ProofSeparator            BridgeProtocolString = "_"
+	SandboxEnvironment        BridgeProtocolString = "sandbox"
+	SandboxHost               BridgeProtocolString = "websocket.sandbox.push.apple.com"
+	SessionIdentifierTemplate BridgeProtocolString = "%x-%x-%x-%x-%x-%d"
+	SignaturePrefixHex        BridgeProtocolString = "0103"
+	SocketURLTemplate         BridgeProtocolString = "wss://%s/v2/%s"
+	WebSocketGUID             BridgeProtocolString = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 )
 
 // Valid indicates whether the value is a known member of the BridgeProtocolString enum.
@@ -51,19 +69,40 @@ func (e BridgeProtocolString) Valid() bool {
 		return true
 	case DefaultTopic:
 		return true
+	case LegacyTransactionSuffix:
+		return true
 	case ProductionEnvironment:
 		return true
 	case ProductionHost:
 		return true
+	case ProofSeparator:
+		return true
 	case SandboxEnvironment:
 		return true
 	case SandboxHost:
+		return true
+	case SessionIdentifierTemplate:
 		return true
 	case SignaturePrefixHex:
 		return true
 	case SocketURLTemplate:
 		return true
 	case WebSocketGUID:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for BridgePushErrorCode.
+const (
+	BridgePushErrorSuccess BridgePushErrorCode = 0
+)
+
+// Valid indicates whether the value is a known member of the BridgePushErrorCode enum.
+func (e BridgePushErrorCode) Valid() bool {
+	switch e {
+	case BridgePushErrorSuccess:
 		return true
 	default:
 		return false
@@ -94,6 +133,45 @@ func (e BridgeStep) Valid() bool {
 	}
 }
 
+// Defines values for BridgeUUIDInteger.
+const (
+	CoordinateParts  BridgeUUIDInteger = 2
+	UUIDGroup1End    BridgeUUIDInteger = 4
+	UUIDGroup4End    BridgeUUIDInteger = 10
+	UUIDVariantIndex BridgeUUIDInteger = 8
+	UUIDVariantMask  BridgeUUIDInteger = 63
+	UUIDVariantValue BridgeUUIDInteger = 128
+	UUIDVersionIndex BridgeUUIDInteger = 6
+	UUIDVersionMask  BridgeUUIDInteger = 15
+	UUIDVersionValue BridgeUUIDInteger = 64
+)
+
+// Valid indicates whether the value is a known member of the BridgeUUIDInteger enum.
+func (e BridgeUUIDInteger) Valid() bool {
+	switch e {
+	case CoordinateParts:
+		return true
+	case UUIDGroup1End:
+		return true
+	case UUIDGroup4End:
+		return true
+	case UUIDVariantIndex:
+		return true
+	case UUIDVariantMask:
+		return true
+	case UUIDVariantValue:
+		return true
+	case UUIDVersionIndex:
+		return true
+	case UUIDVersionMask:
+		return true
+	case UUIDVersionValue:
+		return true
+	default:
+		return false
+	}
+}
+
 // BridgeBootstrapDirect defines model for BridgeBootstrapDirect.
 type BridgeBootstrapDirect struct {
 	AuthInitialRoute     *string                      `json:"authInitialRoute,omitempty"`
@@ -112,7 +190,7 @@ type BridgeBootstrapEnvelope struct {
 type BridgeBootstrapSecondFactor struct {
 	AuthFactors             *[]string                                `json:"authFactors,omitempty"`
 	BridgeInitiateData      *BridgeInitiateData                      `json:"bridgeInitiateData,omitempty"`
-	PhoneNumberVerification *map[string]interface{}                  `json:"phoneNumberVerification,omitempty"`
+	PhoneNumberVerification *BridgePhoneNumberVerification           `json:"phoneNumberVerification,omitempty"`
 	SourceAppId             *BridgeBootstrapSecondFactor_SourceAppId `json:"sourceAppId,omitempty"`
 	AdditionalProperties    map[string]interface{}                   `json:"-"`
 }
@@ -143,19 +221,53 @@ type BridgeExchange struct {
 
 // BridgeInitiateData defines model for BridgeInitiateData.
 type BridgeInitiateData struct {
-	ApnsEnvironment         *string                 `json:"apnsEnvironment,omitempty"`
-	ApnsTopic               *string                 `json:"apnsTopic,omitempty"`
-	PhoneNumberVerification *map[string]interface{} `json:"phoneNumberVerification,omitempty"`
-	WebSocketUrl            *string                 `json:"webSocketUrl,omitempty"`
-	AdditionalProperties    map[string]interface{}  `json:"-"`
+	ApnsEnvironment         *string                        `json:"apnsEnvironment,omitempty"`
+	ApnsTopic               *string                        `json:"apnsTopic,omitempty"`
+	PhoneNumberVerification *BridgePhoneNumberVerification `json:"phoneNumberVerification,omitempty"`
+	WebSocketUrl            *string                        `json:"webSocketUrl,omitempty"`
+	AdditionalProperties    map[string]interface{}         `json:"-"`
 }
+
+// BridgeOpaqueData defines model for BridgeOpaqueData.
+type BridgeOpaqueData struct {
+	union json.RawMessage
+}
+
+// BridgeOpaqueData0 defines model for BridgeOpaqueData.0.
+type BridgeOpaqueData0 map[string]interface{}
+
+// BridgeOpaqueData1 defines model for BridgeOpaqueData.1.
+type BridgeOpaqueData1 = []interface{}
+
+// BridgeOpaqueData2 defines model for BridgeOpaqueData.2.
+type BridgeOpaqueData2 = string
+
+// BridgeOpaqueData3 defines model for BridgeOpaqueData.3.
+type BridgeOpaqueData3 = bool
+
+// BridgeOpaqueData4 defines model for BridgeOpaqueData.4.
+type BridgeOpaqueData4 = float32
+
+// BridgePhoneNumberVerification defines model for BridgePhoneNumberVerification.
+type BridgePhoneNumberVerification struct {
+	PreferredPhoneNumberId *int                        `json:"preferredPhoneNumberId,omitempty"`
+	TrustedPhoneNumber     *BridgeTrustedPhoneNumber   `json:"trustedPhoneNumber,omitempty"`
+	TrustedPhoneNumbers    *[]BridgeTrustedPhoneNumber `json:"trustedPhoneNumbers,omitempty"`
+	AdditionalProperties   map[string]interface{}      `json:"-"`
+}
+
+// BridgeProofPartCount defines model for BridgeProofPartCount.
+type BridgeProofPartCount int
 
 // BridgeProtocolString defines model for BridgeProtocolString.
 type BridgeProtocolString string
 
+// BridgePushErrorCode defines model for BridgePushErrorCode.
+type BridgePushErrorCode int
+
 // BridgePushPayload defines model for BridgePushPayload.
 type BridgePushPayload struct {
-	Akdata               interface{}                 `json:"akdata,omitempty"`
+	Akdata               *BridgeOpaqueData           `json:"akdata,omitempty"`
 	Data                 *string                     `json:"data,omitempty"`
 	Ec                   *int                        `json:"ec,omitempty"`
 	EncryptedCode        *string                     `json:"encryptedCode,omitempty"`
@@ -190,6 +302,30 @@ type BridgePushPayload1 = interface{}
 
 // BridgeStep defines model for BridgeStep.
 type BridgeStep int
+
+// BridgeTrustedPhoneNumber defines model for BridgeTrustedPhoneNumber.
+type BridgeTrustedPhoneNumber struct {
+	Id                   *BridgeTrustedPhoneNumber_Id `json:"id,omitempty"`
+	NonFTEU              *bool                        `json:"nonFTEU,omitempty"`
+	NumberWithDialCode   *string                      `json:"numberWithDialCode,omitempty"`
+	ObfuscatedNumber     *string                      `json:"obfuscatedNumber,omitempty"`
+	PushMode             *string                      `json:"pushMode,omitempty"`
+	AdditionalProperties map[string]interface{}       `json:"-"`
+}
+
+// BridgeTrustedPhoneNumberId0 defines model for BridgeTrustedPhoneNumber.Id.0.
+type BridgeTrustedPhoneNumberId0 = int
+
+// BridgeTrustedPhoneNumberId1 defines model for BridgeTrustedPhoneNumber.Id.1.
+type BridgeTrustedPhoneNumberId1 = string
+
+// BridgeTrustedPhoneNumber_Id defines model for BridgeTrustedPhoneNumber.Id.
+type BridgeTrustedPhoneNumber_Id struct {
+	union json.RawMessage
+}
+
+// BridgeUUIDInteger defines model for BridgeUUIDInteger.
+type BridgeUUIDInteger int
 
 // Getter for additional properties for BridgeBootstrapDirect. Returns the specified
 // element and whether it was found
@@ -581,6 +717,104 @@ func (a BridgeInitiateData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for BridgePhoneNumberVerification. Returns the specified
+// element and whether it was found
+func (a BridgePhoneNumberVerification) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for BridgePhoneNumberVerification
+func (a *BridgePhoneNumberVerification) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for BridgePhoneNumberVerification to handle AdditionalProperties
+func (a *BridgePhoneNumberVerification) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["preferredPhoneNumberId"]; found {
+		err = json.Unmarshal(raw, &a.PreferredPhoneNumberId)
+		if err != nil {
+			return fmt.Errorf("error reading 'preferredPhoneNumberId': %w", err)
+		}
+		delete(object, "preferredPhoneNumberId")
+	}
+
+	if raw, found := object["trustedPhoneNumber"]; found {
+		err = json.Unmarshal(raw, &a.TrustedPhoneNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'trustedPhoneNumber': %w", err)
+		}
+		delete(object, "trustedPhoneNumber")
+	}
+
+	if raw, found := object["trustedPhoneNumbers"]; found {
+		err = json.Unmarshal(raw, &a.TrustedPhoneNumbers)
+		if err != nil {
+			return fmt.Errorf("error reading 'trustedPhoneNumbers': %w", err)
+		}
+		delete(object, "trustedPhoneNumbers")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for BridgePhoneNumberVerification to handle AdditionalProperties
+func (a BridgePhoneNumberVerification) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.PreferredPhoneNumberId != nil {
+		object["preferredPhoneNumberId"], err = json.Marshal(a.PreferredPhoneNumberId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'preferredPhoneNumberId': %w", err)
+		}
+	}
+
+	if a.TrustedPhoneNumber != nil {
+		object["trustedPhoneNumber"], err = json.Marshal(a.TrustedPhoneNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'trustedPhoneNumber': %w", err)
+		}
+	}
+
+	if a.TrustedPhoneNumbers != nil {
+		object["trustedPhoneNumbers"], err = json.Marshal(a.TrustedPhoneNumbers)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'trustedPhoneNumbers': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for BridgePushPayload. Returns the specified
 // element and whether it was found
 func (a BridgePushPayload) Get(fieldName string) (value interface{}, found bool) {
@@ -596,6 +830,134 @@ func (a *BridgePushPayload) Set(fieldName string, value interface{}) {
 		a.AdditionalProperties = make(map[string]interface{})
 	}
 	a.AdditionalProperties[fieldName] = value
+}
+
+// Getter for additional properties for BridgeTrustedPhoneNumber. Returns the specified
+// element and whether it was found
+func (a BridgeTrustedPhoneNumber) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for BridgeTrustedPhoneNumber
+func (a *BridgeTrustedPhoneNumber) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for BridgeTrustedPhoneNumber to handle AdditionalProperties
+func (a *BridgeTrustedPhoneNumber) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["id"]; found {
+		err = json.Unmarshal(raw, &a.Id)
+		if err != nil {
+			return fmt.Errorf("error reading 'id': %w", err)
+		}
+		delete(object, "id")
+	}
+
+	if raw, found := object["nonFTEU"]; found {
+		err = json.Unmarshal(raw, &a.NonFTEU)
+		if err != nil {
+			return fmt.Errorf("error reading 'nonFTEU': %w", err)
+		}
+		delete(object, "nonFTEU")
+	}
+
+	if raw, found := object["numberWithDialCode"]; found {
+		err = json.Unmarshal(raw, &a.NumberWithDialCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'numberWithDialCode': %w", err)
+		}
+		delete(object, "numberWithDialCode")
+	}
+
+	if raw, found := object["obfuscatedNumber"]; found {
+		err = json.Unmarshal(raw, &a.ObfuscatedNumber)
+		if err != nil {
+			return fmt.Errorf("error reading 'obfuscatedNumber': %w", err)
+		}
+		delete(object, "obfuscatedNumber")
+	}
+
+	if raw, found := object["pushMode"]; found {
+		err = json.Unmarshal(raw, &a.PushMode)
+		if err != nil {
+			return fmt.Errorf("error reading 'pushMode': %w", err)
+		}
+		delete(object, "pushMode")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for BridgeTrustedPhoneNumber to handle AdditionalProperties
+func (a BridgeTrustedPhoneNumber) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Id != nil {
+		object["id"], err = json.Marshal(a.Id)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'id': %w", err)
+		}
+	}
+
+	if a.NonFTEU != nil {
+		object["nonFTEU"], err = json.Marshal(a.NonFTEU)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'nonFTEU': %w", err)
+		}
+	}
+
+	if a.NumberWithDialCode != nil {
+		object["numberWithDialCode"], err = json.Marshal(a.NumberWithDialCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'numberWithDialCode': %w", err)
+		}
+	}
+
+	if a.ObfuscatedNumber != nil {
+		object["obfuscatedNumber"], err = json.Marshal(a.ObfuscatedNumber)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'obfuscatedNumber': %w", err)
+		}
+	}
+
+	if a.PushMode != nil {
+		object["pushMode"], err = json.Marshal(a.PushMode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'pushMode': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
 }
 
 // AsBridgeBootstrapSecondFactorSourceAppId0 returns the union data inside the BridgeBootstrapSecondFactor_SourceAppId as a BridgeBootstrapSecondFactorSourceAppId0
@@ -656,6 +1018,146 @@ func (t BridgeBootstrapSecondFactor_SourceAppId) MarshalJSON() ([]byte, error) {
 }
 
 func (t *BridgeBootstrapSecondFactor_SourceAppId) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsBridgeOpaqueData0 returns the union data inside the BridgeOpaqueData as a BridgeOpaqueData0
+func (t BridgeOpaqueData) AsBridgeOpaqueData0() (BridgeOpaqueData0, error) {
+	var body BridgeOpaqueData0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromBridgeOpaqueData0 overwrites any union data inside the BridgeOpaqueData as the provided BridgeOpaqueData0
+func (t *BridgeOpaqueData) FromBridgeOpaqueData0(v BridgeOpaqueData0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeBridgeOpaqueData0 performs a merge with any union data inside the BridgeOpaqueData, using the provided BridgeOpaqueData0
+func (t *BridgeOpaqueData) MergeBridgeOpaqueData0(v BridgeOpaqueData0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsBridgeOpaqueData1 returns the union data inside the BridgeOpaqueData as a BridgeOpaqueData1
+func (t BridgeOpaqueData) AsBridgeOpaqueData1() (BridgeOpaqueData1, error) {
+	var body BridgeOpaqueData1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromBridgeOpaqueData1 overwrites any union data inside the BridgeOpaqueData as the provided BridgeOpaqueData1
+func (t *BridgeOpaqueData) FromBridgeOpaqueData1(v BridgeOpaqueData1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeBridgeOpaqueData1 performs a merge with any union data inside the BridgeOpaqueData, using the provided BridgeOpaqueData1
+func (t *BridgeOpaqueData) MergeBridgeOpaqueData1(v BridgeOpaqueData1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsBridgeOpaqueData2 returns the union data inside the BridgeOpaqueData as a BridgeOpaqueData2
+func (t BridgeOpaqueData) AsBridgeOpaqueData2() (BridgeOpaqueData2, error) {
+	var body BridgeOpaqueData2
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromBridgeOpaqueData2 overwrites any union data inside the BridgeOpaqueData as the provided BridgeOpaqueData2
+func (t *BridgeOpaqueData) FromBridgeOpaqueData2(v BridgeOpaqueData2) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeBridgeOpaqueData2 performs a merge with any union data inside the BridgeOpaqueData, using the provided BridgeOpaqueData2
+func (t *BridgeOpaqueData) MergeBridgeOpaqueData2(v BridgeOpaqueData2) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsBridgeOpaqueData3 returns the union data inside the BridgeOpaqueData as a BridgeOpaqueData3
+func (t BridgeOpaqueData) AsBridgeOpaqueData3() (BridgeOpaqueData3, error) {
+	var body BridgeOpaqueData3
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromBridgeOpaqueData3 overwrites any union data inside the BridgeOpaqueData as the provided BridgeOpaqueData3
+func (t *BridgeOpaqueData) FromBridgeOpaqueData3(v BridgeOpaqueData3) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeBridgeOpaqueData3 performs a merge with any union data inside the BridgeOpaqueData, using the provided BridgeOpaqueData3
+func (t *BridgeOpaqueData) MergeBridgeOpaqueData3(v BridgeOpaqueData3) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsBridgeOpaqueData4 returns the union data inside the BridgeOpaqueData as a BridgeOpaqueData4
+func (t BridgeOpaqueData) AsBridgeOpaqueData4() (BridgeOpaqueData4, error) {
+	var body BridgeOpaqueData4
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromBridgeOpaqueData4 overwrites any union data inside the BridgeOpaqueData as the provided BridgeOpaqueData4
+func (t *BridgeOpaqueData) FromBridgeOpaqueData4(v BridgeOpaqueData4) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeBridgeOpaqueData4 performs a merge with any union data inside the BridgeOpaqueData, using the provided BridgeOpaqueData4
+func (t *BridgeOpaqueData) MergeBridgeOpaqueData4(v BridgeOpaqueData4) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t BridgeOpaqueData) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *BridgeOpaqueData) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }
@@ -770,6 +1272,68 @@ func (t BridgePushPayload_NextStep) MarshalJSON() ([]byte, error) {
 }
 
 func (t *BridgePushPayload_NextStep) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsBridgeTrustedPhoneNumberId0 returns the union data inside the BridgeTrustedPhoneNumber_Id as a BridgeTrustedPhoneNumberId0
+func (t BridgeTrustedPhoneNumber_Id) AsBridgeTrustedPhoneNumberId0() (BridgeTrustedPhoneNumberId0, error) {
+	var body BridgeTrustedPhoneNumberId0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromBridgeTrustedPhoneNumberId0 overwrites any union data inside the BridgeTrustedPhoneNumber_Id as the provided BridgeTrustedPhoneNumberId0
+func (t *BridgeTrustedPhoneNumber_Id) FromBridgeTrustedPhoneNumberId0(v BridgeTrustedPhoneNumberId0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeBridgeTrustedPhoneNumberId0 performs a merge with any union data inside the BridgeTrustedPhoneNumber_Id, using the provided BridgeTrustedPhoneNumberId0
+func (t *BridgeTrustedPhoneNumber_Id) MergeBridgeTrustedPhoneNumberId0(v BridgeTrustedPhoneNumberId0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsBridgeTrustedPhoneNumberId1 returns the union data inside the BridgeTrustedPhoneNumber_Id as a BridgeTrustedPhoneNumberId1
+func (t BridgeTrustedPhoneNumber_Id) AsBridgeTrustedPhoneNumberId1() (BridgeTrustedPhoneNumberId1, error) {
+	var body BridgeTrustedPhoneNumberId1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromBridgeTrustedPhoneNumberId1 overwrites any union data inside the BridgeTrustedPhoneNumber_Id as the provided BridgeTrustedPhoneNumberId1
+func (t *BridgeTrustedPhoneNumber_Id) FromBridgeTrustedPhoneNumberId1(v BridgeTrustedPhoneNumberId1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeBridgeTrustedPhoneNumberId1 performs a merge with any union data inside the BridgeTrustedPhoneNumber_Id, using the provided BridgeTrustedPhoneNumberId1
+func (t *BridgeTrustedPhoneNumber_Id) MergeBridgeTrustedPhoneNumberId1(v BridgeTrustedPhoneNumberId1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t BridgeTrustedPhoneNumber_Id) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *BridgeTrustedPhoneNumber_Id) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }
@@ -911,9 +1475,11 @@ func (a BridgePushPayload) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	object["akdata"], err = json.Marshal(a.Akdata)
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling 'akdata': %w", err)
+	if a.Akdata != nil {
+		object["akdata"], err = json.Marshal(a.Akdata)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'akdata': %w", err)
+		}
 	}
 
 	if a.Data != nil {

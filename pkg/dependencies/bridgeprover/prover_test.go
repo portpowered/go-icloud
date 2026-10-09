@@ -2,9 +2,11 @@ package bridgeprover_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/portpowered/go-icloud/pkg/dependencies/bridgeprover"
 )
@@ -189,5 +191,65 @@ func TestStateAndEntropyFailures(t *testing.T) {
 	_, callErr9 := prover.DecryptMessage(ciphertext)
 	if !errors.Is(callErr9, bridgeprover.ErrState) {
 		t.Fatal(callErr9)
+	}
+}
+
+func TestSourcePermissiveBase64AndInvalidPlaintext(t *testing.T) {
+	t.Parallel()
+	prover := established(t)
+
+	_, err := prover.ProcessMessage2(confirmV)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual, err := prover.DecryptMessage("! " + ciphertext[:8] + " \n" + ciphertext[8:] + "junk")
+	if err != nil || actual != "987654" {
+		t.Fatalf("Source ASCII punctuation = %q, %v", actual, err)
+	}
+	// Synthetic pinned-Python AES-GCM output with plaintext byte FF.
+	_, err = prover.DecryptMessage("AAABAgMEBQYHCAkKCwR3kup6JjGZGsCulaisgSlu")
+	if !errors.Is(err, bridgeprover.ErrPayload) {
+		t.Fatalf("invalid UTF-8 plaintext = %v", err)
+	}
+
+	_, err = prover.DecryptMessage(ciphertext + "\u00e9")
+	if !errors.Is(err, bridgeprover.ErrPayload) {
+		t.Fatalf("non-ASCII ciphertext = %v", err)
+	}
+}
+
+type proverZeroEntropy struct{}
+
+func (proverZeroEntropy) Read(payload []byte) (int, error) {
+	clear(payload)
+
+	return len(payload), nil
+}
+
+func TestInitContextCancelsZeroScalarRetries(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithTimeout(t.Context(), 100*time.Millisecond)
+	defer cancel()
+
+	prover := bridgeprover.New(proverZeroEntropy{})
+
+	err := prover.InitContext(ctx, salt, "654321")
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("zero scalar cancellation = %v", err)
+	}
+}
+
+func TestInitContextRejectsAlreadyCanceledWork(t *testing.T) {
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+
+	prover := bridgeprover.New(bytes.NewReader(nil))
+
+	err := prover.InitContext(ctx, salt, "654321")
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("initial cancellation = %v", err)
 	}
 }
