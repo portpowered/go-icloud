@@ -13,7 +13,8 @@ func photoCLIArgs(t *testing.T, operation string, row map[string]json.RawMessage
 
 	args := []string{}
 
-	if (operation == photoCountCommand || operation == photoAssetsCommand || operation == photoLookupCommand) &&
+	if (operation == photoCountCommand || operation == photoAssetsCommand ||
+		operation == photoLookupCommand || operation == photoDownloadCommand) &&
 		len(row["album"]) != 0 {
 		var album string
 
@@ -21,11 +22,15 @@ func photoCLIArgs(t *testing.T, operation string, row map[string]json.RawMessage
 		args = append(args, "--album", album)
 	}
 
-	if operation == photoLookupCommand {
+	if operation == photoLookupCommand || operation == photoDownloadCommand {
 		var inputs []string
 
 		decode(t, row["inputs"], &inputs)
 		args = append(args, "--photo", inputs[0])
+	}
+
+	if operation == photoDownloadCommand {
+		args = append(args, photoDownloadVersionArgs(t, row)...)
 	}
 
 	return args

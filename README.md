@@ -899,6 +899,7 @@ go-icloud --session <private-session.json> photos-status
 go-icloud --session <private-session.json> photo-albums
 go-icloud --session <private-session.json> --album Library photo-count
 go-icloud --session <private-session.json> --album Library photo-assets
+go-icloud --session <private-session.json> --album Library --photo <asset-id> --version thumb photo-download
 ```
 
 The commands call the public SDK, preserve typed failures and suppress response
@@ -981,3 +982,10 @@ go-icloud --session <private-go-session.json> --album Library --photo <asset-id>
 ~~~
 
 The result contains the complete photo projection or explicit null after the Source-equivalent direct and paginated fallback searches. Signed resource URLs remain private. A live lookup using saved credentials succeeded.
+
+`photo-download` emits a JSON `content` field containing base64 file bytes. An
+available empty file returns an empty string; an unavailable rendition returns
+null. Omit `--version` for the original, or select a known photo rendition.
+Store downloaded content privately. The CLI consumes the published SDK and its
+25 strict Source replays cover exact bytes, signed URLs, fallback lookup, and
+provider and transport errors.

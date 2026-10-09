@@ -30,6 +30,7 @@ type options struct {
 	session          string
 	node             string
 	album            string
+	photoVersion     *icloud.PhotoVersion
 	photoID          string
 	reminderID       string
 	relatedIDs       []string
@@ -89,8 +90,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.BoolVar(&config.forceRefresh, "force-refresh", false, "Skip cookie validation during resume")
 	flags.BoolVar(&config.allowUntrusted, "allow-untrusted", false, "Save paused MFA discovery during resume")
 	flags.StringVar(&config.node, "node", "", "Drive node identifier for drive-node")
-	flags.StringVar(&config.album, "album", "Library", "Photo album identifier or display/full name")
-	flags.StringVar(&config.photoID, "photo", "", "Photo asset identifier for photo")
+	photoFlags(flags, &config)
 	flags.StringVar(&config.reminderID, "reminder", "", "Raw or complete reminder identifier for reminder")
 	flags.Func("since", "Optional cursor for reminder-changes; omission starts an initial read", func(value string) error {
 		config.since = &value
@@ -112,7 +112,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 			"reminder-legacy-snapshot, reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, "+
 			"reminders, reminder-snapshot, "+
 			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, "+
-			"photos-status, photo-albums, photo-count, photo-assets, photo, resume")
+			"photos-status, photo-albums, photo-count, photo-assets, photo, photo-download, resume")
 
 		flags.PrintDefaults()
 	}
@@ -172,7 +172,7 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		"reminders", "reminder-snapshot",
 		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", "reminder-alarms":
 		return readReminders(ctx, client, auth, config)
-	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo":
+	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo", "photo-download":
 		return readPhotos(ctx, client, auth, config)
 	case "account-devices", "account-family", "account-storage", "account-plan":
 		return readAccount(ctx, client, auth, config.operation)
@@ -302,6 +302,9 @@ func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthConte
 		return wrap(client.GetPhotoAlbumCount(ctx, icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: config.album}))
 	case "photo-assets":
 		return wrap(client.ListPhotoAssets(ctx, icloud.ListPhotoAssetsRequest{Auth: auth, Album: config.album}))
+	case "photo-download":
+		return wrap(client.DownloadPhoto(ctx, icloud.DownloadPhotoRequest{Auth: auth, Album: config.album,
+			PhotoID: config.photoID, Version: config.photoVersion}))
 	case "photo":
 		return wrap(client.GetPhoto(ctx, icloud.GetPhotoRequest{Auth: auth, Album: config.album, PhotoID: config.photoID}))
 	default:
@@ -323,4 +326,15 @@ func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthCont
 	default:
 		return nil, errCommand
 	}
+}
+
+func photoFlags(flags *flag.FlagSet, config *options) {
+	flags.StringVar(&config.album, "album", "Library", "Photo album identifier or display/full name")
+	flags.StringVar(&config.photoID, "photo", "", "Photo asset identifier for photo or photo-download")
+	flags.Func("version", "Photo rendition for photo-download; omission selects original", func(value string) error {
+		version := icloud.PhotoVersion(value)
+		config.photoVersion = &version
+
+		return nil
+	})
 }
