@@ -1,0 +1,1148 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iCloud Photos upload wire operations",
+    "version": "0.1.0",
+    "description": "Modern reservation, raw content transfer, registration, ingest status and indexed asset hydration."
+  },
+  "paths": {
+    "/photosupload/createUploadUrl": {
+      "post": {
+        "operationId": "PhotosCreateUploadUrl",
+        "summary": "Reserve URLs for photo bytes",
+        "description": "Reserve URLs for photo bytes.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosCreateUploadUrlRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{contentPath}": {
+      "post": {
+        "operationId": "PhotosSendUploadBytes",
+        "summary": "Store raw photo bytes at the reserved HTTPS URL",
+        "description": "Store raw photo bytes at the reserved HTTPS URL.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/photosupload/putAsset": {
+      "post": {
+        "operationId": "PhotosPutAsset",
+        "summary": "Register uploaded bytes as photo assets",
+        "description": "Register uploaded bytes as photo assets.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosPutAssetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/photosupload/uploadStatus": {
+      "post": {
+        "operationId": "PhotosUploadStatus",
+        "summary": "Read photo ingest progress",
+        "description": "Read photo ingest progress.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosUploadStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/private/records/lookup": {
+      "post": {
+        "operationId": "PhotosHydrateUploadedAsset",
+        "summary": "Read the uploaded asset after CloudKit indexing",
+        "description": "Read the uploaded asset after CloudKit indexing.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKLookupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/records/lookup": {
+      "post": {
+        "operationId": "PhotosHydrateUploadedAssetShared",
+        "summary": "Read the uploaded asset after CloudKit indexing",
+        "description": "Read the uploaded asset after CloudKit indexing.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKLookupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "PhotosUploadclientId": {
+        "name": "clientId",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploaddsid": {
+        "name": "dsid",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadclientBuildNumber": {
+        "name": "clientBuildNumber",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadclientMasteringNumber": {
+        "name": "clientMasteringNumber",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadCookie": {
+        "name": "Cookie",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadOrigin": {
+        "name": "Origin",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadReferer": {
+        "name": "Referer",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadUserAgent": {
+        "name": "User-Agent",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadAcceptEncoding": {
+        "name": "Accept-Encoding",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadConnection": {
+        "name": "Connection",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadremapEnums": {
+        "name": "remapEnums",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "enum": [
+            "True"
+          ],
+          "x-enum-varnames": [
+            "PhotosUploadRemapEnumsTrue"
+          ],
+          "type": "string"
+        }
+      },
+      "PhotosUploadgetCurrentSyncToken": {
+        "name": "getCurrentSyncToken",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "enum": [
+            "True"
+          ],
+          "x-enum-varnames": [
+            "PhotosUploadCurrentSyncTokenTrue"
+          ],
+          "type": "string"
+        }
+      },
+      "PhotosUploadContentPath": {
+        "name": "contentPath",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": ".+"
+        },
+        "description": "Provider-reserved content path. The server origin and query are taken from the HTTPS reservation URL."
+      }
+    },
+    "schemas": {
+      "PhotosCreateUploadUrlRequest": {
+        "type": "object",
+        "properties": {
+          "zoneName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "assets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "x-order": 2
+          }
+        },
+        "required": [
+          "zoneName",
+          "assets"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosUploadReservationResponse": {
+        "type": "object",
+        "properties": {
+          "uploadUrls": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "x-order": 1
+          }
+        },
+        "additionalProperties": true
+      },
+      "PhotosSingleFileUpload": {
+        "type": "object",
+        "properties": {
+          "referenceChecksum": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 1
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "default": null,
+            "x-order": 2
+          },
+          "fileChecksum": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 3
+          },
+          "wrappingKey": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 4
+          },
+          "receipt": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 5
+          }
+        },
+        "additionalProperties": true,
+        "description": "Stored-byte receipt. Unknown provider fields must be retained when registering the asset. Missing known fields default to null when echoed in registration."
+      },
+      "PhotosSingleFileUploadResponse": {
+        "type": "object",
+        "properties": {
+          "singleFile": {
+            "$ref": "#/components/schemas/PhotosSingleFileUpload",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "singleFile"
+        ],
+        "additionalProperties": true
+      },
+      "PhotosPutAssetFile": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "lastModDate": {
+            "type": "integer",
+            "format": "int64",
+            "description": "File modification time in Unix epoch milliseconds.",
+            "x-order": 2
+          },
+          "timeZoneOffset": {
+            "type": "integer",
+            "format": "int64",
+            "description": "UTC minus local timezone offset in minutes.",
+            "x-order": 3
+          },
+          "singleFileUploadRequest": {
+            "$ref": "#/components/schemas/PhotosSingleFileUpload",
+            "x-order": 4
+          }
+        },
+        "required": [
+          "fileName",
+          "lastModDate",
+          "timeZoneOffset",
+          "singleFileUploadRequest"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosPutAssetRequest": {
+        "type": "object",
+        "properties": {
+          "zoneName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhotosPutAssetFile"
+            },
+            "x-order": 2
+          },
+          "localTimeZoneId": {
+            "type": "string",
+            "x-order": 3
+          },
+          "importGroup": {
+            "type": "string",
+            "x-order": 4
+          }
+        },
+        "required": [
+          "zoneName",
+          "files",
+          "localTimeZoneId",
+          "importGroup"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosUploadStatusRequest": {
+        "type": "object",
+        "properties": {
+          "uploadJobIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-order": 1
+          }
+        },
+        "required": [
+          "uploadJobIds"
+        ],
+        "additionalProperties": false
+      },
+      "PhotosUploadStatus": {
+        "type": "object",
+        "properties": {
+          "progress": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "default": null,
+            "x-order": 1
+          },
+          "errorCode": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "default": null,
+            "x-order": 2
+          }
+        },
+        "additionalProperties": true
+      },
+      "PhotosUploadStatusEntries": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/components/schemas/PhotosUploadStatus"
+        }
+      },
+      "PhotosPutAssetStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "default": null,
+            "x-order": 1
+          },
+          "isRetryable": {
+            "type": "boolean",
+            "nullable": true,
+            "default": null,
+            "x-order": 2
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 3
+          }
+        },
+        "additionalProperties": true
+      },
+      "PhotosPutAssetResult": {
+        "type": "object",
+        "properties": {
+          "uploadJobId": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 1
+          },
+          "cplMaster": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 2
+          },
+          "cplAsset": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "x-order": 3
+          },
+          "response": {
+            "$ref": "#/components/schemas/PhotosPutAssetStatus",
+            "nullable": true,
+            "default": null,
+            "x-order": 4
+          }
+        },
+        "additionalProperties": true
+      },
+      "PhotosPutAssetResults": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PhotosPutAssetResult"
+        }
+      },
+      "PhotosDuplicateStatus": {
+        "type": "integer",
+        "enum": [
+          409
+        ],
+        "x-enum-varnames": [
+          "PhotosDuplicateStatusValue"
+        ],
+        "description": "Registration status for an existing asset."
+      },
+      "PhotosUnknownJobErrorCode": {
+        "type": "integer",
+        "enum": [
+          404
+        ],
+        "x-enum-varnames": [
+          "PhotosUnknownJobErrorCodeValue"
+        ],
+        "description": "Upload status error for an unknown job."
+      },
+      "CKLookupRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupRequest"
+      },
+      "CKLookupResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupResponse"
+      },
+      "PhotosUploadDesiredKey": {
+        "description": "Ordered photo projection fields requested during uploaded asset hydration.",
+        "enum": [
+          "resJPEGFullWidth",
+          "resJPEGFullHeight",
+          "resJPEGFullFileType",
+          "resJPEGFullFingerprint",
+          "resJPEGFullRes",
+          "resJPEGLargeWidth",
+          "resJPEGLargeHeight",
+          "resJPEGLargeFileType",
+          "resJPEGLargeFingerprint",
+          "resJPEGLargeRes",
+          "resJPEGMedWidth",
+          "resJPEGMedHeight",
+          "resJPEGMedFileType",
+          "resJPEGMedFingerprint",
+          "resJPEGMedRes",
+          "resJPEGThumbWidth",
+          "resJPEGThumbHeight",
+          "resJPEGThumbFileType",
+          "resJPEGThumbFingerprint",
+          "resJPEGThumbRes",
+          "resVidFullWidth",
+          "resVidFullHeight",
+          "resVidFullFileType",
+          "resVidFullFingerprint",
+          "resVidFullRes",
+          "resVidMedWidth",
+          "resVidMedHeight",
+          "resVidMedFileType",
+          "resVidMedFingerprint",
+          "resVidMedRes",
+          "resVidSmallWidth",
+          "resVidSmallHeight",
+          "resVidSmallFileType",
+          "resVidSmallFingerprint",
+          "resVidSmallRes",
+          "resSidecarWidth",
+          "resSidecarHeight",
+          "resSidecarFileType",
+          "resSidecarFingerprint",
+          "resSidecarRes",
+          "itemType",
+          "dataClassType",
+          "filenameEnc",
+          "originalOrientation",
+          "resOriginalWidth",
+          "resOriginalHeight",
+          "resOriginalFileType",
+          "resOriginalFingerprint",
+          "resOriginalRes",
+          "resOriginalAltWidth",
+          "resOriginalAltHeight",
+          "resOriginalAltFileType",
+          "resOriginalAltFingerprint",
+          "resOriginalAltRes",
+          "resOriginalVidComplWidth",
+          "resOriginalVidComplHeight",
+          "resOriginalVidComplFileType",
+          "resOriginalVidComplFingerprint",
+          "resOriginalVidComplRes",
+          "isDeleted",
+          "isExpunged",
+          "dateExpunged",
+          "remappedRef",
+          "recordName",
+          "recordType",
+          "recordChangeTag",
+          "masterRef",
+          "adjustmentRenderType",
+          "assetDate",
+          "addedDate",
+          "isFavorite",
+          "isHidden",
+          "orientation",
+          "duration",
+          "assetSubtype",
+          "assetSubtypeV2",
+          "assetHDRType",
+          "burstFlags",
+          "burstFlagsExt",
+          "burstId",
+          "captionEnc",
+          "locationEnc",
+          "locationV2Enc",
+          "locationLatitude",
+          "locationLongitude",
+          "adjustmentType",
+          "timeZoneOffset",
+          "vidComplDurValue",
+          "vidComplDurScale",
+          "vidComplDispValue",
+          "vidComplDispScale",
+          "vidComplVisibilityState",
+          "customRenderedValue",
+          "containerId",
+          "itemId",
+          "position",
+          "isKeyAsset"
+        ],
+        "type": "string"
+      }
+    }
+  }
+}
