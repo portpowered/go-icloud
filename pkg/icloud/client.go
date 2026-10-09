@@ -18,6 +18,8 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// ListPhotoAssets enumerates paired assets of a primary photo album.
+	ListPhotoAssets(ctx context.Context, request ListPhotoAssetsRequest) (*ListPhotoAssetsResult, error)
 	// GetPhotoAlbumCount reads the indexed count of a primary-library album.
 	GetPhotoAlbumCount(ctx context.Context, request GetPhotoAlbumCountRequest) (*GetPhotoAlbumCountResult, error)
 	// ListPhotoAlbums reads all primary-library smart and custom albums.

@@ -2,6 +2,8 @@ package webtransport
 
 import (
 	"encoding/json"
+	"errors"
+	"math"
 	"math/big"
 	"regexp"
 	"strconv"
@@ -34,9 +36,20 @@ func reminderSyncInteger(raw json.RawMessage) bool {
 		text = strings.ReplaceAll(text, "_", "")
 	}
 
+	if decoded == "" && strings.ContainsAny(text, ".eE") {
+		return reminderSyncFloatInteger(text)
+	}
+
 	value, valid := new(big.Rat).SetString(text)
 
 	return valid && value.IsInt()
+}
+
+func reminderSyncFloatInteger(text string) bool {
+	number, err := strconv.ParseFloat(text, 64)
+
+	return (err == nil || errors.Is(err, strconv.ErrRange)) &&
+		number > math.MinInt64 && number < float64(math.MaxInt64) && math.Trunc(number) == number
 }
 
 func reminderSyncDouble(raw json.RawMessage) bool {

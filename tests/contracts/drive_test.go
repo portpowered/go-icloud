@@ -1,6 +1,7 @@
 package contracts_test
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -385,9 +386,19 @@ func driveJSONValue(entity replay.Entity) (any, error) {
 		}
 	}
 
+	var complete json.RawMessage
+
+	err := json.Unmarshal(body, &complete)
+	if err != nil {
+		return nil, fmt.Errorf("decode Drive JSON document: %w", err)
+	}
+
 	var value any
 
-	err := json.Unmarshal(body, &value)
+	decoder := json.NewDecoder(bytes.NewReader(body))
+	decoder.UseNumber()
+
+	err = decoder.Decode(&value)
 	if err != nil {
 		return nil, fmt.Errorf("decode Drive JSON: %w", err)
 	}

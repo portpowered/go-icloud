@@ -133,6 +133,24 @@ func (e GetPhotosStatusResultState) Valid() bool {
 	}
 }
 
+// Defines values for PhotoItemType.
+const (
+	Image PhotoItemType = "image"
+	Movie PhotoItemType = "movie"
+)
+
+// Valid indicates whether the value is a known member of the PhotoItemType enum.
+func (e PhotoItemType) Valid() bool {
+	switch e {
+	case Image:
+		return true
+	case Movie:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderChangeEventType.
 const (
 	ReminderChangeDeleted ReminderChangeEventType = "deleted"
@@ -1170,6 +1188,25 @@ type ListPhotoAlbumsResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// ListPhotoAssetsRequest Enumerate all paired assets of a primary smart/custom album in reference order.
+//
+// Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type ListPhotoAssetsRequest struct {
+	// Album Primary album ID or display/full name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListPhotoAssetsResult Complete deduplicated photos and every initialization, discovery, count and page response.
+//
+// Example: {"photos":[],"responses":[]}
+type ListPhotoAssetsResult struct {
+	Photos    []Photo            `json:"photos"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListReminderAlarmsRequest Look up ordered alarms and optional triggers from raw or complete related record identifiers.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"remindersServiceURL":"https://reminders.example.invalid"},"ids":[]}
@@ -1396,6 +1433,47 @@ type PermanentlyDeleteDriveNodeRequest struct {
 // PermanentlyDeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type PermanentlyDeleteDriveNodeResult = DriveItemChangeResult
 
+// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+//
+// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+type Photo struct {
+	// Added Library insertion time or Unix epoch when unset.
+	Added time.Time `json:"added"`
+
+	// AssetMetadata Extensible provider asset metadata normalized as the reference model; no dependency type exposed.
+	AssetMetadata json.RawMessage `json:"assetMetadata"`
+
+	// Created Capture time or Unix epoch when unset.
+	Created time.Time `json:"created"`
+
+	// Dimensions Width then height, normally integer pixels or null; provider values retained.
+	Dimensions []UnknownJSONValue `json:"dimensions"`
+
+	// Filename Decoded original filename or asset ID fallback.
+	Filename string `json:"filename"`
+
+	// ID Asset identifier.
+	ID string `json:"id"`
+
+	// IsLivePhoto Image with an accompanying video file type.
+	IsLivePhoto bool `json:"isLivePhoto"`
+
+	// ItemType Logical media kind.
+	ItemType PhotoItemType `json:"itemType"`
+
+	// MasterID Original master identifier.
+	MasterID string `json:"masterID"`
+
+	// Size Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Size UnknownJSONValue `json:"size"`
+
+	// Versions Available original/alternative/preview/video/sidecar resources.
+	Versions map[string]PhotoResource `json:"versions"`
+}
+
+// PhotoItemType Logical media kind.
+type PhotoItemType string
+
 // PhotoAlbum One smart album or custom photo album with its resolved folder path.
 //
 // Example: {"fullName":"Library","id":"Library","name":"Library","recordChangeTag":null}
@@ -1411,6 +1489,32 @@ type PhotoAlbum struct {
 
 	// RecordChangeTag Provider revision or null when omitted.
 	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+}
+
+// PhotoResource One downloadable photo/video rendition with nullable provider details.
+//
+// Example: {"checksum":null,"filename":"photo.JPG","height":null,"size":null,"type":null,"url":null,"width":null}
+type PhotoResource struct {
+	// Checksum Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Checksum UnknownJSONValue `json:"checksum"`
+
+	// Filename Resource filename with reference file-type extension.
+	Filename string `json:"filename"`
+
+	// Height Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Height UnknownJSONValue `json:"height"`
+
+	// Size Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Size UnknownJSONValue `json:"size"`
+
+	// Type Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Type UnknownJSONValue `json:"type"`
+
+	// Url Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Url UnknownJSONValue `json:"url"`
+
+	// Width Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
+	Width UnknownJSONValue `json:"width"`
 }
 
 // RefreshFindMyRequest Example: {"locate":true}

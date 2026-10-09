@@ -11,7 +11,7 @@ and unused traffic (LIB-05/LIB-12). The added cases cover overlapping normal,
 error and tombstone models and cookie reuse from discovery into the query.
 Thirteen corresponding list-discovery cases bind Source selection and error precedence
 to the public Go list reader, alongside its original twenty-four cases.
-The current portable HTTP corpus contains 900 scenarios and 1,779 pairs, including
+The current portable HTTP corpus contains 1,005 scenarios and 2,189 pairs, including
 348 Reminders scenarios and 414 pairs. The Go snapshot facade executes all
 
 twenty-eight Source cases; full verification and independent review remain open.
@@ -322,3 +322,26 @@ A private live count used the saved trusted session: validation, library discove
 and the count request all returned HTTP 200. Captured replies remain outside Git
 and separate from synthetic cases. Asset enumeration, shared counts, downloads
 and mutations remain pending.
+
+
+## Primary Photos assets
+
+`ListPhotoAssets` consumes 109 Source-executed scenarios and 427 paired exchanges.
+One hundred and five new cases cover all smart filters, ID/name/full-folder selection,
+zero/one/many results, unpaired and duplicate records, rank pagination and
+cookie rotation, all known media types and resource versions, date coercion and
+Windows boundaries, nested typed metadata and opaque future/plugin JSON.
+Whole-page invalid records and first/later HTTP errors retain exact response
+body, headers and prior evidence; every pair must be consumed (LIB-05).
+Source mutation controls reject changed filenames, resource URLs, metadata,
+query values, failure payloads, missing cookies and unused traffic. Wire
+contracts validate every request/reply; generated public models have examples
+and generation drift checks.
+
+Private Go validation and all 13 Photos requests returned HTTP 200. Python
+replayed those captured raw responses offline and matched complete asset
+projections with strict traffic consumption. The private comparison preserved
+cookie scope/order/values and used wire decompression for compressed captures;
+no request or output field was ignored. Captured evidence remains outside Git
+and separate from the synthetic corpus (LIB-09/LIB-12). Resource downloads,
+shared libraries and mutations remain pending.

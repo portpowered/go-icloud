@@ -70,7 +70,8 @@ func validatePhotoCountInvalidReply(t *testing.T, operation *openapi3.Operation,
 	if err != nil {
 		// Source JSON decoding overflows to infinity; its count model rejects
 		// that value. Go rejects it at binary64 decoding instead.
-		if strings.HasSuffix(path, "overflow.json") && photoCountJSONOverflow(err) {
+		if (strings.HasSuffix(path, "overflow.json") ||
+			strings.HasSuffix(path, "metadata-int64-overflow-invalid.json")) && photoCountJSONOverflow(err) {
 			return
 		}
 

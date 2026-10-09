@@ -246,7 +246,7 @@ operation follows the reference's first normal record selection after validating
 the whole reply. Twenty-seven Source/Go initialization cases bind request ordering,
 complete results, cookies and failures. A private live capture confirms trusted
 Go session validation and Photos initialization both return HTTP 200. This is an
-initialization milestone; asset, download and mutation SDK parity remain open.
+initialization operation; downloads and mutation SDK parity remain open.
 
 List the primary library's smart and custom albums:
 
@@ -284,10 +284,36 @@ _ = count.Count
 initializes and discovers albums before querying the selected Hyperion index.
 It returns a nonnegative count with every response; missing albums return
 `NotFound`, and malformed or unusable count replies retain their evidence.
-Forty-nine Source/Go cases bind all smart indexes, custom/folder selection, full
+Fifty-six Source/Go cases bind all smart indexes, custom/folder selection, full
 reply validation, integer coercion, cookies, initialization and HTTP failures.
 A private live primary-library count succeeded with the saved trusted session.
-Photo asset enumeration and shared-library counts remain pending.
+Shared-library counts remain pending.
+
+Enumerate assets in a primary smart or custom album:
+
+```go
+assets, err := client.ListPhotoAssets(ctx, icloud.ListPhotoAssetsRequest{
+    Auth: resumed.Auth, Album: "Library",
+})
+if err != nil { return err }
+for _, photo := range assets.Photos {
+    _ = photo.Filename
+    _ = photo.Versions["original"]
+}
+```
+
+`ListPhotoAssets` checks readiness, discovers albums, and follows the selected
+album's count/rank paging rules. It returns ordered, deduplicated photos with
+master IDs, media kind, dimensions, timestamps, Live Photo status, resource
+versions and complete normalized asset metadata. Version details retain nullable
+or future provider values as JSON. `Responses` retains every reply; failure
+returns no partial photos and keeps final/prior response evidence. One hundred and nine
+Source/Go cases bind complete projections, empty/one/many results, all smart
+queries, custom folders, pagination and overlaps, known file/version types,
+typed metadata coercion, opaque future values, cookies and HTTP/provider errors.
+A private live Go library read succeeded, and Python replayed all 13 captured
+Photos exchanges with matching complete projections. Downloading the listed
+resources, shared-library enumeration and mutations remain pending.
 
 Fetch related records using the identifiers returned on a reminder:
 

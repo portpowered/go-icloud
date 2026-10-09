@@ -47,19 +47,9 @@ func validatePhotoAlbumExchanges(t *testing.T, document *openapi3.T, path string
 		validateFindMyParameters(t, operation, exchange.Request)
 		validateDriveRequest(t, operation, exchange.Request)
 
-		invalid := index == len(exchanges)-1 && (strings.HasSuffix(path, "records-null.json") ||
-			strings.HasSuffix(path, "later-record-malformed.json") || strings.HasSuffix(path, "later-page-invalid.json"))
+		invalid := index == len(exchanges)-1 && photoQueryInvalidReply(path)
 		if invalid {
-			contract := driveResponseContract(operation, exchange.Response.Status)
-
-			value, decodeErr := driveJSONValue(exchange.Response.Body)
-			if decodeErr != nil {
-				t.Fatal(decodeErr)
-			}
-
-			if contract.Value.Content["application/json"].Schema.Value.VisitJSON(value) == nil {
-				t.Fatal("Source-invalid album response accepted by schema")
-			}
+			validatePhotoCountInvalidReply(t, operation, exchange.Response, path)
 		} else {
 			validateDriveResponse(t, operation, exchange.Response)
 		}
@@ -134,4 +124,34 @@ func validatePhotosInitialization(t *testing.T, document *openapi3.T, path strin
 	} else {
 		validateDriveResponse(t, operation, exchange.Response)
 	}
+}
+
+func TestPhotoAssetsWireContracts(t *testing.T) {
+	t.Parallel()
+	document := loadDriveDocument(t, "../../api/external/photos.openapi.yaml")
+
+	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/photos-assets-*.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(paths) != 109 {
+		t.Fatal("photo asset contract inventory changed")
+	}
+
+	for _, path := range paths {
+		t.Run(filepath.Base(path), func(t *testing.T) { t.Parallel(); validatePhotoAlbumExchanges(t, document, path) })
+	}
+}
+
+func photoQueryInvalidReply(path string) bool {
+	for _, suffix := range []string{"records-null.json", "later-record-malformed.json",
+		"later-page-invalid.json", "invalid-last-record.json",
+		"metadata-int64-fraction-invalid.json", "metadata-int64-overflow-invalid.json"} {
+		if strings.HasSuffix(path, suffix) {
+			return true
+		}
+	}
+
+	return false
 }

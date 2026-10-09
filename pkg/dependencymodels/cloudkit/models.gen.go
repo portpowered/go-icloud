@@ -611,13 +611,13 @@ func (e ImageAttachmentType) Valid() bool {
 
 // Defines values for ImageAttachmentUTI.
 const (
-	PublicJpeg ImageAttachmentUTI = "public.jpeg"
+	ImageAttachmentUTIPublicJpeg ImageAttachmentUTI = "public.jpeg"
 )
 
 // Valid indicates whether the value is a known member of the ImageAttachmentUTI enum.
 func (e ImageAttachmentUTI) Valid() bool {
 	switch e {
-	case PublicJpeg:
+	case ImageAttachmentUTIPublicJpeg:
 		return true
 	default:
 		return false
@@ -821,13 +821,13 @@ func (e PhotoAlbumNameField) Valid() bool {
 
 // Defines values for PhotoAlbumParentField.
 const (
-	ParentId PhotoAlbumParentField = "parentId"
+	PhotoAlbumParentFieldParentId PhotoAlbumParentField = "parentId"
 )
 
 // Valid indicates whether the value is a known member of the PhotoAlbumParentField enum.
 func (e PhotoAlbumParentField) Valid() bool {
 	switch e {
-	case ParentId:
+	case PhotoAlbumParentFieldParentId:
 		return true
 	default:
 		return false
@@ -900,6 +900,186 @@ func (e PhotoAlbumTypeField) Valid() bool {
 	}
 }
 
+// Defines values for PhotoAssetQueryField.
+const (
+	PhotoAssetQueryFieldDirection  PhotoAssetQueryField = "direction"
+	PhotoAssetQueryFieldParentId   PhotoAssetQueryField = "parentId"
+	PhotoAssetQueryFieldRecordName PhotoAssetQueryField = "recordName"
+	PhotoAssetQueryFieldSmartAlbum PhotoAssetQueryField = "smartAlbum"
+	PhotoAssetQueryFieldStartRank  PhotoAssetQueryField = "startRank"
+)
+
+// Valid indicates whether the value is a known member of the PhotoAssetQueryField enum.
+func (e PhotoAssetQueryField) Valid() bool {
+	switch e {
+	case PhotoAssetQueryFieldDirection:
+		return true
+	case PhotoAssetQueryFieldParentId:
+		return true
+	case PhotoAssetQueryFieldRecordName:
+		return true
+	case PhotoAssetQueryFieldSmartAlbum:
+		return true
+	case PhotoAssetQueryFieldStartRank:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoDirection.
+const (
+	ASCENDING  PhotoDirection = "ASCENDING"
+	DESCENDING PhotoDirection = "DESCENDING"
+)
+
+// Valid indicates whether the value is a known member of the PhotoDirection enum.
+func (e PhotoDirection) Valid() bool {
+	switch e {
+	case ASCENDING:
+		return true
+	case DESCENDING:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoFileExtension.
+const (
+	DotARW  PhotoFileExtension = ".ARW"
+	DotCR2  PhotoFileExtension = ".CR2"
+	DotCR3  PhotoFileExtension = ".CR3"
+	DotCRW  PhotoFileExtension = ".CRW"
+	DotDNG  PhotoFileExtension = ".DNG"
+	DotHEIC PhotoFileExtension = ".HEIC"
+	DotHEIF PhotoFileExtension = ".HEIF"
+	DotJPG  PhotoFileExtension = ".JPG"
+	DotM4V  PhotoFileExtension = ".M4V"
+	DotMOV  PhotoFileExtension = ".MOV"
+	DotMP4  PhotoFileExtension = ".MP4"
+	DotNEF  PhotoFileExtension = ".NEF"
+	DotNRF  PhotoFileExtension = ".NRF"
+	DotORF  PhotoFileExtension = ".ORF"
+	DotPEF  PhotoFileExtension = ".PEF"
+	DotPNG  PhotoFileExtension = ".PNG"
+	DotRAF  PhotoFileExtension = ".RAF"
+	DotRW2  PhotoFileExtension = ".RW2"
+)
+
+// Valid indicates whether the value is a known member of the PhotoFileExtension enum.
+func (e PhotoFileExtension) Valid() bool {
+	switch e {
+	case DotARW:
+		return true
+	case DotCR2:
+		return true
+	case DotCR3:
+		return true
+	case DotCRW:
+		return true
+	case DotDNG:
+		return true
+	case DotHEIC:
+		return true
+	case DotHEIF:
+		return true
+	case DotJPG:
+		return true
+	case DotM4V:
+		return true
+	case DotMOV:
+		return true
+	case DotMP4:
+		return true
+	case DotNEF:
+		return true
+	case DotNRF:
+		return true
+	case DotORF:
+		return true
+	case DotPEF:
+		return true
+	case DotPNG:
+		return true
+	case DotRAF:
+		return true
+	case DotRW2:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoFileType.
+const (
+	PhotoFileTypeComAdobeRawImage        PhotoFileType = "com.adobe.raw-image"
+	PhotoFileTypeComAppleM4vVideo        PhotoFileType = "com.apple.m4v-video"
+	PhotoFileTypeComAppleQuicktimeMovie  PhotoFileType = "com.apple.quicktime-movie"
+	PhotoFileTypeComCanonCr2RawImage     PhotoFileType = "com.canon.cr2-raw-image"
+	PhotoFileTypeComCanonCr3RawImage     PhotoFileType = "com.canon.cr3-raw-image"
+	PhotoFileTypeComCanonCrwRawImage     PhotoFileType = "com.canon.crw-raw-image"
+	PhotoFileTypeComFujiRawImage         PhotoFileType = "com.fuji.raw-image"
+	PhotoFileTypeComNikonNrwRawImage     PhotoFileType = "com.nikon.nrw-raw-image"
+	PhotoFileTypeComNikonRawImage        PhotoFileType = "com.nikon.raw-image"
+	PhotoFileTypeComOlympusOrRawImage    PhotoFileType = "com.olympus.or-raw-image"
+	PhotoFileTypeComOlympusRawImage      PhotoFileType = "com.olympus.raw-image"
+	PhotoFileTypeComPanasonicRw2RawImage PhotoFileType = "com.panasonic.rw2-raw-image"
+	PhotoFileTypeComPentaxRawImage       PhotoFileType = "com.pentax.raw-image"
+	PhotoFileTypeComSonyArwRawImage      PhotoFileType = "com.sony.arw-raw-image"
+	PhotoFileTypePublicHeic              PhotoFileType = "public.heic"
+	PhotoFileTypePublicHeif              PhotoFileType = "public.heif"
+	PhotoFileTypePublicJpeg              PhotoFileType = "public.jpeg"
+	PhotoFileTypePublicMpeg4             PhotoFileType = "public.mpeg-4"
+	PhotoFileTypePublicPng               PhotoFileType = "public.png"
+)
+
+// Valid indicates whether the value is a known member of the PhotoFileType enum.
+func (e PhotoFileType) Valid() bool {
+	switch e {
+	case PhotoFileTypeComAdobeRawImage:
+		return true
+	case PhotoFileTypeComAppleM4vVideo:
+		return true
+	case PhotoFileTypeComAppleQuicktimeMovie:
+		return true
+	case PhotoFileTypeComCanonCr2RawImage:
+		return true
+	case PhotoFileTypeComCanonCr3RawImage:
+		return true
+	case PhotoFileTypeComCanonCrwRawImage:
+		return true
+	case PhotoFileTypeComFujiRawImage:
+		return true
+	case PhotoFileTypeComNikonNrwRawImage:
+		return true
+	case PhotoFileTypeComNikonRawImage:
+		return true
+	case PhotoFileTypeComOlympusOrRawImage:
+		return true
+	case PhotoFileTypeComOlympusRawImage:
+		return true
+	case PhotoFileTypeComPanasonicRw2RawImage:
+		return true
+	case PhotoFileTypeComPentaxRawImage:
+		return true
+	case PhotoFileTypeComSonyArwRawImage:
+		return true
+	case PhotoFileTypePublicHeic:
+		return true
+	case PhotoFileTypePublicHeif:
+		return true
+	case PhotoFileTypePublicJpeg:
+		return true
+	case PhotoFileTypePublicMpeg4:
+		return true
+	case PhotoFileTypePublicPng:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotoFinishedState.
 const (
 	FINISHED PhotoFinishedState = "FINISHED"
@@ -939,6 +1119,84 @@ const (
 func (e PhotoIndexingStateField) Valid() bool {
 	switch e {
 	case State:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoListIndex.
+const (
+	CPLAssetAndMasterByAddedDate                       PhotoListIndex = "CPLAssetAndMasterByAddedDate"
+	CPLAssetAndMasterByAssetDateWithoutHiddenOrDeleted PhotoListIndex = "CPLAssetAndMasterByAssetDateWithoutHiddenOrDeleted"
+	CPLAssetAndMasterDeletedByExpungedDate             PhotoListIndex = "CPLAssetAndMasterDeletedByExpungedDate"
+	CPLAssetAndMasterHiddenByAssetDate                 PhotoListIndex = "CPLAssetAndMasterHiddenByAssetDate"
+	CPLAssetAndMasterInSmartAlbumByAssetDate           PhotoListIndex = "CPLAssetAndMasterInSmartAlbumByAssetDate"
+	CPLBurstStackAssetAndMasterByAssetDate             PhotoListIndex = "CPLBurstStackAssetAndMasterByAssetDate"
+	CPLContainerRelationLiveByAssetDate                PhotoListIndex = "CPLContainerRelationLiveByAssetDate"
+	CPLContainerRelationLiveByPosition                 PhotoListIndex = "CPLContainerRelationLiveByPosition"
+)
+
+// Valid indicates whether the value is a known member of the PhotoListIndex enum.
+func (e PhotoListIndex) Valid() bool {
+	switch e {
+	case CPLAssetAndMasterByAddedDate:
+		return true
+	case CPLAssetAndMasterByAssetDateWithoutHiddenOrDeleted:
+		return true
+	case CPLAssetAndMasterDeletedByExpungedDate:
+		return true
+	case CPLAssetAndMasterHiddenByAssetDate:
+		return true
+	case CPLAssetAndMasterInSmartAlbumByAssetDate:
+		return true
+	case CPLBurstStackAssetAndMasterByAssetDate:
+		return true
+	case CPLContainerRelationLiveByAssetDate:
+		return true
+	case CPLContainerRelationLiveByPosition:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoMasterField.
+const (
+	AddedDate                   PhotoMasterField = "addedDate"
+	AssetDate                   PhotoMasterField = "assetDate"
+	FilenameEnc                 PhotoMasterField = "filenameEnc"
+	ItemType                    PhotoMasterField = "itemType"
+	MasterRef                   PhotoMasterField = "masterRef"
+	ResOriginalFileType         PhotoMasterField = "resOriginalFileType"
+	ResOriginalHeight           PhotoMasterField = "resOriginalHeight"
+	ResOriginalRes              PhotoMasterField = "resOriginalRes"
+	ResOriginalVidComplFileType PhotoMasterField = "resOriginalVidComplFileType"
+	ResOriginalWidth            PhotoMasterField = "resOriginalWidth"
+)
+
+// Valid indicates whether the value is a known member of the PhotoMasterField enum.
+func (e PhotoMasterField) Valid() bool {
+	switch e {
+	case AddedDate:
+		return true
+	case AssetDate:
+		return true
+	case FilenameEnc:
+		return true
+	case ItemType:
+		return true
+	case MasterRef:
+		return true
+	case ResOriginalFileType:
+		return true
+	case ResOriginalHeight:
+		return true
+	case ResOriginalRes:
+		return true
+	case ResOriginalVidComplFileType:
+		return true
+	case ResOriginalWidth:
 		return true
 	default:
 		return false
@@ -1023,6 +1281,87 @@ func (e PhotoPrimaryZoneType) Valid() bool {
 	}
 }
 
+// Defines values for PhotoRecordKind.
+const (
+	CPLAsset  PhotoRecordKind = "CPLAsset"
+	CPLMaster PhotoRecordKind = "CPLMaster"
+)
+
+// Valid indicates whether the value is a known member of the PhotoRecordKind enum.
+func (e PhotoRecordKind) Valid() bool {
+	switch e {
+	case CPLAsset:
+		return true
+	case CPLMaster:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoResourcePrefix.
+const (
+	ResJPEGMed          PhotoResourcePrefix = "resJPEGMed"
+	ResJPEGThumb        PhotoResourcePrefix = "resJPEGThumb"
+	ResOriginal         PhotoResourcePrefix = "resOriginal"
+	ResOriginalAlt      PhotoResourcePrefix = "resOriginalAlt"
+	ResOriginalVidCompl PhotoResourcePrefix = "resOriginalVidCompl"
+	ResSidecar          PhotoResourcePrefix = "resSidecar"
+	ResVidMed           PhotoResourcePrefix = "resVidMed"
+	ResVidSmall         PhotoResourcePrefix = "resVidSmall"
+)
+
+// Valid indicates whether the value is a known member of the PhotoResourcePrefix enum.
+func (e PhotoResourcePrefix) Valid() bool {
+	switch e {
+	case ResJPEGMed:
+		return true
+	case ResJPEGThumb:
+		return true
+	case ResOriginal:
+		return true
+	case ResOriginalAlt:
+		return true
+	case ResOriginalVidCompl:
+		return true
+	case ResSidecar:
+		return true
+	case ResVidMed:
+		return true
+	case ResVidSmall:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoResourceSuffix.
+const (
+	PhotoResourceSuffixFileType    PhotoResourceSuffix = "FileType"
+	PhotoResourceSuffixFingerprint PhotoResourceSuffix = "Fingerprint"
+	PhotoResourceSuffixHeight      PhotoResourceSuffix = "Height"
+	PhotoResourceSuffixRes         PhotoResourceSuffix = "Res"
+	PhotoResourceSuffixWidth       PhotoResourceSuffix = "Width"
+)
+
+// Valid indicates whether the value is a known member of the PhotoResourceSuffix enum.
+func (e PhotoResourceSuffix) Valid() bool {
+	switch e {
+	case PhotoResourceSuffixFileType:
+		return true
+	case PhotoResourceSuffixFingerprint:
+		return true
+	case PhotoResourceSuffixHeight:
+		return true
+	case PhotoResourceSuffixRes:
+		return true
+	case PhotoResourceSuffixWidth:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PhotoSmartAlbumName.
 const (
 	Bursts          PhotoSmartAlbumName = "Bursts"
@@ -1062,6 +1401,81 @@ func (e PhotoSmartAlbumName) Valid() bool {
 	case TimeLapse:
 		return true
 	case Videos:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoSmartSelector.
+const (
+	FAVORITE   PhotoSmartSelector = "FAVORITE"
+	LIVE       PhotoSmartSelector = "LIVE"
+	PANORAMA   PhotoSmartSelector = "PANORAMA"
+	SCREENSHOT PhotoSmartSelector = "SCREENSHOT"
+	SLOMO      PhotoSmartSelector = "SLOMO"
+	TIMELAPSE  PhotoSmartSelector = "TIMELAPSE"
+	VIDEO      PhotoSmartSelector = "VIDEO"
+)
+
+// Valid indicates whether the value is a known member of the PhotoSmartSelector enum.
+func (e PhotoSmartSelector) Valid() bool {
+	switch e {
+	case FAVORITE:
+		return true
+	case LIVE:
+		return true
+	case PANORAMA:
+		return true
+	case SCREENSHOT:
+		return true
+	case SLOMO:
+		return true
+	case TIMELAPSE:
+		return true
+	case VIDEO:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoVersionName.
+const (
+	Alternative   PhotoVersionName = "alternative"
+	Medium        PhotoVersionName = "medium"
+	MediumImage   PhotoVersionName = "medium_image"
+	MediumVideo   PhotoVersionName = "medium_video"
+	Original      PhotoVersionName = "original"
+	OriginalVideo PhotoVersionName = "original_video"
+	Sidecar       PhotoVersionName = "sidecar"
+	Thumb         PhotoVersionName = "thumb"
+	ThumbImage    PhotoVersionName = "thumb_image"
+	ThumbVideo    PhotoVersionName = "thumb_video"
+)
+
+// Valid indicates whether the value is a known member of the PhotoVersionName enum.
+func (e PhotoVersionName) Valid() bool {
+	switch e {
+	case Alternative:
+		return true
+	case Medium:
+		return true
+	case MediumImage:
+		return true
+	case MediumVideo:
+		return true
+	case Original:
+		return true
+	case OriginalVideo:
+		return true
+	case Sidecar:
+		return true
+	case Thumb:
+		return true
+	case ThumbImage:
+		return true
+	case ThumbVideo:
 		return true
 	default:
 		return false
@@ -1310,13 +1724,13 @@ func (e RelatedFieldFrequency) Valid() bool {
 
 // Defines values for RelatedFieldHeight.
 const (
-	Height RelatedFieldHeight = "Height"
+	RelatedFieldHeightHeight RelatedFieldHeight = "Height"
 )
 
 // Valid indicates whether the value is a known member of the RelatedFieldHeight enum.
 func (e RelatedFieldHeight) Valid() bool {
 	switch e {
-	case Height:
+	case RelatedFieldHeightHeight:
 		return true
 	default:
 		return false
@@ -1535,13 +1949,13 @@ func (e RelatedFieldUTI) Valid() bool {
 
 // Defines values for RelatedFieldWidth.
 const (
-	Width RelatedFieldWidth = "Width"
+	RelatedFieldWidthWidth RelatedFieldWidth = "Width"
 )
 
 // Valid indicates whether the value is a known member of the RelatedFieldWidth enum.
 func (e RelatedFieldWidth) Valid() bool {
 	switch e {
-	case Width:
+	case RelatedFieldWidthWidth:
 		return true
 	default:
 		return false
@@ -2121,9 +2535,9 @@ type CKBytesFieldType string
 
 // CKChainProtectionInfo End-to-end encryption chain protection metadata.
 type CKChainProtectionInfo struct {
-	Bytes                nullable.Nullable[string] `json:"bytes,omitempty"`
-	PcsChangeTag         nullable.Nullable[string] `json:"pcsChangeTag,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
+	Bytes                nullable.Nullable[CKBase64Input] `json:"bytes,omitempty"`
+	PcsChangeTag         nullable.Nullable[string]        `json:"pcsChangeTag,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON         `json:"-"`
 }
 
 // CKComparator CloudKit query filter comparison operators.
@@ -2132,7 +2546,7 @@ type CKComparator string
 // CKDoubleField Floating-point field wrapper, optionally encrypted (e.g. for location data).
 type CKDoubleField struct {
 	Type                 CKDoubleFieldType                 `json:"type"`
-	Value                float64                           `json:"value"`
+	Value                CKDoubleInput                     `json:"value"`
 	IsEncrypted          nullable.Nullable[CKBooleanInput] `json:"isEncrypted,omitempty"`
 	AdditionalProperties map[string]CKUnknownJSON          `json:"-"`
 }
@@ -2140,10 +2554,13 @@ type CKDoubleField struct {
 // CKDoubleFieldType defines model for CKDoubleField.Type.
 type CKDoubleFieldType string
 
+// CKDoubleInput Source floating-point inputs before conversion; numeric text and booleans are accepted.
+type CKDoubleInput = json.RawMessage
+
 // CKDoubleListField List of floating-point values field wrapper.
 type CKDoubleListField struct {
 	Type                 CKDoubleListFieldType    `json:"type"`
-	Value                []float64                `json:"value"`
+	Value                []CKDoubleInput          `json:"value"`
 	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
 }
 
@@ -2364,9 +2781,9 @@ type CKNameComponents struct {
 
 // CKPCSInfo Top-level PCS envelope used by shared-record metadata.
 type CKPCSInfo struct {
-	Bytes                nullable.Nullable[string] `json:"bytes,omitempty"`
-	PcsChangeTag         nullable.Nullable[string] `json:"pcsChangeTag,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
+	Bytes                nullable.Nullable[CKBase64Input] `json:"bytes,omitempty"`
+	PcsChangeTag         nullable.Nullable[string]        `json:"pcsChangeTag,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON         `json:"-"`
 }
 
 // CKParent References a parent record in a record hierarchy.
@@ -2394,9 +2811,9 @@ type CKParticipant struct {
 
 // CKParticipantProtectionInfo Participant-scoped protectionInfo envelope.
 type CKParticipantProtectionInfo struct {
-	Bytes                nullable.Nullable[string] `json:"bytes,omitempty"`
-	PcsChangeTag         nullable.Nullable[string] `json:"pcsChangeTag,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON  `json:"-"`
+	Bytes                nullable.Nullable[CKBase64Input] `json:"bytes,omitempty"`
+	PcsChangeTag         nullable.Nullable[string]        `json:"pcsChangeTag,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON         `json:"-"`
 }
 
 // CKPassthroughField Generic field wrapper for unknown or future CloudKit field types. Known tags must validate their discriminated wrapper and cannot use this future-tag branch.
@@ -2532,9 +2949,9 @@ type CKRecord struct {
 	ChainParentKey         nullable.Nullable[string]                `json:"chainParentKey,omitempty"`
 	ChainPrivateKey        nullable.Nullable[string]                `json:"chainPrivateKey,omitempty"`
 
-	// ExpirationTime seconds since Unix epoch
-	ExpirationTime       nullable.Nullable[int64] `json:"expirationTime,omitempty"`
-	AdditionalProperties map[string]CKUnknownJSON `json:"-"`
+	// ExpirationTime Source seconds-or-milliseconds input, normalized to integer seconds in metadata.
+	ExpirationTime       nullable.Nullable[json.RawMessage] `json:"expirationTime,omitempty"`
+	AdditionalProperties map[string]CKUnknownJSON           `json:"-"`
 }
 
 // CKReference Value inside REFERENCE / REFERENCE_LIST typed fields (both request & response).
@@ -2864,6 +3281,18 @@ type PhotoAlbumType int
 // PhotoAlbumTypeField Reference Photos album protocol value.
 type PhotoAlbumTypeField string
 
+// PhotoAssetQueryField Known primary photo projection/query value from the pinned reference.
+type PhotoAssetQueryField string
+
+// PhotoDirection Known primary photo projection/query value from the pinned reference.
+type PhotoDirection string
+
+// PhotoFileExtension Known primary photo projection/query value from the pinned reference.
+type PhotoFileExtension string
+
+// PhotoFileType Known primary photo projection/query value from the pinned reference.
+type PhotoFileType string
+
 // PhotoFinishedState Reference Photos initialization protocol value.
 type PhotoFinishedState string
 
@@ -2872,6 +3301,12 @@ type PhotoIndexingRecordType string
 
 // PhotoIndexingStateField Reference Photos initialization protocol value.
 type PhotoIndexingStateField string
+
+// PhotoListIndex Known primary photo projection/query value from the pinned reference.
+type PhotoListIndex string
+
+// PhotoMasterField Known primary photo projection/query value from the pinned reference.
+type PhotoMasterField string
 
 // PhotoObjectIndex Pinned photo count index identifiers.
 type PhotoObjectIndex string
@@ -2882,8 +3317,23 @@ type PhotoPrimaryZoneName string
 // PhotoPrimaryZoneType Reference Photos initialization protocol value.
 type PhotoPrimaryZoneType string
 
+// PhotoRecordKind Known primary Photos reference projection value.
+type PhotoRecordKind string
+
+// PhotoResourcePrefix Known primary photo projection/query value from the pinned reference.
+type PhotoResourcePrefix string
+
+// PhotoResourceSuffix Known primary Photos reference projection value.
+type PhotoResourceSuffix string
+
 // PhotoSmartAlbumName Source smart album names in their discovery order.
 type PhotoSmartAlbumName string
+
+// PhotoSmartSelector Known primary Photos reference projection value.
+type PhotoSmartSelector string
+
+// PhotoVersionName Known primary Photos reference projection value.
+type PhotoVersionName string
 
 // PhotosCountField Source integer-coercible photo count.
 type PhotosCountField struct {
