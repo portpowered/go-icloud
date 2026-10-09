@@ -137,6 +137,7 @@ func expectedReferenceSession(t *testing.T, row map[string]json.RawMessage,
 	expected.Auth.DriveServiceURL = services["drivews"]["url"]
 	expected.Auth.DriveDocumentServiceURL = services["docws"]["url"]
 	expected.Auth.FindMyServiceURL = services["findme"]["url"]
+	expected.Auth.RemindersServiceURL = services["reminders"]["url"]
 	expected.Auth.Headers = referenceSavedHeaders(t, row)
 	expected.Auth.Cookies = referenceSavedCookies(t, row)
 	expected.AccountData = referenceResponseBody(t, exchange.Response.Body)

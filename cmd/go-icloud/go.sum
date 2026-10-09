@@ -21,6 +21,10 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/portpowered/go-icloud v0.0.0-20261009001204-c47581b24947 h1:pjWy7w4hY+F0m1iP+OXuiLc1faO5U5CGYcW0lPA+rYI=
 github.com/portpowered/go-icloud v0.0.0-20261009001204-c47581b24947/go.mod h1:D6wBTZpAvTrd1kD1m0bAxK0kK5oxvOVyUi+hnUbfQHU=
+github.com/portpowered/go-icloud v0.0.0-20261009024105-118a2d23278a h1:dJwSqKEAd+N7Xw4XMhmwd4y+QqeXPyhPeCQy2ZrJopQ=
+github.com/portpowered/go-icloud v0.0.0-20261009024105-118a2d23278a/go.mod h1:D6wBTZpAvTrd1kD1m0bAxK0kK5oxvOVyUi+hnUbfQHU=
+github.com/portpowered/go-icloud v0.0.0-20261009025018-4ab068e7ba38 h1:7ZqO3a6AQK7aA2VK8e8J4iTKBmbWgSBaMgi6PhKQnWM=
+github.com/portpowered/go-icloud v0.0.0-20261009025018-4ab068e7ba38/go.mod h1:D6wBTZpAvTrd1kD1m0bAxK0kK5oxvOVyUi+hnUbfQHU=
 github.com/spkg/bom v0.0.0-20160624110644-59b7046e48ad/go.mod h1:qLr4V1qq6nMqFKkMo8ZTx3f+BZEkzsRUY10Xsm2mwU0=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
