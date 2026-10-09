@@ -3,6 +3,7 @@ package icloud
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	"unicode"
 	"unicode/utf8"
@@ -24,7 +25,7 @@ func photoEncryptedText(raw json.RawMessage) (string, bool) {
 }
 
 func photoRecordText(record cloudkit.CKRecord, name string) (string, bool, error) {
-	raw, err := reminderField(record, name)
+	raw, err := photoFieldValue(record, name)
 	if err != nil {
 		return "", false, err
 	}
@@ -94,4 +95,21 @@ func photoBinaryText(raw json.RawMessage) (string, bool, error) {
 	text, ok := photoBase64Text(decoded)
 
 	return text, ok, nil
+}
+
+// photoFieldValue follows Source's Photos-only extra dictionary unwrapping.
+func photoFieldValue(record cloudkit.CKRecord, name string) (json.RawMessage, error) {
+	raw, err := reminderField(record, name)
+	if err != nil {
+		return nil, err
+	}
+
+	var object map[string]json.RawMessage
+	if json.Unmarshal(raw, &object) == nil {
+		if value, exists := object[protocol.PhotosCKPassthroughFieldValue]; exists {
+			return value, nil
+		}
+	}
+
+	return raw, nil
 }

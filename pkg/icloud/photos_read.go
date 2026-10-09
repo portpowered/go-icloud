@@ -3,10 +3,10 @@ package icloud
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
+	"strconv"
 )
 
 type photosRead struct {
@@ -80,7 +80,8 @@ func (read *photosRead) albums(ctx context.Context, parent *string) ([]cloudkit.
 			return nil, read.failure(err, InvalidResponse)
 		}
 
-		if string(raw) != fmt.Sprint(cloudkit.PhotoAlbumTypeN3) {
+		kind, numberErr := strconv.ParseFloat(string(raw), 64)
+		if numberErr != nil || kind != float64(cloudkit.PhotoAlbumTypeN3) {
 			continue
 		}
 

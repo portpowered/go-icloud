@@ -16,7 +16,7 @@ func TestPhotoAlbumWireContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 31 {
+	if len(paths) != 41 {
 		t.Fatal("photo album contract inventory changed")
 	}
 

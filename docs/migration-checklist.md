@@ -2,8 +2,8 @@
 
 Primary Photos albums now have a stateless `ListPhotoAlbums` SDK operation,
 schema-generated public projections, recursive folder/page traversal, and 31
-strict Source/Go cases with 71 exchanges. Twenty-six new cases extend the corpus
-to 837 scenarios and 1,600 pairs. Live Go reads returned 12 albums, with saved
+strict Source/Go cases with 98 exchanges. Thirty-six new cases extend the corpus
+to 847 scenarios and 1,627 pairs. Live Go reads returned 12 albums, with saved
 session validation and every Photos request returning HTTP 200. Final checks,
 CI and exact-head review are pending for this milestone. Asset reads and Photos
 CLI commands are next; live reminder contents remain unresolved.
@@ -18,8 +18,8 @@ is merged. Full Photos parity remains open.
 Current related-read milestone adds forty-six Source-executed synthetic cases
 and fifty-one paired exchanges for hashtag, attachment, recurrence and alarm
 lookup. Go consumes the same artifacts and compares complete ordered results,
-response evidence and failures. The corpus now contains 837 HTTP scenarios and
-1,600 paired exchanges. Reminder writes and full Photos SDK parity remain open.
+response evidence and failures. The corpus now contains 847 HTTP scenarios and
+1,627 paired exchanges. Reminder writes and full Photos SDK parity remain open.
 Source synthetic measurement after this addition covers 62.02% of inventoried
 function-body statements and 1,057/2,076 branch exits; this remains a conservative
 diagnostic, not endpoint completeness proof. Related-read checks, CI and

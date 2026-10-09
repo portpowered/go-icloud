@@ -265,7 +265,7 @@ for _, album := range albums.Albums {
 queries folders. Results preserve Source order, duplicate replacement behavior,
 full parent names, and nullable revision tags. `Responses` retains every HTTP
 reply; failures include prior response evidence and return no partial result.
-Thirty-one Source/Go scenarios cover complete results, empty custom albums,
+Forty-one Source/Go scenarios cover complete results, empty custom albums,
 pagination, folders, encoded names, cookies and provider failures. A private
 live read with the saved trusted session returned 12 albums and HTTP 200 for all
 requests. Shared-library album enumeration remains separate pending work.

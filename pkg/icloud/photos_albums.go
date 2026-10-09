@@ -89,7 +89,7 @@ func photoAlbumFromRecord(record cloudkit.CKRecord) (photoAlbumEntry, bool, erro
 		return absent, false, nil
 	}
 
-	raw, err := reminderField(record, protocol.PhotosPhotoAlbumDeletedFieldValue)
+	raw, err := photoFieldValue(record, protocol.PhotosPhotoAlbumDeletedFieldValue)
 	if err != nil {
 		return absent, false, err
 	}
@@ -115,7 +115,7 @@ func photoAlbumDetails(record cloudkit.CKRecord, name string) (photoAlbumEntry, 
 		entry.album.RecordChangeTag.SetNull()
 	}
 
-	raw, err := reminderField(record, protocol.PhotosPhotoAlbumSortAscendingFieldValue)
+	raw, err := photoFieldValue(record, protocol.PhotosPhotoAlbumSortAscendingFieldValue)
 	if err != nil {
 		return photoAlbumEntry{}, err
 	}
@@ -129,7 +129,7 @@ func photoAlbumDetails(record cloudkit.CKRecord, name string) (photoAlbumEntry, 
 		entry.descending = value != 1
 	}
 
-	raw, err = reminderField(record, protocol.PhotosPhotoAlbumParentFieldValue)
+	raw, err = photoFieldValue(record, protocol.PhotosPhotoAlbumParentFieldValue)
 	if err != nil {
 		return photoAlbumEntry{}, err
 	}

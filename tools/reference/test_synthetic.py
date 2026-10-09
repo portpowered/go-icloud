@@ -20,8 +20,8 @@ from synthetic import execute as execute_scenario
 class SyntheticTests(unittest.TestCase):
     def test_photo_album_matrix(self):
         paths = sorted(FIXTURES.glob("photos-albums-*.json"))
-        self.assertEqual(len(paths), 31)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 71)
+        self.assertEqual(len(paths), 41)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 98)
 
     def test_photo_album_results_requests_and_consumption_are_bound(self):
         baseline = json.loads((FIXTURES / "photos-albums-1.json").read_text())
@@ -243,7 +243,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 31)
+        self.assertEqual(len(paths), 41)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):

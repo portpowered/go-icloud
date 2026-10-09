@@ -289,8 +289,8 @@ This is not proof of complete album, asset, shared-library or write coverage.
 
 ## Primary Photos albums
 
-The public `ListPhotoAlbums` operation consumes 31 Source-executed synthetic
-scenarios and 71 exchanges, including the indexing query. Twenty-six new cases
+The public `ListPhotoAlbums` operation consumes 41 Source-executed synthetic
+scenarios and 98 exchanges, including the indexing query. Thirty-six new cases
 cover nested folder pagination, duplicate IDs, parent cycles, encoded and invalid
 names, deletion filtering, empty continuation, cookie rotation, malformed replies,
 and first/later HTTP failures. Full ordered projections, all metadata and error
