@@ -39,6 +39,16 @@ func DecodeReminderQueryRecord(item cloudkit.CKQueryResponse_Records_Item) (*Rem
 	return decodeReminderEventJSON(raw)
 }
 
+// DecodeReminderLookupRecord selects the Source model alternative for a related lookup.
+func DecodeReminderLookupRecord(item cloudkit.CKLookupResponse_Records_Item) (*ReminderEventRecord, error) {
+	raw, err := json.Marshal(item)
+	if err != nil {
+		return nil, fmt.Errorf("encode reminder lookup record: %w", err)
+	}
+
+	return decodeReminderEventJSON(raw)
+}
+
 func decodeReminderEventJSON(raw []byte) (*ReminderEventRecord, error) {
 	fields, err := accountFields(raw)
 	if err != nil {

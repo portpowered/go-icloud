@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/remindersapi"
@@ -21,6 +22,13 @@ type ReminderLookupResponse struct {
 func (client *Client) LookupReminder(ctx context.Context, auth RequestContext,
 	name string,
 ) (*ReminderLookupResponse, error) {
+	return client.LookupReminders(ctx, auth, []string{name})
+}
+
+// LookupReminders preserves every supplied record name in request order.
+func (client *Client) LookupReminders(ctx context.Context, auth RequestContext,
+	names []string,
+) (*ReminderLookupResponse, error) {
 	zone := cloudkit.CKZoneID{ZoneName: protocol.RemindersZoneNameValue,
 		OwnerRecordName: nil, ZoneType: nil, AdditionalProperties: nil}
 	zone.ZoneType.Set(protocol.RemindersZoneTypeValue)
@@ -30,13 +38,19 @@ func (client *Client) LookupReminder(ctx context.Context, auth RequestContext,
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	recordName, err := referenceJSON(name)
-	if err != nil {
-		return nil, failure(Configuration, err, nil, nil)
+	descriptors := make([]string, 0, len(names))
+
+	for _, name := range names {
+		recordName, encodeErr := referenceJSON(name)
+		if encodeErr != nil {
+			return nil, failure(Configuration, encodeErr, nil, nil)
+		}
+
+		descriptors = append(descriptors, fmt.Sprintf("{%q: %s}", protocol.RemindersCKLookupDescriptorRecordName, recordName))
 	}
 
-	body := fmt.Sprintf("{%q: [{%q: %s}], %q: %s}", protocol.RemindersCKLookupRequestRecords,
-		protocol.RemindersCKLookupDescriptorRecordName, recordName, protocol.RemindersCKLookupRequestZoneID, identity)
+	body := fmt.Sprintf("{%q: [%s], %q: %s}", protocol.RemindersCKLookupRequestRecords,
+		strings.Join(descriptors, ", "), protocol.RemindersCKLookupRequestZoneID, identity)
 	params := new(remindersapi.RemindersLookupRecordsParams)
 	params.ClientId = auth.Params.ClientId
 	params.Dsid = auth.Params.Dsid
@@ -54,22 +68,36 @@ func (client *Client) LookupReminder(ctx context.Context, auth RequestContext,
 		return nil, err
 	}
 
-	fields, err := accountFields(response.Body)
-	if err != nil {
-		return nil, responseFailure(Decode, err, response)
-	}
-
-	err = validateReminderChangeRecords(fields[protocol.RemindersCKLookupResponseRecords])
-	if err != nil {
-		return nil, responseFailure(Decode, err, response)
-	}
-
-	var data cloudkit.CKLookupResponse
-
-	err = json.Unmarshal(response.Body, &data)
+	data, err := decodeReminderLookup(response.Body)
 	if err != nil {
 		return nil, responseFailure(Decode, err, response)
 	}
 
 	return &ReminderLookupResponse{Data: data, Metadata: response}, nil
+}
+
+func decodeReminderLookup(body []byte) (cloudkit.CKLookupResponse, error) {
+	var data cloudkit.CKLookupResponse
+
+	fields, err := accountFields(body)
+	if err != nil {
+		return data, fmt.Errorf("decode reminder lookup: %w", err)
+	}
+
+	err = validateReminderChangeRecords(fields[protocol.RemindersCKLookupResponseRecords])
+	if err != nil {
+		return data, fmt.Errorf("decode reminder lookup: %w", err)
+	}
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return data, fmt.Errorf("decode reminder lookup: %w", err)
+	}
+
+	err = validateReminderSyncRecords(&data.Records)
+	if err != nil {
+		return data, fmt.Errorf("decode reminder lookup: %w", err)
+	}
+
+	return data, nil
 }
