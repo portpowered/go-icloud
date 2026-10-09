@@ -20,6 +20,10 @@ import (
 type Client interface {
 	// ApplySessionResponses copies a native session and applies response updates without network I/O.
 	ApplySessionResponses(ctx context.Context, request ApplySessionResponsesRequest) (*ApplySessionResponsesResult, error)
+	// ListRecentlyAddedPhotos reads the primary library newest first with overlap deduplication.
+	ListRecentlyAddedPhotos(ctx context.Context,
+		request ListRecentlyAddedPhotosRequest,
+	) (*ListRecentlyAddedPhotosResult, error)
 	// GetPhoto finds one album asset by identifier with Source enumeration fallback.
 	GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error)
 	// DownloadPhoto retrieves exact rendition bytes through the photo's provider-issued resource URL.
