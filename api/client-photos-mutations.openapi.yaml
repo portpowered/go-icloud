@@ -1,0 +1,383 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Photos mutation public models",
+    "version": "0.1.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "CreatePhotoAlbumRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "auth",
+          "name"
+        ],
+        "properties": {
+          "auth": {
+            "type": "object",
+            "x-go-type": "AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "library": {
+            "type": "object",
+            "x-go-type": "*PhotoLibrary",
+            "x-go-type-skip-optional-pointer": true,
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "name": {
+            "type": "string",
+            "description": "Decoded album or folder display name."
+          },
+          "folder": {
+            "type": "boolean",
+            "x-go-type-skip-optional-pointer": true,
+            "description": "Create a folder when true and a regular album when false."
+          }
+        },
+        "description": "CreatePhotoAlbum operation input.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "photosServiceURL": "https://photos.example.invalid",
+            "headers": []
+          },
+          "name": "Album"
+        }
+      },
+      "RenamePhotoAlbumRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "auth",
+          "albumID",
+          "name"
+        ],
+        "properties": {
+          "auth": {
+            "type": "object",
+            "x-go-type": "AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "library": {
+            "type": "object",
+            "x-go-type": "*PhotoLibrary",
+            "x-go-type-skip-optional-pointer": true,
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "albumID": {
+            "type": "string",
+            "description": "Provider album record identifier."
+          },
+          "name": {
+            "type": "string",
+            "description": "Decoded album or folder display name."
+          }
+        },
+        "description": "RenamePhotoAlbum operation input.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "photosServiceURL": "https://photos.example.invalid",
+            "headers": []
+          },
+          "albumID": "synthetic-album-0",
+          "name": "Album"
+        }
+      },
+      "DeletePhotoAlbumRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "auth",
+          "albumID"
+        ],
+        "properties": {
+          "auth": {
+            "type": "object",
+            "x-go-type": "AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "library": {
+            "type": "object",
+            "x-go-type": "*PhotoLibrary",
+            "x-go-type-skip-optional-pointer": true,
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "albumID": {
+            "type": "string",
+            "description": "Provider album record identifier."
+          }
+        },
+        "description": "DeletePhotoAlbum operation input.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "photosServiceURL": "https://photos.example.invalid",
+            "headers": []
+          },
+          "albumID": "synthetic-album-0"
+        }
+      },
+      "AddPhotoToAlbumRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "auth",
+          "albumID",
+          "photoID"
+        ],
+        "properties": {
+          "auth": {
+            "type": "object",
+            "x-go-type": "AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "library": {
+            "type": "object",
+            "x-go-type": "*PhotoLibrary",
+            "x-go-type-skip-optional-pointer": true,
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "albumID": {
+            "type": "string",
+            "description": "Provider album record identifier."
+          },
+          "photoID": {
+            "type": "string",
+            "description": "Provider asset identifier."
+          }
+        },
+        "description": "AddPhotoToAlbum operation input.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "photosServiceURL": "https://photos.example.invalid",
+            "headers": []
+          },
+          "albumID": "synthetic-album-0",
+          "photoID": "synthetic-asset-0"
+        }
+      },
+      "SetPhotoFavoriteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "auth",
+          "photoID",
+          "favorite"
+        ],
+        "properties": {
+          "auth": {
+            "type": "object",
+            "x-go-type": "AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "library": {
+            "type": "object",
+            "x-go-type": "*PhotoLibrary",
+            "x-go-type-skip-optional-pointer": true,
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "photoID": {
+            "type": "string",
+            "description": "Provider asset identifier."
+          },
+          "favorite": {
+            "type": "boolean",
+            "description": "Desired favorite state."
+          },
+          "album": {
+            "type": "string",
+            "description": "The updated album projection."
+          }
+        },
+        "description": "SetPhotoFavorite operation input.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "photosServiceURL": "https://photos.example.invalid",
+            "headers": []
+          },
+          "photoID": "synthetic-asset-0",
+          "favorite": true
+        }
+      },
+      "DeletePhotoRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "auth",
+          "photoID"
+        ],
+        "properties": {
+          "auth": {
+            "type": "object",
+            "x-go-type": "AuthContext",
+            "description": "Request-scoped account credentials and response cookie state."
+          },
+          "library": {
+            "type": "object",
+            "x-go-type": "*PhotoLibrary",
+            "x-go-type-skip-optional-pointer": true,
+            "description": "Omission selects the primary library; pass a discovered selection to use a different zone."
+          },
+          "photoID": {
+            "type": "string",
+            "description": "Provider asset identifier."
+          },
+          "album": {
+            "type": "string",
+            "description": "The updated album projection."
+          }
+        },
+        "description": "DeletePhoto operation input.",
+        "example": {
+          "auth": {
+            "accountID": "synthetic-account",
+            "clientID": "synthetic-client",
+            "photosServiceURL": "https://photos.example.invalid",
+            "headers": []
+          },
+          "photoID": "synthetic-asset-0"
+        }
+      },
+      "PhotoAlbumMutationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "album",
+          "responses"
+        ],
+        "properties": {
+          "album": {
+            "type": "object",
+            "x-go-type": "PhotoAlbum",
+            "description": "The updated album projection."
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "x-go-type": "ResponseMetadata"
+            },
+            "description": "Ordered provider responses including initialization, discovery, writes and refreshes."
+          }
+        },
+        "description": "PhotoAlbumMutation operation output.",
+        "example": {
+          "album": {
+            "id": "synthetic-album-0",
+            "name": "Album",
+            "fullName": "Album",
+            "recordChangeTag": null
+          },
+          "responses": []
+        }
+      },
+      "PhotoMutationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "photo",
+          "responses"
+        ],
+        "properties": {
+          "photo": {
+            "type": "object",
+            "x-go-type": "Photo",
+            "description": "The acknowledged or refreshed photo projection."
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "x-go-type": "ResponseMetadata"
+            },
+            "description": "Ordered provider responses including initialization, discovery, writes and refreshes."
+          }
+        },
+        "description": "PhotoMutation operation output.",
+        "example": {
+          "photo": {
+            "id": "synthetic-asset",
+            "masterID": "synthetic-master",
+            "filename": "photo.jpg",
+            "size": null,
+            "dimensions": [
+              null,
+              null
+            ],
+            "itemType": "image",
+            "isLivePhoto": false,
+            "created": "1970-01-01T00:00:00Z",
+            "added": "1970-01-01T00:00:00Z",
+            "versions": {},
+            "assetMetadata": {}
+          },
+          "responses": []
+        }
+      },
+      "PhotoDeletionResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "deleted",
+          "responses"
+        ],
+        "properties": {
+          "deleted": {
+            "type": "boolean",
+            "description": "The provider acknowledged the soft-delete request without per-record rejection."
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "x-go-type": "ResponseMetadata"
+            },
+            "description": "Ordered provider responses including initialization, discovery, writes and refreshes."
+          }
+        },
+        "description": "PhotoDeletion operation output.",
+        "example": {
+          "deleted": true,
+          "responses": []
+        }
+      },
+      "PhotoAlbumRelationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "added",
+          "responses"
+        ],
+        "properties": {
+          "added": {
+            "type": "boolean",
+            "description": "The provider acknowledged creation of the album relation."
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "x-go-type": "ResponseMetadata"
+            },
+            "description": "Ordered provider responses including initialization, discovery, writes and refreshes."
+          }
+        },
+        "description": "PhotoAlbumRelation operation output.",
+        "example": {
+          "added": true,
+          "responses": []
+        }
+      }
+    }
+  }
+}
