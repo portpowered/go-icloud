@@ -208,7 +208,7 @@ func projectAuthResult(state AuthContext, trustToken string, response *webtransp
 
 	if data.Webservices != nil {
 		state.AccountServiceURL = authServiceURL(data.Webservices.Account)
-		state.RemindersServiceURL = authServiceURL(data.Webservices.Reminders)
+		state.RemindersServiceURL = authServiceURL(data.Webservices.Ckdatabasews)
 		state.DriveServiceURL = authServiceURL(data.Webservices.Drivews)
 		state.DriveDocumentServiceURL = authServiceURL(data.Webservices.Docws)
 		state.FindMyServiceURL = authServiceURL(data.Webservices.Findme)

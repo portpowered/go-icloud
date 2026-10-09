@@ -1,5 +1,14 @@
 # iCloud migration checklist
 
+Live Go testing found an authentication-discovery defect: Reminders CloudKit
+requests were sent to the legacy reminders service instead of ckdatabasews.
+The mapping now follows the pinned Python facade. A Source-executed replay with
+distinct legacy and CloudKit URLs binds discovery, and the same public Go SDK
+now validates the refreshed trusted session and lists live reminder zones with
+HTTP 200. Reading the fixed Reminders zone still fails in Python on this account;
+full live reminder access remains unresolved. Photos reference reads succeed.
+This repair is pending final local checks, exact-head CI and independent review.
+
 The separate Go CLI now exposes `reminder-changes`, with optional `--since` input
 that preserves the difference between omission and an explicit empty cursor.
 Its 72 Source-derived change cases bind all ordered events, full reminder fields,
