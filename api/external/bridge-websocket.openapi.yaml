@@ -7,6 +7,27 @@ paths:
     get:
       operationId: upgradeBridge
       description: Upgrade a configured trusted device bridge connection to WebSocket.
+      x-upgrade-layout:
+        version: 1
+        requestLine: {$ref: '#/components/schemas/RequestLine/values/UpgradeRequestLine'}
+        headerLines:
+          - {$ref: '#/components/schemas/HeaderLine/values/HostLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/UpgradeLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/ConnectionLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/OriginLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/UserAgentLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/VersionLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/KeyLine'}
+        separator:
+          - {$ref: '#/components/schemas/LineSeparator/values/CarriageReturn'}
+          - {$ref: '#/components/schemas/LineSeparator/values/LineFeed'}
+        emptyLines: 2
+        acceptHeader: {$ref: '#/components/schemas/AcceptHeader/values/UpgradeAcceptHeader'}
+        guid: {$ref: './bridge-models.openapi.yaml#/components/schemas/BridgeProtocolString/values/WebSocketGUID'}
+        nonceBytes: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_KEY_BYTES'}
+        digest: sha1
+        encoding: base64
+        status: 101
       parameters:
         - name: connection
           in: path
