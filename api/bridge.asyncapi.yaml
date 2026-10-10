@@ -26,6 +26,7 @@ servers:
       fallback: first-path-segment
       percentSpelling: preserve
       hostnameCase: unicode-lowercase-before-zone
+      unicodeProfile: {$ref: './dependency-profiles/bridge-host-unicode.json'}
       zoneDelimiter: '%'
       preprocessing: python-urlsplit-c0-tab-cr-lf
       scheme: ascii-letter-then-letter-digit-plus-minus-dot

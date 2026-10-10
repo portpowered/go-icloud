@@ -42,9 +42,6 @@ linters:
             - google.golang.org/protobuf
             # Public Reminders text replaces malformed UTF-8 subsequences as Source does.
               - golang.org/x/text/encoding/unicode
-              # Source URL hostnames use Unicode lowercase while retaining zone ID case.
-              - golang.org/x/text/cases
-              - golang.org/x/text/language
               # Python urlsplit rejects NFKC authority text that introduces URL separators.
               - golang.org/x/text/unicode/norm
             # Pinned trusted-device bridge uses scrypt for its SPAKE2 password scalars.

@@ -1,0 +1,10 @@
+{
+  "unicodeVersion": "15.0.0",
+  "generator": "tools/reference/generate_host_unicode.py",
+  "source": "Python Unicode15.0.0 str.lower",
+  "lowercaseMappings": 1433,
+  "caseIgnorableRanges": 437,
+  "casedRanges": 150,
+  "generatedFile": "pkg/dependencies/bridge/host_unicode.gen.go",
+  "sha256": "fafaf9d24d32027a9becf7e48bd2ea4d30ef237fa6ff5b857d9f570cfaf7ddf9"
+}

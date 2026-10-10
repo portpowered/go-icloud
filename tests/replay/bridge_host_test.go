@@ -39,7 +39,7 @@ func TestBridgeHostSourcePairs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if fixture.Format != "portos.bridge-host.v1" || fixture.Source.Commit != "e2e44ab875d47dab4475096021da60030f26c35e" || len(fixture.Cases) != 55 {
+	if fixture.Format != "portos.bridge-host.v1" || fixture.Source.Commit != "e2e44ab875d47dab4475096021da60030f26c35e" || len(fixture.Cases) != 62 {
 		t.Fatal("host fixture provenance or denominator changed")
 	}
 

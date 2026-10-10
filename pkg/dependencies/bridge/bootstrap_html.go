@@ -11,8 +11,6 @@ import (
 
 	models "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 	"golang.org/x/net/html"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 var errBootstrap = errors.New("missing or malformed HSA2 bootstrap")
@@ -121,7 +119,7 @@ func explicitSocketHost(candidate string) (string, error) {
 
 func lowercaseSocketHostname(host string) string {
 	name, zone, zoned := strings.Cut(host, "%")
-	name = cases.Lower(language.Und).String(name)
+	name = lowercaseHostName(name)
 	if zoned {
 		return name + "%" + zone
 	}

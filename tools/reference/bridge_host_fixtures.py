@@ -103,6 +103,13 @@ def fixtures(resolve):
         ("invalid-ip-nonbreaking-space", {"webSocketUrl": "wss://[ab\u00a0]/"}),
         ("invalid-zone-quote", {"webSocketUrl": "wss://[fe80::1%a'%b]/"}),
         ("bracketed-scoped-ipv4", {"webSocketUrl": "wss://[127.0.0.1%Zone]/"}),
+        ("sigma-long-dots-cased", {"webSocketUrl": "wss://\u039f\u03a3" + "." * 31 + "A/"}),
+        ("sigma-long-dots-terminal", {"webSocketUrl": "wss://\u039f\u03a3" + "." * 128 + "/"}),
+        ("sigma-long-combining-cased", {"webSocketUrl": "wss://\u039f\u03a3" + "\u0301" * 128 + "A/"}),
+        ("sigma-long-combining-terminal", {"webSocketUrl": "wss://\u039f\u03a3" + "\u0301" * 128 + "/"}),
+        ("sigma-previous-ignored", {"webSocketUrl": "wss://A" + "." * 128 + "\u03a3/"}),
+        ("sigma-uncased-prefix", {"webSocketUrl": "wss://1\u03a3/"}),
+        ("sigma-cased-ignorable", {"webSocketUrl": "wss://A\u03a3\u0345/"}),
     ]
     rows = []
     for name, data in inputs:
