@@ -134,6 +134,10 @@ func nativeAuthResult(operation *nativeAuthOperation) (*NativeAuthResult, error)
 	if len(operation.state.AccountData) != 0 {
 		err := json.Unmarshal(operation.state.AccountData, &account)
 		if err != nil {
+			if operation.response != nil {
+				return nil, nativeResponseError(operation, operation.response, err, InvalidResponse)
+			}
+
 			return nil, newClientError(operation.name, InvalidResponse, 0, nil, nil, err)
 		}
 	}

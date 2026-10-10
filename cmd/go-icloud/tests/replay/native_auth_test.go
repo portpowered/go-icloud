@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
+	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
@@ -47,6 +48,9 @@ func TestNativeAuthenticationCommands(t *testing.T) {
 		{fixture: "auth-pcs-cookies-later", operation: "pcs-access"},
 		{fixture: "auth-pcs-retries-exhausted", operation: "pcs-access"},
 		{fixture: "auth-pcs-unknown-state", operation: "pcs-access"},
+		{fixture: "auth-pcs-consent-omitted", operation: "pcs-access"},
+		{fixture: "auth-pcs-consent-false", operation: "pcs-access"},
+		{fixture: "auth-pcs-consent-null", operation: "pcs-access"},
 	} {
 		t.Run(test.fixture, func(t *testing.T) { t.Parallel(); runNativeAuthentication(t, test.fixture, test.operation) })
 	}
@@ -138,6 +142,11 @@ func nativeCommandAccepted(t *testing.T, raw map[string]json.RawMessage, operati
 	switch operation {
 	case "login", "auth-status", "mfa-devices":
 		return true
+	case "pcs-access":
+		if string(value) != "null" {
+			t.Fatal("Source PCS completion must return None")
+		}
+		return true
 	case "logout":
 		var accepted bool
 		decode(t, readRawObject(t, value)["remote_logout_confirmed"], &accepted)
@@ -222,15 +231,10 @@ func nativeCommandState(t *testing.T, raw json.RawMessage) icloud.NativeAuthStat
 
 func nativeSourceParameters(t *testing.T, raw map[string]json.RawMessage, state *icloud.NativeAuthState) {
 	t.Helper()
-	result, exists := raw["result"]
-	if !exists {
-		return
-	}
-	progress, exists := readRawObject(t, result)["auth_state"]
-	if !exists {
-		return
-	}
-	parameters := readRawObject(t, readRawObject(t, progress)["params"])
+	build, mastering := protocol.AuthClientBuildNumberValue, protocol.AuthClientMasteringNumberValue
+	state.Auth.ClientBuildNumber = &build
+	state.Auth.ClientMasteringNumber = &mastering
+	parameters := readRawObject(t, readRawObject(t, raw["initial_state"])["params"])
 	if build, found := parameters["clientBuildNumber"]; found {
 		var value string
 		decode(t, build, &value)

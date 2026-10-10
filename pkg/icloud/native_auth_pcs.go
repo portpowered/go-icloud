@@ -64,7 +64,12 @@ func (sdk *SDK) RequestPCSAccess(ctx context.Context, input RequestPCSAccessRequ
 }
 
 func nativePCSConsented(status *auth.AuthWebAccessResponse) bool {
-	return status.IsDeviceConsentedForPCS == nil || *status.IsDeviceConsentedForPCS
+	if !status.IsDeviceConsentedForPCS.IsSpecified() {
+		return true
+	}
+
+	consented, err := status.IsDeviceConsentedForPCS.Get()
+	return err == nil && consented
 }
 
 func (sdk *SDK) nativePCSConsent(ctx context.Context, operation *nativeAuthOperation,

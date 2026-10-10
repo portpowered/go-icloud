@@ -21,7 +21,8 @@ func TestNativePCSReplay(t *testing.T) {
 	t.Parallel()
 
 	for _, scenario := range []string{"auth-pcs-enabled", "auth-pcs-consented", "auth-pcs-consent-later",
-		"auth-pcs-consent-refused", "auth-pcs-cookies-later", "auth-pcs-retries-exhausted", "auth-pcs-unknown-state"} {
+		"auth-pcs-consent-refused", "auth-pcs-cookies-later", "auth-pcs-retries-exhausted", "auth-pcs-unknown-state",
+		"auth-pcs-consent-omitted", "auth-pcs-consent-false", "auth-pcs-consent-null"} {
 		t.Run(scenario, func(t *testing.T) { t.Parallel(); nativePCSReplay(t, scenario) })
 	}
 }
@@ -49,16 +50,51 @@ func nativePCSReplay(t *testing.T, name string) {
 	result, err := client.RequestPCSAccess(t.Context(), request)
 	nativeFlowExpectedError(t, raw, err)
 	if err == nil {
+		if !result.Success {
+			t.Fatal("completed Source PCS operation was not successful")
+		}
 		if !reflect.DeepEqual(accountJSON(t, result.State.AccountData), accountJSON(t, state.AccountData)) {
 			t.Fatal("PCS changed account discovery")
 		}
 
 		nativeFlowResponses(t, raw, result.Responses)
 	}
-	expected := map[string]int{"auth-pcs-consent-later": 1, "auth-pcs-cookies-later": 1, "auth-pcs-retries-exhausted": 10}
+	expected := map[string]int{"auth-pcs-consent-later": 1, "auth-pcs-cookies-later": 1, "auth-pcs-retries-exhausted": 10,
+		"auth-pcs-consent-false": 1, "auth-pcs-consent-null": 1}
 	if waits != expected[name] {
 		t.Fatalf("wait count %d, expected %d", waits, expected[name])
 	}
+	if err = transport.AssertConsumed(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestNativePCSAccountProjectionFailure(t *testing.T) {
+	t.Parallel()
+
+	raw, transport, state := nativeFlowFixture(t, "auth-pcs-enabled")
+	state.AccountData = json.RawMessage(`{`)
+	client, err := icloud.New(icloud.WithHTTPTransport(transport))
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = client.RequestPCSAccess(t.Context(), icloud.RequestPCSAccessRequest{
+		Auth: state.Auth, State: state, Service: protocol.AuthWebServicesPhotos})
+	var failure *icloud.ClientError
+	if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse {
+		t.Fatalf("expected malformed account projection failure, got %v", err)
+	}
+	var exchanges []replay.Exchange
+	authReplayDecode(t, raw["exchanges"], &exchanges)
+	final := exchanges[len(exchanges)-1]
+	if failure.StatusCode() != final.Response.Status ||
+		!reflect.DeepEqual(failure.ResponseBody(), nativeFlowBody(t, final.Response.Body)) ||
+		failure.CookieScopeURL() != final.Request.Origin+final.Request.Path {
+		t.Fatal("account projection failure lost completed PCS response evidence")
+	}
+	metadata := append(failure.PriorResponses(), icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
+		Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
+	nativeFlowResponses(t, raw, metadata)
 	if err = transport.AssertConsumed(); err != nil {
 		t.Fatal(err)
 	}

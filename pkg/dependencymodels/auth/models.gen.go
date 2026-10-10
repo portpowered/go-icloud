@@ -948,7 +948,7 @@ type AuthVersion string
 // AuthWebAccessResponse defines model for AuthWebAccessResponse.
 type AuthWebAccessResponse struct {
 	IsICDRSDisabled                 *bool                       `json:"isICDRSDisabled,omitempty"`
-	IsDeviceConsentedForPCS         *bool                       `json:"isDeviceConsentedForPCS,omitempty"`
+	IsDeviceConsentedForPCS         nullable.Nullable[bool]     `json:"isDeviceConsentedForPCS,omitempty"`
 	IsDeviceConsentNotificationSent *bool                       `json:"isDeviceConsentNotificationSent,omitempty"`
 	AdditionalProperties            map[string]UnknownJSONValue `json:"-"`
 }

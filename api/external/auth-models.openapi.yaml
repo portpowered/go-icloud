@@ -637,6 +637,7 @@
           },
           "isDeviceConsentedForPCS": {
             "type": "boolean",
+            "nullable": true,
             "x-order": 1
           },
           "isDeviceConsentNotificationSent": {
