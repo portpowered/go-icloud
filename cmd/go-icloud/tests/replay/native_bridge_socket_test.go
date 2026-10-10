@@ -50,7 +50,8 @@ var (
 )
 
 type sdkBridgeNetwork struct {
-	PrivateScalars []string `json:"private_scalars"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
+	//nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
+	PrivateScalars []string `json:"private_scalars"`
 	ProverRandom   []struct {
 		Upper string `json:"upper_hex"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
 		Value string `json:"value_hex"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
@@ -58,9 +59,10 @@ type sdkBridgeNetwork struct {
 	Connections []struct {
 		Connection bridgeSocketConnection `json:"connection"`
 		Bootstrap  struct {
-			Public     string `json:"public_key"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
-			Nonce      string `json:"nonce"`
-			Expiration uint32 `json:"expiration_seconds"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
+			Public string `json:"public_key"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
+			Nonce  string `json:"nonce"`
+			//nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
+			Expiration uint32 `json:"expiration_seconds"`
 		} `json:"bootstrap"`
 		Events []bridgeSocketEvent `json:"events"`
 	} `json:"connections"`
@@ -186,7 +188,10 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	if network != "tcp" || address != "bridge.example.invalid:443" {
 		return nil, errBridgeUnexpectedSecureDialTarget
 	}
-	socket := &sdkBridgeSocket{owner: r, index: index, closeOnce: sync.Once{}, closeError: nil, bridgeScriptSocket: &bridgeScriptSocket{mu: sync.Mutex{}, events: append([]bridgeSocketEvent(nil), expected.Events...), pending: nil, cursor: 0, closed: false, failure: nil}}
+	socket := &sdkBridgeSocket{owner: r, index: index, closeOnce: sync.Once{}, closeError: nil,
+		bridgeScriptSocket: &bridgeScriptSocket{mu: sync.Mutex{},
+			events: append([]bridgeSocketEvent(nil), expected.Events...), pending: nil,
+			cursor: 0, closed: false, failure: nil}}
 	r.mu.Lock()
 	r.sockets = append(r.sockets, socket)
 	r.mu.Unlock()
@@ -205,6 +210,7 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 
 type sdkBridgeSocket struct {
 	*bridgeScriptSocket
+
 	owner      *sdkBridgeReplay
 	index      int
 	closeOnce  sync.Once
@@ -274,18 +280,23 @@ func (s *sdkBridgeSocket) validateBootstrap(path string) {
 		s.owner.t.Fatal(err)
 	}
 	canonical, err := proto.Marshal(message)
-	if err != nil || !bytes.Equal(canonical, raw) || message.Connection == nil || message.Subscription != nil || message.Acknowledgement != nil || len(message.ProtoReflect().GetUnknown()) != 0 {
+	if err != nil || !bytes.Equal(canonical, raw) || message.Connection == nil ||
+		message.Subscription != nil || message.Acknowledgement != nil || len(message.ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap envelope differs")
 	}
 	body := message.GetConnection()
 	expected := s.owner.network.Connections[s.index].Bootstrap
-	if base64.StdEncoding.EncodeToString(body.GetPublicKey()) != expected.Public || base64.StdEncoding.EncodeToString(body.GetNonce()) != expected.Nonce || body.GetExpiration().GetSeconds() != expected.Expiration || len(body.ProtoReflect().GetUnknown()) != 0 || len(body.GetExpiration().ProtoReflect().GetUnknown()) != 0 {
+	if base64.StdEncoding.EncodeToString(body.GetPublicKey()) != expected.Public ||
+		base64.StdEncoding.EncodeToString(body.GetNonce()) != expected.Nonce ||
+		body.GetExpiration().GetSeconds() != expected.Expiration || len(body.ProtoReflect().GetUnknown()) != 0 ||
+		len(body.GetExpiration().ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap public key, nonce, or expiration differs")
 	}
 	public := body.GetPublicKey()
 	nonce := body.GetNonce()
 	signature := body.GetSignature()
-	if len(public) != 65 || len(nonce) != 17 || nonce[0] != 0 || len(signature) < 2 || !bytes.Equal(signature[:2], []byte{1, 3}) {
+	if len(public) != 65 || len(nonce) != 17 || nonce[0] != 0 || len(signature) < 2 ||
+		!bytes.Equal(signature[:2], []byte{1, 3}) {
 		s.owner.t.Fatal("bootstrap field layout differs")
 	}
 	validated, keyErr := ecdh.P256().NewPublicKey(public)
@@ -303,6 +314,7 @@ func (s *sdkBridgeSocket) validateBootstrap(path string) {
 
 func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
 	var scalar *big.Int
+
 	switch {
 	case r.signing:
 		r.signatureReads++
@@ -354,7 +366,8 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	}
 	//nolint:gosec // RFC 6455 uses SHA-1 to bind the upgrade nonce, not for a security signature (GO-15).
 	digest := sha1.Sum([]byte(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
-	s.events[1].Template = strings.ReplaceAll(s.events[1].Template, "{accept}", base64.StdEncoding.EncodeToString(digest[:]))
+	s.events[1].Template = strings.ReplaceAll(s.events[1].Template, "{accept}",
+		base64.StdEncoding.EncodeToString(digest[:]))
 	payload = []byte(strings.Join(lines, "\r\n"))
 	return payload, nil
 }
@@ -362,6 +375,7 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 	payload = append([]byte(nil), payload...)
 	offset := 2
+
 	switch payload[1] & 127 {
 	case 126:
 		offset += 2

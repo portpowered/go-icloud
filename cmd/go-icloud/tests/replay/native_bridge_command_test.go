@@ -46,28 +46,31 @@ func TestNativeBridgeCommands(t *testing.T) {
 func TestNativeBridgeCommandTrustFailurePersistence(t *testing.T) {
 	t.Parallel()
 
-	runNativeBridgeCommand(t, "../../../../tests/replay/fixtures/synthetic/http/auth-bridge-modern-code-204.json", true, true)
+	runNativeBridgeCommand(t, expectedBridgeCodeFixture, true, true)
 }
 
 func TestNativeBridgeCommandEnvironmentCode(t *testing.T) {
 	t.Parallel()
 
-	runNativeBridgeCommand(t, "../../../../tests/replay/fixtures/synthetic/http/auth-bridge-modern-code-204.json", false, false)
+	runNativeBridgeCommand(t, expectedBridgeCodeFixture, false, false)
 }
 
 func TestNativeBridgeCommandStandardInputCode(t *testing.T) {
 	t.Parallel()
 
-	runNativeBridgeCommand(t, "../../../../tests/replay/fixtures/synthetic/http/auth-bridge-modern-code-204.json", true, false)
+	runNativeBridgeCommand(t, expectedBridgeCodeFixture, true, false)
 }
 
 type nativeBridgeCommandClient struct {
 	icloud.Client
+
 	runner *sdkBridgeReplay
 	owner  *icloud.NativeBridgeSession
 }
 
-func (c *nativeBridgeCommandClient) OpenNativeBridgeSession(ctx context.Context, request icloud.OpenNativeBridgeSessionRequest, options ...icloud.NativeBridgeOption) (*icloud.NativeBridgeSession, error) {
+func (c *nativeBridgeCommandClient) OpenNativeBridgeSession(ctx context.Context,
+	request icloud.OpenNativeBridgeSessionRequest, options ...icloud.NativeBridgeOption,
+) (*icloud.NativeBridgeSession, error) {
 	options = append(options, icloud.WithNativeBridgeDial(c.runner.dial))
 	owner, err := c.Client.OpenNativeBridgeSession(ctx, request, options...)
 	c.owner = owner
@@ -95,7 +98,9 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 	environment := nativeBridgeCommandEnvironment(state)
 	promptOnly := nativeBridgeCommandPromptOnly(t, raw)
 	ctx, cancel := context.WithCancel(t.Context())
+
 	defer cancel()
+
 	arguments := []string{sessionFlag, savedPath}
 	input := io.NopCloser(strings.NewReader("123456\n"))
 	if stdin || promptOnly {
@@ -104,6 +109,7 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 	if promptOnly {
 		input = &nativeBridgeCancelInput{cancel: cancel, closed: make(chan struct{}), once: sync.Once{}}
 	}
+
 	arguments = append(arguments, "mfa-bridge")
 	err := command.RunWithInput(ctx, client, arguments, input, environment, &output, &diagnostic)
 	if client.owner == nil {
@@ -113,12 +119,15 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 		if err == nil {
 			t.Fatal("failed bridge accepted before SMS fallback")
 		}
-		err = command.RunWithInput(t.Context(), client, []string{sessionFlag, savedPath, "--phone-id", "1", "mfa-request"}, io.NopCloser(strings.NewReader("")), environment, &output, &diagnostic)
+		err = command.RunWithInput(t.Context(), client,
+			[]string{sessionFlag, savedPath, "--phone-id", "1", "mfa-request"},
+			io.NopCloser(strings.NewReader("")), environment, &output, &diagnostic)
 	}
 	expectedError := nativeBridgeCommandAcceptance(t, raw, path, promptOnly, lateFailure, err)
 	nativeBridgeCommandSavedState(t, raw, path, savedPath, client.owner, expectedError, lateFailure)
 	console := output.String() + diagnostic.String()
-	for _, secret := range []string{"123456", "synthetic-token", "synthetic-trust", "synthetic-cookie", "synthetic@example.invalid", "synthetic-rotated", `"responses"`, `"accountData"`} {
+	for _, secret := range []string{"123456", "synthetic-token", "synthetic-trust", "synthetic-cookie",
+		"synthetic@example.invalid", "synthetic-rotated", `"responses"`, expectedAccountDataField} {
 		if strings.Contains(console, secret) {
 			t.Fatal("console disclosed private bridge data")
 		}
@@ -129,7 +138,9 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 	}
 }
 
-func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage, lateFailure bool) (*sdkBridgeReplay, *replay.HTTPTransport, *icloud.SDK) {
+func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage,
+	lateFailure bool,
+) (*sdkBridgeReplay, *replay.HTTPTransport, *icloud.SDK) {
 	t.Helper()
 
 	var exchanges []replay.Exchange
@@ -144,7 +155,13 @@ func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage, lat
 	}
 	if lateFailure {
 		exchanges = exchanges[:6]
-		exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{"Content-Type", "application/json"}, {"scnt", "synthetic-rotated-scnt"}, {"X-Apple-ID-Session-Id", "synthetic-rotated-session"}, {"X-Apple-Session-Token", "synthetic-rotated-token"}, {"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {"Set-Cookie", "synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}}, Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`)}}
+		exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{
+			{"Content-Type", "application/json"}, {"scnt", "synthetic-rotated-scnt"},
+			{"X-Apple-ID-Session-Id", "synthetic-rotated-session"},
+			{"X-Apple-Session-Token", "synthetic-rotated-token"},
+			{"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"},
+			{expectedSetCookieHeader, "synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"},
+		}, Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`)}}
 		runner.network.Timeline = runner.network.Timeline[:len(runner.network.Timeline)-1]
 	}
 	transport, err := replay.NewHTTPTransport(exchanges)
@@ -154,7 +171,8 @@ func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage, lat
 	runner.http = transport
 	runner.entropy.replay = runner
 	nativeBridgeCommandEntropy(t, raw, runner)
-	sdk, err := icloud.New(icloud.WithHTTPTransport(runner), icloud.WithRandomSource(&runner.entropy), icloud.WithClock(func() time.Time { return time.Unix(1700000000, 0) }))
+	sdk, err := icloud.New(icloud.WithHTTPTransport(runner), icloud.WithRandomSource(&runner.entropy),
+		icloud.WithClock(func() time.Time { return time.Unix(1700000000, 0) }))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -185,7 +203,9 @@ func nativeBridgeCommandEntropy(t *testing.T, raw map[string]json.RawMessage, ru
 	}
 }
 
-func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage, path string, sdk *icloud.SDK) (icloud.NativeAuthState, string) {
+func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage,
+	path string, sdk *icloud.SDK,
+) (icloud.NativeAuthState, string) {
 	t.Helper()
 	state := nativeBridgeCommandState(t, raw)
 	savedPath := filepath.Join(t.TempDir(), "private.json")
@@ -200,7 +220,11 @@ func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage, pa
 		// Source full-flow authentication prepares the saved state through the public
 		// SDK. The command under test is mfa-bridge; CLI login's explicit pause flag
 		// is covered separately and would change the canonical SRP request bytes.
-		prepared, prepareErr := sdk.Authenticate(t.Context(), icloud.AuthenticateRequest{Auth: state.Auth, AccountName: state.AccountName, Password: "invented-password", SavedState: &state, TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode, AcceptTerms: false, ForceRefresh: false, PauseTwoFactor: false, Service: nil})
+		prepared, prepareErr := sdk.Authenticate(t.Context(), icloud.AuthenticateRequest{
+			Auth: state.Auth, AccountName: state.AccountName, Password: "invented-password", SavedState: &state,
+			TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode,
+			AcceptTerms: false, ForceRefresh: false, PauseTwoFactor: false, Service: nil,
+		})
 		if prepareErr != nil {
 			t.Fatal(prepareErr)
 		}
@@ -221,9 +245,9 @@ func nativeBridgeCommandEnvironment(state icloud.NativeAuthState) func(string) s
 		switch name {
 		case "GO_ICLOUD_CODE":
 			return "123456"
-		case "GO_ICLOUD_ACCOUNT":
+		case expectedAccountEnvironment:
 			return state.AccountName
-		case "GO_ICLOUD_PASSWORD":
+		case expectedPasswordEnvironment:
 			return "invented-password"
 		default:
 			return ""
@@ -251,7 +275,9 @@ func nativeBridgeCommandPromptOnly(t *testing.T, raw map[string]json.RawMessage)
 	return promptOnly
 }
 
-func nativeBridgeCommandAcceptance(t *testing.T, raw map[string]json.RawMessage, path string, promptOnly, lateFailure bool, err error) bool {
+func nativeBridgeCommandAcceptance(t *testing.T, raw map[string]json.RawMessage,
+	path string, promptOnly, lateFailure bool, err error,
+) bool {
 	t.Helper()
 	_, expectedError := raw["error"]
 
@@ -294,7 +320,9 @@ func nativeBridgeCommandExpectedAcceptance(t *testing.T, raw map[string]json.Raw
 	return final && !lateFailure
 }
 
-func nativeBridgeCommandSavedState(t *testing.T, raw map[string]json.RawMessage, path, savedPath string, owner *icloud.NativeBridgeSession, expectedError, lateFailure bool) {
+func nativeBridgeCommandSavedState(t *testing.T, raw map[string]json.RawMessage,
+	path, savedPath string, owner *icloud.NativeBridgeSession, expectedError, lateFailure bool,
+) {
 	t.Helper()
 	progress, stateErr := owner.State()
 	if stateErr != nil {
@@ -303,7 +331,7 @@ func nativeBridgeCommandSavedState(t *testing.T, raw map[string]json.RawMessage,
 	if progress.Active {
 		t.Fatal("command retained active bridge")
 	}
-	data, readErr := os.ReadFile(savedPath)
+	data, readErr := os.ReadFile(filepath.Clean(savedPath))
 	if readErr != nil {
 		t.Fatal(readErr)
 	}
@@ -326,7 +354,8 @@ func nativeBridgeCommandSavedState(t *testing.T, raw map[string]json.RawMessage,
 		}
 	}
 	if lateFailure {
-		if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != "synthetic-rotated-token" || saved.TrustToken != "synthetic-rotated-trust" || saved.CodeRequested || saved.RequiresMFA {
+		if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != "synthetic-rotated-token" ||
+			saved.TrustToken != "synthetic-rotated-trust" || saved.CodeRequested || saved.RequiresMFA {
 			t.Fatal("failed trust lost rotated tokens or completion progress")
 		}
 		found := false
@@ -367,7 +396,9 @@ func nativeBridgeCommandConsumed(t *testing.T, runner *sdkBridgeReplay, transpor
 		}
 	}
 	runner.entropy.mu.Lock()
-	entropyComplete := runner.entropy.private == len(runner.network.PrivateScalars) && runner.entropy.prover == len(runner.network.ProverRandom) && runner.entropy.nonceReads == len(runner.network.Connections) && len(runner.entropy.initial) == 0
+	entropyComplete := runner.entropy.private == len(runner.network.PrivateScalars) &&
+		runner.entropy.prover == len(runner.network.ProverRandom) &&
+		runner.entropy.nonceReads == len(runner.network.Connections) && len(runner.entropy.initial) == 0
 	runner.entropy.mu.Unlock()
 
 	if !entropyComplete {
@@ -401,6 +432,7 @@ func nativeBridgeCommandState(t *testing.T, raw map[string]json.RawMessage) iclo
 	decode(t, initial["account_data"], &account)
 	state.Auth.DriveServiceURL = account.Webservices["drivews"]["url"]
 	state.Auth.FindMyServiceURL = account.Webservices["findme"]["url"]
+
 	for index := range state.Auth.Cookies {
 		state.Auth.Cookies[index].HTTPOnly = true
 	}
