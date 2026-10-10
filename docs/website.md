@@ -5,7 +5,7 @@ fixture provenance, generation commands and reviewer evidence remain repository
 Markdown and are excluded from the customer navigation (LIB-17, template 12–13).
 
 The Pages workflow builds all OpenAPI operations and AsyncAPI channels with the shared Fumadocs action,
-pinned to `4bdb5216ef1a13b9237093dd781de1e1b26946df`. Pull requests build
+pinned to `6f7f713fefae28b2526f140b1cfe0f52c2980e0d`. Pull requests build
 and check the same export used for main deployment. Configure GitHub Pages to use
 GitHub Actions before the first deployment. Coverage HTML and badge JSON belong
 under `coverage/` in the same Pages artifact.
@@ -31,8 +31,25 @@ request media aliases. The reference graph schema view preserves conjunctions,
 alternatives, required fields, examples and named component links without eagerly
 expanding recursive intersections. Native request snippets and the playground
 remain available. The shared action commit must be published before GitHub can
-resolve the workflow pin. Deployment, external link checks, final API guide
-updates and both independent reviews remain release gates.
+resolve the workflow pin. Deployment, external link checks and both independent
+reviews remain release gates.
 
 See [the documentation inventory](documentation-inventory.md), [release procedure](releasing.md),
 and [completion matrix](completion-matrix.md).
+
+The local full export using renderer commit
+`6f7f713fefae28b2526f140b1cfe0f52c2980e0d` passed Next.js and TypeScript
+compilation and the complete site gate: 99 HTML files, including 82 OpenAPI
+operations, both bridge directions and ten customer guides. The bridge checks
+require visible SEND/RECEIVE labels, the original schema format and concrete
+protobuf fields; an additional source comparison verified both rendered code
+blocks against the exact canonical protobuf bytes. Customer navigation links and
+representative Photos and Reminders cURL snippets were checked. This is local
+rendering evidence, not deployment or independent acceptance evidence.
+
+The Windows local exporter in pinned Next.js 16.3.6 writes nested segment-prefetch
+filenames while its browser client requests dotted filenames. Local preview may
+therefore log prefetch 404s and fall back to document navigation. A browser click
+between the bridge pages still loaded the correct direction and source panel.
+The publishing workflow runs on Linux; that remote export and deployed navigation
+remain subject to CI and release verification.

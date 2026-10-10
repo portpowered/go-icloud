@@ -9,12 +9,22 @@
   "/go-icloud/docs/asyncapi/unknown/publish_v2_connection": [
     "ClientMessage",
     "connection",
-    "application/x-protobuf"
+    "application/x-protobuf",
+    "SEND",
+    "Source schema:",
+    "bridge.proto",
+    "application/vnd.google.protobuf;version=2",
+    "optional ConnectionRequest connection = 1"
   ],
   "/go-icloud/docs/asyncapi/unknown/subscribe_v2_connection": [
     "ServerMessage",
     "connection",
-    "application/x-protobuf"
+    "application/x-protobuf",
+    "RECEIVE",
+    "Source schema:",
+    "bridge.proto",
+    "application/vnd.google.protobuf;version=2",
+    "optional bytes push_token_base64 = 1"
   ],
   "/go-icloud/docs/guides": [
     "Use go-icloud",
