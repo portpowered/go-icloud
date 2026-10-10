@@ -17,7 +17,11 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
-const materializedPhotoPath = "2024/01/02/synthetic-0.JPG"
+const (
+	materializedPhotoPath   = "2024/01/02/synthetic-0.JPG"
+	materializedSyncCursor  = "synthetic-sync"
+	materializedResourceKey = "original"
+)
 
 type materializationCase struct {
 	Name      string          `json:"name"`
@@ -104,7 +108,8 @@ func replaySDKMaterialization(t *testing.T, variant materializationCase, targetI
 
 	assertMaterializationResult(t, input, second, key, true)
 	assertMaterializationFiles(t, input.Options.Directory, variant)
-	if repeated := assertMaterializationManifest(t, input.Options.Directory, key, variant); !reflect.DeepEqual(repeated, manifest) {
+	repeated := assertMaterializationManifest(t, input.Options.Directory, key, variant)
+	if !reflect.DeepEqual(repeated, manifest) {
 		t.Fatal("repeat sync changed provider identity or persisted materialized size")
 	}
 
@@ -159,15 +164,17 @@ func materializationEntity(t *testing.T, entity *replay.Entity, data []byte) {
 	entity.Value = value
 }
 
-func assertMaterializationResult(t *testing.T, input photosync.Request, actual *photosync.Result, key string, repeated bool) {
+func assertMaterializationResult(t *testing.T, input photosync.Request,
+	actual *photosync.Result, key string, repeated bool,
+) {
 	t.Helper()
 
 	want := new(photosync.Result)
 	want.Albums, want.Library, want.Directory = []string{}, input.Options.Library, input.Options.Directory
 	want.StatePath = filepath.Join(input.Options.Directory, ".go-icloud-state", key+".json")
-	cursor := "synthetic-sync"
+	cursor := materializedSyncCursor
 	want.SyncCursor = &cursor
-	item := photosync.Item{AssetID: "synthetic-asset-0", ResourceKey: "original", Path: materializedPhotoPath,
+	item := photosync.Item{AssetID: "synthetic-asset-0", ResourceKey: materializedResourceKey, Path: materializedPhotoPath,
 		Action: photosync.Downloaded, Reason: nil}
 	want.DownloadedCount = 1
 
@@ -200,7 +207,9 @@ func assertMaterializationFiles(t *testing.T, directory string, variant material
 	}
 }
 
-func assertMaterializationManifest(t *testing.T, directory, key string, variant materializationCase) photosync.Manifest {
+func assertMaterializationManifest(t *testing.T, directory, key string,
+	variant materializationCase,
+) photosync.Manifest {
 	t.Helper()
 
 	root := materializationRoot(t, directory)
@@ -211,10 +220,10 @@ func assertMaterializationManifest(t *testing.T, directory, key string, variant 
 
 	providerSize, localSize := int64(len(variant.InputHex)/2), int64(len(variant.OutputHex)/2)
 	downloaded := time.Date(2026, time.April, 10, 0, 0, 0, 0, time.UTC)
-	cursor := "synthetic-sync"
+	cursor := materializedSyncCursor
 
 	want := photosync.Manifest{TargetKey: key, Cursor: &cursor,
-		Resources: []photosync.SyncedResource{{AssetID: "synthetic-asset-0", ResourceKey: "original",
+		Resources: []photosync.SyncedResource{{AssetID: "synthetic-asset-0", ResourceKey: materializedResourceKey,
 			RelativePath: materializedPhotoPath, Size: &providerSize, LocalSize: &localSize,
 			Checksum: nil, DownloadedAt: &downloaded}}}
 	if !reflect.DeepEqual(*manifest, want) {
