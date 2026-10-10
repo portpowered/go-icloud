@@ -2,10 +2,7 @@ package webtransport
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
@@ -41,65 +38,43 @@ func photosAssetBody(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDire
 func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.PhotoDirection, offset int64,
 	extra []PhotosAssetSelector, limit int64, selected ...*cloudkit.CKZoneIDReq,
 ) (string, error) {
-	filters := []string{}
+	filters, err := photosAssetFilters(direction, offset, extra)
+	if err != nil {
+		return "", err
+	}
 
-	for _, selector := range append([]PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldDirection,
-		Value: string(direction)}}, extra...) {
-		value := cloudkit.CKFVString{
-			Type:                 cloudkit.CKFVStringTypeSTRING,
-			Value:                selector.Value,
-			AdditionalProperties: nil,
-		}
+	zone := photosQueryZone(selected...)
+	input := new(cloudkit.CKQueryRequest)
+	input.Query.RecordType = string(index)
+	input.Query.FilterBy.Set(filters)
+	input.ZoneID.Set(zone)
+	input.ResultsLimit.Set(limit)
 
-		filter, err := photosAssetFilter(selector.Field, value)
-		if err != nil {
-			return "", err
+	return photosQueryBody(*input, zone)
+}
+
+func photosAssetFilters(direction cloudkit.PhotoDirection, offset int64,
+	extra []PhotosAssetSelector,
+) ([]cloudkit.CKQueryFilterBy, error) {
+	directionFilter, err := photosStringFilter(string(cloudkit.PhotoAssetQueryFieldDirection), string(direction))
+	if err != nil {
+		return nil, err
+	}
+
+	rankFilter, err := photosRankFilter(offset)
+	if err != nil {
+		return nil, err
+	}
+
+	filters := []cloudkit.CKQueryFilterBy{directionFilter, rankFilter}
+	for _, selector := range extra {
+		filter, filterErr := photosStringFilter(string(selector.Field), selector.Value)
+		if filterErr != nil {
+			return nil, filterErr
 		}
 
 		filters = append(filters, filter)
 	}
 
-	rank, err := photosAssetFilter(cloudkit.PhotoAssetQueryFieldStartRank,
-		cloudkit.CKFVInt64{Type: cloudkit.CKFVInt64TypeINT64, Value: max(offset, 0), AdditionalProperties: nil})
-	if err != nil {
-		return "", err
-	}
-
-	filters = append(filters[:1], append([]string{rank}, filters[1:]...)...)
-	zone := cloudkit.CKZoneIDReq{ZoneName: protocol.PhotosPhotoPrimaryZoneNameValue,
-		ZoneType: nil, OwnerRecordName: nil, AdditionalProperties: nil}
-	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
-
-	if len(selected) > 0 && selected[0] != nil {
-		zone = *selected[0]
-	}
-
-	identity, err := referenceJSONFields(
-		zone,
-		[]string{
-			protocol.PhotosCKZoneIDReqZoneName,
-			protocol.PhotosCKZoneIDReqZoneType,
-			protocol.PhotosCKZoneIDReqOwnerRecordName,
-		},
-	)
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf("{%q: {%q: %q, %q: [%s]}, %q: %s, %q: %d}",
-		protocol.PhotosCKQueryRequestQuery, protocol.PhotosCKQueryObjectRecordType, index,
-		protocol.PhotosCKQueryObjectFilterBy, strings.Join(filters, ", "),
-		protocol.PhotosCKQueryRequestZoneID, identity, protocol.PhotosCKQueryRequestResultsLimit,
-		limit), nil
-}
-
-func photosAssetFilter(name cloudkit.PhotoAssetQueryField, field any) (string, error) {
-	value, err := referenceJSON(field)
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf("{%q: %q, %q: %q, %q: %s}",
-		protocol.PhotosCKQueryFilterByComparator, cloudkit.CKComparatorEQUALS,
-		protocol.PhotosCKQueryFilterByFieldName, name, protocol.PhotosCKQueryFilterByFieldValue, value), nil
+	return filters, nil
 }
