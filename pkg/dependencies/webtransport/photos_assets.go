@@ -50,7 +50,7 @@ func photosAssetBodyLimit(index cloudkit.PhotoListIndex, direction cloudkit.Phot
 	input.ZoneID.Set(zone)
 	input.ResultsLimit.Set(limit)
 
-	return photosQueryBody(*input, zone)
+	return photosQueryBody(input, zone)
 }
 
 func photosAssetFilters(direction cloudkit.PhotoDirection, offset int64,

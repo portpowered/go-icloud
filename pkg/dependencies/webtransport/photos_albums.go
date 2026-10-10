@@ -38,5 +38,5 @@ func photosAlbumBody(parent, continuation *string, selected ...*cloudkit.CKZoneI
 		input.ContinuationMarker.Set(*continuation)
 	}
 
-	return photosQueryBody(*input, zone)
+	return photosQueryBody(input, zone)
 }

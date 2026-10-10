@@ -35,7 +35,7 @@ func photosQueryZone(selected ...*cloudkit.CKZoneIDReq) cloudkit.CKZoneIDReq {
 	return *zone
 }
 
-func photosQueryBody(input cloudkit.CKQueryRequest, zone cloudkit.CKZoneIDReq) (string, error) {
+func photosQueryBody(input *cloudkit.CKQueryRequest, zone cloudkit.CKZoneIDReq) (string, error) {
 	body, err := referenceJSONFields(input, []string{protocol.PhotosCKQueryRequestQuery,
 		protocol.PhotosCKQueryRequestZoneID, protocol.PhotosCKQueryRequestResultsLimit,
 		protocol.PhotosCKQueryRequestContinuationMarker})
