@@ -12,5 +12,6 @@ func CallerHeaders(headers http.Header) http.Header {
 	if headers == nil {
 		return http.Header(make(httpboundary.CallerHeaderMap))
 	}
+
 	return http.Header(httpboundary.CallerHeaderMap(headers)).Clone()
 }

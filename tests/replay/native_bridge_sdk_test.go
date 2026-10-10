@@ -50,6 +50,12 @@ var errWebsocketEntropyDiffers = errors.New("websocket entropy differs")
 var errFrameMaskEntropyDiffers = errors.New("frame mask entropy differs")
 var errUndeclaredEntropyLength = errors.New("undeclared entropy length")
 
+// Independent synthetic response expectations preserve the wire spellings.
+const (
+	bridgeFixtureContentType = "Content-Type"
+	bridgeFixtureJSONMedia   = "application/json"
+)
+
 type sdkBridgeNetwork struct {
 	PrivateScalars []string `json:"private_scalars"` //nolint:tagliatelle // Preserve the pinned Python fixture field.
 	ProverRandom   []struct {
@@ -206,6 +212,7 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 		return nil, errUnexpectedSecureDialTarget
 	}
 	script := new(bridgeScriptSocket)
+
 	script.events = append([]bridgeSocketEvent(nil), expected.Events...)
 	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: script}
 
@@ -364,6 +371,7 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	if lateFailure {
 		transport = nativeBridgeTrustFailureFixture(t, raw)
 	}
+
 	nativeBridgeFixtureChallenge(t, raw, &state)
 	if snapshot {
 		var identifier icloud.TrustedPhoneNumberID
@@ -426,12 +434,14 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 		control(session)
 	}
 	if session != nil {
-		if err := session.Close(); err != nil {
-			t.Fatal(err)
+		closeErr := session.Close()
+		if closeErr != nil {
+			t.Fatal(closeErr)
 		}
 	}
-	if err := transport.AssertConsumed(); err != nil {
-		t.Fatal(err)
+	consumptionErr := transport.AssertConsumed()
+	if consumptionErr != nil {
+		t.Fatal(consumptionErr)
 	}
 	if controls.overlap && !runner.overlapChecked {
 		t.Fatal("overlap control did not reach step2")
@@ -542,10 +552,10 @@ func nativeBridgeTrustFailureFixture(t *testing.T, raw map[string]json.RawMessag
 	var exchanges []replay.Exchange
 	authReplayDecode(t, raw["exchanges"], &exchanges)
 	exchanges = exchanges[:6]
-	exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{"Content-Type",
-		"application/json"}, {"scnt", "synthetic-rotated-scnt"}, {"X-Apple-ID-Session-Id",
+	exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{bridgeFixtureContentType,
+		bridgeFixtureJSONMedia}, {"scnt", "synthetic-rotated-scnt"}, {"X-Apple-ID-Session-Id",
 		"synthetic-rotated-session"}, {"X-Apple-Session-Token", "synthetic-rotated-token"},
-		{"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {"Set-Cookie",
+		{"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {accountCookieUpdateHeader,
 			"synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}},
 		Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`),
 			Matchers: nil, ContentTypePattern: "", Parts: nil}}
@@ -722,6 +732,7 @@ func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage,
 		metadata = append(metadata, icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
 			Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
 	}
+
 	nativeFlowResponses(t, raw, metadata)
 	operationLabel := "OpenNativeBridgeSession"
 	if operation == "flow" {
@@ -885,6 +896,7 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	s.validateBootstrap(path)
 	lines[0] = "GET /v2/{signed_bootstrap} HTTP/1.1"
 	key := base64.StdEncoding.EncodeToString([]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15})
+
 	for index, line := range lines {
 		if strings.HasPrefix(line, "Sec-WebSocket-Key:") {
 			if line != "Sec-WebSocket-Key: "+key {
@@ -918,6 +930,7 @@ func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 	for index := offset + 4; index < len(payload); index++ {
 		payload[index] ^= payload[offset+(index-offset-4)%4]
 	}
+
 	clear(payload[offset : offset+4])
 	return payload, nil
 }

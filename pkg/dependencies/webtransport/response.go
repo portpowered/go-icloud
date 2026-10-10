@@ -64,6 +64,7 @@ func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
 	if includeDriveToken {
 		query = orderedRequestQuery(auth)
 	}
+
 	request.URL.RawQuery = query + suffix
 
 	return client.readPrepared(request, policy, auth.Cookies)

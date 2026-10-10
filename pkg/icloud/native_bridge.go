@@ -74,6 +74,7 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	}
 
 	var boot bridgeModels.BridgeBootstrapDirect
+
 	err = json.Unmarshal(progress.state.Challenge.BridgeBootstrap, &boot)
 	if err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
