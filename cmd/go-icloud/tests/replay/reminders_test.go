@@ -40,7 +40,7 @@ func TestReminderCommands(t *testing.T) {
 		}
 
 		if prefix == lookupFixturePrefix {
-			want = 19
+			want = 24
 		}
 
 		if prefix == "sync" {
@@ -48,7 +48,7 @@ func TestReminderCommands(t *testing.T) {
 		}
 
 		if prefix == "changes" {
-			want = 72
+			want = 73
 		}
 
 		if len(paths) != want {

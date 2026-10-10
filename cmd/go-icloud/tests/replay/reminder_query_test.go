@@ -10,7 +10,7 @@ import (
 
 func TestReminderQueryCommands(t *testing.T) {
 	t.Parallel()
-	testReminderCLIInventory(t, "query", expectedReplayReminders, 39)
+	testReminderCLIInventory(t, "query", expectedReplayReminders, 40)
 }
 
 func TestReminderListUnionCommands(t *testing.T) {
