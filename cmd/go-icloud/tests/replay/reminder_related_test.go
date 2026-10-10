@@ -10,9 +10,9 @@ func TestReminderRelatedCommands(t *testing.T) {
 
 	for prefix, operation := range map[string]string{"tags": reminderCLITagsCommand,
 		reminderCLIAttachmentsField: reminderCLIAttachmentsCommand,
-		"recurrence":                reminderCLIRecurrenceCommand, reminderCLIAlarmsField: reminderCLIAlarmsCommand} {
+		expectedReplayRecurrence:    reminderCLIRecurrenceCommand, reminderCLIAlarmsField: reminderCLIAlarmsCommand} {
 		count := map[string]int{"tags": 10, reminderCLIAttachmentsField: 11,
-			"recurrence": 10, reminderCLIAlarmsField: 15}[prefix]
+			expectedReplayRecurrence: 10, reminderCLIAlarmsField: 15}[prefix]
 		testReminderCLIInventory(t, "related-"+prefix, operation, count)
 	}
 }
@@ -22,8 +22,8 @@ func reminderCLIRelatedArgs(t *testing.T, row map[string]json.RawMessage) []stri
 	var operation string
 
 	decode(t, row["operation"], &operation)
-	key := map[string]string{"tags_for": "hashtag_ids", "attachments_for": "attachment_ids",
-		"recurrence_rules_for": "recurrence_rule_ids", "alarms_for": "alarm_ids"}[operation]
+	key := map[string]string{"tags_for": expectedSourceHashtagIDs, "attachments_for": expectedSourceAttachmentIDs,
+		"recurrence_rules_for": expectedSourceRecurrenceRuleIDs, "alarms_for": expectedSourceAlarmIDs}[operation]
 
 	var inputs []struct {
 		Value map[string]json.RawMessage `json:"value"`
@@ -118,11 +118,13 @@ func checkReminderCLIRelatedArray(t *testing.T, actual json.RawMessage, source j
 func renameReminderCLIRelated(t *testing.T, row map[string]json.RawMessage) {
 	t.Helper()
 
-	for source, target := range map[string]string{"reminder_id": "reminderID", "alarm_id": "alarmID",
-		"alarm_uid": "alarmUID", "trigger_id": "triggerID",
-		"location_uid": "locationUID", "file_asset_url": "fileAssetURL",
-		"file_size": "fileSize", "occurrence_count": "occurrenceCount",
-		"first_day_of_week":            "firstDayOfWeek",
+	for source, target := range map[string]string{expectedSourceReminderID: expectedReplayReminderID,
+		expectedSourceAlarmID:  "alarmID",
+		expectedSourceAlarmUID: expectedReplayAlarmUID, expectedSourceTriggerID: expectedReplayTriggerID,
+		expectedSourceLocationUID: expectedReplayLocationUID, expectedSourceFileAssetURL: expectedReplayFileAssetURL,
+		expectedReplayFileSize:         expectedReplaySourceFileSize,
+		expectedReplayOccurrenceCount:  expectedReplaySourceOccurrenceCount,
+		expectedReplayFirstDayOfWeek:   expectedReplaySourceFirstDayOfWeek,
 		reminderCLISourceRevisionField: reminderCLIRevisionField} {
 		if raw, exists := row[source]; exists {
 			row[target] = raw

@@ -47,10 +47,10 @@ func (client *syncCLIClient) GetPhotosCursor(
 	_ context.Context, request icloud.GetPhotosCursorRequest,
 ) (*icloud.GetPhotosCursorResult, error) {
 	client.t.Helper()
-	if request.Auth.AccountID != "stored-account" {
+	if request.Auth.AccountID != expectedReplayStoredAccount {
 		client.t.Fatal("request authentication displaced the saved native account")
 	}
-	if client.named && (request.Library == nil || request.Library.ID != "selected") {
+	if client.named && (request.Library == nil || request.Library.ID != expectedReplaySelected) {
 		client.t.Fatal("cursor lost the discovered library selection")
 	}
 	if client.watchOutput != nil && client.cursors == 1 {
@@ -66,11 +66,13 @@ func (client *syncCLIClient) ListPhotoLibraries(
 	_ context.Context, request icloud.ListPhotoLibrariesRequest,
 ) (*icloud.ListPhotoLibrariesResult, error) {
 	client.t.Helper()
-	if !client.named || request.Auth.AccountID != "stored-account" {
+	if !client.named || request.Auth.AccountID != expectedReplayStoredAccount {
 		client.t.Fatal("unexpected discovery or incorrect saved authentication")
 	}
 	var library icloud.PhotoLibrary
-	decode(client.t, json.RawMessage(`{"id":"selected","zoneName":"selected-zone","zoneType":"REGULAR_CUSTOM_ZONE","ownerRecordName":null,"shared":false,"isSharedLibrary":false,"indexingState":"FINISHED","syncToken":null}`), &library)
+	decode(client.t, json.RawMessage(`{"id":"selected","zoneName":"selected-zone","zoneType":"REGULAR_CUSTOM_ZONE",`+
+		`"ownerRecordName":null,"shared":false,"isSharedLibrary":false,"indexingState":"FINISHED",`+
+		`"syncToken":null}`), &library)
 	return &icloud.ListPhotoLibrariesResult{
 		Libraries: []icloud.PhotoLibrary{library}, Responses: syncReceipt("discovery"),
 	}, nil
@@ -82,12 +84,17 @@ func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.List
 	client.t.Helper()
 	client.visits++
 	var photo icloud.Photo
-	decode(client.t, json.RawMessage(`{"id":"asset","filename":"photo.jpg","masterID":"master","created":"2020-01-01T00:00:00Z","added":"2020-01-01T00:00:00Z","itemType":"image","isLivePhoto":false,"assetMetadata":{},"dimensions":[null,null],"size":1,"versions":{"original":{"filename":"photo.jpg","url":"https://photos.example.invalid/photo","size":1,"type":"public.jpeg","checksum":"one"}}}`), &photo)
+	decode(client.t, json.RawMessage(`{"id":"asset","filename":"photo.jpg","masterID":"master",`+
+		`"created":"2020-01-01T00:00:00Z",`+
+		`"added":"2020-01-01T00:00:00Z","itemType":"image","isLivePhoto":false,"assetMetadata":{},`+
+		`"dimensions":[null,null],"size":1,"versions":{"original":{"filename":"photo.jpg",`+
+		`"url":"https://photos.example.invalid/photo","size":1,"type":"public.jpeg",`+
+		`"checksum":"one"}}}`), &photo)
 	if client.watchOutput != nil {
 		photo.Filename = fmt.Sprintf(watchFilenamePattern, client.visits)
-		resource := photo.Versions["original"]
+		resource := photo.Versions[expectedReplayOriginal]
 		resource.Filename = photo.Filename
-		photo.Versions["original"] = resource
+		photo.Versions[expectedReplayOriginal] = resource
 	}
 	responses := syncReceipt("page")
 	_, err := visitor(icloud.PhotoVisitEvent{Photo: photo, Responses: responses})
@@ -107,7 +114,7 @@ func (client *syncCLIClient) DownloadPhoto(
 	client.t.Helper()
 	//nolint:gosec // GO-15: this synthetic snapshot verifies page credential rotation before download.
 	encoded, err := json.Marshal(request.Auth)
-	if err != nil || !bytes.Contains(encoded, []byte("page-secret")) {
+	if err != nil || !bytes.Contains(encoded, []byte(expectedReplayPageSecret)) {
 		client.t.Fatal("download did not consume the page credential rotation")
 	}
 	client.downloads++
@@ -119,7 +126,7 @@ func (client *syncCLIClient) DownloadPhoto(
 func syncReceipt(stage string) []icloud.ResponseMetadata {
 	return []icloud.ResponseMetadata{{
 		StatusCode: 200, CookieScopeURL: "https://photos.example.invalid/",
-		Headers: []icloud.Header{{Name: "Set-Cookie", Value: "session=" + stage + "-secret; Path=/; Secure"}},
+		Headers: []icloud.Header{{Name: expectedSetCookieHeader, Value: "session=" + stage + "-secret; Path=/; Secure"}},
 	}}
 }
 
@@ -128,16 +135,18 @@ func TestPhotosSyncNativeSessionAndMaterialization(t *testing.T) {
 	client, session, request, before := syncCLISetup(t, false)
 	var output bytes.Buffer
 	receipt := filepath.Join(filepath.Dir(request), syncPrivateResultFilename)
-	if err := runSyncCLI(t.Context(), client, session, request, "photos-sync", receipt, &output); err != nil {
+	if err := runSyncCLI(t.Context(), client, session, request, expectedReplayPhotosSync, receipt, &output); err != nil {
 		t.Fatal(err)
 	}
-	data, err := os.ReadFile(filepath.Join(filepath.Dir(request), "photos", "photo.jpg"))
+	data, err := readSyncFile(t, filepath.Join(filepath.Dir(request), "photos", "photo.jpg"))
 	if err != nil || string(data) != "x" || client.downloads != 1 {
 		t.Fatalf("materialization failed: %q, downloads=%d, %v", data, client.downloads, err)
 	}
 	checkSyncPrivateCursor(t, receipt, output.Bytes(), firstPrivateSyncCursor, true)
-	checkSyncState(t, session, before, "download-secret")
-	for _, secret := range []string{"-secret", "private-trust", "private-account", "responses", "accountData"} {
+	checkSyncState(t, session, before, expectedReplayDownloadSecret)
+	for _, secret := range []string{
+		"-secret", "private-trust", "private-account", expectedReplayResponses, expectedAccountDataKey,
+	} {
 		if strings.Contains(output.String(), secret) {
 			t.Fatalf("console exposed %q", secret)
 		}
@@ -148,18 +157,18 @@ func TestPhotosSyncDiscoversNamedLibraryWithStoredAccount(t *testing.T) {
 	t.Parallel()
 	client, session, requestPath, before := syncCLISetup(t, false)
 	client.named = true
-	data, err := os.ReadFile(requestPath)
+	data, err := readSyncFile(t, requestPath)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var request photosync.Request
 	decode(t, data, &request)
-	request.Options.Library = "selected"
+	request.Options.Library = expectedReplaySelected
 	writeSyncJSON(t, requestPath, request)
-	if err = runSyncCLI(t.Context(), client, session, requestPath, "photos-sync", "", io.Discard); err != nil {
+	if err = runSyncCLI(t.Context(), client, session, requestPath, expectedReplayPhotosSync, "", io.Discard); err != nil {
 		t.Fatal(err)
 	}
-	checkSyncState(t, session, before, "download-secret")
+	checkSyncState(t, session, before, expectedReplayDownloadSecret)
 }
 
 func TestPhotosWatchBoundedIterations(t *testing.T) {
@@ -169,7 +178,7 @@ func TestPhotosWatchBoundedIterations(t *testing.T) {
 
 	client.watchOutput = &output
 	receipt := filepath.Join(filepath.Dir(request), syncPrivateResultFilename)
-	err := runSyncCLI(t.Context(), client, session, request, "photos-watch", receipt, &output)
+	err := runSyncCLI(t.Context(), client, session, request, expectedReplayPhotosWatch, receipt, &output)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -177,7 +186,7 @@ func TestPhotosWatchBoundedIterations(t *testing.T) {
 		t.Fatal("watch did not stop at two synchronous results")
 	}
 	final := checkOrderedWatchResult(t, output.Bytes(), 2)
-	checkSyncState(t, session, before, "page-secret")
+	checkSyncState(t, session, before, expectedReplayPageSecret)
 	checkSyncPrivateCursor(t, receipt, reminderCLIEncode(t, final), secondPrivateSyncCursor, false)
 }
 
@@ -189,12 +198,13 @@ func TestPhotosWatchOutputFailureStopsAfterPersistingIteration(t *testing.T) {
 	t.Parallel()
 	client, session, request, before := syncCLISetup(t, true)
 	cause := errSyncOutputRejected
-	err := runSyncCLI(t.Context(), client, session, request, "photos-watch", "", rejectedSyncOutput{cause: cause})
+	err := runSyncCLI(t.Context(), client, session, request, expectedReplayPhotosWatch, "",
+		rejectedSyncOutput{cause: cause})
 	if !errors.Is(err, cause) || client.cursors != 1 || client.visits != 1 {
 		t.Fatalf("watch continued after rejected output or lost cause: %v, cursors=%d visits=%d",
 			err, client.cursors, client.visits)
 	}
-	checkSyncState(t, session, before, "page-secret")
+	checkSyncState(t, session, before, expectedReplayPageSecret)
 }
 
 func TestPhotosSyncCancellationPreservesReceiptAndRotatesCredentials(t *testing.T) {
@@ -204,19 +214,19 @@ func TestPhotosSyncCancellationPreservesReceiptAndRotatesCredentials(t *testing.
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	client.cancel = cancel
-	receipt := filepath.Join(filepath.Dir(request), "result.json")
-	if err := os.WriteFile(receipt, []byte("existing-receipt"), 0o600); err != nil {
+	receipt := filepath.Join(filepath.Dir(request), expectedReplayResultJSON)
+	if err := os.WriteFile(receipt, []byte(expectedReplayExistingReceipt), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	err := runSyncCLI(ctx, client, session, request, "photos-sync", receipt, io.Discard)
+	err := runSyncCLI(ctx, client, session, request, expectedReplayPhotosSync, receipt, io.Discard)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatalf("lost cancellation: %v", err)
 	}
-	data, readErr := os.ReadFile(receipt)
-	if readErr != nil || string(data) != "existing-receipt" {
+	data, readErr := readSyncFile(t, receipt)
+	if readErr != nil || string(data) != expectedReplayExistingReceipt {
 		t.Fatalf("cancelled command replaced receipt: %q %v", data, readErr)
 	}
-	checkSyncState(t, session, before, "download-secret")
+	checkSyncState(t, session, before, expectedReplayDownloadSecret)
 }
 
 func TestPhotosSyncRejectsMalformedRequestBeforeSDK(t *testing.T) {
@@ -225,17 +235,17 @@ func TestPhotosSyncRejectsMalformedRequestBeforeSDK(t *testing.T) {
 		t.Run(fmt.Sprintf("%x", input), func(t *testing.T) {
 			t.Parallel()
 			client, session, request, _ := syncCLISetup(t, false)
-			before, err := os.ReadFile(session)
+			before, err := readSyncFile(t, session)
 			if err != nil {
 				t.Fatal(err)
 			}
 			if err = os.WriteFile(request, []byte(input), 0o600); err != nil {
 				t.Fatal(err)
 			}
-			if err = runSyncCLI(t.Context(), client, session, request, "photos-sync", "", io.Discard); err == nil {
+			if err = runSyncCLI(t.Context(), client, session, request, expectedReplayPhotosSync, "", io.Discard); err == nil {
 				t.Fatal("malformed request accepted")
 			}
-			after, err := os.ReadFile(session)
+			after, err := readSyncFile(t, session)
 			if err != nil || !bytes.Equal(before, after) || client.cursors != 0 {
 				t.Fatal("invalid input modified native state or called SDK")
 			}
@@ -253,9 +263,15 @@ func syncCLISetup(t *testing.T, watch bool) (*syncCLIClient, string, string, icl
 		Client: sdk, t: t, cursors: 0, visits: 0, downloads: 0, cancel: nil, named: false, watchOutput: nil,
 	}
 	var state icloud.NativeAuthState
-	decode(t, json.RawMessage(`{"auth":{"accountID":"stored-account","clientID":"client","photosServiceURL":"https://photos.example.invalid","headers":[]},"trustToken":"private-trust","accountName":"private-account","accountData":"e30=","accountCountryCode":"USA","challenge":{"mode":"sms","authFactors":["sms"],"authInitialRoute":"sms","hasTrustedDevices":true,"phoneNumbers":[],"securityKeyNames":[]},"codeRequested":true,"deliveryMethod":"sms","deliveryNotice":"private-notice","requiresMFA":true}`), &state)
+	decode(t, json.RawMessage(`{"auth":{"accountID":"stored-account","clientID":"client",`+
+		`"photosServiceURL":"https://photos.example.invalid","headers":[]},`+
+		`"trustToken":"private-trust","accountName":"private-account","accountData":"e30=",`+
+		`"accountCountryCode":"USA","challenge":{"mode":"sms","authFactors":["sms"],`+
+		`"authInitialRoute":"sms","hasTrustedDevices":true,"phoneNumbers":[],`+
+		`"securityKeyNames":[]},"codeRequested":true,"deliveryMethod":"sms",`+
+		`"deliveryNotice":"private-notice","requiresMFA":true}`), &state)
 	directory := t.TempDir()
-	session, requestPath := filepath.Join(directory, "session.json"), filepath.Join(directory, "request.json")
+	session, requestPath := filepath.Join(directory, expectedReplaySessionJSON), filepath.Join(directory, "request.json")
 	writeSyncJSON(t, session, state)
 	request := new(photosync.Request)
 	request.Auth.AccountID = "untrusted-request-account"
@@ -286,10 +302,11 @@ func writeSyncJSON(t *testing.T, path string, value any) {
 func runSyncCLI(ctx context.Context, client icloud.Client, session, request, operation, result string,
 	output io.Writer,
 ) error {
-	args := []string{"--session", session, "--request", request, "--timeout", "10s"}
+	args := []string{sessionFlag, session, expectedRequestOption, request, "--timeout", "10s"}
 	if result != "" {
-		args = append(args, "--save-result", result)
+		args = append(args, expectedReplaySaveResult, result)
 	}
+
 	args = append(args, operation)
 	return command.RunWithInput(ctx, client, args, io.NopCloser(strings.NewReader("")),
 		func(string) string { return "" }, output, io.Discard)
@@ -297,7 +314,7 @@ func runSyncCLI(ctx context.Context, client icloud.Client, session, request, ope
 
 func checkSyncState(t *testing.T, path string, expected icloud.NativeAuthState, cookie string) {
 	t.Helper()
-	data, err := os.ReadFile(path)
+	data, err := readSyncFile(t, path)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -335,7 +352,7 @@ func checkOrderedWatchResult(t *testing.T, output []byte, count int) photosync.R
 			t.Fatal("watch business result differs")
 		}
 		item := result.Items[0]
-		if item.AssetID != "asset" || item.ResourceKey != "original" || string(item.Action) != "listed" ||
+		if item.AssetID != "asset" || item.ResourceKey != expectedReplayOriginal || string(item.Action) != "listed" ||
 			item.Path != fmt.Sprintf(watchFilenamePattern, iteration) ||
 			item.Reason == nil || string(*item.Reason) != "print-only" {
 			t.Fatal("watch result order or item differs")
@@ -354,7 +371,7 @@ func checkOrderedWatchResult(t *testing.T, output []byte, count int) photosync.R
 
 func checkSyncPrivateCursor(t *testing.T, path string, console []byte, cursor string, persisted bool) {
 	t.Helper()
-	data, err := os.ReadFile(path)
+	data, err := readSyncFile(t, path)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -371,7 +388,7 @@ func checkSyncPrivateCursor(t *testing.T, path string, console []byte, cursor st
 		t.Fatal("cursor redaction changed other business fields")
 	}
 	if persisted {
-		manifestData, readErr := os.ReadFile(saved.StatePath)
+		manifestData, readErr := readSyncFile(t, saved.StatePath)
 		if readErr != nil {
 			t.Fatal(readErr)
 		}
@@ -382,4 +399,26 @@ func checkSyncPrivateCursor(t *testing.T, path string, console []byte, cursor st
 			t.Fatal("manifest lost the private cursor")
 		}
 	}
+}
+
+func readSyncFile(t *testing.T, path string) ([]byte, error) {
+	t.Helper()
+
+	directory, err := os.OpenRoot(filepath.Dir(path))
+	if err != nil {
+		return nil, fmt.Errorf("open synthetic synchronization directory: %w", err)
+	}
+
+	defer func() {
+		if closeErr := directory.Close(); closeErr != nil {
+			t.Errorf("close synthetic synchronization directory: %v", closeErr)
+		}
+	}()
+
+	data, err := directory.ReadFile(filepath.Base(path))
+	if err != nil {
+		return nil, fmt.Errorf("read synthetic synchronization file: %w", err)
+	}
+
+	return data, nil
 }
