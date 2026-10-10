@@ -5,11 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"slices"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/bridge"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 	bridgemodels "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )
@@ -30,7 +30,9 @@ func (sdk *SDK) GetAuthenticationChallenge(ctx context.Context, request NativeAu
 }
 
 func (sdk *SDK) nativeGetChallenge(ctx context.Context, operation *nativeAuthOperation) error {
-	request, err := nativeEncodedRequest(webtransport.GetAuthChallengeCall{Origin: nativeIDMSOrigin(operation.state), Params: nil})
+	request, err := nativeEncodedRequest(webtransport.GetAuthChallengeCall{
+		Origin: nativeIDMSOrigin(operation.state), Params: nil,
+	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -65,7 +67,9 @@ func (sdk *SDK) nativeGetChallenge(ctx context.Context, operation *nativeAuthOpe
 }
 
 func (sdk *SDK) nativeProbeSecurityKey(ctx context.Context, operation *nativeAuthOperation) error {
-	request, err := nativeEncodedRequest(webtransport.GetAuthChallengeCall{Origin: nativeIDMSOrigin(operation.state), Params: nil})
+	request, err := nativeEncodedRequest(webtransport.GetAuthChallengeCall{
+		Origin: nativeIDMSOrigin(operation.state), Params: nil,
+	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

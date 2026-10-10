@@ -3,10 +3,10 @@ package icloud
 import (
 	"context"
 	"encoding/json"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
@@ -116,7 +116,9 @@ func nativeVerificationRequest(state NativeAuthState, code string) (webtransport
 	if state.DeliveryMethod != TwoFactorDeliverySMS {
 		input := auth.AuthTrustedCodeRequest{SecurityCode: securityCode}
 
-		return nativeEncodedRequest(webtransport.VerifyAuthTrustedCodeCall{Origin: nativeIDMSOrigin(state), Params: nil, Body: input})
+		return nativeEncodedRequest(webtransport.VerifyAuthTrustedCodeCall{
+			Origin: nativeIDMSOrigin(state), Params: nil, Body: input,
+		})
 	}
 
 	phone, err := nativeSelectedPhone(state.Challenge, nil)
@@ -136,5 +138,7 @@ func nativeVerificationRequest(state NativeAuthState, code string) (webtransport
 
 	input := auth.AuthSMSVerificationRequest{PhoneNumber: payload, SecurityCode: securityCode, Mode: mode}
 
-	return nativeEncodedRequest(webtransport.VerifyAuthSMSCall{Origin: nativeIDMSOrigin(state), Params: nil, Body: input})
+	return nativeEncodedRequest(webtransport.VerifyAuthSMSCall{
+		Origin: nativeIDMSOrigin(state), Params: nil, Body: input,
+	})
 }

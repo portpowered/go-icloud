@@ -1,8 +1,9 @@
 package icloud
 
 import (
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"net/http"
+
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 )
 
 func nativeEncodedRequest(call webtransport.AuthenticationCall) (webtransport.AuthenticationCall, error) {

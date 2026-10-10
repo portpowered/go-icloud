@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"net/http"
 	"strconv"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 	bridgemodels "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )

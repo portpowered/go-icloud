@@ -3,10 +3,10 @@ package icloud
 import (
 	"context"
 	"errors"
-	"github.com/portpowered/go-icloud/pkg/dependencies/securitykey"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"slices"
 
+	"github.com/portpowered/go-icloud/pkg/dependencies/securitykey"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
@@ -120,7 +120,9 @@ func (sdk *SDK) VerifySecurityKey(ctx context.Context, request VerifySecurityKey
 		UserHandle: request.Assertion.UserHandle, CredentialID: request.Assertion.CredentialID,
 		RpId: challenge.RelyingPartyID}
 
-	wire, err := nativeEncodedRequest(webtransport.VerifyAuthSecurityKeyCall{Origin: nativeIDMSOrigin(operation.state), Params: nil, Body: input})
+	wire, err := nativeEncodedRequest(webtransport.VerifyAuthSecurityKeyCall{
+		Origin: nativeIDMSOrigin(operation.state), Params: nil, Body: input,
+	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

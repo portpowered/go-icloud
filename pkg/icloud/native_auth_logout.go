@@ -40,7 +40,9 @@ func (sdk *SDK) nativeRemoteLogout(ctx context.Context, operation *nativeAuthOpe
 	payload := auth.AuthLogoutRequest{TrustBrowser: input.KeepTrusted, AllBrowsers: input.AllSessions}
 	params := authapi.LogoutAuthSessionParams(nativeAuthParams(operation.state))
 
-	request, err := nativeEncodedRequest(webtransport.LogoutAuthSessionCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: payload})
+	request, err := nativeEncodedRequest(webtransport.LogoutAuthSessionCall{
+		Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: payload,
+	})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

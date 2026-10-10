@@ -5,9 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
@@ -55,7 +55,9 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 
 	input := auth.AuthSMSRequest{PhoneNumber: data, Mode: auth.Sms}
 
-	request, err := nativeEncodedRequest(webtransport.RequestAuthSMSCall{Origin: nativeIDMSOrigin(operation.state), Params: nil, Body: input})
+	request, err := nativeEncodedRequest(webtransport.RequestAuthSMSCall{
+		Origin: nativeIDMSOrigin(operation.state), Params: nil, Body: input,
+	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

@@ -85,10 +85,14 @@ func (sdk *SDK) nativePCSConsent(ctx context.Context, operation *nativeAuthOpera
 
 	if notify {
 		converted := authapi.EnableAuthPCSConsentParams(params)
-		request, err = nativeEncodedRequest(webtransport.EnableAuthPCSConsentCall{Origin: operation.state.Auth.SetupServiceURL, Params: &converted})
+		request, err = nativeEncodedRequest(webtransport.EnableAuthPCSConsentCall{
+			Origin: operation.state.Auth.SetupServiceURL, Params: &converted,
+		})
 	} else {
 		converted := authapi.GetAuthWebAccessStateParams(params)
-		request, err = nativeEncodedRequest(webtransport.GetAuthWebAccessStateCall{Origin: operation.state.Auth.SetupServiceURL, Params: &converted})
+		request, err = nativeEncodedRequest(webtransport.GetAuthWebAccessStateCall{
+			Origin: operation.state.Auth.SetupServiceURL, Params: &converted,
+		})
 	}
 
 	if err != nil {
@@ -199,7 +203,9 @@ func (sdk *SDK) nativePCSRequest(ctx context.Context, operation *nativeAuthOpera
 	input := auth.AuthPCSRequest{AppName: service, DerivedFromUserAction: derived}
 	params := authapi.RequestAuthPCSParams(nativeAuthParams(operation.state))
 
-	request, err := nativeEncodedRequest(webtransport.RequestAuthPCSCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: input})
+	request, err := nativeEncodedRequest(webtransport.RequestAuthPCSCall{
+		Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: input,
+	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

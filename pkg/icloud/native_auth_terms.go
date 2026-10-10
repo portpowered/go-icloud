@@ -30,7 +30,9 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 
 	input := auth.AuthGetTermsRequest{Locale: locale}
 
-	request, err := nativeEncodedRequest(webtransport.GetAuthTermsCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: input})
+	request, err := nativeEncodedRequest(webtransport.GetAuthTermsCall{
+		Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: input,
+	})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -67,7 +69,9 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOperation, version int) error {
 	params := authapi.AcceptAuthTermsParams(nativeAuthParams(operation.state))
 
-	request, err := nativeEncodedRequest(webtransport.AcceptAuthTermsCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: auth.AuthAcceptTermsRequest{AcceptedICloudTerms: version}})
+	request, err := nativeEncodedRequest(webtransport.AcceptAuthTermsCall{
+		Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: auth.AuthAcceptTermsRequest{AcceptedICloudTerms: version},
+	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -193,7 +197,9 @@ func (sdk *SDK) nativeOneFactorValidate(ctx context.Context, operation *nativeAu
 func (sdk *SDK) nativeOneFactorLogin(ctx context.Context, operation *nativeAuthOperation,
 	login auth.AuthCredentialsLoginRequest,
 ) (*webtransport.BytesResponse, error) {
-	request, err := nativeEncodedRequest(webtransport.LoginAuthCredentialsCall{Origin: operation.state.Auth.SetupServiceURL, Params: nil, Body: login})
+	request, err := nativeEncodedRequest(webtransport.LoginAuthCredentialsCall{
+		Origin: operation.state.Auth.SetupServiceURL, Params: nil, Body: login,
+	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
