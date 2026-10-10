@@ -101,7 +101,10 @@
     "AuthorizeAuthSignIn"
   ],
   "/go-icloud/docs/openapi/unknown/CompleteAuthSRP": [
-    "CompleteAuthSRP"
+    "CompleteAuthSRP",
+    "AuthSRPCompleteRequest",
+    "$.m1",
+    "$.m2"
   ],
   "/go-icloud/docs/openapi/unknown/DriveCreateFolders": [
     "Create folders"
@@ -173,7 +176,13 @@
     "Read storage usage and quota information"
   ],
   "/go-icloud/docs/openapi/unknown/GetAuthChallenge": [
-    "GetAuthChallenge"
+    "GetAuthChallenge",
+    "AuthChallenge",
+    "AuthFailure",
+    "$.trustedPhoneNumber",
+    "$.fsaChallenge",
+    "$.sourceAppId",
+    "anyOf"
   ],
   "/go-icloud/docs/openapi/unknown/GetAuthTerms": [
     "GetAuthTerms"
@@ -185,7 +194,10 @@
     "Download a family member photo"
   ],
   "/go-icloud/docs/openapi/unknown/InitAuthSRP": [
-    "InitAuthSRP"
+    "InitAuthSRP",
+    "AuthSRPInitRequest",
+    "s2k",
+    "s2k_fo"
   ],
   "/go-icloud/docs/openapi/unknown/ListAccountDevices": [
     "List devices associated with an account",
@@ -239,7 +251,15 @@
     "Look up photo records"
   ],
   "/go-icloud/docs/openapi/unknown/PhotosModifyRecords": [
-    "Update photo library records"
+    "Update photo library records",
+    "PhotoAlbumCreationRequest",
+    "PhotoAlbumRenameRequest",
+    "PhotoAlbumDeletionRequest",
+    "PhotoAlbumRelationRequest",
+    "PhotoFavoriteRequest",
+    "PhotoAssetDeletionRequest",
+    "albumNameEnc",
+    "recordChangeTag"
   ],
   "/go-icloud/docs/openapi/unknown/PhotosPutAsset": [
     "Register uploaded bytes as photo assets"
@@ -247,7 +267,14 @@
   "/go-icloud/docs/openapi/unknown/PhotosQueryRecords": [
     "Read photo library indexing state",
     "query",
-    "recordType"
+    "recordType",
+    "CKQueryResponse",
+    "CKRecord",
+    "CKTombstoneRecord",
+    "CKErrorItem",
+    "$.serverErrorCode",
+    "$.reason",
+    "anyOf[2]"
   ],
   "/go-icloud/docs/openapi/unknown/PhotosQuerySharedRecords": [
     "Read shared photo library records"
@@ -268,7 +295,12 @@
     "Read photo library changes"
   ],
   "/go-icloud/docs/openapi/unknown/PhotosUploadStatus": [
-    "Read photo ingest progress"
+    "Read photo ingest progress",
+    "PhotosUploadStatusEntries",
+    "PhotosSessionErrorResponse",
+    "$.progress",
+    "$.errorCode",
+    "429"
   ],
   "/go-icloud/docs/openapi/unknown/PhotosZoneChanges": [
     "Read photo library changes"

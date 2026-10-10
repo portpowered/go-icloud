@@ -1,11 +1,11 @@
 # Documentation audience audit
 
 This inventory covers every tracked Markdown and MDX file in the integrated
-documentation source audited through library commit `a371dda3`. The original
+documentation source audited through library commit `b3de8aec`. The original
 45-file baseline was recorded at `ca02c17`; this inventory now contains all
 47 tracked Markdown and MDX files. It separates customer
 usage from contributor contracts, provenance and review records (LIB-17;
-template items 12â€“13). Add new documents here when their implementation commits
+template items 12–13). Add new documents here when their implementation commits
 are integrated. This source audit does not certify the rendered deployment.
 
 | File | Audience and unique purpose | Audit disposition |
@@ -49,7 +49,7 @@ are integrated. This source audit does not certify the rendered deployment.
 | `docs/verification.md` | Contributor gate ownership and commands | Removed duplicated standards/control checklist and stale bootstrap-only claims. |
 | `docs/website.md` | Contributor renderer/deployment procedure | Updated pinned action, recursive schema view, site gate and unresolved external rollout. |
 | `docs/documentation-inventory.md` | Contributor audience/duplication audit | This exhaustive baseline record; no independent acceptance verdict. |
-| `api/templates/README.md` | Contributor HTTP generation template ownership | Records the pinned upstream license, retained request constructors and removed generated network senders; generation and active traffic remain subject to the default gate. |
+| `api/templates/README.md` | Contributor HTTP generation template ownership | Records the pinned upstream license, schema-driven null/union/closed-object codecs, retained request constructors and removed generated network senders; generation and active traffic remain subject to the default gate. |
 | `tests/replay/README.md` | Contributor matcher and SDK replay distinction | Removed stale counts and zero-SDK claims; retained exact matching/normalization rules. |
 | `tests/replay/fixtures/captured/README.md` | Contributor captured artifact provenance | Retained unique live evidence/sanitation classification. |
 | `tests/replay/fixtures/synthetic/README.md` | Contributor synthetic artifact provenance | Retained unique implementation-derived classification. |

@@ -5,7 +5,7 @@ fixture provenance, generation commands and reviewer evidence remain repository
 Markdown and are excluded from the customer navigation (LIB-17, template 12–13).
 
 The Pages workflow builds all OpenAPI operations and AsyncAPI channels with the shared Fumadocs action,
-pinned to `4b5b467c417ba44ea04e5a2811b80082303d18c9`. Pull requests build
+pinned to `bc213a78372cbe8200ebd442103b454cbcf55966`. Pull requests build
 and check the same export used for main deployment. GitHub Pages is configured
 to use GitHub Actions; its `github-pages` environment permits the `main` branch.
 Coverage HTML and badge JSON belong
@@ -100,3 +100,16 @@ The renderer repair and final integrated artifact must verify those contracts,
 including non-success responses, without changing canonical schema semantics.
 This scoped artifact inspection does not certify final rendering, interactive
 variant selection, Pages deployment or independent acceptance.
+
+The repair is published at renderer `bc213a78372cbe8200ebd442103b454cbcf55966`
+and passed [blocking action CI](https://github.com/portpowered/api-docs-website-github-action/actions/runs/38046433431),
+including the Next/TypeScript smoke export. Focused SSR through the pinned
+Fumadocs public operation hook checks the actual canonical Photos query
+record/tombstone/error alternatives, required error codes and nullable reason,
+upload progress/error fields and typed 429 responses, and authentication nested
+alternatives/default errors. All response statuses, media and header schemas
+render outside collapsed selectors while the request graph, playground and
+request/response example slots remain. Both library workflows now pin this exact
+repair. The final library artifact must still verify those graphs together with
+the existing examples, snippets, exact payloads and navigation; the earlier
+`7d7d7c41` artifact cannot prove the repaired rendering.

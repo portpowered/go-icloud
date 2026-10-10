@@ -300,7 +300,7 @@ jobs:
           go test -race -coverpkg=./pkg/...,./internal/... -coverprofile=coverage-combined.out ./tests/replay ./pkg/... ./internal/...
           go run ./tools/coverage -profile coverage-combined.out -min 80 -filtered-profile coverage-public.out
       - name: Render canonical references and all customer guides
-        uses: portpowered/api-docs-website-github-action@4b5b467c417ba44ea04e5a2811b80082303d18c9
+        uses: portpowered/api-docs-website-github-action@bc213a78372cbe8200ebd442103b454cbcf55966
         with:
           openapi: 'api/**/*.openapi.yaml'
           asyncapi: 'api/**/*.asyncapi.yaml'
