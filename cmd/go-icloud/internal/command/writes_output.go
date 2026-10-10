@@ -124,7 +124,7 @@ func typedWriteProjection(result any) any {
 func writePhotoRegistration(value icloud.PhotoUploadRegistration) icloud.PhotoUploadRegistration {
 	value.AdditionalProperties = nil
 	value.Status = maps.Clone(value.Status)
-	if !value.Status.IsNull() && !value.Status.IsUnspecified() {
+	if value.Status.IsSpecified() && !value.Status.IsNull() {
 		status := value.Status.GetOrEmpty()
 		status.AdditionalProperties = nil
 		value.Status.Set(status)
