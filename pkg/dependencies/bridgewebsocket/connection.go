@@ -132,7 +132,7 @@ func validatedEndpoint(options Options) (*url.URL, error) {
 	}
 
 	for _, value := range []string{options.Origin, options.UserAgent, endpoint.Hostname()} {
-		if strings.ContainsAny(value, "\r\n") {
+		if strings.ContainsAny(value, string([]byte{byte(model.CarriageReturn), byte(model.LineFeed)})) {
 			return nil, ErrProtocol
 		}
 	}
