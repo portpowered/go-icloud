@@ -71,3 +71,32 @@ the coverage badge and public README destinations before recording publication
 as complete. The renderer's draft
 [PR 5](https://github.com/portpowered/api-docs-website-github-action/pull/5)
 remains separate from library publication and requires its own reviewed merge.
+
+## Rendered artifact inspection at `7d7d7c41`
+
+The successful [documentation run 38043226718](https://github.com/portpowered/go-icloud/actions/runs/38043226718)
+built library commit `7d7d7c41498febacc78555a0af853e16d2a9f6e1`. Inspection of its
+downloaded `api-docs` artifact found 100 HTML pages: 82 OpenAPI operations, both
+bridge directions and ten customer guides, with the coverage report and landing
+pages. All 96 configured page expectations appeared in article content after
+excluding scripts/styles, and 7,342 local navigation links and anchors resolved.
+Both bridge source blocks matched the canonical protobuf exactly.
+
+The request reference exposes nested query field alternatives, requiredness,
+fixed values and examples; all six Photos mutation request alternatives and
+their examples are present. SRP requests show `s2k`/`s2k_fo`, and the Logout
+cURL example preserves `text/plain;charset=UTF-8` with its two JSON fields.
+Representative Photos, SRP, Logout and Reminders request snippets are present.
+The ten guide articles remain customer usage flows; contributor verification and
+review records stay outside their navigation.
+
+The same inspection found a template item 4 blocker: response sections provide
+status/media selections and example JSON but omit schema field graphs. In
+particular, `PhotosQueryRecords` does not expose the record/tombstone/error
+alternatives, `PhotosUploadStatus` does not explain progress/error types and
+requiredness, and `GetAuthChallenge` does not expose nested nullable/alternative
+contracts. Example bodies alone do not establish complete response discovery.
+The renderer repair and final integrated artifact must verify those contracts,
+including non-success responses, without changing canonical schema semantics.
+This scoped artifact inspection does not certify final rendering, interactive
+variant selection, Pages deployment or independent acceptance.

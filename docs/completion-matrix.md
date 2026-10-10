@@ -24,7 +24,7 @@ operation parity. No row below grants final merge or release acceptance.
 | Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Implemented, including portable hardware adapter; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
 | Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Implemented, including resumed consent policy; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
 | Auth sockets | Injected raw WebSocket, protobuf bootstrap/subscription/ACK, signing/proofs, modern/legacy bridge, teardown | Implemented; 53 socket and 30 combined paired timelines plus lifecycle controls; integrated acceptance pending |
-| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `0765205` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
+| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `b24bc838` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
 
 For each port: bind source inputs/defaults and complete results/errors to named
 schema models, execute the public Go operation against every applicable paired
@@ -34,13 +34,15 @@ never ignore fields to accommodate the port (SCHEMA-10, LIB-05).
 
 ## Integration evidence and remaining blockers
 
-The CLI at `1f58336` pins the published SDK
-`v0.0.0-20261010090501-076520573dd5`, with no local replacement. The SDK includes
+The CLI at `a371dda3` pins the published SDK
+`v0.0.0-20261010100312-b24bc8388694`, with no local replacement. Final checks
+against this pin remain pending. The SDK includes
 Source-paired fixes for adding a photo to an album without prior membership,
 empty Photos change zones, exact nullable change cursors, and Reminders document
 base64 decoding. Full SDK race/replay tests passed at `bda83e1`, affected schema
 contracts passed at `a033a9d`, and all-enabled SDK lint passed at `0765205`.
-The subsequent formatting and inventory commits preserve the tested runtime.
+Those are exact-commit baseline receipts; subsequent generated Photos and
+Reminders body changes require fresh integrated checks.
 
 The full `make check` baseline at `7586fc3` passed SDK and CLI race tests,
 contracts, all 136 pinned Source tests, and the HTTP occurrence gate
@@ -51,13 +53,20 @@ threshold. Non-generated SDK coverage at that baseline was replay
 The paired CLI suites now reside in `tests/replay` (GO-12, LIB-07), with new
 Source-bound photo visitor, typed-input and private credential-export cases.
 At isolated CLI test commit `3d32439`, replay coverage passed at 985/1225 (80.4%)
-and combined coverage at 1013/1225 (82.7%); unit tests also passed. These receipts
-used the preceding public SDK pin and require a fresh run against the integrated
-SDK pin above. Generated files are excluded; the production denominator was
-unchanged by the test relocation.
+and combined coverage at 1013/1225 (82.7%); unit tests also passed with the
+preceding public SDK pin. The complete public-pin CLI coverage command at
+`f6d0c65`, using published SDK `0765205`, subsequently passed: replay 985/1225
+(80.4%), unit 543/1225 (44.3%) and combined 1013/1225 (82.7%). Its command
+package contributed 872/1085 replay and 900/1085 combined statements; saved-login
+contributed 113/140 to each profile. These receipts require a fresh run against
+the current SDK pin above. Generated files are excluded; test relocation did not
+change the production denominator.
 
-The current HTTP corpus contains 1,090 scenarios and 2,461 pairs. Focused Source
-checks for the new Photos and Reminders cases passed; the complete 138-test
+At the generated Photos baseline `03528225`, SDK replay coverage passed at
+10901/13095 (83.2%). The final Reminders-inclusive SDK profiles remain pending.
+
+The current HTTP corpus contains 1,092 scenarios and 2,467 pairs. Focused Source
+checks for the new Photos and Reminders cases passed; the complete 139-test
 Source suite and final coverage profiles remain pending. The complete production
 source/model/network audit and its blocking Make/CI integration remain open.
 Focused proof controls passing does not establish actual-source conformance.
@@ -65,11 +74,18 @@ Focused proof controls passing does not establish actual-source conformance.
 Local documentation verification passed with renderer `07bbcec`: 99 HTML files,
 82 OpenAPI operations, both bridge directions and ten guides, including visible
 exact protobuf source, navigation, local/schema links and representative cURL
-snippets. All 45 tracked documentation files were inventoried and historical
+snippets. The historical 45-file documentation baseline was inventoried and historical
 receipts separated from current work. The workflow-only update `4b5b467` retains
 those renderer bytes and passed blocking action CI with all seven focused
 JavaScript suites and the smoke build. It is the current library workflow pin.
-Remote library publication is a separate gate.
+The current source inventory covers all 47 tracked Markdown/MDX files.
+The downloaded documentation CI artifact at `7d7d7c41` passed all current page
+expectations, local navigation/anchors, exact protobuf source and representative
+request variant/snippet checks. Inspection exposed a response documentation gap:
+known response fields, types, requiredness and alternatives are not presented as
+a schema graph. This remains a template item 4 blocker; see
+[the rendered inspection receipt](website.md). Final rendering and remote
+library publication are separate gates.
 
 The remaining final acceptance work is:
 

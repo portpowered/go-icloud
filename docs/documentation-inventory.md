@@ -1,7 +1,7 @@
 # Documentation audience audit
 
 This inventory covers every tracked Markdown and MDX file in the integrated
-documentation source audited through library commit `f6d0c65`. The original
+documentation source audited through library commit `a371dda3`. The original
 45-file baseline was recorded at `ca02c17`; this inventory now contains all
 47 tracked Markdown and MDX files. It separates customer
 usage from contributor contracts, provenance and review records (LIB-17;

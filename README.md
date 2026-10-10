@@ -15,7 +15,7 @@ The pinned security-key HID backend supports Windows, Linux and macOS without
 a cgo toolchain and sets this minimum version.
 
 ```sh
-go get github.com/portpowered/go-icloud/pkg/icloud@v0.0.0-20261010090501-076520573dd5
+go get github.com/portpowered/go-icloud/pkg/icloud@v0.0.0-20261010100312-b24bc8388694
 ```
 
 This development version contains the APIs described below. Final conformance
