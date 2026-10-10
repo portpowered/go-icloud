@@ -274,8 +274,8 @@ func checkReminderWriteOutcome(t *testing.T, row map[string]json.RawMessage, sce
 	}
 }
 
-func checkReminderWriteFailure(t *testing.T, scenario accountScenario,
-	result *icloud.ReminderMutationResult, callErr error,
+func checkReminderWriteFailure[T any](t *testing.T, scenario accountScenario,
+	result *T, callErr error,
 ) {
 	t.Helper()
 

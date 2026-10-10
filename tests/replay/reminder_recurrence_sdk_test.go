@@ -50,7 +50,7 @@ func runReminderRecurrence(t *testing.T, path string) {
 
 	result, callErr := callReminderRecurrenceFixture(t, client, row, scenario, operation)
 	if len(scenario.Error) != 0 {
-		checkReminderWriteFailure(t, scenario, nil, callErr)
+		checkReminderWriteFailure(t, scenario, result, callErr)
 	} else {
 		if callErr != nil || result == nil {
 			t.Fatal(callErr)
@@ -113,6 +113,10 @@ func callReminderRecurrenceFixture(t *testing.T, client *icloud.SDK, row map[str
 		before := marshalFindMyRecovery(t, request)
 		result, err := client.UpdateReminderRecurrenceRule(t.Context(), *request)
 		checkSDKValue(t, request, before)
+
+		if len(scenario.Error) != 0 {
+			checkReminderWriteFailure(t, scenario, result, err)
+		}
 
 		if result == nil {
 			return nil, err

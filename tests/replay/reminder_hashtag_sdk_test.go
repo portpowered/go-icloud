@@ -74,6 +74,10 @@ func callReminderHashtag(t *testing.T, row map[string]json.RawMessage,
 		result, err := client.UpdateReminderHashtag(t.Context(), *request)
 		checkSDKValue(t, request, before)
 
+		if len(scenario.Error) != 0 {
+			checkReminderWriteFailure(t, scenario, result, err)
+		}
+
 		if result == nil {
 			return nil, err
 		}
@@ -145,7 +149,7 @@ func checkReminderHashtagOutcome(t *testing.T, row map[string]json.RawMessage, s
 			t.Fatal("rejected hashtag write returned updated snapshots")
 		}
 
-		checkReminderWriteFailure(t, scenario, nil, callErr)
+		checkReminderWriteFailure(t, scenario, result, callErr)
 
 		return
 	}

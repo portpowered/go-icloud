@@ -65,7 +65,7 @@ func runReminderLocation(t *testing.T, path string) {
 			t.Fatal("location rejection returned success")
 		}
 
-		checkReminderWriteFailure(t, scenario, nil, callErr)
+		checkReminderWriteFailure(t, scenario, result, callErr)
 	} else {
 		if result == nil || callErr != nil {
 			t.Fatal(callErr, errors.Unwrap(callErr))

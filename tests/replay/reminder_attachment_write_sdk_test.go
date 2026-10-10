@@ -56,9 +56,7 @@ func runReminderAttachmentWrite(t *testing.T, path string) {
 		t.Fatal("unknown attachment operation", operation)
 	}
 
-	if len(scenario.Error) != 0 {
-		checkReminderWriteFailure(t, scenario, nil, callErr)
-	} else {
+	if len(scenario.Error) == 0 {
 		if callErr != nil {
 			t.Fatal(callErr)
 		}
@@ -101,6 +99,10 @@ func replayCreateAttachment(t *testing.T, client *icloud.SDK, row map[string]jso
 	result, err := client.CreateReminderURLAttachment(t.Context(), *request)
 	checkSDKValue(t, request, before)
 
+	if len(scenario.Error) != 0 {
+		checkReminderWriteFailure(t, scenario, result, err)
+	}
+
 	if result == nil {
 		return icloud.ReminderAttachment{}, nil, nil, err
 	}
@@ -128,6 +130,10 @@ func replayUpdateAttachment(t *testing.T, client *icloud.SDK, row map[string]jso
 	result, err := client.UpdateReminderAttachment(t.Context(), *request)
 	checkSDKValue(t, request, before)
 
+	if len(scenario.Error) != 0 {
+		checkReminderWriteFailure(t, scenario, result, err)
+	}
+
 	if result == nil {
 		return icloud.ReminderAttachment{}, nil, err
 	}
@@ -146,6 +152,10 @@ func replayDeleteAttachment(t *testing.T, client *icloud.SDK, row map[string]jso
 	before := marshalFindMyRecovery(t, request)
 	result, err := client.DeleteReminderAttachment(t.Context(), request)
 	checkSDKValue(t, request, before)
+
+	if len(scenario.Error) != 0 {
+		checkReminderWriteFailure(t, scenario, result, err)
+	}
 
 	if result == nil {
 		return icloud.ReminderAttachment{}, nil, nil, err
