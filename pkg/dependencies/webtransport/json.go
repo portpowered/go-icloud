@@ -87,6 +87,8 @@ func referenceJSON(value any) ([]byte, error) {
 }
 
 func referenceJSONSpacing(encoded []byte) []byte {
+	encoded = referenceJSONEscapes(encoded)
+
 	var formatted bytes.Buffer
 
 	quoted, escaped := false, false
