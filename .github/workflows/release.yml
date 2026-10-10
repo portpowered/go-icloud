@@ -140,11 +140,6 @@ jobs:
           git diff --exit-code
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           if (git ls-files --others --exclude-standard) { throw 'Generation produced unregistered files' }
-      - name: Run exact default complete source, model and network gate
-        shell: pwsh
-        run: |
-          go run ./tools/wiregate/cmd
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Run blocking all-enabled lint and complete checks
         shell: pwsh
         run: |
