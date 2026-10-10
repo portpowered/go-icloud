@@ -18,20 +18,28 @@ import (
 )
 
 func TestNativePasswordLoginCommands(t *testing.T) {
+	t.Parallel()
+
 	for _, operation := range []string{"login", "renew"} {
 		for _, stdin := range []bool{false, true} {
 			source := "environment"
 			if stdin {
 				source = "stdin"
 			}
-			t.Run(operation+"/"+source, func(t *testing.T) { nativePasswordLoginCommand(t, "auth-srp-paused-mfa", operation, stdin, false) })
+			t.Run(operation+"/"+source, func(t *testing.T) {
+				t.Parallel()
+				nativePasswordLoginCommand(t, "auth-srp-paused-mfa", operation, stdin, false)
+			})
 		}
 	}
 }
 
 func TestNativePasswordLoginRefusals(t *testing.T) {
+	t.Parallel()
+
 	for _, name := range []string{"auth-srp-authorize-refused", "auth-srp-init-refused", "auth-srp-complete-refused"} {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			nativePasswordLoginCommand(t, name, "login", true, name == "auth-srp-complete-refused")
 		})
 	}
@@ -55,18 +63,7 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 	if err != nil {
 		t.Fatal(err)
 	}
-	entropy := []byte{}
-	if value, exists := raw["entropy"]; exists {
-		var samples []string
-		decode(t, readRawObject(t, value)["random_bytes"], &samples)
-		if len(samples) != 1 {
-			t.Fatal("unexpected SRP entropy inventory")
-		}
-		entropy, err = base64.StdEncoding.DecodeString(samples[0])
-		if err != nil || len(entropy) != 256 {
-			t.Fatal("invalid SRP entropy")
-		}
-	}
+	entropy := nativeLoginEntropy(t, raw)
 	random := bytes.NewReader(entropy)
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(random))
 	if err != nil {
@@ -97,7 +94,8 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 		return ""
 	}
 	var output, diagnostic bytes.Buffer
-	err = command.RunWithInput(t.Context(), client, args, io.NopCloser(strings.NewReader("invented-password\n")), environment, &output, &diagnostic)
+	err = command.RunWithInput(t.Context(), client, args,
+		io.NopCloser(strings.NewReader("invented-password\n")), environment, &output, &diagnostic)
 	_, refused := raw["error"]
 	if refused != (err != nil) {
 		t.Fatalf("CLI password acceptance changed: %v", err)
@@ -114,7 +112,40 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 	if random.Len() != 0 {
 		t.Fatal("declared SRP entropy not consumed")
 	}
-	savedJSON, readErr := os.ReadFile(path)
+	assertNativeLoginPersistence(t, path, raw, refused, encoded)
+	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
+		"invented-password", "synthetic-srp-token", "synthetic-srp-cookie", "synthetic-auth-value",
+		"synthetic@example.invalid", `"responses"`, `"accountData"`})
+}
+
+func nativeLoginEntropy(t *testing.T, raw map[string]json.RawMessage) []byte {
+	t.Helper()
+
+	value, exists := raw["entropy"]
+	if !exists {
+		return []byte{}
+	}
+
+	var samples []string
+
+	decode(t, readRawObject(t, value)["random_bytes"], &samples)
+	if len(samples) != 1 {
+		t.Fatal("unexpected SRP entropy inventory")
+	}
+	entropy, err := base64.StdEncoding.DecodeString(samples[0])
+	if err != nil || len(entropy) != 256 {
+		t.Fatal("invalid SRP entropy")
+	}
+
+	return entropy
+}
+
+func assertNativeLoginPersistence(t *testing.T, path string, raw map[string]json.RawMessage,
+	refused bool, encoded []byte,
+) {
+	t.Helper()
+
+	savedJSON, readErr := os.ReadFile(filepath.Clean(path))
 	if readErr != nil {
 		t.Fatal(readErr)
 	}
@@ -122,26 +153,30 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 		if !bytes.Equal(savedJSON, encoded) {
 			t.Fatal("failed password attempt overwrote prior private state")
 		}
-	} else {
-		var saved icloud.NativeAuthState
-		decode(t, savedJSON, &saved)
-		expected := readRawObject(t, readRawObject(t, raw["result"])["auth_state"])
-		var account, actualAccount any
-		decode(t, expected["account"], &account)
-		decode(t, saved.AccountData, &actualAccount)
-		if !reflect.DeepEqual(account, actualAccount) {
-			t.Fatal("Source paused login account changed")
-		}
-		session := readRawObject(t, expected["session_data"])
-		var token string
-		decode(t, session["session_token"], &token)
-		if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != token || saved.Auth.AccountID != "synthetic-dsid" || saved.CodeRequested || saved.RequiresMFA {
-			t.Fatal("Source paused login credentials or progress changed")
-		}
+
+		return
 	}
-	for _, secret := range []string{"invented-password", "synthetic-srp-token", "synthetic-srp-cookie", "synthetic-auth-value", "synthetic@example.invalid", `"responses"`, `"accountData"`} {
-		if strings.Contains(output.String()+diagnostic.String(), secret) {
-			t.Fatal("password command console disclosed private data")
-		}
+
+	var saved icloud.NativeAuthState
+
+	decode(t, savedJSON, &saved)
+	expected := readRawObject(t, readRawObject(t, raw["result"])["auth_state"])
+
+	var account, actualAccount any
+
+	decode(t, expected["account"], &account)
+	decode(t, saved.AccountData, &actualAccount)
+	if !reflect.DeepEqual(account, actualAccount) {
+		t.Fatal("Source paused login account changed")
+	}
+
+	session := readRawObject(t, expected["session_data"])
+
+	var token string
+
+	decode(t, session["session_token"], &token)
+	if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != token ||
+		saved.Auth.AccountID != "synthetic-dsid" || saved.CodeRequested || saved.RequiresMFA {
+		t.Fatal("Source paused login credentials or progress changed")
 	}
 }

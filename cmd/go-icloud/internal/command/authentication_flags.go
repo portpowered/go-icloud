@@ -36,9 +36,11 @@ func defaultSessionPath() (string, error) {
 
 func authenticationCommand(operation string) bool {
 	switch operation {
-	case "login", "renew", "auth-status", "auth-challenge", "mfa-request", "mfa-verify", "mfa-devices",
-		"mfa-send-two-step", "mfa-verify-two-step", "mfa-security-keys", "mfa-security-key", "mfa-bridge",
-		"mfa-existing-code", "mfa-security-key-assertion", "pcs-access", "trust", "logout":
+	case authLoginCommand, authRenewCommand, authStatusCommand, authChallengeCommand,
+		authMFARequestCommand, authMFAVerifyCommand, authMFADevicesCommand,
+		authMFASendTwoStepCommand, authMFAVerifyTwoStepCommand, authSecurityKeysCommand,
+		authSecurityKeyCommand, authBridgeCommand,
+		authExistingCodeCommand, authSecurityKeyAssertionCommand, authPCSCommand, authTrustCommand, authLogoutCommand:
 		return true
 	default:
 		return false

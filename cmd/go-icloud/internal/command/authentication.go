@@ -26,14 +26,15 @@ type authSummary = commandmodels.AuthenticationSummary
 func authenticateCommand(ctx context.Context, client icloud.Client, config options,
 	input io.ReadCloser, environment Environment, output io.Writer,
 ) error {
-	if config.operation == "login" || config.operation == "renew" {
+	if config.operation == authLoginCommand || config.operation == authRenewCommand {
 		return login(ctx, client, config, input, environment, output)
 	}
-	if config.operation == "mfa-security-keys" {
+	if config.operation == authSecurityKeysCommand {
 		result, err := client.ListSecurityKeyDevices(ctx, icloud.ListSecurityKeyDevicesRequest{})
 		if err != nil {
 			return fmt.Errorf("list local security keys: %w", err)
 		}
+
 		return writeResult(output, result)
 	}
 
@@ -43,13 +44,13 @@ func authenticateCommand(ctx context.Context, client icloud.Client, config optio
 	}
 
 	switch config.operation {
-	case "mfa-bridge":
+	case authBridgeCommand:
 		return verifyBridge(ctx, client, config, state, input, environment, output)
-	case "auth-status":
+	case authStatusCommand:
 		return authenticationStatus(ctx, client, config, state, output)
-	case "logout":
+	case authLogoutCommand:
 		return logout(ctx, client, config, state, output)
-	case "mfa-devices":
+	case authMFADevicesCommand:
 		return listTrustedDevices(ctx, client, config, state, output)
 	default:
 		result, operationErr := nativeAuthStep(ctx, client, config, state, input, environment)
@@ -102,6 +103,7 @@ func storeAuthenticationResult(ctx context.Context, path string, result *icloud.
 		CodeRequested: result.State.CodeRequested, DeliveryMethod: string(result.State.DeliveryMethod),
 		DeliveryNotice: result.State.DeliveryNotice,
 		PhoneNumbers:   phones, SecurityKeyNames: append([]string{}, result.State.Challenge.SecurityKeyNames...)}
+
 	err = writeResult(output, summary)
 	if err != nil {
 		return err

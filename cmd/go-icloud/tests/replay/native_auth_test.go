@@ -93,6 +93,7 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 	if operation == "pcs-access" {
 		arguments = append(arguments, "--service", inputs[0])
 	}
+
 	arguments = append(arguments, operation)
 	err = command.RunWithInput(t.Context(), client, arguments,
 		io.NopCloser(strings.NewReader("")), environment, &output, &diagnostic)
@@ -107,36 +108,58 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 			t.Fatal("CLI lost the typed provider failure")
 		}
 	}
-	for _, secret := range []string{"synthetic-token", "synthetic-trust", "synthetic-cookie", "synthetic@example.invalid", "responses", "accountData"} {
-		if strings.Contains(output.String()+diagnostic.String(), secret) {
-			t.Fatal("console disclosed private authentication data")
-		}
-	}
+	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
+		"synthetic-token", "synthetic-trust", "synthetic-cookie", "synthetic@example.invalid", "responses", "accountData"})
 	if err = transport.AssertConsumed(); err != nil {
 		t.Fatal(err)
 	}
+	assertNativeCommandPersistence(t, path, operation, providerFailed, state, encoded)
+}
+
+func assertNativeCommandPrivacy(t *testing.T, console string, secrets []string) {
+	t.Helper()
+
+	for _, secret := range secrets {
+		if strings.Contains(console, secret) {
+			t.Fatal("console disclosed private authentication data")
+		}
+	}
+}
+
+func assertNativeCommandPersistence(t *testing.T, path, operation string, providerFailed bool,
+	state icloud.NativeAuthState, encoded []byte,
+) {
+	t.Helper()
+
 	if operation == "logout" {
 		if _, readErr := os.Stat(path); !os.IsNotExist(readErr) {
 			t.Fatal("explicit logout retained local credentials")
 		}
-	} else if !providerFailed {
-		data, readErr := os.ReadFile(path)
-		if readErr != nil {
-			t.Fatal(readErr)
+
+		return
+	}
+	if providerFailed {
+		return
+	}
+
+	data, readErr := os.ReadFile(filepath.Clean(path))
+	if readErr != nil {
+		t.Fatal(readErr)
+	}
+
+	var saved icloud.NativeAuthState
+
+	decode(t, data, &saved)
+	if saved.Auth.ClientID != state.Auth.ClientID || saved.AccountName != state.AccountName {
+		t.Fatal("private native state lost identity")
+	}
+	if operation == "pcs-access" {
+		savedState, marshalErr := json.Marshal(saved)
+		if marshalErr != nil {
+			t.Fatal(marshalErr)
 		}
-		var saved icloud.NativeAuthState
-		decode(t, data, &saved)
-		if saved.Auth.ClientID != state.Auth.ClientID || saved.AccountName != state.AccountName {
-			t.Fatal("private native state lost identity")
-		}
-		if operation == "pcs-access" {
-			savedState, marshalErr := json.Marshal(saved)
-			if marshalErr != nil {
-				t.Fatal(marshalErr)
-			}
-			if !bytes.Equal(savedState, encoded) {
-				t.Fatal("PCS command changed the complete persisted authentication state")
-			}
+		if !bytes.Equal(savedState, encoded) {
+			t.Fatal("PCS command changed the complete persisted authentication state")
 		}
 	}
 }
@@ -179,7 +202,10 @@ func nativeCommandState(t *testing.T, raw json.RawMessage) icloud.NativeAuthStat
 	initial := readRawObject(t, raw)
 	params := readRawObject(t, initial["params"])
 	session := readRawObject(t, initial["session_data"])
-	state := icloud.NativeAuthState{AccountData: initial["account_data"], DeliveryMethod: icloud.TwoFactorDeliveryUnknown}
+	var state icloud.NativeAuthState
+
+	state.AccountData = initial["account_data"]
+	state.DeliveryMethod = icloud.TwoFactorDeliveryUnknown
 	account := readRawObject(t, initial["account_data"])
 	if information, exists := account["dsInfo"]; exists {
 		if identifier, found := readRawObject(t, information)["dsid"]; found {

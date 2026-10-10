@@ -16,6 +16,7 @@ func login(ctx context.Context, client icloud.Client, config options,
 	if environment == nil {
 		return errAccountEnvironment
 	}
+
 	state, err := loadNativeAuthentication(config.session)
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return err
@@ -47,11 +48,12 @@ func login(ctx context.Context, client icloud.Client, config options,
 	}
 	request := icloud.AuthenticateRequest{Auth: state.Auth, AccountName: account, Password: password,
 		SavedState: nil, TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode,
-		ForceRefresh: config.forceRefresh || config.operation == "renew", PauseTwoFactor: true,
+		ForceRefresh: config.forceRefresh || config.operation == authRenewCommand, PauseTwoFactor: true,
 		AcceptTerms: config.acceptTerms, Service: nil}
 	if config.authService != "" {
 		request.Service = &config.authService
 	}
+
 	if state.Auth.ClientID != "" {
 		request.SavedState = &state
 	}

@@ -56,7 +56,7 @@ func twoStepCommand(ctx context.Context, client icloud.Client, config options,
 func selectedDeviceCommand(ctx context.Context, client icloud.Client, config options,
 	state icloud.NativeAuthState, device icloud.TrustedAuthDevice, input io.ReadCloser, environment Environment,
 ) (*icloud.NativeAuthResult, error) {
-	if config.operation == "mfa-send-two-step" {
+	if config.operation == authMFASendTwoStepCommand {
 		return authResult(client.SendTwoStepCode(ctx, icloud.SendTwoStepCodeRequest{
 			Auth: state.Auth, State: state, Device: device}))
 	}

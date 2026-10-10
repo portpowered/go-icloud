@@ -13,29 +13,35 @@ func nativeAuthStep(ctx context.Context, client icloud.Client, config options, s
 	input io.ReadCloser, environment Environment,
 ) (*icloud.NativeAuthResult, error) {
 	switch config.operation {
-	case "auth-challenge":
+	case authChallengeCommand:
 		return authResult(client.GetAuthenticationChallenge(ctx, icloud.NativeAuthRequest{Auth: state.Auth, State: state}))
-	case "mfa-existing-code":
+	case authExistingCodeCommand:
 		return authResult(client.UseExistingTrustedDeviceCode(ctx, icloud.NativeAuthRequest{Auth: state.Auth, State: state}))
-	case "pcs-access":
+	case authPCSCommand:
 		return authResult(client.RequestPCSAccess(ctx, icloud.RequestPCSAccessRequest{
 			Auth: state.Auth, State: state, Service: config.authService}))
-	case "trust":
+	case authTrustCommand:
 		return authResult(client.TrustSession(ctx, icloud.NativeAuthRequest{Auth: state.Auth, State: state}))
-	case "mfa-security-key":
+	case authSecurityKeyCommand:
 		return authResult(client.ConfirmSecurityKey(ctx, icloud.ConfirmSecurityKeyRequest{
 			Auth: state.Auth, State: state, DeviceID: config.securityKeyID}))
-	case "mfa-security-key-assertion":
+	case authSecurityKeyAssertionCommand:
 		return verifySecurityKeyAssertion(ctx, client, config.requestFile, state)
-	case "mfa-request":
-		phone, err := selectedPhone(state, config.phoneID)
-		if err != nil {
-			return nil, err
+	case authMFARequestCommand:
+		var phone *icloud.TrustedPhoneNumberID
+
+		if config.phoneID != "" {
+			selected, err := selectedPhone(state, config.phoneID)
+			if err != nil {
+				return nil, err
+			}
+
+			phone = selected
 		}
 
 		return authResult(client.RequestTwoFactorCode(ctx, icloud.RequestTwoFactorCodeRequest{
 			Auth: state.Auth, State: state, PhoneNumberID: phone}))
-	case "mfa-verify":
+	case authMFAVerifyCommand:
 		code, err := readSecret(ctx, input, environment, "GO_ICLOUD_CODE", config.secretStdin)
 		if err != nil {
 			return nil, err
@@ -43,7 +49,7 @@ func nativeAuthStep(ctx context.Context, client icloud.Client, config options, s
 
 		return authResult(client.VerifyTwoFactorCode(ctx, icloud.VerifyTwoFactorCodeRequest{
 			Auth: state.Auth, State: state, Code: code}))
-	case "mfa-send-two-step", "mfa-verify-two-step":
+	case authMFASendTwoStepCommand, authMFAVerifyTwoStepCommand:
 		return twoStepCommand(ctx, client, config, state, input, environment)
 	default:
 		return nil, errCommand
@@ -59,6 +65,7 @@ func verifySecurityKeyAssertion(ctx context.Context, client icloud.Client,
 	}
 	request.Auth = state.Auth
 	request.State = state
+
 	return authResult(client.VerifySecurityKey(ctx, *request))
 }
 
@@ -71,13 +78,10 @@ func authResult(result *icloud.NativeAuthResult, err error) (*icloud.NativeAuthR
 }
 
 func selectedPhone(state icloud.NativeAuthState, identifier string) (*icloud.TrustedPhoneNumberID, error) {
-	if identifier == "" {
-		return nil, nil
-	}
-
 	for _, phone := range state.Challenge.PhoneNumbers {
 		numeric, numericErr := phone.ID.AsTrustedPhoneNumberID0()
 		text, textErr := phone.ID.AsTrustedPhoneNumberID1()
+
 		if (numericErr == nil && strconv.Itoa(numeric) == identifier) || (textErr == nil && text == identifier) {
 			return &phone.ID, nil
 		}

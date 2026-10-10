@@ -10,6 +10,7 @@ import (
 
 func visiblePhones(phones []icloud.TrustedPhoneNumber) ([]commandmodels.PhoneChoice, error) {
 	result := make([]commandmodels.PhoneChoice, 0, len(phones))
+
 	for _, phone := range phones {
 		identifier, err := visiblePhoneID(phone.ID)
 		if err != nil {
@@ -23,7 +24,8 @@ func visiblePhones(phones []icloud.TrustedPhoneNumber) ([]commandmodels.PhoneCho
 }
 
 func visiblePhoneID(identifier icloud.TrustedPhoneNumberID) (string, error) {
-	if numeric, err := identifier.AsTrustedPhoneNumberID0(); err == nil {
+	numeric, err := identifier.AsTrustedPhoneNumberID0()
+	if err == nil {
 		return strconv.Itoa(numeric), nil
 	}
 
