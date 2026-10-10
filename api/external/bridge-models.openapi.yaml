@@ -127,6 +127,7 @@ components:
           x-go-type-skip-optional-pointer: true
     BridgeExchangeAkdata:
       description: Uninterpreted provider JSON supplied to the native bridge exchange.
+      nullable: true
     BridgeCompletionData:
       type: string
       enum: [ZG9uZQ==]

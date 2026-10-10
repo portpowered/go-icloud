@@ -26,9 +26,9 @@ func TestBridgeOpaqueEncodingRetainsOpenProviderJSON(t *testing.T) {
 		t.Run(control.name, func(t *testing.T) {
 			t.Parallel()
 			// The field and helper retain compatibility with existing any values.
-			input := bridgemodels.BridgeExchange{
-				Akdata: control.input, Data: nil, Idmsdata: nil, NextStep: "", Ptkn: "", SessionUUID: "",
-			}
+			var input bridgemodels.BridgeExchange
+
+			input.Akdata = control.input
 
 			actual, err := webtransport.EncodeBridgeOpaqueData(input.Akdata)
 
