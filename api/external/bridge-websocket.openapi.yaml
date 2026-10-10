@@ -25,6 +25,16 @@ paths:
         acceptHeader: {$ref: '#/components/schemas/AcceptHeader/values/UpgradeAcceptHeader'}
         guid: {$ref: './bridge-models.openapi.yaml#/components/schemas/BridgeProtocolString/values/WebSocketGUID'}
         nonceBytes: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_KEY_BYTES'}
+        endpoint:
+          scheme: {$ref: '#/components/schemas/Scheme/values/SecureScheme'}
+          defaultPort: {$ref: '#/components/schemas/DefaultPort/values/SecurePort'}
+          network: {$ref: '#/components/schemas/Network/values/DialNetwork'}
+          forbidUserinfo: true
+          forbidFragment: true
+          requireHostname: true
+          forbiddenHeaderBytes:
+            - {$ref: '#/components/schemas/LineSeparator/values/CarriageReturn'}
+            - {$ref: '#/components/schemas/LineSeparator/values/LineFeed'}
         digest: sha1
         encoding: base64
         status: 101
