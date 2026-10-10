@@ -90,6 +90,8 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 
 func typedReadFixtureRequest(operation string, fixture writeFixture) map[string]any {
 	switch operation {
+	case "photo-changes":
+		return map[string]any{"since": fixture.Keywords["since"]}
 	case "shared-photo-count", "shared-photos":
 		return map[string]any{"album": "synthetic-stream-0"}
 	case "shared-photo", "shared-photo-download":

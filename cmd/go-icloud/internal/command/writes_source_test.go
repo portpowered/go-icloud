@@ -1,6 +1,7 @@
 package command_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
@@ -233,9 +234,45 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 		if !ok || len(returned) != 2 {
 			t.Fatal("Source location result lost alarm/trigger tuple")
 		}
+		projectSourceLocationNumbers(t, returned[1].(map[string]any))
 		return map[string]any{"alarm": returned[0], "trigger": returned[1], "reminder": arguments[0]}
 	default:
 		t.Fatal(fmt.Sprintf("unknown Source result adapter: %s", operation))
 	}
 	return nil
+}
+
+// Source converts location geometry to Python float. The public schema exposes
+// float64, whose JSON spelling omits Python's trailing .0. Adapt only those
+// schema fields; integer identifiers and exact provider request bytes stay intact.
+func projectSourceLocationNumbers(t *testing.T, trigger map[string]any) {
+	t.Helper()
+	for _, key := range []string{"latitude", "longitude", "radius"} {
+		number, ok := trigger[key].(json.Number)
+		if !ok {
+			t.Fatalf("Source location %s is not numeric", key)
+		}
+		value, err := number.Float64()
+		if err != nil {
+			t.Fatal(err)
+		}
+		encoded, err := json.Marshal(value)
+		if err != nil {
+			t.Fatal(err)
+		}
+		trigger[key] = json.Number(encoded)
+	}
+}
+
+func TestSourceLocationProjectionPreservesNumericValues(t *testing.T) {
+	t.Parallel()
+	trigger := map[string]any{"latitude": json.Number("1.25"), "longitude": json.Number("2.5"),
+		"radius": json.Number("50.0"), "proximity": json.Number("2"), "opaqueInteger": json.Number("9007199254740993")}
+	projectSourceLocationNumbers(t, trigger)
+	for key, expected := range map[string]json.Number{"latitude": "1.25", "longitude": "2.5", "radius": "50",
+		"proximity": "2", "opaqueInteger": "9007199254740993"} {
+		if trigger[key] != expected {
+			t.Fatalf("%s: want %s, got %v", key, expected, trigger[key])
+		}
+	}
 }
