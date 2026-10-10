@@ -24,6 +24,29 @@ depends on it, then publish the nested module as
 consumer without local replacements. Check public API compatibility against the
 previous stable version when one exists.
 
+The tag-triggered [release workflow](../.github/workflows/release.yml) accepts SDK
+`v*` tags and nested `cmd/go-icloud/v*` tags. It checks the exact tagged commit,
+reruns pinned generation, the default source/model/network gate, `make check`
+(including all-enabled pinned lint and separate coverage), every public package's
+API compatibility, the minimum and current Go versions on all three operating
+systems, and the complete rendered documentation. Publication depends on all jobs.
+
+An SDK tag also installs the candidate CLI at that exact commit through the public
+proxy. After the SDK GitHub release succeeds, update the CLI's `go.mod` to that
+published SDK version, tidy its module, repeat the reviews/checks, and tag the CLI.
+The CLI release gate requires its SDK release to exist and rejects unreleased SDK
+source changes in the CLI tag. A stable CLI must depend on a stable SDK. Clean
+Windows, Linux and macOS consumers download the SDK and install the CLI without a
+workspace, replacement or shared module cache; their installed binary must record
+the declared SDK dependency. SDK and CLI versions may advance independently.
+
+API comparison inventories the union of public `pkg/` packages in the baseline
+and release trees, so a deleted dependency-model or transport package remains a
+breaking change. New public packages are additive. Before v1, a minor version may
+break compatibility; patch releases and stable minor releases must preserve it.
+The workflow currently handles the unversioned v0/v1 module paths. A v2 release
+requires updating the SDK and CLI module paths and release configuration first.
+
 Release notes should state supported customer workflows and material differences
 from the reference. Link to the deployed authentication, Photos, Reminders and CLI
 guides under `https://portpowered.github.io/go-icloud/docs/guides/`; verify their

@@ -16,7 +16,7 @@ import (
 
 const (
 	defaultModulePath        = "github.com/portpowered/go-icloud"
-	defaultPublicPackages    = "pkg/icloud,pkg/dependencymodels/cloudkit"
+	defaultPublicPackages    = "all-public"
 	apiDiffTool              = "golang.org/x/exp/cmd/apidiff@v0.0.0-20260908205506-85c1c2202aba"
 	previousRelease          = "previous-release"
 	policyReport             = "report"
@@ -96,7 +96,7 @@ func parseConfiguration() (configuration, error) {
 	packageList := flag.String(
 		"packages",
 		defaultPublicPackages,
-		"comma-separated public package paths relative to the module root",
+		"all-public, or comma-separated public package paths relative to the module root",
 	)
 
 	flag.Parse()
@@ -199,6 +199,11 @@ func collectChanges(
 		}
 	}()
 
+	configuration.packages, err = expandPublicPackages(root, baseDir, configuration.packages)
+	if err != nil {
+		return nil, err
+	}
+
 	toolDir := filepath.Join(tempDir, "bin")
 
 	err = os.Mkdir(toolDir, toolDirectoryPermissions)
@@ -231,6 +236,17 @@ func comparePackages(
 	changes := make([]incompatibleChange, 0)
 
 	for _, packageName := range configuration.packages {
+		status, statusErr := publicPackagePresence(root, baseDir, packageName)
+		if statusErr != nil {
+			return nil, statusErr
+		}
+		if status == publicPackageAdded {
+			continue
+		}
+		if status == publicPackageRemoved {
+			changes = append(changes, incompatibleChange{packageName: packageName, details: "public package removed"})
+			continue
+		}
 		packageChanges, err := comparePackage(
 			ctx,
 			tool,
