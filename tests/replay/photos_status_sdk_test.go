@@ -58,8 +58,8 @@ func runPhotosStatusSDK(t *testing.T, scenario accountScenario) {
 			t.Fatal(decodeErr)
 		}
 
-		expected["syncToken"] = expected["sync_token"]
-		delete(expected, "sync_token")
+		expected["syncToken"] = expected[replayExpectedCursorField]
+		delete(expected, replayExpectedCursorField)
 
 		encoded, encodeErr := json.Marshal(expected)
 		if encodeErr != nil {
@@ -98,7 +98,7 @@ func checkPhotosStatusFailure(t *testing.T, scenario accountScenario, actual *ic
 		kind = icloud.InvalidResponse
 	}
 
-	if expected["type"] == "PyiCloudServiceNotActivatedException" {
+	if expected["type"] == replayExpectedPyiCloudServiceNotActivatedException {
 		kind = icloud.Unavailable
 	}
 

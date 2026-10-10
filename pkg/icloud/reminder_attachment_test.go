@@ -21,8 +21,8 @@ const (
 func TestReminderAttachmentValidationBeforeNetwork(t *testing.T) {
 	t.Parallel()
 
-	for _, mode := range []string{"url-empty-update", "image-empty-update", testInvalidUnion,
-		"negative-size", "negative-width", testNegativeHeight, reminderAttachmentWrongParent,
+	for _, mode := range []string{testExpectedURLEmptyUpdate, "image-empty-update", testInvalidUnion,
+		testExpectedNegativeSize, testExpectedNegativeWidth, testNegativeHeight, reminderAttachmentWrongParent,
 		reminderAttachmentCancelCreate, testCancelUpdate, reminderAttachmentCancelDelete} {
 		t.Run(mode, func(t *testing.T) {
 			t.Parallel()
@@ -119,7 +119,7 @@ func preparationAttachment(mode string) icloud.ReminderAttachment {
 		return *attachment
 	}
 
-	if mode == "url-empty-update" || mode == reminderAttachmentWrongParent {
+	if mode == testExpectedURLEmptyUpdate || mode == reminderAttachmentWrongParent {
 		url := new(icloud.ReminderURLAttachment)
 		url.ID = testAttachmentID
 		url.ReminderID = "Reminder/another"
@@ -141,9 +141,9 @@ func attachmentRequestUnchanged(request *icloud.UpdateReminderAttachmentRequest,
 
 func assignAttachmentInvalidValue(request *icloud.UpdateReminderAttachmentRequest, mode string, value *int64) {
 	switch mode {
-	case "negative-size":
+	case testExpectedNegativeSize:
 		request.FileSize = value
-	case "negative-width":
+	case testExpectedNegativeWidth:
 		request.Width = value
 	case testNegativeHeight:
 		request.Height = value

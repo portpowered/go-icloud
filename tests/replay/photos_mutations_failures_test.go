@@ -19,8 +19,9 @@ const syntheticNewPhotoAlbumName = "New synthetic"
 func TestPhotoMutationInvalidAcknowledgements(t *testing.T) {
 	t.Parallel()
 
-	for _, name := range []string{"photos-create-album", "photos-rename-album", "photos-delete-album",
-		"photos-add-to-album", "photos-favorite-true", "photos-delete-asset"} {
+	for _, name := range []string{
+		replayExpectedPhotosCreateAlbum, replayExpectedPhotosRenameAlbum, replayExpectedPhotosDeleteAlbum,
+		replayExpectedPhotosAddToAlbum, replayExpectedPhotosFavoriteTrue, replayExpectedPhotosDeleteAsset} {
 		for _, body := range []string{"not-json", `{"records":null}`, `{"records":[{"recordName":"broken"}]}`} {
 			t.Run(name+body, func(t *testing.T) { t.Parallel(); runPhotoMutationFailure(t, name, body) })
 		}
@@ -29,7 +30,7 @@ func TestPhotoMutationInvalidAcknowledgements(t *testing.T) {
 func runPhotoMutationFailure(t *testing.T, name, body string) {
 	t.Helper()
 
-	path := filepath.Join("fixtures", "synthetic", "http", name+".json")
+	path := filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", name+".json")
 	scenario := readAccountScenario(t, path)
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
 	last.Body = replay.Entity{Encoding: testBase64Encoding,
@@ -41,7 +42,7 @@ func runPhotoMutationFailure(t *testing.T, name, body string) {
 		t.Fatal(err)
 	}
 
-	entropy, err := base64.StdEncoding.DecodeString("AAECAwQFBgcICQoLDA0ODw==")
+	entropy, err := base64.StdEncoding.DecodeString(replayExpectedAlbumRecordBytes)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,7 +62,7 @@ func runPhotoMutationFailure(t *testing.T, name, body string) {
 		inputs    []json.RawMessage
 	)
 
-	authReplayDecode(t, raw["operation"], &operation)
+	authReplayDecode(t, raw[replayExpectedOperation], &operation)
 	authReplayDecode(t, raw["inputs"], &inputs)
 	_, err = callPhotoMutationScenario(t, client, auth, nil, scenario, operation, name, inputs)
 	checkPhotoMutationFailure(t, scenario, nil, err, icloud.InvalidResponse)
@@ -94,7 +95,7 @@ func checkPhotoMutationFailure(t *testing.T, scenario accountScenario, prefix []
 
 func TestPhotoAlbumCreationEmptyAcknowledgement(t *testing.T) {
 	t.Parallel()
-	scenario := readAccountScenario(t, "fixtures/synthetic/http/photos-create-album.json")
+	scenario := readAccountScenario(t, replayExpectedFixturesSyntheticHttpPhotosCreateAlbumJson)
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
 	last.Body = replay.Entity{Encoding: testBase64Encoding,
 		Value: marshalFindMyRecovery(t,
@@ -106,7 +107,7 @@ func TestPhotoAlbumCreationEmptyAcknowledgement(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	entropy, err := base64.StdEncoding.DecodeString("AAECAwQFBgcICQoLDA0ODw==")
+	entropy, err := base64.StdEncoding.DecodeString(replayExpectedAlbumRecordBytes)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -180,8 +181,8 @@ func TestPhotoAlbumRenameSameNameDoesNotWrite(t *testing.T) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	result, err := client.RenamePhotoAlbum(t.Context(), icloud.RenamePhotoAlbumRequest{Auth: auth,
-		AlbumID: photoMutationAlbumID, Name: "Synthetic 0", Library: nil})
-	if err != nil || result == nil || result.Album.GetOrEmpty().Name != "Synthetic 0" {
+		AlbumID: photoMutationAlbumID, Name: replayExpectedSynthetic0, Library: nil})
+	if err != nil || result == nil || result.Album.GetOrEmpty().Name != replayExpectedSynthetic0 {
 		t.Fatal("same-name rename failed", err)
 	}
 	checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
@@ -207,7 +208,7 @@ func TestPhotoAlbumCreationExplicitTypeOverridesFolder(t *testing.T) {
 func runPhotoAlbumTypeControl(t *testing.T, kind icloud.PhotoAlbumType) {
 	t.Helper()
 
-	scenario := readAccountScenario(t, "fixtures/synthetic/http/photos-create-album.json")
+	scenario := readAccountScenario(t, replayExpectedFixturesSyntheticHttpPhotosCreateAlbumJson)
 	last := &scenario.Exchanges[len(scenario.Exchanges)-1]
 	body := contractAuthBody(t, last.Request.Body)
 	oldValue := []byte(`"albumType": {"type": "INT64", "value": 0}`)
@@ -238,7 +239,7 @@ func runPhotoAlbumTypeControl(t *testing.T, kind icloud.PhotoAlbumType) {
 func TestPhotoAlbumCreationEntropyFailurePreservesInitialization(t *testing.T) {
 	t.Parallel()
 
-	scenario := readAccountScenario(t, "fixtures/synthetic/http/photos-create-album.json")
+	scenario := readAccountScenario(t, replayExpectedFixturesSyntheticHttpPhotosCreateAlbumJson)
 	scenario.Exchanges = scenario.Exchanges[:1]
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {

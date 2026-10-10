@@ -39,7 +39,7 @@ func TestReminderWritesCancellationAndEntropyFailure(t *testing.T) {
 				continue
 			}
 
-			t.Run(operation+map[bool]string{false: "/entropy", true: testCanceledSuffix}[canceled], func(t *testing.T) {
+			t.Run(operation+map[bool]string{false: testExpectedEntropy, true: testCanceledSuffix}[canceled], func(t *testing.T) {
 				t.Parallel()
 				checkReminderPreparationFailure(t, operation, canceled)
 			})
@@ -126,7 +126,7 @@ func callReminderHashtagMutation(ctx context.Context, client *icloud.SDK,
 		request := new(icloud.CreateReminderHashtagRequest)
 		request.Auth = auth
 		request.Reminder.ID = reminderTestRecordName
-		request.Name = "synthetic-tag-name"
+		request.Name = testExpectedSyntheticTagName
 		_, err := client.CreateReminderHashtag(ctx, *request)
 
 		return err
@@ -134,7 +134,7 @@ func callReminderHashtagMutation(ctx context.Context, client *icloud.SDK,
 		request := new(icloud.UpdateReminderHashtagRequest)
 		request.Auth = auth
 		request.Hashtag.ID = reminderHashtagTestName
-		request.Name = "synthetic-tag-name"
+		request.Name = testExpectedSyntheticTagName
 		_, err := client.UpdateReminderHashtag(ctx, *request)
 
 		return err

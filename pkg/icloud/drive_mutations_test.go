@@ -76,7 +76,7 @@ func TestDriveMutationsOwnBodiesOnReadAndCloseFailure(t *testing.T) {
 				response := new(http.Response)
 				response.StatusCode = http.StatusOK
 				response.Header = make(http.Header)
-				response.Header.Set("Content-Type", testJSONMedia)
+				response.Header.Set(testExpectedContentType, testJSONMedia)
 				response.Body = body
 
 				return response, nil
@@ -102,7 +102,7 @@ func TestDriveMutationProviderShapes(t *testing.T) {
 
 	for name, bodies := range map[string][]string{
 		"create": {testJSONNull, `[]`, invalidProviderJSON, `{"folders":false}`},
-		"rename": {testJSONNull, `[]`, invalidProviderJSON, `{"items":false}`},
+		"rename": {testJSONNull, `[]`, invalidProviderJSON, testExpectedDriveFalseItems},
 	} {
 		invoke := driveMutationInvocations()[name]
 
@@ -129,18 +129,18 @@ func TestDriveCreationOverridesContentTypeWithoutChangingCallerHeaders(t *testin
 	t.Parallel()
 
 	auth := driveAuth()
-	auth.Headers = []icloud.Header{{Name: "Content-Type", Value: testJSONMedia},
+	auth.Headers = []icloud.Header{{Name: testExpectedContentType, Value: testJSONMedia},
 		{Name: "Cookie", Value: testPrivateCookie}}
 
 	client, err := icloud.New(icloud.WithHTTPTransport(sdkRoundTrip(func(request *http.Request) (*http.Response, error) {
-		if request.Header.Get("Content-Type") != "plain/text" || request.Header.Get("Cookie") != testPrivateCookie {
+		if request.Header.Get(testExpectedContentType) != "plain/text" || request.Header.Get("Cookie") != testPrivateCookie {
 			t.Fatal("creation did not apply its explicit reference header override")
 		}
 
 		response := new(http.Response)
 		response.StatusCode = http.StatusOK
 		response.Header = make(http.Header)
-		response.Header.Set("Content-Type", testJSONMedia)
+		response.Header.Set(testExpectedContentType, testJSONMedia)
 		response.Body = io.NopCloser(strings.NewReader(`{"folders":[]}`))
 
 		return response, nil

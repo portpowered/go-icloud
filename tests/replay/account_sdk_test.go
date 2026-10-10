@@ -116,7 +116,8 @@ func assertDevicesSDKFailure(t *testing.T, scenario accountScenario,
 	}
 
 	headers := failure.ResponseHeaders()
-	if len(headers) != 1 || headers[0].Name != protocol.HTTPContentTypeName || headers[0].Value != "application/json" {
+	if len(headers) != 1 ||
+		headers[0].Name != protocol.HTTPContentTypeName || headers[0].Value != replayExpectedJSONMedia {
 		t.Fatal("SDK provider failure lost headers")
 	}
 }
@@ -141,7 +142,7 @@ func assertDevicesSDKSuccess(t *testing.T, scenario accountScenario,
 
 	if response.Metadata.StatusCode != scenario.Exchanges[0].Response.Status ||
 		len(response.Metadata.Headers) != 1 || response.Metadata.Headers[0].Name != protocol.HTTPContentTypeName ||
-		response.Metadata.Headers[0].Value != "application/json" {
+		response.Metadata.Headers[0].Value != replayExpectedJSONMedia {
 		t.Fatal("SDK device metadata changed")
 	}
 }

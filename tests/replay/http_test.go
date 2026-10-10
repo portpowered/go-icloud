@@ -102,7 +102,7 @@ func sampleExchange() replay.Exchange {
 		Request: replay.Request{
 			Method: http.MethodPost, Origin: "https://example.invalid", Path: "/files/a%2Fb",
 			Query:   []replay.Pair{{"tag", "one"}, {"tag", "two"}, {"empty", ""}},
-			Headers: []replay.Pair{{"accept", "application/octet-stream"}, {contentLengthHeader, "3"}},
+			Headers: []replay.Pair{{"accept", replayExpectedBinaryMedia}, {contentLengthHeader, "3"}},
 			Body: replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9B"`),
 				Matchers: nil, ContentTypePattern: "", Parts: nil,
 			},
@@ -110,7 +110,9 @@ func sampleExchange() replay.Exchange {
 		Response: &replay.Response{
 			BodyRepresentation: "",
 			Status:             http.StatusOK,
-			Headers:            []replay.Pair{{"Set-Cookie", "first=one; Secure"}, {"Set-Cookie", "second=two; Secure"}},
+			Headers: []replay.Pair{
+				{accountCookieUpdateHeader, "first=one; Secure"}, {accountCookieUpdateHeader, "second=two; Secure"},
+			},
 			Body: replay.Entity{Encoding: testBase64Encoding, Value: json.RawMessage(`"AP9C"`),
 				Matchers: nil, ContentTypePattern: "", Parts: nil,
 			},
@@ -128,7 +130,7 @@ func sampleRequest(t *testing.T) *http.Request {
 		t.Fatal(err)
 	}
 
-	request.Header.Set("Accept", "application/octet-stream")
+	request.Header.Set("Accept", replayExpectedBinaryMedia)
 
 	return request
 }
@@ -187,9 +189,11 @@ func TestExactBinaryResponseAndOwnership(t *testing.T) {
 func TestRequestMutationsStayRejected(t *testing.T) {
 	t.Parallel()
 
-	for _, change := range []string{changeMethod, changeOrigin, "escaped_path", "query_order", extraQuery,
-		"header", "extra_header", "body", changeLength, "header_length", "host", "userinfo", chunkedEncoding, "fragment",
-		"opaque", "force_query", "trailer", "unknown_length", "connection_close"} {
+	for _, change := range []string{
+		changeMethod, changeOrigin, replayExpectedEscapedPath, replayExpectedQueryOrder, extraQuery,
+		"header", replayExpectedExtraHeader, "body", changeLength, replayExpectedHeaderLength,
+		"host", replayExpectedUserinfo, chunkedEncoding, replayExpectedFragment,
+		"opaque", replayExpectedForceQuery, "trailer", replayExpectedUnknownLength, replayExpectedConnectionClose} {
 		t.Run(change, func(t *testing.T) {
 			t.Parallel()
 
@@ -226,18 +230,18 @@ func mutateRequest(request *http.Request, change string) {
 	case changeMethod:
 		request.Method = http.MethodPut
 	case changeOrigin:
-		request.URL.Host = "other.invalid"
-	case "escaped_path":
+		request.URL.Host = replayExpectedOtherInvalid
+	case replayExpectedEscapedPath:
 		request.URL.RawPath = ""
-	case "query_order":
+	case replayExpectedQueryOrder:
 		request.URL.RawQuery = "tag=two&tag=one&empty="
 	case extraQuery:
 		request.URL.RawQuery += "&extra=value"
 	case "host":
-		request.Host = "other.invalid"
-	case "userinfo":
-		request.URL.User = url.User("invented")
-	case "fragment":
+		request.Host = replayExpectedOtherInvalid
+	case replayExpectedUserinfo:
+		request.URL.User = url.User(replayExpectedInvented)
+	case replayExpectedFragment:
 		request.URL.Fragment = unexpectedRequest
 	default:
 		mutateRequestFraming(request, change)
@@ -248,13 +252,13 @@ func mutateRequestFraming(request *http.Request, change string) {
 	switch change {
 	case "opaque":
 		request.URL.Opaque = "//other.invalid/wrong"
-	case "force_query":
+	case replayExpectedForceQuery:
 		request.URL.ForceQuery = true
 	case "trailer":
 		request.Trailer = http.Header{"Extra": []string{"value"}}
-	case "unknown_length":
+	case replayExpectedUnknownLength:
 		request.ContentLength = -1
-	case "connection_close":
+	case replayExpectedConnectionClose:
 		request.Close = true
 	default:
 		mutateRequestEntity(request, change)
@@ -265,13 +269,13 @@ func mutateRequestEntity(request *http.Request, change string) {
 	switch change {
 	case "header":
 		request.Header.Set("Accept", "wrong")
-	case "extra_header":
-		request.Header.Set("Authorization", "invented")
+	case replayExpectedExtraHeader:
+		request.Header.Set("Authorization", replayExpectedInvented)
 	case "body":
 		request.Body = io.NopCloser(strings.NewReader("bad"))
 	case changeLength:
 		request.ContentLength++
-	case "header_length":
+	case replayExpectedHeaderLength:
 		request.Header.Set("Content-Length", "003")
 	case chunkedEncoding:
 		request.TransferEncoding = []string{chunkedEncoding}
@@ -330,7 +334,7 @@ func TestExpectedTransportFailureConsumesItsExchange(t *testing.T) {
 
 	exchange := sampleExchange()
 	exchange.Response = nil
-	exchange.Error = "ReadTimeout"
+	exchange.Error = replayExpectedReadTimeout
 	transport := newTransport(t, exchange)
 
 	response, err := transport.RoundTrip(sampleRequest(t))
@@ -341,7 +345,7 @@ func TestExpectedTransportFailureConsumesItsExchange(t *testing.T) {
 
 	var failure replay.TransportError
 
-	if response != nil || !errors.As(err, &failure) || failure.Class != "ReadTimeout" {
+	if response != nil || !errors.As(err, &failure) || failure.Class != replayExpectedReadTimeout {
 		t.Fatalf("recorded failure lost: %v", err)
 	}
 
@@ -354,7 +358,10 @@ func TestExpectedTransportFailureConsumesItsExchange(t *testing.T) {
 func TestMalformedOrUnsupportedOutcomesFailBeforeReplay(t *testing.T) {
 	t.Parallel()
 
-	changes := []string{"encoding", "base64", "outcome", "no_outcome", "failure", "status", changeOrigin, "representation"}
+	changes := []string{
+		replayExpectedEncoding, "base64", "outcome", replayExpectedNoOutcome,
+		"failure", "status", changeOrigin, replayExpectedRepresentation,
+	}
 	for _, change := range changes {
 		t.Run(change, func(t *testing.T) {
 			t.Parallel()
@@ -372,20 +379,20 @@ func TestMalformedOrUnsupportedOutcomesFailBeforeReplay(t *testing.T) {
 
 func mutateExchange(exchange *replay.Exchange, change string) {
 	switch change {
-	case "encoding":
+	case replayExpectedEncoding:
 		exchange.Request.Body.Encoding = testJSONPattern
 	case "base64":
 		exchange.Response.Body.Value = json.RawMessage(`"!"`)
 	case "outcome":
 		exchange.Error = "Timeout"
-	case "no_outcome":
+	case replayExpectedNoOutcome:
 		exchange.Response = nil
 	case "failure":
 		exchange.Response = nil
 		exchange.Error = "UnknownFailure"
 	case "status":
 		exchange.Response.Status = 0
-	case "representation":
+	case replayExpectedRepresentation:
 		exchange.Response.BodyRepresentation = "unknown"
 	case changeOrigin:
 		exchange.Request.Origin += "/path"
@@ -444,7 +451,8 @@ func closeAndInspect(t *testing.T, closer io.Closer, transport *replay.HTTPTrans
 func TestPortableAccountExchangeUsesGoHTTPClient(t *testing.T) {
 	t.Parallel()
 
-	data, err := os.ReadFile(filepath.Join("fixtures", "synthetic", "http", "account-devices-one.json"))
+	path := filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", "account-devices-one.json")
+	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -468,7 +476,7 @@ func TestPortableAccountExchangeUsesGoHTTPClient(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	request.Header.Set("Accept", "application/json")
+	request.Header.Set("Accept", replayExpectedJSONMedia)
 
 	response, err := client.Do(request)
 	if err != nil {

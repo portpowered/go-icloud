@@ -62,8 +62,8 @@ func runPhotoAlbumsSDK(t *testing.T, scenario accountScenario) {
 		}
 
 		for _, album := range expected {
-			album["fullName"] = album["fullname"]
-			delete(album, "fullname")
+			album[replayExpectedFullName] = album[replayExpectedFullname]
+			delete(album, replayExpectedFullname)
 			album[reminderPublicRevisionField] = album[reminderSourceRevisionField]
 			delete(album, reminderSourceRevisionField)
 		}
@@ -105,7 +105,7 @@ func checkPhotoReadFailure(t *testing.T, scenario accountScenario, actual *iclou
 		kind = icloud.NotFound
 	}
 
-	if expected["type"] == "PyiCloudServiceNotActivatedException" {
+	if expected["type"] == replayExpectedPyiCloudServiceNotActivatedException {
 		kind = icloud.Unavailable
 	}
 

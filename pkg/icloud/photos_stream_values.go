@@ -64,7 +64,6 @@ func sharedPhotoDate(record cloudkit.CKRecord, name string) time.Time {
 	epoch := time.Unix(0, 0).UTC()
 
 	value, err := sharedFieldValue(record, name)
-
 	if err != nil {
 		return epoch
 	}

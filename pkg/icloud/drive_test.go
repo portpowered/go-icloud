@@ -47,7 +47,7 @@ func TestDriveNodeRejectsInvalidProviderShapes(t *testing.T) {
 func TestDriveLibrariesRejectsInvalidProviderShapes(t *testing.T) {
 	t.Parallel()
 
-	for _, body := range []string{`null`, `{}`, `[]`, `{"items":null}`, `{"items":false}`, `{"items":[{"name":false}]}`} {
+	for _, body := range []string{`null`, `{}`, `[]`, `{"items":null}`, testExpectedDriveFalseItems, `{"items":[{"name":false}]}`} {
 		t.Run(body, func(t *testing.T) {
 			t.Parallel()
 
@@ -131,7 +131,7 @@ func TestDriveRequestPreservesReferenceStringEncodingAndEmptyShareOmission(t *te
 		response := new(http.Response)
 		response.StatusCode = http.StatusOK
 		response.Header = make(http.Header)
-		response.Header.Set("Content-Type", testJSONMedia)
+		response.Header.Set(testExpectedContentType, testJSONMedia)
 		response.Body = io.NopCloser(strings.NewReader(`[{}]`))
 
 		return response, nil

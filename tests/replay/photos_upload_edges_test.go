@@ -46,7 +46,7 @@ func runPhotoUploadCursorControl(t *testing.T, fileOnly, atEnd bool) {
 		filename = "photos-upload-pipeline-success.json"
 	}
 
-	path := filepath.Join("fixtures", "synthetic", "http", filename)
+	path := filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", filename)
 	row := authReplayObject(t, path)
 	scenario := readAccountScenario(t, path)
 	scenario.Exchanges = scenario.Exchanges[:photoControlUploadStages]
@@ -110,7 +110,7 @@ func photoUploadEmptyRange(t *testing.T, exchanges []replay.Exchange) {
 	reserve.Body.Value = marshalFindMyRecovery(t, base64.StdEncoding.EncodeToString(body))
 	transfer := &exchanges[2].Request
 	transfer.Body.Value = marshalFindMyRecovery(t, "")
-	transfer.Headers = []replay.Pair{{"accept", "application/json"}, {"transfer-encoding", "chunked"}}
+	transfer.Headers = []replay.Pair{{"accept", replayExpectedJSONMedia}, {chunkedHeader, "chunked"}}
 	response := exchanges[2].Response
 	body = bytes.Replace(contractAuthBody(t, response.Body), []byte(": 3,"), []byte(": 0,"), 1)
 	response.Body.Value = marshalFindMyRecovery(t, base64.StdEncoding.EncodeToString(body))

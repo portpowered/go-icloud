@@ -225,7 +225,7 @@ func checkDriveNodeError(t *testing.T, scenario driveNodeScenario, err error) {
 		t.Fatalf("node failure is not typed: %v", err)
 	}
 
-	if source.Type == "PyiCloudAPIResponseException" {
+	if source.Type == replayExpectedPyiCloudAPIResponseException {
 		if failure.Kind() != icloud.Unavailable {
 			t.Fatal("node upload refusal classification changed")
 		}

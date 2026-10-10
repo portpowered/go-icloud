@@ -19,3 +19,14 @@ const (
 	testRetainedRecurrence     = "RecurrenceRule/keep"
 	testCanceledSuffix         = "/canceled"
 )
+
+// Independent literals preserve synthetic controls and Source spellings.
+const (
+	testExpectedEntropy          = "/entropy"
+	testExpectedContentType      = "Content-Type"
+	testExpectedNegativeSize     = "negative-size"
+	testExpectedNegativeWidth    = "negative-width"
+	testExpectedSyntheticTagName = "synthetic-tag-name"
+	testExpectedURLEmptyUpdate   = "url-empty-update"
+	testExpectedDriveFalseItems  = "{\"items\":false}"
+)

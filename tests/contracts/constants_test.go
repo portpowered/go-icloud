@@ -34,6 +34,7 @@ const (
 
 // Independent literals preserve schema spellings and negative controls.
 const (
+	//nolint:gosec // GO-15: this is the schema field spelling, not a credential.
 	authWebTokenField               = "dsWebAuthToken"
 	nullableErrorControl            = "nullable-error"
 	contractSyntheticName           = "synthetic"
@@ -51,4 +52,21 @@ const (
 	reminderFutureTokensField       = "futureTokens"
 	reminderTitleDocumentField      = "TitleDocument"
 	reminderAssetQueryControl       = "asset-query"
+)
+
+// Independent literals preserve synthetic controls and Source spellings.
+const (
+	contractExchangeFailureFormat           = "%s exchange %d: %v"
+	contractAuthModelsPath                  = "../../api/external/auth-models.openapi.yaml"
+	contractAuthAPIPath                     = "../../api/external/auth.openapi.yaml"
+	contractFindMyFixturePattern            = "../replay/fixtures/synthetic/http/findmy-*.json"
+	contractContentTypeField                = "Content-Type"
+	contractExpectedFindMyInitializeRequest = "FindMyInitializeRequest"
+	contractExpectedFindMyPlaySound         = "FindMyPlaySound"
+	contractExpectedFindMySendMessage       = "FindMySendMessage"
+	contractExpectedExtendedLogin           = "extended_login"
+	contractExpectedIssuerPrefix            = "issuer-prefix"
+	contractExpectedRequired                = "required"
+	contractQueryControl                    = "token-query"
+	contractTrustField                      = "trustToken"
 )

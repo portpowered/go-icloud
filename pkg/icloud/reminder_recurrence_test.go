@@ -69,7 +69,7 @@ func TestReminderRecurrencePreparationGuards(t *testing.T) {
 				continue
 			}
 
-			t.Run(operation+map[bool]string{true: testCanceledSuffix, false: "/entropy"}[canceled], func(t *testing.T) {
+			t.Run(operation+map[bool]string{true: testCanceledSuffix, false: testExpectedEntropy}[canceled], func(t *testing.T) {
 				t.Parallel()
 
 				entropy := new(reminderFailingEntropy)

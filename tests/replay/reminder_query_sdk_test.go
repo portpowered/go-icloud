@@ -117,7 +117,7 @@ func checkReminderQueryFailure(t *testing.T, scenario reminderQueryScenario,
 		t.Fatal(decodeErr)
 	}
 
-	if expected["type"] == "ValidationError" || expected["message"] == "Changes response validation failed" {
+	if expected["type"] == "ValidationError" || expected["message"] == replayExpectedChangesResponseValidationFailed {
 		kind = icloud.InvalidResponse
 	}
 
@@ -176,10 +176,18 @@ func checkReminderRelatedProjection(t *testing.T, actual any, source json.RawMes
 	}
 
 	for _, record := range records {
-		for source, target := range map[string]string{"reminder_id": "reminderID", "alarm_id": "alarmID",
-			"alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID",
-			"file_asset_url": "fileAssetURL", "file_size": "fileSize", "occurrence_count": "occurrenceCount",
-			"first_day_of_week": "firstDayOfWeek", reminderSourceRevisionField: reminderPublicRevisionField} {
+		for source, target := range map[string]string{
+			reminderLocationSourceReminderID:  reminderLocationPublicReminderID,
+			reminderLocationSourceAlarmID:     "alarmID",
+			reminderLocationSourceAlarmUID:    reminderLocationPublicAlarmUID,
+			reminderLocationSourceTriggerID:   reminderLocationPublicTriggerID,
+			reminderLocationSourceLocationUID: reminderLocationPublicLocationUID,
+			replayExpectedFileAssetUrl:        replayExpectedFileAssetURL,
+			"file_size":                       replayExpectedFileSize,
+			reminderRecurrenceSourceCount:     reminderRecurrenceCount,
+			reminderRecurrenceSourceWeekday:   reminderRecurrenceWeekday,
+			reminderSourceRevisionField:       reminderPublicRevisionField,
+		} {
 			if raw, exists := record[source]; exists {
 				record[target] = raw
 				delete(record, source)

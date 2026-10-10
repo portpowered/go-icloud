@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	testFolderPrefix       = "FOLDER::SYNTHETIC_ZONE::TempId-"
+	testFolderPrefix = "FOLDER::SYNTHETIC_ZONE::TempId-"
+	//nolint:gosec // GO-15: this is a synthetic cookie header name, not a credential.
 	testUploadCookie       = "X-SYNTHETIC-COOKIE"
 	testUploadTokenPattern = `\bt=([^;]+)`
 )

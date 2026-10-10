@@ -40,7 +40,7 @@ func TestPortableFindMyRepliesRoundTripThroughCanonicalModels(t *testing.T) {
 	t.Parallel()
 	document := loadDriveDocument(t, findMySchemaPath)
 
-	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/findmy-*.json")
+	paths, err := filepath.Glob(contractFindMyFixturePattern)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func TestGeneratedFindMyCommandParsersPreserveReplyBytes(t *testing.T) {
 	t.Parallel()
 	document := loadDriveDocument(t, findMySchemaPath)
 
-	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/findmy-*.json")
+	paths, err := filepath.Glob(contractFindMyFixturePattern)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,7 +127,8 @@ func TestGeneratedFindMyCommandParsersPreserveReplyBytes(t *testing.T) {
 			}
 
 			switch operation.OperationID {
-			case "FindMyPlaySound", "FindMySendMessage", findMyLostDeviceSchema, findMyEraseDeviceSchema:
+			case contractExpectedFindMyPlaySound, contractExpectedFindMySendMessage,
+				findMyLostDeviceSchema, findMyEraseDeviceSchema:
 				body := findMyEntityBytes(t, exchange.Response.Body)
 				response := new(http.Response)
 				response.StatusCode = exchange.Response.Status
@@ -159,14 +160,14 @@ func parseFindMyCommandBody(t *testing.T, operation string, response *http.Respo
 	t.Helper()
 
 	switch operation {
-	case "FindMyPlaySound":
+	case contractExpectedFindMyPlaySound:
 		result, err := findmyapi.ParseFindMyPlaySoundResponse(response)
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		return result.Body
-	case "FindMySendMessage":
+	case contractExpectedFindMySendMessage:
 		result, err := findmyapi.ParseFindMySendMessageResponse(response)
 		if err != nil {
 			t.Fatal(err)

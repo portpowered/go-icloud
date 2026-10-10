@@ -70,7 +70,7 @@ func runSharedValueRule(t *testing.T, mutation string) {
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	auth.SharedPhotosServiceURL = syntheticSharedPhotosOrigin
 	result, err := client.GetSharedPhoto(t.Context(), icloud.GetSharedPhotoRequest{
-		Auth: auth, Album: "synthetic-stream-0", PhotoID: "synthetic-asset-0"})
+		Auth: auth, Album: "synthetic-stream-0", PhotoID: photoMutationAssetID})
 	if mutation == sharedMissingWidthRule || mutation == sharedMissingHeightRule ||
 		mutation == sharedNullLikeCountRule || mutation == sharedStringLikeCountRule {
 		if err == nil || result != nil {
@@ -80,7 +80,8 @@ func runSharedValueRule(t *testing.T, mutation string) {
 		if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse {
 			t.Fatal("projection failure must be typed InvalidResponse", err)
 		}
-		if consumeErr := transport.AssertConsumed(); consumeErr != nil {
+		consumeErr := transport.AssertConsumed()
+		if consumeErr != nil {
 			t.Fatal(consumeErr)
 		}
 		return
@@ -93,7 +94,8 @@ func runSharedValueRule(t *testing.T, mutation string) {
 			t.Fatal("Source ignores malformed records")
 		}
 		checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
-		if consumeErr := transport.AssertConsumed(); consumeErr != nil {
+		consumeErr := transport.AssertConsumed()
+		if consumeErr != nil {
 			t.Fatal(consumeErr)
 		}
 		return
@@ -159,21 +161,21 @@ func mutateSharedRecordValues(mutation string, fields map[string]json.RawMessage
 	case sharedInvalidDateRule:
 		fields["originalCreationDate"] = json.RawMessage(`{"value":1e300}`)
 	case sharedFractionalSizeRule:
-		fields["resOriginalFileSize"] = json.RawMessage(`{"value":1.75}`)
+		fields[replayExpectedResOriginalFileSize] = json.RawMessage(`{"value":1.75}`)
 	case sharedStringSizeRule:
-		fields["resOriginalFileSize"] = json.RawMessage(`{"value":"1.0"}`)
+		fields[replayExpectedResOriginalFileSize] = json.RawMessage(`{"value":"1.0"}`)
 	case sharedMissingWidthRule:
 		delete(fields, "resOriginalWidth")
 	case sharedMissingHeightRule:
 		delete(fields, "resOriginalHeight")
 	case sharedTruthyLikedRule:
-		records[1]["pluginFields"] = json.RawMessage(`{"likedByCaller":{"value":"false"}}`)
+		records[1][replayExpectedPluginFields] = json.RawMessage(`{"likedByCaller":{"value":"false"}}`)
 	case sharedEmptyLikedRule:
-		records[1]["pluginFields"] = json.RawMessage(`{"likedByCaller":{"value":[]}}`)
+		records[1][replayExpectedPluginFields] = json.RawMessage(`{"likedByCaller":{"value":[]}}`)
 	case sharedNullLikeCountRule:
-		records[1]["pluginFields"] = json.RawMessage(`{"likeCount":{"value":null}}`)
+		records[1][replayExpectedPluginFields] = json.RawMessage(`{"likeCount":{"value":null}}`)
 	case sharedStringLikeCountRule:
-		records[1]["pluginFields"] = json.RawMessage(`{"likeCount":{"value":"many"}}`)
+		records[1][replayExpectedPluginFields] = json.RawMessage(`{"likeCount":{"value":"many"}}`)
 	case sharedMalformedMasterRefRule:
 		records[1]["fields"] = json.RawMessage(`{"masterRef":{"value":42}}`)
 	}

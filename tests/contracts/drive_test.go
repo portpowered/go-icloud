@@ -84,7 +84,7 @@ func TestPortableDriveExchangesMatchContracts(t *testing.T) {
 		for index, exchange := range exchanges {
 			operation, err := bindDriveOperation(documents, exchanges, index)
 			if err != nil {
-				t.Fatalf("%s exchange %d: %v", path, index, err)
+				t.Fatalf(contractExchangeFailureFormat, path, index, err)
 			}
 
 			validateDriveRequest(t, operation, exchange.Request)
@@ -301,7 +301,7 @@ func validateDriveResponse(t *testing.T, operation *openapi3.Operation, response
 
 func contractResponseMedia(content openapi3.Content, headers []replay.Pair) (*openapi3.MediaType, error) {
 	for _, header := range headers {
-		if !strings.EqualFold(header[0], "Content-Type") {
+		if !strings.EqualFold(header[0], contractContentTypeField) {
 			continue
 		}
 
@@ -354,7 +354,7 @@ func driveHeaderMedia(t *testing.T, headers []replay.Pair) string {
 	t.Helper()
 
 	for _, header := range headers {
-		if strings.EqualFold(header[0], "Content-Type") {
+		if strings.EqualFold(header[0], contractContentTypeField) {
 			value, _, err := mime.ParseMediaType(header[1])
 			if err != nil {
 				t.Fatal(err)
@@ -470,7 +470,7 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 	documents := loadDriveDocuments(t)
 
 	for _, mutation := range []string{
-		"origin", mutationPath, mutationMethod, "issuer", "issuer-prefix", issuerMethodControl, "first",
+		"origin", mutationPath, mutationMethod, "issuer", contractExpectedIssuerPrefix, issuerMethodControl, "first",
 	} {
 		t.Run(mutation, func(t *testing.T) {
 			t.Parallel()
@@ -487,7 +487,7 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 				exchanges[index].Request.Method = http.MethodPost
 			case "issuer":
 				exchanges[0].Request.Path = unregisteredContractPath
-			case "issuer-prefix":
+			case contractExpectedIssuerPrefix:
 				exchanges[0].Request.Path = unregisteredContractPath + exchanges[0].Request.Path
 			case issuerMethodControl:
 				exchanges[0].Request.Method = http.MethodPost

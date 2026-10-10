@@ -271,7 +271,7 @@ func accountMemberPhoto(t *testing.T, client *accountapi.ClientWithResponses,
 
 	return &accountPhotoResult{
 		MemberID: memberID, Status: response.Status,
-		Headers: []replay.Pair{{"Content-Type", response.Headers.Get("Content-Type")}},
+		Headers: []replay.Pair{{replayExpectedContentType, response.Headers.Get(replayExpectedContentType)}},
 		Body:    base64.StdEncoding.EncodeToString(response.Body),
 	}
 }
@@ -373,7 +373,7 @@ func accountProviderFailure(t *testing.T, encoded json.RawMessage, status int, b
 		t.Fatal(err)
 	}
 
-	if expected.Type != "PyiCloudAPIResponseException" ||
+	if expected.Type != replayExpectedPyiCloudAPIResponseException ||
 		expected.Message != accountProviderMessage(t, status, body) {
 		t.Fatal("account provider failure lost its recorded class/status/body")
 	}
