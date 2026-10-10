@@ -117,6 +117,7 @@ func TestPhotoUploadPreservesCallerCursorAndReaderOwnership(t *testing.T) {
 	}
 
 	const ignored = photoControlCursorPrefix
+
 	reader := &photoUploadOwnedReader{Reader: bytes.NewReader(append([]byte(ignored), data...)), closed: false}
 	_, err = reader.Seek(int64(len(ignored)), io.SeekStart)
 	if err != nil {

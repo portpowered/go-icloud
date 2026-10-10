@@ -47,6 +47,7 @@ func runPhotoMutationScenario(t *testing.T, name string) {
 	authReplayDecode(t, raw[replayExpectedOperation], &operation)
 
 	var inputs []json.RawMessage
+
 	authReplayDecode(t, raw["inputs"], &inputs)
 
 	client, transport := newPhotoMutationReplay(t, scenario)
@@ -313,7 +314,9 @@ func requirePhotoMutationAcknowledged(t *testing.T, acknowledged bool) {
 
 func checkPhotoMutationPhoto(t *testing.T, photo icloud.Photo, raw json.RawMessage) {
 	t.Helper()
+
 	var expected map[string]json.RawMessage
+
 	authReplayDecode(t, raw, &expected)
 	checkPhotoAssetsProjection(t, []icloud.Photo{photo},
 		append(append(json.RawMessage("["), expected["photo"]...), ']'))

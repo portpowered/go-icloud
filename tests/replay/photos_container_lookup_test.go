@@ -152,6 +152,7 @@ func checkPhotosContainerLookup(
 		}
 
 		var got, want any
+
 		authReplayDecode(t, actual, &got)
 		authReplayDecode(t, scenario.Result, &want)
 		applySourceNullDefaults(got, want)

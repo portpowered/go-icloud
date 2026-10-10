@@ -254,6 +254,7 @@ func selectedPhotoChangesLibrary(
 			return &library, libraries.Responses
 		}
 	}
+
 	t.Fatal("selected library missing")
 	return nil, nil
 }

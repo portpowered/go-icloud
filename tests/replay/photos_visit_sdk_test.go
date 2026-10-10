@@ -56,7 +56,6 @@ func TestPhotoVisitorStopsBeforeLaterPage(t *testing.T) {
 	checkReminderSyncResponses(t, result.Responses, exchanges)
 
 	err = transport.AssertConsumed()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +91,6 @@ func TestPhotoVisitorPreservesCallerFailure(t *testing.T) {
 	}
 
 	err = transport.AssertConsumed()
-
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -162,6 +162,7 @@ func TestPhotoFavoriteRefreshFailureKeepsFallback(t *testing.T) {
 	}
 
 	var expected map[string]json.RawMessage
+
 	authReplayDecode(t, scenario.Result, &expected)
 	checkPhotoAssetsProjection(t, []icloud.Photo{result.Photo},
 		append(append(json.RawMessage("["), expected["photo"]...), ']'))
