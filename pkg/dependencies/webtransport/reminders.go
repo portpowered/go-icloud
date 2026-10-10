@@ -22,7 +22,7 @@ type ReminderZonesResponse struct {
 
 // ListReminderZones discovers fresh zones using operation-local credentials.
 func (client *Client) ListReminderZones(ctx context.Context, auth RequestContext) (*ReminderZonesResponse, error) {
-	body, err := referenceJSON(make(cloudkit.ReminderZoneListRequest))
+	body, err := referenceJSON(cloudkit.ReminderZoneListRequest{})
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

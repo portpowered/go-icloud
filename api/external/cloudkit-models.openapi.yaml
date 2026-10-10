@@ -9284,6 +9284,7 @@
       "ReminderZoneListRequest": {
         "description": "Discover the available Reminders zones without additional selection fields.",
         "type": "object",
+        "x-go-type": "struct{}",
         "additionalProperties": false,
         "maxProperties": 0,
         "properties": {}
