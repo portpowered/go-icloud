@@ -44,7 +44,7 @@ func TestSecurityKeyCommandUsesSelectedDeviceAndSourceAssertion(t *testing.T) {
 	t.Parallel()
 
 	for _, control := range []string{
-		expectedAcceptedResponse, expectedCallerAssertionControl, "missing device", expectedCancelledCeremonyControl,
+		expectedAcceptedResponse, expectedCallerAssertionControl, expectedMissingDeviceControl, expectedCancelledCeremonyControl,
 	} {
 		t.Run(control, func(t *testing.T) {
 			t.Parallel()
@@ -92,7 +92,7 @@ func commandSecurityKeyReplay(t *testing.T, control string) {
 	}
 
 	identifier := expectedSecurityKeyDevice
-	if control == "missing device" {
+	if control == expectedMissingDeviceControl {
 		identifier = "unavailable"
 	}
 
@@ -113,7 +113,7 @@ func commandSecurityKeyReplay(t *testing.T, control string) {
 	}
 
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
-		expectedSyntheticSessionValue, "synthetic-trust", expectedSyntheticAuthCookie,
+		expectedSyntheticSessionValue, expectedSyntheticTrustValue, expectedSyntheticAuthCookie,
 		"credentialIDs", expectedAccountDataKey, expectedReplayResponses})
 }
 
@@ -157,7 +157,7 @@ func commandKeyOutcome(t *testing.T, control string, err error,
 			t.Fatal("invalid hardware ceremony succeeded")
 		}
 
-		if control == "missing device" && provider.request != nil {
+		if control == expectedMissingDeviceControl && provider.request != nil {
 			t.Fatal("unavailable device reached assertion ceremony")
 		}
 

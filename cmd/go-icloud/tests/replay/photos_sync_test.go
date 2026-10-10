@@ -120,7 +120,12 @@ func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.List
 	if client.cancel != nil {
 		client.cancel()
 
-		return nil, ctx.Err()
+		err = ctx.Err()
+		if err != nil {
+			return nil, fmt.Errorf("visit synthetic photo assets: %w", err)
+		}
+
+		return nil, nil
 	}
 
 	return &icloud.ListPhotoAssetsResult{Photos: []icloud.Photo{photo}, Responses: responses}, nil
@@ -375,8 +380,13 @@ func runSyncCLI(ctx context.Context, client icloud.Client, session, request, ope
 
 	args = append(args, operation)
 
-	return command.RunWithInput(ctx, client, args, io.NopCloser(strings.NewReader("")),
+	err := command.RunWithInput(ctx, client, args, io.NopCloser(strings.NewReader("")),
 		func(string) string { return "" }, output, io.Discard)
+	if err != nil {
+		return fmt.Errorf("run synchronization command: %w", err)
+	}
+
+	return nil
 }
 
 func checkSyncState(t *testing.T, path string, expected icloud.NativeAuthState, cookie string) {

@@ -37,7 +37,9 @@ const (
 
 // Independent fixed values in synthetic authentication replay controls (LIB-05).
 const (
-	expectedSyntheticSessionValue    = "synthetic-token"
-	expectedSyntheticAccountName     = "synthetic@example.invalid"
-	expectedCancelledCeremonyControl = "cancelled ceremony"
+	expectedSyntheticSessionValue           = "synthetic-token"
+	expectedSyntheticAccountName            = "synthetic@example.invalid"
+	expectedCancelledCeremonyControl        = "cancelled ceremony"
+	expectedSyntheticTrustValue      string = "synthetic-trust"
+	expectedMissingDeviceControl     string = "missing device"
 )

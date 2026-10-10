@@ -4,6 +4,7 @@ package command
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"strings"
 	"testing"
@@ -91,7 +92,12 @@ type startedReader struct {
 func (reader *startedReader) Read(data []byte) (int, error) {
 	close(reader.started)
 
-	return reader.ReadCloser.Read(data)
+	count, err := reader.ReadCloser.Read(data)
+	if err != nil {
+		return count, fmt.Errorf("read started input: %w", err)
+	}
+
+	return count, nil
 }
 
 func TestSecretPreCancellationAvoidsReading(t *testing.T) {

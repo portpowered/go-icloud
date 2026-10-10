@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -75,7 +76,11 @@ func (c *nativeBridgeCommandClient) OpenNativeBridgeSession(ctx context.Context,
 	owner, err := c.Client.OpenNativeBridgeSession(ctx, request, options...)
 	c.owner = owner
 
-	return owner, err
+	if err != nil {
+		return owner, fmt.Errorf("open replay bridge session: %w", err)
+	}
+
+	return owner, nil
 }
 
 type nativeBridgeCancelInput struct {
@@ -87,10 +92,12 @@ type nativeBridgeCancelInput struct {
 func (r *nativeBridgeCancelInput) Read([]byte) (int, error) {
 	r.cancel()
 	<-r.closed
+
 	return 0, io.EOF
 }
 func (r *nativeBridgeCancelInput) Close() error {
 	r.once.Do(func() { close(r.closed) })
+
 	return nil
 }
 
@@ -141,7 +148,7 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 	nativeBridgeCommandSavedState(t, raw, path, savedPath, client.owner, expectedError, lateFailure)
 
 	console := output.String() + diagnostic.String()
-	for _, secret := range []string{"123456", expectedSyntheticSessionValue, "synthetic-trust", expectedSyntheticAuthCookie,
+	for _, secret := range []string{"123456", expectedSyntheticSessionValue, expectedSyntheticTrustValue, expectedSyntheticAuthCookie,
 		expectedSyntheticAccountName, "synthetic-rotated", expectedReplayResponsesField, expectedAccountDataField} {
 		if strings.Contains(console, secret) {
 			t.Fatal("console disclosed private bridge data")

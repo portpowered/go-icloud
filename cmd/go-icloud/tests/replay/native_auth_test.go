@@ -131,7 +131,7 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 	}
 
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
-		expectedSyntheticSessionValue, "synthetic-trust", expectedSyntheticAuthCookie,
+		expectedSyntheticSessionValue, expectedSyntheticTrustValue, expectedSyntheticAuthCookie,
 		expectedSyntheticAccountName, expectedReplayResponses, expectedAccountDataKey})
 
 	err = transport.AssertConsumed()

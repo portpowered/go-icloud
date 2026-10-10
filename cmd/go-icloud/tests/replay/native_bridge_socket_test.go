@@ -170,7 +170,12 @@ func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, erro
 
 	r.take(map[string]any{"surface": "http", "exchange": float64(index)})
 
-	return r.http.RoundTrip(request)
+	response, err := r.http.RoundTrip(request)
+	if err != nil {
+		return response, fmt.Errorf("replay bridge HTTP exchange: %w", err)
+	}
+
+	return response, nil
 }
 func (r *sdkBridgeReplay) take(event map[string]any) {
 	r.t.Helper()

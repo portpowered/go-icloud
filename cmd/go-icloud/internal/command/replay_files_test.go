@@ -1,6 +1,7 @@
 package command_test
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,7 +14,7 @@ func readReplayFile(t *testing.T, path string) ([]byte, error) {
 
 	directory, err := os.OpenRoot(filepath.Dir(path))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("open replay directory: %w", err)
 	}
 
 	t.Cleanup(func() {
@@ -23,5 +24,10 @@ func readReplayFile(t *testing.T, path string) ([]byte, error) {
 		}
 	})
 
-	return directory.ReadFile(filepath.Base(path))
+	data, err := directory.ReadFile(filepath.Base(path))
+	if err != nil {
+		return data, fmt.Errorf("read replay file: %w", err)
+	}
+
+	return data, nil
 }
