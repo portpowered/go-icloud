@@ -30,7 +30,7 @@ func TestPhotoChangesSDKPortableScenarios(t *testing.T) {
 	}
 }
 
-func photoChangesInputs(t *testing.T, path string) (string, *string) {
+func photoChangesInputs(t *testing.T, path string) (string, *string, *string) {
 	t.Helper()
 
 	data, err := os.ReadFile(filepath.Clean(path))
@@ -48,6 +48,7 @@ func photoChangesInputs(t *testing.T, path string) (string, *string) {
 	var (
 		library  string
 		keywords map[string]*string
+		cursor   *string
 	)
 
 	if raw := fields["library"]; raw != nil {
@@ -64,7 +65,17 @@ func photoChangesInputs(t *testing.T, path string) (string, *string) {
 		}
 	}
 
-	return library, keywords["since"]
+	raw := fields["photos_sync_token"]
+	if raw == nil {
+		t.Fatal("missing independently observed Source cursor")
+	}
+
+	err = json.Unmarshal(raw, &cursor)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return library, keywords["since"], cursor
 }
 
 func runPhotoChangesSDK(t *testing.T, path string, scenario accountScenario) {
@@ -82,7 +93,7 @@ func runPhotoChangesSDK(t *testing.T, path string, scenario accountScenario) {
 
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
-	key, since := photoChangesInputs(t, path)
+	key, since, cursor := photoChangesInputs(t, path)
 
 	library, prior := selectedPhotoChangesLibrary(t, client, auth, key)
 
@@ -103,14 +114,29 @@ func runPhotoChangesSDK(t *testing.T, path string, scenario accountScenario) {
 
 		checkPhotoChangesProjection(t, actual.Changes, scenario.Result)
 		checkReminderSyncResponses(t, append(prior, actual.Responses...), scenario.Exchanges)
-		if filepath.Base(path) == "photos-changes-empty-zones.json" && !actual.SyncToken.IsNull() {
-			t.Fatal("empty provider zone page returned a fabricated cursor")
-		}
+		checkPhotoChangesCursor(t, actual, cursor)
 	}
 
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func checkPhotoChangesCursor(t *testing.T, actual *icloud.GetPhotoChangesResult, expected *string) {
+	t.Helper()
+
+	if expected == nil {
+		if !actual.SyncToken.IsNull() {
+			t.Fatal("photo changes returned a cursor where Source observed null")
+		}
+
+		return
+	}
+
+	token, err := actual.SyncToken.Get()
+	if err != nil || token != *expected {
+		t.Fatalf("photo changes cursor = %q (%v), Source observed %q", token, err, *expected)
 	}
 }
 

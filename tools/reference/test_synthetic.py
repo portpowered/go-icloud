@@ -18,6 +18,36 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_photo_changes_bind_final_source_cursor_and_null(self):
+        paths = [
+            path
+            for path in sorted(FIXTURES.glob("photos-*changes*.json"))
+            if json.loads(path.read_text(encoding="utf-8"))["operation"] == "iter_changes"
+        ]
+        self.assertEqual(len(paths), 11)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 37)
+        for name in [
+            "photos-changes-one",
+            "photos-changes-empty-zones",
+            "photos-shared-library-changes-one-refused-4",
+        ]:
+            for mutation in ["changed", "missing"]:
+                scenario = json.loads(
+                    (FIXTURES / (name + ".json")).read_text(encoding="utf-8")
+                )
+                if mutation == "changed":
+                    scenario["photos_sync_token"] = "forged-cursor"
+                else:
+                    del scenario["photos_sync_token"]
+                with (
+                    self.subTest(name=name, mutation=mutation),
+                    TemporaryDirectory() as directory,
+                ):
+                    path = Path(directory) / "changed.json"
+                    path.write_text(json.dumps(scenario), encoding="utf-8")
+                    with self.assertRaises(AssertionError):
+                        replay_synthetic(path)
+
     def test_photo_relation_uses_library_asset_independent_of_destination(self):
         for name in ["photos-add-to-album", "photos-add-to-empty-album"]:
             with self.subTest(name=name):

@@ -135,5 +135,6 @@
   "keyword_inputs": {
     "since": "synthetic-old"
   },
-  "result": []
+  "result": [],
+  "photos_sync_token": null
 }

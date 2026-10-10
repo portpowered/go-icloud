@@ -307,5 +307,6 @@
   "error": {
     "type": "PyiCloudAPIResponseException",
     "message": " (503): {\"reason\": \"synthetic shared Photos refusal\", \"errorCode\": 503}"
-  }
+  },
+  "photos_sync_token": "synthetic-sync"
 }

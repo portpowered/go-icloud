@@ -265,13 +265,18 @@ def execute(api, scenario, observations=None):
             *scenario["inputs"], **scenario.get("keyword_inputs", {})
         )
         if operation == "iter_changes":
-            return [
-                {
-                    **asdict(item),
-                    "modified": item.modified.isoformat() if item.modified else None,
-                }
-                for item in value
-            ]
+            try:
+                return [
+                    {
+                        **asdict(item),
+                        "modified": item.modified.isoformat() if item.modified else None,
+                    }
+                    for item in value
+                ]
+            finally:
+                if observations is not None:
+                    library = getattr(service, "_root_library", service)
+                    observations["photos_sync_token"] = library.current_sync_token
         return value
     raise ValueError("Unregistered synthetic service")
 
@@ -403,6 +408,14 @@ def replay_synthetic(path):
                 raise AssertionError(
                     "Synthetic pre-retry authentication state mismatch"
                 )
+            if (
+                scenario["service"] == "photos"
+                and scenario["operation"] == "iter_changes"
+            ):
+                if "photos_sync_token" not in scenario or scenario[
+                    "photos_sync_token"
+                ] != observations.get("photos_sync_token"):
+                    raise AssertionError("Synthetic Photos cursor state mismatch")
             adapter.assert_consumed()
         finally:
             close_reference(api)
