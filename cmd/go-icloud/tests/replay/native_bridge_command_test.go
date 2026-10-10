@@ -314,7 +314,7 @@ func nativeBridgeCommandSourceState(t *testing.T, raw map[string]json.RawMessage
 	t.Helper()
 	expected := readRawObject(t, readRawObject(t, raw["result"])["auth_state"])
 	var account, actualAccount any
-	decode(t, expected["account_data"], &account)
+	decode(t, expected["account"], &account)
 	decode(t, state.AccountData, &actualAccount)
 	if !reflect.DeepEqual(account, actualAccount) {
 		t.Fatal("Source account data changed")
