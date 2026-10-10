@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"mime"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -412,8 +411,7 @@ func verifyGeneration(t *testing.T, artifact generationArtifact) {
 		t.Fatal(err)
 	}
 
-	//nolint:gosec // SCHEMA-16: fixed generator and checked-in inputs; test-owned output paths vary.
-	command := exec.CommandContext(t.Context(), "go", "run", generatorTool, "-config", config, artifact.Schema)
+	command := generationCommand(t, config, artifact.Schema)
 
 	log, err := command.CombinedOutput()
 	if err != nil {
