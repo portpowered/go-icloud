@@ -12,7 +12,7 @@ and setup origins. Token lookup uses `/setup/ws/1/fmipWebAuthenticate` on the
 setup origin and omits the ordinary account query parameters.
 
 `api/external/findmy-models.openapi.yaml` owns canonical models and generates
-`pkg/dependencymodels/findmy`. The internal generated client imports those models.
+`pkg/dependencymodels/findmy`. The internal generated request builders import those models.
 Protocol paths, methods, parameter names, fields and fixed string values come
 from these schema documents. `make generate-api` regenerates them; contract and
 generator checks reject drift and ambiguous operation/model constants

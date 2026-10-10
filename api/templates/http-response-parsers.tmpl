@@ -1,0 +1,124 @@
+{{/* Derived from oapi-codegen v2.8.0, Apache-2.0. Modified to generate only schema request builders and response parsers; HTTP ownership stays in webtransport. */}}
+{{range .}}{{$opid := .OperationId}}{{$op := .}}
+{{$responseTypeDefinitions := getResponseTypeDefinitions .}}
+{{$headerResponses := responsesWithHeaders .Responses}}
+{{- range $headerResponses}}
+// {{genResponseTypeName $opid | ucFirst}}{{.StatusCode | ucFirst}}Headers the declared response headers of an HTTP {{.StatusCode}} response for {{$opid}}
+type {{genResponseTypeName $opid | ucFirst}}{{.StatusCode | ucFirst}}Headers struct {
+    {{range .Headers -}}
+        {{with .DeprecationComment}}{{.}}
+        {{end -}}{{.GoName}} {{.GoTypeDef}}
+    {{end -}}
+}
+{{end}}
+type {{genResponseTypeName $opid | ucFirst}} struct {
+    Body         []byte
+	HTTPResponse *http.Response
+    {{- range $responseTypeDefinitions}}
+    // {{.TypeName}} the response for an HTTP {{ .ResponseName }} `{{ .ContentTypeName }}` response
+    {{.TypeName}} *{{.Schema.TypeDecl}}
+    {{- end}}
+    {{- range $headerResponses}}
+    // Headers{{.StatusCode | ucFirst}} the parsed response headers for an HTTP {{.StatusCode}} response
+    Headers{{.StatusCode | ucFirst}} *{{genResponseTypeName $opid | ucFirst}}{{.StatusCode | ucFirst}}Headers
+    {{- end}}
+}
+
+{{ if not opts.OutputOptions.SkipResponseBodyGetters }}
+{{- range $responseTypeDefinitions}}
+  // Get{{.TypeName}} returns the response for an HTTP {{ .ResponseName }} `{{ .ContentTypeName }}` response
+  func (r {{genResponseTypeName $opid | ucFirst}}) Get{{.TypeName}}() *{{.Schema.TypeDecl}} {
+      return r.{{.TypeName}}
+  }
+{{- end}}
+
+// GetBody returns the raw response body bytes
+func (r {{genResponseTypeName $opid | ucFirst}}) GetBody() []byte {
+    return r.Body
+}
+{{end}}
+
+// Status returns HTTPResponse.Status
+func (r {{genResponseTypeName $opid | ucFirst}}) Status() string {
+    if r.HTTPResponse != nil {
+        return r.HTTPResponse.Status
+    }
+    return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r {{genResponseTypeName $opid | ucFirst}}) StatusCode() int {
+    if r.HTTPResponse != nil {
+        return r.HTTPResponse.StatusCode
+    }
+    return 0
+}
+
+{{ if opts.OutputOptions.ClientResponseBytesFunction }}
+// Bytes is a convenience method to retrieve the raw bytes from the HTTP response
+func (r {{genResponseTypeName $opid | ucFirst}}) Bytes() []byte {
+    return r.Body
+}
+{{end}}
+
+{{ if not opts.OutputOptions.SkipClientResponseContentType }}
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r {{genResponseTypeName $opid | ucFirst}}) ContentType() string {
+    if r.HTTPResponse != nil {
+        return r.HTTPResponse.Header.Get("Content-Type")
+    }
+    return ""
+}
+{{end}}
+
+{{end}}
+
+
+{{/* Generate parse functions for responses*/}}
+{{range .}}{{$opid := .OperationId}}
+
+// Parse{{genResponseTypeName $opid | ucFirst}} parses an HTTP response for the {{$opid}} operation
+func Parse{{genResponseTypeName $opid | ucFirst}}(rsp *http.Response) (*{{genResponseTypeName $opid}}, error) {
+    bodyBytes, err := io.ReadAll(rsp.Body)
+    defer func() { _ = rsp.Body.Close() }()
+    if err != nil {
+        return nil, err
+    }
+
+    response := {{genResponsePayload $opid}}
+
+    {{genResponseUnmarshal .}}
+    {{- /* Bind declared response headers into the typed Headers<StatusCode>
+    fields. Binding is lenient: an absent header (even a required one) leaves
+    the field at its zero value rather than failing the parse, mirroring the
+    body unmarshal's tolerance of spec-violating servers. A present header
+    that fails to bind to its declared type is an error. */ -}}
+    {{$headerResponses := responsesWithHeaders .Responses}}
+    {{- if $headerResponses}}
+    switch {
+    {{- range $headerResponses}}
+    case {{getConditionOfResponseName "rsp.StatusCode" .StatusCode}}:
+        var headers {{genResponseTypeName $opid | ucFirst}}{{.StatusCode | ucFirst}}Headers
+        {{- range .Headers}}
+        if values := rsp.Header.Values({{.Name | toGoString}}); len(values) > 0 {
+            var value {{.Schema.TypeDecl}}
+            if err := runtime.BindStyledParameterWithOptions("simple", {{.Name | toGoString}}, values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: {{.Required}}, Type: "{{.SchemaType}}", Format: "{{.SchemaFormat}}"}); err != nil {
+                return nil, err
+            }
+            {{- if .IsNullable}}
+            headers.{{.GoName}}.Set(value)
+            {{- else if .IsOptional}}
+            headers.{{.GoName}} = &value
+            {{- else}}
+            headers.{{.GoName}} = value
+            {{- end}}
+        }
+        {{- end}}
+        response.Headers{{.StatusCode | ucFirst}} = &headers
+    {{- end}}
+    }
+    {{- end}}
+
+    return response, nil
+}
+{{end}}{{/* range . $opid := .OperationId */}}

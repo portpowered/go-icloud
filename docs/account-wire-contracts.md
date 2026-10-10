@@ -35,24 +35,27 @@ Binary member photos remain uninterpreted bytes, including empty content.
 These counts demonstrate wire-contract checks, not SDK semantic replay or
 live endpoint coverage (LIB-07).
 
-The generated Go client now executes all 34 synthetic account scenarios against
-strict paired replay. Requests originate from portable initial account state
-and operation inputs, rather than from the expected request. Result checks bind
-device records, family names, storage bytes, plan JSON, and member-photo
-status/headers/bytes; provider failures bind the reference status/body/message.
-Both route-client and wire-model generation use their checked-in configs in
-drift tests. Successful member photos use an adapter that reads and closes raw
-response bodies: the generic generated JSON-default parser can mistake binary
-success labeled `application/json` for an error object. This is fixture/source
-compatibility, not a claim about observed live photo content types.
+The public SDK executes all 34 synthetic account scenarios against strict paired
+replay. Requests originate from portable initial account state and operation
+inputs. Result checks bind device records, family names, storage bytes, plan
+JSON, and member-photo status/headers/bytes; provider failures bind the reference
+status/body/message. The same synthetic cases pass the pinned Python reference
+with no network.
 
-The generated client tests establish request/response interoperability. A separate
-public SDK driver now runs all eleven account-device scenarios, including empty,
-one and multiple devices, HTTP 503, and seven HTTP 200 provider-error envelopes.
-The same new synthetic cases pass the pinned Python reference with no network.
-Public projections come from `api/client-models.openapi.yaml`, independently of
-wire types (API-02). Contract tests validate its ten invented examples, regenerate
-its models, and compile an independent consumer module.
+Schema generation retains request builders, response models, and
+response parsers. Checked-in templates remove unused generated client send
+methods and their default transports and arbitrary request-editor callbacks.
+The active SDK transport owns injection, origin validation, cancellation and
+response-body closure (LIB-01); complete source auditing still inspects generated
+sources for outbound calls introduced by later generator changes. Both route
+and wire-model generation use their checked-in configs in drift tests.
+Successful member photos retain exact raw bytes even when labeled
+`application/json`; shared SDK response handling closes the body and preserves
+read/close failures. This is fixture/source compatibility, not a claim about
+observed live photo content types. Public projections come from
+`api/client-models.openapi.yaml`, independently of wire types (API-02). Contract
+tests validate its ten invented examples, regenerate its models, and compile an
+independent consumer module.
 
 `GetAccountDevices` performs fresh requests with caller-owned `AuthContext`.
 Concurrent two-account paired replays bind separate identities, cookies and
@@ -62,8 +65,8 @@ Typed errors retain exact body/headers and causes without displaying private
 provider text. Unit controls cover cancellation, timeouts, unknown metadata,
 HTTP failure classes, invalid provider bodies and falsy error fields.
 
-All 34 account scenarios now execute the public SDK as well as the generated
-client. Family/photo flows obtain member DSIDs from the public family result.
+All 34 account scenarios execute the public SDK. Family/photo flows obtain
+member DSIDs from the public family result.
 Storage binds usage, quota, media and unknown account metadata. Plan summaries
 bind the opaque JSON value, including arrays and null, for global/China gateways.
 New reference-derived cases cover omitted families, named nulls, provider refusal,
@@ -72,7 +75,7 @@ pinned Python reference offline. Shared response handling reads/closes every bod
 unit controls verify read/close causes suppress output across all four new methods.
 
 Non-generated coverage includes `pkg/icloud` and handwritten `internal` code,
-including the transport and binary-photo adapter. Replay: 284/348 statements
+including the transport and the former binary-photo adapter. Replay: 284/348 statements
 (81.6%); unit: 287/348 (82.5%); combined: 321/348 (92.2%). These historical account-milestone measurements
 are separate (LIB-07) and describe its five account operations. See
 [Drive contracts](drive-wire-contracts.md) for current coverage including the two
@@ -82,7 +85,7 @@ three measurements. `make check` and blocking CI require at least 80% replay
 and combined coverage; CI saves separate profiles. Schema-owned protocol
 constants include inline operation parameters and have syntax/collision checks.
 
-## Unknown values
+## Unknown values and remaining work
 
 Additional provider fields retain raw JSON, including nulls and integers beyond
 floating-point precision. The reference does not define concrete subscription
