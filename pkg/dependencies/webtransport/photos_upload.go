@@ -169,7 +169,7 @@ func (client *Client) readPhotoUpload(ctx context.Context, auth RequestContext,
 		return nil, failure(Configuration, constructionErr, nil, nil)
 	}
 
-	return client.readWithPolicy(ctx, auth, request, photoUploadQuerySuffix(cloudKitFlags), successfulContent)
+	return client.readWithPolicy(ctx, auth, request, photoUploadQuerySuffix(cloudKitFlags), successfulContent, false)
 }
 
 func photoUploadQuerySuffix(cloudKitFlags bool) string {
