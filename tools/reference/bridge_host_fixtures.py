@@ -28,7 +28,9 @@ def source_resolver(checkout, revision):
     selected = [
         node
         for node in tree.body
-        if (isinstance(node, ast.FunctionDef) and node.name == "_resolve_websocket_host")
+        if (
+            isinstance(node, ast.FunctionDef) and node.name == "_resolve_websocket_host"
+        )
         or (
             isinstance(node, ast.AnnAssign)
             and isinstance(node.target, ast.Name)
@@ -42,7 +44,10 @@ def source_resolver(checkout, revision):
         "Hsa2BootContext": SimpleNamespace,
         "PyiCloudTrustedDevicePromptException": PyiCloudTrustedDevicePromptException,
     }
-    exec(compile(ast.Module(body=selected, type_ignores=[]), str(path), "exec"), namespace)
+    exec(
+        compile(ast.Module(body=selected, type_ignores=[]), str(path), "exec"),
+        namespace,
+    )
     return namespace["_resolve_websocket_host"]
 
 
@@ -64,7 +69,10 @@ def fixtures(resolve):
         ("production", {"apnsEnvironment": "prod"}),
         ("sandbox", {"apnsEnvironment": "sandbox"}),
         ("empty-url-environment", {"webSocketUrl": "", "apnsEnvironment": "prod"}),
-        ("explicit-over-environment", {"webSocketUrl": "wss://EXAMPLE/a", "apnsEnvironment": "sandbox"}),
+        (
+            "explicit-over-environment",
+            {"webSocketUrl": "wss://EXAMPLE/a", "apnsEnvironment": "sandbox"},
+        ),
         ("missing", {}),
         ("unknown-environment", {"apnsEnvironment": "other"}),
         ("invalid-port-text", {"webSocketUrl": "wss://EXAMPLE:bad/a"}),
@@ -97,16 +105,28 @@ def fixtures(resolve):
         ("nfkc-safe", {"webSocketUrl": "wss://\uff25XAMPLE/a"}),
         ("invalid-ip-single-quote", {"webSocketUrl": "wss://[bad'ip]/"}),
         ("invalid-ip-double-quote", {"webSocketUrl": 'wss://[bad"ip]/'}),
-        ("invalid-ip-both-quotes", {"webSocketUrl": 'wss://[bad\'"ip]/'}),
+        ("invalid-ip-both-quotes", {"webSocketUrl": "wss://[bad'\"ip]/"}),
         ("invalid-ip-backslash", {"webSocketUrl": "wss://[bad\\ip]/"}),
         ("invalid-ip-nul", {"webSocketUrl": "wss://[ab\u0000]/"}),
         ("invalid-ip-nonbreaking-space", {"webSocketUrl": "wss://[ab\u00a0]/"}),
         ("invalid-zone-quote", {"webSocketUrl": "wss://[fe80::1%a'%b]/"}),
         ("bracketed-scoped-ipv4", {"webSocketUrl": "wss://[127.0.0.1%Zone]/"}),
-        ("sigma-long-dots-cased", {"webSocketUrl": "wss://\u039f\u03a3" + "." * 31 + "A/"}),
-        ("sigma-long-dots-terminal", {"webSocketUrl": "wss://\u039f\u03a3" + "." * 128 + "/"}),
-        ("sigma-long-combining-cased", {"webSocketUrl": "wss://\u039f\u03a3" + "\u0301" * 128 + "A/"}),
-        ("sigma-long-combining-terminal", {"webSocketUrl": "wss://\u039f\u03a3" + "\u0301" * 128 + "/"}),
+        (
+            "sigma-long-dots-cased",
+            {"webSocketUrl": "wss://\u039f\u03a3" + "." * 31 + "A/"},
+        ),
+        (
+            "sigma-long-dots-terminal",
+            {"webSocketUrl": "wss://\u039f\u03a3" + "." * 128 + "/"},
+        ),
+        (
+            "sigma-long-combining-cased",
+            {"webSocketUrl": "wss://\u039f\u03a3" + "\u0301" * 128 + "A/"},
+        ),
+        (
+            "sigma-long-combining-terminal",
+            {"webSocketUrl": "wss://\u039f\u03a3" + "\u0301" * 128 + "/"},
+        ),
         ("sigma-previous-ignored", {"webSocketUrl": "wss://A" + "." * 128 + "\u03a3/"}),
         ("sigma-uncased-prefix", {"webSocketUrl": "wss://1\u03a3/"}),
         ("sigma-cased-ignorable", {"webSocketUrl": "wss://A\u03a3\u0345/"}),
@@ -127,7 +147,9 @@ def fixtures(resolve):
 def main():
     root = Path(__file__).resolve().parents[2]
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, default=root / ".reference" / "pyicloud-live")
+    parser.add_argument(
+        "--source", type=Path, default=root / ".reference" / "pyicloud-live"
+    )
     args = parser.parse_args()
     pin = json.loads((root / "tools/reference/source.json").read_text())["live"]
     document = {

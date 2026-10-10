@@ -8,8 +8,8 @@ from pathlib import Path
 
 from icloud import SOURCE
 from pyicloud.services.photos_legacy import (
-    PhotoStreamLibrary,
     PhotoStreamAsset,
+    PhotoStreamLibrary,
     SharedPhotoStreamAlbum,
 )
 
@@ -17,7 +17,12 @@ from pyicloud.services.photos_legacy import (
 class SharedPhotoValuesTests(unittest.TestCase):
     def setUp(self):
         root = Path(__file__).resolve().parents[2]
-        scenario = json.loads((root / "tests/replay/fixtures/synthetic/http/photos-upload-shared-get-found.json").read_text(encoding="utf-8"))
+        scenario = json.loads(
+            (
+                root / "tests/replay/fixtures/synthetic/http/"
+                "photos-upload-shared-get-found.json"
+            ).read_text(encoding="utf-8")
+        )
         self.assertEqual(scenario["source"], SOURCE["live"])
         response = scenario["exchanges"][2]["response"]["body"]
         self.records = json.loads(base64.b64decode(response["value"]))["records"]
@@ -50,8 +55,16 @@ class SharedPhotoValuesTests(unittest.TestCase):
 
     def test_ignored_records(self):
         parser = object.__new__(PhotoStreamLibrary)
-        ignored = [None, 42, "ignored", {"recordType": "future"}, {"recordType": "CPLAsset", "fields": 42}]
-        assets, masters = parser.parse_asset_response({"records": ignored + self.records})
+        ignored = [
+            None,
+            42,
+            "ignored",
+            {"recordType": "future"},
+            {"recordType": "CPLAsset", "fields": 42},
+        ]
+        assets, masters = parser.parse_asset_response(
+            {"records": ignored + self.records}
+        )
         self.assertEqual(len(assets), 1)
         self.assertEqual(len(masters), 1)
         self.assertEqual(parser.parse_asset_response({"records": 42}), ({}, []))
