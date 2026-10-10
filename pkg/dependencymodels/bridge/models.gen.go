@@ -211,13 +211,17 @@ type BridgeCompletionData string
 
 // BridgeExchange defines model for BridgeExchange.
 type BridgeExchange struct {
-	Akdata      interface{} `json:"akdata,omitempty"`
-	Data        *string     `json:"data,omitempty"`
-	Idmsdata    *string     `json:"idmsdata,omitempty"`
-	NextStep    BridgeStep  `json:"nextStep"`
-	Ptkn        string      `json:"ptkn"`
-	SessionUUID string      `json:"sessionUUID"`
+	// Akdata Uninterpreted provider JSON supplied to the native bridge exchange.
+	Akdata      BridgeExchangeAkdata `json:"akdata,omitempty"`
+	Data        *string              `json:"data,omitempty"`
+	Idmsdata    *string              `json:"idmsdata,omitempty"`
+	NextStep    BridgeStep           `json:"nextStep"`
+	Ptkn        string               `json:"ptkn"`
+	SessionUUID string               `json:"sessionUUID"`
 }
+
+// BridgeExchangeAkdata Uninterpreted provider JSON supplied to the native bridge exchange.
+type BridgeExchangeAkdata = interface{}
 
 // BridgeInitiateData defines model for BridgeInitiateData.
 type BridgeInitiateData struct {
