@@ -94,5 +94,7 @@ func photoUploadFiles(files []PhotoUploadFile) []photosupload.PhotosPutAssetFile
 }
 
 func photoUploadUnixMilliseconds(value time.Time) int64 {
-	return int64((float64(value.Unix()) + float64(value.Nanosecond())/float64(time.Second)) * float64(time.Second/time.Millisecond))
+	seconds := float64(value.Unix()) + float64(value.Nanosecond())/float64(time.Second)
+
+	return int64(seconds * float64(time.Second/time.Millisecond))
 }

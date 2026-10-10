@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
-	"testing"
 )
 
 type photoMutationCancellationCall func(context.Context, *icloud.SDK) error

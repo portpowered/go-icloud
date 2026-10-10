@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/oapi-codegen/nullable"
-	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
-	"github.com/portpowered/go-icloud/pkg/dependencymodels/photosupload"
 	"io"
 	"strings"
+
+	"github.com/oapi-codegen/nullable"
+	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/photosupload"
 )
 
 var errPhotoUploadContent = errors.New("photo upload requires seekable content")
@@ -69,21 +71,27 @@ func (read *photosRead) completePhotoUpload(ctx context.Context, request UploadP
 	if !request.Hydrate && request.AlbumID == nil {
 		return result, nil
 	}
+
 	photo, hydrationErr := read.hydratePhotoUpload(ctx, request, registration)
 	if hydrationErr != nil {
 		return nil, hydrationErr
 	}
+
 	if len(photo) == 0 {
 		result.Responses = read.metadata()
+
 		return result, nil
 	}
+
 	result.Photo.Set(photo[0])
 	result.Indexed = true
+
 	if album != nil && album.ID != string(cloudkit.Library) {
 		added, albumErr := read.addPhotoToAlbum(ctx, *album, photo[0])
 		if albumErr != nil {
 			return nil, albumErr
 		}
+
 		if !added {
 			return nil, read.failure(errPhotoMutationRejected, Provider)
 		}
@@ -121,20 +129,10 @@ func (read *photosRead) uploadOnePhoto(ctx context.Context, request UploadPhotoR
 	var result photosupload.PhotosPutAssetResult
 
 	uploadAuth := read.uploadBoundary(request.Auth)
-
-	response, reserve, err := read.sdk.web.PhotosReserveUploads(ctx, uploadAuth,
-		photosupload.PhotosCreateUploadUrlRequest{ZoneName: photoUploadZone(read.auth),
-			Assets: map[string]int64{identity: size}}, serviceFlow)
+	target, err := read.reservePhotoUpload(ctx, uploadAuth, identity, size, serviceFlow)
 	if err != nil {
-		return result, read.failure(err, InvalidResponse)
+		return result, err
 	}
-
-	read.responses = append(read.responses, response)
-	if reserve.UploadUrls == nil || (*reserve.UploadUrls)[identity] == "" {
-		return result, read.failure(errPhotoUploadReservation, InvalidResponse)
-	}
-
-	target := (*reserve.UploadUrls)[identity]
 
 	response, receipt, err := read.sdk.web.PhotosUploadBytes(ctx, read.auth, target, request.Content)
 	if err != nil {
@@ -142,6 +140,33 @@ func (read *photosRead) uploadOnePhoto(ctx context.Context, request UploadPhotoR
 	}
 
 	read.responses = append(read.responses, response)
+
+	return read.registerUploadedPhoto(ctx, request, identity, receipt, serviceFlow)
+}
+
+func (read *photosRead) reservePhotoUpload(ctx context.Context, uploadAuth webtransport.RequestContext,
+	identity string, size int64, serviceFlow bool,
+) (string, error) {
+	response, reserve, err := read.sdk.web.PhotosReserveUploads(ctx, uploadAuth,
+		photosupload.PhotosCreateUploadUrlRequest{ZoneName: photoUploadZone(read.auth),
+			Assets: map[string]int64{identity: size}}, serviceFlow)
+	if err != nil {
+		return "", read.failure(err, InvalidResponse)
+	}
+
+	read.responses = append(read.responses, response)
+
+	if reserve.UploadUrls == nil || (*reserve.UploadUrls)[identity] == "" {
+		return "", read.failure(errPhotoUploadReservation, InvalidResponse)
+	}
+
+	return (*reserve.UploadUrls)[identity], nil
+}
+
+func (read *photosRead) registerUploadedPhoto(ctx context.Context, request UploadPhotoRequest,
+	identity string, receipt photosupload.PhotosSingleFileUpload, serviceFlow bool,
+) (photosupload.PhotosPutAssetResult, error) {
+	var result photosupload.PhotosPutAssetResult
 
 	group := identity
 	if request.ImportGroup != nil && *request.ImportGroup != "" {
@@ -152,7 +177,7 @@ func (read *photosRead) uploadOnePhoto(ctx context.Context, request UploadPhotoR
 		LastModDate:    photoUploadUnixMilliseconds(request.ModificationTime),
 		TimeZoneOffset: int64(request.TimeZoneOffset), SingleFileUploadRequest: receipt}}
 
-	response, registrations, err := read.sdk.web.PhotosRegisterUploads(ctx, uploadAuth,
+	response, registrations, err := read.sdk.web.PhotosRegisterUploads(ctx, read.uploadBoundary(request.Auth),
 		photosupload.PhotosPutAssetRequest{ZoneName: photoUploadZone(read.auth), Files: files,
 			LocalTimeZoneId: request.LocalTimeZoneID, ImportGroup: group}, serviceFlow)
 	if err != nil {
@@ -168,6 +193,7 @@ func (read *photosRead) singlePhotoRegistration(
 	registrations []photosupload.PhotosPutAssetResult,
 ) (photosupload.PhotosPutAssetResult, error) {
 	var result photosupload.PhotosPutAssetResult
+
 	if len(registrations) != 1 {
 		return result, read.failure(errPhotoUploadRegistration, InvalidResponse)
 	}

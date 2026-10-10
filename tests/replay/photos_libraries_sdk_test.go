@@ -11,7 +11,10 @@ import (
 func TestSharedPhotoLibraryAssetReads(t *testing.T) {
 	t.Parallel()
 
-	for _, name := range []string{"photos-shared-library-assets-0.json", "photos-shared-library-assets-1.json", "photos-shared-library-assets-3.json", "photos-shared-library-assets-pagination.json"} {
+	for _, name := range []string{
+		"photos-shared-library-assets-0.json", "photos-shared-library-assets-1.json",
+		"photos-shared-library-assets-3.json", "photos-shared-library-assets-pagination.json",
+	} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", name))

@@ -79,7 +79,8 @@ func TestPhotoUploadPreservesUnknownNumberPrecision(t *testing.T) {
 	t.Parallel()
 	const number = "9007199254740993"
 	const body = `{"singleFile":{"referenceChecksum":"synthetic-reference","size":3,` +
-		`"fileChecksum":"synthetic-checksum","wrappingKey":"synthetic-key","receipt":"synthetic-receipt","opaque":` + number + `}}`
+		`"fileChecksum":"synthetic-checksum","wrappingKey":"synthetic-key",` +
+		`"receipt":"synthetic-receipt","opaque":` + number + `}}`
 	runner, transport := photoUploadControl(t, "photos-upload-bytes-binary.json", body)
 	result, err := runner.call(t)
 	if err != nil {

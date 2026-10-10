@@ -134,6 +134,7 @@ func (read *photosRead) waitForPhotoIndexing(ctx context.Context, deadline time.
 		if errors.Is(err, context.DeadlineExceeded) {
 			kind = Timeout
 		}
+
 		return read.failure(err, kind)
 	}
 

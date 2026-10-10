@@ -3,12 +3,12 @@ package icloud
 import (
 	"encoding/json"
 	"math"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/portpowered/go-icloud/internal/remindersdate"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
-	"strconv"
 )
 
 const photoMillisPerSecond = 1000

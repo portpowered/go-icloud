@@ -100,7 +100,8 @@ var errPhotoVisitorCaller = errors.New("synthetic visitor failure")
 
 func TestRecentlyAddedVisitorStopsBeforeAnotherWindow(t *testing.T) {
 	t.Parallel()
-	scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", "photos-recently-added-overlap-partial-next.json"))
+	scenario := readAccountScenario(t,
+		filepath.Join("fixtures/synthetic/http", "photos-recently-added-overlap-partial-next.json"))
 	exchanges := scenario.Exchanges[:4]
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
@@ -113,7 +114,8 @@ func TestRecentlyAddedVisitorStopsBeforeAnotherWindow(t *testing.T) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	visited := 0
-	result, err := client.VisitRecentlyAddedPhotos(t.Context(), icloud.ListRecentlyAddedPhotosRequest{Auth: auth, Library: nil},
+	request := icloud.ListRecentlyAddedPhotosRequest{Auth: auth, Library: nil}
+	result, err := client.VisitRecentlyAddedPhotos(t.Context(), request,
 		func(event icloud.PhotoVisitEvent) (bool, error) {
 			visited++
 			checkReminderSyncResponses(t, event.Responses, exchanges)

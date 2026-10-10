@@ -555,7 +555,9 @@ func checkPhotoUploadResponses(t *testing.T, actual []icloud.ResponseMetadata, e
 	}
 }
 
-func checkPhotoUploadServiceRegistration(t *testing.T, scenario accountScenario, actual icloud.PhotoUploadRegistration) {
+func checkPhotoUploadServiceRegistration(t *testing.T,
+	scenario accountScenario, actual icloud.PhotoUploadRegistration,
+) {
 	t.Helper()
 	for _, exchange := range scenario.Exchanges {
 		if exchange.Request.Path != protocol.PhotosUploadPhotosPutAssetPath {

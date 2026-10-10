@@ -5,12 +5,13 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"github.com/portpowered/go-icloud/pkg/icloud"
-	"github.com/portpowered/go-icloud/tests/replay"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/portpowered/go-icloud/pkg/icloud"
+	"github.com/portpowered/go-icloud/tests/replay"
 )
 
 func TestPhotoMutationSDKPortableScenarios(t *testing.T) {

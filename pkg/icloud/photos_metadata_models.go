@@ -4,11 +4,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/portpowered/go-icloud/internal/remindersdate"
 	"math"
 	"strconv"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/internal/remindersdate"
 )
 
 type photoNormalizer func(json.RawMessage) (json.RawMessage, error)

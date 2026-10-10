@@ -57,7 +57,8 @@ func runSharedValueRule(t *testing.T, mutation string) {
 	records[0]["fields"] = sharedValueJSON(t, fields)
 	envelope["records"] = sharedValueJSON(t, records)
 	if mutation == "ignored-records" {
-		envelope["records"] = append(json.RawMessage(`[null,42,"ignored",{"recordType":"future"},{"recordType":"CPLAsset","fields":42},`), envelope["records"][1:]...)
+		ignored := json.RawMessage(`[null,42,"ignored",{"recordType":"future"},{"recordType":"CPLAsset","fields":42},`)
+		envelope["records"] = append(ignored, envelope["records"][1:]...)
 	}
 	if mutation == "scalar-records" {
 		envelope["records"] = json.RawMessage(`42`)

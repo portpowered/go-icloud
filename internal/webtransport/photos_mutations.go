@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/portpowered/go-icloud/internal/photosapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations"
-	"net/http"
 )
 
 // ModifyPhotos sends one generated album or asset mutation and preserves provider evidence.

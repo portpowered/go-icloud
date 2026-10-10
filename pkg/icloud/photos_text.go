@@ -3,10 +3,11 @@ package icloud
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 func photoEncryptedText(raw json.RawMessage) (string, bool) {

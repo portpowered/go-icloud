@@ -3,10 +3,11 @@ package replay_test
 import (
 	"encoding/json"
 	"errors"
-	"github.com/portpowered/go-icloud/pkg/icloud"
-	"github.com/portpowered/go-icloud/tests/replay"
 	"path/filepath"
 	"testing"
+
+	"github.com/portpowered/go-icloud/pkg/icloud"
+	"github.com/portpowered/go-icloud/tests/replay"
 )
 
 func TestPhotosStatusSDKPortableScenarios(t *testing.T) {

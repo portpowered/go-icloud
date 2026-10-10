@@ -5,10 +5,11 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
-	pm "github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations"
 	"io"
 	"strings"
+
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
+	pm "github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations"
 )
 
 // CreatePhotoAlbum creates an album or folder using injected time and entropy.

@@ -3,11 +3,11 @@ package icloud
 import (
 	"context"
 	"errors"
+	"maps"
+
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/webtransport"
-
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/photosupload"
-	"maps"
 )
 
 var errPhotoUploadReservation = errors.New("photo upload reservation has no URL for the requested file")

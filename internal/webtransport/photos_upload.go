@@ -44,26 +44,38 @@ func (client *Client) PhotosReserveUploads(ctx context.Context, auth RequestCont
 		return nil, data, err
 	}
 
-	var fields map[string]json.RawMessage
-
-	_ = json.Unmarshal(response.Body, &fields)
-
-	if raw := fields[protocol.PhotosUploadReservationResponseUploadUrls]; raw != nil {
-		var urls map[string]json.RawMessage
-
-		decodeErr := json.Unmarshal(raw, &urls)
-		if decodeErr != nil || urls == nil {
-			return nil, data, responseFailure(Decode, errPhotoUploadPayload, response)
-		}
-
-		for _, value := range urls {
-			if bytes.Equal(value, []byte("null")) {
-				return nil, data, responseFailure(Decode, errPhotoUploadPayload, response)
-			}
-		}
+	if !validPhotoReservationURLs(response.Body) {
+		return nil, data, responseFailure(Decode, errPhotoUploadPayload, response)
 	}
 
 	return response, data, nil
+}
+
+func validPhotoReservationURLs(body []byte) bool {
+	var fields map[string]json.RawMessage
+
+	if json.Unmarshal(body, &fields) != nil {
+		return false
+	}
+
+	raw := fields[protocol.PhotosUploadReservationResponseUploadUrls]
+	if raw == nil {
+		return true
+	}
+
+	var urls map[string]json.RawMessage
+
+	if json.Unmarshal(raw, &urls) != nil || urls == nil {
+		return false
+	}
+
+	for _, value := range urls {
+		if bytes.Equal(value, []byte("null")) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // PhotosRegisterUploads registers previously stored receipts without retrying writes.

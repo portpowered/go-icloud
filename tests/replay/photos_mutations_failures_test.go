@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/portpowered/go-icloud/pkg/icloud"
-	"github.com/portpowered/go-icloud/tests/replay"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/portpowered/go-icloud/pkg/icloud"
+	"github.com/portpowered/go-icloud/tests/replay"
 )
 
 func TestPhotoMutationInvalidAcknowledgements(t *testing.T) {
