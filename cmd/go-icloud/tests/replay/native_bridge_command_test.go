@@ -94,7 +94,13 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 		var random []string
 		decode(t, entropy["random_bytes"], &random)
 		if len(random) > 0 {
-			runner.entropy.initial, _ = base64.StdEncoding.DecodeString(random[0])
+			sample, sampleErr := base64.StdEncoding.DecodeString(random[0])
+			if sampleErr != nil {
+				t.Fatal(sampleErr)
+			}
+			if len(sample) == 256 {
+				runner.entropy.initial = sample
+			}
 		}
 	}
 	sdk, err := icloud.New(icloud.WithHTTPTransport(runner), icloud.WithRandomSource(&runner.entropy), icloud.WithClock(func() time.Time { return time.Unix(1700000000, 0) }))
