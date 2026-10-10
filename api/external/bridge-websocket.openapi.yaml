@@ -155,9 +155,11 @@ components:
             markers:
               - marker: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_SHORT_LIMIT'}
                 width: 16
+                byteWidth: {$ref: '#/components/schemas/ExtensionLengths/values/MediumLengthBytes'}
                 order: big
               - marker: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_LONG_MARKER'}
                 width: 64
+                byteWidth: {$ref: '#/components/schemas/ExtensionLengths/values/LongLengthBytes'}
                 order: big
             default: short
           mask:
