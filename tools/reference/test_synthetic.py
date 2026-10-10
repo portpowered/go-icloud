@@ -498,12 +498,12 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 31)
+        self.assertEqual(len(paths), 32)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 32)
+        self.assertEqual(pairs, 33)
         complete = json.loads(
             (FIXTURES / "reminders-query-compound-all-types.json").read_text()
         )["result"]
@@ -612,12 +612,12 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_change_iteration_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-changes-*.json"))
-        self.assertEqual(len(paths), 72)
+        self.assertEqual(len(paths), 73)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 75)
+        self.assertEqual(pairs, 76)
         full = json.loads(
             (FIXTURES / "reminders-changes-full-deleted.json").read_text()
         )
@@ -685,7 +685,14 @@ class SyntheticTests(unittest.TestCase):
                     replay_synthetic(path)
 
     def test_reminder_lookup_complete_projection_and_text_fallbacks(self):
-        for name in ["full", "audit-dates", "unreadable-documents"]:
+        for name in [
+            "full",
+            "audit-dates",
+            "unreadable-documents",
+            "unpadded-string",
+            "ignored-base64",
+            "empty-decoded-bytes",
+        ]:
             path = FIXTURES / f"reminders-get-{name}.json"
             scenario = json.loads(path.read_text(encoding="utf-8"))
             with self.subTest(case=name):
@@ -800,7 +807,7 @@ class SyntheticTests(unittest.TestCase):
 
     def test_recently_added_matrix_preserves_newest_first_without_count_requests(self):
         paths = sorted(FIXTURES.glob("photos-recently-added-*.json"))
-        self.assertEqual(len(paths), 31)
+        self.assertEqual(len(paths), 32)
         self.assertEqual(sum(replay_synthetic(path) for path in paths), 128)
         for path in paths:
             scenario = json.loads(path.read_text(encoding="utf-8"))

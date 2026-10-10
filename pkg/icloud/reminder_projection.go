@@ -1,9 +1,9 @@
 package icloud
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/reminderstext"
@@ -72,9 +72,23 @@ func reminderDocumentText(record cloudkit.CKRecord, name, absent, unreadable str
 		return unreadable
 	}
 
-	data, err := base64.StdEncoding.DecodeString(encoded)
+	bytes, err := reminderRelatedBytes(record, name)
 	if err != nil {
 		return unreadable
+	}
+
+	if !bytes {
+		padding := (reminderBase64Quantum - len(encoded)%reminderBase64Quantum) % reminderBase64Quantum
+		encoded += strings.Repeat("=", padding)
+	}
+
+	data, err := reminderRelatedBase64(encoded)
+	if err != nil {
+		return unreadable
+	}
+
+	if bytes && len(data) == 0 {
+		return absent
 	}
 
 	text, err := reminderstext.Decode(data)

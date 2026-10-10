@@ -27,7 +27,7 @@ func TestReminderLookupSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 19 {
+	if len(paths) != 22 {
 		t.Fatal("reminder lookup scenario inventory changed")
 	}
 
