@@ -70,7 +70,7 @@ func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.List
 	client.t.Helper()
 	client.visits++
 	var photo icloud.Photo
-	decode(client.t, json.RawMessage(`{"id":"asset","filename":"photo.jpg","masterID":"master","created":"2020-01-01T00:00:00Z","added":"2020-01-01T00:00:00Z","itemType":"image","isLivePhoto":false,"assetMetadata":{},"dimensions":[null,null],"size":1,"versions":{"original":{"url":"https://photos.example.invalid/photo","size":1,"type":"public.jpeg","checksum":"one"}}}`), &photo)
+	decode(client.t, json.RawMessage(`{"id":"asset","filename":"photo.jpg","masterID":"master","created":"2020-01-01T00:00:00Z","added":"2020-01-01T00:00:00Z","itemType":"image","isLivePhoto":false,"assetMetadata":{},"dimensions":[null,null],"size":1,"versions":{"original":{"filename":"photo.jpg","url":"https://photos.example.invalid/photo","size":1,"type":"public.jpeg","checksum":"one"}}}`), &photo)
 	responses := syncReceipt("page")
 	_, err := visitor(icloud.PhotoVisitEvent{Photo: photo, Responses: responses})
 	if err != nil {
