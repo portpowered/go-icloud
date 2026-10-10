@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/portpowered/go-icloud/internal/accountapi"
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 	"github.com/portpowered/go-icloud/tests/replay"
 )

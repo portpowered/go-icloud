@@ -1,0 +1,9 @@
+package: remindersapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/remindersapi/client.gen.go
+output-options:
+  nullable-type: true
+import-mapping:
+  ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit

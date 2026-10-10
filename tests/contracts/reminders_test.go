@@ -168,8 +168,8 @@ func TestRemindersGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: cloudKitModelsPath, Config: "../../pkg/dependencymodels/cloudkit/config.yaml",
 			Output: "../../pkg/dependencymodels/cloudkit/models.gen.go"},
-		{Schema: remindersSchemaPath, Config: "../../internal/remindersapi/config.yaml",
-			Output: "../../internal/remindersapi/client.gen.go"},
+		{Schema: remindersSchemaPath, Config: "../../pkg/dependencies/webtransport/remindersapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/remindersapi/client.gen.go"},
 	} {
 		t.Run(filepath.Base(artifact.Output), func(t *testing.T) { t.Parallel(); verifyGeneration(t, artifact) })
 	}

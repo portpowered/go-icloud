@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/portpowered/go-icloud/internal/photosuploadapi"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosuploadapi"
 )
 
 const photosUploadSchemaPath = "../../api/external/photos-upload.openapi.yaml"
@@ -18,7 +18,7 @@ func TestPhotosUploadGenerationHasNoDrift(t *testing.T) {
 		Config: "../../pkg/dependencymodels/photosupload/config.yaml",
 		Output: "../../pkg/dependencymodels/photosupload/models.gen.go"})
 	verifyGeneration(t, generationArtifact{Schema: photosUploadSchemaPath,
-		Config: "../../internal/photosuploadapi/config.yaml", Output: "../../internal/photosuploadapi/client.gen.go"})
+		Config: "../../pkg/dependencies/webtransport/photosuploadapi/config.yaml", Output: "../../pkg/dependencies/webtransport/photosuploadapi/client.gen.go"})
 }
 
 func TestPhotosUploadReceiptPreservesUnknownNumber(t *testing.T) {

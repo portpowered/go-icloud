@@ -3,7 +3,7 @@ package icloud
 import (
 	"context"
 
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 )
 
 const reminderSnapshotOperation = "ListReminderSnapshot"

@@ -201,8 +201,8 @@ func TestFindMyGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: findMyModelsPath, Config: "../../pkg/dependencymodels/findmy/config.yaml",
 			Output: "../../pkg/dependencymodels/findmy/models.gen.go"},
-		{Schema: findMySchemaPath, Config: "../../internal/findmyapi/config.yaml",
-			Output: "../../internal/findmyapi/client.gen.go"},
+		{Schema: findMySchemaPath, Config: "../../pkg/dependencies/webtransport/findmyapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/findmyapi/client.gen.go"},
 	} {
 		t.Run(filepath.Base(artifact.Output), func(t *testing.T) {
 			t.Parallel()

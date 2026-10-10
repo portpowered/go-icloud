@@ -1,0 +1,9 @@
+package: findmyapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/findmyapi/client.gen.go
+output-options:
+  nullable-type: true
+import-mapping:
+  ./findmy-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/findmy

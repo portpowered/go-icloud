@@ -5,7 +5,7 @@ import (
 	"errors"
 	"maps"
 
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/findmy"
 )
 

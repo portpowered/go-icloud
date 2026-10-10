@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/portpowered/go-icloud/internal/authapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 

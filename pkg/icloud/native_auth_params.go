@@ -1,6 +1,6 @@
 package icloud
 
-import "github.com/portpowered/go-icloud/internal/authapi"
+import "github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 
 func nativeAuthParams(state NativeAuthState) authapi.ListAuthTrustedDevicesParams {
 	params := authapi.ListAuthTrustedDevicesParams{ClientBuildNumber: state.Auth.ClientBuildNumber,

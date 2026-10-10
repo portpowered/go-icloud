@@ -1,0 +1,9 @@
+package: driveapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/driveapi/client.gen.go
+output-options:
+  nullable-type: true
+import-mapping:
+  ./drive-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/drive

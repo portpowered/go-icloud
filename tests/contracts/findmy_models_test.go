@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/portpowered/go-icloud/internal/findmyapi"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/findmyapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/findmy"
 	"github.com/portpowered/go-icloud/tests/replay"
 )

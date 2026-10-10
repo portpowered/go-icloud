@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
 )
 

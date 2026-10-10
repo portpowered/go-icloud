@@ -1,0 +1,11 @@
+package: photosuploadapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/photosuploadapi/client.gen.go
+output-options:
+  nullable-type: true
+  skip-prune: true
+import-mapping:
+  ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit
+  ./photos-upload-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/photosupload

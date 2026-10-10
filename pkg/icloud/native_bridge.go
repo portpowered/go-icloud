@@ -13,9 +13,9 @@ import (
 
 	"github.com/oapi-codegen/nullable"
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/internal/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencies/bridge"
 	"github.com/portpowered/go-icloud/pkg/dependencies/bridgewebsocket"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 	bridgeModels "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )

@@ -5,7 +5,7 @@ account devices, family members, member photos, storage usage and plan summary.
 `pkg/dependencymodels/account/models.gen.go` is generated with oapi-codegen v2.8.0.
 Its canonical definitions live in `api/external/account-models.openapi.yaml`.
 The route schema references those definitions; generated request builders in
-`internal/accountapi/client.gen.go` import the shared models instead of
+`pkg/dependencies/webtransport/accountapi/client.gen.go` import the shared models instead of
 duplicating them. The generator runtime is pinned in go.mod.
 Run `make generate-api` to regenerate it. Contract tests regenerate the models
 and reject drift (SCHEMA-16).

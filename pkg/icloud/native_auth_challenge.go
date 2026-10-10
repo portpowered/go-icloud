@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/portpowered/go-icloud/internal/authapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/bridge"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 	bridgemodels "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )

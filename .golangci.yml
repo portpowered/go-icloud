@@ -104,7 +104,7 @@ linters:
         linters: [revive]
         text: package-comments
       # GO-13: the generated sibling owns the package godoc; a second one fails godoclint.
-      - path: internal/accountapi/photo\.go
+      - path: pkg/dependencies/webtransport/accountapi/photo\.go
         linters: [revive]
         text: package-comments
       # GO-13: models.gen.go owns this package godoc; only the named handwritten file is exempt.

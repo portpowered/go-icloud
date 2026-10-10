@@ -54,8 +54,8 @@ func TestSavedSessionGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: "../../api/external/auth-models.openapi.yaml", Config: "../../pkg/dependencymodels/auth/config.yaml",
 			Output: "../../pkg/dependencymodels/auth/models.gen.go"},
-		{Schema: "../../api/external/auth.openapi.yaml", Config: "../../internal/authapi/config.yaml",
-			Output: "../../internal/authapi/client.gen.go"},
+		{Schema: "../../api/external/auth.openapi.yaml", Config: "../../pkg/dependencies/webtransport/authapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/authapi/client.gen.go"},
 	} {
 		t.Run(artifact.Output, func(t *testing.T) { t.Parallel(); verifyGeneration(t, artifact) })
 	}

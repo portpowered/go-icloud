@@ -12,7 +12,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/portpowered/go-icloud/internal/accountapi"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 

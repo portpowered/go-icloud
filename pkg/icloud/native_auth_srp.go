@@ -6,10 +6,10 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/portpowered/go-icloud/internal/authapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/internal/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencies/srp"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 	srpmodels "github.com/portpowered/go-icloud/pkg/dependencymodels/srp"
 )

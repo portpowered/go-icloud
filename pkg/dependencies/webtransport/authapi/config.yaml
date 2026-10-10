@@ -1,0 +1,9 @@
+package: authapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/authapi/client.gen.go
+output-options:
+  nullable-type: true
+import-mapping:
+  ./auth-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/auth

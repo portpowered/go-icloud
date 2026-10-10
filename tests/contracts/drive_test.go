@@ -412,10 +412,10 @@ func TestDriveGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: driveModelsPath, Config: "../../pkg/dependencymodels/drive/config.yaml",
 			Output: "../../pkg/dependencymodels/drive/models.gen.go"},
-		{Schema: driveSchemaPath, Config: "../../internal/driveapi/config.yaml",
-			Output: "../../internal/driveapi/client.gen.go"},
-		{Schema: driveContentSchemaPath, Config: "../../internal/drivecontentapi/config.yaml",
-			Output: "../../internal/drivecontentapi/client.gen.go"},
+		{Schema: driveSchemaPath, Config: "../../pkg/dependencies/webtransport/driveapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/driveapi/client.gen.go"},
+		{Schema: driveContentSchemaPath, Config: "../../pkg/dependencies/webtransport/drivecontentapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/drivecontentapi/client.gen.go"},
 	} {
 		t.Run(artifact.Config, func(t *testing.T) {
 			t.Parallel()

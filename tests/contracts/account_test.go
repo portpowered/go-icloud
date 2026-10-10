@@ -365,8 +365,8 @@ func TestAccountGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: accountModelsPath, Config: "../../pkg/dependencymodels/account/config.yaml",
 			Output: "../../pkg/dependencymodels/account/models.gen.go"},
-		{Schema: accountSchemaPath, Config: "../../internal/accountapi/config.yaml",
-			Output: "../../internal/accountapi/client.gen.go"},
+		{Schema: accountSchemaPath, Config: "../../pkg/dependencies/webtransport/accountapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/accountapi/client.gen.go"},
 		{Schema: "../../api/client-models.openapi.yaml", Config: "../../pkg/icloud/config.yaml",
 			Output: "../../pkg/icloud/models.gen.go"},
 	} {
