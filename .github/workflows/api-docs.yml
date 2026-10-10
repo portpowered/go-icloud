@@ -30,7 +30,7 @@ jobs:
           go test -race -coverpkg=./pkg/...,./internal/... -coverprofile=coverage-combined.out ./tests/replay ./pkg/... ./internal/...
           go run ./tools/coverage -profile coverage-combined.out -min 80 -filtered-profile coverage-public.out
       - name: Build guides and canonical API references
-        uses: portpowered/api-docs-website-github-action@ca7008e2b4de6e600ec5157f9adb015fafd54961
+        uses: portpowered/api-docs-website-github-action@4bdb5216ef1a13b9237093dd781de1e1b26946df
         with:
           openapi: 'api/**/*.openapi.yaml'
           asyncapi: 'api/**/*.asyncapi.yaml'

@@ -5,7 +5,7 @@ fixture provenance, generation commands and reviewer evidence remain repository
 Markdown and are excluded from the customer navigation (LIB-17, template 12–13).
 
 The Pages workflow builds all OpenAPI operations and AsyncAPI channels with the shared Fumadocs action,
-pinned to `ca7008e2b4de6e600ec5157f9adb015fafd54961`. Pull requests build
+pinned to `4bdb5216ef1a13b9237093dd781de1e1b26946df`. Pull requests build
 and check the same export used for main deployment. Configure GitHub Pages to use
 GitHub Actions before the first deployment. Coverage HTML and badge JSON belong
 under `coverage/` in the same Pages artifact.
@@ -18,6 +18,13 @@ AsyncAPI `externalDocs` links, including nested channel documentation. Missing g
 fails even when a fallback page exists. The gate is an automated aid; inspect
 required fields, known variants, example values and request snippets visually
 before final independent approval.
+
+The renderer derives AsyncAPI 3 presentation documents from canonical AsyncAPI 2
+without changing the source schemas. Publish maps to application send and
+subscribe to receive. Server variables, channel parameters and extension links
+remain available. Non-JSON payloads display their exact local source and original
+schema format rather than an invented JSON model. Unsupported lossy adaptations
+fail the build. Both generation and runtime consume the same derived documents.
 
 The renderer opts into JSON encoding for canonical `plain/text` and wildcard
 request media aliases. The reference graph schema view preserves conjunctions,
