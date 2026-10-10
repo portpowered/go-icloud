@@ -1,9 +1,8 @@
 # Independent review record
 
-Review state: **not approved**. No complete-library final approval is recorded.
-Final acceptance requires an independent functional review and passing CI at
-the reviewed commit under the current standards; historical scoped reviews
-do not sign off the current implementation.
+Review state: **functional review approved, final checks pending**.
+Final acceptance requires passing normal checks and CI under the current
+standards; historical scoped reviews do not sign off the current implementation.
 
 The records below preserve historical and scoped reviewer receipts. Current
 implementation and test receipts belong in the
@@ -15,6 +14,32 @@ schema checks, functional replay, race tests, coverage, public consumers and
 ordinary lint. Historical provenance-engine findings below are superseded as
 acceptance requirements. Custom compiler or exhaustive ownership proofs are
 not required, and their isolated implementation is not shipping code.
+
+## Current functional review — 2026-10-10
+
+Independent reviewer: `practical_functional_review` (read-only; no implementation).
+Reviewed implementation: `bb27394f426702ab392beeef7c85befc4fe30110`, with release/lint
+cleanup additionally reviewed at `5ba0ff64403dcbe71fc0c3b665cefe7c078e3335`.
+The shipping SDK and CLI code are unchanged between those commits.
+
+Verdict: no material functional, security or compatibility findings in the
+reviewed Photos, Reminders, authentication or CLI code. Approval is contingent
+on passing ordinary final checks and CI. No additional provenance machinery
+is required.
+
+The review examined paired requests and public results, cursor continuation,
+Photos mutations, atomic reminder relations and attachment deletion, provider
+failures, caller-state preservation, authentication binding, cancellation,
+logout and secret-output protection. The bridge alias preserves existing Go
+call compatibility, and primitive-control comparisons preserve behavior.
+The release cleanup removes a command for an absent provenance package and
+unused exceptions; generation, lint, builds, race/replay, coverage and public
+compatibility checks remain intact.
+
+Current measured test evidence is recorded in the
+[completion matrix](completion-matrix.md). The full 144-test Python reference
+suite and separate SDK/CLI coverage are behavioral evidence, not a claim that
+every implementation branch is exercised. Live provider testing remains opt-in.
 
 ## Reviewer A — initial blind audit
 
