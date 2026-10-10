@@ -129,6 +129,15 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 		if saved.Auth.ClientID != state.Auth.ClientID || saved.AccountName != state.AccountName {
 			t.Fatal("private native state lost identity")
 		}
+		if operation == "pcs-access" {
+			savedState, marshalErr := json.Marshal(saved)
+			if marshalErr != nil {
+				t.Fatal(marshalErr)
+			}
+			if !bytes.Equal(savedState, encoded) {
+				t.Fatal("PCS command changed the complete persisted authentication state")
+			}
+		}
 	}
 }
 
