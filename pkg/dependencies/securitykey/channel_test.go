@@ -265,6 +265,7 @@ func TestRejectInvalidCBOR(t *testing.T) {
 			payloadLength := len(payload)
 			if payloadLength > math.MaxUint16 || payloadLength > int(wire.MaxPayloadBytes) {
 				t.Fatal("fixture payload exceeds HID limit")
+				return
 			}
 
 			binary.BigEndian.PutUint16(response[5:], uint16(payloadLength))

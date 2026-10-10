@@ -71,7 +71,6 @@ func (channel *channel) call(ctx context.Context, command wire.CTAPCommand, requ
 
 func decodeResponse(encoder cbor.EncMode, encoded []byte, response any) error {
 	decoder, err := assertionDecoderOptions().DecMode()
-
 	if err != nil {
 		return keyFailure("CBOR configuration", err)
 	}
@@ -408,7 +407,6 @@ func (channel *channel) selectCredential(
 		}
 		maximum = nextMaximum
 		filtered = filtered[skipped:]
-
 	}
 
 	return &wire.Credential{
@@ -419,6 +417,7 @@ func (channel *channel) selectCredential(
 
 func filterCredentials(info *wire.InfoResponse, credentials []wire.Credential) []wire.Credential {
 	filtered := make([]wire.Credential, 0, len(credentials))
+
 	for _, credential := range credentials {
 		if info.MaxCredentialIdLength == nil || *info.MaxCredentialIdLength == 0 ||
 			len(credential.Id) <= *info.MaxCredentialIdLength {
@@ -539,6 +538,7 @@ func selectionRetry(err error, maximum, count int) (int, int, error) {
 	if !errors.As(err, &failure) || failure.Stage != stageCTAP {
 		return 0, 0, err
 	}
+
 	switch failure.Status {
 	case int(wire.RequestTooLarge):
 		if maximum <= 1 {

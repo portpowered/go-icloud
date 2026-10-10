@@ -156,6 +156,7 @@ func nativeSecurityKeyFailure(operation string, err error) *ClientError {
 	}
 
 	kind := Transport
+
 	var deviceError *securitykey.Error
 
 	switch {

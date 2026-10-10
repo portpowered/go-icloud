@@ -102,7 +102,6 @@ func (backend HIDBackend) Open(ctx context.Context, deviceID string) (Connection
 	}
 
 	err = ctx.Err()
-
 	if err != nil {
 		return nil, keyFailure(stageBackend, errors.Join(err, connection.Close()))
 	}

@@ -22,6 +22,8 @@ const (
 	syntheticCredentialID   = "qrvM"
 	syntheticRelyingPartyID = "apple.com"
 	syntheticOrigin         = "https://apple.com"
+	syntheticU2FFixture     = "python-u2f-synthetic.json"
+	wrongRelyingPartyCase   = "wrong relying party"
 )
 
 var (
@@ -59,13 +61,13 @@ func (backend fakeBackend) Devices(ctx context.Context) ([]Device, error) {
 }
 
 //nolint:ireturn // The fake implements the injected Backend interface returning Connection.
-func (backend fakeBackend) Open(ctx context.Context, id string) (Connection, error) {
+func (backend fakeBackend) Open(ctx context.Context, deviceID string) (Connection, error) {
 	err := ctx.Err()
 	if err != nil {
 		return nil, fmt.Errorf("synthetic open context: %w", err)
 	}
 
-	if id != syntheticDeviceID {
+	if deviceID != syntheticDeviceID {
 		return nil, ErrProtocol
 	}
 
@@ -207,7 +209,7 @@ func TestPythonCTAP2Transcript(t *testing.T) {
 
 	for _, name := range []string{
 		"python-ctap2-synthetic.json",
-		"python-u2f-synthetic.json",
+		syntheticU2FFixture,
 		"python-fallback-synthetic.json",
 		"python-uv1-synthetic.json",
 		"python-uv2-synthetic.json",
@@ -265,7 +267,7 @@ func assertPythonTranscript(t *testing.T, name string) {
 	assertConsumed(t, connection)
 	assertConsumed(t, discovery)
 
-	if name == "python-u2f-synthetic.json" && *waits != 1 {
+	if name == syntheticU2FFixture && *waits != 1 {
 		t.Fatal("U2F presence was not polled")
 	}
 }
@@ -447,7 +449,7 @@ func TestRejectInvalidAssertionBindings(t *testing.T) {
 		User:                nil,
 	}
 	cases := map[string]wire.AssertionResponse{
-		"wrong relying party":  valid,
+		wrongRelyingPartyCase:  valid,
 		"missing presence":     valid,
 		"missing signature":    valid,
 		"different credential": valid,
@@ -470,7 +472,7 @@ func TestRejectInvalidAssertionBindings(t *testing.T) {
 			t.Parallel()
 
 			rp := syntheticRelyingPartyID
-			if name == "wrong relying party" {
+			if name == wrongRelyingPartyCase {
 				rp = "example.com"
 			}
 
