@@ -123,7 +123,7 @@ func TestSourcePINInteractionUnavailable(t *testing.T) {
 		MaxMsgSize:               nil,
 		PinUvAuthProtocols:       nil,
 		Versions:                 nil,
-	}, wire.PINProtocolV2, syntheticRelyingPartyID, false, true)
+	}, pinProtocolNegotiation{protocol: wire.PINProtocolV2, supported: true}, syntheticRelyingPartyID, false, true)
 	if !errors.Is(err, ErrPINRequired) {
 		t.Fatalf("source PIN interaction failure missing: %v", err)
 	}

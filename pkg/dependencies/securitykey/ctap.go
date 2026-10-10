@@ -159,7 +159,7 @@ func (channel *channel) setMessageLimit(info *wire.InfoResponse) error {
 }
 
 func (channel *channel) retryAssertion(
-	ctx context.Context, request Request, data []byte, credentials []wire.Credential, protocol wire.PINProtocol,
+	ctx context.Context, request Request, data []byte, credentials []wire.Credential, protocol pinProtocolNegotiation,
 ) (Assertion, error) {
 	required, allowUV := false, true
 
@@ -202,7 +202,7 @@ func ctapFallbackFailure(stage string) bool {
 
 func (channel *channel) assertAttempt(
 	ctx context.Context, request Request, data []byte, credentials []wire.Credential,
-	protocol wire.PINProtocol, required, allowUV bool,
+	protocol pinProtocolNegotiation, required, allowUV bool,
 ) (Assertion, error) {
 	info, err := channel.info(ctx)
 	if err != nil {

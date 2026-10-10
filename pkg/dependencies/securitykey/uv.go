@@ -20,30 +20,36 @@ type authParameters struct {
 	internalUV bool
 }
 
+// The absence of a negotiated PIN protocol is local policy, not a wire value.
+type pinProtocolNegotiation struct {
+	protocol  wire.PINProtocol
+	supported bool
+}
+
 func infoOption(info *wire.InfoResponse, option wire.InfoOption) bool {
 	return info.Options != nil && (*info.Options)[string(option)]
 }
 
-func negotiatedProtocol(info *wire.InfoResponse) wire.PINProtocol {
+func negotiatedProtocol(info *wire.InfoResponse) pinProtocolNegotiation {
 	if info.PinUvAuthProtocols == nil {
-		return 0
+		return pinProtocolNegotiation{protocol: wire.PINProtocolV1, supported: false}
 	}
 
 	for _, candidate := range []wire.PINProtocol{wire.PINProtocolV2, wire.PINProtocolV1} {
 		if slices.Contains(*info.PinUvAuthProtocols, int(candidate)) {
-			return candidate
+			return pinProtocolNegotiation{protocol: candidate, supported: true}
 		}
 	}
 
-	return 0
+	return pinProtocolNegotiation{protocol: wire.PINProtocolV1, supported: false}
 }
 
 func (channel *channel) authParameters(
-	ctx context.Context, info *wire.InfoResponse, protocol wire.PINProtocol, relyingPartyID string,
+	ctx context.Context, info *wire.InfoResponse, negotiation pinProtocolNegotiation, relyingPartyID string,
 	required, allowUV bool,
 ) (authParameters, error) {
 	result := authParameters{
-		protocol:   protocol,
+		protocol:   negotiation.protocol,
 		token:      nil,
 		internalUV: false,
 	}
@@ -58,11 +64,11 @@ func (channel *channel) authParameters(
 			return result, nil
 		}
 
-		if !protocol.Valid() {
+		if !negotiation.supported || !negotiation.protocol.Valid() {
 			return result, keyFailure("PIN protocol", ErrUnsupported)
 		}
 
-		token, err := channel.uvToken(ctx, protocol, relyingPartyID)
+		token, err := channel.uvToken(ctx, negotiation.protocol, relyingPartyID)
 		result.token = token
 
 		return result, err
