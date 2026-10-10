@@ -3,12 +3,17 @@ title: Standalone CLI
 description: Authenticate, select account resources, and run typed commands with private receipts.
 ---
 
-Install the public CLI module with Go 1.25 or newer:
+Install the development CLI containing these commands with Go 1.25 or newer:
 
 ```sh
-go install github.com/portpowered/go-icloud/cmd/go-icloud@latest
+go install github.com/portpowered/go-icloud/cmd/go-icloud@v0.0.0-20261010092154-f6d0c654ce58
 go-icloud --help
 ```
+
+This published development version pins the public SDK
+`v0.0.0-20261010090501-076520573dd5`. Final conformance and stable SDK/CLI
+releases remain pending. After release, select its explicit CLI version; `@latest`
+may currently resolve to an earlier feature set.
 
 Supply your account through `GO_ICLOUD_ACCOUNT` and your password through
 `GO_ICLOUD_PASSWORD` from your secret store, or pipe it to `--secret-stdin login`.

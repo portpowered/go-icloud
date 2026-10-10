@@ -9,14 +9,17 @@
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://portpowered.github.io/go-icloud/docs/guides/)
 
 A Go iCloud client for account information, Find My devices, Drive, Photos, and
-Reminders. Import the public SDK:
+Reminders. Install the public SDK with Go 1.25 or newer:
 
-Use Go 1.25 or newer. The pinned security-key HID backend supports Windows,
-Linux and macOS without a cgo toolchain and sets this minimum version.
+The pinned security-key HID backend supports Windows, Linux and macOS without
+a cgo toolchain and sets this minimum version.
 
 ```sh
-go get github.com/portpowered/go-icloud/pkg/icloud
+go get github.com/portpowered/go-icloud/pkg/icloud@v0.0.0-20261010090501-076520573dd5
 ```
+
+This development version contains the APIs described below. Final conformance
+and a stable release remain pending; `@latest` may select an earlier release.
 
 Authenticate with caller-owned credentials before selecting a discovered service:
 
@@ -55,6 +58,9 @@ Customer guides explain [authentication and renewal](https://portpowered.github.
 [Reminders](https://portpowered.github.io/go-icloud/docs/guides/reminders),
 [configuration and errors](https://portpowered.github.io/go-icloud/docs/guides/configuration),
 and the [standalone CLI](https://portpowered.github.io/go-icloud/docs/guides/cli).
+
+Pages publication is pending. Until deployment, read the same customer guides
+in [the repository](docs/guides/index.mdx).
 
 Synthetic paired replay establishes
 compatibility with the pinned Python reference; it does not establish successful

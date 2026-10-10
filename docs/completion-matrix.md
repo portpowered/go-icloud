@@ -20,11 +20,11 @@ operation parity. No row below grants final merge or release acceptance.
 | Reminders | Create, update, soft delete; CRDT encoding and resolution tokens | Implemented; 11 paired scenarios, full local checks and two scoped reviews |
 | Reminders hashtags | Create, rename, soft delete; atomic parent links and revision updates | Implemented; 6 paired scenarios and full local checks; final review pending |
 | Other Reminders relations | Location alarm/trigger, URL/image attachment updates, recurrence rules | Implemented; 15 paired scenarios and an empty-ID control; scoped race checks; integrated acceptance pending |
-| Auth login | Native SRP s2k/s2k_fo, service one-factor paths, paused MFA and returned credentials | Implemented; combined SDK race verification pending |
-| Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Implemented, including portable hardware adapter; combined SDK race verification pending |
-| Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Implemented, including resumed consent policy; combined SDK race verification pending |
+| Auth login | Native SRP s2k/s2k_fo, service one-factor paths, paused MFA and returned credentials | Implemented; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
+| Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Implemented, including portable hardware adapter; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
+| Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Implemented, including resumed consent policy; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
 | Auth sockets | Injected raw WebSocket, protobuf bootstrap/subscription/ACK, signing/proofs, modern/legacy bridge, teardown | Implemented; 53 socket and 30 combined paired timelines plus lifecycle controls; integrated acceptance pending |
-| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; complete workspace race suite passed at `8743c53`; published SDK pin/tidy verified at `970b428`; public-pin race and final acceptance pending |
+| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `0765205` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
 
 For each port: bind source inputs/defaults and complete results/errors to named
 schema models, execute the public Go operation against every applicable paired

@@ -1,25 +1,25 @@
 # Documentation audience audit
 
 This inventory covers every tracked Markdown and MDX file in the integrated
-documentation source audited through library commit `f9c2985`. The original
+documentation source audited through library commit `f6d0c65`. The original
 45-file baseline was recorded at `ca02c17`; this inventory now contains all
 47 tracked Markdown and MDX files. It separates customer
 usage from contributor contracts, provenance and review records (LIB-17;
-template items 12–13). Add new documents here when their implementation commits
+template items 12â€“13). Add new documents here when their implementation commits
 are integrated. This source audit does not certify the rendered deployment.
 
 | File | Audience and unique purpose | Audit disposition |
 | --- | --- | --- |
 | `README.md` | Customer landing, installation, SDK entry point, badges | Native authentication first; saved-session route retained; focused installation and service guides. |
-| `docs/guides/index.mdx` | Customer service navigation | New MDX landing, links to each operation guide. |
+| `docs/guides/index.mdx` | Customer service navigation | MDX landing, links to each operation guide. |
 | `docs/guides/authentication.mdx` | Customer account/session lifecycle | Native SRP, MFA, bridge, hardware/injected assertions and complete private state; saved-session renewal retained. |
-| `docs/guides/account.mdx` | Customer account discovery | New devices/family/storage usage, generated reference links. |
-| `docs/guides/findmy.mdx` | Customer discovery and controls | New device/session usage, selection and cleanup. |
-| `docs/guides/drive.mdx` | Customer browsing and transfers | New public flow, reference links and explicit file ownership. |
+| `docs/guides/account.mdx` | Customer account discovery | Devices/family/storage usage, generated reference links. |
+| `docs/guides/findmy.mdx` | Customer discovery and controls | Device/session usage, selection and cleanup. |
+| `docs/guides/drive.mdx` | Customer browsing and transfers | Public flow, reference links and explicit file ownership. |
 | `docs/guides/photos.mdx` | Customer libraries, assets, mutations, uploads and local synchronization | Current generated APIs, callback ownership, private receipts, explicit provider-error and date-dialect adaptations. |
 | `docs/guides/shared-photos.mdx` | Customer legacy shared streams | Distinct account-discovered read service, null/empty downloads and excluded inert Source mutations. |
-| `docs/guides/reminders.mdx` | Customer lists/snapshots/writes | New revision ownership and core mutation usage. |
-| `docs/guides/configuration.mdx` | Customer injection and error handling | New cancellation/session/transport ownership guidance. |
+| `docs/guides/reminders.mdx` | Customer lists/snapshots/writes | Revision ownership and core mutation usage. |
+| `docs/guides/configuration.mdx` | Customer injection and error handling | Cancellation/session/transport ownership guidance. |
 | `docs/guides/cli.mdx` | Customer CLI install and commands | Native auth, full typed Photos reads/writes/visitors/sync and Reminders writes; strict requests and private receipts. |
 | `docs/native-authentication.md` | Contributor SRP, challenge and trust contracts | Preserved integrated generated-model decisions and scoped synthetic evidence; no live authentication claim. |
 | `docs/authentication-bridge.md` | Contributor owned socket lifecycle and framing | Preserved bootstrap, protobuf/websocket provenance, cancellation, state copies and paired timelines. |
@@ -39,7 +39,7 @@ are integrated. This source audit does not certify the rendered deployment.
 | `docs/library-standards.md` | Contributor shared acceptance requirements | Authoritative standards retained, never duplicated as customer prose. |
 | `docs/completion-matrix.md` | Contributor current implementation acceptance record | Preserved; integration/review owners update verdicts. |
 | `docs/migration-checklist.md` | Contributor ordered migration work record | Historical snapshots explicitly separated; original receipts and acceptance boxes preserved; current work linked to completion matrix. |
-| `docs/independent-review.md` | Independent reviewers' verdict and evidence | Preserved verbatim; documentation work cannot award itself approval. |
+| `docs/independent-review.md` | Independent reviewers' verdict and evidence | Original reviewer receipts preserved; current acceptance introduction maintained separately; documentation work cannot award itself approval. |
 | `docs/operation-matrix.md` | Contributor historical live capture scope | Retained account-specific observations; remaining gaps labeled historical batch scope. |
 | `docs/python-provider-migration-playbook.md` | Contributor reference-first evidence workflow | Replaced copied second checklist with concise workflow and authoritative links. |
 | `docs/reference-capture.md` | Contributor instrumentation and private artifact handling | Consolidated current commands, provenance classes and replay expectations. |
@@ -67,7 +67,9 @@ while changing aggregate totals come from the actual audit commands.
 The site expectations cover every canonical OpenAPI operation and both canonical
 bridge channel directions, plus all customer guides. AsyncAPI 2.6 channel
 presentation requires the shared renderer's explicit version adaptation; keep the
-canonical socket schema and its extension references intact. The final integrated
-commit still needs a complete export, visual inspection, external deployment/link/
-badge checks and independent verdicts. Source inventories and local baseline
-checks do not substitute for those release requirements.
+canonical socket schema and its extension references intact. Exact-commit local
+and remote render receipts are recorded in
+[documentation publishing](website.md). The final integrated commit still needs
+its own checked export and inspection, external deployment/link/badge checks and
+independent verdicts. Source inventories and earlier render receipts do not
+substitute for those release requirements.

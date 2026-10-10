@@ -1,7 +1,8 @@
 # SDK maintenance boundaries
 
 `pkg/icloud` is the public SDK. Its named request/result projections are generated
-from `api/client-models.openapi.yaml` and are independent of provider wire structs
+from the public operation schemas under `api/`, including
+`api/client-models.openapi.yaml`, and are independent of provider wire structs
 (API-01–API-03). Keep the operation inventory together in the Client interface.
 
 Provider contracts live in responsibility-specific external schemas and generate
