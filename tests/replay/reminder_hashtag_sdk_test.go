@@ -117,7 +117,7 @@ func reminderHashtagFixture(t *testing.T, raw json.RawMessage) icloud.ReminderHa
 
 	authReplayDecode(t, raw, &wrapper)
 	fields := sourceReminderFields(t, wrapper.Value)
-	fields["reminderID"] = fields[reminderLocationSourceReminderID]
+	fields[reminderLocationPublicReminderID] = fields[reminderLocationSourceReminderID]
 	delete(fields, reminderLocationSourceReminderID)
 
 	if _, exists := fields[reminderSourceCreated]; !exists {

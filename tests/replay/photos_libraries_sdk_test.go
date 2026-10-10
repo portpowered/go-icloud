@@ -94,7 +94,6 @@ func TestEmptyPhotoLibraryDiscovery(t *testing.T) {
 	checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
 
 	err = transport.AssertConsumed()
-
 	if err != nil {
 		t.Fatal(err)
 	}

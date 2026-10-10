@@ -81,7 +81,8 @@ func checkPhotoAssetsProjection(t *testing.T, actual []icloud.Photo, raw json.Ra
 	}
 
 	for _, photo := range expected {
-		for old, name := range map[string]string{"master_id": replayLiteralMasterID, "item_type": replayLiteralItemType,
+		for old, name := range map[string]string{
+			replayExpectedSourceMasterID: replayLiteralMasterID, replayExpectedItemType: replayLiteralItemType,
 			"is_live_photo": "isLivePhoto", "asset": "assetMetadata"} {
 			photo[name] = photo[old]
 			delete(photo, old)

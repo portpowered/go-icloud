@@ -182,7 +182,7 @@ func fixtureBridgeClock(ticks []float64) func() time.Time {
 
 func sourceBridgePush(push *bridge.Push) map[string]any {
 	result := map[string]any{
-		"payload": push.Payload, "session_uuid": push.SessionID, replayLiteralNextStep: nil,
+		"payload": push.Payload, replayExpectedSessionUUID: push.SessionID, replayLiteralNextStep: nil,
 		"rui_url_key": push.Payload.RuiURLKey, "txnid": push.Payload.Txnid,
 		"salt": push.Payload.Salt, "mid": push.Payload.Mid, "idmsdata": push.Payload.Idmsdata,
 		"akdata": push.Payload.Akdata, "data": push.Payload.Data,

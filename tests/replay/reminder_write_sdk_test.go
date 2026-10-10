@@ -161,7 +161,8 @@ func reminderUpdateFixture(t *testing.T, row map[string]json.RawMessage,
 	authReplayDecode(t, inputs[0]["value"], &value)
 
 	for _, key := range []string{
-		reminderSourceCompletedDate, replayLiteralDueDate, "start_date", reminderSourceCreated, replayLiteralModified,
+		reminderSourceCompletedDate, replayLiteralDueDate, replayExpectedStartDate,
+		reminderSourceCreated, replayLiteralModified,
 		reminderSourceParentID, reminderSourceRevisionField, replayLiteralTimeZone} {
 		if _, ok := value[key]; !ok {
 			value[key] = json.RawMessage(`null`)
@@ -190,8 +191,8 @@ func sourceReminderFields(t *testing.T, value map[string]json.RawMessage) map[st
 
 	for source, target := range map[string]string{
 		"list_id": "listID", "desc": "description", reminderSourceCompletedDate: replayLiteralCompletedDate,
-		replayLiteralDueDate: "dueDate",
-		"start_date":         replayLiteralStartDate, "all_day": "allDay", replayLiteralTimeZone: "timeZone",
+		replayLiteralDueDate:    "dueDate",
+		replayExpectedStartDate: replayLiteralStartDate, "all_day": "allDay", replayLiteralTimeZone: "timeZone",
 		reminderSourceAlarmIDs:   "alarmIDs",
 		reminderSourceHashtagIDs: "hashtagIDs", reminderSourceAttachmentIDs: "attachmentIDs",
 		reminderSourceRecurrenceIDs: "recurrenceRuleIDs",

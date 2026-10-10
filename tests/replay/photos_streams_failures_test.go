@@ -110,7 +110,7 @@ func callSharedPhotosFailure(t *testing.T, client *icloud.SDK, auth icloud.AuthC
 
 	const (
 		album = replayLiteralSyntheticStream0
-		photo = "synthetic-asset-0"
+		photo = photoMutationAssetID
 	)
 
 	switch operation {

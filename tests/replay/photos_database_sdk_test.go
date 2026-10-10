@@ -67,7 +67,7 @@ func runPhotosDatabaseSDK(t *testing.T, path string) {
 
 	var since *string
 
-	if raw := keywords["sync_token"]; raw != nil {
+	if raw := keywords[replayExpectedCursorField]; raw != nil {
 		authReplayDecode(t, raw, &since)
 	}
 

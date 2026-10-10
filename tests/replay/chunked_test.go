@@ -64,8 +64,8 @@ func stringName(empty bool) string {
 func TestDeclaredChunkedRejectsChangedFraming(t *testing.T) {
 	t.Parallel()
 	changes := map[string]func(*http.Request){
-		"missing":     func(request *http.Request) { request.TransferEncoding = nil },
-		"unsupported": func(request *http.Request) { request.TransferEncoding = []string{"gzip"} },
+		"missing":                 func(request *http.Request) { request.TransferEncoding = nil },
+		replayExpectedUnsupported: func(request *http.Request) { request.TransferEncoding = []string{"gzip"} },
 		"multiple": func(request *http.Request) {
 			request.TransferEncoding = []string{chunkedEncoding, chunkedEncoding}
 		},

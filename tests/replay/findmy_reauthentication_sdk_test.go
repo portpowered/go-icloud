@@ -59,7 +59,7 @@ func runFindMyTokenRecoverySDK(t *testing.T, path string) {
 	inputRow := make(map[string]json.RawMessage, len(row)+1)
 	maps.Copy(inputRow, row)
 
-	inputRow[replayLiteralKeywordInputs] = json.RawMessage(`{"force_refresh":true}`)
+	inputRow[replayLiteralKeywordInputs] = json.RawMessage(replayExpectedForceRefreshInput)
 
 	request := authReplayRequest(t, inputRow)
 
@@ -101,11 +101,13 @@ func checkFindMyRecoveredRead(t *testing.T, client icloud.Client, row map[string
 	maps.Copy(expected, row)
 
 	if len(row["error"]) != 0 {
-		expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row[replayLiteralErrorAuthState]...), '}')
+		expected["result"] = append(append(json.RawMessage(replayExpectedAuthStateObjectPrefix),
+			row[replayLiteralErrorAuthState]...), '}')
 	}
 
 	if len(row[replayLiteralRefreshAuthState]) != 0 {
-		expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row[replayLiteralRefreshAuthState]...), '}')
+		expected["result"] = append(append(json.RawMessage(replayExpectedAuthStateObjectPrefix),
+			row[replayLiteralRefreshAuthState]...), '}')
 	}
 
 	expected[replayExpectedExchanges] = marshalFindMyRecovery(t, scenario.Exchanges[:2])

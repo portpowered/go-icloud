@@ -181,3 +181,25 @@ const (
 	replayLiteralUpdated                            = "updated-"
 	replayLiteralUsedBytes                          = "used_bytes"
 )
+
+// Additional independent spellings counted across the complete replay test package.
+const (
+	replayExpectedCachedAuthFixturePath = "fixtures/synthetic/http/auth-authenticate-cached.json"
+	replayExpectedFlagTrue              = "\"flag\":true"
+	replayExpectedItemType              = "item_type"
+	replayExpectedSourceMasterID        = "master_id"
+	replayExpectedNestedRedactionInput  = `{"Password":"invented","items":[{"verificationCode":"654321"}],"fixed":true}`
+	replayExpectedPinnedSourceCommit    = "e2e44ab875d47dab4475096021da60030f26c35e"
+	replayExpectedWebSocketKeyHeader    = "Sec-WebSocket-Key: AAAAAAAAAAAAAAAAAAAAAA=="
+	replayExpectedSessionUUID           = "session_uuid"
+	replayExpectedSourceValueError      = "ValueError"
+	replayExpectedStartDate             = "start_date"
+	replayExpectedSyntheticUpload       = "synthetic-upload"
+	replayExpectedUnsupported           = "unsupported"
+)
+
+const (
+	replayExpectedWebSocketAcceptMarker = "{accept}"
+	replayExpectedForceRefreshInput     = `{"force_refresh":true}`
+	replayExpectedAuthStateObjectPrefix = `{"auth_state":`
+)

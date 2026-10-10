@@ -264,7 +264,7 @@ func driveNodeLocalKind(kind, message string) icloud.ErrorKind {
 	switch kind {
 	case "NotADirectoryError":
 		want = icloud.NotDirectory
-	case "ValueError":
+	case replayExpectedSourceValueError:
 		want = icloud.NotInTrash
 	}
 

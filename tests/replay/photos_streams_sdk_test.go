@@ -176,7 +176,8 @@ func checkSharedAlbumProjection(t *testing.T, actual []icloud.SharedPhotoAlbum, 
 	}
 
 	for index, album := range actual {
-		checkSharedFields(t, album, expected[index], map[string]string{"fullname": "fullName", "creation_date": "created",
+		checkSharedFields(t, album, expected[index], map[string]string{
+			replayExpectedFullname: replayExpectedFullName, "creation_date": "created",
 			"sharing_type": "sharingType", "allow_contributions": "allowContributions", "is_public": "isPublic",
 			"is_web_upload_supported": "isWebUploadSupported", "public_url": "publicURL"})
 	}
@@ -198,7 +199,7 @@ func checkSharedPhotosProjection(t *testing.T, actual []icloud.SharedPhoto, raw 
 		delete(expected[index], replayLiteralLikeCount)
 		delete(expected[index], "liked")
 		checkSharedFields(t, photo.Photo, expected[index], map[string]string{
-			"master_id": replayLiteralMasterID, "item_type": replayLiteralItemType})
+			replayExpectedSourceMasterID: replayLiteralMasterID, replayExpectedItemType: replayLiteralItemType})
 	}
 }
 

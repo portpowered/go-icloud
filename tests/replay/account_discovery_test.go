@@ -66,8 +66,8 @@ func discoveredAccountCredentials(t *testing.T, row map[string]json.RawMessage,
 		authReplayDecode(t, identity["china"], &request.Auth.ChinaMainland)
 		request.Auth.ClientID = session["client_id"]
 		request.Auth.SessionToken = session[replayExpectedSessionStateField]
-		request.TrustToken = session["trust_token"]
-		request.AccountCountryCode.Set(session["account_country"])
+		request.TrustToken = session[replayExpectedTrustedStateField]
+		request.AccountCountryCode.Set(session[replayExpectedAccountCountry])
 
 		for name, value := range headers {
 			request.Auth.Headers = append(request.Auth.Headers, icloud.Header{Name: name, Value: value})

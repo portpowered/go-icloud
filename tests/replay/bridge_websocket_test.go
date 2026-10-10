@@ -242,7 +242,7 @@ func (s *bridgeScriptSocket) Write(payload []byte) (int, error) {
 func expectedBridgeSend(event bridgeSocketEvent) ([]byte, error) {
 	if event.Kind == "upgrade" {
 		lines := append([]string(nil), event.Lines...)
-		lines = append(lines, "Sec-WebSocket-Key: AAAAAAAAAAAAAAAAAAAAAA==", "", "")
+		lines = append(lines, replayExpectedWebSocketKeyHeader, "", "")
 
 		return []byte(strings.Join(lines, "\r\n")), nil
 	}
@@ -318,7 +318,7 @@ func expectedBridgeReceive(event bridgeSocketEvent) ([]byte, error) {
 			return nil, fmt.Errorf("fixture socket suffix: %w", err)
 		}
 
-		return append([]byte(strings.ReplaceAll(event.Template, "{accept}", accept)), suffix...), nil
+		return append([]byte(strings.ReplaceAll(event.Template, replayExpectedWebSocketAcceptMarker, accept)), suffix...), nil
 	}
 
 	payload, err := base64.StdEncoding.DecodeString(event.Data)

@@ -51,7 +51,7 @@ func tenantDriveNodeScenario(t *testing.T, tenant string) driveNodeScenario {
 
 	replace := strings.NewReplacer(
 		replayExpectedSyntheticClient, "client-"+tenant, "synthetic-account", replayExpectedAccount+tenant,
-		"synthetic-root", "root-"+tenant, "synthetic-upload", "token-"+tenant,
+		"synthetic-root", "root-"+tenant, replayExpectedSyntheticUpload, "token-"+tenant,
 		"session=uploaded", replayExpectedSessionUploaded+tenant)
 
 	var scenario driveNodeScenario

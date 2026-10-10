@@ -85,7 +85,7 @@ func resumeForFailedFindMyUpdate(t *testing.T, client icloud.Client, row map[str
 	checkFindMyRecoveryFailure(t, err, icloud.AuthenticationRequired, scenario.Exchanges[0], nil)
 
 	input := maps.Clone(row)
-	input[replayLiteralKeywordInputs] = json.RawMessage(`{"force_refresh":true}`)
+	input[replayLiteralKeywordInputs] = json.RawMessage(replayExpectedForceRefreshInput)
 	request := authReplayRequest(t, input)
 	request.ForceRefresh = true
 	request.ResponseUpdates = []icloud.ResponseMetadata{publicFindMyFailure(t, err)}
@@ -96,7 +96,8 @@ func resumeForFailedFindMyUpdate(t *testing.T, client icloud.Client, row map[str
 	}
 
 	expected := maps.Clone(row)
-	expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row[replayLiteralRefreshAuthState]...), '}')
+	expected["result"] = append(append(json.RawMessage(replayExpectedAuthStateObjectPrefix),
+		row[replayLiteralRefreshAuthState]...), '}')
 	expected[replayExpectedExchanges] = marshalFindMyRecovery(t, scenario.Exchanges[:2])
 	assertResumedAuth(t, expected, result)
 
@@ -109,7 +110,8 @@ func checkAppliedFailedFindMyState(t *testing.T, row map[string]json.RawMessage,
 	t.Helper()
 
 	expected := maps.Clone(row)
-	expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row[replayLiteralErrorAuthState]...), '}')
+	expected["result"] = append(append(json.RawMessage(replayExpectedAuthStateObjectPrefix),
+		row[replayLiteralErrorAuthState]...), '}')
 	assertResumedAuth(t, expected, &result)
 	checkFindMyRecoveryResponses(t, result.Responses, scenario.Exchanges)
 

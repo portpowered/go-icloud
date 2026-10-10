@@ -170,7 +170,7 @@ func sourceLookupDefault(key string, value any) bool {
 		return true
 	}
 	fields, ok := value.(map[string]any)
-	return key == "pluginFields" && ok && len(fields) == 0
+	return key == replayExpectedPluginFields && ok && len(fields) == 0
 }
 
 func checkPhotosContainerMetadata(t *testing.T, actual *webtransport.BytesResponse, exchange replay.Exchange) {

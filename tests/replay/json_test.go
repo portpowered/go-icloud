@@ -75,9 +75,9 @@ func TestJSONPatternBindsAllUndeclaredFieldsAndFullFormat(t *testing.T) {
 		strings.Replace(patternBody, photoUploadOpaqueInteger, "9007199254740992", 1),
 		strings.Replace(patternBody, `"TempId-aa"`, reminderChangeNullValue, 1),
 		strings.Replace(patternBody, `"id":"TempId-aa"`, `"missing":"TempId-aa"`, 1),
-		strings.Replace(patternBody, `"flag":true`, `"flag":true,"extra":1`, 1),
+		strings.Replace(patternBody, replayExpectedFlagTrue, `"flag":true,"extra":1`, 1),
 		patternBody + `{}`,
-		strings.Replace(patternBody, `"flag":true`, `"flag":false,"flag":true`, 1),
+		strings.Replace(patternBody, replayExpectedFlagTrue, `"flag":false,"flag":true`, 1),
 	} {
 		t.Run(body, func(t *testing.T) {
 			t.Parallel()
@@ -94,11 +94,11 @@ func TestJSONRedactionChecksNestedTypesAndCodeShape(t *testing.T) {
 	entity := replay.Entity{Encoding: replayLiteralJSONRedacted, Value: json.RawMessage(redactedBody),
 		Matchers: nil, ContentTypePattern: "", Parts: nil,
 	}
-	valid := `{"Password":"invented","items":[{"verificationCode":"654321"}],"fixed":true}`
+	valid := replayExpectedNestedRedactionInput
 
 	for _, body := range []string{
 		valid,
-		strings.Replace(valid, "invented", "", 1),
+		strings.Replace(valid, replayExpectedInvented, "", 1),
 		strings.Replace(valid, `"invented"`, "false", 1),
 		strings.Replace(valid, "654321", "123", 1),
 		strings.Replace(valid, "654321", "１２３４５６", 1),
@@ -120,7 +120,7 @@ func TestRedactedLengthIsVerifiedBeforeIgnoringRecordedSize(t *testing.T) {
 	entity := replay.Entity{Encoding: replayLiteralJSONRedacted, Value: json.RawMessage(redactedBody),
 		Matchers: nil, ContentTypePattern: "", Parts: nil,
 	}
-	body := `{"Password":"invented","items":[{"verificationCode":"654321"}],"fixed":true}`
+	body := replayExpectedNestedRedactionInput
 
 	for _, length := range []string{"1", "999"} {
 		t.Run(length, func(t *testing.T) {

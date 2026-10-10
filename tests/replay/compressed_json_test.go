@@ -27,7 +27,7 @@ func TestCompressedJSONBindsCompleteDecodedBytes(t *testing.T) {
 
 			entity := replay.Entity{Encoding: testJSONPattern, Value: json.RawMessage(compressedBody(sourceEmptyDocument)),
 				Matchers: []replay.JSONMatcher{{Path: []json.RawMessage{json.RawMessage(`"document"`)},
-					Pattern: "base64-zlib-exact"}}, Parts: nil, ContentTypePattern: ""}
+					Pattern: compressedJSONRule}}, Parts: nil, ContentTypePattern: ""}
 			exchange := jsonExchange(entity)
 			exchange.Request.Headers = append(exchange.Request.Headers,
 				replay.Pair{contentLengthHeader, strconv.Itoa(len(entity.Value))})
