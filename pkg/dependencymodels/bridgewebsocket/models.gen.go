@@ -218,6 +218,9 @@ type HeaderLine string
 // LineSeparator defines model for LineSeparator.
 type LineSeparator int
 
+// Mask defines model for Mask.
+type Mask = []byte
+
 // OpcodeMask defines model for OpcodeMask.
 type OpcodeMask int
 
