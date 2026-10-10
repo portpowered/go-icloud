@@ -34,22 +34,29 @@ never ignore fields to accommodate the port (SCHEMA-10, LIB-05).
 
 ## Integration evidence and remaining blockers
 
-At integration snapshot `970b428`, the SDK implementation is publicly available
-as `v0.0.0-20261010021755-81ab20d63d5a`. The separate CLI pins that version;
+At integration snapshot `7334404`, the SDK implementation is publicly available
+as `v0.0.0-20261010022446-ed7c72b31b4c`. The separate CLI pins that version;
 its isolated `GOWORK=off` dependency download and tidy checks passed. The complete
 CLI race suite passed at `8743c53` using an integration workspace. A complete race
 run against the final public pin is still required.
 
-The SDK race run at `00f2ac9` passed the runtime packages but failed overall on a
-schema negative control and a stale fixture-count assertion. Commit `77b7ccb`
-fixed both with focused contract/replay checks. No complete SDK race pass after
-that repair is recorded here. Scoped passes cannot substitute for the final run.
+At `3b66d50`, `make sdk-coverage` passed all SDK replay and production-package
+tests under the race detector. Non-generated statement coverage was replay
+10721/12874 (83.3%), unit 4314/12874 (33.5%), and combined 11107/12874 (86.3%).
+The replay gate includes ten pinned Source HID transcripts, eight hardware
+failure controls, and nineteen Source Photos materialization cases through the
+public SDK and filesystem. Generated code is excluded from these numerators
+and denominators. Final integrated repository checks, including contracts,
+verification tools, Source tests and the later assertion fixes, remain pending.
 
-Local documentation verification passed with renderer `6f7f713`: 99 HTML files,
+Local documentation verification passed with renderer `07bbcec`: 99 HTML files,
 82 OpenAPI operations, both bridge directions and ten guides, including visible
 exact protobuf source, navigation, local/schema links and representative cURL
 snippets. All 45 tracked documentation files were inventoried and historical
-receipts separated from current work. Remote publication is a separate gate.
+receipts separated from current work. The workflow-only update `4b5b467` retains
+those renderer bytes and passed blocking action CI with all seven focused
+JavaScript suites and the smoke build. It is the current library workflow pin.
+Remote library publication is a separate gate.
 
 The remaining final acceptance work is:
 
