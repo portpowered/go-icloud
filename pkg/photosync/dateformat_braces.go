@@ -88,6 +88,7 @@ func replacementEnd(format string, index int) (int, error) {
 
 func parseReplacement(field string) (dateReplacement, error) {
 	result := new(dateReplacement)
+
 	name, spec, hasSpec := strings.Cut(field, ":")
 	if hasSpec {
 		result.spec = spec

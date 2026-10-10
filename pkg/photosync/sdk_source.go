@@ -13,6 +13,11 @@ import (
 
 var errSDKSelection = errors.New("photo sync account or library does not match the bound SDK session")
 
+const (
+	newSDKSourceOperation          = "NewSDKSource"
+	applySessionResponsesOperation = "ApplySessionResponses"
+)
+
 // SDKClient is the public library subset used by local synchronization.
 type SDKClient interface {
 	ApplySessionResponses(ctx context.Context, request icloud.ApplySessionResponsesRequest) (
@@ -42,13 +47,13 @@ func NewSDKSource(ctx context.Context, client SDKClient, session icloud.ResumeSe
 	libraries []icloud.PhotoLibrary,
 ) (*SDKSource, error) {
 	if client == nil {
-		return nil, &SyncError{Operation: "NewSDKSource", Cause: errConfiguration}
+		return nil, &SyncError{Operation: newSDKSourceOperation, Cause: errConfiguration}
 	}
 
 	copied, err := client.ApplySessionResponses(ctx,
 		icloud.ApplySessionResponsesRequest{Session: session, Responses: []icloud.ResponseMetadata{}})
 	if err != nil {
-		return nil, &SyncError{Operation: "NewSDKSource", Cause: err}
+		return nil, &SyncError{Operation: newSDKSourceOperation, Cause: err}
 	}
 
 	selected := make(map[string]icloud.PhotoLibrary, len(libraries))
@@ -254,7 +259,7 @@ func (source *SDKSource) recordOnce(ctx context.Context, responses []icloud.Resp
 	result, err := source.client.ApplySessionResponses(context.WithoutCancel(ctx),
 		icloud.ApplySessionResponsesRequest{Session: session, Responses: responses})
 	if err != nil {
-		return &SyncError{Operation: "ApplySessionResponses", Cause: err}
+		return &SyncError{Operation: applySessionResponsesOperation, Cause: err}
 	}
 
 	source.mu.Lock()
@@ -289,7 +294,7 @@ func (source *SDKSource) recordFailure(ctx context.Context, cause error, observe
 
 	err := source.record(ctx, responses)
 	if err != nil {
-		return &SyncError{Operation: "ApplySessionResponses", Cause: errors.Join(cause, err)}
+		return &SyncError{Operation: applySessionResponsesOperation, Cause: errors.Join(cause, err)}
 	}
 
 	return cause

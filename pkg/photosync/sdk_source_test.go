@@ -10,6 +10,8 @@ import (
 	"github.com/portpowered/go-icloud/pkg/photosync"
 )
 
+const testDownloadOperation = "download"
+
 type sdkSourceClient struct {
 	*icloud.SDK
 
@@ -38,7 +40,7 @@ func assertCookie(t *testing.T, auth icloud.AuthContext, expected string) {
 func (client *sdkSourceClient) GetPhotosCursor(_ context.Context,
 	_ icloud.GetPhotosCursorRequest,
 ) (*icloud.GetPhotosCursorResult, error) {
-	return &icloud.GetPhotosCursorResult{SyncToken: "cursor-1", Responses: cookieReceipt("cursor")}, nil
+	return &icloud.GetPhotosCursorResult{SyncToken: testFirstCursor, Responses: cookieReceipt("cursor")}, nil
 }
 
 func (client *sdkSourceClient) VisitPhotoAssets(_ context.Context, input icloud.ListPhotoAssetsRequest,
@@ -60,7 +62,7 @@ func (client *sdkSourceClient) DownloadPhoto(_ context.Context,
 
 	result := new(icloud.DownloadPhotoResult)
 	result.Content.Set([]byte("asset-1:original"))
-	result.Responses = cookieReceipt("download")
+	result.Responses = cookieReceipt(testDownloadOperation)
 
 	return result, nil
 }
@@ -68,7 +70,7 @@ func (client *sdkSourceClient) DownloadPhoto(_ context.Context,
 func (client *sdkSourceClient) DeletePhoto(_ context.Context,
 	input icloud.DeletePhotoRequest,
 ) (*icloud.PhotoDeletionResult, error) {
-	assertCookie(client.test, input.Auth, "download")
+	assertCookie(client.test, input.Auth, testDownloadOperation)
 
 	return &icloud.PhotoDeletionResult{Deleted: true, Responses: cookieReceipt("deleted")}, nil
 }
@@ -81,7 +83,7 @@ func TestSDKSourceAppliesPageCookiesBeforeNestedTransfer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	asset := photo("asset-1", "photo.jpg")
+	asset := photo("asset-1", testPhotoFilename)
 	providerPhoto := new(icloud.Photo)
 	providerPhoto.ID, providerPhoto.Filename = asset.ID, asset.Filename
 	providerPhoto.ItemType = icloud.Image

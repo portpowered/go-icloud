@@ -8,10 +8,13 @@ import (
 )
 
 const (
-	dateMicrosecond  = 1000
-	dateWeekDays     = 7
-	dateHalfDayHours = 12
-	dateYearCentury  = 100
+	dateShortCalendarLayout = "01/02/06"
+	dateClockLayout         = "15:04:05"
+	dateLocalZoneReason     = "machine-local Windows CRT timezone"
+	dateMicrosecond         = 1000
+	dateWeekDays            = 7
+	dateHalfDayHours        = 12
+	dateYearCentury         = 100
 )
 
 func formatFolder(instant time.Time, format string) (string, error) {
@@ -64,7 +67,7 @@ func formatDateAware(instant time.Time, format string, aware bool) (string, erro
 			}
 
 			if format[index] == 'z' || format[index] == 'Z' {
-				return "", unsupportedDateFormat("machine-local Windows CRT timezone")
+				return "", unsupportedDateFormat(dateLocalZoneReason)
 			}
 		}
 
@@ -102,7 +105,7 @@ func dateDirective(instant time.Time, directive byte, short bool) (string, error
 
 	if directive == 'z' || directive == 'Z' {
 		if short {
-			return "", unsupportedDateFormat("machine-local Windows CRT timezone")
+			return "", unsupportedDateFormat(dateLocalZoneReason)
 		}
 
 		return dateZone(instant, directive), nil
@@ -137,8 +140,8 @@ func dateNumber(instant time.Time, directive byte) (int, int, bool) {
 func dateText(instant time.Time, directive byte, short bool) (string, error) {
 	layouts := map[byte]string{
 		'a': "Mon", 'A': "Monday", 'b': "Jan", 'h': "Jan", 'B': "January", 'p': "PM",
-		'c': "Mon Jan _2 15:04:05 2006", 'x': "01/02/06", 'X': "15:04:05", 'e': "_2",
-		'D': "01/02/06", 'F': "2006-01-02", 'r': "03:04:05 PM", 'R': "15:04", 'T': "15:04:05",
+		'c': "Mon Jan _2 15:04:05 2006", 'x': dateShortCalendarLayout, 'X': dateClockLayout, 'e': "_2",
+		'D': dateShortCalendarLayout, 'F': "2006-01-02", 'r': "03:04:05 PM", 'R': "15:04", 'T': dateClockLayout,
 	}
 	shortLayouts := map[byte]string{
 		'c': "Monday, January 02, 2006 15:04:05", 'x': "Monday, January 02, 2006", 'e': "2",

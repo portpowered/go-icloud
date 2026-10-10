@@ -14,6 +14,8 @@ import (
 // Metadata contains the decoded metadata used to create an XMP sidecar.
 type Metadata = photomaterialize.Metadata
 
+const measureMaterializedPhotoError = "measure materialized photo: %w"
+
 func (state *runState) materialize(ctx context.Context, asset Asset, resource Resource) (bool, bool, string, error) {
 	relative, err := relativePath(asset, resource, state.request.Options.FolderStructure)
 	if err != nil {
@@ -96,7 +98,7 @@ func (state *runState) download(ctx context.Context, asset Asset, resource Resou
 	now := state.engine.now().UTC()
 	localSize, err := state.engine.files.Size(ctx, target)
 	if err != nil {
-		return false, false, relative, fmt.Errorf("measure materialized photo: %w", err)
+		return false, false, relative, fmt.Errorf(measureMaterializedPhotoError, err)
 	}
 
 	upsertResource(&state.manifest, SyncedResource{AssetID: asset.ID, ResourceKey: resource.Key,
@@ -116,7 +118,7 @@ func (state *runState) refreshLocalSize(ctx context.Context, target string, iden
 	entry := manifestResource(state.manifest, identity)
 	localSize, err := state.engine.files.Size(ctx, target)
 	if err != nil {
-		return fmt.Errorf("measure materialized photo: %w", err)
+		return fmt.Errorf(measureMaterializedPhotoError, err)
 	}
 
 	if entry.LocalSize != nil && *entry.LocalSize == localSize {

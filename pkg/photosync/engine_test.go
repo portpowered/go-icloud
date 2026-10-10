@@ -15,6 +15,15 @@ import (
 
 const testOriginalVersion = string(icloud.PhotoOriginal)
 
+const (
+	testPhotoFilename     = "photo.jpg"
+	testCollisionFilename = "Photo.JPG"
+	testSecondFilename    = "second.jpg"
+	testSameFilename      = "same.jpg"
+	testFirstCursor       = "cursor-1"
+	testSecondCursor      = "cursor-2"
+)
+
 type source struct {
 	assets    []photosync.Asset
 	cursor    string
@@ -68,7 +77,7 @@ func (provider *source) Delete(_ context.Context, _ icloud.AuthContext, asset ph
 }
 
 func newSource(assets ...photosync.Asset) *source {
-	return &source{assets: assets, cursor: "cursor-1", downloads: []string{}, deletions: []string{},
+	return &source{assets: assets, cursor: testFirstCursor, downloads: []string{}, deletions: []string{},
 		visits: 0, available: true}
 }
 
@@ -109,7 +118,7 @@ func request(directory string) photosync.Request {
 func TestPersistedManifestAndCursor(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "photo.jpg"))
+	provider := newSource(photo("asset-1", testPhotoFilename))
 	client := newEngine(t, provider)
 	input := request(filepath.Join(t.TempDir(), "output"))
 
@@ -122,7 +131,7 @@ func TestPersistedManifestAndCursor(t *testing.T) {
 		t.Fatalf("first result: %+v", first)
 	}
 
-	data, err := os.ReadFile(filepath.Join(input.Options.Directory, "photo.jpg"))
+	data, err := readPhotoSyncTestFile(t, filepath.Join(input.Options.Directory, testPhotoFilename))
 	if err != nil || string(data) != "asset-1:original" {
 		t.Fatalf("materialized bytes %q: %v", data, err)
 	}
@@ -141,7 +150,7 @@ func checkRestartAndSize(t *testing.T, provider *source, client *photosync.Engin
 		t.Fatalf("restart did not reuse manifest: %+v", second)
 	}
 
-	err = os.WriteFile(filepath.Join(input.Options.Directory, "photo.jpg"), []byte("truncated"), 0o600)
+	err = os.WriteFile(filepath.Join(input.Options.Directory, testPhotoFilename), []byte("truncated"), 0o600)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +169,7 @@ func TestPreviewNeverWritesOrDeletes(t *testing.T) {
 	t.Parallel()
 
 	for _, printOnly := range []bool{false, true} {
-		provider := newSource(photo("asset-1", "photo.jpg"))
+		provider := newSource(photo("asset-1", testPhotoFilename))
 		input := request(filepath.Join(t.TempDir(), "output"))
 		input.Options.DryRun, input.Options.OnlyPrintFilenames = !printOnly, printOnly
 		input.Options.AutoDelete = true
@@ -186,7 +195,7 @@ func TestPreviewNeverWritesOrDeletes(t *testing.T) {
 func TestStaleCleanupAndRetention(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "first.jpg"), photo("asset-2", "second.jpg"))
+	provider := newSource(photo("asset-1", "first.jpg"), photo("asset-2", testSecondFilename))
 	input := request(t.TempDir())
 
 	client := newEngine(t, provider)
@@ -196,7 +205,7 @@ func TestStaleCleanupAndRetention(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	provider.assets, provider.cursor = provider.assets[:1], "cursor-2"
+	provider.assets, provider.cursor = provider.assets[:1], testSecondCursor
 	input.Options.AutoDelete = true
 	days := 5
 	input.Options.KeepIcloudRecentDays = &days
@@ -210,7 +219,7 @@ func TestStaleCleanupAndRetention(t *testing.T) {
 		t.Fatalf("cleanup result: %+v", result)
 	}
 
-	_, err = os.Stat(filepath.Join(input.Options.Directory, "second.jpg"))
+	_, err = os.Stat(filepath.Join(input.Options.Directory, testSecondFilename))
 	if !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("stale file remains: %v", err)
 	}
@@ -219,7 +228,7 @@ func TestStaleCleanupAndRetention(t *testing.T) {
 func TestMissingDownloadDoesNotAdvanceCursorOrDeleteRemote(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "photo.jpg"))
+	provider := newSource(photo("asset-1", testPhotoFilename))
 	provider.available = false
 	input := request(t.TempDir())
 	days := 0
@@ -243,7 +252,7 @@ func TestMissingDownloadDoesNotAdvanceCursorOrDeleteRemote(t *testing.T) {
 func TestCanceledRunAndWatch(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "photo.jpg"))
+	provider := newSource(photo("asset-1", testPhotoFilename))
 	client := newEngine(t, provider)
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()

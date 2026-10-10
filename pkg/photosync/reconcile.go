@@ -11,15 +11,17 @@ import (
 	"github.com/portpowered/go-icloud/internal/photomaterialize"
 )
 
+const resolvePhotoSidecarError = "resolve photo sidecar: %w"
+
 func (state *runState) writeSidecar(ctx context.Context, path string, metadata Metadata) error {
 	relative, err := filepath.Rel(state.root, path)
 	if err != nil {
-		return fmt.Errorf("resolve photo sidecar: %w", err)
+		return fmt.Errorf(resolvePhotoSidecarError, err)
 	}
 
 	path, err = state.engine.targetPath(ctx, state.root, filepath.ToSlash(relative))
 	if err != nil {
-		return fmt.Errorf("resolve photo sidecar: %w", err)
+		return fmt.Errorf(resolvePhotoSidecarError, err)
 	}
 
 	existing, err := state.engine.files.ReadFile(ctx, path)

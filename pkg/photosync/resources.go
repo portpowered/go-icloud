@@ -6,6 +6,11 @@ import (
 	"maps"
 )
 
+const (
+	originalResourceKey    = "original"
+	alternativeResourceKey = "alternative"
+)
+
 func selectResources(asset Asset, options Options) []Resource {
 	if skipAsset(asset, options) {
 		return nil
@@ -16,7 +21,7 @@ func selectResources(asset Asset, options Options) []Resource {
 
 	result := []Resource{}
 
-	candidates := []string{string(options.Size), "original", "medium", "thumb"}
+	candidates := []string{string(options.Size), originalResourceKey, "medium", "thumb"}
 
 	if resource := resolveResource(resources, candidates); resource != nil {
 		result = append(result, *resource)
@@ -60,9 +65,9 @@ func resolveResource(resources map[string]Resource, candidates []string) *Resour
 }
 
 func alignResources(resources map[string]Resource, policy OptionsAlignRaw) {
-	original, hasOriginal := resources["original"]
+	original, hasOriginal := resources[originalResourceKey]
 
-	alternative, hasAlternative := resources["alternative"]
+	alternative, hasAlternative := resources[alternativeResourceKey]
 
 	if !hasOriginal || !hasAlternative {
 		return
@@ -70,7 +75,7 @@ func alignResources(resources map[string]Resource, policy OptionsAlignRaw) {
 
 	if photomaterialize.ShouldSwapRAW(original.Filename, stringValue(original.Type),
 		alternative.Filename, stringValue(alternative.Type), string(policy)) {
-		resources["original"], resources["alternative"] = alternative, original
+		resources[originalResourceKey], resources[alternativeResourceKey] = alternative, original
 	}
 }
 

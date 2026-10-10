@@ -18,12 +18,12 @@ func TestPhotoSyncPortableFilenameCollisions(t *testing.T) {
 		first  string
 		second string
 	}{
-		{name: "ASCII", first: "Photo.JPG", second: "photo.jpg"},
+		{name: "ASCII", first: testCollisionFilename, second: testPhotoFilename},
 		{name: "accent", first: "\u00c4.JPG", second: "\u00e4.jpg"},
 		{name: "sigma", first: "\u03a3.JPG", second: "\u03c2.jpg"},
 		{name: "dotless-i", first: "I.JPG", second: "\u0131.jpg"},
 		{name: "Kelvin", first: "K.JPG", second: "\u212a.jpg"},
-		{name: "trailing-dot", first: "Photo.JPG", second: "Photo.JPG."},
+		{name: "trailing-dot", first: testCollisionFilename, second: "Photo.JPG."},
 	}
 
 	for _, testCase := range cases {
@@ -57,7 +57,7 @@ func checkPortableCollision(t *testing.T, firstName, secondName string) {
 	// existing assets have reserved their paths in this run.
 	provider.assets = []photosync.Asset{photo("asset-3", secondName),
 		photo("asset-2", secondName), photo("asset-1", firstName)}
-	provider.cursor = "cursor-2"
+	provider.cursor = testSecondCursor
 	changed, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil || changed == nil || changed.DownloadedCount != 1 || len(provider.downloads) != 3 {
 		t.Fatalf("tracked collision run: %+v %v downloads=%v", changed, err, provider.downloads)
@@ -75,7 +75,7 @@ func checkPortableCollision(t *testing.T, firstName, secondName string) {
 func readCollisionManifest(t *testing.T, statePath string) photosync.Manifest {
 	t.Helper()
 
-	data, err := os.ReadFile(filepath.Clean(statePath))
+	data, err := readPhotoSyncTestFile(t, filepath.Clean(statePath))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,7 +98,7 @@ func checkCollisionBytes(t *testing.T, directory string, manifest photosync.Mani
 	}
 
 	for _, resource := range manifest.Resources {
-		data, err := os.ReadFile(filepath.Join(directory, filepath.FromSlash(resource.RelativePath)))
+		data, err := readPhotoSyncTestFile(t, filepath.Join(directory, filepath.FromSlash(resource.RelativePath)))
 		if err != nil || string(data) != resource.AssetID+":"+resource.ResourceKey {
 			t.Fatalf("asset %s path %s contains %q: %v", resource.AssetID, resource.RelativePath, data, err)
 		}
@@ -108,7 +108,7 @@ func checkCollisionBytes(t *testing.T, directory string, manifest photosync.Mani
 func TestPhotoSyncRejectsAmbiguousPersistedFilenameOwnership(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "Photo.JPG"), photo("asset-2", "photo.jpg"))
+	provider := newSource(photo("asset-1", testCollisionFilename), photo("asset-2", testPhotoFilename))
 	input := request(t.TempDir())
 	result, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil {
@@ -116,7 +116,7 @@ func TestPhotoSyncRejectsAmbiguousPersistedFilenameOwnership(t *testing.T) {
 	}
 
 	manifest := readCollisionManifest(t, result.StatePath)
-	manifest.Resources[1].RelativePath = "photo.jpg"
+	manifest.Resources[1].RelativePath = testPhotoFilename
 	data, err := json.Marshal(manifest)
 	if err != nil {
 		t.Fatal(err)

@@ -19,6 +19,8 @@ func DefaultOptions(directory string) Options {
 		DryRun: false, AutoDelete: false}
 }
 
+const copySyncRequestError = "copy photo sync request: %w"
+
 func validateOptions(options Options) error {
 	if options.Directory == "" || options.Library == string(LegacySharedLibrary) || !options.Size.Valid() ||
 		!options.LivePhotoSize.Valid() || !options.AlignRaw.Valid() {
@@ -89,14 +91,14 @@ func manifestPath(options Options, key string) string {
 func copyRequest(request Request) (Request, error) {
 	data, err := json.Marshal(request)
 	if err != nil {
-		return request, fmt.Errorf("copy photo sync request: %w", err)
+		return request, fmt.Errorf(copySyncRequestError, err)
 	}
 
 	var copied Request
 
 	err = json.Unmarshal(data, &copied)
 	if err != nil {
-		return request, fmt.Errorf("copy photo sync request: %w", err)
+		return request, fmt.Errorf(copySyncRequestError, err)
 	}
 
 	return copied, nil

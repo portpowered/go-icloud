@@ -23,7 +23,7 @@ func (failingPhotoFiles) WriteAtomic(_ context.Context, _ string, _ []byte) erro
 func TestPhotoSyncFailedWriteCannotPersistOrDelete(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "photo.jpg"))
+	provider := newSource(photo("asset-1", testPhotoFilename))
 	input := request(t.TempDir())
 	days := 0
 	input.Options.KeepIcloudRecentDays = &days
@@ -67,7 +67,7 @@ func (files escapingSidecarFiles) Resolve(ctx context.Context, path string) (str
 func TestPhotoSyncSidecarCannotFollowOutsideDestination(t *testing.T) {
 	t.Parallel()
 
-	asset := photo("asset-1", "photo.jpg")
+	asset := photo("asset-1", testPhotoFilename)
 	asset.Metadata = new(photosync.Metadata)
 
 	provider := newSource(asset)
@@ -98,7 +98,7 @@ func TestPhotoSyncSidecarCannotFollowOutsideDestination(t *testing.T) {
 func TestPhotoSyncBoundedWatchDoesNotWaitAfterFinalRun(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "photo.jpg"))
+	provider := newSource(photo("asset-1", testPhotoFilename))
 	waits := 0
 	engine, err := photosync.New(provider, photosync.Configuration{Files: photosync.OSFileSystem{}, Now: nil,
 		Wait: func(context.Context, time.Duration) error {
@@ -126,7 +126,7 @@ func TestPhotoSyncBoundedWatchDoesNotWaitAfterFinalRun(t *testing.T) {
 func TestPhotoSyncRetentionDoesNotOverflowLargeDayIntervals(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "photo.jpg"))
+	provider := newSource(photo("asset-1", testPhotoFilename))
 	input := request(t.TempDir())
 	days := 999999999
 	input.Options.KeepIcloudRecentDays = &days
@@ -143,7 +143,7 @@ func TestPhotoSyncRetentionDoesNotOverflowLargeDayIntervals(t *testing.T) {
 func TestPhotoSyncRecentCutoffRejectsPythonDateOverflow(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("asset-1", "photo.jpg"))
+	provider := newSource(photo("asset-1", testPhotoFilename))
 	input := request(t.TempDir())
 	days := 999999999
 	input.Options.Recent = &days
@@ -158,7 +158,7 @@ func TestPhotoSyncRecentCutoffRejectsPythonDateOverflow(t *testing.T) {
 func TestPhotoSyncCollisionUsesSourceUnicodeCodePoints(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("first", "same.jpg"), photo("photo-\u76f8\u518c\u7f16\u53f7αβγδε", "same.jpg"))
+	provider := newSource(photo("first", testSameFilename), photo("photo-\u76f8\u518c\u7f16\u53f7αβγδε", testSameFilename))
 	input := request(t.TempDir())
 	input.Options.OnlyPrintFilenames = true
 	result, err := newEngine(t, provider).Run(t.Context(), input)

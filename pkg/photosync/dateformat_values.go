@@ -53,6 +53,7 @@ func pythonTimezoneRepr(instant time.Time) string {
 	}
 
 	days := offset / dateSecondsDay
+
 	seconds := offset % dateSecondsDay
 	if seconds < 0 {
 		days--
@@ -303,6 +304,7 @@ func padDateNumber(text string, options dateValueSpec, base int) string {
 		}
 
 		desired := options.width - len(prefix) - len(suffix)
+
 		required := desired - (desired-1)/(group+1)
 		if required > len(digits) {
 			digits = strings.Repeat("0", required-len(digits)) + digits

@@ -13,16 +13,23 @@ import (
 // The engine confines resource accesses to the resolved output root, including existing symlinks.
 type OSFileSystem struct{}
 
+const (
+	readLocalFileError    = "read local file: %w"
+	inspectLocalFileError = "inspect local file: %w"
+	removeLocalFileError  = "remove local file: %w"
+	resolveLocalPathError = "resolve local path: %w"
+)
+
 // ReadFile reads one local file after checking cancellation.
 func (OSFileSystem) ReadFile(ctx context.Context, path string) ([]byte, error) {
 	err := ctx.Err()
 	if err != nil {
-		return nil, fmt.Errorf("read local file: %w", err)
+		return nil, fmt.Errorf(readLocalFileError, err)
 	}
 
 	data, err := os.ReadFile(path) // #nosec G304 -- caller-owned filesystem; engine confines resource paths.
 	if err != nil {
-		return nil, fmt.Errorf("read local file: %w", err)
+		return nil, fmt.Errorf(readLocalFileError, err)
 	}
 
 	return data, nil
@@ -32,16 +39,16 @@ func (OSFileSystem) ReadFile(ctx context.Context, path string) ([]byte, error) {
 func (OSFileSystem) Size(ctx context.Context, path string) (int64, error) {
 	err := ctx.Err()
 	if err != nil {
-		return 0, fmt.Errorf("inspect local file: %w", err)
+		return 0, fmt.Errorf(inspectLocalFileError, err)
 	}
 
 	info, err := os.Stat(path)
 	if err != nil {
-		return 0, fmt.Errorf("inspect local file: %w", err)
+		return 0, fmt.Errorf(inspectLocalFileError, err)
 	}
 
 	if !info.Mode().IsRegular() {
-		return 0, fmt.Errorf("inspect local file: %w", fs.ErrInvalid)
+		return 0, fmt.Errorf(inspectLocalFileError, fs.ErrInvalid)
 	}
 
 	return info.Size(), nil
@@ -51,12 +58,12 @@ func (OSFileSystem) Size(ctx context.Context, path string) (int64, error) {
 func (OSFileSystem) Remove(ctx context.Context, path string) error {
 	err := ctx.Err()
 	if err != nil {
-		return fmt.Errorf("remove local file: %w", err)
+		return fmt.Errorf(removeLocalFileError, err)
 	}
 
 	err = os.Remove(path)
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("remove local file: %w", err)
+		return fmt.Errorf(removeLocalFileError, err)
 	}
 
 	return nil
@@ -66,12 +73,12 @@ func (OSFileSystem) Remove(ctx context.Context, path string) error {
 func (OSFileSystem) Resolve(ctx context.Context, path string) (string, error) {
 	err := ctx.Err()
 	if err != nil {
-		return "", fmt.Errorf("resolve local path: %w", err)
+		return "", fmt.Errorf(resolveLocalPathError, err)
 	}
 
 	absolute, err := filepath.Abs(path)
 	if err != nil {
-		return "", fmt.Errorf("resolve local path: %w", err)
+		return "", fmt.Errorf(resolveLocalPathError, err)
 	}
 
 	resolved, err := filepath.EvalSymlinks(absolute)
@@ -80,7 +87,7 @@ func (OSFileSystem) Resolve(ctx context.Context, path string) (string, error) {
 	}
 
 	if !errors.Is(err, fs.ErrNotExist) {
-		return "", fmt.Errorf("resolve local path: %w", err)
+		return "", fmt.Errorf(resolveLocalPathError, err)
 	}
 
 	parent := filepath.Dir(absolute)

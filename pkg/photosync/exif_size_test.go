@@ -15,6 +15,7 @@ import (
 
 type exifSizeSource struct {
 	*source
+
 	data []byte
 }
 
@@ -34,7 +35,8 @@ func TestEXIFMaterializedSizeAndProviderIdentity(t *testing.T) {
 		t.Run(map[bool]string{false: "new-manifest", true: "legacy-manifest"}[legacy], func(t *testing.T) {
 			t.Parallel()
 
-			provider := &exifSizeSource{source: newSource(photo("exif", "photo.jpg")), data: []byte{0xff, 0xd8, 0xff, 0xd9}}
+			provider := &exifSizeSource{source: newSource(photo("exif", testPhotoFilename)),
+				data: []byte{0xff, 0xd8, 0xff, 0xd9}}
 			setEXIFProviderSize(provider)
 			input := request(t.TempDir())
 			input.Options.SetExifDatetime = !legacy
@@ -82,7 +84,7 @@ func TestEXIFMaterializedSizeAndProviderIdentity(t *testing.T) {
 func TestLegacyEXIFManifestRequiresRecordedMaterializedSize(t *testing.T) {
 	t.Parallel()
 
-	provider := &exifSizeSource{source: newSource(photo("exif", "photo.jpg")), data: []byte{0xff, 0xd8, 0xff, 0xd9}}
+	provider := &exifSizeSource{source: newSource(photo("exif", testPhotoFilename)), data: []byte{0xff, 0xd8, 0xff, 0xd9}}
 	setEXIFProviderSize(provider)
 	input := request(t.TempDir())
 	input.Options.SetExifDatetime = true
@@ -116,13 +118,14 @@ func setEXIFProviderSize(provider *exifSizeSource) {
 func checkEXIFMaterializedSize(t *testing.T, provider *exifSizeSource, statePath, directory string) {
 	t.Helper()
 
-	data, err := os.ReadFile(filepath.Join(directory, "photo.jpg"))
+	data, err := readPhotoSyncTestFile(t, filepath.Join(directory, testPhotoFilename))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	want := photomaterialize.UpdateEXIF(provider.data, *provider.assets[0].TakenAt)
-	if !bytes.Equal(data, want) || len(data) <= len(provider.data) || !bytes.Contains(data, []byte("2026:04:01 00:00:00")) {
+	if !bytes.Equal(data, want) || len(data) <= len(provider.data) ||
+		!bytes.Contains(data, []byte("2026:04:01 00:00:00")) {
 		t.Fatal("materialized EXIF timestamp or original JPEG changed")
 	}
 
@@ -136,12 +139,13 @@ func checkEXIFMaterializedSize(t *testing.T, provider *exifSizeSource, statePath
 func readEXIFManifest(t *testing.T, path string) photosync.Manifest {
 	t.Helper()
 
-	data, err := os.ReadFile(path)
+	data, err := readPhotoSyncTestFile(t, path)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	var manifest photosync.Manifest
+
 	err = json.Unmarshal(data, &manifest)
 	if err != nil {
 		t.Fatal(err)
