@@ -175,7 +175,8 @@ func assertMaterializationResult(t *testing.T, input photosync.Request,
 	want.StatePath = filepath.Join(input.Options.Directory, ".go-icloud-state", key+".json")
 	cursor := materializedSyncCursor
 	want.SyncCursor = &cursor
-	item := photosync.Item{AssetID: "synthetic-asset-0", ResourceKey: materializedResourceKey, Path: materializedPhotoPath,
+	item := photosync.Item{AssetID: photoMutationAssetID, ResourceKey: materializedResourceKey,
+		Path:   materializedPhotoPath,
 		Action: photosync.Downloaded, Reason: nil}
 	want.DownloadedCount = 1
 
@@ -224,7 +225,7 @@ func assertMaterializationManifest(t *testing.T, directory, key string,
 	cursor := materializedSyncCursor
 
 	want := photosync.Manifest{TargetKey: key, Cursor: &cursor,
-		Resources: []photosync.SyncedResource{{AssetID: "synthetic-asset-0", ResourceKey: materializedResourceKey,
+		Resources: []photosync.SyncedResource{{AssetID: photoMutationAssetID, ResourceKey: materializedResourceKey,
 			RelativePath: materializedPhotoPath, Size: &providerSize, LocalSize: &localSize,
 			Checksum: nil, DownloadedAt: &downloaded}}}
 	if !reflect.DeepEqual(*manifest, want) {

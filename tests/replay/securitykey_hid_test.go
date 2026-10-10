@@ -16,6 +16,14 @@ import (
 )
 
 const (
+	hidReplayUV1Fixture              = "python-uv1-synthetic.json"
+	hidReplayUV2Fixture              = "python-uv2-synthetic.json"
+	hidReplayWrongNonceControl       = "wrong nonce"
+	hidReplayWrongChannelControl     = "wrong channel"
+	hidReplayWrongCommandControl     = "wrong command"
+	hidReplayMissingSignatureControl = "missing signature"
+	hidReplayMissingPresenceControl  = "missing presence"
+
 	hidReplayDeviceName          = "Synthetic authenticator"
 	hidReplayU2FFixture          = "python-u2f-synthetic.json"
 	hidReplayFallbackFixture     = "python-fallback-synthetic.json"
@@ -234,7 +242,7 @@ func TestSecurityKeySourceHIDReplay(t *testing.T) {
 	t.Parallel()
 
 	for _, name := range []string{"python-ctap2-synthetic.json", hidReplayU2FFixture,
-		hidReplayFallbackFixture, "python-uv1-synthetic.json", "python-uv2-synthetic.json",
+		hidReplayFallbackFixture, hidReplayUV1Fixture, hidReplayUV2Fixture,
 		"python-selection-synthetic.json", "python-zero-limit-synthetic.json", "python-uv-retry-synthetic.json",
 		"python-uv-blocked-synthetic.json", "python-pin-required-synthetic.json"} {
 		t.Run(name, func(t *testing.T) {
@@ -285,7 +293,7 @@ func replaySecurityKeySourceHID(t *testing.T, name string) {
 	}
 
 	expectedEntropy := hidReplayScalarBytes
-	if name == "python-uv1-synthetic.json" || name == "python-uv2-synthetic.json" {
+	if name == hidReplayUV1Fixture || name == hidReplayUV2Fixture {
 		expectedEntropy = 0
 	}
 
@@ -317,8 +325,10 @@ func hidReplayResult(t *testing.T, result securitykey.Assertion, fixture hidRepl
 // change only the device response or owned handle failure named by the case.
 func TestSecurityKeyHIDFailureReplay(t *testing.T) {
 	t.Parallel()
-	for _, name := range []string{hidReplayShortReportControl, "wrong nonce", "wrong channel", "wrong command",
-		"missing signature", "missing presence", hidReplayCloseFailureControl, "cancel"} {
+
+	for _, name := range []string{hidReplayShortReportControl, hidReplayWrongNonceControl,
+		hidReplayWrongChannelControl, hidReplayWrongCommandControl,
+		hidReplayMissingSignatureControl, hidReplayMissingPresenceControl, hidReplayCloseFailureControl, "cancel"} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			fixture := hidReplayRead(t, hidReplayU2FFixture)
@@ -329,19 +339,19 @@ func TestSecurityKeyHIDFailureReplay(t *testing.T) {
 			case hidReplayShortReportControl:
 				connection.events = connection.events[:2]
 				connection.events[1].packet = connection.events[1].packet[:4]
-			case "wrong nonce":
+			case hidReplayWrongNonceControl:
 				connection.events = connection.events[:2]
 				connection.events[1].packet[hidReplayPayloadOffset] = 0xff
-			case "wrong channel":
+			case hidReplayWrongChannelControl:
 				connection.events = connection.events[:2]
 				connection.events[1].packet[0] = 0
-			case "wrong command":
+			case hidReplayWrongCommandControl:
 				connection.events = connection.events[:2]
 				connection.events[1].packet[4] = 0x90
-			case "missing signature":
+			case hidReplayMissingSignatureControl:
 				connection.events[len(connection.events)-1].packet = hidReplayHex(t,
 					"0102030483000701000000009000"+strings.Repeat("00", hidReplayShortSignaturePadding))
-			case "missing presence":
+			case hidReplayMissingPresenceControl:
 				connection.events[len(connection.events)-1].packet[hidReplayPayloadOffset] = 0
 			case hidReplayCloseFailureControl:
 				cause = fs.ErrClosed

@@ -200,7 +200,11 @@ func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, erro
 		}
 	}
 
-	return response, err
+	if err != nil {
+		return response, fmt.Errorf("bridge replay transport: %w", err)
+	}
+
+	return response, nil
 }
 
 func (r *sdkBridgeReplay) take(event map[string]any) {
@@ -430,14 +434,7 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	nativeBridgeFixtureChallenge(t, raw, &state)
 
 	if snapshot {
-		var identifier icloud.TrustedPhoneNumberID
-
-		authReplayDecode(t, json.RawMessage(`1`), &identifier)
-
-		nonFTEU := true
-		state.Challenge.PhoneNumbers = append(state.Challenge.PhoneNumbers,
-			icloud.TrustedPhoneNumber{ID: identifier, Number: "synthetic-unused",
-				PushMode: "sms", NonFTEU: &nonFTEU})
+		nativeBridgeSnapshotPhone(t, &state)
 	}
 
 	initial := authReplayObjectBytes(t, raw["initial_state"])
@@ -544,6 +541,19 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	if !bytes.Equal(before, after) {
 		t.Fatal("bridge changed caller-owned state")
 	}
+}
+
+func nativeBridgeSnapshotPhone(t *testing.T, state *icloud.NativeAuthState) {
+	t.Helper()
+
+	var identifier icloud.TrustedPhoneNumberID
+
+	authReplayDecode(t, json.RawMessage(`1`), &identifier)
+
+	nonFTEU := true
+	state.Challenge.PhoneNumbers = append(state.Challenge.PhoneNumbers,
+		icloud.TrustedPhoneNumber{ID: identifier, Number: "synthetic-unused",
+			PushMode: "sms", NonFTEU: &nonFTEU})
 }
 
 func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, session *icloud.NativeBridgeSession) {
