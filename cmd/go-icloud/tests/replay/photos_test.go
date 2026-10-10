@@ -119,7 +119,7 @@ func TestPhotoReadCommands(t *testing.T) {
 
 		want := 27
 		if prefix == "albums" {
-			want = 41
+			want = 42
 		}
 
 		if prefix == "count" {
@@ -127,7 +127,7 @@ func TestPhotoReadCommands(t *testing.T) {
 		}
 
 		if prefix == "assets" {
-			want = 109
+			want = 110
 		}
 
 		if prefix == lookupFixturePrefix {
