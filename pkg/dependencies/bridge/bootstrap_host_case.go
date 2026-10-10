@@ -11,8 +11,11 @@ type hostRuneRange struct {
 
 func lowercaseHostName(name string) string {
 	letters := []rune(name)
+
 	var output strings.Builder
+
 	previousCased := false
+
 	for index, value := range letters {
 		if value == '\u03a3' && previousCased && !followingHostCased(letters[index+1:]) {
 			output.WriteRune('\u03c2')
@@ -45,6 +48,7 @@ func hostRuneIn(ranges []hostRuneRange, value rune) bool {
 		if selected < interval.first {
 			return 1
 		}
+
 		if selected > interval.last {
 			return -1
 		}

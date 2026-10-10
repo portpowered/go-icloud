@@ -120,6 +120,7 @@ func explicitSocketHost(candidate string) (string, error) {
 func lowercaseSocketHostname(host string) string {
 	name, zone, zoned := strings.Cut(host, "%")
 	name = lowercaseHostName(name)
+
 	if zoned {
 		return name + "%" + zone
 	}

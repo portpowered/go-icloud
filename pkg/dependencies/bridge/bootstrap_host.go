@@ -3,6 +3,7 @@ package bridge
 import (
 	"errors"
 	"fmt"
+	"math"
 	"net/netip"
 	"strings"
 	"unicode"
@@ -11,9 +12,9 @@ import (
 )
 
 var (
-	errHostBrackets = errors.New("Invalid IPv6 URL")
+	errHostBrackets = errors.New("Invalid IPv6 URL") //nolint:staticcheck // Preserve Python urlsplit's exact parser diagnostic.
 	errHostFuture   = errors.New("IPvFuture address is invalid")
-	errHostIPv4     = errors.New("An IPv4 address cannot be in brackets")
+	errHostIPv4     = errors.New("An IPv4 address cannot be in brackets") //nolint:staticcheck // Preserve Python ipaddress's exact parser diagnostic.
 )
 
 // sourceURLHostname projects Python urlsplit's authority and hostname rules.
@@ -21,6 +22,7 @@ var (
 func sourceURLHostname(candidate string) (string, error) {
 	remaining := strings.TrimLeftFunc(candidate, func(value rune) bool { return value <= ' ' })
 	remaining = strings.NewReplacer("\t", "", "\r", "", "\n", "").Replace(remaining)
+
 	if scheme, tail, found := strings.Cut(remaining, ":"); found && validHostScheme(scheme) {
 		remaining = tail
 	}
@@ -45,10 +47,12 @@ func sourceURLHostname(candidate string) (string, error) {
 
 	if _, bracketed, found := strings.Cut(authority, "["); found {
 		host, _, _ := strings.Cut(bracketed, "]")
+
 		return host, nil
 	}
 
 	host, _, _ := strings.Cut(authority, ":")
+
 	return host, nil
 }
 
@@ -79,13 +83,16 @@ func validateHostAuthority(authority string) error {
 	if open {
 		_, remainder, _ := strings.Cut(authority, "[")
 		bracketed, _, _ := strings.Cut(remainder, "]")
-		if err := validateBracketedHost(bracketed); err != nil {
+		err := validateBracketedHost(bracketed)
+		if err != nil {
 			return err
 		}
 	}
 
 	withoutSyntax := strings.NewReplacer("@", "", ":", "", "#", "", "?", "").Replace(authority)
-	if normalized := norm.NFKC.String(withoutSyntax); normalized != withoutSyntax && strings.ContainsAny(normalized, "/?#@:") {
+	normalized := norm.NFKC.String(withoutSyntax)
+	if normalized != withoutSyntax && strings.ContainsAny(normalized, "/?#@:") {
+		//nolint:err113 // Preserve Source's exact authority diagnostic; explicitSocketHost wraps this parser cause.
 		return fmt.Errorf("netloc '%s' contains invalid characters under NFKC normalization", authority)
 	}
 
@@ -124,6 +131,7 @@ func validateBracketedHost(host string) error {
 }
 
 func invalidHostIP(host string) error {
+	//nolint:err113 // Preserve Source's exact invalid-IP repr diagnostic; explicitSocketHost wraps this parser cause.
 	return fmt.Errorf("%s does not appear to be an IPv4 or IPv6 address", pythonHostRepresentation(host))
 }
 
@@ -135,7 +143,9 @@ func pythonHostRepresentation(text string) string {
 	}
 
 	var output strings.Builder
+
 	output.WriteByte(quote)
+
 	for _, value := range text {
 		switch {
 		case value == rune(quote) || value == '\\':
@@ -149,15 +159,17 @@ func pythonHostRepresentation(text string) string {
 			output.WriteString("\\n")
 		case value == ' ' || unicode.IsPrint(value) && !unicode.IsSpace(value):
 			output.WriteRune(value)
-		case value <= 0xff:
+		case value <= math.MaxUint8:
 			fmt.Fprintf(&output, "\\x%02x", value)
-		case value <= 0xffff:
+		case value <= math.MaxUint16:
 			fmt.Fprintf(&output, "\\u%04x", value)
 		default:
 			fmt.Fprintf(&output, "\\U%08x", value)
 		}
 	}
+
 	output.WriteByte(quote)
+
 	return output.String()
 }
 
