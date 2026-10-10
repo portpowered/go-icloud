@@ -1,14 +1,16 @@
-package webtransport
+package webtransport_test
 
 import (
 	"bytes"
 	"testing"
 
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	bridgemodels "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )
 
 func TestBridgeOpaqueEncodingRetainsOpenProviderJSON(t *testing.T) {
 	t.Parallel()
+
 	for _, control := range []struct {
 		name     string
 		input    any
@@ -24,8 +26,12 @@ func TestBridgeOpaqueEncodingRetainsOpenProviderJSON(t *testing.T) {
 		t.Run(control.name, func(t *testing.T) {
 			t.Parallel()
 			// The field and helper retain compatibility with existing any values.
-			input := bridgemodels.BridgeExchange{Akdata: control.input}
-			actual, err := EncodeBridgeOpaqueData(input.Akdata)
+			input := bridgemodels.BridgeExchange{
+				Akdata: control.input, Data: nil, Idmsdata: nil, NextStep: "", Ptkn: "", SessionUUID: "",
+			}
+
+			actual, err := webtransport.EncodeBridgeOpaqueData(input.Akdata)
+
 			if err != nil || !bytes.Equal(actual, []byte(control.expected)) {
 				t.Fatalf("opaque provider encoding=%s error=%v; expected=%s", actual, err, control.expected)
 			}
