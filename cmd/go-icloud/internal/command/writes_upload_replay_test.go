@@ -55,6 +55,7 @@ func runUploadWriteReplay(t *testing.T, scenario writeReplayCase) {
 		writeProbeFile(t, content, data)
 		args = append(args, "--file", content)
 	}
+
 	args = append(args, scenario.operation)
 	var output, diagnostic bytes.Buffer
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
@@ -81,7 +82,8 @@ func uploadWriteRequest(t *testing.T, operation string, fixture writeFixture) ma
 		var seconds int64
 		decodeWriteFixture(t, fixture.File["name"], &filename)
 		decodeWriteFixture(t, fixture.File["modified_seconds"], &seconds)
-		request := map[string]any{"filename": filename, "modificationTime": time.Unix(seconds, 0).UTC().Format(time.RFC3339Nano),
+		request := map[string]any{
+			"filename": filename, "modificationTime": time.Unix(seconds, 0).UTC().Format(time.RFC3339Nano),
 			"localTimeZoneID": "UTC", "timeZoneOffset": 0}
 		if operation == "photo-upload" {
 			request["hydrate"] = true
@@ -100,15 +102,20 @@ func uploadRegisterWriteRequest(t *testing.T, fixture writeFixture) map[string]a
 	files := make([]any, 0, len(source))
 	for _, item := range source {
 		file := item.(map[string]any)
-		seconds, err := file["lastModDate"].(json.Number).Int64()
+		milliseconds := file["lastModDate"].(json.Number)
+		seconds, err := milliseconds.Int64()
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		files = append(files, map[string]any{"filename": file["fileName"],
 			"modificationTime": time.UnixMilli(seconds).UTC().Format(time.RFC3339Nano),
 			"timeZoneOffset":   file["timeZoneOffset"], "receipt": file["singleFileUploadRequest"]})
 	}
-	return map[string]any{"files": files, "importGroup": fixture.Keywords["import_group"], "localTimeZoneID": fixture.Keywords["local_time_zone_id"]}
+	return map[string]any{
+		"files": files, "importGroup": fixture.Keywords["import_group"],
+		"localTimeZoneID": fixture.Keywords["local_time_zone_id"],
+	}
 }
 
 func checkUploadWriteResult(t *testing.T, operation string, fixture writeFixture, path string, output []byte) {
@@ -125,6 +132,7 @@ func checkUploadWriteResult(t *testing.T, operation string, fixture writeFixture
 	var console any
 	decodeWriteFixture(t, output, &console)
 	var expected any
+
 	switch operation {
 	case "photo-upload-reserve":
 		compareUploadPrivateValue(t, result["uploadURLs"], fixture.Result)
@@ -133,7 +141,8 @@ func checkUploadWriteResult(t *testing.T, operation string, fixture writeFixture
 		compareUploadPrivateValue(t, result["receipt"], fixture.Result)
 		expected = map[string]any{}
 	case "photo-upload-register":
-		expected = map[string]any{"registrations": sourceUploadRegistrations(t, fixture.Result.([]any))}
+		registrations := fixture.Result.([]any)
+		expected = map[string]any{"registrations": sourceUploadRegistrations(t, registrations)}
 	default:
 		observed := fixture.Result.(map[string]any)
 		acknowledgement := observed["value"]
@@ -195,7 +204,8 @@ func sourceUploadRegistrations(t *testing.T, source []any) []any {
 	t.Helper()
 	result := make([]any, 0, len(source))
 	for _, item := range source {
-		result = append(result, sourceUploadRegistration(t, item.(map[string]any)))
+		registration := item.(map[string]any)
+		result = append(result, sourceUploadRegistration(t, registration))
 	}
 	return result
 }

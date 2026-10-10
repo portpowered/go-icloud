@@ -11,11 +11,12 @@ func runLocationWrite(ctx context.Context, client icloud.Client,
 ) (any, error) {
 	switch operation {
 	case "reminder-location-add":
-		return invokeWrite(ctx, path, resultPath, func(input icloud.AddReminderLocationTriggerRequest) (*icloud.AddReminderLocationTriggerResult, error) {
-			input.Auth = auth
+		return invokeWrite(ctx, path, resultPath,
+			func(input icloud.AddReminderLocationTriggerRequest) (*icloud.AddReminderLocationTriggerResult, error) {
+				input.Auth = auth
 
-			return client.AddReminderLocationTrigger(ctx, input)
-		})
+				return client.AddReminderLocationTrigger(ctx, input)
+			})
 	default:
 		return nil, errCommand
 	}

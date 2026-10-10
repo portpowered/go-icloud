@@ -22,7 +22,7 @@ func TestTypedReadInputFailures(t *testing.T) {
 		t.Run(request, func(t *testing.T) {
 			t.Parallel()
 			var probe readProbe
-			_, output, err := runWriteProbe(t, t.Context(), &probe, "photo-upload-status", request, nil)
+			_, output, err := runWriteProbe(t.Context(), t, &probe, "photo-upload-status", request, nil)
 			var inputError *command.WriteRequestError
 			if !errors.As(err, &inputError) || probe.calls != 0 || output != "" {
 				t.Fatal("invalid typed read reached SDK or output", err)

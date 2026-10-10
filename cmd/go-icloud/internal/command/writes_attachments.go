@@ -11,23 +11,26 @@ func runAttachmentWrite(ctx context.Context, client icloud.Client,
 ) (any, error) {
 	switch operation {
 	case "reminder-attachment-create":
-		return invokeWrite(ctx, path, resultPath, func(input icloud.CreateReminderURLAttachmentRequest) (*icloud.ReminderAttachmentMutationResult, error) {
-			input.Auth = auth
+		return invokeWrite(ctx, path, resultPath,
+			func(input icloud.CreateReminderURLAttachmentRequest) (*icloud.ReminderAttachmentMutationResult, error) {
+				input.Auth = auth
 
-			return client.CreateReminderURLAttachment(ctx, input)
-		})
+				return client.CreateReminderURLAttachment(ctx, input)
+			})
 	case "reminder-attachment-update":
-		return invokeWrite(ctx, path, resultPath, func(input icloud.UpdateReminderAttachmentRequest) (*icloud.UpdateReminderAttachmentResult, error) {
-			input.Auth = auth
+		return invokeWrite(ctx, path, resultPath,
+			func(input icloud.UpdateReminderAttachmentRequest) (*icloud.UpdateReminderAttachmentResult, error) {
+				input.Auth = auth
 
-			return client.UpdateReminderAttachment(ctx, input)
-		})
+				return client.UpdateReminderAttachment(ctx, input)
+			})
 	case "reminder-attachment-delete":
-		return invokeWrite(ctx, path, resultPath, func(input icloud.DeleteReminderAttachmentRequest) (*icloud.ReminderAttachmentMutationResult, error) {
-			input.Auth = auth
+		return invokeWrite(ctx, path, resultPath,
+			func(input icloud.DeleteReminderAttachmentRequest) (*icloud.ReminderAttachmentMutationResult, error) {
+				input.Auth = auth
 
-			return client.DeleteReminderAttachment(ctx, input)
-		})
+				return client.DeleteReminderAttachment(ctx, input)
+			})
 	default:
 		return nil, errCommand
 	}

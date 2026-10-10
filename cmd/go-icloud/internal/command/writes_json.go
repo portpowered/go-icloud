@@ -54,6 +54,7 @@ func walkWriteJSON(decoder *json.Decoder, depth int) error {
 	}
 
 	seen := make(map[string]bool)
+
 	for decoder.More() {
 		if opening == '{' {
 			key, keyErr := decoder.Token()
@@ -84,12 +85,15 @@ func validateWriteAttachment(data []byte) error {
 	}
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
+
 	var err error
 	if _, selected := fields["url"]; selected {
 		var attachment icloud.ReminderURLAttachment
+
 		err = decoder.Decode(&attachment)
 	} else {
 		var attachment icloud.ReminderImageAttachment
+
 		err = decoder.Decode(&attachment)
 	}
 	if err != nil {

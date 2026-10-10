@@ -79,7 +79,10 @@ func loadWriteFixture(t *testing.T, name string) writeFixture {
 	}
 	var row map[string]json.RawMessage
 	decodeWriteFixture(t, data, &row)
-	fixture := writeFixture{Exchanges: nil, Inputs: nil, Keywords: nil, Result: nil, Failure: row["error"], Initial: nil, Entropy: nil, File: nil}
+	fixture := writeFixture{
+		Exchanges: nil, Inputs: nil, Keywords: nil, Result: nil, Failure: row["error"],
+		Initial: nil, Entropy: nil, File: nil,
+	}
 	decodeWriteFixture(t, row["exchanges"], &fixture.Exchanges)
 	decodeWriteFixture(t, row["inputs"], &fixture.Inputs)
 	decodeWriteFixture(t, row["initial_state"], &fixture.Initial)
@@ -115,8 +118,10 @@ func fixtureWriteAuthentication(t *testing.T, fixture writeFixture) icloud.AuthC
 	decodeWriteFixture(t, fixture.Initial["params"], &params)
 	decodeWriteFixture(t, fixture.Initial["headers"], &headers)
 	decodeWriteFixture(t, fixture.Initial["origin"], &origin)
-	auth := icloud.AuthContext{AccountID: params["dsid"], ClientID: params["clientId"],
-		RemindersServiceURL: origin, PhotosServiceURL: origin, Headers: nil}
+	var auth icloud.AuthContext
+
+	auth.AccountID, auth.ClientID = params["dsid"], params["clientId"]
+	auth.RemindersServiceURL, auth.PhotosServiceURL = origin, origin
 	for name, value := range headers {
 		auth.Headers = append(auth.Headers, icloud.Header{Name: name, Value: value})
 	}
@@ -143,6 +148,7 @@ func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HT
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		random.Write(data)
 	}
 	if data, exists := fixture.Entropy["random_bytes"]; exists {
@@ -180,10 +186,12 @@ func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 	session := filepath.Join(directory, "session.json")
 	input := filepath.Join(directory, "request.json")
 	result := filepath.Join(directory, "result.json")
+
 	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
 	writeFixtureValue(t, input, request)
 	var output, diagnostic bytes.Buffer
-	err = command.Run(t.Context(), client, []string{"--session", session, "--request", input, "--save-result", result, scenario.operation},
+	args := []string{"--session", session, "--request", input, "--save-result", result, scenario.operation}
+	err = command.Run(t.Context(), client, args,
 		&output, &diagnostic)
 	checkWriteReplayResult(t, scenario, fixture, output.Bytes(), result, err)
 	if err = transport.AssertConsumed(); err != nil {
@@ -197,10 +205,13 @@ func writeFixtureValue(t *testing.T, path string, value any) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	writeProbeFile(t, path, data)
 }
 
-func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writeFixture, output []byte, resultPath string, callErr error) {
+func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writeFixture,
+	output []byte, resultPath string, callErr error,
+) {
 	t.Helper()
 	if len(fixture.Failure) != 0 || scenario.fixture == "photos-favorite-record-error" {
 		var failure *icloud.ClientError
@@ -232,6 +243,7 @@ func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writ
 	var saved map[string]json.RawMessage
 	decodeWriteFixture(t, data, &saved)
 	var responses []icloud.ResponseMetadata
+
 	decodeWriteFixture(t, saved["responses"], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
 }
@@ -248,7 +260,9 @@ func checkFailedWriteReceipt(t *testing.T, fixture writeFixture, failure *icloud
 	if !bytes.Equal(failure.ResponseBody(), body) {
 		t.Fatal("CLI failure lost paired provider body")
 	}
-	response := icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()}
+	response := icloud.ResponseMetadata{
+		StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL(),
+	}
 	checkWriteResponses(t, []icloud.ResponseMetadata{response}, []replay.Exchange{last})
 	checkWriteResponses(t, failure.PriorResponses(), fixture.Exchanges[:len(fixture.Exchanges)-1])
 }

@@ -12,7 +12,7 @@ import (
 var errWriteFile = errors.New("provide --file with --request for photo-upload or photo-upload-file")
 
 func fileWriteCommand(operation string) bool {
-	return operation == "photo-upload" || operation == "photo-upload-file" || operation == "photo-upload-send"
+	return operation == writePhotoUpload || operation == "photo-upload-file" || operation == "photo-upload-send"
 }
 
 func runFileWrite(ctx context.Context, client icloud.Client,
@@ -21,8 +21,9 @@ func runFileWrite(ctx context.Context, client icloud.Client,
 	if operation == "photo-upload-send" {
 		return runUploadSend(ctx, client, auth, requestPath, contentPath, resultPath)
 	}
+
 	switch operation {
-	case "photo-upload":
+	case writePhotoUpload:
 		return invokeFileWrite(ctx, requestPath, contentPath, resultPath,
 			func(input icloud.UploadPhotoRequest, content io.ReadSeeker) (*icloud.UploadPhotoResult, error) {
 				input.Auth = auth

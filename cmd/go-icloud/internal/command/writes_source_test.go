@@ -2,7 +2,6 @@ package command_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -59,14 +58,17 @@ func sourceWriteField(key string) string {
 	}
 	names := map[string]string{
 		"list_id": "listID", "reminder_id": "reminderID", "parent_reminder_id": "parentReminderID",
-		"hashtag_ids": "hashtagIDs", "attachment_ids": "attachmentIDs", "alarm_ids": "alarmIDs", "recurrence_rule_ids": "recurrenceRuleIDs",
-		"alarm_id": "alarmID", "alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID", "file_asset_url": "fileAssetURL",
-		"master_id": "masterID",
+		"hashtag_ids": "hashtagIDs", "attachment_ids": "attachmentIDs",
+		"alarm_ids": "alarmIDs", "recurrence_rule_ids": "recurrenceRuleIDs",
+		"alarm_id": "alarmID", "alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID",
+		"file_asset_url": "fileAssetURL",
+		"master_id":      "masterID",
 	}
 	if name, known := names[key]; known {
 		return name
 	}
 	parts := strings.Split(key, "_")
+
 	for index := 1; index < len(parts); index++ {
 		part := parts[index]
 		if part != "" {
@@ -110,6 +112,7 @@ func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map
 		request = sourceWriteProjection(fixture.Keywords).(map[string]any)
 	}
 	inputs := sourceWriteProjection(fixture.Inputs).([]any)
+
 	switch operation {
 	case "reminder-create":
 		request["listID"], request["title"] = inputs[0], inputs[1]
@@ -182,8 +185,8 @@ func fixtureWriteExpected(t *testing.T, operation string, fixture writeFixture) 
 	if operation == "photo-album-create" {
 		return map[string]any{"album": result}
 	}
-	observed, ok := result.(map[string]any)
-	if !ok {
+	observed, objectPresent := result.(map[string]any)
+	if !objectPresent {
 		t.Fatal("Source write result is not an object", operation)
 	}
 	if operation == "photo-album-rename" {
@@ -210,7 +213,9 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 		return map[string]any{"reminder": arguments[0]}
 	case "reminder-delete":
 		reminder := arguments[0].(map[string]any)
-		return map[string]any{"deleted": true, "modified": reminder["modified"], "recordChangeTag": reminder["recordChangeTag"]}
+		return map[string]any{
+			"deleted": true, "modified": reminder["modified"], "recordChangeTag": reminder["recordChangeTag"],
+		}
 	case "reminder-hashtag-create":
 		return map[string]any{"hashtag": value, "reminder": arguments[0]}
 	case "reminder-hashtag-update":
@@ -237,7 +242,7 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 		projectSourceLocationNumbers(t, returned[1].(map[string]any))
 		return map[string]any{"alarm": returned[0], "trigger": returned[1], "reminder": arguments[0]}
 	default:
-		t.Fatal(fmt.Sprintf("unknown Source result adapter: %s", operation))
+		t.Fatal("unknown Source result adapter: " + operation)
 	}
 	return nil
 }

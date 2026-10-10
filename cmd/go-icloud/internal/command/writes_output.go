@@ -67,8 +67,10 @@ func stripWriteSecrets(value any) {
 		for key, child := range node {
 			if privateWriteField(key) {
 				delete(node, key)
+
 				continue
 			}
+
 			stripWriteSecrets(child)
 		}
 	case []any:
@@ -97,7 +99,9 @@ func typedWriteProjection(result any) any {
 			return value
 		}
 		copied := *value
+
 		copied.Registrations = make([]icloud.PhotoUploadRegistration, 0, len(value.Registrations))
+
 		for _, registration := range value.Registrations {
 			copied.Registrations = append(copied.Registrations, writePhotoRegistration(registration))
 		}

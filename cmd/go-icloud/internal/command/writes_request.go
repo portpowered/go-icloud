@@ -53,6 +53,7 @@ func openWriteFile(path string) (*os.File, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open request directory: %w", err)
 	}
+
 	defer func() { _ = directory.Close() }()
 
 	file, err := directory.Open(filepath.Base(path))
@@ -72,6 +73,7 @@ func decodeWriteRequest[Request any](input io.Reader) (*Request, error) {
 	}
 
 	var trailing json.RawMessage
+
 	err := decoder.Decode(&trailing)
 	if !errors.Is(err, io.EOF) {
 		if err != nil {

@@ -6,10 +6,22 @@ import (
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
 
+const (
+	writePhotoAlbumCreate    = "photo-album-create"
+	writePhotoAlbumRename    = "photo-album-rename"
+	writePhotoAlbumDelete    = "photo-album-delete"
+	writePhotoAlbumAdd       = "photo-album-add"
+	writePhotoFavorite       = "photo-favorite"
+	writePhotoDelete         = "photo-delete"
+	writePhotoUpload         = "photo-upload"
+	writePhotoUploadRegister = "photo-upload-register"
+)
+
 func writeCommand(operation string) bool {
 	if fileWriteCommand(operation) || phaseWriteCommand(operation) {
 		return true
 	}
+
 	switch operation {
 	case "reminder-create", "reminder-update", "reminder-delete":
 		return true
@@ -21,9 +33,9 @@ func writeCommand(operation string) bool {
 		return true
 	case "reminder-location-add":
 		return true
-	case "photo-album-create", "photo-album-rename", "photo-album-delete":
+	case writePhotoAlbumCreate, writePhotoAlbumRename, writePhotoAlbumDelete:
 		return true
-	case "photo-album-add", "photo-favorite", "photo-delete":
+	case writePhotoAlbumAdd, writePhotoFavorite, writePhotoDelete:
 		return true
 	default:
 		return false
@@ -36,6 +48,7 @@ func runWrite(ctx context.Context, client icloud.Client,
 	if phaseWriteCommand(operation) {
 		return runUploadWrite(ctx, client, auth, operation, path, resultPath)
 	}
+
 	switch operation {
 	case "reminder-create", "reminder-update", "reminder-delete":
 		return runReminderWrite(ctx, client, auth, operation, path, resultPath)
@@ -47,9 +60,9 @@ func runWrite(ctx context.Context, client icloud.Client,
 		return runAttachmentWrite(ctx, client, auth, operation, path, resultPath)
 	case "reminder-location-add":
 		return runLocationWrite(ctx, client, auth, operation, path, resultPath)
-	case "photo-album-create", "photo-album-rename", "photo-album-delete":
+	case writePhotoAlbumCreate, writePhotoAlbumRename, writePhotoAlbumDelete:
 		return runAlbumWrite(ctx, client, auth, operation, path, resultPath)
-	case "photo-album-add", "photo-favorite", "photo-delete":
+	case writePhotoAlbumAdd, writePhotoFavorite, writePhotoDelete:
 		return runAssetWrite(ctx, client, auth, operation, path, resultPath)
 	default:
 		return nil, errCommand
