@@ -15,7 +15,7 @@ func (sdk *SDK) nativeAcceptTerms(ctx context.Context, operation *nativeAuthOper
 	login auth.AuthTokenLoginRequest, account auth.AuthAccountResponse,
 ) (bool, error) {
 	return sdk.nativeAcceptTermsLogin(ctx, operation, webtransport.LoginAuthTokenCall{
-		Origin: operation.state.Auth.SetupServiceURL, Body: login}, account)
+		Origin: operation.state.Auth.SetupServiceURL, Params: nil, Body: login}, account)
 }
 
 func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAuthOperation,
@@ -171,7 +171,7 @@ func (sdk *SDK) nativeOneFactorTerms(ctx context.Context, operation *nativeAuthO
 	}
 
 	_, err := sdk.nativeAcceptTermsLogin(ctx, operation, webtransport.LoginAuthCredentialsCall{
-		Origin: operation.state.Auth.SetupServiceURL, Body: login}, account)
+		Origin: operation.state.Auth.SetupServiceURL, Params: nil, Body: login}, account)
 
 	return err
 }

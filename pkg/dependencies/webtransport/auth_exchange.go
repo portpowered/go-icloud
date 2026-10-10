@@ -44,6 +44,7 @@ func (client *Client) exchangeAuthenticationCall(ctx context.Context, call Authe
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
+
 	return client.exchangeAuthentication(ctx, request, headers, cookies, media)
 }
 

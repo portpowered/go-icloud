@@ -49,7 +49,7 @@ func (sdk *SDK) nativeBridgeExchange(ctx context.Context, state NativeAuthState,
 func (sdk *SDK) nativeBridgeStart(ctx context.Context, state NativeAuthState, input auth.AuthBridgeStartRequest,
 ) (NativeAuthState, ResponseMetadata, *auth.AuthBridgeResponse, error) {
 	request, err := nativeEncodedRequest(webtransport.AuthBridgeStep0Call{
-		Origin: nativeIDMSOrigin(state), Body: input})
+		Origin: nativeIDMSOrigin(state), Params: nil, Body: input})
 	if err != nil {
 		return state, ResponseMetadata{}, nil, newClientError("OpenNativeBridgeSession", Configuration, 0, nil, nil, err)
 	}
@@ -67,16 +67,23 @@ func (sdk *SDK) nativeBridgeStep(ctx context.Context, state NativeAuthState, ste
 	return sdk.nativeBridgeHTTP(ctx, state, request)
 }
 
+//nolint:ireturn // GO-15: selects the sealed schema-owned step 2, 4 or 6 operation without an untyped body.
 func nativeBridgeStepRequest(state NativeAuthState, step int,
 	body auth.AuthBridgeStepRequest,
 ) (webtransport.AuthenticationCall, error) {
 	switch auth.AuthBridgeStepRequestNextStep(step) {
 	case auth.N2:
-		return nativeEncodedRequest(webtransport.AuthBridgeStep2Call{Origin: nativeIDMSOrigin(state), Body: body})
+		return nativeEncodedRequest(webtransport.AuthBridgeStep2Call{
+			Origin: nativeIDMSOrigin(state), Params: nil, Body: body,
+		})
 	case auth.N4:
-		return nativeEncodedRequest(webtransport.AuthBridgeStep4Call{Origin: nativeIDMSOrigin(state), Body: body})
+		return nativeEncodedRequest(webtransport.AuthBridgeStep4Call{
+			Origin: nativeIDMSOrigin(state), Params: nil, Body: body,
+		})
 	case auth.N6:
-		return nativeEncodedRequest(webtransport.AuthBridgeStep6Call{Origin: nativeIDMSOrigin(state), Body: body})
+		return nativeEncodedRequest(webtransport.AuthBridgeStep6Call{
+			Origin: nativeIDMSOrigin(state), Params: nil, Body: body,
+		})
 	default:
 		return nil, errNativeAuthInput
 	}
@@ -116,7 +123,7 @@ func (sdk *SDK) nativeBridgeCode(ctx context.Context, state NativeAuthState, inp
 	}
 
 	request, err := nativeEncodedRequest(webtransport.ValidateAuthBridgeCodeCall{
-		Origin: nativeIDMSOrigin(state), Body: input})
+		Origin: nativeIDMSOrigin(state), Params: nil, Body: input})
 	if err != nil {
 		return state, ResponseMetadata{}, 0, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

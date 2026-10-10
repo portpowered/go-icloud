@@ -1,15 +1,17 @@
 package icloud
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 )
 
+//nolint:ireturn // GO-15: preserves the sealed schema-owned operation union and nil on preparation failure.
 func nativeEncodedRequest(call webtransport.AuthenticationCall) (webtransport.AuthenticationCall, error) {
 	err := webtransport.ValidateAuthenticationCall(call)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("validate native authentication request: %w", err)
 	}
 
 	return call, nil

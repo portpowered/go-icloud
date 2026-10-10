@@ -144,7 +144,7 @@ type VerifyAuthSecurityKeyCall struct {
 
 func (VerifyAuthSecurityKeyCall) authenticationCall() {}
 
-// SendAuthVerificationCodeCall carries the generated parameters and authentication body for SendAuthVerificationCode.
+// SendAuthVerificationCodeCall carries generated parameters and the named trusted-device body.
 type SendAuthVerificationCodeCall struct {
 	// Origin is the caller-owned HTTPS account origin.
 	Origin string
@@ -154,7 +154,7 @@ type SendAuthVerificationCodeCall struct {
 
 func (SendAuthVerificationCodeCall) authenticationCall() {}
 
-// ValidateAuthVerificationCodeCall carries the generated parameters and authentication body for ValidateAuthVerificationCode.
+// ValidateAuthVerificationCodeCall carries generated parameters and the named trusted-device body.
 type ValidateAuthVerificationCodeCall struct {
 	// Origin is the caller-owned HTTPS account origin.
 	Origin string

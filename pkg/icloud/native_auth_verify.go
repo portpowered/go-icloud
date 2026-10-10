@@ -111,6 +111,7 @@ func nativeCodeAccepted(delivery TwoFactorDeliveryMethod, response *webtransport
 	return accepted
 }
 
+//nolint:ireturn // GO-15: selects either schema-owned SMS or trusted-code operations with distinct concrete bodies.
 func nativeVerificationRequest(state NativeAuthState, code string) (webtransport.AuthenticationCall, error) {
 	securityCode := auth.AuthSecurityCode{Code: code}
 	if state.DeliveryMethod != TwoFactorDeliverySMS {

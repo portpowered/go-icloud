@@ -9,42 +9,63 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
+const (
+	authBoundaryOrigin               string = "https://accounts.example.test"
+	authBoundaryJSONMedia            string = "application/json"
+	authBoundaryLogoutMedia          string = "text/plain;charset=UTF-8"
+	authBoundaryMediaHeader          string = "Content-Type"
+	authBoundaryLowercaseMediaHeader string = "content-type"
+)
+
 // Embedding a supported call satisfies the interface but does not add a supported operation.
 type embeddedAuthenticationCall struct {
 	webtransport.GetAuthChallengeCall
+
 	Body []byte
 }
 
 func TestAuthenticationCallRejectsIncompatibleMediaBeforeTransport(t *testing.T) {
+	t.Parallel()
+
+	srpBody := auth.AuthSRPInitRequest{A: nil, AccountName: "", Protocols: nil}
+	logoutBody := auth.AuthLogoutRequest{TrustBrowser: false, AllBrowsers: false}
+
 	wrong := "text/json"
-	origin := "https://accounts.example.test"
+	params := new(authapi.InitAuthSRPParams)
+	params.ContentType = &wrong
+
 	for name, testcase := range map[string]struct {
 		call    webtransport.AuthenticationCall
 		headers http.Header
 	}{
 		"typed-parameters": {
-			call: webtransport.InitAuthSRPCall{Origin: origin,
-				Params: &authapi.InitAuthSRPParams{ContentType: &wrong}, Body: auth.AuthSRPInitRequest{}},
+			call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin,
+				Params: params, Body: srpBody},
 		},
-		"body-header": {call: webtransport.InitAuthSRPCall{Origin: origin},
-			headers: http.Header{"Content-Type": {wrong}}},
-		"logout-header": {call: webtransport.LogoutAuthSessionCall{Origin: origin},
-			headers: http.Header{"Content-Type": {"application/json"}}},
-		"second-header": {call: webtransport.InitAuthSRPCall{Origin: origin},
-			headers: http.Header{"Content-Type": {"application/json", wrong}}},
-		"lowercase-header": {call: webtransport.InitAuthSRPCall{Origin: origin},
-			headers: http.Header{"content-type": {wrong}}},
-		"mixedcase-header": {call: webtransport.InitAuthSRPCall{Origin: origin},
-			headers: http.Header{"Content-Type": {"application/json"}, "CONTENT-TYPE": {wrong}}},
-		"retrieval-header": {call: webtransport.GetAuthChallengeCall{Origin: origin},
-			headers: http.Header{"Content-Type": {wrong}}},
+		"body-header": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
+			headers: http.Header{authBoundaryMediaHeader: {wrong}}},
+		"logout-header": {call: webtransport.LogoutAuthSessionCall{Origin: authBoundaryOrigin, Params: nil, Body: logoutBody},
+			headers: http.Header{authBoundaryMediaHeader: {authBoundaryJSONMedia}}},
+		"second-header": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
+			headers: http.Header{authBoundaryMediaHeader: {authBoundaryJSONMedia, wrong}}},
+		"lowercase-header": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
+			headers: http.Header{authBoundaryLowercaseMediaHeader: {wrong}}},
+		"mixedcase-header": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
+			headers: http.Header{authBoundaryMediaHeader: {authBoundaryJSONMedia}, "CONTENT-TYPE": {wrong}}},
+		"retrieval-header": {call: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil},
+			headers: http.Header{authBoundaryMediaHeader: {wrong}}},
 	} {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
 			calls := 0
+
 			client := webtransport.New(findMyRoundTrip(func(*http.Request) (*http.Response, error) {
 				calls++
+
 				return findMyTestResponse(`{}`), nil
 			}))
+
 			response, err := client.ExchangeAuthentication(t.Context(), testcase.call, testcase.headers, nil)
 			if err == nil || response != nil || calls != 0 {
 				t.Fatalf("incompatible authentication media reached transport: response=%v err=%v calls=%d", response, err, calls)
@@ -54,34 +75,54 @@ func TestAuthenticationCallRejectsIncompatibleMediaBeforeTransport(t *testing.T)
 }
 
 func TestAuthenticationCallEmitsItsCanonicalMedia(t *testing.T) {
+	t.Parallel()
+
+	srpBody := auth.AuthSRPInitRequest{A: nil, AccountName: "", Protocols: nil}
+	logoutBody := auth.AuthLogoutRequest{TrustBrowser: false, AllBrowsers: false}
+
 	for name, testcase := range map[string]struct {
 		call    webtransport.AuthenticationCall
 		headers http.Header
 		media   string
 	}{
-		"json-default":     {call: webtransport.InitAuthSRPCall{Origin: "https://accounts.example.test"}, media: "application/json"},
-		"logout-default":   {call: webtransport.LogoutAuthSessionCall{Origin: "https://accounts.example.test"}, media: "text/plain;charset=UTF-8"},
-		"retrieval-absent": {call: webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test"}},
-		"retrieval-json": {call: webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test"},
-			headers: http.Header{"Content-Type": {"application/json", "application/json"}}, media: "application/json"},
-		"mixedcase-json": {call: webtransport.InitAuthSRPCall{Origin: "https://accounts.example.test"},
-			headers: http.Header{"content-type": {"application/json"}, "Content-Type": {"application/json"}}, media: "application/json"},
+		"json-default": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
+			media: authBoundaryJSONMedia},
+		"logout-default": {call: webtransport.LogoutAuthSessionCall{
+			Origin: authBoundaryOrigin, Params: nil, Body: logoutBody,
+		},
+			media: authBoundaryLogoutMedia},
+		"retrieval-absent": {call: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil}},
+		"retrieval-json": {call: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil},
+			headers: http.Header{authBoundaryMediaHeader: {authBoundaryJSONMedia, authBoundaryJSONMedia}},
+			media:   authBoundaryJSONMedia},
+		"mixedcase-json": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
+			headers: http.Header{authBoundaryLowercaseMediaHeader: {authBoundaryJSONMedia},
+				authBoundaryMediaHeader: {authBoundaryJSONMedia}},
+			media: authBoundaryJSONMedia},
 	} {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
 			calls := 0
+
 			client := webtransport.New(findMyRoundTrip(func(request *http.Request) (*http.Response, error) {
 				calls++
-				values := request.Header.Values("Content-Type")
-				if request.Header.Get("Content-Type") != testcase.media || len(values) > 1 {
+
+				values := request.Header.Values(authBoundaryMediaHeader)
+				if request.Header.Get(authBoundaryMediaHeader) != testcase.media || len(values) > 1 {
 					t.Fatalf("actual sent media differs from the operation: %v", values)
 				}
+
 				for name := range request.Header {
-					if http.CanonicalHeaderKey(name) == "Content-Type" && name != "Content-Type" {
+					if http.CanonicalHeaderKey(name) == authBoundaryMediaHeader &&
+						name != authBoundaryMediaHeader {
 						t.Fatalf("case-variant media survived normalization: %s", name)
 					}
 				}
+
 				return findMyTestResponse(`{}`), nil
 			}))
+
 			_, err := client.ExchangeAuthentication(t.Context(), testcase.call, testcase.headers, nil)
 			if err != nil || calls != 1 {
 				t.Fatalf("canonical operation failed: err=%v calls=%d", err, calls)
@@ -91,19 +132,25 @@ func TestAuthenticationCallEmitsItsCanonicalMedia(t *testing.T) {
 }
 
 func TestAuthenticationCallRejectsUnknownDynamicTypesBeforeTransport(t *testing.T) {
+	t.Parallel()
+
 	for name, call := range map[string]webtransport.AuthenticationCall{
 		"nil":       nil,
 		"typed-nil": (*webtransport.GetAuthChallengeCall)(nil),
 		"embedded": embeddedAuthenticationCall{
-			GetAuthChallengeCall: webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test"},
+			GetAuthChallengeCall: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil},
 			Body:                 []byte("arbitrary body"),
 		},
-		"non-https": webtransport.GetAuthChallengeCall{Origin: "http://accounts.example.test"},
+		"non-https": webtransport.GetAuthChallengeCall{Origin: "http://accounts.example.test", Params: nil},
 	} {
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
 			calls := 0
+
 			client := webtransport.New(findMyRoundTrip(func(*http.Request) (*http.Response, error) {
 				calls++
+
 				return findMyTestResponse(`{}`), nil
 			}))
 

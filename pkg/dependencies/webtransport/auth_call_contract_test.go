@@ -1,3 +1,4 @@
+//nolint:testpackage // GO-15: compares the private admission, constructor and media type switches structurally.
 package webtransport
 
 import (
@@ -11,6 +12,8 @@ import (
 )
 
 func TestAuthenticationAdmissionAndConstructionCoverTheSameCalls(t *testing.T) {
+	t.Parallel()
+
 	_, source, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("authentication contract test source path is unavailable")
@@ -20,8 +23,10 @@ func TestAuthenticationAdmissionAndConstructionCoverTheSameCalls(t *testing.T) {
 	admitted := authenticationTypeCases(t, filepath.Join(root, "auth_exchange.go"), "ExchangeAuthentication")
 	constructed := authenticationTypeCases(t, filepath.Join(root, "auth_call_requests.go"), "buildAuthenticationRequest")
 	media := authenticationTypeCases(t, filepath.Join(root, "auth_call_media.go"), "authenticationCallMedia")
+
 	if len(admitted) == 0 || !reflect.DeepEqual(admitted, constructed) || !reflect.DeepEqual(admitted, media) {
-		t.Fatalf("authentication admission, construction, and media differ: admission=%v construction=%v media=%v", admitted, constructed, media)
+		t.Fatalf("authentication admission, construction, and media differ: admission=%v construction=%v media=%v",
+			admitted, constructed, media)
 	}
 }
 
@@ -34,6 +39,7 @@ func authenticationTypeCases(t *testing.T, path, functionName string) map[string
 	}
 
 	result := map[string]bool{}
+
 	for _, declaration := range file.Decls {
 		function, ok := declaration.(*ast.FuncDecl)
 		if !ok || function.Name.Name != functionName {
@@ -55,10 +61,13 @@ func authenticationTypeCases(t *testing.T, path, functionName string) map[string
 				if result[name.Name] {
 					t.Fatalf("duplicate authentication call: %s", name.Name)
 				}
+
 				result[name.Name] = true
 			}
+
 			return false
 		})
 	}
+
 	return result
 }

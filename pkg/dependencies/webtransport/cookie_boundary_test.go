@@ -61,7 +61,7 @@ func runCookieBoundaryCase(t *testing.T, testcase cookieBoundaryCase) {
 	var err error
 
 	if testcase.authentication {
-		request := webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test"}
+		request := webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil}
 
 		_, err = client.ExchangeAuthentication(t.Context(), request, headers, state)
 	} else {
