@@ -148,6 +148,7 @@ func TestPhotoSyncRecentCutoffRejectsPythonDateOverflow(t *testing.T) {
 	days := 999999999
 	input.Options.Recent = &days
 	result, err := newEngine(t, provider).Run(t.Context(), input)
+
 	var failure *photosync.SyncError
 	if !errors.As(err, &failure) || result == nil || provider.visits != 0 {
 		t.Fatalf("unrepresentable Python cutoff continued enumeration: result=%+v error=%v", result, err)

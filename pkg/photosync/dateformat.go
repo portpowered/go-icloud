@@ -1,4 +1,3 @@
-// Package photosync materializes iCloud Photos through injectable storage and source interfaces.
 package photosync
 
 import (
@@ -126,6 +125,7 @@ func dateNumber(instant time.Time, directive byte) (int, int, bool) {
 	}
 	widths := map[byte]int{'Y': 4, 'G': 4, 'j': 3, 'w': 1, 'u': 1}
 	value, recognized := numbers[directive]
+
 	width := widths[directive]
 	if width == 0 {
 		width = 2
@@ -144,6 +144,7 @@ func dateText(instant time.Time, directive byte, short bool) (string, error) {
 		'c': "Monday, January 02, 2006 15:04:05", 'x': "Monday, January 02, 2006", 'e': "2",
 		'D': "1/2/06", 'F': "2006-1-2", 'r': "3:4:5 PM", 'R': "15:4", 'T': "15:4:5",
 	}
+
 	if short {
 		if layout, ok := shortLayouts[directive]; ok {
 			return shortDateText(instant, directive, layout), nil

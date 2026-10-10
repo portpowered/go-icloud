@@ -44,6 +44,7 @@ func generate(ctx context.Context, root string) (resultErr error) {
 	if strings.TrimSpace(string(version)) != compilerVersion {
 		return errCompilerVersion
 	}
+
 	directory, err := os.MkdirTemp("", "icloud-protogen-")
 	if err != nil {
 		return fmt.Errorf("create private generator directory: %w", err)
