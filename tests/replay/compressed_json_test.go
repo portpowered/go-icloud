@@ -12,6 +12,9 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
+// Independent matcher spelling keeps this external test detached from replay internals.
+const replayExpectedCompressedJSONPattern = "base64-zlib-exact"
+
 const sourceEmptyDocument = "eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJytJMMl" +
 	"xSVwJfvUE+n2tIO9pe8fx0x0PSzExMEAxIwAhRkUpg=="
 
@@ -27,7 +30,7 @@ func TestCompressedJSONBindsCompleteDecodedBytes(t *testing.T) {
 
 			entity := replay.Entity{Encoding: testJSONPattern, Value: json.RawMessage(compressedBody(sourceEmptyDocument)),
 				Matchers: []replay.JSONMatcher{{Path: []json.RawMessage{json.RawMessage(`"document"`)},
-					Pattern: compressedJSONRule}}, Parts: nil, ContentTypePattern: ""}
+					Pattern: replayExpectedCompressedJSONPattern}}, Parts: nil, ContentTypePattern: ""}
 			exchange := jsonExchange(entity)
 			exchange.Request.Headers = append(exchange.Request.Headers,
 				replay.Pair{contentLengthHeader, strconv.Itoa(len(entity.Value))})
