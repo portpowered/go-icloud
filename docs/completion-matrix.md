@@ -24,7 +24,7 @@ operation parity. No row below grants final merge or release acceptance.
 | Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Implemented, including portable hardware adapter; CI passed at `46878751`; final integrated acceptance pending |
 | Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Implemented, including resumed consent policy; CI passed at `46878751`; final integrated acceptance pending |
 | Auth sockets | Injected raw WebSocket, protobuf bootstrap/subscription/ACK, signing/proofs, modern/legacy bridge, teardown | Implemented; 53 socket and 30 combined paired timelines plus lifecycle controls; integrated acceptance pending |
-| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `c49557a2` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
+| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `12f42d49` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
 
 For each port: bind source inputs/defaults and complete results/errors to named
 schema models, execute the public Go operation against every applicable paired
@@ -45,15 +45,20 @@ replay/unit/combined thresholds; replay and combined remain below the preferred
 complete-branch coverage.
 
 Subsequent bridge opaque-JSON/null/schema changes through `d363127b` are outside
-that receipt. Their final public SDK publication, CLI pin, strict union/gate
-checks and exact-commit complete verification remain pending. The installation
+that receipt. The public SDK `12f42d49` and CLI pin `49e9368f` are now published;
+strict union/gate checks and exact-commit complete verification remain pending. The installation
 pins below identify the latest documented published preview; they are not a
 final release. Keep final acceptance and independent reviews open.
 
+The isolated public-module CLI race suite at `49e9368f`, using SDK `12f42d49`,
+passed: command 1.695 seconds, saved-login 1.072 seconds and replay 32.534 seconds.
+This confirms the published consumer test suite for that pin; it does not extend
+the earlier SDK coverage or full CI receipt to the newer bridge schema changes.
+
 ## Historical verification receipts and current blockers
 
-The published preview CLI at `5366cdcb` pins the published SDK
-`v0.0.0-20261010112114-c49557a2ffca`, with no local replacement. Final
+The published preview CLI at `49e9368f` pins the published SDK
+`v0.0.0-20261010121958-12f42d499619`, with no local replacement. Final
 complete-library acceptance against this pin remains pending. The SDK includes
 Source-paired fixes for adding a photo to an album without prior membership,
 empty Photos change zones, exact nullable change cursors, and Reminders document
