@@ -19,6 +19,15 @@ directories and `result.json` outputs belong under
 `%LOCALAPPDATA%/go-icloud/reference`. The recorder does not sanitize arbitrary
 personal data; never copy private captures into the repository.
 
+The private capture CLI supports `login` and eight read commands: `status`,
+`account`, `devices`, `drive`, `albums`, `photos`, `reminders`, and
+`reminder-zones`. Its login helper accepts a two-factor verification code but
+does not support legacy two-step completion. `tools/reference/replay.py` replays
+captured reads only; it explicitly excludes `login` captures. This workflow does
+not expose Photos or Reminders writes, or separate MFA, trust, consent and logout
+capture commands. The HTTP recorder does not capture trusted-device bridge TLS/
+socket frames or security-key HID traffic.
+
 ## Pair format and replay
 
 Each `portos.http-exchange.v1` pair contains source revision, operation, sequence,
@@ -49,6 +58,14 @@ Private captured reads, portable synthetic scenarios, document decoding controls
 and binary socket transcripts are separate evidence classes (LIB-04, LIB-05,
 LIB-07, LIB-12). Paired synthetic results establish pinned-source compatibility;
 they do not establish live provider behavior.
+
+Portable paired replay covers the selected SDK Photos, Reminders and
+authentication operation families, including writes and authentication flows.
+`tools/reference/synthetic.py` executes the HTTP scenarios with network access
+forbidden; separate bridge/socket and security-key transcripts exercise framed
+traffic. These runners replay fixtures and do not provide additional private
+capture commands. Recording support and portable replay coverage therefore have
+different scopes (LIB-05, LIB-07, LIB-12).
 
 The [observed read batch](operation-matrix.md) records limited account evidence.
 The [endpoint occurrence audit](reference-endpoint-coverage.md) is a diagnostic
