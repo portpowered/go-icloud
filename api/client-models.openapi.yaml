@@ -5581,9 +5581,8 @@
             "x-go-name": "ID"
           },
           "metadata": {
-            "description": "Detached provider device metadata",
+            "description": "Detached provider device metadata, including unknown future fields.",
             "format": "byte",
-            "including unknown future fields.": null,
             "type": "string",
             "x-string-content-schema": {
               "$ref": "./external/auth-models.openapi.yaml#/components/schemas/AuthTrustedDevice"

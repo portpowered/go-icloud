@@ -3348,7 +3348,7 @@ type TrashDriveNodeResult = DriveItemChangeResult
 type TrustedAuthDevice struct {
 	ID string `json:"id"`
 
-	// Metadata Detached provider device metadata
+	// Metadata Detached provider device metadata, including unknown future fields.
 	Metadata []byte `json:"metadata"`
 }
 
