@@ -15,6 +15,7 @@ func TestZoneDiscoveryRequestsHaveNoPayloadFields(t *testing.T) {
 		if value := reflect.TypeOf(request); value.Kind() != reflect.Struct || value.NumField() != 0 {
 			t.Errorf("empty request has a caller payload surface: %v", value)
 		}
+
 		encoded, err := json.Marshal(request)
 		if err != nil || string(encoded) != "{}" {
 			t.Errorf("empty request encoding: %s, %v", encoded, err)

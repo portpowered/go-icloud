@@ -14,7 +14,9 @@ import (
 func TestLoginUnionPreservesConstructorBytes(t *testing.T) {
 	t.Parallel()
 
-	token := auth.AuthTokenLoginRequest{AccountCountryCode: nil, DsWebAuthToken: "token", ExtendedLogin: true, TrustToken: "trust"}
+	token := auth.AuthTokenLoginRequest{
+		AccountCountryCode: nil, DsWebAuthToken: "token", ExtendedLogin: true, TrustToken: "trust",
+	}
 	credentials := auth.AuthCredentialsLoginRequest{AppName: nil, AppleId: "account", Password: "password"}
 
 	for _, test := range []struct {
@@ -68,12 +70,14 @@ func TestLoginUnionPreservesConstructorBytes(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			t.Cleanup(func() {
 				closeErr := request.Body.Close()
 				if closeErr != nil {
 					t.Error(closeErr)
 				}
 			})
+
 			got, err = io.ReadAll(request.Body)
 			if err != nil || !bytes.Equal(got, want) {
 				t.Fatalf("request bytes = %q, %v; want %q", got, err, want)
@@ -86,6 +90,7 @@ func TestLoginUnionRejectsInvalidBodiesWithoutMutation(t *testing.T) {
 	t.Parallel()
 
 	const valid = ` {"password":"secret", "appName":null,"apple_id":"account"} `
+
 	for _, invalid := range []string{
 		``, `null`, `[]`, `{}`, `{"foreign":true}`,
 		`{"appName":null,"apple_id":"account"}`,
@@ -117,7 +122,8 @@ func TestLoginUnionRejectsInvalidBodiesWithoutMutation(t *testing.T) {
 			}
 
 			corrupt := auth.CorruptAuthLoginRequest([]byte(invalid))
-			if _, err := corrupt.MarshalJSON(); err == nil {
+			_, corruptErr := corrupt.MarshalJSON()
+			if corruptErr == nil {
 				t.Fatal("invalid private storage serialized")
 			}
 
