@@ -142,5 +142,10 @@ func emitPhotosSync(ctx context.Context, progress *photosSyncProgress, destinati
 		}
 	}
 
-	return writeResult(output, result)
+	projected, err := safeWriteResult(result)
+	if err != nil {
+		return err
+	}
+
+	return writeResult(output, projected)
 }

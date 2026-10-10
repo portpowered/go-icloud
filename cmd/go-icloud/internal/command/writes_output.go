@@ -84,7 +84,7 @@ func privateWriteField(key string) bool {
 	switch key {
 	case "auth", "accountID", "clientID", "dsid", "cookies", "headers", "metadata", "responses",
 		"assetMetadata", "masterMetadata", "versions", "dimensions", "size", "checksum",
-		"fileAssetURL", "uploadURLs", "receipt", "wrappingKey", "uploadToken", "syncToken", "errorMessage",
+		"fileAssetURL", "uploadURLs", "receipt", "wrappingKey", "uploadToken", "syncToken", "syncCursor", "errorMessage",
 		"additionalMetadata", "location", "publicURL", "ownerID", "ownerRecordName":
 		return true
 	default:
