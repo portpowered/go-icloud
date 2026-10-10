@@ -30,17 +30,17 @@ func decodeResponseContent(data []byte, coding string) ([]byte, error) {
 	for _, mode := range slices.Backward(modes) {
 		var err error
 
-		switch account.HTTPContentCoding(strings.TrimSpace(mode)) {
-		case account.Gzip, account.XGzip:
+		switch strings.TrimSpace(mode) {
+		case string(account.Gzip), string(account.XGzip):
 			data, err = decodeGzipContent(data)
 			if err != nil {
 				return data, err
 			}
 
 			continue
-		case account.Deflate:
+		case string(account.Deflate):
 			data, err = decodeDeflateContent(data)
-		case account.Identity:
+		case string(account.Identity):
 			continue
 		default:
 			continue
