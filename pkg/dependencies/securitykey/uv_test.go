@@ -1,3 +1,4 @@
+//nolint:testpackage // White-box protocol and injected HID lifecycle tests require unexported seams (GO-15).
 package securitykey
 
 import (
@@ -5,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"strconv"
 	"testing"
 
 	wire "github.com/portpowered/go-icloud/pkg/dependencymodels/securitykey"
@@ -26,64 +28,103 @@ type cryptoVectors struct {
 	Vectors []cryptoVector `json:"vectors"`
 }
 
-func TestPythonPINUVCrypto(test *testing.T) {
-	test.Parallel()
+func TestPythonPINUVCrypto(t *testing.T) {
+	t.Parallel()
+
 	raw, err := os.ReadFile("../../../tests/replay/fixtures/securitykey/python-pinuv-crypto-synthetic.json")
 	if err != nil {
-		test.Fatal(err)
+		t.Fatal(err)
 	}
+
 	var fixture cryptoVectors
-	if err := json.Unmarshal(raw, &fixture); err != nil {
-		test.Fatal(err)
+
+	err = json.Unmarshal(raw, &fixture)
+	if err != nil {
+		t.Fatal(err)
 	}
+
 	for _, vector := range fixture.Vectors {
-		test.Run(string(rune('0'+vector.Version)), func(test *testing.T) {
-			test.Parallel()
+		t.Run(strconv.Itoa(vector.Version), func(t *testing.T) {
+			t.Parallel()
+
 			protocol := wire.PINProtocol(vector.Version)
-			peer := &wire.COSEKey{KeyType: wire.COSEKeyKeyTypeN2, Curve: wire.N1, Algorithm: wire.Minus25, X: decodeHex(test, vector.PeerX), Y: decodeHex(test, vector.PeerY)}
-			local, secret, err := encapsulate(peer, protocol, bytes.NewReader(decodeHex(test, vector.Scalar)))
+			peer := &wire.COSEKey{
+				KeyType:   wire.COSEKeyKeyTypeN2,
+				Curve:     wire.N1,
+				Algorithm: wire.Minus25,
+				X:         decodeHex(t, vector.PeerX),
+				Y:         decodeHex(t, vector.PeerY),
+			}
+
+			local, secret, err := encapsulate(peer, protocol, bytes.NewReader(decodeHex(t, vector.Scalar)))
 			if err != nil {
-				test.Fatal(err)
+				t.Fatal(err)
 			}
-			if !bytes.Equal(local.X, decodeHex(test, vector.LocalX)) || !bytes.Equal(local.Y, decodeHex(test, vector.LocalY)) || !bytes.Equal(secret, decodeHex(test, vector.Secret)) {
-				test.Fatal("ECDH/KDF differs from Python")
+
+			if !bytes.Equal(local.X, decodeHex(t, vector.LocalX)) ||
+				!bytes.Equal(local.Y, decodeHex(t, vector.LocalY)) ||
+				!bytes.Equal(secret, decodeHex(t, vector.Secret)) {
+				t.Fatal("ECDH/KDF differs from Python")
 			}
-			token, err := decryptToken(protocol, secret, decodeHex(test, vector.EncryptedToken))
+
+			token, err := decryptToken(protocol, secret, decodeHex(t, vector.EncryptedToken))
 			if err != nil {
-				test.Fatal(err)
+				t.Fatal(err)
 			}
-			if !bytes.Equal(token, decodeHex(test, vector.Token)) {
-				test.Fatal("AES-CBC token differs from Python")
+
+			if !bytes.Equal(token, decodeHex(t, vector.Token)) {
+				t.Fatal("AES-CBC token differs from Python")
 			}
 		})
 	}
 }
 
-func TestPINUVRejectInvalidCiphertext(test *testing.T) {
-	test.Parallel()
+func TestPINUVRejectInvalidCiphertext(t *testing.T) {
+	t.Parallel()
+
 	for _, protocol := range []wire.PINProtocol{wire.PINProtocolV1, wire.PINProtocolV2} {
 		for _, size := range []int{0, 1, 15, 17, 48, 80} {
 			secret := make([]byte, 32)
 			if protocol == wire.PINProtocolV2 {
 				secret = make([]byte, 64)
 			}
+
 			_, err := decryptToken(protocol, secret, make([]byte, size))
+
 			if protocol == wire.PINProtocolV2 && size == 48 {
 				continue
 			}
+
 			if !errors.Is(err, ErrProtocol) {
-				test.Fatalf("invalid ciphertext accepted: protocol %d, length %d", protocol, size)
+				t.Fatalf("invalid ciphertext accepted: protocol %d, length %d", protocol, size)
 			}
 		}
 	}
 }
 
-func TestSourcePINInteractionUnavailable(test *testing.T) {
-	test.Parallel()
+func TestSourcePINInteractionUnavailable(t *testing.T) {
+	t.Parallel()
+
 	options := map[string]bool{string(wire.AlwaysUv): true, string(wire.ClientPin): true}
-	channel := &channel{}
-	_, err := channel.authParameters(test.Context(), &wire.InfoResponse{Options: &options}, wire.PINProtocolV2, "apple.com", false, true)
+	channel := &channel{
+		connection:      nil,
+		id:              0,
+		ctap2:           false,
+		wait:            nil,
+		entropy:         nil,
+		maxMessageBytes: 0,
+	}
+
+	_, err := channel.authParameters(t.Context(), &wire.InfoResponse{
+		Options:                  &options,
+		Aaguid:                   nil,
+		MaxCredentialCountInList: nil,
+		MaxCredentialIdLength:    nil,
+		MaxMsgSize:               nil,
+		PinUvAuthProtocols:       nil,
+		Versions:                 nil,
+	}, wire.PINProtocolV2, syntheticRelyingPartyID, false, true)
 	if !errors.Is(err, ErrPINRequired) {
-		test.Fatalf("source PIN interaction failure missing: %v", err)
+		t.Fatalf("source PIN interaction failure missing: %v", err)
 	}
 }

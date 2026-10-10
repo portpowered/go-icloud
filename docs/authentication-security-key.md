@@ -51,3 +51,7 @@ an actual authenticator accepted a live Apple challenge. The SDK binds the proof
 to the relying party, requested credential and presence flags; Apple verifies
 the authenticator signature using the registered credential's public key.
 
+The narrowly scoped lint exceptions follow GO-15: private protocol/lifecycle tests
+need access to injected internals, Backend.Open must return its injected interface,
+and an absent CTAP allow-list is represented by a nil optional credential.
+
