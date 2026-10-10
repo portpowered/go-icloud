@@ -506,13 +506,13 @@ func (e CompoundQueryDefaultLimit) Valid() bool {
 
 // Defines values for CompoundQueryIncludeCompleted.
 const (
-	IncludeCompleted CompoundQueryIncludeCompleted = "includeCompleted"
+	CompoundQueryIncludeCompletedIncludeCompleted CompoundQueryIncludeCompleted = "includeCompleted"
 )
 
 // Valid indicates whether the value is a known member of the CompoundQueryIncludeCompleted enum.
 func (e CompoundQueryIncludeCompleted) Valid() bool {
 	switch e {
-	case IncludeCompleted:
+	case CompoundQueryIncludeCompletedIncludeCompleted:
 		return true
 	default:
 		return false
@@ -536,13 +536,13 @@ func (e CompoundQueryReferenceAction) Valid() bool {
 
 // Defines values for CompoundQueryValidateReference.
 const (
-	LookupValidatingReference CompoundQueryValidateReference = "LookupValidatingReference"
+	CompoundQueryValidateReferenceLookupValidatingReference CompoundQueryValidateReference = "LookupValidatingReference"
 )
 
 // Valid indicates whether the value is a known member of the CompoundQueryValidateReference enum.
 func (e CompoundQueryValidateReference) Valid() bool {
 	switch e {
-	case LookupValidatingReference:
+	case CompoundQueryValidateReferenceLookupValidatingReference:
 		return true
 	default:
 		return false
@@ -3300,6 +3300,54 @@ func (e ReminderIDPrefix) Valid() bool {
 	}
 }
 
+// Defines values for ReminderIncludeCompletedFilterFieldName.
+const (
+	ReminderIncludeCompletedFilterFieldNameIncludeCompleted ReminderIncludeCompletedFilterFieldName = "includeCompleted"
+)
+
+// Valid indicates whether the value is a known member of the ReminderIncludeCompletedFilterFieldName enum.
+func (e ReminderIncludeCompletedFilterFieldName) Valid() bool {
+	switch e {
+	case ReminderIncludeCompletedFilterFieldNameIncludeCompleted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderIncludeCompletedValue.
+const (
+	ReminderIncludeCompletedFalse ReminderIncludeCompletedValue = 0
+	ReminderIncludeCompletedTrue  ReminderIncludeCompletedValue = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderIncludeCompletedValue enum.
+func (e ReminderIncludeCompletedValue) Valid() bool {
+	switch e {
+	case ReminderIncludeCompletedFalse:
+		return true
+	case ReminderIncludeCompletedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderListQueryFilterFieldName.
+const (
+	ReminderListQueryFilterFieldNameList ReminderListQueryFilterFieldName = "List"
+)
+
+// Valid indicates whether the value is a known member of the ReminderListQueryFilterFieldName enum.
+func (e ReminderListQueryFilterFieldName) Valid() bool {
+	switch e {
+	case ReminderListQueryFilterFieldNameList:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ReminderLocationRequestAtomic.
 const (
 	ReminderLocationAtomicTrue ReminderLocationRequestAtomic = true
@@ -3339,6 +3387,66 @@ const (
 func (e ReminderOptionalTimestampType) Valid() bool {
 	switch e {
 	case ReminderOptionalTIMESTAMPType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderReadComparator.
+const (
+	ReminderReadComparatorEquals ReminderReadComparator = "EQUALS"
+)
+
+// Valid indicates whether the value is a known member of the ReminderReadComparator enum.
+func (e ReminderReadComparator) Valid() bool {
+	switch e {
+	case ReminderReadComparatorEquals:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderReadIntegerType.
+const (
+	ReminderReadIntegerTypeInt64 ReminderReadIntegerType = "INT64"
+)
+
+// Valid indicates whether the value is a known member of the ReminderReadIntegerType enum.
+func (e ReminderReadIntegerType) Valid() bool {
+	switch e {
+	case ReminderReadIntegerTypeInt64:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderReadReferenceAction.
+const (
+	ReminderReadReferenceActionValidate ReminderReadReferenceAction = "VALIDATE"
+)
+
+// Valid indicates whether the value is a known member of the ReminderReadReferenceAction enum.
+func (e ReminderReadReferenceAction) Valid() bool {
+	switch e {
+	case ReminderReadReferenceActionValidate:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderReadReferenceType.
+const (
+	ReminderReadReferenceTypeReference ReminderReadReferenceType = "REFERENCE"
+)
+
+// Valid indicates whether the value is a known member of the ReminderReadReferenceType enum.
+func (e ReminderReadReferenceType) Valid() bool {
+	switch e {
+	case ReminderReadReferenceTypeReference:
 		return true
 	default:
 		return false
@@ -3873,6 +3981,36 @@ const (
 func (e ReminderUpdateRecordRecordType) Valid() bool {
 	switch e {
 	case ReminderUpdateRecordTypeReminder:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderValidateReferenceFilterFieldName.
+const (
+	ReminderValidateReferenceFilterFieldNameLookupValidatingReference ReminderValidateReferenceFilterFieldName = "LookupValidatingReference"
+)
+
+// Valid indicates whether the value is a known member of the ReminderValidateReferenceFilterFieldName enum.
+func (e ReminderValidateReferenceFilterFieldName) Valid() bool {
+	switch e {
+	case ReminderValidateReferenceFilterFieldNameLookupValidatingReference:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ReminderValidateReferenceValue.
+const (
+	ReminderValidateReferenceEnabled ReminderValidateReferenceValue = 1
+)
+
+// Valid indicates whether the value is a known member of the ReminderValidateReferenceValue enum.
+func (e ReminderValidateReferenceValue) Valid() bool {
+	switch e {
+	case ReminderValidateReferenceEnabled:
 		return true
 	default:
 		return false
@@ -5813,6 +5951,29 @@ type ReminderAttachmentZeroValueType string
 // ReminderAttachmentZeroValueValue defines model for ReminderAttachmentZeroValue.Value.
 type ReminderAttachmentZeroValueValue int64
 
+// ReminderCompoundQuery Read reminders and related records with one filter of each required kind.
+type ReminderCompoundQuery struct {
+	// RecordType Pinned pseudo record type used to discover the current Reminders sync token.
+	RecordType ReminderSyncQueryRecordType   `json:"recordType"`
+	FilterBy   []ReminderCompoundQueryFilter `json:"filterBy"`
+}
+
+// ReminderCompoundQueryFilter One of the three distinct filters required for a Reminders list query.
+type ReminderCompoundQueryFilter struct {
+	union json.RawMessage
+}
+
+// ReminderCompoundQueryRequest Read one page of reminders and related records for a selected list.
+type ReminderCompoundQueryRequest struct {
+	// Query Read reminders and related records with one filter of each required kind.
+	Query ReminderCompoundQuery `json:"query"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID             CKZoneIDReq `json:"zoneID"`
+	ResultsLimit       int64       `json:"resultsLimit"`
+	ContinuationMarker *string     `json:"continuationMarker,omitempty"`
+}
+
 // ReminderCreationFields Known reminder fields in reference mutation order.
 type ReminderCreationFields struct {
 	// AllDay An INT64 boolean wrapper, emitted as zero or one.
@@ -5950,6 +6111,24 @@ type ReminderCreationTokens struct {
 type ReminderCreationTokensMap struct {
 	// Map Named per-field resolution tokens in reference order.
 	Map ReminderCreationTokens `json:"map"`
+}
+
+// ReminderCurrentSyncQuery Discover the current cursor without compound list filters.
+type ReminderCurrentSyncQuery struct {
+	// RecordType Pinned pseudo record type used to discover the current Reminders sync token.
+	RecordType ReminderSyncQueryRecordType `json:"recordType"`
+}
+
+// ReminderCurrentSyncQueryRequest Discover the current Reminders zone cursor using a one-result query.
+type ReminderCurrentSyncQueryRequest struct {
+	// Query Discover the current cursor without compound list filters.
+	Query ReminderCurrentSyncQuery `json:"query"`
+
+	// ZoneID Zone identifier for requests (without redundant fields).
+	ZoneID CKZoneIDReq `json:"zoneID"`
+
+	// ResultsLimit Pinned lightweight current-token query result limit.
+	ResultsLimit ReminderSyncQueryLimit `json:"resultsLimit"`
 }
 
 // ReminderDeletionFields Known fields sent when soft-deleting a reminder.
@@ -6281,6 +6460,53 @@ type ReminderHashtagWriteNameType string
 // ReminderIDPrefix Pinned Reminders list protocol value used by the domain projection.
 type ReminderIDPrefix string
 
+// ReminderIncludeCompletedField Whether completed reminders are included in the requested list.
+type ReminderIncludeCompletedField struct {
+	// Type Numeric field wrapper used by Reminders list filters.
+	Type ReminderReadIntegerType `json:"type"`
+
+	// Value Include completed reminders when one; return active reminders only when zero.
+	Value ReminderIncludeCompletedValue `json:"value"`
+}
+
+// ReminderIncludeCompletedFilter Select whether the compound query includes completed reminders.
+type ReminderIncludeCompletedFilter struct {
+	// Comparator Equality comparison used by Reminders list filters.
+	Comparator ReminderReadComparator                  `json:"comparator"`
+	FieldName  ReminderIncludeCompletedFilterFieldName `json:"fieldName"`
+
+	// FieldValue Whether completed reminders are included in the requested list.
+	FieldValue ReminderIncludeCompletedField `json:"fieldValue"`
+}
+
+// ReminderIncludeCompletedFilterFieldName defines model for ReminderIncludeCompletedFilter.FieldName.
+type ReminderIncludeCompletedFilterFieldName string
+
+// ReminderIncludeCompletedValue Include completed reminders when one; return active reminders only when zero.
+type ReminderIncludeCompletedValue int
+
+// ReminderListQueryField A validated reference to the caller-selected reminders list.
+type ReminderListQueryField struct {
+	// Type Reference field wrapper used by a Reminders list filter.
+	Type ReminderReadReferenceType `json:"type"`
+
+	// Value The caller-selected list and its required validation action.
+	Value ReminderReadReference `json:"value"`
+}
+
+// ReminderListQueryFilter Limit the compound query to a caller-selected list.
+type ReminderListQueryFilter struct {
+	// Comparator Equality comparison used by Reminders list filters.
+	Comparator ReminderReadComparator           `json:"comparator"`
+	FieldName  ReminderListQueryFilterFieldName `json:"fieldName"`
+
+	// FieldValue A validated reference to the caller-selected reminders list.
+	FieldValue ReminderListQueryField `json:"fieldValue"`
+}
+
+// ReminderListQueryFilterFieldName defines model for ReminderListQueryFilter.FieldName.
+type ReminderListQueryFilterFieldName string
+
 // ReminderLocationOperation defines model for ReminderLocationOperation.
 type ReminderLocationOperation struct {
 	union json.RawMessage
@@ -6317,6 +6543,26 @@ type ReminderOptionalTimestamp struct {
 
 // ReminderOptionalTimestampType defines model for ReminderOptionalTimestamp.Type.
 type ReminderOptionalTimestampType string
+
+// ReminderReadComparator Equality comparison used by Reminders list filters.
+type ReminderReadComparator string
+
+// ReminderReadIntegerType Numeric field wrapper used by Reminders list filters.
+type ReminderReadIntegerType string
+
+// ReminderReadReference The caller-selected list and its required validation action.
+type ReminderReadReference struct {
+	RecordName string `json:"recordName"`
+
+	// Action Validate the referenced list before reading its reminders.
+	Action ReminderReadReferenceAction `json:"action"`
+}
+
+// ReminderReadReferenceAction Validate the referenced list before reading its reminders.
+type ReminderReadReferenceAction string
+
+// ReminderReadReferenceType Reference field wrapper used by a Reminders list filter.
+type ReminderReadReferenceType string
 
 // ReminderRecordType Pinned Reminder domain mapping protocol value.
 type ReminderRecordType string
@@ -6753,6 +6999,31 @@ type ReminderUpdateTokensMap struct {
 	Map ReminderUpdateTokens `json:"map"`
 }
 
+// ReminderValidateReferenceField Enable validating-reference lookup for related reminder records.
+type ReminderValidateReferenceField struct {
+	// Type Numeric field wrapper used by Reminders list filters.
+	Type ReminderReadIntegerType `json:"type"`
+
+	// Value Require validating-reference lookup for the compound list query.
+	Value ReminderValidateReferenceValue `json:"value"`
+}
+
+// ReminderValidateReferenceFilter Request related records through validating references.
+type ReminderValidateReferenceFilter struct {
+	// Comparator Equality comparison used by Reminders list filters.
+	Comparator ReminderReadComparator                   `json:"comparator"`
+	FieldName  ReminderValidateReferenceFilterFieldName `json:"fieldName"`
+
+	// FieldValue Enable validating-reference lookup for related reminder records.
+	FieldValue ReminderValidateReferenceField `json:"fieldValue"`
+}
+
+// ReminderValidateReferenceFilterFieldName defines model for ReminderValidateReferenceFilter.FieldName.
+type ReminderValidateReferenceFilterFieldName string
+
+// ReminderValidateReferenceValue Require validating-reference lookup for the compound list query.
+type ReminderValidateReferenceValue int
+
 // ReminderWriteBoolean An INT64 boolean wrapper, emitted as zero or one.
 type ReminderWriteBoolean struct {
 	Type  ReminderWriteBooleanType  `json:"type"`
@@ -6821,8 +7092,16 @@ type ReminderWriteTimestamp struct {
 // ReminderWriteTimestampType defines model for ReminderWriteTimestamp.Type.
 type ReminderWriteTimestampType string
 
+// ReminderZoneListRequest Discover the available Reminders zones without additional selection fields.
+type ReminderZoneListRequest = map[string]interface{}
+
 // RemindersModificationRequest Implemented single-reminder variants plus explicitly scoped remaining linked-record shapes.
 type RemindersModificationRequest struct {
+	union json.RawMessage
+}
+
+// RemindersReadQueryRequest Current cursor discovery or complete list query for the Reminders zone.
+type RemindersReadQueryRequest struct {
 	union json.RawMessage
 }
 
@@ -14785,6 +15064,94 @@ func (t *ReminderAttachmentURLCreationRequest_Operations_Item) UnmarshalJSON(b [
 	return err
 }
 
+// AsReminderListQueryFilter returns the union data inside the ReminderCompoundQueryFilter as a ReminderListQueryFilter
+func (t ReminderCompoundQueryFilter) AsReminderListQueryFilter() (ReminderListQueryFilter, error) {
+	var body ReminderListQueryFilter
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderListQueryFilter overwrites any union data inside the ReminderCompoundQueryFilter as the provided ReminderListQueryFilter
+func (t *ReminderCompoundQueryFilter) FromReminderListQueryFilter(v ReminderListQueryFilter) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderListQueryFilter performs a merge with any union data inside the ReminderCompoundQueryFilter, using the provided ReminderListQueryFilter
+func (t *ReminderCompoundQueryFilter) MergeReminderListQueryFilter(v ReminderListQueryFilter) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderIncludeCompletedFilter returns the union data inside the ReminderCompoundQueryFilter as a ReminderIncludeCompletedFilter
+func (t ReminderCompoundQueryFilter) AsReminderIncludeCompletedFilter() (ReminderIncludeCompletedFilter, error) {
+	var body ReminderIncludeCompletedFilter
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderIncludeCompletedFilter overwrites any union data inside the ReminderCompoundQueryFilter as the provided ReminderIncludeCompletedFilter
+func (t *ReminderCompoundQueryFilter) FromReminderIncludeCompletedFilter(v ReminderIncludeCompletedFilter) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderIncludeCompletedFilter performs a merge with any union data inside the ReminderCompoundQueryFilter, using the provided ReminderIncludeCompletedFilter
+func (t *ReminderCompoundQueryFilter) MergeReminderIncludeCompletedFilter(v ReminderIncludeCompletedFilter) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderValidateReferenceFilter returns the union data inside the ReminderCompoundQueryFilter as a ReminderValidateReferenceFilter
+func (t ReminderCompoundQueryFilter) AsReminderValidateReferenceFilter() (ReminderValidateReferenceFilter, error) {
+	var body ReminderValidateReferenceFilter
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderValidateReferenceFilter overwrites any union data inside the ReminderCompoundQueryFilter as the provided ReminderValidateReferenceFilter
+func (t *ReminderCompoundQueryFilter) FromReminderValidateReferenceFilter(v ReminderValidateReferenceFilter) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderValidateReferenceFilter performs a merge with any union data inside the ReminderCompoundQueryFilter, using the provided ReminderValidateReferenceFilter
+func (t *ReminderCompoundQueryFilter) MergeReminderValidateReferenceFilter(v ReminderValidateReferenceFilter) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ReminderCompoundQueryFilter) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ReminderCompoundQueryFilter) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // AsReminderHashtagParentOperation returns the union data inside the ReminderHashtagCreationRequest_Operations_Item as a ReminderHashtagParentOperation
 func (t ReminderHashtagCreationRequest_Operations_Item) AsReminderHashtagParentOperation() (ReminderHashtagParentOperation, error) {
 	var body ReminderHashtagParentOperation
@@ -15491,6 +15858,68 @@ func (t RemindersModificationRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (t *RemindersModificationRequest) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsReminderCurrentSyncQueryRequest returns the union data inside the RemindersReadQueryRequest as a ReminderCurrentSyncQueryRequest
+func (t RemindersReadQueryRequest) AsReminderCurrentSyncQueryRequest() (ReminderCurrentSyncQueryRequest, error) {
+	var body ReminderCurrentSyncQueryRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderCurrentSyncQueryRequest overwrites any union data inside the RemindersReadQueryRequest as the provided ReminderCurrentSyncQueryRequest
+func (t *RemindersReadQueryRequest) FromReminderCurrentSyncQueryRequest(v ReminderCurrentSyncQueryRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderCurrentSyncQueryRequest performs a merge with any union data inside the RemindersReadQueryRequest, using the provided ReminderCurrentSyncQueryRequest
+func (t *RemindersReadQueryRequest) MergeReminderCurrentSyncQueryRequest(v ReminderCurrentSyncQueryRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsReminderCompoundQueryRequest returns the union data inside the RemindersReadQueryRequest as a ReminderCompoundQueryRequest
+func (t RemindersReadQueryRequest) AsReminderCompoundQueryRequest() (ReminderCompoundQueryRequest, error) {
+	var body ReminderCompoundQueryRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromReminderCompoundQueryRequest overwrites any union data inside the RemindersReadQueryRequest as the provided ReminderCompoundQueryRequest
+func (t *RemindersReadQueryRequest) FromReminderCompoundQueryRequest(v ReminderCompoundQueryRequest) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeReminderCompoundQueryRequest performs a merge with any union data inside the RemindersReadQueryRequest, using the provided ReminderCompoundQueryRequest
+func (t *RemindersReadQueryRequest) MergeReminderCompoundQueryRequest(v ReminderCompoundQueryRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t RemindersReadQueryRequest) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *RemindersReadQueryRequest) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }

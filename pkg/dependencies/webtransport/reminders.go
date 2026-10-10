@@ -1,11 +1,11 @@
 package webtransport
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/remindersapi"
@@ -22,6 +22,11 @@ type ReminderZonesResponse struct {
 
 // ListReminderZones discovers fresh zones using operation-local credentials.
 func (client *Client) ListReminderZones(ctx context.Context, auth RequestContext) (*ReminderZonesResponse, error) {
+	body, err := referenceJSON(make(cloudkit.ReminderZoneListRequest))
+	if err != nil {
+		return nil, failure(Configuration, err, nil, nil)
+	}
+
 	params := new(remindersapi.RemindersListZonesParams)
 	params.ClientId = auth.Params.ClientId
 	params.Dsid = auth.Params.Dsid
@@ -29,7 +34,7 @@ func (client *Client) ListReminderZones(ctx context.Context, auth RequestContext
 	params.GetCurrentSyncToken = remindersapi.RemindersListZonesParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersListZonesRequestWithBody(auth.Origin, params,
-		jsonMedia(), strings.NewReader("{}"))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

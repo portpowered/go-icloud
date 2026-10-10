@@ -155,35 +155,15 @@ func reminderRequiredValue(fields map[string]json.RawMessage, name string) bool 
 }
 
 func reminderListChangesBody(syncToken *string) ([]byte, error) {
-	zone := cloudkit.CKZoneID{ZoneName: protocol.RemindersZoneNameValue,
-		OwnerRecordName: nil, ZoneType: nil, AdditionalProperties: nil}
-	zone.ZoneType.Set(protocol.RemindersZoneTypeValue)
-
-	identity, err := referenceJSON(zone)
-	if err != nil {
-		return nil, err
-	}
-
-	types, err := referenceJSON([]string{protocol.RemindersListRecordTypeValue})
-	if err != nil {
-		return nil, err
-	}
-	// Generated extensible models marshal through maps. Preserve Source field insertion
-	// order explicitly while leaving names and scalar encodings schema-owned.
-	body := fmt.Sprintf("{%q: [{%q: %s, %q: %s", protocol.RemindersCKZoneChangesRequestZones,
-		protocol.RemindersCKZoneChangesZoneReqZoneID, identity,
-		protocol.RemindersCKZoneChangesZoneReqDesiredRecordTypes, types)
+	zone := new(cloudkit.CKZoneChangesZoneReq)
+	zone.ZoneID = reminderChangeZone()
+	zone.DesiredRecordTypes.Set([]string{protocol.RemindersListRecordTypeValue})
 
 	if syncToken != nil {
-		token, tokenErr := referenceJSON(syncToken)
-		if tokenErr != nil {
-			return nil, tokenErr
-		}
-
-		body += fmt.Sprintf(", %q: %s", protocol.RemindersCKZoneChangesZoneReqSyncToken, token)
+		zone.SyncToken.Set(*syncToken)
 	}
 
-	return []byte(body + "}]}"), nil
+	return reminderChangesRequestBody(*zone)
 }
 
 func (client *Client) readReminderRequest(ctx context.Context, auth RequestContext,

@@ -160,7 +160,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CKQueryRequest"
+                "$ref": "#/components/schemas/RemindersReadQueryRequest"
               }
             }
           },
@@ -463,7 +463,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CKEmptyRequest"
+                "$ref": "#/components/schemas/ReminderZoneListRequest"
               }
             }
           },
@@ -1001,6 +1001,12 @@
       },
       "RemindersModificationRequest": {
         "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/RemindersModificationRequest"
+      },
+      "RemindersReadQueryRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/RemindersReadQueryRequest"
+      },
+      "ReminderZoneListRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/ReminderZoneListRequest"
       }
     }
   }

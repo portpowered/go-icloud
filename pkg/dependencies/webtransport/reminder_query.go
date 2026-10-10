@@ -3,9 +3,9 @@ package webtransport
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/remindersapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -45,56 +45,75 @@ func (client *Client) ReminderCompoundQuery(ctx context.Context, auth RequestCon
 }
 
 func reminderCompoundBody(listID string, completed bool, limit int64, continuation *string) ([]byte, error) {
-	name, err := referenceJSON(listID)
+	parent, parentErr := reminderListQueryFilter(listID)
+	include, includeErr := reminderIncludeCompletedFilter(completed)
+	validate, validateErr := reminderValidateReferenceFilter()
+
+	err := errors.Join(parentErr, includeErr, validateErr)
 	if err != nil {
 		return nil, err
 	}
 
-	zone, err := reminderSyncZoneJSON()
+	input := new(cloudkit.ReminderCompoundQueryRequest)
+	input.Query.RecordType = cloudkit.ReminderList
+	input.Query.FilterBy = []cloudkit.ReminderCompoundQueryFilter{parent, include, validate}
+	input.ZoneID = reminderRequestZone()
+	input.ResultsLimit = limit
+	input.ContinuationMarker = continuation
+
+	return referenceJSON(input)
+}
+
+func reminderListQueryFilter(listID string) (cloudkit.ReminderCompoundQueryFilter, error) {
+	filter := new(cloudkit.ReminderListQueryFilter)
+	filter.Comparator = cloudkit.ReminderReadComparatorEquals
+	filter.FieldName = cloudkit.ReminderListQueryFilterFieldNameList
+	filter.FieldValue.Type = cloudkit.ReminderReadReferenceTypeReference
+	filter.FieldValue.Value.RecordName = listID
+	filter.FieldValue.Value.Action = cloudkit.ReminderReadReferenceActionValidate
+	result := new(cloudkit.ReminderCompoundQueryFilter)
+
+	err := result.FromReminderListQueryFilter(*filter)
 	if err != nil {
-		return nil, err
+		return *result, fmt.Errorf("encode reminder list filter: %w", err)
 	}
 
-	identity := fmt.Sprintf("{%q: %s, %q: %q}", protocol.RemindersCKReferenceRecordName, name,
-		protocol.RemindersCKReferenceAction, protocol.RemindersCompoundQueryReferenceActionValue)
-	reference := fmt.Sprintf("{%q: %q, %q: %s}", protocol.RemindersCKFVReferenceType,
-		cloudkit.CKFVReferenceTypeREFERENCE, protocol.RemindersCKFVReferenceValue, identity)
+	return *result, nil
+}
 
-	include := 0
+func reminderIncludeCompletedFilter(completed bool) (cloudkit.ReminderCompoundQueryFilter, error) {
+	filter := new(cloudkit.ReminderIncludeCompletedFilter)
+	filter.Comparator = cloudkit.ReminderReadComparatorEquals
+	filter.FieldName = cloudkit.ReminderIncludeCompletedFilterFieldNameIncludeCompleted
+	filter.FieldValue.Type = cloudkit.ReminderReadIntegerTypeInt64
+	filter.FieldValue.Value = cloudkit.ReminderIncludeCompletedFalse
+
 	if completed {
-		include = 1
+		filter.FieldValue.Value = cloudkit.ReminderIncludeCompletedTrue
 	}
 
-	includeFilter := reminderCompoundFilter(protocol.RemindersCompoundQueryIncludeCompletedValue,
-		reminderCompoundInteger(include))
-	validateFilter := reminderCompoundFilter(protocol.RemindersCompoundQueryValidateReferenceValue,
-		reminderCompoundInteger(1))
-	filters := reminderCompoundFilter(protocol.RemindersReminderFieldListValue, reference) + ", " +
-		includeFilter + ", " + validateFilter
-	query := fmt.Sprintf("{%q: %q, %q: [%s]}", protocol.RemindersCKQueryObjectRecordType,
-		protocol.RemindersReminderSyncQueryRecordTypeValue, protocol.RemindersCKQueryObjectFilterBy, filters)
-	body := fmt.Sprintf("{%q: %s, %q: %s, %q: %d", protocol.RemindersCKQueryRequestQuery, query,
-		protocol.RemindersCKQueryRequestZoneID, zone, protocol.RemindersCKQueryRequestResultsLimit, limit)
+	result := new(cloudkit.ReminderCompoundQueryFilter)
 
-	if continuation != nil {
-		marker, markerErr := referenceJSON(*continuation)
-		if markerErr != nil {
-			return nil, markerErr
-		}
-
-		body += fmt.Sprintf(", %q: %s", protocol.RemindersCKQueryRequestContinuationMarker, marker)
+	err := result.FromReminderIncludeCompletedFilter(*filter)
+	if err != nil {
+		return *result, fmt.Errorf("encode reminder completed filter: %w", err)
 	}
 
-	return []byte(body + "}"), nil
+	return *result, nil
 }
 
-func reminderCompoundFilter(name, value string) string {
-	return fmt.Sprintf("{%q: %q, %q: %q, %q: %s}", protocol.RemindersCKQueryFilterByComparator,
-		cloudkit.CKComparatorEQUALS, protocol.RemindersCKQueryFilterByFieldName, name,
-		protocol.RemindersCKQueryFilterByFieldValue, value)
-}
+func reminderValidateReferenceFilter() (cloudkit.ReminderCompoundQueryFilter, error) {
+	filter := new(cloudkit.ReminderValidateReferenceFilter)
+	filter.Comparator = cloudkit.ReminderReadComparatorEquals
+	filter.FieldName = cloudkit.ReminderValidateReferenceFilterFieldNameLookupValidatingReference
+	filter.FieldValue.Type = cloudkit.ReminderReadIntegerTypeInt64
+	filter.FieldValue.Value = cloudkit.ReminderValidateReferenceEnabled
+	result := new(cloudkit.ReminderCompoundQueryFilter)
 
-func reminderCompoundInteger(value int) string {
-	return fmt.Sprintf("{%q: %q, %q: %d}", protocol.RemindersCKFVInt64Type,
-		cloudkit.CKFVInt64TypeINT64, protocol.RemindersCKFVInt64Value, value)
+	err := result.FromReminderValidateReferenceFilter(*filter)
+	if err != nil {
+		return *result, fmt.Errorf("encode reminder reference filter: %w", err)
+	}
+
+	return *result, nil
 }

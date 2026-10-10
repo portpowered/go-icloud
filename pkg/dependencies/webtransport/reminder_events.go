@@ -3,10 +3,10 @@ package webtransport
 import (
 	"bytes"
 	"context"
-	"fmt"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/remindersapi"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 // ReminderEventChanges reads one ordered reminder change page from a caller cursor.
@@ -53,27 +53,15 @@ func (client *Client) ReminderEventChanges(ctx context.Context, auth RequestCont
 }
 
 func reminderEventChangesBody(syncToken *string) ([]byte, error) {
-	zone, err := reminderSyncZoneJSON()
-	if err != nil {
-		return nil, err
-	}
-
-	types, err := referenceJSON([]string{protocol.RemindersReminderRecordTypeValue})
-	if err != nil {
-		return nil, err
-	}
-
-	body := fmt.Sprintf("{%q: [{%q: %s, %q: %s", protocol.RemindersCKZoneChangesRequestZones,
-		protocol.RemindersCKZoneChangesZoneReqZoneID, zone, protocol.RemindersCKZoneChangesZoneReqDesiredRecordTypes, types)
+	zone := new(cloudkit.CKZoneChangesZoneReq)
+	zone.ZoneID = reminderChangeZone()
+	zone.DesiredRecordTypes.Set([]string{protocol.RemindersReminderRecordTypeValue})
 
 	if syncToken != nil {
-		token, tokenErr := referenceJSON(syncToken)
-		if tokenErr != nil {
-			return nil, tokenErr
-		}
-
-		body += fmt.Sprintf(", %q: %s", protocol.RemindersCKZoneChangesZoneReqSyncToken, token)
+		zone.SyncToken.Set(*syncToken)
 	}
 
-	return []byte(body + fmt.Sprintf(", %q: %t}]}", protocol.RemindersCKZoneChangesZoneReqReverse, false)), nil
+	zone.Reverse.Set(false)
+
+	return reminderChangesRequestBody(*zone)
 }

@@ -236,11 +236,6 @@ func (e RemindersListZonesParamsGetCurrentSyncToken) Valid() bool {
 // CKAssetBytes Exact downloaded asset bytes, retained before decoding list membership.
 type CKAssetBytes = externalRef0.CKAssetBytes
 
-// CKEmptyRequest Empty payload for zone discovery.
-//
-// Example: {}
-type CKEmptyRequest = externalRef0.CKEmptyRequest
-
 // CKLookupRequest Payload for fetching specific records by their names.
 //
 // Example: {"records":[{"recordName":"Reminder/synthetic-item"}],"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
@@ -255,15 +250,6 @@ type CKLookupResponse = externalRef0.CKLookupResponse
 //
 // Example: {"records":[{"fields":{},"recordChangeTag":"synthetic-new-tag","recordName":"Reminder/00000001-0000-4000-8000-000000000000","recordType":"Reminder"}]}
 type CKModifyResponse = externalRef0.CKModifyResponse
-
-// CKQueryRequest Top-level /records/query request payload.
-//
-// “zoneID“ is optional because CloudKit also accepts a “zoneWide“-style
-// query (no specific zone, scans all zones in the database) used by the
-// Invites service to enumerate per-event zones in one round trip.
-//
-// Example: {"query":{"filterBy":[{"comparator":"EQUALS","fieldName":"List","fieldValue":{"type":"REFERENCE","value":{"action":"VALIDATE","recordName":"List/synthetic-list"}}},{"comparator":"EQUALS","fieldName":"includeCompleted","fieldValue":{"type":"INT64","value":1}},{"comparator":"EQUALS","fieldName":"LookupValidatingReference","fieldValue":{"type":"INT64","value":1}}],"recordType":"reminderList"},"resultsLimit":2,"zoneID":{"zoneName":"Reminders","zoneType":"REGULAR_CUSTOM_ZONE"}}
-type CKQueryRequest = externalRef0.CKQueryRequest
 
 // CKQueryResponse Top-level response from /records/query:
 // - records: list of CKRecord
@@ -297,8 +283,14 @@ type LegacyRemindersStartup struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
+// ReminderZoneListRequest Discover the available Reminders zones without additional selection fields.
+type ReminderZoneListRequest = externalRef0.ReminderZoneListRequest
+
 // RemindersModificationRequest Implemented single-reminder variants plus explicitly scoped remaining linked-record shapes.
 type RemindersModificationRequest = externalRef0.RemindersModificationRequest
+
+// RemindersReadQueryRequest Current cursor discovery or complete list query for the Reminders zone.
+type RemindersReadQueryRequest = externalRef0.RemindersReadQueryRequest
 
 // RemindersAccept defines model for RemindersAccept.
 type RemindersAccept = string
@@ -536,10 +528,10 @@ type RemindersLookupRecordsJSONRequestBody = CKLookupRequest
 type RemindersModifyRecordsJSONRequestBody = RemindersModificationRequest
 
 // RemindersQueryRecordsJSONRequestBody defines body for RemindersQueryRecords for application/json ContentType.
-type RemindersQueryRecordsJSONRequestBody = CKQueryRequest
+type RemindersQueryRecordsJSONRequestBody = RemindersReadQueryRequest
 
 // RemindersListZonesJSONRequestBody defines body for RemindersListZones for application/json ContentType.
-type RemindersListZonesJSONRequestBody = CKEmptyRequest
+type RemindersListZonesJSONRequestBody = ReminderZoneListRequest
 
 // Getter for additional properties for LegacyRemindersStartup. Returns the specified
 // element and whether it was found

@@ -133,13 +133,13 @@ func remindersRequestTarget(operation string) any {
 	case remindersLookupOperation:
 		return new(cloudkit.CKLookupRequest)
 	case remindersQueryOperation:
-		return new(cloudkit.CKQueryRequest)
+		return new(cloudkit.RemindersReadQueryRequest)
 	case remindersModifyOperation:
 		return new(cloudkit.CKModifyRequest)
 	case remindersChangesOperation:
 		return new(cloudkit.CKZoneChangesRequest)
 	case remindersZonesOperation:
-		return new(cloudkit.CKEmptyRequest)
+		return new(cloudkit.ReminderZoneListRequest)
 	default:
 		panic("unknown Reminders request model")
 	}

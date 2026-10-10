@@ -8895,6 +8895,397 @@
           "value"
         ],
         "type": "object"
+      },
+      "ReminderReadComparator": {
+        "description": "Equality comparison used by Reminders list filters.",
+        "type": "string",
+        "enum": [
+          "EQUALS"
+        ],
+        "x-enum-varnames": [
+          "ReminderReadComparatorEquals"
+        ]
+      },
+      "ReminderReadIntegerType": {
+        "description": "Numeric field wrapper used by Reminders list filters.",
+        "type": "string",
+        "enum": [
+          "INT64"
+        ],
+        "x-enum-varnames": [
+          "ReminderReadIntegerTypeInt64"
+        ]
+      },
+      "ReminderReadReferenceType": {
+        "description": "Reference field wrapper used by a Reminders list filter.",
+        "type": "string",
+        "enum": [
+          "REFERENCE"
+        ],
+        "x-enum-varnames": [
+          "ReminderReadReferenceTypeReference"
+        ]
+      },
+      "ReminderReadReferenceAction": {
+        "description": "Validate the referenced list before reading its reminders.",
+        "type": "string",
+        "enum": [
+          "VALIDATE"
+        ],
+        "x-enum-varnames": [
+          "ReminderReadReferenceActionValidate"
+        ]
+      },
+      "ReminderIncludeCompletedValue": {
+        "description": "Include completed reminders when one; return active reminders only when zero.",
+        "type": "integer",
+        "enum": [
+          0,
+          1
+        ],
+        "x-enum-varnames": [
+          "ReminderIncludeCompletedFalse",
+          "ReminderIncludeCompletedTrue"
+        ]
+      },
+      "ReminderValidateReferenceValue": {
+        "description": "Require validating-reference lookup for the compound list query.",
+        "type": "integer",
+        "enum": [
+          1
+        ],
+        "x-enum-varnames": [
+          "ReminderValidateReferenceEnabled"
+        ]
+      },
+      "ReminderReadReference": {
+        "description": "The caller-selected list and its required validation action.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recordName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "action": {
+            "$ref": "#/components/schemas/ReminderReadReferenceAction",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "recordName",
+          "action"
+        ]
+      },
+      "ReminderListQueryField": {
+        "description": "A validated reference to the caller-selected reminders list.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ReminderReadReferenceType",
+            "x-order": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/ReminderReadReference",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ReminderIncludeCompletedField": {
+        "description": "Whether completed reminders are included in the requested list.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ReminderReadIntegerType",
+            "x-order": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/ReminderIncludeCompletedValue",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ReminderValidateReferenceField": {
+        "description": "Enable validating-reference lookup for related reminder records.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ReminderReadIntegerType",
+            "x-order": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/ReminderValidateReferenceValue",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ReminderListQueryFilter": {
+        "description": "Limit the compound query to a caller-selected list.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "comparator": {
+            "$ref": "#/components/schemas/ReminderReadComparator",
+            "x-order": 1
+          },
+          "fieldName": {
+            "type": "string",
+            "enum": [
+              "List"
+            ],
+            "x-enum-varnames": [
+              "List"
+            ],
+            "x-order": 2
+          },
+          "fieldValue": {
+            "$ref": "#/components/schemas/ReminderListQueryField",
+            "x-order": 3
+          }
+        },
+        "required": [
+          "comparator",
+          "fieldName",
+          "fieldValue"
+        ]
+      },
+      "ReminderIncludeCompletedFilter": {
+        "description": "Select whether the compound query includes completed reminders.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "comparator": {
+            "$ref": "#/components/schemas/ReminderReadComparator",
+            "x-order": 1
+          },
+          "fieldName": {
+            "type": "string",
+            "enum": [
+              "includeCompleted"
+            ],
+            "x-enum-varnames": [
+              "IncludeCompleted"
+            ],
+            "x-order": 2
+          },
+          "fieldValue": {
+            "$ref": "#/components/schemas/ReminderIncludeCompletedField",
+            "x-order": 3
+          }
+        },
+        "required": [
+          "comparator",
+          "fieldName",
+          "fieldValue"
+        ]
+      },
+      "ReminderValidateReferenceFilter": {
+        "description": "Request related records through validating references.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "comparator": {
+            "$ref": "#/components/schemas/ReminderReadComparator",
+            "x-order": 1
+          },
+          "fieldName": {
+            "type": "string",
+            "enum": [
+              "LookupValidatingReference"
+            ],
+            "x-enum-varnames": [
+              "LookupValidatingReference"
+            ],
+            "x-order": 2
+          },
+          "fieldValue": {
+            "$ref": "#/components/schemas/ReminderValidateReferenceField",
+            "x-order": 3
+          }
+        },
+        "required": [
+          "comparator",
+          "fieldName",
+          "fieldValue"
+        ]
+      },
+      "ReminderCompoundQueryFilter": {
+        "description": "One of the three distinct filters required for a Reminders list query.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ReminderListQueryFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderIncludeCompletedFilter"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderValidateReferenceFilter"
+          }
+        ]
+      },
+      "ReminderCompoundQuery": {
+        "description": "Read reminders and related records with one filter of each required kind.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recordType": {
+            "$ref": "#/components/schemas/ReminderSyncQueryRecordType",
+            "x-order": 1
+          },
+          "filterBy": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "$ref": "#/components/schemas/ReminderCompoundQueryFilter"
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/ReminderIncludeCompletedFilter"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ReminderValidateReferenceFilter"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/ReminderListQueryFilter"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ReminderValidateReferenceFilter"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/ReminderListQueryFilter"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ReminderIncludeCompletedFilter"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "x-order": 2
+          }
+        },
+        "required": [
+          "recordType",
+          "filterBy"
+        ]
+      },
+      "ReminderCurrentSyncQuery": {
+        "description": "Discover the current cursor without compound list filters.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recordType": {
+            "$ref": "#/components/schemas/ReminderSyncQueryRecordType",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "recordType"
+        ]
+      },
+      "ReminderCompoundQueryRequest": {
+        "description": "Read one page of reminders and related records for a selected list.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/ReminderCompoundQuery",
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "resultsLimit": {
+            "type": "integer",
+            "format": "int64",
+            "x-order": 3
+          },
+          "continuationMarker": {
+            "type": "string",
+            "x-order": 4
+          }
+        },
+        "required": [
+          "query",
+          "zoneID",
+          "resultsLimit"
+        ]
+      },
+      "ReminderCurrentSyncQueryRequest": {
+        "description": "Discover the current Reminders zone cursor using a one-result query.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/ReminderCurrentSyncQuery",
+            "x-order": 1
+          },
+          "zoneID": {
+            "$ref": "#/components/schemas/CKZoneIDReq",
+            "x-order": 2
+          },
+          "resultsLimit": {
+            "$ref": "#/components/schemas/ReminderSyncQueryLimit",
+            "x-order": 3
+          }
+        },
+        "required": [
+          "query",
+          "zoneID",
+          "resultsLimit"
+        ]
+      },
+      "RemindersReadQueryRequest": {
+        "description": "Current cursor discovery or complete list query for the Reminders zone.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ReminderCurrentSyncQueryRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ReminderCompoundQueryRequest"
+          }
+        ]
+      },
+      "ReminderZoneListRequest": {
+        "description": "Discover the available Reminders zones without additional selection fields.",
+        "type": "object",
+        "additionalProperties": false,
+        "maxProperties": 0,
+        "properties": {}
       }
     }
   },

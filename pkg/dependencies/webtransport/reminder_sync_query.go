@@ -22,15 +22,16 @@ type ReminderQueryResponse struct {
 func (client *Client) ReminderCurrentSyncQuery(ctx context.Context,
 	auth RequestContext,
 ) (*ReminderQueryResponse, error) {
-	zone, err := reminderSyncZoneJSON()
+	input := new(cloudkit.ReminderCurrentSyncQueryRequest)
+	input.Query.RecordType = cloudkit.ReminderList
+	input.ZoneID = reminderRequestZone()
+	input.ResultsLimit = cloudkit.ReminderSyncQueryLimitOne
+
+	body, err := referenceJSON(input)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	body := fmt.Sprintf("{%q: {%q: %q}, %q: %s, %q: %d}", protocol.RemindersCKQueryRequestQuery,
-		protocol.RemindersCKQueryObjectRecordType, protocol.RemindersReminderSyncQueryRecordTypeValue,
-		protocol.RemindersCKQueryRequestZoneID, zone, protocol.RemindersCKQueryRequestResultsLimit,
-		cloudkit.ReminderSyncQueryLimitOne)
 	params := new(remindersapi.RemindersQueryRecordsParams)
 	params.ClientId = auth.Params.ClientId
 	params.Dsid = auth.Params.Dsid
@@ -38,7 +39,7 @@ func (client *Client) ReminderCurrentSyncQuery(ctx context.Context,
 	params.GetCurrentSyncToken = remindersapi.RemindersQueryRecordsParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersQueryRecordsRequestWithBody(auth.Origin, params,
-		jsonMedia(), bytes.NewBufferString(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -85,12 +86,4 @@ func decodeReminderSyncQuery(body []byte) (cloudkit.CKQueryResponse, error) {
 	}
 
 	return data, nil
-}
-
-func reminderSyncZoneJSON() ([]byte, error) {
-	zone := cloudkit.CKZoneID{ZoneName: protocol.RemindersZoneNameValue,
-		OwnerRecordName: nil, ZoneType: nil, AdditionalProperties: nil}
-	zone.ZoneType.Set(protocol.RemindersZoneTypeValue)
-
-	return referenceJSON(zone)
 }

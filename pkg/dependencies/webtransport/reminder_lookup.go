@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/remindersapi"
@@ -29,28 +28,22 @@ func (client *Client) LookupReminder(ctx context.Context, auth RequestContext,
 func (client *Client) LookupReminders(ctx context.Context, auth RequestContext,
 	names []string,
 ) (*ReminderLookupResponse, error) {
-	zone := cloudkit.CKZoneID{ZoneName: protocol.RemindersZoneNameValue,
-		OwnerRecordName: nil, ZoneType: nil, AdditionalProperties: nil}
-	zone.ZoneType.Set(protocol.RemindersZoneTypeValue)
+	input := new(cloudkit.CKLookupRequest)
+	input.ZoneID = reminderRequestZone()
+	input.Records = make([]cloudkit.CKLookupDescriptor, 0, len(names))
 
-	identity, err := referenceJSON(zone)
+	for _, name := range names {
+		descriptor := new(cloudkit.CKLookupDescriptor)
+		descriptor.RecordName = name
+		input.Records = append(input.Records, *descriptor)
+	}
+
+	body, err := referenceJSONFields(input, []string{protocol.RemindersCKLookupRequestRecords,
+		protocol.RemindersCKLookupRequestZoneID})
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	descriptors := make([]string, 0, len(names))
-
-	for _, name := range names {
-		recordName, encodeErr := referenceJSON(name)
-		if encodeErr != nil {
-			return nil, failure(Configuration, encodeErr, nil, nil)
-		}
-
-		descriptors = append(descriptors, fmt.Sprintf("{%q: %s}", protocol.RemindersCKLookupDescriptorRecordName, recordName))
-	}
-
-	body := fmt.Sprintf("{%q: [%s], %q: %s}", protocol.RemindersCKLookupRequestRecords,
-		strings.Join(descriptors, ", "), protocol.RemindersCKLookupRequestZoneID, identity)
 	params := new(remindersapi.RemindersLookupRecordsParams)
 	params.ClientId = auth.Params.ClientId
 	params.Dsid = auth.Params.Dsid
@@ -58,7 +51,7 @@ func (client *Client) LookupReminders(ctx context.Context, auth RequestContext,
 	params.GetCurrentSyncToken = remindersapi.RemindersLookupRecordsParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersLookupRecordsRequestWithBody(auth.Origin, params,
-		jsonMedia(), bytes.NewBufferString(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
