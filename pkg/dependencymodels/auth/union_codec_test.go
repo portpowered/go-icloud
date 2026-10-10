@@ -122,6 +122,7 @@ func TestLoginUnionRejectsInvalidBodiesWithoutMutation(t *testing.T) {
 			}
 
 			corrupt := auth.CorruptAuthLoginRequest([]byte(invalid))
+
 			_, corruptErr := corrupt.MarshalJSON()
 			if corruptErr == nil {
 				t.Fatal("invalid private storage serialized")
