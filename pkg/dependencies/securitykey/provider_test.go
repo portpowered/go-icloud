@@ -93,6 +93,7 @@ type fakeConnection struct {
 
 func (connection *fakeConnection) Close() error {
 	connection.closed++
+
 	return connection.closeFailure
 }
 func (connection *fakeConnection) Write(ctx context.Context, packet []byte) (int, error) {
@@ -291,6 +292,7 @@ func transcriptProvider(t *testing.T, connection, discovery *fakeConnection) (*P
 		if err != nil {
 			return fmt.Errorf("synthetic waiter context: %w", err)
 		}
+
 		return nil
 	}
 

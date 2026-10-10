@@ -211,6 +211,7 @@ func TestOpenCancellationClosesNewHandle(t *testing.T) {
 	backend := HIDBackend{
 		open: func(string) (Connection, error) {
 			cancel()
+
 			return connection, nil
 		},
 		enumerate: nil,

@@ -61,6 +61,7 @@ func generate(ctx context.Context, root string) (resultErr error) {
 
 	install.Env = append(os.Environ(), "GOBIN="+directory, "GOWORK=off")
 	output, installErr := install.CombinedOutput()
+
 	if installErr != nil {
 		return fmt.Errorf("install pinned protobuf plugin: %w: %s", installErr, output)
 	}
@@ -86,6 +87,7 @@ func compile(ctx context.Context, root, directory string) error {
 	command.Env = append(os.Environ(), "PATH="+directory+string(os.PathListSeparator)+os.Getenv("PATH"))
 	command.Dir = filepath.Clean(root)
 	output, err := command.CombinedOutput()
+
 	if err != nil {
 		return fmt.Errorf("generate schema-owned bridge protobuf: %w: %s", err, output)
 	}

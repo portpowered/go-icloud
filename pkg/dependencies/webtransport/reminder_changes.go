@@ -222,7 +222,9 @@ func (client *Client) DownloadReminderMembership(ctx context.Context, auth Reque
 		return nil, failure(Decode, errReminderZonesShape, nil, nil)
 	}
 
-	request, err := remindersapi.NewRemindersDownloadAssetRequest(target.Scheme+"://"+target.Host, target.EscapedPath(), nil)
+	request, err := remindersapi.NewRemindersDownloadAssetRequest(
+		target.Scheme+"://"+target.Host, target.EscapedPath(), nil,
+	)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

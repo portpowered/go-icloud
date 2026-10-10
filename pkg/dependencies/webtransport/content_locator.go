@@ -1,6 +1,7 @@
 package webtransport
 
 import (
+	"fmt"
 	"net/url"
 
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary"
@@ -11,5 +12,10 @@ import (
 func contentLocatorTarget(contentURL string) (*url.URL, error) {
 	locator := httpboundary.ContentLocator{Url: contentURL}
 
-	return url.Parse(locator.Url)
+	target, err := url.Parse(locator.Url)
+	if err != nil {
+		return nil, fmt.Errorf("parse content locator: %w", err)
+	}
+
+	return target, nil
 }
