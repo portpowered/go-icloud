@@ -120,13 +120,14 @@ func (sdk *SDK) nativeSRPComplete(ctx context.Context, operation *nativeAuthOper
 	input AuthenticateRequest, challenge string, proof srp.Proof,
 ) error {
 	data := auth.AuthSRPCompleteRequest{AccountName: operation.state.AccountName, C: challenge,
-		M1: proof.M1, M2: proof.M2, RememberMe: true, TrustTokens: []string{}, Pause2FA: nil}
+		M1: proof.M1, M2: proof.M2, RememberMe: auth.AuthSRPCompleteRequestRememberMeTrue,
+		TrustTokens: []string{}, Pause2FA: nil}
 	if operation.state.TrustToken != "" {
 		data.TrustTokens = append(data.TrustTokens, operation.state.TrustToken)
 	}
 
 	if input.PauseTwoFactor {
-		pause := auth.AuthSRPCompleteRequestPause2FA(true)
+		pause := auth.AuthSRPCompleteRequestPause2FATrue
 		data.Pause2FA = &pause
 	}
 
