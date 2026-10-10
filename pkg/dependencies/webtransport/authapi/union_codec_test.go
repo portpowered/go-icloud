@@ -18,12 +18,17 @@ func TestLoginUnionPreservesConstructorBytes(t *testing.T) {
 		name  string
 		model any
 		from  func(*LoginAuthTokenJSONBody) error
+		as    func(LoginAuthTokenJSONBody) (any, error)
 	}{
 		{"token", token, func(body *LoginAuthTokenJSONBody) error {
 			return body.FromExternalRef0AuthTokenLoginRequest(token)
+		}, func(body LoginAuthTokenJSONBody) (any, error) {
+			return body.AsExternalRef0AuthTokenLoginRequest()
 		}},
 		{"credentials", credentials, func(body *LoginAuthTokenJSONBody) error {
 			return body.FromExternalRef0AuthCredentialsLoginRequest(credentials)
+		}, func(body LoginAuthTokenJSONBody) (any, error) {
+			return body.AsExternalRef0AuthCredentialsLoginRequest()
 		}},
 	} {
 		t.Run(test.name, func(t *testing.T) {
@@ -38,6 +43,14 @@ func TestLoginUnionPreservesConstructorBytes(t *testing.T) {
 			got, err := body.MarshalJSON()
 			if err != nil || !bytes.Equal(got, want) {
 				t.Fatalf("constructor bytes = %q, %v; want %q", got, err, want)
+			}
+			decoded, err := test.as(body)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got, err = json.Marshal(decoded)
+			if err != nil || !bytes.Equal(got, want) {
+				t.Fatalf("decoded bytes = %q, %v; want %q", got, err, want)
 			}
 			request, err := NewLoginAuthTokenRequest("https://example.invalid", nil, LoginAuthTokenJSONRequestBody(body))
 			if err != nil {
