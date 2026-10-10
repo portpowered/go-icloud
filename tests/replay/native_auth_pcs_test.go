@@ -107,7 +107,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	nativeFlowResponses(t, raw, metadata)
 	bodyCopy, headersCopy := failure.ResponseBody(), failure.ResponseHeaders()
 	bodyCopy[0] ^= 1
-	headersCopy[0].Value = "mutation-probe"
+	headersCopy[0].Value = nativeMutationProbe
 
 	if !reflect.DeepEqual(failure.ResponseBody(), nativeFlowBody(t, final.Response.Body)) ||
 		!reflect.DeepEqual(failure.ResponseHeaders(), metadata[len(metadata)-1].Headers) {

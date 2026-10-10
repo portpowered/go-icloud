@@ -84,15 +84,14 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 	)
 
 	switch operation {
-	case "validate_2fa_code":
-
+	case nativeValidateTwoFactorOperation:
 		var code string
 
 		authReplayDecode(t, inputs[0], &code)
 
 		result, err = client.VerifyTwoFactorCode(ctx, icloud.VerifyTwoFactorCodeRequest{
 			Auth: state.Auth, State: state, Code: code})
-	case "request_2fa_code":
+	case nativeRequestTwoFactorOperation:
 		result, err = client.RequestTwoFactorCode(ctx, icloud.RequestTwoFactorCodeRequest{
 			Auth: state.Auth, State: state, PhoneNumberID: nil})
 	case "trust_session":
@@ -101,7 +100,6 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 		result, err = client.SendTwoStepCode(ctx, icloud.SendTwoStepCodeRequest{
 			Auth: state.Auth, State: state, Device: nativeFixtureDevice(t, inputs[0])})
 	case "validate_verification_code":
-
 		var code string
 
 		authReplayDecode(t, inputs[1], &code)

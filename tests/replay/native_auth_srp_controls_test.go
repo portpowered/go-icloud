@@ -14,6 +14,7 @@ import (
 
 func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 	t.Parallel()
+
 	for _, control := range []string{nativeSRPZeroServerControl, nativeSRPEmptySaltControl, nativeSRPEmptyContextControl,
 		nativeSRPZeroIterationsControl, nativeSRPProtocolControl} {
 		t.Run(control, func(t *testing.T) {
@@ -40,7 +41,7 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 			case nativeSRPZeroIterationsControl:
 				challenge.Iteration = 0
 			case nativeSRPProtocolControl:
-				challenge.Protocol = auth.AuthSRPProtocol("unsupported")
+				challenge.Protocol = auth.AuthSRPProtocol(replayExpectedUnsupported)
 			}
 			body, err := json.Marshal(challenge)
 			if err != nil {

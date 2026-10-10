@@ -75,6 +75,7 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 	if !reflect.DeepEqual(accountJSON(t, result.State.AccountData), accountJSON(t, state["account"])) {
 		t.Fatal("native authentication changed account discovery")
 	}
+
 	var requires, requested bool
 
 	var delivery string
@@ -94,7 +95,6 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 		t.Fatal("native authentication lost normalized challenge metadata")
 	}
 	if notice, exists := state["delivery_notice"]; exists {
-
 		var expectedNotice string
 
 		authReplayDecode(t, notice, &expectedNotice)
@@ -134,6 +134,7 @@ func nativeFixtureSession(t *testing.T, state map[string]json.RawMessage) map[st
 
 func TestNativeSavedSessionReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, name := range []string{nativeCloudKitDiscoveryFixture, replayExpectedAuthAuthenticateCached,
 		nativePausedAuthenticationFixture, nativeRefreshAuthenticationFixture, nativeUntrustedRefreshFixture,
 		nativeStaleTokenFixture, nativeTokenRotationFixture, nativeValidation201Fixture,

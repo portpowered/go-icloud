@@ -82,9 +82,11 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage,
 
 	state.Challenge.SecurityKeyNames = append([]string{}, *challenge.KeyNames...)
 	state.Challenge.ProviderData = bytes.Clone(initial["auth_data"])
+
 	var flow []struct {
 		Inputs []json.RawMessage `json:"inputs"`
 	}
+
 	authReplayDecode(t, raw["inputs"], &flow)
 
 	var payload auth.AuthWebAuthnAssertion
@@ -110,7 +112,7 @@ func (provider *nativeFixtureAuthenticator) Assert(_ context.Context, request ic
 ) {
 	provider.request = &request
 	if provider.mutateInput {
-		request.Challenge.CredentialIDs[0] = "mutation-probe"
+		request.Challenge.CredentialIDs[0] = nativeMutationProbe
 	}
 	return provider.assertion, provider.err
 }
@@ -179,7 +181,7 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 		{name: "cancellation", cause: context.Canceled, kind: icloud.Canceled},
 		{name: "deadline", cause: context.DeadlineExceeded, kind: icloud.Timeout},
 		{name: "PIN required", cause: securitykey.ErrPINRequired, kind: icloud.AuthenticationRequired},
-		{name: "unsupported", cause: securitykey.ErrUnsupported, kind: icloud.Configuration},
+		{name: replayExpectedUnsupported, cause: securitykey.ErrUnsupported, kind: icloud.Configuration},
 		{name: "invalid device proof", cause: securitykey.ErrProtocol, kind: icloud.InvalidResponse},
 		{name: "device rejected credential", cause: &securitykey.Error{
 			Stage: "CTAP", Status: int(keymodels.NoCredentials), Cause: securitykey.ErrProtocol}, kind: icloud.Provider},

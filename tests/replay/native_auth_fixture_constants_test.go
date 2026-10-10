@@ -11,7 +11,7 @@ const (
 	nativeBridgeSMSFallbackFixture     = "auth-bridge-sms-fallback"
 	nativeRefreshAuthenticationFixture = "auth-authenticate-refresh"
 	nativeUntrustedRefreshFixture      = "auth-authenticate-untrusted-refresh"
-	nativeTokenRotationFixture         = "auth-token-cookie-rotation"
+	nativeTokenRotationFixture         = "auth-token-cookie-rotation" //nolint:gosec // G101: replay scenario name.
 	nativeValidation201Fixture         = "auth-authenticate-validation-201"
 	nativeEmptyHeadersRefreshFixture   = "auth-authenticate-empty-headers-refresh"
 	nativeQuotedCookieFixture          = "auth-authenticate-quoted-cookie"
@@ -40,4 +40,14 @@ const (
 	nativePCSLaterCookiesFixture       = "auth-pcs-cookies-later"
 	nativePCSExhaustedFixture          = "auth-pcs-retries-exhausted"
 	nativeOneFactorFixture             = "auth-one-factor-service"
+)
+
+const (
+	nativeValidateTwoFactorOperation = "validate_2fa_code"
+	nativeRequestTwoFactorOperation  = "request_2fa_code"
+	nativeMutationProbe              = "mutation-probe"
+	nativeBridgeMutation             = "synthetic-mutation"
+	nativeBridgeRotatedScnt          = "synthetic-rotated-scnt"
+	nativeBridgeRotatedSession       = "synthetic-rotated-session"
+	nativeBridgeRotatedTrust         = "synthetic-rotated-trust"
 )
