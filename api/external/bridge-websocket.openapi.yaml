@@ -61,6 +61,16 @@ components:
       type: string
       enum: ['443']
       x-enum-varnames: [SecurePort]
+    Network:
+      type: string
+      enum: [tcp]
+      x-enum-varnames: [DialNetwork]
+    PayloadLimit:
+      type: integer
+      description: SDK local 64 MiB receive resource policy (GO-06), not a Source or provider wire limit.
+      x-sdk-resource-policy: true
+      enum: [67108864]
+      x-enum-varnames: [MaxMessageBytes]
     Mask:
       type: string
       format: byte
@@ -143,6 +153,7 @@ components:
                             - {kind: length, args: [{kind: input, input: mask}]}
         frameDecode:
           headerWidth: {$ref: '#/components/schemas/ExtensionLengths/values/MediumLengthBytes'}
+          maxPayload: {$ref: '#/components/schemas/PayloadLimit/values/MaxMessageBytes'}
           opcode:
             offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameOpcodePosition'}
             mask: {$ref: '#/components/schemas/OpcodeMask/values/FrameOpcodeMask'}
@@ -181,3 +192,4 @@ components:
         payload:
           type: string
           format: byte
+          x-byte-max-length: {$ref: '#/components/schemas/PayloadLimit/values/MaxMessageBytes'}

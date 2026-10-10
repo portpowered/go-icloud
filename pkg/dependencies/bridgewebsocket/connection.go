@@ -86,7 +86,7 @@ func Open(ctx context.Context, options Options) (*Conn, error) {
 		port = string(model.SecurePort)
 	}
 
-	socket, err := dial(ctx, "tcp", net.JoinHostPort(endpoint.Hostname(), port))
+	socket, err := dial(ctx, string(model.DialNetwork), net.JoinHostPort(endpoint.Hostname(), port))
 	if err != nil {
 		return nil, fmt.Errorf("bridge dial: %w", err)
 	}

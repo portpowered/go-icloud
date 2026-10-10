@@ -124,6 +124,21 @@ func (e LineSeparator) Valid() bool {
 	}
 }
 
+// Defines values for Network.
+const (
+	DialNetwork Network = "tcp"
+)
+
+// Valid indicates whether the value is a known member of the Network enum.
+func (e Network) Valid() bool {
+	switch e {
+	case DialNetwork:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for OpcodeMask.
 const (
 	FrameOpcodeMask OpcodeMask = 15
@@ -133,6 +148,21 @@ const (
 func (e OpcodeMask) Valid() bool {
 	switch e {
 	case FrameOpcodeMask:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PayloadLimit.
+const (
+	MaxMessageBytes PayloadLimit = 6.7108864e+07
+)
+
+// Valid indicates whether the value is a known member of the PayloadLimit enum.
+func (e PayloadLimit) Valid() bool {
+	switch e {
+	case MaxMessageBytes:
 		return true
 	default:
 		return false
@@ -242,8 +272,14 @@ type LineSeparator int
 // Mask defines model for Mask.
 type Mask = []byte
 
+// Network defines model for Network.
+type Network string
+
 // OpcodeMask defines model for OpcodeMask.
 type OpcodeMask int
+
+// PayloadLimit SDK local 64 MiB receive resource policy (GO-06), not a Source or provider wire limit.
+type PayloadLimit int
 
 // RequestLine defines model for RequestLine.
 type RequestLine string

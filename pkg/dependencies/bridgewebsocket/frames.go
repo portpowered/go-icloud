@@ -11,7 +11,6 @@ import (
 )
 
 // A local allocation bound prevents an untrusted frame from exhausting memory.
-const maxMessageBytes = 64 * 1024 * 1024
 
 // SendBinary sends a complete masked binary message with caller-owned entropy.
 func (c *Conn) SendBinary(ctx context.Context, payload []byte) error {
@@ -131,7 +130,8 @@ func (m *messageFragments) accept(next model.Frame) ([]byte, bool, error) {
 		m.opcode = next.Opcode
 	}
 
-	if len(m.payload) > maxMessageBytes-len(next.Payload) {
+	// GO-06: the generated 64 MiB bound is local SDK receive resource policy.
+	if len(m.payload) > int(model.MaxMessageBytes)-len(next.Payload) {
 		return nil, false, ErrProtocol
 	}
 
@@ -182,7 +182,7 @@ func (c *Conn) readFrame() (model.Frame, error) {
 		return *result, err
 	}
 
-	if length > maxMessageBytes {
+	if length > uint64(model.MaxMessageBytes) {
 		return *result, ErrProtocol
 	}
 

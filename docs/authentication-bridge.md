@@ -36,6 +36,9 @@ boundary. Its contract requires the caller to establish TLS when connecting to
 a real server; offline tests supply a scripted connection. Without this option,
 the transport establishes and verifies TLS itself. The socket implementation
 handles raw RFC 6455 upgrade, masking, fragmentation, ping/pong, and close frames.
+The SDK rejects incoming frames or reassembled messages above 64 MiB as a local
+resource policy (GO-06). The pinned Python raw-frame path does not impose this
+specific bound; the generated schema marks it as SDK policy, not a provider limit.
 
 The socket fixture inventory contains 53 synthetic paired scenarios derived
 from the pinned source: 18 raw WebSocket transcripts and 35 protobuf/push
