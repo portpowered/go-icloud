@@ -140,8 +140,10 @@ func TestAuthenticationCallRejectsUnknownDynamicTypesBeforeTransport(t *testing.
 		"nil":       nil,
 		"typed-nil": (*webtransport.GetAuthChallengeCall)(nil),
 		"embedded": embeddedAuthenticationCall{
-			GetAuthChallengeCall: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil},
-			Body:                 []byte("arbitrary body"),
+			GetAuthChallengeCall: webtransport.GetAuthChallengeCall{
+				Origin: authBoundaryOrigin, Params: nil,
+			},
+			Body: []byte("arbitrary body"),
 		},
 		"non-https":       webtransport.GetAuthChallengeCall{Origin: "http://accounts.example.test", Params: nil},
 		"origin-path":     webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test/extra", Params: nil},

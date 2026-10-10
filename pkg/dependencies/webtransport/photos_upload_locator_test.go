@@ -26,7 +26,8 @@ func TestPhotoUploadLocatorPreservesEscapedSignedTarget(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if request.Method != "POST" || request.URL.String() != target || request.URL.EscapedPath() != "/a%2Fb" || request.ContentLength != 3 {
+	if request.Method != "POST" || request.URL.String() != target || request.URL.EscapedPath() != "/a%2Fb" ||
+		request.ContentLength != 3 {
 		t.Fatalf("upload target or framing changed: %s %s length=%d", request.Method, request.URL, request.ContentLength)
 	}
 

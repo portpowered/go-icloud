@@ -197,6 +197,7 @@ func photoObjectValue(value json.RawMessage, asset bool) (json.RawMessage, error
 	if asset {
 		return photoTypedMetadata[cloudkit.CKAssetToken](object)
 	}
+
 	encoded, err := photoTypedMetadata[cloudkit.CKReference](object)
 	if err != nil {
 		return nil, fmt.Errorf("encode photo object: %w", err)

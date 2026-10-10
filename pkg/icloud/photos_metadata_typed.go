@@ -14,15 +14,19 @@ func photoTypedMetadata[T any](value any) (json.RawMessage, error) {
 	if err != nil {
 		return nil, fmt.Errorf("encode normalized photo model: %w", err)
 	}
+
 	var projected T
+
 	err = json.Unmarshal(body, &projected)
 	if err != nil {
 		return nil, fmt.Errorf("decode normalized photo model: %w", err)
 	}
+
 	encoded, err := json.Marshal(projected)
 	if err != nil {
 		return nil, fmt.Errorf("encode projected photo model: %w", err)
 	}
+
 	return encoded, nil
 }
 

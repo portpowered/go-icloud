@@ -70,7 +70,8 @@ func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOper
 	params := authapi.AcceptAuthTermsParams(nativeAuthParams(operation.state))
 
 	request, err := nativeEncodedRequest(webtransport.AcceptAuthTermsCall{
-		Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: auth.AuthAcceptTermsRequest{AcceptedICloudTerms: version},
+		Origin: operation.state.Auth.SetupServiceURL, Params: &params,
+		Body: auth.AuthAcceptTermsRequest{AcceptedICloudTerms: version},
 	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)

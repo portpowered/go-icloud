@@ -40,6 +40,7 @@ func (client *Client) exchangeAuthenticationCall(ctx context.Context, call Authe
 	}
 
 	media := authenticationCallMedia(call)
+
 	err = validateAuthenticationMedia(request.Header, headers, media)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)

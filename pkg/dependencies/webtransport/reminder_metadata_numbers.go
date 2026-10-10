@@ -69,11 +69,14 @@ func normalizeReminderAudit(fields map[string]json.RawMessage, name string) erro
 	if err != nil {
 		return fmt.Errorf("encode reminder audit: %w", err)
 	}
+
 	var info cloudkit.CKAuditInfo
+
 	err = json.Unmarshal(body, &info)
 	if err != nil {
 		return fmt.Errorf("decode normalized reminder audit: %w", err)
 	}
+
 	fields[name], err = json.Marshal(info)
 	if err != nil {
 		return fmt.Errorf("encode normalized reminder audit: %w", err)

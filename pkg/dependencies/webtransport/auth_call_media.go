@@ -55,11 +55,12 @@ func authenticationHeaders(request *http.Request, caller http.Header, media stri
 	initialMedia := request.Header.Get(protocol.AuthHTTPContentTypeName)
 	request.Header = normalizeAuthenticationHeaders(caller)
 
-	if media != "" {
+	switch {
+	case media != "":
 		request.Header.Set(protocol.AuthHTTPContentTypeName, media)
-	} else if initialMedia != "" || request.Header.Get(protocol.AuthHTTPContentTypeName) != "" {
+	case initialMedia != "" || request.Header.Get(protocol.AuthHTTPContentTypeName) != "":
 		request.Header.Set(protocol.AuthHTTPContentTypeName, string(httpboundary.HTTPJSONMediaApplicationJSON))
-	} else {
+	default:
 		request.Header.Del(protocol.AuthHTTPContentTypeName)
 	}
 }

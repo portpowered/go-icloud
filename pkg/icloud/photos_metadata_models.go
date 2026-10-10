@@ -64,6 +64,7 @@ func photoValueList(raw json.RawMessage, tag string) (json.RawMessage, error) {
 	normalize := func(value json.RawMessage) (json.RawMessage, error) {
 		return photoNormalizedValue(tag, value)
 	}
+
 	switch tag {
 	case string(cloudkit.CKInt64FieldTypeINT64):
 		return photoNormalizeList[cloudkit.CKIntegerInput](raw, normalize)
@@ -129,7 +130,8 @@ func photoMetadataRecord(raw json.RawMessage) (map[string]json.RawMessage, error
 	return object, nil
 }
 
-func photoMetadataChildren[T any](raw json.RawMessage, normalizers map[string]photoNormalizer) (json.RawMessage, error) {
+func photoMetadataChildren[T any](raw json.RawMessage, normalizers map[string]photoNormalizer,
+) (json.RawMessage, error) {
 	object, err := photoModelObject(raw)
 	if err != nil {
 		return nil, err
@@ -154,7 +156,9 @@ func photoMetadataAudit(raw json.RawMessage) (json.RawMessage, error) {
 }
 
 func photoMetadataShare(raw json.RawMessage) (json.RawMessage, error) {
-	return photoMetadataChildren[cloudkit.CKShare](raw, map[string]photoNormalizer{protocol.PhotosCKShareZoneID: photoZoneModel})
+	return photoMetadataChildren[cloudkit.CKShare](raw, map[string]photoNormalizer{
+		protocol.PhotosCKShareZoneID: photoZoneModel,
+	})
 }
 
 func photoMetadataParticipant(raw json.RawMessage) (json.RawMessage, error) {
