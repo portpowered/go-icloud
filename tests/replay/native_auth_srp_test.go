@@ -11,6 +11,7 @@ import (
 
 func TestNativeSRPReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, name := range []string{"auth-srp-s2k", "auth-srp-s2k_fo", "auth-srp-trust-token",
 		"auth-srp-paused-mfa", "auth-srp-sms-mfa", "auth-srp-authorize-refused", "auth-srp-init-refused",
 		"auth-srp-complete-refused"} {

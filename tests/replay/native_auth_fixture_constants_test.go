@@ -50,4 +50,5 @@ const (
 	nativeBridgeRotatedScnt          = "synthetic-rotated-scnt"
 	nativeBridgeRotatedSession       = "synthetic-rotated-session"
 	nativeBridgeRotatedTrust         = "synthetic-rotated-trust"
+	nativeBridgeRotatedToken         = "synthetic-rotated-token" //nolint:gosec // G101: synthetic fixture expectation.
 )

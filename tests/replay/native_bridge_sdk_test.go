@@ -221,6 +221,7 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: script}
 
 	r.sockets = append(r.sockets, socket)
+
 	for _, operation := range []string{"connect", "wrap", "timeout"} {
 		socket.mark(operation, 0)
 	}
@@ -273,6 +274,7 @@ func (s *sdkBridgeSocket) mark(operation string, event int) {
 	if operation == "send" || operation == "receive" || operation == "close" {
 		value["event"] = float64(event)
 	}
+
 	s.owner.take(value)
 }
 
@@ -462,6 +464,7 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	if runner.timeline != len(runner.network.Timeline) {
 		t.Fatalf("combined timeline consumed %d/%d", runner.timeline, len(runner.network.Timeline))
 	}
+
 	for _, socket := range runner.sockets {
 		assertBridgeSocketConsumed(t, socket.bridgeScriptSocket)
 	}
@@ -490,6 +493,7 @@ func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, sessio
 		t.Fatal("missing source bridge session")
 	}
 	fields := authReplayObjectBytes(t, bridgeState)
+
 	var identifier, step string
 
 	var active bool
@@ -518,6 +522,7 @@ func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, sessio
 			t.Fatal("Source transaction or legacy selection differs")
 		}
 	}
+
 	nativeBridgeSnapshotOwnership(t, session, progress)
 }
 
@@ -554,6 +559,7 @@ func nativeBridgeSnapshotOwnership(t *testing.T, session *icloud.NativeBridgeSes
 			t.Fatal("State snapshot mutated session phone union bytes")
 		}
 	}
+
 	for _, header := range after.State.Auth.Headers {
 		if header.Name == nativeBridgeMutation {
 			t.Fatal("State snapshot mutated session headers")
@@ -575,7 +581,7 @@ func nativeBridgeTrustFailureFixture(t *testing.T, raw map[string]json.RawMessag
 	exchanges = exchanges[:6]
 	exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{bridgeFixtureContentType,
 		bridgeFixtureJSONMedia}, {"scnt", nativeBridgeRotatedScnt}, {"X-Apple-ID-Session-Id",
-		nativeBridgeRotatedSession}, {"X-Apple-Session-Token", "synthetic-rotated-token"},
+		nativeBridgeRotatedSession}, {"X-Apple-Session-Token", nativeBridgeRotatedToken},
 		{"X-Apple-TwoSV-Trust-Token", nativeBridgeRotatedTrust}, {accountCookieUpdateHeader,
 			"synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}},
 		BodyRepresentation: "",
@@ -604,6 +610,7 @@ func nativeBridgeFixtureChallenge(t *testing.T, raw map[string]json.RawMessage, 
 	var challenge map[string]json.RawMessage
 
 	authReplayDecode(t, initial["auth_data"], &challenge)
+
 	var account struct {
 		Webservices map[string]map[string]string `json:"webservices"`
 	}
@@ -878,11 +885,12 @@ func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, ses
 		t.Fatal("partial trust progress flags differ")
 	}
 	if progress.State.Auth.SessionToken == nil ||
-		*progress.State.Auth.SessionToken != "synthetic-rotated-token" ||
+		*progress.State.Auth.SessionToken != nativeBridgeRotatedToken ||
 		progress.State.TrustToken != nativeBridgeRotatedTrust {
 		t.Fatal("partial trust token rotation lost")
 	}
 	headers := http.Header{}
+
 	for _, header := range progress.State.Auth.Headers {
 		headers.Add(header.Name, header.Value)
 	}
@@ -959,7 +967,7 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	//nolint:gosec // RFC 6455 fixture accept digest, not a cryptographic signature.
 	digest := sha1.Sum([]byte(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
 	s.events[1].Template = strings.ReplaceAll(s.events[1].Template,
-		"{accept}", base64.StdEncoding.EncodeToString(digest[:]))
+		replayExpectedWebSocketAcceptMarker, base64.StdEncoding.EncodeToString(digest[:]))
 	payload = []byte(strings.Join(lines, "\r\n"))
 	return payload, nil
 }
@@ -1056,6 +1064,7 @@ func TestNativeBridgeFailedOpenReturnsClosedOwner(t *testing.T) {
 			if session == nil {
 				t.Fatal("failed open lost owned authentication progress")
 			}
+
 			state, err := session.State()
 			if err != nil {
 				t.Fatal(err)

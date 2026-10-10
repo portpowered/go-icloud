@@ -40,6 +40,7 @@ func WithNativeBridgeDial(dial NativeBridgeDial) NativeBridgeOption {
 		if dial == nil {
 			return errNativeBridgeOption
 		}
+
 		configuration.dial = dial
 
 		return nil
@@ -126,6 +127,7 @@ func (session *NativeBridgeSession) State() (*NativeBridgeSessionState, error) {
 	if push.Payload.Txnid != nil {
 		transaction = nullable.NewNullableWithValue(*push.Payload.Txnid)
 	}
+
 	return &NativeBridgeSessionState{State: state, Responses: responses,
 		Active: session.connection.Active(), Legacy: bridgeLegacy(push),
 		SessionID: push.SessionID, NextStep: push.NextStep, TransactionID: transaction}, nil
@@ -142,9 +144,11 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 
 	defer session.busy.Store(false)
 	defer func() { _ = session.Close() }()
+
 	if session.connection == nil || !session.connection.Active() {
 		return nil, session.failure(operation, bridge.ErrClosed)
 	}
+
 	push, err := session.connection.Snapshot()
 	if err != nil {
 		return nil, session.failure(operation, err)
@@ -161,6 +165,7 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 	if err != nil {
 		return nil, session.failure(operation, err)
 	}
+
 	if !verified {
 		return session.result(false)
 	}
@@ -175,6 +180,7 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 	}
 
 	session.recordResult(result)
+
 	return session.result(result.Success)
 }
 
@@ -188,6 +194,7 @@ func (session *NativeBridgeSession) Close() error {
 	if err != nil {
 		return session.failure("NativeBridgeSession.Close", err)
 	}
+
 	return nil
 }
 
@@ -271,6 +278,7 @@ func (session *NativeBridgeSession) result(success bool) (*NativeAuthResult, err
 	session.mutex.Lock()
 	state, responses := cloneNativeAuthState(session.state), cloneDriveResponses(session.responses)
 	session.mutex.Unlock()
+
 	operation := new(nativeAuthOperation)
 	operation.name = "NativeBridgeSession.VerifyCode"
 	operation.state, operation.responses, operation.success = state, responses, success
@@ -296,6 +304,7 @@ func (session *NativeBridgeSession) failure(operation string, err error) *Client
 		progress.record(&webtransport.BytesResponse{Status: metadata.StatusCode,
 			CookieScopeURL: metadata.CookieScopeURL, Headers: requestHeaders(metadata.Headers), Body: nil})
 	}
+
 	if client.status != 0 {
 		progress.record(&webtransport.BytesResponse{Status: client.status,
 			CookieScopeURL: client.cookieScopeURL, Headers: requestHeaders(client.headers), Body: nil})

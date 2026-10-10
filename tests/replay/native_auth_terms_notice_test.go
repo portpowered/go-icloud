@@ -10,6 +10,7 @@ import (
 
 func TestNativeTermsTrustPreservesSourceDeliveryState(t *testing.T) {
 	t.Parallel()
+
 	for _, name := range []string{"auth-terms-trust-accepted-notice", "auth-terms-trust-untrusted-notice"} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
