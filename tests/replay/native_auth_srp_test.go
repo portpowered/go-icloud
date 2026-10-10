@@ -26,7 +26,12 @@ func nativeSRPReplay(t *testing.T, name string) {
 	if encoded, exists := initial["synthetic_password"]; exists {
 		authReplayDecode(t, encoded, &password)
 	}
-	random := nativeFixtureEntropy(t, raw)
+	var random []byte
+
+	if _, exists := raw["entropy"]; exists {
+		random = nativeFixtureEntropy(t, raw)
+	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(bytes.NewReader(random)))
 	if err != nil {
 		t.Fatal(err)
