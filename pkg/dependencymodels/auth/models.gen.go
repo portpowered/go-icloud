@@ -873,6 +873,26 @@ type AuthServiceError_Code struct {
 	union json.RawMessage
 }
 
+// AuthSessionValidationRequest Saved-session validation submits only the JSON null value.
+type AuthSessionValidationRequest struct{}
+
+// MarshalJSON emits the schema's only permitted JSON value.
+func (AuthSessionValidationRequest) MarshalJSON() ([]byte, error) {
+	return []byte("null"), nil
+}
+
+// UnmarshalJSON rejects every non-null value.
+func (*AuthSessionValidationRequest) UnmarshalJSON(data []byte) error {
+	var decoded *struct{}
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+	if decoded != nil {
+		return fmt.Errorf("expected null JSON value")
+	}
+	return nil
+}
+
 // AuthSkVersion defines model for AuthSkVersion.
 type AuthSkVersion string
 

@@ -5,6 +5,7 @@ generate:
 output: pkg/dependencies/webtransport/authapi/client.gen.go
 output-options:
   user-templates:
+    request-bodies.tmpl: api/templates/schema-request-bodies.tmpl
     typedef.tmpl: api/templates/schema-types.tmpl
     client.tmpl: api/templates/http-request-builders.tmpl
     client-with-responses.tmpl: api/templates/http-response-parsers.tmpl

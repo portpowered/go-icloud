@@ -919,9 +919,6 @@ type SendAuthVerificationCodeParams struct {
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
-// ValidateAuthSessionJSONBody defines parameters for ValidateAuthSession.
-type ValidateAuthSessionJSONBody = map[string]interface{}
-
 // ValidateAuthSessionParams defines parameters for ValidateAuthSession.
 type ValidateAuthSessionParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
@@ -974,7 +971,7 @@ type VerifyAuthSecurityKeyJSONRequestBody = externalRef0.AuthWebAuthnAssertion
 type VerifyAuthTrustedCodeJSONRequestBody = externalRef0.AuthTrustedCodeRequest
 
 // LoginAuthTokenJSONRequestBody defines body for LoginAuthToken for application/json ContentType.
-type LoginAuthTokenJSONRequestBody LoginAuthTokenJSONBody
+type LoginAuthTokenJSONRequestBody = LoginAuthTokenJSONBody
 
 // GetAuthTermsJSONRequestBody defines body for GetAuthTerms for application/json ContentType.
 type GetAuthTermsJSONRequestBody = externalRef0.AuthGetTermsRequest
@@ -989,7 +986,7 @@ type RequestAuthPCSJSONRequestBody = externalRef0.AuthPCSRequest
 type SendAuthVerificationCodeJSONRequestBody = externalRef0.AuthTrustedDevice
 
 // ValidateAuthSessionJSONRequestBody defines body for ValidateAuthSession for application/json ContentType.
-type ValidateAuthSessionJSONRequestBody = ValidateAuthSessionJSONBody
+type ValidateAuthSessionJSONRequestBody = externalRef0.AuthSessionValidationRequest
 
 // ValidateAuthVerificationCodeJSONRequestBody defines body for ValidateAuthVerificationCode for application/json ContentType.
 type ValidateAuthVerificationCodeJSONRequestBody = externalRef0.AuthTrustedDevice

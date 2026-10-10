@@ -4425,7 +4425,7 @@ type CKDoubleListFieldType string
 // CKEmptyRequest Empty payload for zone discovery.
 //
 // Example: {}
-type CKEmptyRequest = map[string]interface{}
+type CKEmptyRequest = struct{}
 
 // CKEncryptedBytesField Base64-encoded encrypted binary field wrapper.
 type CKEncryptedBytesField struct {
@@ -7093,7 +7093,7 @@ type ReminderWriteTimestamp struct {
 type ReminderWriteTimestampType string
 
 // ReminderZoneListRequest Discover the available Reminders zones without additional selection fields.
-type ReminderZoneListRequest = map[string]interface{}
+type ReminderZoneListRequest = struct{}
 
 // RemindersModificationRequest Implemented single-reminder variants plus explicitly scoped remaining linked-record shapes.
 type RemindersModificationRequest struct {
