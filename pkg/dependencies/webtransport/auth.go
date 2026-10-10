@@ -82,7 +82,7 @@ func (client *Client) readAuth(ctx context.Context, origin string, headers http.
 	contentType := request.Header.Get(protocol.HTTPContentTypeName)
 	request = request.WithContext(ctx)
 
-	request.Header = headers.Clone()
+	request.Header = CallerHeaders(headers)
 
 	if request.Header.Get(protocol.HTTPContentTypeName) == "" && contentType != "" {
 		request.Header.Set(protocol.HTTPContentTypeName, contentType)

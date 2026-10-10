@@ -51,7 +51,7 @@ func (client *Client) GetDriveNode(ctx context.Context, auth RequestContext,
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	response, err := client.read(ctx, auth, request, "")
+	response, err := client.readDrive(ctx, auth, request, "")
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (client *Client) ListDriveLibraries(ctx context.Context, auth RequestContex
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	response, err := client.read(ctx, auth, request, "")
+	response, err := client.readDrive(ctx, auth, request, "")
 	if err != nil {
 		return nil, err
 	}

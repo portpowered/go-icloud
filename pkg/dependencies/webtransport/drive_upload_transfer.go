@@ -82,7 +82,7 @@ func (client *Client) transferDriveUpload(ctx context.Context, auth RequestConte
 	}
 
 	request.URL = target
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, contentType)
 
 	if request.Header.Get(protocol.AcceptName) == "" {

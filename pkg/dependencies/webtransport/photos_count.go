@@ -44,7 +44,7 @@ func (client *Client) PhotosAlbumCount(
 	}
 
 	request = request.WithContext(ctx)
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaPlainText)
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
 		queryPart(protocol.PhotosRemapEnumsName, string(photosapi.PhotosCountAlbumsParamsRemapEnumsTrue)) + "&" +

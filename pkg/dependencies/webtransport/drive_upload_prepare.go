@@ -92,7 +92,7 @@ func (client *Client) prepareDriveUpload(ctx context.Context, auth RequestContex
 	}
 
 	response, err := client.readWithPolicy(ctx, plainTextUploadAuth(auth), request,
-		"&"+queryPart(protocol.DriveGetUploadDestinationTokenName, token), successfulContent)
+		"&"+queryPart(protocol.DriveGetUploadDestinationTokenName, token), successfulContent, true)
 	if err != nil {
 		return nil, drive.DriveUploadDestination{}, token, err
 	}
@@ -106,7 +106,7 @@ func (client *Client) prepareDriveUpload(ctx context.Context, auth RequestContex
 }
 
 func plainTextUploadAuth(auth RequestContext) RequestContext {
-	auth.Headers = auth.Headers.Clone()
+	auth.Headers = CallerHeaders(auth.Headers)
 	auth.Headers.Set(protocol.HTTPContentTypeName, protocol.DriveMediaPlainText)
 
 	return auth

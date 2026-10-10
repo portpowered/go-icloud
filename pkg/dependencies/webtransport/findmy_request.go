@@ -28,7 +28,7 @@ func (client *Client) postFindMy(ctx context.Context, auth RequestContext,
 
 	request = request.WithContext(ctx)
 
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 
 	if request.Header == nil {
 		request.Header = make(map[string][]string)

@@ -30,11 +30,17 @@ const (
 func (client *Client) read(ctx context.Context, auth RequestContext,
 	request *http.Request, suffix string,
 ) (*BytesResponse, error) {
-	return client.readWithPolicy(ctx, auth, request, suffix, exactOK)
+	return client.readWithPolicy(ctx, auth, request, suffix, exactOK, false)
+}
+
+func (client *Client) readDrive(ctx context.Context, auth RequestContext,
+	request *http.Request, suffix string,
+) (*BytesResponse, error) {
+	return client.readWithPolicy(ctx, auth, request, suffix, exactOK, true)
 }
 
 func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
-	request *http.Request, suffix string, policy responsePolicy,
+	request *http.Request, suffix string, policy responsePolicy, includeDriveToken bool,
 ) (*BytesResponse, error) {
 	err := validateOrigin(auth.Origin)
 	if err != nil {
@@ -45,7 +51,7 @@ func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
 
 	contentType := request.Header.Get(protocol.HTTPContentTypeName)
 
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 	if request.Header.Get(protocol.HTTPContentTypeName) == "" && contentType != "" {
 		request.Header.Set(protocol.HTTPContentTypeName, contentType)
 	}
@@ -54,7 +60,11 @@ func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
 	}
 
-	request.URL.RawQuery = orderedRequestQuery(auth) + suffix
+	query := orderedAccountQuery(auth.Params)
+	if includeDriveToken {
+		query = orderedRequestQuery(auth)
+	}
+	request.URL.RawQuery = query + suffix
 
 	return client.readPrepared(request, policy, auth.Cookies)
 }

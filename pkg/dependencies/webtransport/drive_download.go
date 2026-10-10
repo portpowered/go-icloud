@@ -33,7 +33,7 @@ func (client *Client) DownloadDriveFile(ctx context.Context, auth RequestContext
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	token, err := client.read(ctx, auth, request,
+	token, err := client.readDrive(ctx, auth, request,
 		"&"+queryPart(protocol.DriveGetDownloadTokensDocumentIdName, documentID))
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func driveContentRequest(contentURL string, auth RequestContext) (*http.Request,
 
 	request.URL.RawQuery += orderedRequestQuery(auth)
 
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
 	}

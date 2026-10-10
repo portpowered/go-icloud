@@ -57,7 +57,7 @@ func (client *Client) registerDriveUpload(ctx context.Context, auth RequestConte
 	}
 
 	response, err := client.readWithPolicy(ctx, plainTextUploadAuth(auth), request,
-		"&"+queryPart(protocol.DriveRegisterDocumentTokenName, token), successfulContent)
+		"&"+queryPart(protocol.DriveRegisterDocumentTokenName, token), successfulContent, true)
 	if err != nil {
 		return nil, data, err
 	}

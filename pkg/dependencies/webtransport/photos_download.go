@@ -31,7 +31,7 @@ func (client *Client) DownloadPhotoContent(ctx context.Context, auth RequestCont
 	// Bind the exact escaped provider URL, including repeated signed query values.
 	request.URL = target
 
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))

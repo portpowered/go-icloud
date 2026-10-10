@@ -729,15 +729,6 @@ func copyString(value *string) *string {
 	return &copyValue
 }
 
-func requestHeaders(headers []Header) http.Header {
-	result := make(http.Header)
-	for _, header := range headers {
-		result.Add(header.Name, header.Value)
-	}
-
-	return result
-}
-
 func driveRequestContext(auth AuthContext) (webtransport.RequestContext, error) {
 	boundary, err := accountRequestContext(auth)
 	if err != nil {

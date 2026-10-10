@@ -197,7 +197,7 @@ func (client *Client) readReminderRequest(ctx context.Context, auth RequestConte
 	}
 
 	request = request.WithContext(ctx)
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.RemindersMediaApplicationJson)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
@@ -231,7 +231,7 @@ func (client *Client) DownloadReminderMembership(ctx context.Context, auth Reque
 	request.URL = target
 	request = request.WithContext(ctx)
 
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))

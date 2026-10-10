@@ -34,7 +34,7 @@ func (client *Client) PhotosLibraryZones(ctx context.Context, auth RequestContex
 	}
 
 	request = request.WithContext(ctx)
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaApplicationJson)
 
 	if request.Header.Get(protocol.AcceptName) == "" {

@@ -41,7 +41,7 @@ func (client *Client) ListReminderZones(ctx context.Context, auth RequestContext
 	}
 
 	request = request.WithContext(ctx)
-	request.Header = auth.Headers.Clone()
+	request.Header = CallerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.RemindersMediaApplicationJson)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
