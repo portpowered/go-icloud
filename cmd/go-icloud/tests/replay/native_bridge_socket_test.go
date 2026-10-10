@@ -12,11 +12,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/portpowered/go-icloud/pkg/dependencies/bridgewebsocket"
-	"github.com/portpowered/go-icloud/pkg/dependencymodels/bridgepb"
-	"github.com/portpowered/go-icloud/pkg/icloud"
-	"github.com/portpowered/go-icloud/tests/replay"
-	"google.golang.org/protobuf/proto"
 	"io"
 	"math/big"
 	"net"
@@ -26,6 +21,12 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/portpowered/go-icloud/pkg/dependencies/bridgewebsocket"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/bridgepb"
+	"github.com/portpowered/go-icloud/pkg/icloud"
+	"github.com/portpowered/go-icloud/tests/replay"
+	"google.golang.org/protobuf/proto"
 )
 
 type sdkBridgeNetwork struct {

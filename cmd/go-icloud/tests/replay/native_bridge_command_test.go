@@ -76,7 +76,11 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 	var exchanges []replay.Exchange
 	decode(t, raw["exchanges"], &exchanges)
 	runner := &sdkBridgeReplay{t: t}
-	decode(t, raw["bridge_network"], &runner.network)
+	// Timeline events contain bounded fixture indexes. Decode this entire network
+	// with the same JSON numeric representation as the events emitted below.
+	if networkErr := json.Unmarshal(raw["bridge_network"], &runner.network); networkErr != nil {
+		t.Fatal(networkErr)
+	}
 	if lateFailure {
 		exchanges = exchanges[:6]
 		exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{"Content-Type", "application/json"}, {"scnt", "synthetic-rotated-scnt"}, {"X-Apple-ID-Session-Id", "synthetic-rotated-session"}, {"X-Apple-Session-Token", "synthetic-rotated-token"}, {"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {"Set-Cookie", "synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}}, Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`)}}
