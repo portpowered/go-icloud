@@ -129,13 +129,13 @@ components:
                   operator: '^'
                   args:
                     - {kind: item}
-                    - kind: index
+                    - kind: at
                       args:
                         - {kind: input, input: mask}
                         - kind: binary
                           operator: '%'
                           args:
-                            - {kind: input, input: index}
+                            - {kind: index}
                             - {kind: length, args: [{kind: input, input: mask}]}
       properties:
         opcode:
