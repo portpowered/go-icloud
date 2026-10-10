@@ -31,6 +31,8 @@ paths:
           network: {$ref: '#/components/schemas/Network/values/DialNetwork'}
           forbidUserinfo: true
           forbidFragment: true
+          forbidQuery: true
+          requestTargetPattern: {$ref: '#/components/schemas/RequestTargetPattern/values/CanonicalRequestTarget'}
           requireHostname: true
           forbiddenHeaderBytes:
             - {$ref: '#/components/schemas/LineSeparator/values/CarriageReturn'}
@@ -56,6 +58,10 @@ paths:
             Sec-WebSocket-Accept: {schema: {type: string, format: byte}}
 components:
   schemas:
+    RequestTargetPattern:
+      type: string
+      enum: ['^/v2/[0-9a-f]+$']
+      x-enum-varnames: [CanonicalRequestTarget]
     RequestLine:
       type: string
       enum: ['GET %s HTTP/1.1']

@@ -15,6 +15,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -35,6 +36,7 @@ var ErrClosed = errors.New("bridge WebSocket closed")
 
 // Options supplies one configured endpoint and its caller-owned dependencies.
 type Options struct {
+	// URL uses the generated bridge channel and hex connection identifier, without a query.
 	URL       string
 	Origin    string
 	UserAgent string
@@ -128,6 +130,11 @@ func validatedEndpoint(options Options) (*url.URL, error) {
 	}
 
 	if endpoint.User != nil || endpoint.Fragment != "" {
+		return nil, ErrProtocol
+	}
+
+	matched, err := regexp.MatchString(string(model.CanonicalRequestTarget), endpoint.EscapedPath())
+	if err != nil || !matched || endpoint.RawQuery != "" || endpoint.ForceQuery {
 		return nil, ErrProtocol
 	}
 

@@ -47,7 +47,7 @@ func openedBridgePipe(t *testing.T) (*bridgewebsocket.Conn, net.Conn) {
 	}()
 
 	options := new(bridgewebsocket.Options)
-	options.URL = "wss://bridge.example.invalid/v2/synthetic"
+	options.URL = "wss://bridge.example.invalid/v2/abcdef0123456789"
 	options.Origin, options.UserAgent = "https://www.icloud.com", "test"
 	options.Random = bytes.NewReader(make([]byte, 256))
 	options.Dial = func(context.Context, string, string) (net.Conn, error) { return client, nil }

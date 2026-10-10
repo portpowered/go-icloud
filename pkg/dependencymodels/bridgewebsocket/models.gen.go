@@ -184,6 +184,21 @@ func (e RequestLine) Valid() bool {
 	}
 }
 
+// Defines values for RequestTargetPattern.
+const (
+	CanonicalRequestTarget RequestTargetPattern = "^/v2/[0-9a-f]+$"
+)
+
+// Valid indicates whether the value is a known member of the RequestTargetPattern enum.
+func (e RequestTargetPattern) Valid() bool {
+	switch e {
+	case CanonicalRequestTarget:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for Scheme.
 const (
 	SecureScheme Scheme = "wss"
@@ -283,6 +298,9 @@ type PayloadLimit int
 
 // RequestLine defines model for RequestLine.
 type RequestLine string
+
+// RequestTargetPattern defines model for RequestTargetPattern.
+type RequestTargetPattern string
 
 // Scheme defines model for Scheme.
 type Scheme string
