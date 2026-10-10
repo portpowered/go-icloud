@@ -43,11 +43,12 @@ func TestInternalTransportCoverageIsIncluded(t *testing.T) {
 	t.Parallel()
 
 	for file, expected := range map[string]bool{
-		"internal/transport/client.go": true,
-		"pkg/client.go":                true,
-		"internal/testing/helper.go":   false,
-		"pkg/testing/helper.go":        false,
-		"tools/generator/main.go":      false,
+		"internal/transport/client.go":            true,
+		"pkg/dependencies/webtransport/client.go": true,
+		"pkg/client.go":                           true,
+		"internal/testing/helper.go":              false,
+		"pkg/testing/helper.go":                   false,
+		"tools/generator/main.go":                 false,
 	} {
 		_, included, err := coverageSource("example.com/test/"+file+":1.1,1.2", "example.com/test")
 		if err != nil || included != expected {

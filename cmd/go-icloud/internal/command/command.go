@@ -126,10 +126,10 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags := flag.NewFlagSet("go-icloud", flag.ContinueOnError)
 	flags.SetOutput(diagnostic)
 	flags.StringVar(&config.session, "session", "", "Private JSON containing an icloud.AuthContext")
-	flags.StringVar(&config.requestFile, "request", "", "Private JSON containing the generated request for a named write")
+	flags.StringVar(&config.requestFile, "request", "", "Private JSON containing the generated request for the selected command")
 	flags.StringVar(&config.contentFile, "file", "", "Local content file for a named upload")
 	flags.StringVar(&config.saveResult, "save-result", "",
-		"Explicit private destination for complete generated write results and receipts")
+		"Explicit private destination for complete generated results and receipts")
 	authenticationFlags(flags, &config)
 	flags.StringVar(&config.referenceState, "reference-state", "", "Existing reference login directory for resume")
 	flags.StringVar(&config.saveSession, "save-session", "", "Private native-session destination for resume")
@@ -224,7 +224,7 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", "reminder-alarms":
 		return readReminders(ctx, client, auth, config)
 	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo", "photo-download":
-		return readPhotos(ctx, client, auth, config)
+		return photoFlagResult(ctx, client, auth, config)
 	case "account-devices", "account-family", "account-storage", "account-plan":
 		return readAccount(ctx, client, auth, config.operation)
 	case "drive-libraries":
@@ -345,6 +345,15 @@ func readReminderRelated(ctx context.Context, client icloud.Client,
 	default:
 		return nil, errCommand
 	}
+}
+
+func photoFlagResult(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
+	result, err := readPhotos(ctx, client, auth, config)
+	if err != nil {
+		return nil, err
+	}
+
+	return finishWriteResult(ctx, result, config.saveResult)
 }
 
 func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
