@@ -43,6 +43,7 @@ func TestDriveTokenQueryScope(t *testing.T) {
 			} else {
 				_, err = client.GetDevices(t.Context(), auth)
 			}
+
 			if err != nil || calls != 1 {
 				t.Fatalf("scoped request failed: calls=%d error=%v", calls, err)
 			}

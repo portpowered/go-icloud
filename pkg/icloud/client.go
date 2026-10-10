@@ -337,6 +337,7 @@ func New(options ...Option) (*SDK, error) {
 		if err != nil {
 			return nil, newClientError("New", Configuration, 0, nil, nil, err)
 		}
+
 		config.securityKey = provider
 	}
 

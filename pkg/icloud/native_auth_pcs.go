@@ -69,6 +69,7 @@ func nativePCSConsented(status *auth.AuthWebAccessResponse) bool {
 	}
 
 	consented, err := status.IsDeviceConsentedForPCS.Get()
+
 	return err == nil && consented
 }
 

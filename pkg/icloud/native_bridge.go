@@ -41,6 +41,7 @@ func WithNativeBridgeDial(dial NativeBridgeDial) NativeBridgeOption {
 			return errNativeBridgeOption
 		}
 		configuration.dial = dial
+
 		return nil
 	}
 }
@@ -79,6 +80,7 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	if err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
+
 	if boot.TwoSV == nil || boot.TwoSV.BridgeInitiateData == nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, errNativeAuthInput)
 	}
@@ -95,6 +97,7 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	owner.connection = connection
 	owner.state.CodeRequested = true
 	owner.state.DeliveryMethod = TwoFactorDeliveryTrustedDevice
+
 	return owner, nil
 }
 

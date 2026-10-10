@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	legacyPublicPackage = "pkg/dependencymodels/legacy"
-	icloudPublicPackage = "pkg/icloud"
+	legacyPublicPackage    = "pkg/dependencymodels/legacy"
+	icloudPublicPackage    = "pkg/icloud"
+	photosyncPublicPackage = "pkg/photosync"
 )
 
 func TestPublicPackageInventoryRetainsRemovedAndAddedPackages(t *testing.T) {
@@ -24,12 +25,12 @@ func TestPublicPackageInventoryRetainsRemovedAndAddedPackages(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := []string{legacyPublicPackage, icloudPublicPackage, "pkg/photosync"}
+	expected := []string{legacyPublicPackage, icloudPublicPackage, photosyncPublicPackage}
 	if !reflect.DeepEqual(packages, expected) {
 		t.Fatalf("public package denominator: want %v, got %v", expected, packages)
 	}
 	for path, expectedStatus := range map[string]publicPackageStatus{
-		icloudPublicPackage: publicPackagePresent, "pkg/photosync": publicPackageAdded,
+		icloudPublicPackage: publicPackagePresent, photosyncPublicPackage: publicPackageAdded,
 		legacyPublicPackage: publicPackageRemoved,
 	} {
 		status, err := publicPackagePresence(current, baseline, path)

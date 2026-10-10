@@ -12,9 +12,11 @@ import (
 )
 
 var (
-	errHostBrackets = errors.New("Invalid IPv6 URL") //nolint:staticcheck // Preserve Python urlsplit's exact parser diagnostic.
+	//nolint:staticcheck // Preserve Python urlsplit's exact parser diagnostic.
+	errHostBrackets = errors.New("Invalid IPv6 URL")
 	errHostFuture   = errors.New("IPvFuture address is invalid")
-	errHostIPv4     = errors.New("An IPv4 address cannot be in brackets") //nolint:staticcheck // Preserve Python ipaddress's exact parser diagnostic.
+	//nolint:staticcheck // Preserve Python ipaddress's exact parser diagnostic.
+	errHostIPv4 = errors.New("An IPv4 address cannot be in brackets")
 )
 
 // sourceURLHostname projects Python urlsplit's authority and hostname rules.
@@ -83,6 +85,7 @@ func validateHostAuthority(authority string) error {
 	if open {
 		_, remainder, _ := strings.Cut(authority, "[")
 		bracketed, _, _ := strings.Cut(remainder, "]")
+
 		err := validateBracketedHost(bracketed)
 		if err != nil {
 			return err
@@ -90,6 +93,7 @@ func validateHostAuthority(authority string) error {
 	}
 
 	withoutSyntax := strings.NewReplacer("@", "", ":", "", "#", "", "?", "").Replace(authority)
+
 	normalized := norm.NFKC.String(withoutSyntax)
 	if normalized != withoutSyntax && strings.ContainsAny(normalized, "/?#@:") {
 		//nolint:err113 // Preserve Source's exact authority diagnostic; explicitSocketHost wraps this parser cause.

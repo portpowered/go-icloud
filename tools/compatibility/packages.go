@@ -23,7 +23,9 @@ func expandPublicPackages(root, baseline string, configured []string) ([]string,
 	if len(configured) != 1 || configured[0] != defaultPublicPackages {
 		return configured, nil
 	}
+
 	packages := map[string]bool{}
+
 	for _, tree := range []string{root, baseline} {
 		err := filepath.WalkDir(filepath.Join(tree, "pkg"), func(path string, entry fs.DirEntry, walkErr error) error {
 			if errors.Is(walkErr, fs.ErrNotExist) {
@@ -49,11 +51,15 @@ func expandPublicPackages(root, baseline string, configured []string) ([]string,
 	if len(packages) == 0 {
 		return nil, newGateError("public package inventory is empty", nil)
 	}
+
 	result := make([]string, 0, len(packages))
+
 	for path := range packages {
 		result = append(result, path)
 	}
+
 	slices.Sort(result)
+
 	return result, nil
 }
 
@@ -87,6 +93,7 @@ func publicPackageExists(path string) (bool, error) {
 	if err != nil {
 		return false, newGateError("read public package", err)
 	}
+
 	for _, entry := range entries {
 		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".go") && !strings.HasSuffix(entry.Name(), "_test.go") {
 			return true, nil

@@ -72,6 +72,7 @@ func runCookieBoundaryCase(t *testing.T, testcase cookieBoundaryCase) {
 		auth.Headers, auth.Cookies = headers, state
 		_, err = client.DownloadPhotoContent(t.Context(), auth, cookieBoundaryContentURL)
 	}
+
 	if err != nil || calls != 1 {
 		t.Fatalf("cookie boundary failed: calls=%d error=%v", calls, err)
 	}

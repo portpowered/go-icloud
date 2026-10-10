@@ -203,6 +203,7 @@ func initialResponse(packet []byte, command byte, target int) (int, bool, error)
 
 func (channel *channel) readReport(ctx context.Context) ([]byte, error) {
 	packet := make([]byte, int(wire.ReportBytes))
+
 	count, err := channel.connection.Read(ctx, packet)
 	if err != nil {
 		return nil, keyFailure("read", err)

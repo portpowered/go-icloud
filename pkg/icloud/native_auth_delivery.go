@@ -80,10 +80,12 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 	if err != nil {
 		return nativeResponseError(operation, response, err, InvalidResponse)
 	}
+
 	operation.state.Challenge.PhoneNumbers = prioritized
 	if selected == nil {
 		operation.state.DeliveryNotice = nil
 	}
+
 	operation.state.DeliveryMethod = TwoFactorDeliverySMS
 	operation.state.CodeRequested = true
 
