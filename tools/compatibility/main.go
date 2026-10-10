@@ -245,6 +245,7 @@ func comparePackages(
 		}
 		if status == publicPackageRemoved {
 			changes = append(changes, incompatibleChange{packageName: packageName, details: "public package removed"})
+
 			continue
 		}
 		packageChanges, err := comparePackage(

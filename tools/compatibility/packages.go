@@ -37,7 +37,7 @@ func expandPublicPackages(root, baseline string, configured []string) ([]string,
 			}
 			relative, err := filepath.Rel(tree, filepath.Dir(path))
 			if err != nil {
-				return err
+				return newGateError("resolve public package path", err)
 			}
 			packages[filepath.ToSlash(relative)] = true
 			return nil
@@ -66,6 +66,7 @@ func publicPackagePresence(current, baseline, path string) (publicPackageStatus,
 	if err != nil {
 		return publicPackagePresent, err
 	}
+
 	switch {
 	case !oldExists && newExists:
 		return publicPackageAdded, nil
