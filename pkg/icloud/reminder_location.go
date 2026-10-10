@@ -41,7 +41,7 @@ func (sdk *SDK) AddReminderLocationTrigger(ctx context.Context,
 	}
 
 	reminder := copyReminder(request.Reminder)
-	reminder.AlarmIDs = append(reminderRelatedIDs(reminder.AlarmIDs, protocol.RemindersAlarmIDPrefixValue, ""), ids[0])
+	reminder.AlarmIDs = append(reminderRelatedIDs(reminder.AlarmIDs, protocol.RemindersAlarmIDPrefixValue), ids[0])
 
 	input, err := sdk.locationRequest(reminder, alarm, trigger, now, nonceTime)
 	if err != nil {

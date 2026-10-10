@@ -42,26 +42,18 @@ func TestDriveSessionCloseCancelsCurrentAndQueuedRequests(t *testing.T) {
 
 	var workers sync.WaitGroup
 
-	workers.Add(1)
-
-	go func() {
-		defer workers.Done()
-
+	workers.Go(func() {
 		_, callErr := session.Root(t.Context(), icloud.DriveLocationRequest{Refresh: false})
 		results <- callErr
-	}()
+	})
 
 	<-started
 
 	for range driveQueuedCalls {
-		workers.Add(1)
-
-		go func() {
-			defer workers.Done()
-
+		workers.Go(func() {
 			_, callErr := session.Root(t.Context(), icloud.DriveLocationRequest{Refresh: false})
 			results <- callErr
-		}()
+		})
 	}
 
 	for range 2 {

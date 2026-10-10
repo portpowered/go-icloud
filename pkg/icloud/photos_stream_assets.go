@@ -241,6 +241,7 @@ func fillSharedPhoto(photo *Photo, pair photoPair) error {
 	photo.AssetMetadata = metadata
 
 	photo.Dimensions = []json.RawMessage{}
+
 	for _, name := range []cloudkit.PhotoMasterField{cloudkit.ResOriginalWidth, cloudkit.ResOriginalHeight} {
 		value, valueErr := sharedFieldValue(pair.master, string(name))
 		if valueErr != nil || len(value) == 0 {

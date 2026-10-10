@@ -29,8 +29,9 @@ const sharedMalformedMasterRefRule = "malformed-master-ref"
 
 func TestSharedPhotosLegacyValueRules(t *testing.T) {
 	t.Parallel()
-	for _, mutation := range []string{sharedFilenameTextRule, sharedInvalidDateRule, sharedFractionalSizeRule, sharedStringSizeRule,
-		sharedTruthyLikedRule, sharedEmptyLikedRule, sharedNullLikeCountRule, sharedStringLikeCountRule, sharedMissingWidthRule, sharedMissingHeightRule,
+	for _, mutation := range []string{sharedFilenameTextRule, sharedInvalidDateRule,
+		sharedFractionalSizeRule, sharedStringSizeRule, sharedTruthyLikedRule, sharedEmptyLikedRule,
+		sharedNullLikeCountRule, sharedStringLikeCountRule, sharedMissingWidthRule, sharedMissingHeightRule,
 		sharedIgnoredRecordsRule, sharedScalarRecordsRule, sharedMalformedMasterRefRule} {
 		t.Run(mutation, func(t *testing.T) { t.Parallel(); runSharedValueRule(t, mutation) })
 	}

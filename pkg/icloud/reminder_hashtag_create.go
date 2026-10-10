@@ -37,7 +37,7 @@ func (sdk *SDK) CreateReminderHashtag(ctx context.Context,
 		return nil, err
 	}
 
-	ids := reminderRelatedIDs(reminder.HashtagIDs, protocol.RemindersHashtagIDPrefixValue, "")
+	ids := reminderRelatedIDs(reminder.HashtagIDs, protocol.RemindersHashtagIDPrefixValue)
 	ids = append(ids, identity)
 	reminder.HashtagIDs = ids
 	parent := reminderRecordName(reminder.ID)
@@ -60,7 +60,7 @@ func (sdk *SDK) reminderHashtagCreationRequest(reminder Reminder, name string,
 		return cloudkit.ReminderHashtagCreationRequest{}, "", err
 	}
 
-	ids := append(reminderRelatedIDs(reminder.HashtagIDs, protocol.RemindersHashtagIDPrefixValue, ""), identity)
+	ids := append(reminderRelatedIDs(reminder.HashtagIDs, protocol.RemindersHashtagIDPrefixValue), identity)
 
 	parent, err := sdk.reminderHashtagParent(reminder, ids)
 	if err != nil {

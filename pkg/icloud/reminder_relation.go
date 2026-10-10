@@ -119,8 +119,8 @@ func reminderRelatedRecordName(name, prefix string) string {
 	return prefix + name
 }
 
-func reminderRelatedIDs(input []string, prefix, removed string) []string {
-	return reminderNormalizedIDs(input, prefix, removed, removed != "")
+func reminderRelatedIDs(input []string, prefix string) []string {
+	return reminderNormalizedIDs(input, prefix, "", false)
 }
 
 func reminderUnlinkedIDs(input []string, prefix, removed string) []string {

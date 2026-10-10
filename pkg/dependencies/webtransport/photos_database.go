@@ -60,6 +60,7 @@ func photosDatabaseRequest(auth RequestContext, body []byte) (*http.Request, err
 			protocol.PhotosMediaApplicationJson,
 			bytes.NewReader(body),
 		)
+
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo database changes: %w", err)
 		}
@@ -68,6 +69,7 @@ func photosDatabaseRequest(auth RequestContext, body []byte) (*http.Request, err
 	}
 
 	params := photosDatabaseChangesParams(auth)
+
 	request, err := photosapi.NewPhotosDatabaseChangesRequestWithBody(
 		auth.Origin,
 		params,

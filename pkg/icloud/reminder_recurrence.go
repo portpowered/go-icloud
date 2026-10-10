@@ -50,7 +50,7 @@ func (sdk *SDK) CreateReminderRecurrenceRule(ctx context.Context,
 	rule.ID = protocol.RemindersRecurrenceRuleIDPrefixValue + identity
 	reminder := copyReminder(request.Reminder)
 	reminder.RecurrenceRuleIDs = append(reminderRelatedIDs(reminder.RecurrenceRuleIDs,
-		protocol.RemindersRecurrenceRuleIDPrefixValue, ""), identity)
+		protocol.RemindersRecurrenceRuleIDPrefixValue), identity)
 
 	input, err := sdk.reminderRecurrenceCreationRequest(reminder, rule)
 	if err != nil {
@@ -132,7 +132,7 @@ func (sdk *SDK) DeleteReminderRecurrenceRule(ctx context.Context,
 	}
 
 	name := reminderRelatedRecordName(rule.ID, protocol.RemindersRecurrenceRuleIDPrefixValue)
-	raw := reminderRelatedIDs([]string{name}, protocol.RemindersRecurrenceRuleIDPrefixValue, "")[0]
+	raw := reminderRelatedIDs([]string{name}, protocol.RemindersRecurrenceRuleIDPrefixValue)[0]
 	reminder.RecurrenceRuleIDs = reminderUnlinkedRecurrenceIDs(reminder.RecurrenceRuleIDs, raw)
 
 	input, err := sdk.reminderRecurrenceDeletionRequest(reminder, rule)
@@ -191,7 +191,7 @@ func validReminderRecurrence(rule ReminderRecurrenceRule) bool {
 }
 
 func reminderUnlinkedRecurrenceIDs(input []string, removed string) []string {
-	ids := reminderRelatedIDs(input, protocol.RemindersRecurrenceRuleIDPrefixValue, "")
+	ids := reminderRelatedIDs(input, protocol.RemindersRecurrenceRuleIDPrefixValue)
 
 	return slices.DeleteFunc(ids, func(name string) bool { return name == removed })
 }

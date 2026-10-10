@@ -140,7 +140,8 @@ type Client interface {
 	// VerifySecurityKey submits a caller-owned WebAuthn assertion and refreshes session trust.
 	VerifySecurityKey(ctx context.Context, request VerifySecurityKeyRequest) (*NativeAuthResult, error)
 	// ListSecurityKeyDevices enumerates devices through the injected hardware authenticator.
-	ListSecurityKeyDevices(ctx context.Context, request ListSecurityKeyDevicesRequest) (*ListSecurityKeyDevicesResult, error)
+	ListSecurityKeyDevices(ctx context.Context,
+		request ListSecurityKeyDevicesRequest) (*ListSecurityKeyDevicesResult, error)
 	// ConfirmSecurityKey selects a hardware device and completes its assertion ceremony.
 	ConfirmSecurityKey(ctx context.Context, request ConfirmSecurityKeyRequest) (*NativeAuthResult, error)
 	// TrustSession exchanges session trust and refreshes account service discovery.
@@ -340,7 +341,8 @@ func New(options ...Option) (*SDK, error) {
 	}
 
 	return &SDK{web: webtransport.New(config.transport), clock: config.clock, random: config.random,
-		photoUploadWait: config.photoUploadWait, photoUploadClock: config.photoUploadClock, authWait: config.authWait, securityKey: config.securityKey}, nil
+		photoUploadWait: config.photoUploadWait, photoUploadClock: config.photoUploadClock,
+		authWait: config.authWait, securityKey: config.securityKey}, nil
 }
 
 // WithRandomSource supplies a concurrency-safe entropy reader for generated identities and authentication.

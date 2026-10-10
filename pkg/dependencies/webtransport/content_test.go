@@ -18,13 +18,15 @@ const decodedTestContent = "decoded"
 
 const rawDeflateTestContent = "raw-deflate"
 
+const layeredTestContent = "gzip, deflate"
+
 var errContentClose = errors.New("synthetic response close failure")
 
 // These are synthetic wire controls; canonical Source replay bodies are already decoded.
 func TestCompressedHTTPContent(t *testing.T) {
 	t.Parallel()
 
-	codings := []string{"gzip", "x-gzip", "deflate", rawDeflateTestContent, "gzip, deflate", decodedTestContent}
+	codings := []string{"gzip", "x-gzip", "deflate", rawDeflateTestContent, layeredTestContent, decodedTestContent}
 	for _, coding := range codings {
 		t.Run(coding, func(t *testing.T) {
 			t.Parallel()
@@ -69,7 +71,7 @@ func compressedTestContent(t *testing.T, coding string, data []byte) []byte {
 		return data
 	}
 
-	if coding == "gzip, deflate" {
+	if coding == layeredTestContent {
 		return compressedTestContent(t, "deflate", compressedTestContent(t, "gzip", data))
 	}
 

@@ -419,13 +419,9 @@ func TestResponseCloseAndInspectionAreRaceSafe(t *testing.T) {
 	var group sync.WaitGroup
 
 	for range 10 {
-		group.Add(1)
-
-		go func() {
-			defer group.Done()
-
+		group.Go(func() {
 			closeAndInspect(t, response.Body, transport)
-		}()
+		})
 	}
 
 	group.Wait()

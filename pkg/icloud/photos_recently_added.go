@@ -86,11 +86,13 @@ func (read *photosRead) recentlyAdded(ctx context.Context) ([]Photo, error) {
 
 func recentPhotoWindow(pairs []photoPair, seen map[string]bool) []photoPair {
 	selected := []photoPair{}
+
 	for _, pair := range pairs {
 		if seen[pair.asset.RecordName] {
 			continue
 		}
 		seen[pair.asset.RecordName] = true
+
 		selected = append(selected, pair)
 	}
 

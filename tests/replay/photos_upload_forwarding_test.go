@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"slices"
 	"strconv"
 	"testing"
 	"time"
@@ -49,7 +50,7 @@ func TestPhotoUploadComposableReceiptForwardsWithoutRounding(t *testing.T) {
 	registerScenario := readAccountScenario(t, registerPath)
 	photoUploadOpaqueResponse(t, bytesScenario.Exchanges[1].Response)
 	photoUploadOpaqueRequest(t, &registerScenario.Exchanges[1].Request)
-	exchanges := append(bytesScenario.Exchanges, registerScenario.Exchanges...)
+	exchanges := slices.Concat(bytesScenario.Exchanges, registerScenario.Exchanges)
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
 		t.Fatal(err)

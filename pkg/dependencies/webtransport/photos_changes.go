@@ -90,7 +90,6 @@ func photosChangesRequest(auth RequestContext, body []byte) (*http.Request, erro
 			protocol.PhotosMediaApplicationJson,
 			bytes.NewReader(body),
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo changes: %w", err)
 		}

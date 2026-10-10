@@ -25,7 +25,7 @@ func (sdk *SDK) CreateReminderURLAttachment(ctx context.Context,
 	}
 
 	reminder := copyReminder(request.Reminder)
-	reminder.AttachmentIDs = reminderRelatedIDs(reminder.AttachmentIDs, protocol.RemindersAttachmentIDPrefixValue, "")
+	reminder.AttachmentIDs = reminderRelatedIDs(reminder.AttachmentIDs, protocol.RemindersAttachmentIDPrefixValue)
 	reminder.AttachmentIDs = append(reminder.AttachmentIDs, identity)
 	attachment := new(ReminderURLAttachment)
 	attachment.ID = protocol.RemindersAttachmentIDPrefixValue + identity
