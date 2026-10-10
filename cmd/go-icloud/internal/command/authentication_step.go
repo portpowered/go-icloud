@@ -63,6 +63,7 @@ func verifySecurityKeyAssertion(ctx context.Context, client icloud.Client,
 	if err != nil {
 		return nil, err
 	}
+
 	request.Auth = state.Auth
 	request.State = state
 

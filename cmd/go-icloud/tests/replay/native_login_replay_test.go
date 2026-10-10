@@ -84,11 +84,12 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 		args = append(args, "--secret-stdin")
 	}
 	args = append(args, operation)
+
 	environment := func(key string) string {
-		if key == "GO_ICLOUD_ACCOUNT" {
+		if key == expectedAccountEnvironment {
 			return state.AccountName
 		}
-		if key == "GO_ICLOUD_PASSWORD" {
+		if key == expectedPasswordEnvironment {
 			return "invented-password"
 		}
 		return ""
@@ -115,7 +116,7 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 	assertNativeLoginPersistence(t, path, raw, refused, encoded)
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
 		"invented-password", "synthetic-srp-token", "synthetic-srp-cookie", "synthetic-auth-value",
-		"synthetic@example.invalid", `"responses"`, `"accountData"`})
+		"synthetic@example.invalid", `"responses"`, expectedAccountDataField})
 }
 
 func nativeLoginEntropy(t *testing.T, raw map[string]json.RawMessage) []byte {

@@ -18,6 +18,8 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
+const expectedAccountDataKey = "accountData"
+
 func TestNativeAuthenticationCommands(t *testing.T) {
 	t.Parallel()
 	for _, test := range []struct{ fixture, operation string }{
@@ -109,7 +111,7 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 		}
 	}
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
-		"synthetic-token", "synthetic-trust", "synthetic-cookie", "synthetic@example.invalid", "responses", "accountData"})
+		"synthetic-token", "synthetic-trust", "synthetic-cookie", "synthetic@example.invalid", "responses", expectedAccountDataKey})
 	if err = transport.AssertConsumed(); err != nil {
 		t.Fatal(err)
 	}
@@ -171,6 +173,7 @@ func nativeCommandAccepted(t *testing.T, raw map[string]json.RawMessage, operati
 		return true
 	}
 	value := readRawObject(t, result)["value"]
+
 	switch operation {
 	case "login", "auth-status", "mfa-devices":
 		return true

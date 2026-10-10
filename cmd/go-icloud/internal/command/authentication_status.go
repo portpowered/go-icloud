@@ -16,10 +16,12 @@ func authenticationStatus(ctx context.Context, client icloud.Client, config opti
 	if err != nil {
 		return fmt.Errorf("authentication status: %w", err)
 	}
+
 	err = saveNativeAuthentication(ctx, config.session, result.State)
 	if err != nil {
 		return err
 	}
+
 	return writeResult(output, commandmodels.AuthenticationStatusSummary{SessionFile: config.session,
 		Authenticated: result.Authenticated, Trusted: result.TrustedSession,
 		RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep})

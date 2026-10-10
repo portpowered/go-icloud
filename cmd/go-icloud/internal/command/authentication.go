@@ -29,6 +29,7 @@ func authenticateCommand(ctx context.Context, client icloud.Client, config optio
 	if config.operation == authLoginCommand || config.operation == authRenewCommand {
 		return login(ctx, client, config, input, environment, output)
 	}
+
 	if config.operation == authSecurityKeysCommand {
 		result, err := client.ListSecurityKeyDevices(ctx, icloud.ListSecurityKeyDevicesRequest{})
 		if err != nil {

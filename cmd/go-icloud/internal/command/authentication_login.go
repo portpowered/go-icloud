@@ -46,10 +46,12 @@ func login(ctx context.Context, client icloud.Client, config options,
 	if config.china || state.Auth.ChinaMainland == nil {
 		state.Auth.ChinaMainland = &config.china
 	}
+
 	request := icloud.AuthenticateRequest{Auth: state.Auth, AccountName: account, Password: password,
 		SavedState: nil, TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode,
 		ForceRefresh: config.forceRefresh || config.operation == authRenewCommand, PauseTwoFactor: true,
 		AcceptTerms: config.acceptTerms, Service: nil}
+
 	if config.authService != "" {
 		request.Service = &config.authService
 	}

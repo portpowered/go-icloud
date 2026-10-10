@@ -12,7 +12,10 @@ import (
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
 
-const syntheticClientID = "synthetic-client"
+const (
+	syntheticClientID     = "synthetic-client"
+	syntheticSessionToken = "synthetic-token"
+)
 
 type fixture struct {
 	Cases []loginCase `json:"cases"`
@@ -115,7 +118,7 @@ func assertLogin(t *testing.T, item loginCase, result *savedlogin.Login, root st
 		t.Fatalf("imported synthetic cookies differ: %#v", result.Request.Auth.Cookies)
 	}
 
-	if result.Request.Auth.ClientID != syntheticClientID || result.Request.Auth.SessionToken != "synthetic-token" ||
+	if result.Request.Auth.ClientID != syntheticClientID || result.Request.Auth.SessionToken != syntheticSessionToken ||
 		result.Request.TrustToken != "synthetic-trust" || result.Request.Auth.SetupServiceURL != item.SetupOrigin ||
 		result.Output != filepath.Join(root, "accounts", item.AccountKey, "go-session.json") {
 		t.Fatal("reference identity or credentials changed")

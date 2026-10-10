@@ -22,7 +22,7 @@ func TestReferenceSessionCountryPresence(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if session.ClientID != syntheticClientID || session.Token != "synthetic-token" {
+			if session.ClientID != syntheticClientID || session.Token != syntheticSessionToken {
 				t.Fatal("generated reference model changed pinned underscore keys")
 			}
 			if session.Country.IsSpecified() != (country != "") || session.Country.IsNull() != (country == explicitNullCountry) {

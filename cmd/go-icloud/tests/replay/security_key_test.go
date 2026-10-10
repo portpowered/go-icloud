@@ -17,6 +17,11 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
+const (
+	expectedAcceptedResponse = "accepted"
+	expectedRequestOption    = "--request"
+)
+
 type commandSecurityKey struct {
 	assertion icloud.SecurityKeyAssertion
 	request   *icloud.SecurityKeyCeremony
@@ -37,7 +42,7 @@ func (provider *commandSecurityKey) Assert(_ context.Context,
 func TestSecurityKeyCommandUsesSelectedDeviceAndSourceAssertion(t *testing.T) {
 	t.Parallel()
 
-	for _, control := range []string{"accepted", "caller assertion", "missing device", "cancelled ceremony"} {
+	for _, control := range []string{expectedAcceptedResponse, "caller assertion", "missing device", "cancelled ceremony"} {
 		t.Run(control, func(t *testing.T) {
 			t.Parallel()
 			commandSecurityKeyReplay(t, control)
@@ -85,11 +90,11 @@ func commandSecurityKeyReplay(t *testing.T, control string) {
 	if readErr != nil {
 		t.Fatal(readErr)
 	}
-	if control != "accepted" && control != "caller assertion" && !bytes.Equal(saved, data) {
+	if control != expectedAcceptedResponse && control != "caller assertion" && !bytes.Equal(saved, data) {
 		t.Fatal("failed hardware ceremony changed saved credentials")
 	}
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
-		"synthetic-token", "synthetic-trust", "synthetic-cookie", "credentialIDs", "accountData", "responses"})
+		"synthetic-token", "synthetic-trust", "synthetic-cookie", "credentialIDs", expectedAccountDataKey, "responses"})
 }
 
 func commandKeyArguments(t *testing.T, control, path, identifier string,
@@ -112,14 +117,14 @@ func commandKeyArguments(t *testing.T, control, path, identifier string,
 	if err = os.WriteFile(request, data, 0o600); err != nil {
 		t.Fatal(err)
 	}
-	return []string{sessionFlag, path, "--request", request, "mfa-security-key-assertion"}
+	return []string{sessionFlag, path, expectedRequestOption, request, "mfa-security-key-assertion"}
 }
 
 func commandKeyOutcome(t *testing.T, control string, err error,
 	provider *commandSecurityKey, transport *replay.HTTPTransport,
 ) {
 	t.Helper()
-	if control != "accepted" && control != "caller assertion" {
+	if control != expectedAcceptedResponse && control != "caller assertion" {
 		if err == nil {
 			t.Fatal("invalid hardware ceremony succeeded")
 		}
@@ -134,7 +139,7 @@ func commandKeyOutcome(t *testing.T, control string, err error,
 	if err != nil {
 		t.Fatal(err)
 	}
-	if control == "accepted" && (provider.request == nil || provider.request.DeviceID != "synthetic-device" ||
+	if control == expectedAcceptedResponse && (provider.request == nil || provider.request.DeviceID != "synthetic-device" ||
 		provider.request.Origin != icloud.HttpsappleCom || provider.request.UserVerification != icloud.Discouraged) {
 		t.Fatal("CLI selected ceremony differs from generated security-key contract")
 	}

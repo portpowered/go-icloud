@@ -9,7 +9,10 @@ import (
 	"testing"
 )
 
-const syntheticPasswordWithSpaces = " synthetic password "
+const (
+	syntheticPasswordWithSpaces = " synthetic password "
+	syntheticSecretCode         = "synthetic-code"
+)
 
 func TestSecretSources(t *testing.T) {
 	t.Parallel()
@@ -27,8 +30,8 @@ func TestSecretSources(t *testing.T) {
 			want:        syntheticPasswordWithSpaces, failure: false},
 		{name: "line", text: syntheticPasswordWithSpaces + "\r\nignored", stdin: true,
 			environment: nil, want: syntheticPasswordWithSpaces, failure: false},
-		{name: "end of file", text: "synthetic-code", stdin: true,
-			environment: nil, want: "synthetic-code", failure: false},
+		{name: "end of file", text: syntheticSecretCode, stdin: true,
+			environment: nil, want: syntheticSecretCode, failure: false},
 		{name: "empty", text: "", stdin: true, environment: nil, want: "", failure: true},
 		{name: "missing environment", text: "", stdin: false, environment: nil, want: "", failure: true},
 		{name: "bounded input", text: strings.Repeat("x", maximumSecretBytes+1), stdin: true,
@@ -53,6 +56,7 @@ func TestSecretSources(t *testing.T) {
 
 func TestSecretCancellationClosesBlockedInput(t *testing.T) {
 	t.Parallel()
+
 	reader, writer := io.Pipe()
 	t.Cleanup(func() { _ = writer.Close() })
 
