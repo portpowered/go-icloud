@@ -22,7 +22,7 @@ func (client *Client) DownloadPhotoContent(ctx context.Context, auth RequestCont
 		return nil, failure(Decode, errPhotoContentURL, nil, nil)
 	}
 
-	request, err := photosapi.NewPhotosDownloadContentRequest(target.Scheme+"://"+target.Host, target.EscapedPath())
+	request, err := photosapi.NewPhotosDownloadContentRequest(target.Scheme+"://"+target.Host, target.EscapedPath(), nil)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

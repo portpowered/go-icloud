@@ -119,7 +119,7 @@ func nativeVerificationRequest(state NativeAuthState, code string) (*http.Reques
 		input := auth.AuthTrustedCodeRequest{SecurityCode: securityCode}
 
 		return nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-			return nativeGeneratedRequest(authapi.NewVerifyAuthTrustedCodeRequestWithBody(nativeIDMSOrigin(state),
+			return nativeGeneratedRequest(authapi.NewVerifyAuthTrustedCodeRequestWithBody(nativeIDMSOrigin(state), nil,
 				protocol.AuthMediaApplicationJson, body))
 		})
 	}
@@ -142,7 +142,7 @@ func nativeVerificationRequest(state NativeAuthState, code string) (*http.Reques
 	input := auth.AuthSMSVerificationRequest{PhoneNumber: payload, SecurityCode: securityCode, Mode: mode}
 
 	return nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewVerifyAuthSMSRequestWithBody(nativeIDMSOrigin(state),
+		return nativeGeneratedRequest(authapi.NewVerifyAuthSMSRequestWithBody(nativeIDMSOrigin(state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 }

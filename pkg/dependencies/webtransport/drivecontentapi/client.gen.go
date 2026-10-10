@@ -15,6 +15,7 @@ import (
 	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 	externalRef0 "github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
+	externalRef1 "github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary"
 )
 
 // DriveError Extensible JSON error envelope; raw response bytes must also remain available.
@@ -28,6 +29,18 @@ type DriveUploadReceipt = externalRef0.DriveUploadReceipt
 
 // DriveContentFailure Extensible JSON error envelope; raw response bytes must also remain available.
 type DriveContentFailure = DriveError
+
+// DriveDownloadContentParams defines parameters for DriveDownloadContent.
+type DriveDownloadContentParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// DriveUploadContentParams defines parameters for DriveUploadContent.
+type DriveUploadContentParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
 
 // DriveUploadContentMultipartRequestBody defines body for DriveUploadContent for multipart/form-data ContentType.
 type DriveUploadContentMultipartRequestBody = DriveMultipartUpload
@@ -111,7 +124,7 @@ type ClientInterface interface {
 	// Select data_token.url before package_token.url and append caller authentication parameters as the reference does. Preserve exact bytes, including empty content.
 	//
 	// Corresponds with GET /{contentPath} (the `DriveDownloadContent` operationId).
-	DriveDownloadContent(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DriveDownloadContent(ctx context.Context, contentPath string, params *DriveDownloadContentParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DriveUploadContentWithBody Upload file content to a provider-issued URL
 	//
@@ -120,7 +133,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /{contentPath} (the `DriveUploadContent` operationId).
-	DriveUploadContentWithBody(ctx context.Context, contentPath string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DriveUploadContentWithBody(ctx context.Context, contentPath string, params *DriveUploadContentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // DriveDownloadContent Download content from a provider-issued URL
@@ -128,8 +141,8 @@ type ClientInterface interface {
 // Select data_token.url before package_token.url and append caller authentication parameters as the reference does. Preserve exact bytes, including empty content.
 //
 // Corresponds with GET /{contentPath} (the `DriveDownloadContent` operationId).
-func (c *Client) DriveDownloadContent(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDriveDownloadContentRequest(c.Server, contentPath)
+func (c *Client) DriveDownloadContent(ctx context.Context, contentPath string, params *DriveDownloadContentParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDriveDownloadContentRequest(c.Server, contentPath, params)
 	if err != nil {
 		return nil, err
 	}
@@ -147,8 +160,8 @@ func (c *Client) DriveDownloadContent(ctx context.Context, contentPath string, r
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /{contentPath} (the `DriveUploadContent` operationId).
-func (c *Client) DriveUploadContentWithBody(ctx context.Context, contentPath string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDriveUploadContentRequestWithBody(c.Server, contentPath, contentType, body)
+func (c *Client) DriveUploadContentWithBody(ctx context.Context, contentPath string, params *DriveUploadContentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDriveUploadContentRequestWithBody(c.Server, contentPath, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +173,7 @@ func (c *Client) DriveUploadContentWithBody(ctx context.Context, contentPath str
 }
 
 // NewDriveDownloadContentRequest constructs an http.Request for the DriveDownloadContent method
-func NewDriveDownloadContentRequest(server string, contentPath string) (*http.Request, error) {
+func NewDriveDownloadContentRequest(server string, contentPath string, params *DriveDownloadContentParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -190,11 +203,26 @@ func NewDriveDownloadContentRequest(server string, contentPath string) (*http.Re
 		return nil, err
 	}
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewDriveUploadContentRequestWithBody constructs an http.Request for the DriveUploadContent method, with any body, and a specified content type
-func NewDriveUploadContentRequestWithBody(server string, contentPath string, contentType string, body io.Reader) (*http.Request, error) {
+func NewDriveUploadContentRequestWithBody(server string, contentPath string, params *DriveUploadContentParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -225,6 +253,21 @@ func NewDriveUploadContentRequestWithBody(server string, contentPath string, con
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
 
 	return req, nil
 }
@@ -280,7 +323,7 @@ type ClientWithResponsesInterface interface {
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /{contentPath} (the `DriveDownloadContent` operationId).
-	DriveDownloadContentWithResponse(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*DriveDownloadContentResponse, error)
+	DriveDownloadContentWithResponse(ctx context.Context, contentPath string, params *DriveDownloadContentParams, reqEditors ...RequestEditorFn) (*DriveDownloadContentResponse, error)
 
 	// DriveUploadContentWithBodyWithResponse Upload file content to a provider-issued URL
 	//
@@ -289,7 +332,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /{contentPath} (the `DriveUploadContent` operationId).
-	DriveUploadContentWithBodyWithResponse(ctx context.Context, contentPath string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveUploadContentResponse, error)
+	DriveUploadContentWithBodyWithResponse(ctx context.Context, contentPath string, params *DriveUploadContentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveUploadContentResponse, error)
 }
 
 type DriveDownloadContentResponse struct {
@@ -395,8 +438,8 @@ func (r DriveUploadContentResponse) ContentType() string {
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /{contentPath} (the `DriveDownloadContent` operationId).
-func (c *ClientWithResponses) DriveDownloadContentWithResponse(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*DriveDownloadContentResponse, error) {
-	rsp, err := c.DriveDownloadContent(ctx, contentPath, reqEditors...)
+func (c *ClientWithResponses) DriveDownloadContentWithResponse(ctx context.Context, contentPath string, params *DriveDownloadContentParams, reqEditors ...RequestEditorFn) (*DriveDownloadContentResponse, error) {
+	rsp, err := c.DriveDownloadContent(ctx, contentPath, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -410,8 +453,8 @@ func (c *ClientWithResponses) DriveDownloadContentWithResponse(ctx context.Conte
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /{contentPath} (the `DriveUploadContent` operationId).
-func (c *ClientWithResponses) DriveUploadContentWithBodyWithResponse(ctx context.Context, contentPath string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveUploadContentResponse, error) {
-	rsp, err := c.DriveUploadContentWithBody(ctx, contentPath, contentType, body, reqEditors...)
+func (c *ClientWithResponses) DriveUploadContentWithBodyWithResponse(ctx context.Context, contentPath string, params *DriveUploadContentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DriveUploadContentResponse, error) {
+	rsp, err := c.DriveUploadContentWithBody(ctx, contentPath, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

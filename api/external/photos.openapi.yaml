@@ -251,7 +251,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/database/1/com.apple.photos.cloud/production/private/zones/list": {

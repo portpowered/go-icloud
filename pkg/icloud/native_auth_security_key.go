@@ -124,7 +124,7 @@ func (sdk *SDK) VerifySecurityKey(ctx context.Context, request VerifySecurityKey
 		RpId: challenge.RelyingPartyID}
 
 	wire, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewVerifyAuthSecurityKeyRequestWithBody(nativeIDMSOrigin(operation.state),
+		return nativeGeneratedRequest(authapi.NewVerifyAuthSecurityKeyRequestWithBody(nativeIDMSOrigin(operation.state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {

@@ -27,7 +27,7 @@ func (client *Client) ValidateAuthSession(ctx context.Context, origin string, he
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	request, err := authapi.NewValidateAuthSessionRequestWithBody(origin, "", bytes.NewReader(body))
+	request, err := authapi.NewValidateAuthSessionRequestWithBody(origin, nil, "", bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -44,7 +44,7 @@ func (client *Client) LoginAuthToken(ctx context.Context, origin string, headers
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, protocol.AuthMediaApplicationJson,
+	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, nil, protocol.AuthMediaApplicationJson,
 		bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
@@ -62,7 +62,7 @@ func (client *Client) LoginAuthCredentials(ctx context.Context, origin string, h
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, protocol.AuthMediaApplicationJson,
+	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, nil, protocol.AuthMediaApplicationJson,
 		bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)

@@ -76,7 +76,7 @@ func (client *Client) transferDriveUpload(ctx context.Context, auth RequestConte
 	}
 
 	request, err := drivecontentapi.NewDriveUploadContentRequestWithBody(target.Scheme+"://"+target.Host,
-		target.EscapedPath(), contentType, bytes.NewReader(body))
+		target.EscapedPath(), nil, contentType, bytes.NewReader(body))
 	if err != nil {
 		return nil, receipt, failure(Configuration, err, nil, nil)
 	}

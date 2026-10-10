@@ -15,7 +15,8 @@ import (
 
 	"github.com/oapi-codegen/runtime"
 	externalRef0 "github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
-	externalRef1 "github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations"
+	externalRef1 "github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary"
+	externalRef2 "github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations"
 )
 
 // Defines values for PhotosGetCurrentSyncToken.
@@ -1022,6 +1023,12 @@ type PhotosListSharedZonesParamsRemapEnums string
 // PhotosListSharedZonesParamsGetCurrentSyncToken defines parameters for PhotosListSharedZones.
 type PhotosListSharedZonesParamsGetCurrentSyncToken string
 
+// PhotosDownloadContentParams defines parameters for PhotosDownloadContent.
+type PhotosDownloadContentParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
 // PhotosDatabaseChangesJSONRequestBody defines body for PhotosDatabaseChanges for application/json ContentType.
 type PhotosDatabaseChangesJSONRequestBody = CKDatabaseChangesRequest
 
@@ -1035,7 +1042,7 @@ type PhotosCountAlbumsJSONRequestBody = PhotosCountRequest
 type PhotosLookupRecordsJSONRequestBody = CKLookupRequest
 
 // PhotosModifyRecordsJSONRequestBody defines body for PhotosModifyRecords for application/json ContentType.
-type PhotosModifyRecordsJSONRequestBody = externalRef1.PhotoMutationRequest
+type PhotosModifyRecordsJSONRequestBody = externalRef2.PhotoMutationRequest
 
 // PhotosQueryRecordsJSONRequestBody defines body for PhotosQueryRecords for application/json ContentType.
 type PhotosQueryRecordsJSONRequestBody = CKQueryRequest
@@ -1056,7 +1063,7 @@ type PhotosCountSharedAlbumsJSONRequestBody = PhotosCountRequest
 type PhotosSharedLookupRecordsJSONRequestBody = CKLookupRequest
 
 // PhotosSharedModifyRecordsJSONRequestBody defines body for PhotosSharedModifyRecords for application/json ContentType.
-type PhotosSharedModifyRecordsJSONRequestBody = externalRef1.PhotoMutationRequest
+type PhotosSharedModifyRecordsJSONRequestBody = externalRef2.PhotoMutationRequest
 
 // PhotosQuerySharedRecordsJSONRequestBody defines body for PhotosQuerySharedRecords for application/json ContentType.
 type PhotosQuerySharedRecordsJSONRequestBody = CKQueryRequest
@@ -1395,7 +1402,7 @@ type ClientInterface interface {
 	// Use the preceding selected photo resource URL without appending CloudKit account parameters. Preserve exact bytes including empty content.
 	//
 	// Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
-	PhotosDownloadContent(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PhotosDownloadContent(ctx context.Context, contentPath string, params *PhotosDownloadContentParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // PhotosDatabaseChangesWithBody Read changed photo libraries
@@ -1935,8 +1942,8 @@ func (c *Client) PhotosListSharedZones(ctx context.Context, params *PhotosListSh
 // Use the preceding selected photo resource URL without appending CloudKit account parameters. Preserve exact bytes including empty content.
 //
 // Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
-func (c *Client) PhotosDownloadContent(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPhotosDownloadContentRequest(c.Server, contentPath)
+func (c *Client) PhotosDownloadContent(ctx context.Context, contentPath string, params *PhotosDownloadContentParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPhotosDownloadContentRequest(c.Server, contentPath, params)
 	if err != nil {
 		return nil, err
 	}
@@ -4790,7 +4797,7 @@ func NewPhotosListSharedZonesRequestWithBody(server string, params *PhotosListSh
 }
 
 // NewPhotosDownloadContentRequest constructs an http.Request for the PhotosDownloadContent method
-func NewPhotosDownloadContentRequest(server string, contentPath string) (*http.Request, error) {
+func NewPhotosDownloadContentRequest(server string, contentPath string, params *PhotosDownloadContentParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -4818,6 +4825,21 @@ func NewPhotosDownloadContentRequest(server string, contentPath string) (*http.R
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
 	}
 
 	return req, nil
@@ -5126,7 +5148,7 @@ type ClientWithResponsesInterface interface {
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
-	PhotosDownloadContentWithResponse(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*PhotosDownloadContentResponse, error)
+	PhotosDownloadContentWithResponse(ctx context.Context, contentPath string, params *PhotosDownloadContentParams, reqEditors ...RequestEditorFn) (*PhotosDownloadContentResponse, error)
 }
 
 type PhotosDatabaseChangesResponse struct {
@@ -6262,8 +6284,8 @@ func (c *ClientWithResponses) PhotosListSharedZonesWithResponse(ctx context.Cont
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /{contentPath} (the `PhotosDownloadContent` operationId).
-func (c *ClientWithResponses) PhotosDownloadContentWithResponse(ctx context.Context, contentPath string, reqEditors ...RequestEditorFn) (*PhotosDownloadContentResponse, error) {
-	rsp, err := c.PhotosDownloadContent(ctx, contentPath, reqEditors...)
+func (c *ClientWithResponses) PhotosDownloadContentWithResponse(ctx context.Context, contentPath string, params *PhotosDownloadContentParams, reqEditors ...RequestEditorFn) (*PhotosDownloadContentResponse, error) {
+	rsp, err := c.PhotosDownloadContent(ctx, contentPath, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

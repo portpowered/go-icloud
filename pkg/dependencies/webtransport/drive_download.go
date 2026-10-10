@@ -83,7 +83,7 @@ func driveContentRequest(contentURL string, auth RequestContext) (*http.Request,
 		return nil, errDriveShape
 	}
 
-	request, err := drivecontentapi.NewDriveDownloadContentRequest(target.Scheme+"://"+target.Host, target.EscapedPath())
+	request, err := drivecontentapi.NewDriveDownloadContentRequest(target.Scheme+"://"+target.Host, target.EscapedPath(), nil)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

@@ -92,7 +92,7 @@ func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOper
 
 func (sdk *SDK) nativeTermsRelogin(ctx context.Context, operation *nativeAuthOperation, login any) (bool, error) {
 	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL,
+		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL, nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
@@ -204,7 +204,7 @@ func (sdk *SDK) nativeOneFactorLogin(ctx context.Context, operation *nativeAuthO
 	login auth.AuthCredentialsLoginRequest,
 ) (*webtransport.BytesResponse, error) {
 	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL,
+		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL, nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {

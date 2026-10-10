@@ -58,7 +58,7 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 	input := auth.AuthSMSRequest{PhoneNumber: data, Mode: auth.Sms}
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewRequestAuthSMSRequestWithBody(nativeIDMSOrigin(operation.state),
+		return nativeGeneratedRequest(authapi.NewRequestAuthSMSRequestWithBody(nativeIDMSOrigin(operation.state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {

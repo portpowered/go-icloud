@@ -527,7 +527,12 @@
           "default": {
             "$ref": "#/components/responses/RemindersFailure"
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/rd/startup": {
@@ -547,6 +552,9 @@
           },
           {
             "$ref": "#/components/parameters/RemindersClientMasteringNumber"
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ],
         "responses": {

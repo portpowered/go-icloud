@@ -51,7 +51,7 @@ func (sdk *SDK) nativeBridgeExchange(ctx context.Context, state NativeAuthState,
 func (sdk *SDK) nativeBridgeStart(ctx context.Context, state NativeAuthState, input auth.AuthBridgeStartRequest,
 ) (NativeAuthState, ResponseMetadata, *auth.AuthBridgeResponse, error) {
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep0RequestWithBody(nativeIDMSOrigin(state),
+		return nativeGeneratedRequest(authapi.NewAuthBridgeStep0RequestWithBody(nativeIDMSOrigin(state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {
@@ -76,13 +76,13 @@ func (sdk *SDK) nativeBridgeStep(ctx context.Context, state NativeAuthState, ste
 func nativeBridgeStepRequest(state NativeAuthState, step int, body io.Reader) (*http.Request, error) {
 	switch auth.AuthBridgeStepRequestNextStep(step) {
 	case auth.N2:
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep2RequestWithBody(nativeIDMSOrigin(state),
+		return nativeGeneratedRequest(authapi.NewAuthBridgeStep2RequestWithBody(nativeIDMSOrigin(state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	case auth.N4:
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep4RequestWithBody(nativeIDMSOrigin(state),
+		return nativeGeneratedRequest(authapi.NewAuthBridgeStep4RequestWithBody(nativeIDMSOrigin(state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	case auth.N6:
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep6RequestWithBody(nativeIDMSOrigin(state),
+		return nativeGeneratedRequest(authapi.NewAuthBridgeStep6RequestWithBody(nativeIDMSOrigin(state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	default:
 		return nil, errNativeAuthInput
@@ -123,7 +123,7 @@ func (sdk *SDK) nativeBridgeCode(ctx context.Context, state NativeAuthState, inp
 	}
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewValidateAuthBridgeCodeRequestWithBody(nativeIDMSOrigin(state),
+		return nativeGeneratedRequest(authapi.NewValidateAuthBridgeCodeRequestWithBody(nativeIDMSOrigin(state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {

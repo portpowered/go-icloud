@@ -30,7 +30,7 @@ func (sdk *SDK) GetAuthenticationChallenge(ctx context.Context, request NativeAu
 }
 
 func (sdk *SDK) nativeGetChallenge(ctx context.Context, operation *nativeAuthOperation) error {
-	request, err := authapi.NewGetAuthChallengeRequest(nativeIDMSOrigin(operation.state))
+	request, err := authapi.NewGetAuthChallengeRequest(nativeIDMSOrigin(operation.state), nil)
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -65,7 +65,7 @@ func (sdk *SDK) nativeGetChallenge(ctx context.Context, operation *nativeAuthOpe
 }
 
 func (sdk *SDK) nativeProbeSecurityKey(ctx context.Context, operation *nativeAuthOperation) error {
-	request, err := authapi.NewGetAuthChallengeRequest(nativeIDMSOrigin(operation.state))
+	request, err := authapi.NewGetAuthChallengeRequest(nativeIDMSOrigin(operation.state), nil)
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

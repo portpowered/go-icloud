@@ -6,6 +6,7 @@ output: pkg/dependencies/webtransport/photosapi/client.gen.go
 output-options:
   nullable-type: true
 import-mapping:
+  ./http-boundary-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary
   ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit
 
   ./photos-mutations-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations

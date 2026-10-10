@@ -93,7 +93,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/setup/ws/1/accountLogin": {
@@ -181,7 +186,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/setup/ws/1/listDevices": {
@@ -243,6 +253,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -316,6 +329,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -389,6 +405,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -462,6 +481,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -525,6 +547,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -588,6 +613,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -661,6 +689,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -734,6 +765,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -807,6 +841,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -910,6 +947,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -950,7 +990,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/signin/complete": {
@@ -998,6 +1043,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
           }
         ]
       }
@@ -1028,7 +1076,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/verify/phone": {
@@ -1067,7 +1120,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/verify/phone/securitycode": {
@@ -1106,7 +1164,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/verify/trusteddevice/securitycode": {
@@ -1145,7 +1208,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/verify/security/key": {
@@ -1184,7 +1252,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/2sv/trust": {
@@ -1213,7 +1286,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/bridge/step/0": {
@@ -1252,7 +1330,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/bridge/step/2": {
@@ -1291,7 +1374,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/bridge/step/4": {
@@ -1330,7 +1418,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/bridge/step/6": {
@@ -1369,7 +1462,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     },
     "/appleauth/auth/bridge/code/validate": {
@@ -1408,7 +1506,12 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          }
+        ]
       }
     }
   },

@@ -6,4 +6,5 @@ output: pkg/dependencies/webtransport/drivecontentapi/client.gen.go
 output-options:
   nullable-type: true
 import-mapping:
+  ./http-boundary-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary
   ./drive-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/drive

@@ -15,6 +15,7 @@ import (
 
 	"github.com/oapi-codegen/runtime"
 	externalRef0 "github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
+	externalRef1 "github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary"
 )
 
 // Defines values for RemindersGetCurrentSyncToken.
@@ -512,6 +513,15 @@ type RemindersLegacyStartupParams struct {
 
 	// ClientMasteringNumber Optional authentication client mastering parameter; preserve omission and the exact supplied value.
 	ClientMasteringNumber *RemindersClientMasteringNumber `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// RemindersDownloadAssetParams defines parameters for RemindersDownloadAsset.
+type RemindersDownloadAssetParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // RemindersZoneChangesJSONRequestBody defines body for RemindersZoneChanges for application/json ContentType.
@@ -788,7 +798,7 @@ type ClientInterface interface {
 	// Use the asset URL received in a record. Bind the origin/path/query to that record before requesting; this template does not authorize arbitrary destinations.
 	//
 	// Corresponds with GET /{assetPath} (the `RemindersDownloadAsset` operationId).
-	RemindersDownloadAsset(ctx context.Context, assetPath string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RemindersDownloadAsset(ctx context.Context, assetPath string, params *RemindersDownloadAssetParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // RemindersZoneChangesWithBody Fetch changed reminder records for a zone
@@ -1003,8 +1013,8 @@ func (c *Client) RemindersLegacyStartup(ctx context.Context, params *RemindersLe
 // Use the asset URL received in a record. Bind the origin/path/query to that record before requesting; this template does not authorize arbitrary destinations.
 //
 // Corresponds with GET /{assetPath} (the `RemindersDownloadAsset` operationId).
-func (c *Client) RemindersDownloadAsset(ctx context.Context, assetPath string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRemindersDownloadAssetRequest(c.Server, assetPath)
+func (c *Client) RemindersDownloadAsset(ctx context.Context, assetPath string, params *RemindersDownloadAssetParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemindersDownloadAssetRequest(c.Server, assetPath, params)
 	if err != nil {
 		return nil, err
 	}
@@ -2109,11 +2119,26 @@ func NewRemindersLegacyStartupRequest(server string, params *RemindersLegacyStar
 		return nil, err
 	}
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewRemindersDownloadAssetRequest constructs an http.Request for the RemindersDownloadAsset method
-func NewRemindersDownloadAssetRequest(server string, assetPath string) (*http.Request, error) {
+func NewRemindersDownloadAssetRequest(server string, assetPath string, params *RemindersDownloadAssetParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2141,6 +2166,21 @@ func NewRemindersDownloadAssetRequest(server string, assetPath string) (*http.Re
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
 	}
 
 	return req, nil
@@ -2296,7 +2336,7 @@ type ClientWithResponsesInterface interface {
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /{assetPath} (the `RemindersDownloadAsset` operationId).
-	RemindersDownloadAssetWithResponse(ctx context.Context, assetPath string, reqEditors ...RequestEditorFn) (*RemindersDownloadAssetResponse, error)
+	RemindersDownloadAssetWithResponse(ctx context.Context, assetPath string, params *RemindersDownloadAssetParams, reqEditors ...RequestEditorFn) (*RemindersDownloadAssetResponse, error)
 }
 
 type RemindersZoneChangesResponse struct {
@@ -2793,8 +2833,8 @@ func (c *ClientWithResponses) RemindersLegacyStartupWithResponse(ctx context.Con
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /{assetPath} (the `RemindersDownloadAsset` operationId).
-func (c *ClientWithResponses) RemindersDownloadAssetWithResponse(ctx context.Context, assetPath string, reqEditors ...RequestEditorFn) (*RemindersDownloadAssetResponse, error) {
-	rsp, err := c.RemindersDownloadAsset(ctx, assetPath, reqEditors...)
+func (c *ClientWithResponses) RemindersDownloadAssetWithResponse(ctx context.Context, assetPath string, params *RemindersDownloadAssetParams, reqEditors ...RequestEditorFn) (*RemindersDownloadAssetResponse, error) {
+	rsp, err := c.RemindersDownloadAsset(ctx, assetPath, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

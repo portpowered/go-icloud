@@ -35,3 +35,9 @@ type ContentLocator struct {
 	// Url Exact content locator supplied by a caller or decoded provider field. Before use, require HTTPS, a nonempty host, no userinfo and no fragment. Preserve escaped path and provider query. SDK-invented locators are not caller-owned.
 	Url CallerContentURL `json:"url"`
 }
+
+// SessionCookieValue Serialized session cookie pairs originating from caller seeds or provider Set-Cookie responses. Preserve ordering, native quoting, and exact values; this declaration does not authorize SDK-invented credentials.
+type SessionCookieValue = string
+
+// SessionCookie Serialized session cookie pairs originating from caller seeds or provider Set-Cookie responses. Preserve ordering, native quoting, and exact values; this declaration does not authorize SDK-invented credentials.
+type SessionCookie = SessionCookieValue

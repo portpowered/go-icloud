@@ -84,7 +84,7 @@ func (sdk *SDK) nativeSRPChallenge(ctx context.Context, operation *nativeAuthOpe
 		Protocols: []auth.AuthSRPProtocol{auth.S2k, auth.S2kFo}}
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewInitAuthSRPRequestWithBody(nativeIDMSOrigin(operation.state),
+		return nativeGeneratedRequest(authapi.NewInitAuthSRPRequestWithBody(nativeIDMSOrigin(operation.state), nil,
 			protocol.AuthMediaApplicationJson, body))
 	})
 	if err != nil {

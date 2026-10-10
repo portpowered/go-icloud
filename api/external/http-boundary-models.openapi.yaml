@@ -5,7 +5,18 @@ info:
   description: Caller-owned HTTP headers and validated content locators at the public transport boundary.
 paths: {}
 components:
+  parameters:
+    SessionCookie:
+      name: Cookie
+      in: header
+      required: false
+      description: Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+      schema: {$ref: '#/components/schemas/SessionCookieValue'}
   schemas:
+    SessionCookieValue:
+      type: string
+      description: Serialized session cookie pairs originating from caller seeds or provider Set-Cookie responses. Preserve ordering, native quoting, and exact values; this declaration does not authorize SDK-invented credentials.
+
     CallerContentURL:
       type: string
       format: uri

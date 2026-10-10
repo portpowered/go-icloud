@@ -15,7 +15,20 @@ import (
 
 	"github.com/oapi-codegen/runtime"
 	externalRef0 "github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
+	externalRef1 "github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary"
 )
+
+// GetAuthChallengeParams defines parameters for GetAuthChallenge.
+type GetAuthChallengeParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// TrustAuthSessionParams defines parameters for TrustAuthSession.
+type TrustAuthSessionParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
 
 // AuthorizeAuthSignInParams defines parameters for AuthorizeAuthSignIn.
 type AuthorizeAuthSignInParams struct {
@@ -28,16 +41,88 @@ type AuthorizeAuthSignInParams struct {
 	ResponseMode *string `form:"response_mode,omitempty" json:"response_mode,omitempty"`
 	State        *string `form:"state,omitempty" json:"state,omitempty"`
 	AuthVersion  *string `form:"authVersion,omitempty" json:"authVersion,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// ValidateAuthBridgeCodeParams defines parameters for ValidateAuthBridgeCode.
+type ValidateAuthBridgeCodeParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// AuthBridgeStep0Params defines parameters for AuthBridgeStep0.
+type AuthBridgeStep0Params struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// AuthBridgeStep2Params defines parameters for AuthBridgeStep2.
+type AuthBridgeStep2Params struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// AuthBridgeStep4Params defines parameters for AuthBridgeStep4.
+type AuthBridgeStep4Params struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// AuthBridgeStep6Params defines parameters for AuthBridgeStep6.
+type AuthBridgeStep6Params struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // CompleteAuthSRPParams defines parameters for CompleteAuthSRP.
 type CompleteAuthSRPParams struct {
 	IsRememberMeEnabled *string `form:"isRememberMeEnabled,omitempty" json:"isRememberMeEnabled,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// InitAuthSRPParams defines parameters for InitAuthSRP.
+type InitAuthSRPParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// RequestAuthSMSParams defines parameters for RequestAuthSMS.
+type RequestAuthSMSParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// VerifyAuthSMSParams defines parameters for VerifyAuthSMS.
+type VerifyAuthSMSParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// VerifyAuthSecurityKeyParams defines parameters for VerifyAuthSecurityKey.
+type VerifyAuthSecurityKeyParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
+
+// VerifyAuthTrustedCodeParams defines parameters for VerifyAuthTrustedCode.
+type VerifyAuthTrustedCodeParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // LoginAuthTokenJSONBody defines parameters for LoginAuthToken.
 type LoginAuthTokenJSONBody struct {
 	union json.RawMessage
+}
+
+// LoginAuthTokenParams defines parameters for LoginAuthToken.
+type LoginAuthTokenParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // EnableAuthPCSConsentParams defines parameters for EnableAuthPCSConsent.
@@ -46,6 +131,9 @@ type EnableAuthPCSConsentParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // GetAuthTermsParams defines parameters for GetAuthTerms.
@@ -54,6 +142,9 @@ type GetAuthTermsParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // ListAuthTrustedDevicesParams defines parameters for ListAuthTrustedDevices.
@@ -62,6 +153,9 @@ type ListAuthTrustedDevicesParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // LogoutAuthSessionParams defines parameters for LogoutAuthSession.
@@ -70,6 +164,9 @@ type LogoutAuthSessionParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // AcceptAuthTermsParams defines parameters for AcceptAuthTerms.
@@ -78,6 +175,9 @@ type AcceptAuthTermsParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // RequestAuthPCSParams defines parameters for RequestAuthPCS.
@@ -86,6 +186,9 @@ type RequestAuthPCSParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // GetAuthWebAccessStateParams defines parameters for GetAuthWebAccessState.
@@ -94,6 +197,9 @@ type GetAuthWebAccessStateParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // SendAuthVerificationCodeParams defines parameters for SendAuthVerificationCode.
@@ -102,10 +208,19 @@ type SendAuthVerificationCodeParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // ValidateAuthSessionJSONBody defines parameters for ValidateAuthSession.
 type ValidateAuthSessionJSONBody = map[string]interface{}
+
+// ValidateAuthSessionParams defines parameters for ValidateAuthSession.
+type ValidateAuthSessionParams struct {
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+}
 
 // ValidateAuthVerificationCodeParams defines parameters for ValidateAuthVerificationCode.
 type ValidateAuthVerificationCodeParams struct {
@@ -113,6 +228,9 @@ type ValidateAuthVerificationCodeParams struct {
 	ClientMasteringNumber *string `form:"clientMasteringNumber,omitempty" json:"clientMasteringNumber,omitempty"`
 	ClientId              *string `form:"clientId,omitempty" json:"clientId,omitempty"`
 	Dsid                  *string `form:"dsid,omitempty" json:"dsid,omitempty"`
+
+	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
 }
 
 // ValidateAuthBridgeCodeJSONRequestBody defines body for ValidateAuthBridgeCode for application/json ContentType.
@@ -313,14 +431,14 @@ type ClientInterface interface {
 	// Native account authentication operation with caller-owned credentials.
 	//
 	// Corresponds with GET /appleauth/auth (the `GetAuthChallenge` operationId).
-	GetAuthChallenge(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetAuthChallenge(ctx context.Context, params *GetAuthChallengeParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// TrustAuthSession TrustAuthSession
 	//
 	// Native account authentication operation with caller-owned credentials.
 	//
 	// Corresponds with GET /appleauth/auth/2sv/trust (the `TrustAuthSession` operationId).
-	TrustAuthSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	TrustAuthSession(ctx context.Context, params *TrustAuthSessionParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthorizeAuthSignIn AuthorizeAuthSignIn
 	//
@@ -336,7 +454,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-	ValidateAuthBridgeCodeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ValidateAuthBridgeCodeWithBody(ctx context.Context, params *ValidateAuthBridgeCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ValidateAuthBridgeCode ValidateAuthBridgeCode
 	//
@@ -345,7 +463,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-	ValidateAuthBridgeCode(ctx context.Context, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ValidateAuthBridgeCode(ctx context.Context, params *ValidateAuthBridgeCodeParams, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep0WithBody AuthBridgeStep0
 	//
@@ -354,7 +472,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-	AuthBridgeStep0WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep0WithBody(ctx context.Context, params *AuthBridgeStep0Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep0 AuthBridgeStep0
 	//
@@ -363,7 +481,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-	AuthBridgeStep0(ctx context.Context, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep0(ctx context.Context, params *AuthBridgeStep0Params, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep2WithBody AuthBridgeStep2
 	//
@@ -372,7 +490,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-	AuthBridgeStep2WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep2WithBody(ctx context.Context, params *AuthBridgeStep2Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep2 AuthBridgeStep2
 	//
@@ -381,7 +499,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-	AuthBridgeStep2(ctx context.Context, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep2(ctx context.Context, params *AuthBridgeStep2Params, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep4WithBody AuthBridgeStep4
 	//
@@ -390,7 +508,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-	AuthBridgeStep4WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep4WithBody(ctx context.Context, params *AuthBridgeStep4Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep4 AuthBridgeStep4
 	//
@@ -399,7 +517,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-	AuthBridgeStep4(ctx context.Context, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep4(ctx context.Context, params *AuthBridgeStep4Params, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep6WithBody AuthBridgeStep6
 	//
@@ -408,7 +526,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-	AuthBridgeStep6WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep6WithBody(ctx context.Context, params *AuthBridgeStep6Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AuthBridgeStep6 AuthBridgeStep6
 	//
@@ -417,7 +535,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-	AuthBridgeStep6(ctx context.Context, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	AuthBridgeStep6(ctx context.Context, params *AuthBridgeStep6Params, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CompleteAuthSRPWithBody CompleteAuthSRP
 	//
@@ -444,7 +562,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-	InitAuthSRPWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	InitAuthSRPWithBody(ctx context.Context, params *InitAuthSRPParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// InitAuthSRP InitAuthSRP
 	//
@@ -453,7 +571,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-	InitAuthSRP(ctx context.Context, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	InitAuthSRP(ctx context.Context, params *InitAuthSRPParams, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RequestAuthSMSWithBody RequestAuthSMS
 	//
@@ -462,7 +580,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-	RequestAuthSMSWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RequestAuthSMSWithBody(ctx context.Context, params *RequestAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RequestAuthSMS RequestAuthSMS
 	//
@@ -471,7 +589,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-	RequestAuthSMS(ctx context.Context, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	RequestAuthSMS(ctx context.Context, params *RequestAuthSMSParams, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// VerifyAuthSMSWithBody VerifyAuthSMS
 	//
@@ -480,7 +598,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-	VerifyAuthSMSWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	VerifyAuthSMSWithBody(ctx context.Context, params *VerifyAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// VerifyAuthSMS VerifyAuthSMS
 	//
@@ -489,7 +607,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-	VerifyAuthSMS(ctx context.Context, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	VerifyAuthSMS(ctx context.Context, params *VerifyAuthSMSParams, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// VerifyAuthSecurityKeyWithBody VerifyAuthSecurityKey
 	//
@@ -498,7 +616,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-	VerifyAuthSecurityKeyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	VerifyAuthSecurityKeyWithBody(ctx context.Context, params *VerifyAuthSecurityKeyParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// VerifyAuthSecurityKey VerifyAuthSecurityKey
 	//
@@ -507,7 +625,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-	VerifyAuthSecurityKey(ctx context.Context, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	VerifyAuthSecurityKey(ctx context.Context, params *VerifyAuthSecurityKeyParams, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// VerifyAuthTrustedCodeWithBody VerifyAuthTrustedCode
 	//
@@ -516,7 +634,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-	VerifyAuthTrustedCodeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	VerifyAuthTrustedCodeWithBody(ctx context.Context, params *VerifyAuthTrustedCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// VerifyAuthTrustedCode VerifyAuthTrustedCode
 	//
@@ -525,7 +643,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-	VerifyAuthTrustedCode(ctx context.Context, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	VerifyAuthTrustedCode(ctx context.Context, params *VerifyAuthTrustedCodeParams, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// LoginAuthTokenWithBody Refresh a saved web token
 	//
@@ -534,7 +652,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-	LoginAuthTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	LoginAuthTokenWithBody(ctx context.Context, params *LoginAuthTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// LoginAuthToken Refresh a saved web token
 	//
@@ -543,7 +661,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-	LoginAuthToken(ctx context.Context, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	LoginAuthToken(ctx context.Context, params *LoginAuthTokenParams, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// EnableAuthPCSConsent EnableAuthPCSConsent
 	//
@@ -663,7 +781,7 @@ type ClientInterface interface {
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-	ValidateAuthSessionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ValidateAuthSessionWithBody(ctx context.Context, params *ValidateAuthSessionParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ValidateAuthSession Validate saved session
 	//
@@ -672,7 +790,7 @@ type ClientInterface interface {
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-	ValidateAuthSession(ctx context.Context, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ValidateAuthSession(ctx context.Context, params *ValidateAuthSessionParams, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ValidateAuthVerificationCodeWithBody ValidateAuthVerificationCode
 	//
@@ -698,8 +816,8 @@ type ClientInterface interface {
 // Native account authentication operation with caller-owned credentials.
 //
 // Corresponds with GET /appleauth/auth (the `GetAuthChallenge` operationId).
-func (c *Client) GetAuthChallenge(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetAuthChallengeRequest(c.Server)
+func (c *Client) GetAuthChallenge(ctx context.Context, params *GetAuthChallengeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAuthChallengeRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -715,8 +833,8 @@ func (c *Client) GetAuthChallenge(ctx context.Context, reqEditors ...RequestEdit
 // Native account authentication operation with caller-owned credentials.
 //
 // Corresponds with GET /appleauth/auth/2sv/trust (the `TrustAuthSession` operationId).
-func (c *Client) TrustAuthSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewTrustAuthSessionRequest(c.Server)
+func (c *Client) TrustAuthSession(ctx context.Context, params *TrustAuthSessionParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewTrustAuthSessionRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -751,8 +869,8 @@ func (c *Client) AuthorizeAuthSignIn(ctx context.Context, params *AuthorizeAuthS
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-func (c *Client) ValidateAuthBridgeCodeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewValidateAuthBridgeCodeRequestWithBody(c.Server, contentType, body)
+func (c *Client) ValidateAuthBridgeCodeWithBody(ctx context.Context, params *ValidateAuthBridgeCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewValidateAuthBridgeCodeRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -770,8 +888,8 @@ func (c *Client) ValidateAuthBridgeCodeWithBody(ctx context.Context, contentType
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-func (c *Client) ValidateAuthBridgeCode(ctx context.Context, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewValidateAuthBridgeCodeRequest(c.Server, body)
+func (c *Client) ValidateAuthBridgeCode(ctx context.Context, params *ValidateAuthBridgeCodeParams, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewValidateAuthBridgeCodeRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -789,8 +907,8 @@ func (c *Client) ValidateAuthBridgeCode(ctx context.Context, body ValidateAuthBr
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-func (c *Client) AuthBridgeStep0WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep0RequestWithBody(c.Server, contentType, body)
+func (c *Client) AuthBridgeStep0WithBody(ctx context.Context, params *AuthBridgeStep0Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep0RequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -808,8 +926,8 @@ func (c *Client) AuthBridgeStep0WithBody(ctx context.Context, contentType string
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-func (c *Client) AuthBridgeStep0(ctx context.Context, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep0Request(c.Server, body)
+func (c *Client) AuthBridgeStep0(ctx context.Context, params *AuthBridgeStep0Params, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep0Request(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -827,8 +945,8 @@ func (c *Client) AuthBridgeStep0(ctx context.Context, body AuthBridgeStep0JSONRe
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-func (c *Client) AuthBridgeStep2WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep2RequestWithBody(c.Server, contentType, body)
+func (c *Client) AuthBridgeStep2WithBody(ctx context.Context, params *AuthBridgeStep2Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep2RequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -846,8 +964,8 @@ func (c *Client) AuthBridgeStep2WithBody(ctx context.Context, contentType string
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-func (c *Client) AuthBridgeStep2(ctx context.Context, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep2Request(c.Server, body)
+func (c *Client) AuthBridgeStep2(ctx context.Context, params *AuthBridgeStep2Params, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep2Request(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -865,8 +983,8 @@ func (c *Client) AuthBridgeStep2(ctx context.Context, body AuthBridgeStep2JSONRe
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-func (c *Client) AuthBridgeStep4WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep4RequestWithBody(c.Server, contentType, body)
+func (c *Client) AuthBridgeStep4WithBody(ctx context.Context, params *AuthBridgeStep4Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep4RequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -884,8 +1002,8 @@ func (c *Client) AuthBridgeStep4WithBody(ctx context.Context, contentType string
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-func (c *Client) AuthBridgeStep4(ctx context.Context, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep4Request(c.Server, body)
+func (c *Client) AuthBridgeStep4(ctx context.Context, params *AuthBridgeStep4Params, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep4Request(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -903,8 +1021,8 @@ func (c *Client) AuthBridgeStep4(ctx context.Context, body AuthBridgeStep4JSONRe
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-func (c *Client) AuthBridgeStep6WithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep6RequestWithBody(c.Server, contentType, body)
+func (c *Client) AuthBridgeStep6WithBody(ctx context.Context, params *AuthBridgeStep6Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep6RequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -922,8 +1040,8 @@ func (c *Client) AuthBridgeStep6WithBody(ctx context.Context, contentType string
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-func (c *Client) AuthBridgeStep6(ctx context.Context, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthBridgeStep6Request(c.Server, body)
+func (c *Client) AuthBridgeStep6(ctx context.Context, params *AuthBridgeStep6Params, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthBridgeStep6Request(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -979,8 +1097,8 @@ func (c *Client) CompleteAuthSRP(ctx context.Context, params *CompleteAuthSRPPar
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-func (c *Client) InitAuthSRPWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewInitAuthSRPRequestWithBody(c.Server, contentType, body)
+func (c *Client) InitAuthSRPWithBody(ctx context.Context, params *InitAuthSRPParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewInitAuthSRPRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -998,8 +1116,8 @@ func (c *Client) InitAuthSRPWithBody(ctx context.Context, contentType string, bo
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-func (c *Client) InitAuthSRP(ctx context.Context, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewInitAuthSRPRequest(c.Server, body)
+func (c *Client) InitAuthSRP(ctx context.Context, params *InitAuthSRPParams, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewInitAuthSRPRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1017,8 +1135,8 @@ func (c *Client) InitAuthSRP(ctx context.Context, body InitAuthSRPJSONRequestBod
 // Takes any type of body and a specified content type.
 //
 // Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-func (c *Client) RequestAuthSMSWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRequestAuthSMSRequestWithBody(c.Server, contentType, body)
+func (c *Client) RequestAuthSMSWithBody(ctx context.Context, params *RequestAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRequestAuthSMSRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1036,8 +1154,8 @@ func (c *Client) RequestAuthSMSWithBody(ctx context.Context, contentType string,
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-func (c *Client) RequestAuthSMS(ctx context.Context, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRequestAuthSMSRequest(c.Server, body)
+func (c *Client) RequestAuthSMS(ctx context.Context, params *RequestAuthSMSParams, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRequestAuthSMSRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1055,8 +1173,8 @@ func (c *Client) RequestAuthSMS(ctx context.Context, body RequestAuthSMSJSONRequ
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-func (c *Client) VerifyAuthSMSWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewVerifyAuthSMSRequestWithBody(c.Server, contentType, body)
+func (c *Client) VerifyAuthSMSWithBody(ctx context.Context, params *VerifyAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyAuthSMSRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1074,8 +1192,8 @@ func (c *Client) VerifyAuthSMSWithBody(ctx context.Context, contentType string, 
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-func (c *Client) VerifyAuthSMS(ctx context.Context, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewVerifyAuthSMSRequest(c.Server, body)
+func (c *Client) VerifyAuthSMS(ctx context.Context, params *VerifyAuthSMSParams, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyAuthSMSRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1093,8 +1211,8 @@ func (c *Client) VerifyAuthSMS(ctx context.Context, body VerifyAuthSMSJSONReques
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-func (c *Client) VerifyAuthSecurityKeyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewVerifyAuthSecurityKeyRequestWithBody(c.Server, contentType, body)
+func (c *Client) VerifyAuthSecurityKeyWithBody(ctx context.Context, params *VerifyAuthSecurityKeyParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyAuthSecurityKeyRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1112,8 +1230,8 @@ func (c *Client) VerifyAuthSecurityKeyWithBody(ctx context.Context, contentType 
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-func (c *Client) VerifyAuthSecurityKey(ctx context.Context, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewVerifyAuthSecurityKeyRequest(c.Server, body)
+func (c *Client) VerifyAuthSecurityKey(ctx context.Context, params *VerifyAuthSecurityKeyParams, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyAuthSecurityKeyRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1131,8 +1249,8 @@ func (c *Client) VerifyAuthSecurityKey(ctx context.Context, body VerifyAuthSecur
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-func (c *Client) VerifyAuthTrustedCodeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewVerifyAuthTrustedCodeRequestWithBody(c.Server, contentType, body)
+func (c *Client) VerifyAuthTrustedCodeWithBody(ctx context.Context, params *VerifyAuthTrustedCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyAuthTrustedCodeRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1150,8 +1268,8 @@ func (c *Client) VerifyAuthTrustedCodeWithBody(ctx context.Context, contentType 
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-func (c *Client) VerifyAuthTrustedCode(ctx context.Context, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewVerifyAuthTrustedCodeRequest(c.Server, body)
+func (c *Client) VerifyAuthTrustedCode(ctx context.Context, params *VerifyAuthTrustedCodeParams, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVerifyAuthTrustedCodeRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1169,8 +1287,8 @@ func (c *Client) VerifyAuthTrustedCode(ctx context.Context, body VerifyAuthTrust
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-func (c *Client) LoginAuthTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewLoginAuthTokenRequestWithBody(c.Server, contentType, body)
+func (c *Client) LoginAuthTokenWithBody(ctx context.Context, params *LoginAuthTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewLoginAuthTokenRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1188,8 +1306,8 @@ func (c *Client) LoginAuthTokenWithBody(ctx context.Context, contentType string,
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-func (c *Client) LoginAuthToken(ctx context.Context, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewLoginAuthTokenRequest(c.Server, body)
+func (c *Client) LoginAuthToken(ctx context.Context, params *LoginAuthTokenParams, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewLoginAuthTokenRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1448,8 +1566,8 @@ func (c *Client) SendAuthVerificationCode(ctx context.Context, params *SendAuthV
 // Takes any type of body and a specified content type.
 //
 // Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-func (c *Client) ValidateAuthSessionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewValidateAuthSessionRequestWithBody(c.Server, contentType, body)
+func (c *Client) ValidateAuthSessionWithBody(ctx context.Context, params *ValidateAuthSessionParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewValidateAuthSessionRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1467,8 +1585,8 @@ func (c *Client) ValidateAuthSessionWithBody(ctx context.Context, contentType st
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-func (c *Client) ValidateAuthSession(ctx context.Context, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewValidateAuthSessionRequest(c.Server, body)
+func (c *Client) ValidateAuthSession(ctx context.Context, params *ValidateAuthSessionParams, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewValidateAuthSessionRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1518,7 +1636,7 @@ func (c *Client) ValidateAuthVerificationCode(ctx context.Context, params *Valid
 }
 
 // NewGetAuthChallengeRequest constructs an http.Request for the GetAuthChallenge method
-func NewGetAuthChallengeRequest(server string) (*http.Request, error) {
+func NewGetAuthChallengeRequest(server string, params *GetAuthChallengeParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1541,11 +1659,26 @@ func NewGetAuthChallengeRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewTrustAuthSessionRequest constructs an http.Request for the TrustAuthSession method
-func NewTrustAuthSessionRequest(server string) (*http.Request, error) {
+func NewTrustAuthSessionRequest(server string, params *TrustAuthSessionParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1566,6 +1699,21 @@ func NewTrustAuthSessionRequest(server string) (*http.Request, error) {
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
 	}
 
 	return req, nil
@@ -1718,22 +1866,37 @@ func NewAuthorizeAuthSignInRequest(server string, params *AuthorizeAuthSignInPar
 		return nil, err
 	}
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewValidateAuthBridgeCodeRequest calls the generic ValidateAuthBridgeCode builder with application/json body
-func NewValidateAuthBridgeCodeRequest(server string, body ValidateAuthBridgeCodeJSONRequestBody) (*http.Request, error) {
+func NewValidateAuthBridgeCodeRequest(server string, params *ValidateAuthBridgeCodeParams, body ValidateAuthBridgeCodeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewValidateAuthBridgeCodeRequestWithBody(server, "application/json", bodyReader)
+	return NewValidateAuthBridgeCodeRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewValidateAuthBridgeCodeRequestWithBody constructs an http.Request for the ValidateAuthBridgeCode method, with any body, and a specified content type
-func NewValidateAuthBridgeCodeRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewValidateAuthBridgeCodeRequestWithBody(server string, params *ValidateAuthBridgeCodeParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1758,22 +1921,37 @@ func NewValidateAuthBridgeCodeRequestWithBody(server string, contentType string,
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewAuthBridgeStep0Request calls the generic AuthBridgeStep0 builder with application/json body
-func NewAuthBridgeStep0Request(server string, body AuthBridgeStep0JSONRequestBody) (*http.Request, error) {
+func NewAuthBridgeStep0Request(server string, params *AuthBridgeStep0Params, body AuthBridgeStep0JSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAuthBridgeStep0RequestWithBody(server, "application/json", bodyReader)
+	return NewAuthBridgeStep0RequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewAuthBridgeStep0RequestWithBody constructs an http.Request for the AuthBridgeStep0 method, with any body, and a specified content type
-func NewAuthBridgeStep0RequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAuthBridgeStep0RequestWithBody(server string, params *AuthBridgeStep0Params, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1798,22 +1976,37 @@ func NewAuthBridgeStep0RequestWithBody(server string, contentType string, body i
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewAuthBridgeStep2Request calls the generic AuthBridgeStep2 builder with application/json body
-func NewAuthBridgeStep2Request(server string, body AuthBridgeStep2JSONRequestBody) (*http.Request, error) {
+func NewAuthBridgeStep2Request(server string, params *AuthBridgeStep2Params, body AuthBridgeStep2JSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAuthBridgeStep2RequestWithBody(server, "application/json", bodyReader)
+	return NewAuthBridgeStep2RequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewAuthBridgeStep2RequestWithBody constructs an http.Request for the AuthBridgeStep2 method, with any body, and a specified content type
-func NewAuthBridgeStep2RequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAuthBridgeStep2RequestWithBody(server string, params *AuthBridgeStep2Params, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1838,22 +2031,37 @@ func NewAuthBridgeStep2RequestWithBody(server string, contentType string, body i
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewAuthBridgeStep4Request calls the generic AuthBridgeStep4 builder with application/json body
-func NewAuthBridgeStep4Request(server string, body AuthBridgeStep4JSONRequestBody) (*http.Request, error) {
+func NewAuthBridgeStep4Request(server string, params *AuthBridgeStep4Params, body AuthBridgeStep4JSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAuthBridgeStep4RequestWithBody(server, "application/json", bodyReader)
+	return NewAuthBridgeStep4RequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewAuthBridgeStep4RequestWithBody constructs an http.Request for the AuthBridgeStep4 method, with any body, and a specified content type
-func NewAuthBridgeStep4RequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAuthBridgeStep4RequestWithBody(server string, params *AuthBridgeStep4Params, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1878,22 +2086,37 @@ func NewAuthBridgeStep4RequestWithBody(server string, contentType string, body i
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewAuthBridgeStep6Request calls the generic AuthBridgeStep6 builder with application/json body
-func NewAuthBridgeStep6Request(server string, body AuthBridgeStep6JSONRequestBody) (*http.Request, error) {
+func NewAuthBridgeStep6Request(server string, params *AuthBridgeStep6Params, body AuthBridgeStep6JSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAuthBridgeStep6RequestWithBody(server, "application/json", bodyReader)
+	return NewAuthBridgeStep6RequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewAuthBridgeStep6RequestWithBody constructs an http.Request for the AuthBridgeStep6 method, with any body, and a specified content type
-func NewAuthBridgeStep6RequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAuthBridgeStep6RequestWithBody(server string, params *AuthBridgeStep6Params, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1917,6 +2140,21 @@ func NewAuthBridgeStep6RequestWithBody(server string, contentType string, body i
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
 
 	return req, nil
 }
@@ -1985,22 +2223,37 @@ func NewCompleteAuthSRPRequestWithBody(server string, params *CompleteAuthSRPPar
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewInitAuthSRPRequest calls the generic InitAuthSRP builder with application/json body
-func NewInitAuthSRPRequest(server string, body InitAuthSRPJSONRequestBody) (*http.Request, error) {
+func NewInitAuthSRPRequest(server string, params *InitAuthSRPParams, body InitAuthSRPJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewInitAuthSRPRequestWithBody(server, "application/json", bodyReader)
+	return NewInitAuthSRPRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewInitAuthSRPRequestWithBody constructs an http.Request for the InitAuthSRP method, with any body, and a specified content type
-func NewInitAuthSRPRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewInitAuthSRPRequestWithBody(server string, params *InitAuthSRPParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2025,22 +2278,37 @@ func NewInitAuthSRPRequestWithBody(server string, contentType string, body io.Re
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewRequestAuthSMSRequest calls the generic RequestAuthSMS builder with application/json body
-func NewRequestAuthSMSRequest(server string, body RequestAuthSMSJSONRequestBody) (*http.Request, error) {
+func NewRequestAuthSMSRequest(server string, params *RequestAuthSMSParams, body RequestAuthSMSJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewRequestAuthSMSRequestWithBody(server, "application/json", bodyReader)
+	return NewRequestAuthSMSRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewRequestAuthSMSRequestWithBody constructs an http.Request for the RequestAuthSMS method, with any body, and a specified content type
-func NewRequestAuthSMSRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewRequestAuthSMSRequestWithBody(server string, params *RequestAuthSMSParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2065,22 +2333,37 @@ func NewRequestAuthSMSRequestWithBody(server string, contentType string, body io
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewVerifyAuthSMSRequest calls the generic VerifyAuthSMS builder with application/json body
-func NewVerifyAuthSMSRequest(server string, body VerifyAuthSMSJSONRequestBody) (*http.Request, error) {
+func NewVerifyAuthSMSRequest(server string, params *VerifyAuthSMSParams, body VerifyAuthSMSJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewVerifyAuthSMSRequestWithBody(server, "application/json", bodyReader)
+	return NewVerifyAuthSMSRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewVerifyAuthSMSRequestWithBody constructs an http.Request for the VerifyAuthSMS method, with any body, and a specified content type
-func NewVerifyAuthSMSRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewVerifyAuthSMSRequestWithBody(server string, params *VerifyAuthSMSParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2105,22 +2388,37 @@ func NewVerifyAuthSMSRequestWithBody(server string, contentType string, body io.
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewVerifyAuthSecurityKeyRequest calls the generic VerifyAuthSecurityKey builder with application/json body
-func NewVerifyAuthSecurityKeyRequest(server string, body VerifyAuthSecurityKeyJSONRequestBody) (*http.Request, error) {
+func NewVerifyAuthSecurityKeyRequest(server string, params *VerifyAuthSecurityKeyParams, body VerifyAuthSecurityKeyJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewVerifyAuthSecurityKeyRequestWithBody(server, "application/json", bodyReader)
+	return NewVerifyAuthSecurityKeyRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewVerifyAuthSecurityKeyRequestWithBody constructs an http.Request for the VerifyAuthSecurityKey method, with any body, and a specified content type
-func NewVerifyAuthSecurityKeyRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewVerifyAuthSecurityKeyRequestWithBody(server string, params *VerifyAuthSecurityKeyParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2145,22 +2443,37 @@ func NewVerifyAuthSecurityKeyRequestWithBody(server string, contentType string, 
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewVerifyAuthTrustedCodeRequest calls the generic VerifyAuthTrustedCode builder with application/json body
-func NewVerifyAuthTrustedCodeRequest(server string, body VerifyAuthTrustedCodeJSONRequestBody) (*http.Request, error) {
+func NewVerifyAuthTrustedCodeRequest(server string, params *VerifyAuthTrustedCodeParams, body VerifyAuthTrustedCodeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewVerifyAuthTrustedCodeRequestWithBody(server, "application/json", bodyReader)
+	return NewVerifyAuthTrustedCodeRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewVerifyAuthTrustedCodeRequestWithBody constructs an http.Request for the VerifyAuthTrustedCode method, with any body, and a specified content type
-func NewVerifyAuthTrustedCodeRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewVerifyAuthTrustedCodeRequestWithBody(server string, params *VerifyAuthTrustedCodeParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2185,22 +2498,37 @@ func NewVerifyAuthTrustedCodeRequestWithBody(server string, contentType string, 
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewLoginAuthTokenRequest calls the generic LoginAuthToken builder with application/json body
-func NewLoginAuthTokenRequest(server string, body LoginAuthTokenJSONRequestBody) (*http.Request, error) {
+func NewLoginAuthTokenRequest(server string, params *LoginAuthTokenParams, body LoginAuthTokenJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewLoginAuthTokenRequestWithBody(server, "application/json", bodyReader)
+	return NewLoginAuthTokenRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewLoginAuthTokenRequestWithBody constructs an http.Request for the LoginAuthToken method, with any body, and a specified content type
-func NewLoginAuthTokenRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewLoginAuthTokenRequestWithBody(server string, params *LoginAuthTokenParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2224,6 +2552,21 @@ func NewLoginAuthTokenRequestWithBody(server string, contentType string, body io
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
 
 	return req, nil
 }
@@ -2313,6 +2656,21 @@ func NewEnableAuthPCSConsentRequest(server string, params *EnableAuthPCSConsentP
 	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
 	}
 
 	return req, nil
@@ -2418,6 +2776,21 @@ func NewGetAuthTermsRequestWithBody(server string, params *GetAuthTermsParams, c
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
@@ -2506,6 +2879,21 @@ func NewListAuthTrustedDevicesRequest(server string, params *ListAuthTrustedDevi
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
 	}
 
 	return req, nil
@@ -2611,6 +2999,21 @@ func NewLogoutAuthSessionRequestWithBody(server string, params *LogoutAuthSessio
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
@@ -2713,6 +3116,21 @@ func NewAcceptAuthTermsRequestWithBody(server string, params *AcceptAuthTermsPar
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
 
 	return req, nil
 }
@@ -2817,6 +3235,21 @@ func NewRequestAuthPCSRequestWithBody(server string, params *RequestAuthPCSParam
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
@@ -2905,6 +3338,21 @@ func NewGetAuthWebAccessStateRequest(server string, params *GetAuthWebAccessStat
 	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
 	}
 
 	return req, nil
@@ -3010,22 +3458,37 @@ func NewSendAuthVerificationCodeRequestWithBody(server string, params *SendAuthV
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
 // NewValidateAuthSessionRequest calls the generic ValidateAuthSession builder with application/json body
-func NewValidateAuthSessionRequest(server string, body ValidateAuthSessionJSONRequestBody) (*http.Request, error) {
+func NewValidateAuthSessionRequest(server string, params *ValidateAuthSessionParams, body ValidateAuthSessionJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewValidateAuthSessionRequestWithBody(server, "application/json", bodyReader)
+	return NewValidateAuthSessionRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewValidateAuthSessionRequestWithBody constructs an http.Request for the ValidateAuthSession method, with any body, and a specified content type
-func NewValidateAuthSessionRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewValidateAuthSessionRequestWithBody(server string, params *ValidateAuthSessionParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -3049,6 +3512,21 @@ func NewValidateAuthSessionRequestWithBody(server string, contentType string, bo
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
 
 	return req, nil
 }
@@ -3153,6 +3631,21 @@ func NewValidateAuthVerificationCodeRequestWithBody(server string, params *Valid
 
 	req.Header.Add("Content-Type", contentType)
 
+	if params != nil {
+
+		if params.Cookie != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Cookie", *params.Cookie, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Cookie", headerParam0)
+		}
+
+	}
+
 	return req, nil
 }
 
@@ -3207,7 +3700,7 @@ type ClientWithResponsesInterface interface {
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /appleauth/auth (the `GetAuthChallenge` operationId).
-	GetAuthChallengeWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAuthChallengeResponse, error)
+	GetAuthChallengeWithResponse(ctx context.Context, params *GetAuthChallengeParams, reqEditors ...RequestEditorFn) (*GetAuthChallengeResponse, error)
 
 	// TrustAuthSessionWithResponse TrustAuthSession
 	//
@@ -3216,7 +3709,7 @@ type ClientWithResponsesInterface interface {
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /appleauth/auth/2sv/trust (the `TrustAuthSession` operationId).
-	TrustAuthSessionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*TrustAuthSessionResponse, error)
+	TrustAuthSessionWithResponse(ctx context.Context, params *TrustAuthSessionParams, reqEditors ...RequestEditorFn) (*TrustAuthSessionResponse, error)
 
 	// AuthorizeAuthSignInWithResponse AuthorizeAuthSignIn
 	//
@@ -3234,7 +3727,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-	ValidateAuthBridgeCodeWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error)
+	ValidateAuthBridgeCodeWithBodyWithResponse(ctx context.Context, params *ValidateAuthBridgeCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error)
 
 	// ValidateAuthBridgeCodeWithResponse ValidateAuthBridgeCode
 	//
@@ -3243,7 +3736,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-	ValidateAuthBridgeCodeWithResponse(ctx context.Context, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error)
+	ValidateAuthBridgeCodeWithResponse(ctx context.Context, params *ValidateAuthBridgeCodeParams, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error)
 
 	// AuthBridgeStep0WithBodyWithResponse AuthBridgeStep0
 	//
@@ -3252,7 +3745,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-	AuthBridgeStep0WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error)
+	AuthBridgeStep0WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep0Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error)
 
 	// AuthBridgeStep0WithResponse AuthBridgeStep0
 	//
@@ -3261,7 +3754,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-	AuthBridgeStep0WithResponse(ctx context.Context, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error)
+	AuthBridgeStep0WithResponse(ctx context.Context, params *AuthBridgeStep0Params, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error)
 
 	// AuthBridgeStep2WithBodyWithResponse AuthBridgeStep2
 	//
@@ -3270,7 +3763,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-	AuthBridgeStep2WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error)
+	AuthBridgeStep2WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep2Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error)
 
 	// AuthBridgeStep2WithResponse AuthBridgeStep2
 	//
@@ -3279,7 +3772,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-	AuthBridgeStep2WithResponse(ctx context.Context, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error)
+	AuthBridgeStep2WithResponse(ctx context.Context, params *AuthBridgeStep2Params, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error)
 
 	// AuthBridgeStep4WithBodyWithResponse AuthBridgeStep4
 	//
@@ -3288,7 +3781,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-	AuthBridgeStep4WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error)
+	AuthBridgeStep4WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep4Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error)
 
 	// AuthBridgeStep4WithResponse AuthBridgeStep4
 	//
@@ -3297,7 +3790,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-	AuthBridgeStep4WithResponse(ctx context.Context, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error)
+	AuthBridgeStep4WithResponse(ctx context.Context, params *AuthBridgeStep4Params, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error)
 
 	// AuthBridgeStep6WithBodyWithResponse AuthBridgeStep6
 	//
@@ -3306,7 +3799,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-	AuthBridgeStep6WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error)
+	AuthBridgeStep6WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep6Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error)
 
 	// AuthBridgeStep6WithResponse AuthBridgeStep6
 	//
@@ -3315,7 +3808,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-	AuthBridgeStep6WithResponse(ctx context.Context, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error)
+	AuthBridgeStep6WithResponse(ctx context.Context, params *AuthBridgeStep6Params, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error)
 
 	// CompleteAuthSRPWithBodyWithResponse CompleteAuthSRP
 	//
@@ -3342,7 +3835,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-	InitAuthSRPWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error)
+	InitAuthSRPWithBodyWithResponse(ctx context.Context, params *InitAuthSRPParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error)
 
 	// InitAuthSRPWithResponse InitAuthSRP
 	//
@@ -3351,7 +3844,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-	InitAuthSRPWithResponse(ctx context.Context, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error)
+	InitAuthSRPWithResponse(ctx context.Context, params *InitAuthSRPParams, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error)
 
 	// RequestAuthSMSWithBodyWithResponse RequestAuthSMS
 	//
@@ -3360,7 +3853,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-	RequestAuthSMSWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error)
+	RequestAuthSMSWithBodyWithResponse(ctx context.Context, params *RequestAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error)
 
 	// RequestAuthSMSWithResponse RequestAuthSMS
 	//
@@ -3369,7 +3862,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-	RequestAuthSMSWithResponse(ctx context.Context, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error)
+	RequestAuthSMSWithResponse(ctx context.Context, params *RequestAuthSMSParams, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error)
 
 	// VerifyAuthSMSWithBodyWithResponse VerifyAuthSMS
 	//
@@ -3378,7 +3871,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-	VerifyAuthSMSWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error)
+	VerifyAuthSMSWithBodyWithResponse(ctx context.Context, params *VerifyAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error)
 
 	// VerifyAuthSMSWithResponse VerifyAuthSMS
 	//
@@ -3387,7 +3880,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-	VerifyAuthSMSWithResponse(ctx context.Context, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error)
+	VerifyAuthSMSWithResponse(ctx context.Context, params *VerifyAuthSMSParams, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error)
 
 	// VerifyAuthSecurityKeyWithBodyWithResponse VerifyAuthSecurityKey
 	//
@@ -3396,7 +3889,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-	VerifyAuthSecurityKeyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error)
+	VerifyAuthSecurityKeyWithBodyWithResponse(ctx context.Context, params *VerifyAuthSecurityKeyParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error)
 
 	// VerifyAuthSecurityKeyWithResponse VerifyAuthSecurityKey
 	//
@@ -3405,7 +3898,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-	VerifyAuthSecurityKeyWithResponse(ctx context.Context, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error)
+	VerifyAuthSecurityKeyWithResponse(ctx context.Context, params *VerifyAuthSecurityKeyParams, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error)
 
 	// VerifyAuthTrustedCodeWithBodyWithResponse VerifyAuthTrustedCode
 	//
@@ -3414,7 +3907,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-	VerifyAuthTrustedCodeWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error)
+	VerifyAuthTrustedCodeWithBodyWithResponse(ctx context.Context, params *VerifyAuthTrustedCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error)
 
 	// VerifyAuthTrustedCodeWithResponse VerifyAuthTrustedCode
 	//
@@ -3423,7 +3916,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-	VerifyAuthTrustedCodeWithResponse(ctx context.Context, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error)
+	VerifyAuthTrustedCodeWithResponse(ctx context.Context, params *VerifyAuthTrustedCodeParams, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error)
 
 	// LoginAuthTokenWithBodyWithResponse Refresh a saved web token
 	//
@@ -3432,7 +3925,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-	LoginAuthTokenWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error)
+	LoginAuthTokenWithBodyWithResponse(ctx context.Context, params *LoginAuthTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error)
 
 	// LoginAuthTokenWithResponse Refresh a saved web token
 	//
@@ -3441,7 +3934,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-	LoginAuthTokenWithResponse(ctx context.Context, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error)
+	LoginAuthTokenWithResponse(ctx context.Context, params *LoginAuthTokenParams, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error)
 
 	// EnableAuthPCSConsentWithResponse EnableAuthPCSConsent
 	//
@@ -3567,7 +4060,7 @@ type ClientWithResponsesInterface interface {
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-	ValidateAuthSessionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error)
+	ValidateAuthSessionWithBodyWithResponse(ctx context.Context, params *ValidateAuthSessionParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error)
 
 	// ValidateAuthSessionWithResponse Validate saved session
 	//
@@ -3576,7 +4069,7 @@ type ClientWithResponsesInterface interface {
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-	ValidateAuthSessionWithResponse(ctx context.Context, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error)
+	ValidateAuthSessionWithResponse(ctx context.Context, params *ValidateAuthSessionParams, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error)
 
 	// ValidateAuthVerificationCodeWithBodyWithResponse ValidateAuthVerificationCode
 	//
@@ -4818,8 +5311,8 @@ func (r ValidateAuthVerificationCodeResponse) ContentType() string {
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /appleauth/auth (the `GetAuthChallenge` operationId).
-func (c *ClientWithResponses) GetAuthChallengeWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAuthChallengeResponse, error) {
-	rsp, err := c.GetAuthChallenge(ctx, reqEditors...)
+func (c *ClientWithResponses) GetAuthChallengeWithResponse(ctx context.Context, params *GetAuthChallengeParams, reqEditors ...RequestEditorFn) (*GetAuthChallengeResponse, error) {
+	rsp, err := c.GetAuthChallenge(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4833,8 +5326,8 @@ func (c *ClientWithResponses) GetAuthChallengeWithResponse(ctx context.Context, 
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /appleauth/auth/2sv/trust (the `TrustAuthSession` operationId).
-func (c *ClientWithResponses) TrustAuthSessionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*TrustAuthSessionResponse, error) {
-	rsp, err := c.TrustAuthSession(ctx, reqEditors...)
+func (c *ClientWithResponses) TrustAuthSessionWithResponse(ctx context.Context, params *TrustAuthSessionParams, reqEditors ...RequestEditorFn) (*TrustAuthSessionResponse, error) {
+	rsp, err := c.TrustAuthSession(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4863,8 +5356,8 @@ func (c *ClientWithResponses) AuthorizeAuthSignInWithResponse(ctx context.Contex
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-func (c *ClientWithResponses) ValidateAuthBridgeCodeWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error) {
-	rsp, err := c.ValidateAuthBridgeCodeWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) ValidateAuthBridgeCodeWithBodyWithResponse(ctx context.Context, params *ValidateAuthBridgeCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error) {
+	rsp, err := c.ValidateAuthBridgeCodeWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4878,8 +5371,8 @@ func (c *ClientWithResponses) ValidateAuthBridgeCodeWithBodyWithResponse(ctx con
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/code/validate (the `ValidateAuthBridgeCode` operationId).
-func (c *ClientWithResponses) ValidateAuthBridgeCodeWithResponse(ctx context.Context, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error) {
-	rsp, err := c.ValidateAuthBridgeCode(ctx, body, reqEditors...)
+func (c *ClientWithResponses) ValidateAuthBridgeCodeWithResponse(ctx context.Context, params *ValidateAuthBridgeCodeParams, body ValidateAuthBridgeCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthBridgeCodeResponse, error) {
+	rsp, err := c.ValidateAuthBridgeCode(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4893,8 +5386,8 @@ func (c *ClientWithResponses) ValidateAuthBridgeCodeWithResponse(ctx context.Con
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-func (c *ClientWithResponses) AuthBridgeStep0WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error) {
-	rsp, err := c.AuthBridgeStep0WithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep0WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep0Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error) {
+	rsp, err := c.AuthBridgeStep0WithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4908,8 +5401,8 @@ func (c *ClientWithResponses) AuthBridgeStep0WithBodyWithResponse(ctx context.Co
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/0 (the `AuthBridgeStep0` operationId).
-func (c *ClientWithResponses) AuthBridgeStep0WithResponse(ctx context.Context, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error) {
-	rsp, err := c.AuthBridgeStep0(ctx, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep0WithResponse(ctx context.Context, params *AuthBridgeStep0Params, body AuthBridgeStep0JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep0Response, error) {
+	rsp, err := c.AuthBridgeStep0(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4923,8 +5416,8 @@ func (c *ClientWithResponses) AuthBridgeStep0WithResponse(ctx context.Context, b
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-func (c *ClientWithResponses) AuthBridgeStep2WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error) {
-	rsp, err := c.AuthBridgeStep2WithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep2WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep2Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error) {
+	rsp, err := c.AuthBridgeStep2WithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4938,8 +5431,8 @@ func (c *ClientWithResponses) AuthBridgeStep2WithBodyWithResponse(ctx context.Co
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/2 (the `AuthBridgeStep2` operationId).
-func (c *ClientWithResponses) AuthBridgeStep2WithResponse(ctx context.Context, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error) {
-	rsp, err := c.AuthBridgeStep2(ctx, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep2WithResponse(ctx context.Context, params *AuthBridgeStep2Params, body AuthBridgeStep2JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep2Response, error) {
+	rsp, err := c.AuthBridgeStep2(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4953,8 +5446,8 @@ func (c *ClientWithResponses) AuthBridgeStep2WithResponse(ctx context.Context, b
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-func (c *ClientWithResponses) AuthBridgeStep4WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error) {
-	rsp, err := c.AuthBridgeStep4WithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep4WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep4Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error) {
+	rsp, err := c.AuthBridgeStep4WithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4968,8 +5461,8 @@ func (c *ClientWithResponses) AuthBridgeStep4WithBodyWithResponse(ctx context.Co
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/4 (the `AuthBridgeStep4` operationId).
-func (c *ClientWithResponses) AuthBridgeStep4WithResponse(ctx context.Context, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error) {
-	rsp, err := c.AuthBridgeStep4(ctx, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep4WithResponse(ctx context.Context, params *AuthBridgeStep4Params, body AuthBridgeStep4JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep4Response, error) {
+	rsp, err := c.AuthBridgeStep4(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4983,8 +5476,8 @@ func (c *ClientWithResponses) AuthBridgeStep4WithResponse(ctx context.Context, b
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-func (c *ClientWithResponses) AuthBridgeStep6WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error) {
-	rsp, err := c.AuthBridgeStep6WithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep6WithBodyWithResponse(ctx context.Context, params *AuthBridgeStep6Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error) {
+	rsp, err := c.AuthBridgeStep6WithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4998,8 +5491,8 @@ func (c *ClientWithResponses) AuthBridgeStep6WithBodyWithResponse(ctx context.Co
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/bridge/step/6 (the `AuthBridgeStep6` operationId).
-func (c *ClientWithResponses) AuthBridgeStep6WithResponse(ctx context.Context, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error) {
-	rsp, err := c.AuthBridgeStep6(ctx, body, reqEditors...)
+func (c *ClientWithResponses) AuthBridgeStep6WithResponse(ctx context.Context, params *AuthBridgeStep6Params, body AuthBridgeStep6JSONRequestBody, reqEditors ...RequestEditorFn) (*AuthBridgeStep6Response, error) {
+	rsp, err := c.AuthBridgeStep6(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5043,8 +5536,8 @@ func (c *ClientWithResponses) CompleteAuthSRPWithResponse(ctx context.Context, p
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-func (c *ClientWithResponses) InitAuthSRPWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error) {
-	rsp, err := c.InitAuthSRPWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) InitAuthSRPWithBodyWithResponse(ctx context.Context, params *InitAuthSRPParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error) {
+	rsp, err := c.InitAuthSRPWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5058,8 +5551,8 @@ func (c *ClientWithResponses) InitAuthSRPWithBodyWithResponse(ctx context.Contex
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/signin/init (the `InitAuthSRP` operationId).
-func (c *ClientWithResponses) InitAuthSRPWithResponse(ctx context.Context, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error) {
-	rsp, err := c.InitAuthSRP(ctx, body, reqEditors...)
+func (c *ClientWithResponses) InitAuthSRPWithResponse(ctx context.Context, params *InitAuthSRPParams, body InitAuthSRPJSONRequestBody, reqEditors ...RequestEditorFn) (*InitAuthSRPResponse, error) {
+	rsp, err := c.InitAuthSRP(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5073,8 +5566,8 @@ func (c *ClientWithResponses) InitAuthSRPWithResponse(ctx context.Context, body 
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-func (c *ClientWithResponses) RequestAuthSMSWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error) {
-	rsp, err := c.RequestAuthSMSWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) RequestAuthSMSWithBodyWithResponse(ctx context.Context, params *RequestAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error) {
+	rsp, err := c.RequestAuthSMSWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5088,8 +5581,8 @@ func (c *ClientWithResponses) RequestAuthSMSWithBodyWithResponse(ctx context.Con
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /appleauth/auth/verify/phone (the `RequestAuthSMS` operationId).
-func (c *ClientWithResponses) RequestAuthSMSWithResponse(ctx context.Context, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error) {
-	rsp, err := c.RequestAuthSMS(ctx, body, reqEditors...)
+func (c *ClientWithResponses) RequestAuthSMSWithResponse(ctx context.Context, params *RequestAuthSMSParams, body RequestAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*RequestAuthSMSResponse, error) {
+	rsp, err := c.RequestAuthSMS(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5103,8 +5596,8 @@ func (c *ClientWithResponses) RequestAuthSMSWithResponse(ctx context.Context, bo
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-func (c *ClientWithResponses) VerifyAuthSMSWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error) {
-	rsp, err := c.VerifyAuthSMSWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) VerifyAuthSMSWithBodyWithResponse(ctx context.Context, params *VerifyAuthSMSParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error) {
+	rsp, err := c.VerifyAuthSMSWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5118,8 +5611,8 @@ func (c *ClientWithResponses) VerifyAuthSMSWithBodyWithResponse(ctx context.Cont
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/verify/phone/securitycode (the `VerifyAuthSMS` operationId).
-func (c *ClientWithResponses) VerifyAuthSMSWithResponse(ctx context.Context, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error) {
-	rsp, err := c.VerifyAuthSMS(ctx, body, reqEditors...)
+func (c *ClientWithResponses) VerifyAuthSMSWithResponse(ctx context.Context, params *VerifyAuthSMSParams, body VerifyAuthSMSJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSMSResponse, error) {
+	rsp, err := c.VerifyAuthSMS(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5133,8 +5626,8 @@ func (c *ClientWithResponses) VerifyAuthSMSWithResponse(ctx context.Context, bod
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-func (c *ClientWithResponses) VerifyAuthSecurityKeyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error) {
-	rsp, err := c.VerifyAuthSecurityKeyWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) VerifyAuthSecurityKeyWithBodyWithResponse(ctx context.Context, params *VerifyAuthSecurityKeyParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error) {
+	rsp, err := c.VerifyAuthSecurityKeyWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5148,8 +5641,8 @@ func (c *ClientWithResponses) VerifyAuthSecurityKeyWithBodyWithResponse(ctx cont
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/verify/security/key (the `VerifyAuthSecurityKey` operationId).
-func (c *ClientWithResponses) VerifyAuthSecurityKeyWithResponse(ctx context.Context, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error) {
-	rsp, err := c.VerifyAuthSecurityKey(ctx, body, reqEditors...)
+func (c *ClientWithResponses) VerifyAuthSecurityKeyWithResponse(ctx context.Context, params *VerifyAuthSecurityKeyParams, body VerifyAuthSecurityKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthSecurityKeyResponse, error) {
+	rsp, err := c.VerifyAuthSecurityKey(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5163,8 +5656,8 @@ func (c *ClientWithResponses) VerifyAuthSecurityKeyWithResponse(ctx context.Cont
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-func (c *ClientWithResponses) VerifyAuthTrustedCodeWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error) {
-	rsp, err := c.VerifyAuthTrustedCodeWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) VerifyAuthTrustedCodeWithBodyWithResponse(ctx context.Context, params *VerifyAuthTrustedCodeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error) {
+	rsp, err := c.VerifyAuthTrustedCodeWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5178,8 +5671,8 @@ func (c *ClientWithResponses) VerifyAuthTrustedCodeWithBodyWithResponse(ctx cont
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /appleauth/auth/verify/trusteddevice/securitycode (the `VerifyAuthTrustedCode` operationId).
-func (c *ClientWithResponses) VerifyAuthTrustedCodeWithResponse(ctx context.Context, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error) {
-	rsp, err := c.VerifyAuthTrustedCode(ctx, body, reqEditors...)
+func (c *ClientWithResponses) VerifyAuthTrustedCodeWithResponse(ctx context.Context, params *VerifyAuthTrustedCodeParams, body VerifyAuthTrustedCodeJSONRequestBody, reqEditors ...RequestEditorFn) (*VerifyAuthTrustedCodeResponse, error) {
+	rsp, err := c.VerifyAuthTrustedCode(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5193,8 +5686,8 @@ func (c *ClientWithResponses) VerifyAuthTrustedCodeWithResponse(ctx context.Cont
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-func (c *ClientWithResponses) LoginAuthTokenWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error) {
-	rsp, err := c.LoginAuthTokenWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) LoginAuthTokenWithBodyWithResponse(ctx context.Context, params *LoginAuthTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error) {
+	rsp, err := c.LoginAuthTokenWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5208,8 +5701,8 @@ func (c *ClientWithResponses) LoginAuthTokenWithBodyWithResponse(ctx context.Con
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /setup/ws/1/accountLogin (the `LoginAuthToken` operationId).
-func (c *ClientWithResponses) LoginAuthTokenWithResponse(ctx context.Context, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error) {
-	rsp, err := c.LoginAuthToken(ctx, body, reqEditors...)
+func (c *ClientWithResponses) LoginAuthTokenWithResponse(ctx context.Context, params *LoginAuthTokenParams, body LoginAuthTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*LoginAuthTokenResponse, error) {
+	rsp, err := c.LoginAuthToken(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5418,8 +5911,8 @@ func (c *ClientWithResponses) SendAuthVerificationCodeWithResponse(ctx context.C
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-func (c *ClientWithResponses) ValidateAuthSessionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error) {
-	rsp, err := c.ValidateAuthSessionWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) ValidateAuthSessionWithBodyWithResponse(ctx context.Context, params *ValidateAuthSessionParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error) {
+	rsp, err := c.ValidateAuthSessionWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -5433,8 +5926,8 @@ func (c *ClientWithResponses) ValidateAuthSessionWithBodyWithResponse(ctx contex
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /setup/ws/1/validate (the `ValidateAuthSession` operationId).
-func (c *ClientWithResponses) ValidateAuthSessionWithResponse(ctx context.Context, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error) {
-	rsp, err := c.ValidateAuthSession(ctx, body, reqEditors...)
+func (c *ClientWithResponses) ValidateAuthSessionWithResponse(ctx context.Context, params *ValidateAuthSessionParams, body ValidateAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateAuthSessionResponse, error) {
+	rsp, err := c.ValidateAuthSession(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

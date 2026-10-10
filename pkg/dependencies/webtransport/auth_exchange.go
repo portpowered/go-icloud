@@ -28,7 +28,7 @@ func (client *Client) ExchangeAuthentication(ctx context.Context, request *http.
 	request = request.WithContext(ctx)
 	contentType := request.Header.Get(protocol.AuthHTTPContentTypeName)
 
-	request.Header = headers.Clone()
+	request.Header = callerHeaders(headers)
 
 	if request.Header.Get(protocol.AuthHTTPContentTypeName) == "" && contentType != "" {
 		request.Header.Set(protocol.AuthHTTPContentTypeName, contentType)
