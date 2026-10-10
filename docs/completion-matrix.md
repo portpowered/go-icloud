@@ -34,20 +34,33 @@ never ignore fields to accommodate the port (SCHEMA-10, LIB-05).
 
 ## Integration evidence and remaining blockers
 
-At integration snapshot `7334404`, the SDK implementation is publicly available
-as `v0.0.0-20261010022446-ed7c72b31b4c`. The separate CLI pins that version;
-its isolated `GOWORK=off` dependency download and tidy checks passed. The complete
-CLI race suite passed at `8743c53` using an integration workspace. A complete race
-run against the final public pin is still required.
+The CLI at `1f58336` pins the published SDK
+`v0.0.0-20261010090501-076520573dd5`, with no local replacement. The SDK includes
+Source-paired fixes for adding a photo to an album without prior membership,
+empty Photos change zones, exact nullable change cursors, and Reminders document
+base64 decoding. Full SDK race/replay tests passed at `bda83e1`, affected schema
+contracts passed at `a033a9d`, and all-enabled SDK lint passed at `0765205`.
+The subsequent formatting and inventory commits preserve the tested runtime.
 
-At `3b66d50`, `make sdk-coverage` passed all SDK replay and production-package
-tests under the race detector. Non-generated statement coverage was replay
-10721/12874 (83.3%), unit 4314/12874 (33.5%), and combined 11107/12874 (86.3%).
-The replay gate includes ten pinned Source HID transcripts, eight hardware
-failure controls, and nineteen Source Photos materialization cases through the
-public SDK and filesystem. Generated code is excluded from these numerators
-and denominators. Final integrated repository checks, including contracts,
-verification tools, Source tests and the later assertion fixes, remain pending.
+The full `make check` baseline at `7586fc3` passed SDK and CLI race tests,
+contracts, all 136 pinned Source tests, and the HTTP occurrence gate
+(1,081 scenarios, 2,448 pairs, 76/76 routes). It failed the CLI replay coverage
+threshold. Non-generated SDK coverage at that baseline was replay
+10837/13021 (83.2%), unit 4395/13021 (33.8%), and combined 11235/13021 (86.3%).
+
+The paired CLI suites now reside in `tests/replay` (GO-12, LIB-07), with new
+Source-bound photo visitor, typed-input and private credential-export cases.
+At isolated CLI test commit `3d32439`, replay coverage passed at 985/1225 (80.4%)
+and combined coverage at 1013/1225 (82.7%); unit tests also passed. These receipts
+used the preceding public SDK pin and require a fresh run against the integrated
+SDK pin above. Generated files are excluded; the production denominator was
+unchanged by the test relocation.
+
+The current HTTP corpus contains 1,090 scenarios and 2,461 pairs. Focused Source
+checks for the new Photos and Reminders cases passed; the complete 138-test
+Source suite and final coverage profiles remain pending. The complete production
+source/model/network audit and its blocking Make/CI integration remain open.
+Focused proof controls passing does not establish actual-source conformance.
 
 Local documentation verification passed with renderer `07bbcec`: 99 HTML files,
 82 OpenAPI operations, both bridge directions and ten guides, including visible
