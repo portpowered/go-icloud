@@ -22,7 +22,7 @@ func checkReminderCLIReminder(t *testing.T, actual, source json.RawMessage) {
 		"due_date": "dueDate", "start_date": expectedReplayStartDate, "all_day": "allDay", "time_zone": "timeZone",
 		expectedSourceAlarmIDs: "alarmIDs", expectedSourceHashtagIDs: "hashtagIDs",
 		expectedSourceAttachmentIDs:     "attachmentIDs",
-		expectedSourceRecurrenceRuleIDs: "recurrenceRuleIDs", "parent_reminder_id": expectedParentReminderID,
+		expectedSourceRecurrenceRuleIDs: "recurrenceRuleIDs", expectedSourceParentID: expectedParentReminderID,
 		reminderCLISourceRevisionField: reminderCLIRevisionField} {
 		expected[after] = expected[before]
 		delete(expected, before)

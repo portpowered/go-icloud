@@ -67,8 +67,9 @@ func sourceWriteField(key string) string {
 	}
 
 	names := map[string]string{
-		"list_id": "listID", "reminder_id": expectedReplayReminderID, "parent_reminder_id": expectedParentReminderID,
-		"hashtag_ids": testHashtagIDsKey, "attachment_ids": testAttachmentIDsKey,
+		"list_id": "listID", "reminder_id": expectedReplayReminderID,
+		expectedSourceParentID: expectedParentReminderID,
+		"hashtag_ids":          testHashtagIDsKey, "attachment_ids": testAttachmentIDsKey,
 		"alarm_ids": testAlarmIDsKey, "recurrence_rule_ids": testRecurrenceRuleIDsKey,
 		"alarm_id": "alarmID", "alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID",
 		"file_asset_url":       "fileAssetURL",

@@ -78,6 +78,7 @@ const (
 	expectedSourceMasterID       = "master_id"
 	expectedSyntheticAccount     = "synthetic-account"
 	expectedParentReminderID     = "parentReminderID"
+	expectedSourceParentID       = "parent_reminder_id"
 	expectedOneAssetFixture      = "photos-assets-1"
 	expectedClientID             = "clientID"
 	expectedRecentPhotoFixture   = "photos-recently-added-one"
