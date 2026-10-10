@@ -300,7 +300,7 @@ jobs:
           go test -race -coverpkg=./pkg/...,./internal/... -coverprofile=coverage-combined.out ./tests/replay ./pkg/... ./internal/...
           go run ./tools/coverage -profile coverage-combined.out -min 80 -filtered-profile coverage-public.out
       - name: Render canonical references and all customer guides
-        uses: portpowered/api-docs-website-github-action@6f7f713fefae28b2526f140b1cfe0f52c2980e0d
+        uses: portpowered/api-docs-website-github-action@07bbcec19b7cf2037dac60db6e9ba3365d59dee8
         with:
           openapi: 'api/**/*.openapi.yaml'
           asyncapi: 'api/**/*.asyncapi.yaml'
@@ -309,7 +309,7 @@ jobs:
           title: go-icloud
           base-path: /go-icloud
           output: site
-          json-media-types: 'plain/text,*/*'
+          json-media-types: 'plain/text,text/plain;charset=UTF-8,*/*'
           schema-view: references
       - name: Add public coverage report and inspect every rendered link
         run: |

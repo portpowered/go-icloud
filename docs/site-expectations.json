@@ -202,7 +202,11 @@
     "Refresh a saved web token"
   ],
   "/go-icloud/docs/openapi/unknown/LogoutAuthSession": [
-    "LogoutAuthSession"
+    "LogoutAuthSession",
+    "Content-Type: text/plain;charset=UTF-8",
+    "--data-raw",
+    "\"trustBrowser\": true",
+    "\"allBrowsers\": true"
   ],
   "/go-icloud/docs/openapi/unknown/PhotosCountAlbums": [
     "Count photos in an album"
