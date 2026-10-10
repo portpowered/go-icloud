@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
@@ -278,9 +277,6 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 func nativeBridgeCommandState(t *testing.T, raw map[string]json.RawMessage) icloud.NativeAuthState {
 	t.Helper()
 	state := nativeCommandState(t, raw["initial_state"])
-	build, mastering := protocol.AuthClientBuildNumberValue, protocol.AuthClientMasteringNumberValue
-	state.Auth.ClientBuildNumber = &build
-	state.Auth.ClientMasteringNumber = &mastering
 	nativeSourceParameters(t, raw, &state)
 	initial := readRawObject(t, raw["initial_state"])
 	if value, exists := initial["requires_mfa"]; exists {
