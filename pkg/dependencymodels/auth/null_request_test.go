@@ -14,12 +14,14 @@ func TestSessionValidationRequestPermitsOnlyNull(t *testing.T) {
 		t.Fatalf("null request encoding: %s, %v", encoded, err)
 	}
 	for _, input := range []string{"null", " \n\t null \r"} {
-		if err := json.Unmarshal([]byte(input), &request); err != nil {
-			t.Errorf("valid null %q rejected: %v", input, err)
+		decodeErr := json.Unmarshal([]byte(input), &request)
+		if decodeErr != nil {
+			t.Errorf("valid null %q rejected: %v", input, decodeErr)
 		}
 	}
 	for _, input := range []string{"{}", "[]", "1", "true", `"null"`, "", "null null", "null {}"} {
-		if err := json.Unmarshal([]byte(input), &request); err == nil {
+		decodeErr := json.Unmarshal([]byte(input), &request)
+		if decodeErr == nil {
 			t.Errorf("invalid null request %q accepted", input)
 		}
 	}
