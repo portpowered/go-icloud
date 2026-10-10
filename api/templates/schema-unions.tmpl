@@ -1,0 +1,220 @@
+{{range .Types}}
+    {{$typeName := .TypeName -}}
+    {{$discriminator := .Schema.Discriminator}}
+    {{$schema := .Schema -}}
+    {{/* Supported contracts contain only unconstrained string/boolean object members.
+         General unions retain the pinned upstream behavior. */}}
+    {{$checked := and $schema.OAPISchema (not $discriminator) (not $schema.HasAdditionalProperties) (eq (len $schema.Properties) 0) -}}
+    {{if $checked -}}
+        {{$root := $schema.OAPISchema -}}
+        {{$checked = and (gt (len $root.OneOf) 0) (eq (len $root.AnyOf) 0) (eq (len $root.AllOf) 0) (not $root.Not) (not $root.Nullable) (not $root.Type) (eq (len $root.Enum) 0) (eq (printf "%T" $root.Const) "<nil>") -}}
+        {{range $root.OneOf -}}
+            {{if not .Value -}}{{$checked = false -}}{{else -}}
+                {{$member := .Value -}}
+                {{$checked = and $checked ($member.Type.Is "object") (not $member.Nullable) (eq (len $member.OneOf) 0) (eq (len $member.AnyOf) 0) (eq (len $member.AllOf) 0) (not $member.Not) (eq (len $member.Enum) 0) (eq (printf "%T" $member.Const) "<nil>") (not $member.AdditionalProperties.Schema) (eq $member.MinProps 0) (not $member.MaxProps) (eq (len $member.PatternProperties) 0) (eq (len $member.DependentSchemas) 0) (eq (len $member.DependentRequired) 0) (not $member.PropertyNames) (not $member.If) (not $member.Then) (not $member.Else) (not $member.UnevaluatedProperties.Has) (not $member.UnevaluatedProperties.Schema) -}}
+                {{range $member.Required -}}
+                    {{if not (index $member.Properties .) -}}{{$checked = false -}}{{end -}}
+                {{end -}}
+                {{range $member.Properties -}}
+                    {{if not .Value -}}{{$checked = false -}}{{else -}}
+                        {{$property := .Value -}}
+                        {{$checked = and $checked (or ($property.Type.Is "string") ($property.Type.Is "boolean")) (eq (len $property.OneOf) 0) (eq (len $property.AnyOf) 0) (eq (len $property.AllOf) 0) (not $property.Not) (eq (len $property.Enum) 0) (eq (printf "%T" $property.Const) "<nil>") (eq $property.Format "") (eq $property.Pattern "") (eq $property.MinLength 0) (not $property.MaxLength) -}}
+                    {{end -}}
+                {{end -}}
+            {{end -}}
+        {{end -}}
+    {{end -}}
+    {{if $checked -}}
+        // validate{{$typeName}} checks the generated oneOf contract without rewriting bytes.
+        func validate{{$typeName}}(data []byte) error {
+            var object map[string]interface{}
+            if err := json.Unmarshal(data, &object); err != nil { return err }
+            if object == nil { return errors.New("{{$typeName}} requires an object") }
+            matches := 0
+            {{range $index, $reference := $schema.OAPISchema.OneOf -}}
+                if matches{{$typeName}}Member{{$index}}(object) { matches++ }
+            {{end -}}
+            if matches != 1 { return errors.New("{{$typeName}} requires exactly one schema member") }
+            return nil
+        }
+        {{range $index, $reference := $schema.OAPISchema.OneOf -}}
+            {{$member := $reference.Value -}}
+            func matches{{$typeName}}Member{{$index}}(object map[string]interface{}) bool {
+                {{range $member.Required -}}
+                    if _, present := object[{{printf "%q" .}}]; !present { return false }
+                {{end -}}
+                {{range $name, $reference := $member.Properties -}}
+                    if value, present := object[{{printf "%q" $name}}]; present {
+                        {{if $reference.Value.Nullable -}} if value != nil { {{end -}}
+                        {{if $reference.Value.Type.Is "string" -}}
+                            if _, valid := value.(string); !valid { return false }
+                        {{else -}}
+                            if _, valid := value.(bool); !valid { return false }
+                        {{end -}}
+                        {{if $reference.Value.Nullable -}} } {{end -}}
+                    }
+                {{end -}}
+                {{if eq (printf "%s" $member.AdditionalProperties.MarshalJSON) "false" -}}
+                    for name := range object {
+                        switch name {
+                        {{range $name, $reference := $member.Properties -}}
+                        case {{printf "%q" $name}}:
+                        {{end -}}
+                        default: return false
+                        }
+                    }
+                {{end -}}
+                return true
+            }
+        {{end -}}
+    {{end -}}
+    {{range .Schema.UnionElements}}
+        {{$stamp := $schema.DiscriminatorStampFor . -}}
+        // As{{ .Method }} returns the union data inside the {{$typeName}} as a {{.}}
+        func (t {{$typeName}}) As{{ .Method }}() ({{.}}, error) {
+            var body {{.}}
+            err := json.Unmarshal(t.union, &body)
+            return body, err
+        }
+
+        // From{{ .Method }} overwrites any union data inside the {{$typeName}} as the provided {{.}}
+        func (t *{{$typeName}}) From{{ .Method }} (v {{.}}) error {
+            {{if and $stamp $stamp.Property -}}
+                {{if $stamp.Property.IsPointer -}}
+                    var discriminator {{$stamp.Property.Schema.TypeDecl}} = "{{$stamp.Value}}"
+                    t.{{$stamp.Property.GoFieldName}} = &discriminator
+                {{else -}}
+                    t.{{$stamp.Property.GoFieldName}} = "{{$stamp.Value}}"
+                {{end -}}
+            {{end -}}
+            b, err := json.Marshal(v)
+            {{if $stamp -}}
+                if err != nil {
+                    return err
+                }
+                b, err = runtime.JSONMerge(b, []byte(`{{$stamp.JSONPatch}}`))
+            {{end -}}
+            {{if $checked -}}
+                if err != nil { return err }
+                if err := validate{{$typeName}}(b); err != nil { return err }
+            {{end -}}
+            t.union = b
+            return err
+        }
+
+        // Merge{{ .Method }} performs a merge with any union data inside the {{$typeName}}, using the provided {{.}}
+        func (t *{{$typeName}}) Merge{{ .Method }} (v {{.}}) error {
+            {{if and $stamp $stamp.Property -}}
+                {{if $stamp.Property.IsPointer -}}
+                    var discriminator {{$stamp.Property.Schema.TypeDecl}} = "{{$stamp.Value}}"
+                    t.{{$stamp.Property.GoFieldName}} = &discriminator
+                {{else -}}
+                    t.{{$stamp.Property.GoFieldName}} = "{{$stamp.Value}}"
+                {{end -}}
+            {{end -}}
+            b, err := json.Marshal(v)
+            if err != nil {
+              return err
+            }
+            {{if $stamp -}}
+                b, err = runtime.JSONMerge(b, []byte(`{{$stamp.JSONPatch}}`))
+                if err != nil {
+                    return err
+                }
+            {{end}}
+            merged, err := runtime.JSONMerge(t.union, b)
+            {{if $checked -}}
+                if err != nil { return err }
+                if err := validate{{$typeName}}(merged); err != nil { return err }
+            {{end -}}
+            t.union = merged
+            return err
+        }
+    {{end}}
+
+    {{if $discriminator}}
+        func (t {{.TypeName}}) Discriminator() (string, error) {
+            var discriminator struct {
+                Discriminator string {{$discriminator.JSONTag}}
+            }
+            err := json.Unmarshal(t.union, &discriminator)
+            return discriminator.Discriminator, err
+        }
+
+        {{$cases := $schema.DiscriminatorCases -}}
+        {{if $cases}}
+            func (t {{.TypeName}}) ValueByDiscriminator() (interface{}, error) {
+                discriminator, err := t.Discriminator()
+                if err != nil {
+                    return nil, err
+                }
+                switch discriminator{
+                    {{range $cases -}}
+                        case "{{.Value}}":
+                            return t.As{{.Method}}()
+                    {{end -}}
+                    default:
+                        return nil, errors.New("unknown discriminator value: "+discriminator)
+                }
+            }
+        {{end}}
+    {{end}}
+
+    {{if not .Schema.HasAdditionalProperties}}
+
+    func (t {{.TypeName}}) MarshalJSON() ([]byte, error) {
+        {{if $checked -}}
+            if err := validate{{$typeName}}(t.union); err != nil { return nil, err }
+        {{end -}}
+        b, err := t.union.MarshalJSON()
+        {{if ne 0 (len .Schema.Properties) -}}
+            if err != nil {
+                return nil, err
+            }
+            object := make(map[string]json.RawMessage)
+            if t.union != nil {
+              err = json.Unmarshal(b, &object)
+              if err != nil {
+                return nil, err
+              }
+            }
+            {{range .Schema.Properties}}
+            {{if .RequiresNilCheck}}if t.{{.GoFieldName}} != nil { {{end}}
+                object["{{.JsonFieldName}}"], err = json.Marshal(t.{{.GoFieldName}})
+                if err != nil {
+                    return nil, fmt.Errorf("error marshaling '{{.JsonFieldName}}': %w", err)
+                }
+            {{if .RequiresNilCheck}} }{{end}}
+            {{end -}}
+            b, err = json.Marshal(object)
+        {{end -}}
+        return b, err
+    }
+
+    func (t *{{.TypeName}}) UnmarshalJSON(b []byte) error {
+        {{if $checked -}}
+            if err := validate{{$typeName}}(b); err != nil { return err }
+        {{end -}}
+        err := t.union.UnmarshalJSON(b)
+        {{if ne 0 (len .Schema.Properties) -}}
+            if err != nil {
+                return err
+            }
+            object := make(map[string]json.RawMessage)
+            err = json.Unmarshal(b, &object)
+            if err != nil {
+                return err
+            }
+            {{range .Schema.Properties}}
+                if raw, found := object["{{.JsonFieldName}}"]; found {
+                    err = json.Unmarshal(raw, &t.{{.GoFieldName}})
+                    if err != nil {
+                        return fmt.Errorf("error reading '{{.JsonFieldName}}': %w", err)
+                    }
+                }
+            {{end}}
+        {{end -}}
+        return err
+    }
+    {{end}}
+{{end}}
