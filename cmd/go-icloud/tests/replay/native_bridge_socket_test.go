@@ -3,9 +3,10 @@ package replay_test
 import (
 	"bytes"
 	"context"
+	"crypto/ecdh"
 	"crypto/ecdsa"
 	"crypto/elliptic"
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // RFC 6455 requires SHA-1 solely for its upgrade accept digest (GO-15).
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/binary"
@@ -24,23 +25,42 @@ import (
 
 	"github.com/portpowered/go-icloud/pkg/dependencies/bridgewebsocket"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/bridgepb"
-	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
 	"google.golang.org/protobuf/proto"
 )
 
+var (
+	errBridgeUndeclaredSRPEntropy              = errors.New("undeclared SRP entropy")
+	errBridgeUnboundedOptionalSignatureEntropy = errors.New("unbounded optional signature entropy")
+	errBridgeUnexpectedOptionalECDSAEntropy    = errors.New("unexpected optional ECDSA entropy")
+	errBridgeInvalidFixtureNonce               = errors.New("invalid fixture nonce")
+	errBridgeUndeclaredWebSocketOrUUIDEntropy  = errors.New("undeclared websocket or UUID entropy")
+	errBridgeSecureDialDeadlineDiffers         = errors.New("secure dial deadline differs")
+	errBridgeUndeclaredBridgeConnection        = errors.New("undeclared bridge connection")
+	errBridgeUnexpectedSecureDialTarget        = errors.New("unexpected secure dial target")
+	errBridgeUnboundedSignatureEntropy         = errors.New("unbounded signature entropy")
+	errBridgeUndeclaredBootstrapScalar         = errors.New("undeclared bootstrap scalar")
+	errBridgeUndeclaredProverScalar            = errors.New("undeclared prover scalar")
+	errBridgeIncorrectProverBound              = errors.New("incorrect prover bound")
+	errBridgeInvalidFixtureScalar              = errors.New("invalid fixture scalar")
+	errBridgeInvalidUpgradeTarget              = errors.New("invalid upgrade target")
+	errBridgeWebSocketEntropyDiffers           = errors.New("websocket entropy differs")
+	errBridgeFrameMaskEntropyDiffers           = errors.New("frame mask entropy differs")
+	errBridgeEntropyLength                     = errors.New("undeclared entropy length")
+)
+
 type sdkBridgeNetwork struct {
-	PrivateScalars []string `json:"private_scalars"`
+	PrivateScalars []string `json:"private_scalars"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
 	ProverRandom   []struct {
-		Upper string `json:"upper_hex"`
-		Value string `json:"value_hex"`
-	} `json:"prover_random"`
+		Upper string `json:"upper_hex"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
+		Value string `json:"value_hex"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
+	} `json:"prover_random"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
 	Connections []struct {
 		Connection bridgeSocketConnection `json:"connection"`
 		Bootstrap  struct {
-			Public     string `json:"public_key"`
+			Public     string `json:"public_key"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
 			Nonce      string `json:"nonce"`
-			Expiration uint32 `json:"expiration_seconds"`
+			Expiration uint32 `json:"expiration_seconds"` //nolint:tagliatelle // The pinned Source fixture field is snake_case (LIB-12).
 		} `json:"bootstrap"`
 		Events []bridgeSocketEvent `json:"events"`
 	} `json:"connections"`
@@ -55,8 +75,6 @@ type sdkBridgeReplay struct {
 	timeline, httpIndex, connectionIndex int
 	sockets                              []*sdkBridgeSocket
 	entropy                              sdkBridgeEntropy
-	session                              *icloud.NativeBridgeSession
-	overlap, overlapChecked              bool
 }
 
 type sdkBridgeEntropy struct {
@@ -72,17 +90,17 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 	switch len(destination) {
 	case 256:
 		if len(r.initial) != 256 {
-			return 0, errors.New("undeclared SRP entropy")
+			return 0, errBridgeUndeclaredSRPEntropy
 		}
 		copy(destination, r.initial)
 		r.initial = nil
 	case 1:
 		r.signatureReads++
 		if r.signatureReads > 4 {
-			return 0, errors.New("unbounded optional signature entropy")
+			return 0, errBridgeUnboundedOptionalSignatureEntropy
 		}
 		if !r.signing {
-			return 0, errors.New("unexpected optional ECDSA entropy")
+			return 0, errBridgeUnexpectedOptionalECDSAEntropy
 		}
 	case 8:
 		r.nonceReads++
@@ -94,14 +112,14 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 		}
 		nonce, err := base64.StdEncoding.DecodeString(r.replay.network.Connections[index].Bootstrap.Nonce)
 		if err != nil || len(nonce) != 17 {
-			return 0, errors.New("invalid fixture nonce")
+			return 0, errBridgeInvalidFixtureNonce
 		}
 		copy(destination, nonce[9:])
 		r.signing = true
 	case 16:
 		r.wideReads++
 		if r.wideReads > len(r.replay.network.Connections)+1 {
-			return 0, errors.New("undeclared websocket or UUID entropy")
+			return 0, errBridgeUndeclaredWebSocketOrUUIDEntropy
 		}
 		if r.uuid {
 			destination[3] = 1
@@ -120,11 +138,16 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 	case 32:
 		return r.readScalar(destination)
 	default:
-		return 0, fmt.Errorf("undeclared entropy length %d", len(destination))
+		return 0, fmt.Errorf("undeclared entropy length %d: %w", len(destination), errBridgeEntropyLength)
 	}
 	return len(destination), nil
 }
 
+func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, error) {
+	r.take(map[string]any{"surface": "http", "exchange": float64(r.httpIndex)})
+	r.httpIndex++
+	return r.http.RoundTrip(request)
+}
 func (r *sdkBridgeReplay) take(event map[string]any) {
 	r.t.Helper()
 	r.mu.Lock()
@@ -138,25 +161,20 @@ func (r *sdkBridgeReplay) take(event map[string]any) {
 	r.timeline++
 }
 
-func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, error) {
-	r.take(map[string]any{"surface": "http", "exchange": float64(r.httpIndex)})
-	r.httpIndex++
-	return r.http.RoundTrip(request)
-}
 func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (net.Conn, error) {
 	deadline, bounded := ctx.Deadline()
 	if !bounded || time.Until(deadline) <= 0 || time.Until(deadline) > 30*time.Second {
-		return nil, errors.New("secure dial deadline differs")
+		return nil, errBridgeSecureDialDeadlineDiffers
 	}
 	index := r.connectionIndex
 	if index >= len(r.network.Connections) {
-		return nil, errors.New("undeclared bridge connection")
+		return nil, errBridgeUndeclaredBridgeConnection
 	}
 	expected := r.network.Connections[index]
 	if network != "tcp" || address != "bridge.example.invalid:443" {
-		return nil, errors.New("unexpected secure dial target")
+		return nil, errBridgeUnexpectedSecureDialTarget
 	}
-	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: &bridgeScriptSocket{events: append([]bridgeSocketEvent(nil), expected.Events...)}}
+	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: &bridgeScriptSocket{mu: sync.Mutex{}, events: append([]bridgeSocketEvent(nil), expected.Events...), pending: nil, cursor: 0, closed: false, failure: nil}}
 	r.sockets = append(r.sockets, socket)
 	for _, operation := range []string{"connect", "wrap", "timeout"} {
 		socket.mark(operation, 0)
@@ -170,14 +188,6 @@ type sdkBridgeSocket struct {
 	*bridgeScriptSocket
 	owner *sdkBridgeReplay
 	index int
-}
-
-func (s *sdkBridgeSocket) mark(operation string, event int) {
-	value := map[string]any{"surface": "socket", "connection": float64(s.index), "operation": operation}
-	if operation == "send" || operation == "receive" || operation == "close" {
-		value["event"] = float64(event)
-	}
-	s.owner.take(value)
 }
 
 func (s *sdkBridgeSocket) Write(payload []byte) (int, error) {
@@ -210,6 +220,14 @@ func (s *sdkBridgeSocket) Close() error {
 	return s.bridgeScriptSocket.Close()
 }
 
+func (s *sdkBridgeSocket) mark(operation string, event int) {
+	value := map[string]any{"surface": "socket", "connection": float64(s.index), "operation": operation}
+	if operation == "send" || operation == "receive" || operation == "close" {
+		value["event"] = float64(event)
+	}
+	s.owner.take(value)
+}
+
 func (s *sdkBridgeSocket) validateBootstrap(path string) {
 	s.owner.t.Helper()
 	raw, err := hex.DecodeString(path)
@@ -235,41 +253,48 @@ func (s *sdkBridgeSocket) validateBootstrap(path string) {
 	if len(public) != 65 || len(nonce) != 17 || nonce[0] != 0 || len(signature) < 2 || !bytes.Equal(signature[:2], []byte{1, 3}) {
 		s.owner.t.Fatal("bootstrap field layout differs")
 	}
-	x, y := elliptic.Unmarshal(elliptic.P256(), public)
+	validated, keyErr := ecdh.P256().NewPublicKey(public)
+	if keyErr != nil {
+		s.owner.t.Fatal(keyErr)
+	}
+	point := validated.Bytes()
+	x := new(big.Int).SetBytes(point[1:33])
+	y := new(big.Int).SetBytes(point[33:])
 	digest := sha256.Sum256(nonce)
-	if x == nil || !ecdsa.VerifyASN1(&ecdsa.PublicKey{Curve: elliptic.P256(), X: x, Y: y}, digest[:], signature[2:]) {
+	if !ecdsa.VerifyASN1(&ecdsa.PublicKey{Curve: elliptic.P256(), X: x, Y: y}, digest[:], signature[2:]) {
 		s.owner.t.Fatal("bootstrap signature rejected")
 	}
 }
 
 func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
 	var scalar *big.Int
-	if r.signing {
+	switch {
+	case r.signing:
 		r.signatureReads++
 		if r.signatureReads > 4 {
-			return 0, errors.New("unbounded signature entropy")
+			return 0, errBridgeUnboundedSignatureEntropy
 		}
 		scalar = big.NewInt(1)
-	} else if r.private == 0 {
+	case r.private == 0:
 		if len(r.replay.network.PrivateScalars) != 1 {
-			return 0, errors.New("undeclared bootstrap scalar")
+			return 0, errBridgeUndeclaredBootstrapScalar
 		}
 		scalar, _ = new(big.Int).SetString(r.replay.network.PrivateScalars[r.private], 16)
 		r.private++
-	} else {
+	default:
 		if r.prover >= len(r.replay.network.ProverRandom) {
-			return 0, errors.New("undeclared prover scalar")
+			return 0, errBridgeUndeclaredProverScalar
 		}
 		sample := r.replay.network.ProverRandom[r.prover]
 		r.prover++
 		upper, ok := new(big.Int).SetString(sample.Upper, 0)
 		if !ok || upper.Cmp(elliptic.P256().Params().N) != 0 {
-			return 0, errors.New("incorrect prover bound")
+			return 0, errBridgeIncorrectProverBound
 		}
 		scalar, _ = new(big.Int).SetString(sample.Value, 0)
 	}
 	if scalar == nil {
-		return 0, errors.New("invalid fixture scalar")
+		return 0, errBridgeInvalidFixtureScalar
 	}
 	scalar.FillBytes(destination)
 	return len(destination), nil
@@ -278,7 +303,7 @@ func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
 func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	lines := strings.Split(string(payload), "\r\n")
 	if len(lines) < 2 || !strings.HasPrefix(lines[0], "GET /v2/") || !strings.HasSuffix(lines[0], " HTTP/1.1") {
-		return nil, errors.New("invalid upgrade target")
+		return nil, errBridgeInvalidUpgradeTarget
 	}
 	path := strings.TrimSuffix(strings.TrimPrefix(lines[0], "GET /v2/"), " HTTP/1.1")
 	s.validateBootstrap(path)
@@ -287,11 +312,12 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	for index, line := range lines {
 		if strings.HasPrefix(line, "Sec-WebSocket-Key:") {
 			if line != "Sec-WebSocket-Key: "+key {
-				return nil, errors.New("websocket entropy differs")
+				return nil, errBridgeWebSocketEntropyDiffers
 			}
 			lines[index] = "Sec-WebSocket-Key: AAAAAAAAAAAAAAAAAAAAAA=="
 		}
 	}
+	//nolint:gosec // RFC 6455 uses SHA-1 to bind the upgrade nonce, not for a security signature (GO-15).
 	digest := sha1.Sum([]byte(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
 	s.events[1].Template = strings.ReplaceAll(s.events[1].Template, "{accept}", base64.StdEncoding.EncodeToString(digest[:]))
 	payload = []byte(strings.Join(lines, "\r\n"))
@@ -308,8 +334,9 @@ func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 		offset += 8
 	}
 	if len(payload) < offset+4 || !bytes.Equal(payload[offset:offset+4], []byte{0, 1, 2, 3}) {
-		return nil, errors.New("frame mask entropy differs")
+		return nil, errBridgeFrameMaskEntropyDiffers
 	}
+
 	for index := offset + 4; index < len(payload); index++ {
 		payload[index] ^= payload[offset+(index-offset-4)%4]
 	}
