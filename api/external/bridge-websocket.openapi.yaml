@@ -49,6 +49,10 @@ components:
       type: integer
       enum: [15]
       x-enum-varnames: [FrameOpcodeMask]
+    HeaderPosition:
+      type: integer
+      enum: [0,1]
+      x-enum-varnames: [FrameOpcodePosition,FrameLengthPosition]
     ExtensionLengths:
       type: integer
       enum: [2,8]
@@ -137,6 +141,30 @@ components:
                           args:
                             - {kind: index}
                             - {kind: length, args: [{kind: input, input: mask}]}
+        frameDecode:
+          headerWidth: {$ref: '#/components/schemas/ExtensionLengths/values/MediumLengthBytes'}
+          opcode:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameOpcodePosition'}
+            mask: {$ref: '#/components/schemas/OpcodeMask/values/FrameOpcodeMask'}
+          finished:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameOpcodePosition'}
+            mask: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}
+          length:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameLengthPosition'}
+            mask: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_LONG_MARKER'}
+            markers:
+              - marker: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_SHORT_LIMIT'}
+                width: 16
+                order: big
+              - marker: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_LONG_MARKER'}
+                width: 64
+                order: big
+            default: short
+          mask:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameLengthPosition'}
+            flag: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}
+            width: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_MASK_BYTES'}
+          payload: {width: length, xor: mask, indexModulo: mask.length}
       properties:
         opcode:
           type: integer

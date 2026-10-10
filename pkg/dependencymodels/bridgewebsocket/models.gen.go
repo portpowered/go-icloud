@@ -88,6 +88,24 @@ func (e HeaderLine) Valid() bool {
 	}
 }
 
+// Defines values for HeaderPosition.
+const (
+	FrameLengthPosition HeaderPosition = 1
+	FrameOpcodePosition HeaderPosition = 0
+)
+
+// Valid indicates whether the value is a known member of the HeaderPosition enum.
+func (e HeaderPosition) Valid() bool {
+	switch e {
+	case FrameLengthPosition:
+		return true
+	case FrameOpcodePosition:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LineSeparator.
 const (
 	CarriageReturn LineSeparator = 13
@@ -214,6 +232,9 @@ type Frame struct {
 
 // HeaderLine defines model for HeaderLine.
 type HeaderLine string
+
+// HeaderPosition defines model for HeaderPosition.
+type HeaderPosition int
 
 // LineSeparator defines model for LineSeparator.
 type LineSeparator int

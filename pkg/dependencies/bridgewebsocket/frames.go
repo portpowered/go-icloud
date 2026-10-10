@@ -174,10 +174,10 @@ func (c *Conn) readFrame() (model.Frame, error) {
 	}
 
 	fin := byte(pb.Framing_FRAMING_FIN_MASK)
-	result.Opcode = pb.Opcode(header[0] & byte(model.FrameOpcodeMask))
-	result.Finished = header[0]&fin != 0
+	result.Opcode = pb.Opcode(header[model.FrameOpcodePosition] & byte(model.FrameOpcodeMask))
+	result.Finished = header[model.FrameOpcodePosition]&fin != 0
 
-	length, err := c.readLength(header[1] & byte(pb.Framing_FRAMING_LONG_MARKER))
+	length, err := c.readLength(header[model.FrameLengthPosition] & byte(pb.Framing_FRAMING_LONG_MARKER))
 	if err != nil {
 		return *result, err
 	}
@@ -187,7 +187,7 @@ func (c *Conn) readFrame() (model.Frame, error) {
 	}
 
 	mask := []byte{}
-	if header[1]&fin != 0 {
+	if header[model.FrameLengthPosition]&fin != 0 {
 		mask = make([]byte, int(pb.Framing_FRAMING_MASK_BYTES))
 
 		_, err = io.ReadFull(c.reader, mask)
