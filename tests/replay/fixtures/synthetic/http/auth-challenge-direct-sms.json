@@ -1,0 +1,258 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; implementation-derived",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "service": "auth",
+  "initial_state": {
+    "account_name": "synthetic@example.invalid",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "params": {
+      "clientId": "synthetic-client"
+    },
+    "session_data": {
+      "client_id": "synthetic-client",
+      "account_country": "USA",
+      "session_token": "synthetic-srp-token"
+    },
+    "cookies": [
+      {
+        "name": "synthetic-auth-cookie",
+        "value": "synthetic-auth-value",
+        "domain": ".apple.com",
+        "path": "/",
+        "secure": true,
+        "rest": {
+          "HttpOnly": null
+        }
+      }
+    ],
+    "account_data": {}
+  },
+  "inputs": [],
+  "operation": "_get_mfa_auth_options",
+  "keyword_inputs": {},
+  "exchanges": [
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "text/html"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJ0cnVzdGVkUGhvbmVOdW1iZXIiOiB7ImlkIjogMSwgIm51bWJlcldpdGhEaWFsQ29kZSI6ICJzeW50aGV0aWMtbWFza2VkIiwgInB1c2hNb2RlIjogInNtcyJ9LCAibW9kZSI6ICJzbXMifQ=="
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "origin": "https://idmsa.apple.com",
+        "path": "/appleauth/auth",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "x-apple-oauth-client-id",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-oauth-client-type",
+            "firstPartyAuth"
+          ],
+          [
+            "x-apple-oauth-redirect-uri",
+            "https://www.icloud.com"
+          ],
+          [
+            "x-apple-oauth-require-grant-code",
+            "true"
+          ],
+          [
+            "x-apple-oauth-response-mode",
+            "web_message"
+          ],
+          [
+            "x-apple-oauth-response-type",
+            "code"
+          ],
+          [
+            "x-apple-oauth-state",
+            "synthetic-client"
+          ],
+          [
+            "x-apple-widget-key",
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+          ],
+          [
+            "x-apple-fd-client-info",
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+          ],
+          [
+            "referer",
+            "https://idmsa.apple.com"
+          ],
+          [
+            "x-apple-frame-id",
+            "synthetic-client"
+          ],
+          [
+            "cookie",
+            "synthetic-auth-cookie=synthetic-auth-value"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": ""
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "e30="
+        }
+      }
+    }
+  ],
+  "result": {
+    "value": {
+      "trustedPhoneNumber": {
+        "id": 1,
+        "numberWithDialCode": "synthetic-masked",
+        "pushMode": "sms"
+      },
+      "mode": "sms",
+      "authInitialRoute": "",
+      "hasTrustedDevices": false,
+      "authFactors": []
+    },
+    "auth_state": {
+      "account": {},
+      "params": {
+        "clientBuildNumber": "2534Project66",
+        "clientMasteringNumber": "2534B22",
+        "clientId": "synthetic-client"
+      },
+      "session_data": {
+        "client_id": "synthetic-client",
+        "account_country": "USA",
+        "session_token": "synthetic-srp-token"
+      },
+      "challenge": {},
+      "requires_mfa": false,
+      "cookies": [
+        {
+          "name": "synthetic-auth-cookie",
+          "value": "synthetic-auth-value",
+          "domain": ".apple.com",
+          "path": "/",
+          "secure": true,
+          "expires": null,
+          "discard": true,
+          "attributes": {
+            "HttpOnly": null
+          }
+        }
+      ],
+      "webservices": null,
+      "requires_2fa": false,
+      "requires_2sa": false,
+      "trusted_session": false,
+      "delivery_method": "unknown",
+      "code_requested": false,
+      "session_file_exists": true,
+      "cookie_file_exists": true
+    },
+    "arguments": []
+  }
+}

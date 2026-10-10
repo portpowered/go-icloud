@@ -14,7 +14,8 @@ func TestReminderAttachmentWritePortableScenarios(t *testing.T) {
 
 	for _, name := range []string{"create-url-attachment-success", "create-url-attachment-record-error",
 		"update-attachment-success", "update-attachment-record-error", "update-image-success",
-		"delete-attachment-success", "delete-attachment-record-error", "delete-attachment-empty-id-success"} {
+		"delete-attachment-success", "delete-attachment-record-error", "delete-attachment-empty-id-success",
+		"delete-image-success"} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			runReminderAttachmentWrite(t, replayLiteralFixturesSyntheticHTTPReminders+name+".json")

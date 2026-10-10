@@ -18,6 +18,21 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_direct_authentication_challenge(self):
+        for name, exchanges in [
+            ("auth-challenge-direct-sms", 2),
+            ("auth-challenge-direct-refused", 1),
+        ]:
+            with self.subTest(name=name):
+                self.assertEqual(
+                    replay_synthetic(FIXTURES / (name + ".json")), exchanges
+                )
+
+    def test_image_attachment_deletion(self):
+        self.assertEqual(
+            replay_synthetic(FIXTURES / "reminders-delete-image-success.json"), 1
+        )
+
     def test_photo_selector_html_and_literal_escape_source_bytes(self):
         for name in [
             "photos-albums-parent-html-escaped-literal",
