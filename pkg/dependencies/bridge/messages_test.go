@@ -13,6 +13,7 @@ import (
 // Python _decode_fields consumers; repeated subscription apps remain ordered.
 func TestServerDuplicateFields(t *testing.T) {
 	t.Parallel()
+
 	first := new(bridgepb.ServerMessage)
 	first.Connection = new(bridgepb.ConnectionResponse)
 	first.Connection.PushTokenBase64 = []byte("first")
@@ -25,12 +26,14 @@ func TestServerDuplicateFields(t *testing.T) {
 	second.Connection = new(bridgepb.ConnectionResponse)
 	second.Connection.PushTokenBase64 = []byte("second")
 	second.Connection.Status = proto.Uint64(2)
-	second.Push = &bridgepb.PushMessage{Topic: []byte("other"), MessageId: proto.Uint64(2), Payload: []byte("other payload")}
+	second.Push = &bridgepb.PushMessage{Topic: []byte("other"), MessageId: proto.Uint64(2),
+		Payload: []byte("other payload")}
 	encoded := duplicateWire(t, first, second)
 	decoded, err := bridge.DecodeServerMessage(encoded)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !proto.Equal(decoded, first) {
 		t.Fatalf("first singular fields: %v", decoded)
 	}
@@ -43,6 +46,7 @@ func TestServerDuplicateFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !proto.Equal(decoded.GetConnection(), first.GetConnection()) || !proto.Equal(decoded.GetPush(), first.GetPush()) {
 		t.Fatalf("nested first singular fields: %v", decoded)
 	}

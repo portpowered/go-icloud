@@ -208,6 +208,7 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	script := new(bridgeScriptSocket)
 	script.events = append([]bridgeSocketEvent(nil), expected.Events...)
 	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: script}
+
 	r.sockets = append(r.sockets, socket)
 	for _, operation := range []string{"connect", "wrap", "timeout"} {
 		socket.mark(operation, 0)
@@ -275,9 +276,9 @@ func (s *sdkBridgeSocket) validateBootstrap(path string) {
 	canonical, err := proto.Marshal(message)
 	if err != nil ||
 		!bytes.Equal(canonical, raw) ||
-		message.Connection == nil ||
-		message.Subscription != nil ||
-		message.Acknowledgement != nil ||
+		message.GetConnection() == nil ||
+		message.GetSubscription() != nil ||
+		message.GetAcknowledgement() != nil ||
 		len(message.ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap envelope differs")
 	}
@@ -356,9 +357,9 @@ type sdkBridgeControls struct {
 }
 
 func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeControls) {
-	lateFailure, snapshot, control := controls.lateFailure, controls.snapshot, controls.after
-
 	t.Helper()
+
+	lateFailure, snapshot, control := controls.lateFailure, controls.snapshot, controls.after
 	raw, transport, state := nativeFlowFixture(t, name)
 	if lateFailure {
 		transport = nativeBridgeTrustFailureFixture(t, raw)
@@ -498,6 +499,7 @@ func nativeBridgeSnapshotOwnership(t *testing.T, session *icloud.NativeBridgeSes
 	t.Helper()
 	// Mutating detached snapshots must not change the owner.
 	var identifierBefore []byte
+
 	if len(progress.State.Challenge.PhoneNumbers) > 0 {
 		identifier, err := progress.State.Challenge.PhoneNumbers[0].ID.MarshalJSON()
 		if err != nil {
@@ -545,7 +547,8 @@ func nativeBridgeTrustFailureFixture(t *testing.T, raw map[string]json.RawMessag
 		"synthetic-rotated-session"}, {"X-Apple-Session-Token", "synthetic-rotated-token"},
 		{"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {"Set-Cookie",
 			"synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}},
-		Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`)}}
+		Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`),
+			Matchers: nil, ContentTypePattern: "", Parts: nil}}
 	var network sdkBridgeNetwork
 	authReplayDecode(t, raw["bridge_network"], &network)
 	network.Timeline = network.Timeline[:len(network.Timeline)-1]
@@ -699,7 +702,11 @@ func nativeBridgeSMSFallback(t *testing.T, client *icloud.SDK, flow *sdkBridgeFl
 		flow.values = append(flow.values, true)
 	}
 
-	return err
+	if err != nil {
+		return fmt.Errorf("%w", err)
+	}
+
+	return nil
 }
 
 func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage,
@@ -820,7 +827,7 @@ func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, ses
 		headers.Add(header.Name, header.Value)
 	}
 	if headers.Get("Scnt") != "synthetic-rotated-scnt" ||
-		headers.Get("X-Apple-ID-Session-Id") != "synthetic-rotated-session" {
+		headers.Get("X-Apple-Id-Session-Id") != "synthetic-rotated-session" {
 		t.Fatal("partial trust continuation headers lost")
 	}
 	found := false
@@ -836,6 +843,7 @@ func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, ses
 
 func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
 	var scalar *big.Int
+
 	switch {
 	case r.signing:
 		r.signatureReads++
@@ -896,6 +904,7 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 	payload = append([]byte(nil), payload...)
 	offset := 2
+
 	switch payload[1] & 127 {
 	case 126:
 		offset += 2
@@ -983,6 +992,7 @@ func TestNativeBridgeFailedOpenReturnsClosedOwner(t *testing.T) {
 			if state.Active || state.SessionID != "" || state.NextStep != "" || !state.TransactionID.IsNull() {
 				t.Fatal("failed-open owner exposed active challenge")
 			}
+
 			if len(state.Responses) != 1 || state.Responses[0].StatusCode != http.StatusServiceUnavailable {
 				t.Fatal("failed-open owner lost current provider metadata")
 			}

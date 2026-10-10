@@ -74,7 +74,8 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	}
 
 	var boot bridgeModels.BridgeBootstrapDirect
-	if err := json.Unmarshal(progress.state.Challenge.BridgeBootstrap, &boot); err != nil {
+	err = json.Unmarshal(progress.state.Challenge.BridgeBootstrap, &boot)
+	if err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
 	if boot.TwoSV == nil || boot.TwoSV.BridgeInitiateData == nil {
@@ -179,7 +180,8 @@ func (session *NativeBridgeSession) Close() error {
 		return nil
 	}
 
-	if err := session.connection.Close(); err != nil {
+	err := session.connection.Close()
+	if err != nil {
 		return session.failure("NativeBridgeSession.Close", err)
 	}
 	return nil
@@ -192,7 +194,8 @@ func nativeBridgeConfig(options []NativeBridgeOption) (*nativeBridgeConfiguratio
 		if option == nil {
 			return nil, errNativeBridgeOption
 		}
-		if err := option(configuration); err != nil {
+		err := option(configuration)
+		if err != nil {
 			return nil, err
 		}
 	}

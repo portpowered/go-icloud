@@ -99,7 +99,6 @@ func canonicalFields(payload []byte, descriptor protoreflect.MessageDescriptor) 
 		value := payload[count:]
 
 		remaining, err := validateField(value, wireType, field)
-
 		if err != nil {
 			return nil, err
 		}
@@ -130,7 +129,6 @@ func canonicalField(value []byte, wireType protowire.Type, field protoreflect.Fi
 	message, _ := protowire.ConsumeBytes(value)
 
 	canonical, err := canonicalFields(message, field.Message())
-
 	if err != nil {
 		return nil, err
 	}
