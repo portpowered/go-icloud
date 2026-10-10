@@ -32,6 +32,10 @@ func TestAuthenticationCallRejectsIncompatibleMediaBeforeTransport(t *testing.T)
 			headers: http.Header{"Content-Type": {"application/json"}}},
 		"second-header": {call: webtransport.InitAuthSRPCall{Origin: origin},
 			headers: http.Header{"Content-Type": {"application/json", wrong}}},
+		"lowercase-header": {call: webtransport.InitAuthSRPCall{Origin: origin},
+			headers: http.Header{"content-type": {wrong}}},
+		"mixedcase-header": {call: webtransport.InitAuthSRPCall{Origin: origin},
+			headers: http.Header{"Content-Type": {"application/json"}, "CONTENT-TYPE": {wrong}}},
 		"retrieval-header": {call: webtransport.GetAuthChallengeCall{Origin: origin},
 			headers: http.Header{"Content-Type": {wrong}}},
 	} {
@@ -60,6 +64,8 @@ func TestAuthenticationCallEmitsItsCanonicalMedia(t *testing.T) {
 		"retrieval-absent": {call: webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test"}},
 		"retrieval-json": {call: webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test"},
 			headers: http.Header{"Content-Type": {"application/json", "application/json"}}, media: "application/json"},
+		"mixedcase-json": {call: webtransport.InitAuthSRPCall{Origin: "https://accounts.example.test"},
+			headers: http.Header{"content-type": {"application/json"}, "Content-Type": {"application/json"}}, media: "application/json"},
 	} {
 		t.Run(name, func(t *testing.T) {
 			calls := 0
@@ -68,6 +74,11 @@ func TestAuthenticationCallEmitsItsCanonicalMedia(t *testing.T) {
 				values := request.Header.Values("Content-Type")
 				if request.Header.Get("Content-Type") != testcase.media || len(values) > 1 {
 					t.Fatalf("actual sent media differs from the operation: %v", values)
+				}
+				for name := range request.Header {
+					if http.CanonicalHeaderKey(name) == "Content-Type" && name != "Content-Type" {
+						t.Fatalf("case-variant media survived normalization: %s", name)
+					}
 				}
 				return findMyTestResponse(`{}`), nil
 			}))

@@ -30,7 +30,7 @@ func authenticationCallMedia(call AuthenticationCall) string {
 }
 
 func validateAuthenticationMedia(initial, caller http.Header, expected string) error {
-	for _, headers := range []http.Header{initial, caller} {
+	for _, headers := range []http.Header{normalizeAuthenticationHeaders(initial), normalizeAuthenticationHeaders(caller)} {
 		for _, value := range headers.Values(protocol.AuthHTTPContentTypeName) {
 			if value == "" {
 				continue
@@ -49,7 +49,7 @@ func validateAuthenticationMedia(initial, caller http.Header, expected string) e
 
 func authenticationHeaders(request *http.Request, caller http.Header, media string) {
 	initialMedia := request.Header.Get(protocol.AuthHTTPContentTypeName)
-	request.Header = callerHeaders(caller)
+	request.Header = normalizeAuthenticationHeaders(caller)
 	if media != "" {
 		request.Header.Set(protocol.AuthHTTPContentTypeName, media)
 	} else if initialMedia != "" || request.Header.Get(protocol.AuthHTTPContentTypeName) != "" {
@@ -57,4 +57,14 @@ func authenticationHeaders(request *http.Request, caller http.Header, media stri
 	} else {
 		request.Header.Del(protocol.AuthHTTPContentTypeName)
 	}
+}
+
+func normalizeAuthenticationHeaders(caller http.Header) http.Header {
+	result := http.Header(make(httpboundary.CallerHeaderMap))
+	for name, values := range caller {
+		for _, value := range values {
+			result.Add(name, value)
+		}
+	}
+	return result
 }
