@@ -66,35 +66,12 @@ func (client *Client) PhotosAlbumCount(
 	return &PhotosCountResponse{Data: data, Metadata: response}, nil
 }
 
-func decodePhotosCount(body []byte) (cloudkit.PhotosCountResponse, error) {
-	var data cloudkit.PhotosCountResponse
-
-	body, err := photosCountJSON(body)
-	if err != nil {
-		return data, err
-	}
-
-	fields, err := accountFields(body)
-	if err != nil {
-		return data, err
-	}
-
-	if !reminderModelRequired(reflect.TypeFor[cloudkit.PhotosCountResponse](), fields) {
-		return data, errPhotosCountShape
-	}
-
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		return data, fmt.Errorf("decode photo count: %w", err)
-	}
-
-	return data, nil
-}
-
 // Source JSON decoding rounds decimal and exponent numbers to binary64 before
 // its integer model validates them. Keep plain JSON integers exact, and retain
 // the original HTTP bytes separately as response evidence.
-func photosCountJSON(body []byte) ([]byte, error) {
+func decodePhotosCount(body []byte) (cloudkit.PhotosCountResponse, error) {
+	var data cloudkit.PhotosCountResponse
+
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.UseNumber()
 
@@ -102,7 +79,7 @@ func photosCountJSON(body []byte) ([]byte, error) {
 
 	err := decoder.Decode(&value)
 	if err != nil {
-		return nil, fmt.Errorf("decode photo count numbers: %w", err)
+		return data, fmt.Errorf("decode photo count numbers: %w", err)
 	}
 
 	// Unmarshal also rejects trailing JSON before normalization replaces bytes.
@@ -110,7 +87,7 @@ func photosCountJSON(body []byte) ([]byte, error) {
 
 	err = json.Unmarshal(body, &complete)
 	if err != nil {
-		return nil, fmt.Errorf("decode photo count document: %w", err)
+		return data, fmt.Errorf("decode photo count document: %w", err)
 	}
 
 	path := []string{protocol.PhotosCountResponseBatch, protocol.PhotosCountResponseBatchRecords,
@@ -118,10 +95,32 @@ func photosCountJSON(body []byte) ([]byte, error) {
 
 	normalized, err := json.Marshal(photosCountNumbers(value, path))
 	if err != nil {
-		return nil, fmt.Errorf("normalize photo count numbers: %w", err)
+		return data, fmt.Errorf("normalize photo count numbers: %w", err)
 	}
 
-	return normalized, nil
+	// The generated open-property map retains the normalized member presence
+	// before decoding required fields into the generated response model.
+	var fields map[string]cloudkit.CKUnknownJSON
+
+	err = json.Unmarshal(normalized, &fields)
+	if err != nil {
+		return data, fmt.Errorf("decode account object: %w", err)
+	}
+
+	if fields == nil {
+		return data, errAccountShape
+	}
+
+	if !reminderModelRequired(reflect.TypeFor[cloudkit.PhotosCountResponse](), fields) {
+		return data, errPhotosCountShape
+	}
+
+	err = json.Unmarshal(normalized, &data)
+	if err != nil {
+		return data, fmt.Errorf("decode photo count: %w", err)
+	}
+
+	return data, nil
 }
 
 func photosCountNumbers(value any, path []string) any {

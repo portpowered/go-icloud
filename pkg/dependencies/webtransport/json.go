@@ -60,7 +60,14 @@ func referenceJSONFields(value any, fields []string) ([]byte, error) {
 
 	output.WriteByte('}')
 
-	return referenceJSON(json.RawMessage(output.Bytes()))
+	var compact bytes.Buffer
+
+	err = json.Compact(&compact, output.Bytes())
+	if err != nil {
+		return nil, fmt.Errorf("compact ordered request object: %w", err)
+	}
+
+	return referenceJSONSpacing(compact.Bytes()), nil
 }
 
 // referenceJSON preserves the pinned client's JSON spacing and ASCII string encoding.
@@ -76,11 +83,15 @@ func referenceJSON(value any) ([]byte, error) {
 		return nil, fmt.Errorf("encode web request: %w", err)
 	}
 
+	return referenceJSONSpacing(bytes.TrimSuffix(encoded.Bytes(), []byte{'\n'})), nil
+}
+
+func referenceJSONSpacing(encoded []byte) []byte {
 	var formatted bytes.Buffer
 
 	quoted, escaped := false, false
 
-	for _, character := range string(bytes.TrimSuffix(encoded.Bytes(), []byte{'\n'})) {
+	for _, character := range string(encoded) {
 		writeASCII(&formatted, character)
 
 		if escaped {
@@ -99,7 +110,7 @@ func referenceJSON(value any) ([]byte, error) {
 		}
 	}
 
-	return formatted.Bytes(), nil
+	return formatted.Bytes()
 }
 
 func writeASCII(output *bytes.Buffer, character rune) {

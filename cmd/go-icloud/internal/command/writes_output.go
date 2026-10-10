@@ -46,10 +46,9 @@ func finishWriteResult(ctx context.Context, result any, path string) (any, error
 // Preserve semantic fields while excluding credentials and uninterpreted provider
 // material. This projection is applied before the shared console encoder.
 func safeWriteResult(result any) (any, error) {
-	result = typedWriteProjection(result)
-	result = typedReadProjection(result)
+	projected := typedReadProjection(typedWriteProjection(result))
 
-	data, err := json.Marshal(result)
+	data, err := json.Marshal(projected)
 	if err != nil {
 		return nil, fmt.Errorf("encode write projection: %w", err)
 	}

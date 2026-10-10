@@ -34,7 +34,12 @@ func (session *FindMySession) Snapshot() (*FindMySnapshot, error) {
 
 		body, err = json.Marshal(user.MustGet())
 		if err == nil && string(body) != "{}" {
-			err = projectFindMyValue(user, &result.UserInfo)
+			var projected FindMyUserInfo
+
+			err = projectFindMyValue(user.MustGet(), &projected)
+			if err == nil {
+				result.UserInfo.Set(projected)
+			}
 		}
 	}
 
@@ -45,7 +50,7 @@ func (session *FindMySession) Snapshot() (*FindMySnapshot, error) {
 	return result, nil
 }
 
-func projectFindMyValue(input, output any) error {
+func projectFindMyValue[Input, Output any](input Input, output *Output) error {
 	body, err := json.Marshal(input)
 	if err != nil {
 		return fmt.Errorf("encode Find My projection: %w", err)
