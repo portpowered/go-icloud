@@ -4,6 +4,7 @@ generate:
 output: pkg/dependencymodels/auth/models.gen.go
 output-options:
   user-templates:
+    union.tmpl: api/templates/schema-unions.tmpl
     typedef.tmpl: api/templates/schema-types.tmpl
   skip-prune: true
   nullable-type: true

@@ -9,6 +9,8 @@ import (
 )
 
 func TestZoneDiscoveryRequestsHaveNoPayloadFields(t *testing.T) {
+	t.Parallel()
+
 	for _, request := range []any{cloudkit.CKEmptyRequest{}, cloudkit.ReminderZoneListRequest{}} {
 		if value := reflect.TypeOf(request); value.Kind() != reflect.Struct || value.NumField() != 0 {
 			t.Errorf("empty request has a caller payload surface: %v", value)

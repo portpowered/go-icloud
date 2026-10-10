@@ -8,6 +8,12 @@
   "paths": {},
   "components": {
     "schemas": {
+      "AuthLoginRequest": {
+        "oneOf": [
+          {"$ref": "#/components/schemas/AuthTokenLoginRequest"},
+          {"$ref": "#/components/schemas/AuthCredentialsLoginRequest"}
+        ]
+      },
       "AuthSessionValidationRequest": {
         "description": "Saved-session validation submits only the JSON null value.",
         "type": "object",

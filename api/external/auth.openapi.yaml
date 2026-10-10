@@ -114,26 +114,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "oneOf": [
-                  {
-                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
-                  },
-                  {
-                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthCredentialsLoginRequest"
-                  }
-                ]
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthLoginRequest"
               }
             },
             "*/*": {
               "schema": {
-                "oneOf": [
-                  {
-                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTokenLoginRequest"
-                  },
-                  {
-                    "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthCredentialsLoginRequest"
-                  }
-                ]
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthLoginRequest"
               }
             }
           },

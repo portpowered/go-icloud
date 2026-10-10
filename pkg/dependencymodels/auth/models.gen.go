@@ -5,6 +5,7 @@ package auth
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/oapi-codegen/nullable"
@@ -733,6 +734,11 @@ type AuthIdentity struct {
 	HsaVersion           *int                        `json:"hsaVersion,omitempty"`
 	LanguageCode         *string                     `json:"languageCode,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// AuthLoginRequest defines model for AuthLoginRequest.
+type AuthLoginRequest struct {
+	union json.RawMessage
 }
 
 // AuthLogoutContentType defines model for AuthLogoutContentType.
@@ -3609,6 +3615,195 @@ func (t AuthFailure_ErrorCode) MarshalJSON() ([]byte, error) {
 }
 
 func (t *AuthFailure_ErrorCode) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// validateAuthLoginRequest checks the generated oneOf contract without rewriting bytes.
+func validateAuthLoginRequest(data []byte) error {
+	var object map[string]interface{}
+	if err := json.Unmarshal(data, &object); err != nil {
+		return err
+	}
+	if object == nil {
+		return errors.New("AuthLoginRequest requires an object")
+	}
+	matches := 0
+	if matchesAuthLoginRequestMember0(object) {
+		matches++
+	}
+	if matchesAuthLoginRequestMember1(object) {
+		matches++
+	}
+	if matches != 1 {
+		return errors.New("AuthLoginRequest requires exactly one schema member")
+	}
+	return nil
+}
+func matchesAuthLoginRequestMember0(object map[string]interface{}) bool {
+	if _, present := object["accountCountryCode"]; !present {
+		return false
+	}
+	if _, present := object["dsWebAuthToken"]; !present {
+		return false
+	}
+	if _, present := object["extended_login"]; !present {
+		return false
+	}
+	if _, present := object["trustToken"]; !present {
+		return false
+	}
+	if value, present := object["accountCountryCode"]; present {
+		if value != nil {
+			if _, valid := value.(string); !valid {
+				return false
+			}
+		}
+	}
+	if value, present := object["dsWebAuthToken"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	if value, present := object["extended_login"]; present {
+		if _, valid := value.(bool); !valid {
+			return false
+		}
+	}
+	if value, present := object["trustToken"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	return true
+}
+func matchesAuthLoginRequestMember1(object map[string]interface{}) bool {
+	if _, present := object["appName"]; !present {
+		return false
+	}
+	if _, present := object["apple_id"]; !present {
+		return false
+	}
+	if _, present := object["password"]; !present {
+		return false
+	}
+	if value, present := object["appName"]; present {
+		if value != nil {
+			if _, valid := value.(string); !valid {
+				return false
+			}
+		}
+	}
+	if value, present := object["apple_id"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	if value, present := object["password"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	for name := range object {
+		switch name {
+		case "appName":
+		case "apple_id":
+		case "password":
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+// AsAuthTokenLoginRequest returns the union data inside the AuthLoginRequest as a AuthTokenLoginRequest
+func (t AuthLoginRequest) AsAuthTokenLoginRequest() (AuthTokenLoginRequest, error) {
+	var body AuthTokenLoginRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthTokenLoginRequest overwrites any union data inside the AuthLoginRequest as the provided AuthTokenLoginRequest
+func (t *AuthLoginRequest) FromAuthTokenLoginRequest(v AuthTokenLoginRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	if err := validateAuthLoginRequest(b); err != nil {
+		return err
+	}
+	t.union = b
+	return err
+}
+
+// MergeAuthTokenLoginRequest performs a merge with any union data inside the AuthLoginRequest, using the provided AuthTokenLoginRequest
+func (t *AuthLoginRequest) MergeAuthTokenLoginRequest(v AuthTokenLoginRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	if err != nil {
+		return err
+	}
+	if err := validateAuthLoginRequest(merged); err != nil {
+		return err
+	}
+	t.union = merged
+	return err
+}
+
+// AsAuthCredentialsLoginRequest returns the union data inside the AuthLoginRequest as a AuthCredentialsLoginRequest
+func (t AuthLoginRequest) AsAuthCredentialsLoginRequest() (AuthCredentialsLoginRequest, error) {
+	var body AuthCredentialsLoginRequest
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAuthCredentialsLoginRequest overwrites any union data inside the AuthLoginRequest as the provided AuthCredentialsLoginRequest
+func (t *AuthLoginRequest) FromAuthCredentialsLoginRequest(v AuthCredentialsLoginRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	if err := validateAuthLoginRequest(b); err != nil {
+		return err
+	}
+	t.union = b
+	return err
+}
+
+// MergeAuthCredentialsLoginRequest performs a merge with any union data inside the AuthLoginRequest, using the provided AuthCredentialsLoginRequest
+func (t *AuthLoginRequest) MergeAuthCredentialsLoginRequest(v AuthCredentialsLoginRequest) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	if err != nil {
+		return err
+	}
+	if err := validateAuthLoginRequest(merged); err != nil {
+		return err
+	}
+	t.union = merged
+	return err
+}
+
+func (t AuthLoginRequest) MarshalJSON() ([]byte, error) {
+	if err := validateAuthLoginRequest(t.union); err != nil {
+		return nil, err
+	}
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *AuthLoginRequest) UnmarshalJSON(b []byte) error {
+	if err := validateAuthLoginRequest(b); err != nil {
+		return err
+	}
 	err := t.union.UnmarshalJSON(b)
 	return err
 }
