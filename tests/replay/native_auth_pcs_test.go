@@ -287,8 +287,10 @@ func TestNativePCSWaitCancellation(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
+
 	wait := func(ctx context.Context, _ time.Duration) error {
 		cancel()
+
 		return ctx.Err()
 	}
 

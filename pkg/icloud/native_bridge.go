@@ -92,7 +92,6 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 
 	connection, err := bridge.Start(ctx, *boot.TwoSV.BridgeInitiateData,
 		owner.bridgeOptions(configuration))
-
 	if err != nil {
 		failure := owner.failure(operation, err)
 		owner.bridgeFallbackNotice(err)

@@ -26,10 +26,12 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 			raw, transport, state := nativeFlowFixture(t, nativeKeyAcceptedFixture)
 			assertion := nativeFixtureAssertion(t, raw, &state)
 			provider := newNativeFixtureAuthenticator(t, raw, assertion, nil, true)
+
 			client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithSecurityKeyAuthenticator(provider))
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			before, err := json.Marshal(state)
 			if err != nil {
 				t.Fatal(err)
@@ -44,16 +46,20 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 				result, err = client.VerifySecurityKey(t.Context(), icloud.VerifySecurityKeyRequest{
 					Auth: state.Auth, State: state, Assertion: assertion})
 			}
+
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			nativeAssertState(t, raw, result)
+
 			after, err := json.Marshal(state)
 			if err != nil || !bytes.Equal(before, after) {
 				t.Fatal("security-key verification changed caller state")
 			}
+
 			provider.assertConsumed(ceremony)
+
 			err = transport.AssertConsumed()
 			if err != nil {
 				t.Fatal(err)
@@ -71,9 +77,11 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage,
 	var challenge auth.AuthChallenge
 
 	authReplayDecode(t, initial["auth_data"], &challenge)
+
 	if challenge.FsaChallenge == nil {
 		t.Fatal("security challenge missing")
 	}
+
 	key := challenge.FsaChallenge
 	state.Challenge.SecurityKeyChallenge = &icloud.SecurityKeyChallenge{Challenge: *key.Challenge,
 		CredentialIDs: append([]string{}, *key.KeyHandles...), RelyingPartyID: *key.RpId}
@@ -90,6 +98,7 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage,
 	var payload auth.AuthWebAuthnAssertion
 
 	authReplayDecode(t, flow[0].Inputs[0], &payload)
+
 	return icloud.SecurityKeyAssertion{ClientData: payload.ClientData, Signature: payload.SignatureData,
 		AuthenticatorData: payload.AuthenticatorData, CredentialID: payload.CredentialID, UserHandle: payload.UserHandle}
 }
@@ -105,6 +114,7 @@ func newNativeFixtureAuthenticator(t *testing.T, raw map[string]json.RawMessage,
 	var challenge auth.AuthChallenge
 
 	authReplayDecode(t, initial["auth_data"], &challenge)
+
 	if challenge.FsaChallenge == nil {
 		t.Fatal("security challenge missing")
 	}
@@ -224,10 +234,12 @@ func TestNativeSecurityKeyBindingRejectsInvalidAssertions(t *testing.T) {
 			case nativeKeyShortAuthenticatorControl:
 				assertion.AuthenticatorData = assertion.AuthenticatorData[:32]
 			}
+
 			client, err := icloud.New(icloud.WithHTTPTransport(nativeNoAuthTransport{test: t}))
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			_, err = client.VerifySecurityKey(t.Context(), icloud.VerifySecurityKeyRequest{
 				Auth: state.Auth, State: state, Assertion: assertion})
 
@@ -244,6 +256,7 @@ type nativeNoAuthTransport struct{ test *testing.T }
 
 func (transport nativeNoAuthTransport) RoundTrip(_ *http.Request) (*http.Response, error) {
 	transport.test.Fatal("unexpected authentication HTTP traffic")
+
 	return nil, errors.ErrUnsupported
 }
 
@@ -269,11 +282,13 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 			raw, _, state := nativeFlowFixture(t, nativeKeyAcceptedFixture)
 			assertion := nativeFixtureAssertion(t, raw, &state)
 			provider := newNativeFixtureAuthenticator(t, raw, assertion, control.cause, false)
+
 			client, err := icloud.New(icloud.WithHTTPTransport(nativeNoAuthTransport{test: t}),
 				icloud.WithSecurityKeyAuthenticator(provider))
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			_, err = client.ConfirmSecurityKey(t.Context(), icloud.ConfirmSecurityKeyRequest{
 				Auth: state.Auth, State: state, DeviceID: nativeKeyDeviceID})
 

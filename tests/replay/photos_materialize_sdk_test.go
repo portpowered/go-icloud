@@ -108,6 +108,7 @@ func replaySDKMaterialization(t *testing.T, variant materializationCase, targetI
 
 	assertMaterializationResult(t, input, second, key, true)
 	assertMaterializationFiles(t, input.Options.Directory, variant)
+
 	repeated := assertMaterializationManifest(t, input.Options.Directory, key, variant)
 	if !reflect.DeepEqual(repeated, manifest) {
 		t.Fatal("repeat sync changed provider identity or persisted materialized size")

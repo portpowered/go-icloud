@@ -232,6 +232,7 @@ func hidReplayRequest(fixture hidReplayFixture) securitykey.Request {
 
 func TestSecurityKeySourceHIDReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, name := range []string{"python-ctap2-synthetic.json", hidReplayU2FFixture,
 		hidReplayFallbackFixture, "python-uv1-synthetic.json", "python-uv2-synthetic.json",
 		"python-selection-synthetic.json", "python-zero-limit-synthetic.json", "python-uv-retry-synthetic.json",
