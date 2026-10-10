@@ -3,6 +3,17 @@ package bridge
 
 import "fmt"
 
+const (
+	stageBootstrapJSON      = "bootstrap JSON"
+	stageBootstrapEntropy   = "bootstrap entropy"
+	stageBootstrapKey       = "bootstrap key"
+	stageVerification       = "verification"
+	stageServerProof        = "server proof"
+	stageServerShare        = "server share"
+	stageServerConfirmation = "server confirmation"
+	stageHTTPExchange       = "HTTP exchange"
+)
+
 // ProtocolError records the protocol stage without disclosing challenge secrets.
 type ProtocolError struct {
 	Stage string

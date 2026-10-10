@@ -13,15 +13,19 @@ import (
 // Python _decode_fields consumers; repeated subscription apps remain ordered.
 func TestServerDuplicateFields(t *testing.T) {
 	t.Parallel()
-	first := &bridgepb.ServerMessage{
-		Connection:   &bridgepb.ConnectionResponse{PushTokenBase64: []byte("first"), Status: proto.Uint64(0)},
-		Push:         &bridgepb.PushMessage{Topic: []byte("topic"), MessageId: proto.Uint64(1), Payload: []byte("payload")},
-		Subscription: &bridgepb.SubscriptionResponse{Payload: &bridgepb.SubscriptionPayload{Apps: []*bridgepb.AppSubscriptionResponse{{Topic: []byte("one")}, {Topic: []byte("two")}}}},
-	}
-	second := &bridgepb.ServerMessage{
-		Connection: &bridgepb.ConnectionResponse{PushTokenBase64: []byte("second"), Status: proto.Uint64(2)},
-		Push:       &bridgepb.PushMessage{Topic: []byte("other"), MessageId: proto.Uint64(2), Payload: []byte("other payload")},
-	}
+	first := new(bridgepb.ServerMessage)
+	first.Connection = new(bridgepb.ConnectionResponse)
+	first.Connection.PushTokenBase64 = []byte("first")
+	first.Connection.Status = proto.Uint64(0)
+	first.Push = &bridgepb.PushMessage{Topic: []byte("topic"), MessageId: proto.Uint64(1), Payload: []byte("payload")}
+	first.Subscription = new(bridgepb.SubscriptionResponse)
+	first.Subscription.Payload = new(bridgepb.SubscriptionPayload)
+	first.Subscription.Payload.Apps = []*bridgepb.AppSubscriptionResponse{{Topic: []byte("one")}, {Topic: []byte("two")}}
+	second := new(bridgepb.ServerMessage)
+	second.Connection = new(bridgepb.ConnectionResponse)
+	second.Connection.PushTokenBase64 = []byte("second")
+	second.Connection.Status = proto.Uint64(2)
+	second.Push = &bridgepb.PushMessage{Topic: []byte("other"), MessageId: proto.Uint64(2), Payload: []byte("other payload")}
 	encoded := duplicateWire(t, first, second)
 	decoded, err := bridge.DecodeServerMessage(encoded)
 	if err != nil {
@@ -33,7 +37,7 @@ func TestServerDuplicateFields(t *testing.T) {
 
 	connection := duplicateWire(t, first.GetConnection(), second.GetConnection())
 	push := duplicateWire(t, first.GetPush(), second.GetPush())
-	nested := &bridgepb.ServerMessage{}
+	nested := new(bridgepb.ServerMessage)
 	nested.ProtoReflect().SetUnknown(append(lengthDelimited(1, connection), lengthDelimited(2, push)...))
 	decoded, err = bridge.DecodeServerMessage(duplicateWire(t, nested))
 	if err != nil {
@@ -46,14 +50,18 @@ func TestServerDuplicateFields(t *testing.T) {
 
 func duplicateWire(t *testing.T, messages ...proto.Message) []byte {
 	t.Helper()
+
 	var wire []byte
+
 	for _, message := range messages {
 		encoded, err := proto.Marshal(message)
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		wire = append(wire, encoded...)
 	}
+
 	return wire
 }
 

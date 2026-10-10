@@ -3,9 +3,10 @@ package replay_test
 import (
 	"bytes"
 	"context"
+	"crypto/ecdh"
 	"crypto/ecdsa"
 	"crypto/elliptic"
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // RFC 6455 requires SHA-1 for the upgrade accept digest.
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
@@ -31,18 +32,36 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var errUndeclaredSRPEntropy = errors.New("undeclared SRP entropy")
+var errUnboundedOptionalSignatureEntropy = errors.New("unbounded optional signature entropy")
+var errUnexpectedOptionalECDSAEntropy = errors.New("unexpected optional ECDSA entropy")
+var errInvalidFixtureNonce = errors.New("invalid fixture nonce")
+var errUndeclaredWebsocketOrUUIDEntropy = errors.New("undeclared websocket or UUID entropy")
+var errSecureDialDeadlineDiffers = errors.New("secure dial deadline differs")
+var errUndeclaredBridgeConnection = errors.New("undeclared bridge connection")
+var errUnexpectedSecureDialTarget = errors.New("unexpected secure dial target")
+var errUnboundedSignatureEntropy = errors.New("unbounded signature entropy")
+var errUndeclaredBootstrapScalar = errors.New("undeclared bootstrap scalar")
+var errUndeclaredProverScalar = errors.New("undeclared prover scalar")
+var errIncorrectProverBound = errors.New("incorrect prover bound")
+var errInvalidFixtureScalar = errors.New("invalid fixture scalar")
+var errInvalidUpgradeTarget = errors.New("invalid upgrade target")
+var errWebsocketEntropyDiffers = errors.New("websocket entropy differs")
+var errFrameMaskEntropyDiffers = errors.New("frame mask entropy differs")
+var errUndeclaredEntropyLength = errors.New("undeclared entropy length")
+
 type sdkBridgeNetwork struct {
-	PrivateScalars []string `json:"private_scalars"`
+	PrivateScalars []string `json:"private_scalars"` //nolint:tagliatelle // Preserve the pinned Python fixture field.
 	ProverRandom   []struct {
-		Upper string `json:"upper_hex"`
-		Value string `json:"value_hex"`
-	} `json:"prover_random"`
+		Upper string `json:"upper_hex"` //nolint:tagliatelle // Preserve the pinned Python fixture field.
+		Value string `json:"value_hex"` //nolint:tagliatelle // Preserve the pinned Python fixture field.
+	} `json:"prover_random"` //nolint:tagliatelle // Preserve the pinned Python fixture field.
 	Connections []struct {
 		Connection bridgeSocketConnection `json:"connection"`
 		Bootstrap  struct {
-			Public     string `json:"public_key"`
+			Public     string `json:"public_key"` //nolint:tagliatelle // Preserve the pinned Python fixture field.
 			Nonce      string `json:"nonce"`
-			Expiration uint32 `json:"expiration_seconds"`
+			Expiration uint32 `json:"expiration_seconds"` //nolint:tagliatelle // Preserve the pinned Python fixture field.
 		} `json:"bootstrap"`
 		Events []bridgeSocketEvent `json:"events"`
 	} `json:"connections"`
@@ -71,20 +90,21 @@ type sdkBridgeEntropy struct {
 
 func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 	clear(destination)
+
 	switch len(destination) {
 	case 256:
 		if len(r.initial) != 256 {
-			return 0, errors.New("undeclared SRP entropy")
+			return 0, errUndeclaredSRPEntropy
 		}
 		copy(destination, r.initial)
 		r.initial = nil
 	case 1:
 		r.signatureReads++
 		if r.signatureReads > 4 {
-			return 0, errors.New("unbounded optional signature entropy")
+			return 0, errUnboundedOptionalSignatureEntropy
 		}
 		if !r.signing {
-			return 0, errors.New("unexpected optional ECDSA entropy")
+			return 0, errUnexpectedOptionalECDSAEntropy
 		}
 	case 8:
 		r.nonceReads++
@@ -96,14 +116,14 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 		}
 		nonce, err := base64.StdEncoding.DecodeString(r.replay.network.Connections[index].Bootstrap.Nonce)
 		if err != nil || len(nonce) != 17 {
-			return 0, errors.New("invalid fixture nonce")
+			return 0, errInvalidFixtureNonce
 		}
 		copy(destination, nonce[9:])
 		r.signing = true
 	case 16:
 		r.wideReads++
 		if r.wideReads > len(r.replay.network.Connections)+1 {
-			return 0, errors.New("undeclared websocket or UUID entropy")
+			return 0, errUndeclaredWebsocketOrUUIDEntropy
 		}
 		if r.uuid {
 			destination[3] = 1
@@ -122,22 +142,9 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 	case 32:
 		return r.readScalar(destination)
 	default:
-		return 0, fmt.Errorf("undeclared entropy length %d", len(destination))
+		return 0, fmt.Errorf("%w %d", errUndeclaredEntropyLength, len(destination))
 	}
 	return len(destination), nil
-}
-
-func (r *sdkBridgeReplay) take(event map[string]any) {
-	r.t.Helper()
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	if r.timeline >= len(r.network.Timeline) {
-		r.t.Fatalf("extra combined timeline event %v", event)
-	}
-	if !reflect.DeepEqual(event, r.network.Timeline[r.timeline]) {
-		r.t.Fatalf("combined timeline[%d] = %v; expected %v", r.timeline, event, r.network.Timeline[r.timeline])
-	}
-	r.timeline++
 }
 
 func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, error) {
@@ -165,26 +172,42 @@ func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, erro
 			body, _ := request.GetBody()
 			data, _ := io.ReadAll(body)
 			_ = body.Close()
+
 			r.t.Logf("HTTP mismatch %s body=%s: %v", request.URL, data, err)
 		}
 	}
 	return response, err
 }
 
+func (r *sdkBridgeReplay) take(event map[string]any) {
+	r.t.Helper()
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.timeline >= len(r.network.Timeline) {
+		r.t.Fatalf("extra combined timeline event %v", event)
+	}
+	if !reflect.DeepEqual(event, r.network.Timeline[r.timeline]) {
+		r.t.Fatalf("combined timeline[%d] = %v; expected %v", r.timeline, event, r.network.Timeline[r.timeline])
+	}
+	r.timeline++
+}
+
 func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (net.Conn, error) {
 	deadline, bounded := ctx.Deadline()
 	if !bounded || time.Until(deadline) <= 0 || time.Until(deadline) > 30*time.Second {
-		return nil, errors.New("secure dial deadline differs")
+		return nil, errSecureDialDeadlineDiffers
 	}
 	index := r.connectionIndex
 	if index >= len(r.network.Connections) {
-		return nil, errors.New("undeclared bridge connection")
+		return nil, errUndeclaredBridgeConnection
 	}
 	expected := r.network.Connections[index]
 	if network != "tcp" || address != "bridge.example.invalid:443" {
-		return nil, errors.New("unexpected secure dial target")
+		return nil, errUnexpectedSecureDialTarget
 	}
-	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: &bridgeScriptSocket{events: append([]bridgeSocketEvent(nil), expected.Events...)}}
+	script := new(bridgeScriptSocket)
+	script.events = append([]bridgeSocketEvent(nil), expected.Events...)
+	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: script}
 	r.sockets = append(r.sockets, socket)
 	for _, operation := range []string{"connect", "wrap", "timeout"} {
 		socket.mark(operation, 0)
@@ -196,16 +219,9 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 
 type sdkBridgeSocket struct {
 	*bridgeScriptSocket
+
 	owner *sdkBridgeReplay
 	index int
-}
-
-func (s *sdkBridgeSocket) mark(operation string, event int) {
-	value := map[string]any{"surface": "socket", "connection": float64(s.index), "operation": operation}
-	if operation == "send" || operation == "receive" || operation == "close" {
-		value["event"] = float64(event)
-	}
-	s.owner.take(value)
 }
 
 func (s *sdkBridgeSocket) Write(payload []byte) (int, error) {
@@ -238,6 +254,14 @@ func (s *sdkBridgeSocket) Close() error {
 	return s.bridgeScriptSocket.Close()
 }
 
+func (s *sdkBridgeSocket) mark(operation string, event int) {
+	value := map[string]any{"surface": "socket", "connection": float64(s.index), "operation": operation}
+	if operation == "send" || operation == "receive" || operation == "close" {
+		value["event"] = float64(event)
+	}
+	s.owner.take(value)
+}
+
 func (s *sdkBridgeSocket) validateBootstrap(path string) {
 	s.owner.t.Helper()
 	raw, err := hex.DecodeString(path)
@@ -249,28 +273,43 @@ func (s *sdkBridgeSocket) validateBootstrap(path string) {
 		s.owner.t.Fatal(err)
 	}
 	canonical, err := proto.Marshal(message)
-	if err != nil || !bytes.Equal(canonical, raw) || message.Connection == nil || message.Subscription != nil || message.Acknowledgement != nil || len(message.ProtoReflect().GetUnknown()) != 0 {
+	if err != nil ||
+		!bytes.Equal(canonical, raw) ||
+		message.Connection == nil ||
+		message.Subscription != nil ||
+		message.Acknowledgement != nil ||
+		len(message.ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap envelope differs")
 	}
 	body := message.GetConnection()
 	expected := s.owner.network.Connections[s.index].Bootstrap
-	if base64.StdEncoding.EncodeToString(body.GetPublicKey()) != expected.Public || base64.StdEncoding.EncodeToString(body.GetNonce()) != expected.Nonce || body.GetExpiration().GetSeconds() != expected.Expiration || len(body.ProtoReflect().GetUnknown()) != 0 || len(body.GetExpiration().ProtoReflect().GetUnknown()) != 0 {
+	if base64.StdEncoding.EncodeToString(body.GetPublicKey()) != expected.Public ||
+		base64.StdEncoding.EncodeToString(body.GetNonce()) != expected.Nonce ||
+		body.GetExpiration().GetSeconds() != expected.Expiration ||
+		len(body.ProtoReflect().GetUnknown()) != 0 ||
+		len(body.GetExpiration().ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap public key, nonce, or expiration differs")
 	}
 	public := body.GetPublicKey()
 	nonce := body.GetNonce()
 	signature := body.GetSignature()
-	if len(public) != 65 || len(nonce) != 17 || nonce[0] != 0 || len(signature) < 2 || !bytes.Equal(signature[:2], []byte{1, 3}) {
+	if len(public) != 65 || len(nonce) != 17 || nonce[0] != 0 || len(signature) < 2 || !bytes.Equal(signature[:2],
+		[]byte{1, 3}) {
 		s.owner.t.Fatal("bootstrap field layout differs")
 	}
-	x, y := elliptic.Unmarshal(elliptic.P256(), public)
+	// Validate the same uncompressed P-256 point before reconstructing its
+	// coordinates for ECDSA. Exact Source public-key and nonce checks precede this.
+	_, keyErr := ecdh.P256().NewPublicKey(public)
+	x := new(big.Int).SetBytes(public[1:33])
+	y := new(big.Int).SetBytes(public[33:])
 	digest := sha256.Sum256(nonce)
-	if x == nil || !ecdsa.VerifyASN1(&ecdsa.PublicKey{Curve: elliptic.P256(), X: x, Y: y}, digest[:], signature[2:]) {
+	if keyErr != nil || !ecdsa.VerifyASN1(&ecdsa.PublicKey{Curve: elliptic.P256(), X: x, Y: y}, digest[:], signature[2:]) {
 		s.owner.t.Fatal("bootstrap signature rejected")
 	}
 }
 
 func TestNativeBridgeSDKReplay(t *testing.T) {
+	t.Parallel()
 	paths, err := filepath.Glob("fixtures/synthetic/http/auth-bridge-*.json")
 	if err != nil {
 		t.Fatal(err)
@@ -279,7 +318,10 @@ func TestNativeBridgeSDKReplay(t *testing.T) {
 		t.Fatalf("bridge HTTP inventory changed: %d", len(paths))
 	}
 	for _, path := range paths {
-		t.Run(strings.TrimSuffix(filepath.Base(path), ".json"), func(t *testing.T) { nativeBridgeSDKReplay(t, strings.TrimSuffix(filepath.Base(path), ".json")) })
+		t.Run(strings.TrimSuffix(filepath.Base(path), ".json"), func(t *testing.T) {
+			t.Parallel()
+			nativeBridgeSDKReplay(t, strings.TrimSuffix(filepath.Base(path), ".json"))
+		})
 	}
 }
 
@@ -291,17 +333,21 @@ func nativeBridgeSDKReplay(t *testing.T, name string) {
 // Synthetic negative control extends the source-matched success transcript at
 // the final trust boundary; it is not a captured provider or Python replay.
 func TestNativeBridgeTrustFailureRetainsRotatedCredentials(t *testing.T) {
+	t.Parallel()
 	nativeBridgeSDKCase(t, "auth-bridge-modern-code-204", true)
 }
 
 func nativeBridgeSDKCase(t *testing.T, name string, lateFailure bool) {
 	t.Helper()
-	nativeBridgeSDKScenario(t, name, sdkBridgeControls{lateFailure: lateFailure})
+	nativeBridgeSDKScenario(t, name, sdkBridgeControls{lateFailure: lateFailure,
+		snapshot: false, overlap: false, after: nil})
 }
 
 // Synthetic unused phone metadata exposes RawMessage aliasing in State snapshots.
 func TestNativeBridgeStateSnapshotsOwnPhoneUnion(t *testing.T) {
-	nativeBridgeSDKScenario(t, "auth-bridge-modern-prompt", sdkBridgeControls{snapshot: true})
+	t.Parallel()
+	nativeBridgeSDKScenario(t, "auth-bridge-modern-prompt", sdkBridgeControls{lateFailure: false,
+		snapshot: true, overlap: false, after: nil})
 }
 
 type sdkBridgeControls struct {
@@ -311,6 +357,7 @@ type sdkBridgeControls struct {
 
 func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeControls) {
 	lateFailure, snapshot, control := controls.lateFailure, controls.snapshot, controls.after
+
 	t.Helper()
 	raw, transport, state := nativeFlowFixture(t, name)
 	if lateFailure {
@@ -321,12 +368,15 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 		var identifier icloud.TrustedPhoneNumberID
 		authReplayDecode(t, json.RawMessage(`1`), &identifier)
 		nonFTEU := true
-		state.Challenge.PhoneNumbers = append(state.Challenge.PhoneNumbers, icloud.TrustedPhoneNumber{ID: identifier, Number: "synthetic-unused", PushMode: "sms", NonFTEU: &nonFTEU})
+		state.Challenge.PhoneNumbers = append(state.Challenge.PhoneNumbers,
+			icloud.TrustedPhoneNumber{ID: identifier, Number: "synthetic-unused",
+				PushMode: "sms", NonFTEU: &nonFTEU})
 	}
 	initial := authReplayObjectBytes(t, raw["initial_state"])
 	originalState := state
-	before, _ := json.Marshal(originalState)
-	runner := &sdkBridgeReplay{t: t, http: transport, overlap: controls.overlap}
+	before := nativeBridgeMarshal(t, originalState)
+	runner := new(sdkBridgeReplay)
+	runner.t, runner.http, runner.overlap = t, transport, controls.overlap
 	authReplayDecode(t, raw["bridge_network"], &runner.network)
 	runner.entropy.replay = runner
 	if entropy, ok := raw["entropy"]; ok {
@@ -340,7 +390,11 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 			}
 		}
 	}
-	client, err := icloud.New(icloud.WithHTTPTransport(runner), icloud.WithRandomSource(&runner.entropy), icloud.WithClock(func() time.Time { return time.Unix(1700000000, 0) }))
+	client, err := icloud.New(icloud.WithHTTPTransport(runner), icloud.WithRandomSource(&runner.entropy),
+		icloud.WithClock(func() time.Time {
+			return time.Unix(1700000000,
+				0)
+		}))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -350,7 +404,7 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	if operation == "flow" {
 		authReplayDecode(t, raw["inputs"], &actions)
 	} else {
-		actions = append(actions, sdkBridgeAction{Operation: operation})
+		actions = append(actions, sdkBridgeAction{Operation: operation, Inputs: nil})
 	}
 	flow, err := nativeBridgeActions(t, client, runner, state, initial, actions, name)
 	session, result, state, values, responses := flow.session, flow.result, flow.state, flow.values, flow.responses
@@ -390,10 +444,11 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	if runner.entropy.nonceReads != len(runner.network.Connections) || len(runner.entropy.initial) != 0 {
 		t.Fatal("declared nonce or SRP entropy not consumed")
 	}
-	if runner.entropy.private != len(runner.network.PrivateScalars) || runner.entropy.prover != len(runner.network.ProverRandom) {
+	if runner.entropy.private != len(runner.network.PrivateScalars) ||
+		runner.entropy.prover != len(runner.network.ProverRandom) {
 		t.Fatal("declared crypto entropy not consumed")
 	}
-	after, _ := json.Marshal(originalState)
+	after := nativeBridgeMarshal(t, originalState)
 	if !bytes.Equal(before, after) {
 		t.Fatal("bridge changed caller-owned state")
 	}
@@ -435,6 +490,12 @@ func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, sessio
 			t.Fatal("Source transaction or legacy selection differs")
 		}
 	}
+	nativeBridgeSnapshotOwnership(t, session, progress)
+}
+
+func nativeBridgeSnapshotOwnership(t *testing.T, session *icloud.NativeBridgeSession,
+	progress *icloud.NativeBridgeSessionState) {
+	t.Helper()
 	// Mutating detached snapshots must not change the owner.
 	var identifierBefore []byte
 	if len(progress.State.Challenge.PhoneNumbers) > 0 {
@@ -447,7 +508,8 @@ func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, sessio
 			identifier[0] = '9'
 		}
 	}
-	progress.State.Auth.Headers = append(progress.State.Auth.Headers, icloud.Header{Name: "synthetic-mutation", Value: "synthetic"})
+	progress.State.Auth.Headers = append(progress.State.Auth.Headers,
+		icloud.Header{Name: "synthetic-mutation", Value: "synthetic"})
 	if len(progress.State.Challenge.PhoneNumbers) > 0 && progress.State.Challenge.PhoneNumbers[0].NonFTEU != nil {
 		*progress.State.Challenge.PhoneNumbers[0].NonFTEU = !*progress.State.Challenge.PhoneNumbers[0].NonFTEU
 	}
@@ -466,7 +528,9 @@ func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, sessio
 			t.Fatal("State snapshot mutated session headers")
 		}
 	}
-	if len(progress.State.Challenge.PhoneNumbers) > 0 && progress.State.Challenge.PhoneNumbers[0].NonFTEU != nil && *after.State.Challenge.PhoneNumbers[0].NonFTEU == *progress.State.Challenge.PhoneNumbers[0].NonFTEU {
+	if len(progress.State.Challenge.PhoneNumbers) > 0 &&
+		progress.State.Challenge.PhoneNumbers[0].NonFTEU != nil &&
+		*after.State.Challenge.PhoneNumbers[0].NonFTEU == *progress.State.Challenge.PhoneNumbers[0].NonFTEU {
 		t.Fatal("State snapshot mutated session phone metadata")
 	}
 }
@@ -476,12 +540,17 @@ func nativeBridgeTrustFailureFixture(t *testing.T, raw map[string]json.RawMessag
 	var exchanges []replay.Exchange
 	authReplayDecode(t, raw["exchanges"], &exchanges)
 	exchanges = exchanges[:6]
-	exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{"Content-Type", "application/json"}, {"scnt", "synthetic-rotated-scnt"}, {"X-Apple-ID-Session-Id", "synthetic-rotated-session"}, {"X-Apple-Session-Token", "synthetic-rotated-token"}, {"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {"Set-Cookie", "synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}}, Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`)}}
+	exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{"Content-Type",
+		"application/json"}, {"scnt", "synthetic-rotated-scnt"}, {"X-Apple-ID-Session-Id",
+		"synthetic-rotated-session"}, {"X-Apple-Session-Token", "synthetic-rotated-token"},
+		{"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {"Set-Cookie",
+			"synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}},
+		Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`)}}
 	var network sdkBridgeNetwork
 	authReplayDecode(t, raw["bridge_network"], &network)
 	network.Timeline = network.Timeline[:len(network.Timeline)-1]
-	raw["bridge_network"], _ = json.Marshal(network)
-	raw["exchanges"], _ = json.Marshal(exchanges)
+	raw["bridge_network"] = nativeBridgeMarshal(t, network)
+	raw["exchanges"] = nativeBridgeMarshal(t, exchanges)
 	delete(raw, "error")
 	transport, fixtureErr := replay.NewHTTPTransport(exchanges)
 	if fixtureErr != nil {
@@ -527,7 +596,9 @@ type sdkBridgeFlow struct {
 	responses []icloud.ResponseMetadata
 }
 
-func nativeBridgeActions(t *testing.T, client *icloud.SDK, runner *sdkBridgeReplay, state icloud.NativeAuthState, initial map[string]json.RawMessage, actions []sdkBridgeAction, name string) (*sdkBridgeFlow, error) {
+func nativeBridgeActions(t *testing.T, client *icloud.SDK, runner *sdkBridgeReplay,
+	state icloud.NativeAuthState, initial map[string]json.RawMessage,
+	actions []sdkBridgeAction, name string) (*sdkBridgeFlow, error) {
 	t.Helper()
 
 	flow := new(sdkBridgeFlow)
@@ -540,19 +611,29 @@ func nativeBridgeActions(t *testing.T, client *icloud.SDK, runner *sdkBridgeRepl
 		case "authenticate":
 			var password string
 			authReplayDecode(t, initial["synthetic_password"], &password)
-			flow.result, err = client.Authenticate(t.Context(), icloud.AuthenticateRequest{Auth: flow.state.Auth, AccountName: flow.state.AccountName, Password: password, TrustToken: flow.state.TrustToken, AccountCountryCode: flow.state.AccountCountryCode, SavedState: &flow.state})
+			flow.result, err = client.Authenticate(t.Context(), icloud.AuthenticateRequest{Auth: flow.state.Auth,
+				AccountName: flow.state.AccountName, Password: password, TrustToken: flow.state.TrustToken,
+				AccountCountryCode: flow.state.AccountCountryCode, SavedState: &flow.state,
+				AcceptTerms: false, ForceRefresh: false, PauseTwoFactor: false,
+				Service: nil})
 			if err == nil {
 				flow.state = flow.result.State
 				flow.responses = append(flow.responses, flow.result.Responses...)
-				flow.session, err = client.OpenNativeBridgeSession(t.Context(), icloud.OpenNativeBridgeSessionRequest{Auth: flow.state.Auth, State: flow.state}, icloud.WithNativeBridgeDial(runner.dial))
+				flow.session, err = client.OpenNativeBridgeSession(t.Context(),
+					icloud.OpenNativeBridgeSessionRequest{Auth: flow.state.Auth,
+						State: flow.state}, icloud.WithNativeBridgeDial(runner.dial))
 			}
 			flow.values = append(flow.values, nil)
 		case "request_2fa_code":
-			flow.result, err = client.RequestTwoFactorCode(t.Context(), icloud.RequestTwoFactorCodeRequest{Auth: flow.state.Auth, State: flow.state})
+			flow.result, err = client.RequestTwoFactorCode(t.Context(),
+				icloud.RequestTwoFactorCodeRequest{Auth: flow.state.Auth, State: flow.state,
+					PhoneNumberID: nil})
 			if err == nil {
 				flow.state = flow.result.State
 				if flow.session == nil {
-					flow.session, err = client.OpenNativeBridgeSession(t.Context(), icloud.OpenNativeBridgeSessionRequest{Auth: flow.state.Auth, State: flow.state}, icloud.WithNativeBridgeDial(runner.dial))
+					flow.session, err = client.OpenNativeBridgeSession(t.Context(),
+						icloud.OpenNativeBridgeSessionRequest{Auth: flow.state.Auth,
+							State: flow.state}, icloud.WithNativeBridgeDial(runner.dial))
 				}
 			}
 			if err == nil {
@@ -582,35 +663,48 @@ func nativeBridgeActions(t *testing.T, client *icloud.SDK, runner *sdkBridgeRepl
 		}
 	}
 	if err != nil && name == "auth-bridge-sms-fallback" {
-		if flow.session != nil {
-			progress, stateErr := flow.session.State()
-			if stateErr != nil {
-				t.Fatal(stateErr)
-			}
-			flow.state = progress.State
-		}
-		var failure *icloud.ClientError
-		if !errors.As(err, &failure) {
-			t.Fatal(err)
-		}
-		flow.responses = append(flow.responses, failure.PriorResponses()...)
-		if failure.StatusCode() != 0 {
-			flow.responses = append(flow.responses, icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
-		}
-		selected := flow.state.Challenge.PhoneNumbers[0].ID
-		flow.result, err = client.RequestTwoFactorCode(t.Context(), icloud.RequestTwoFactorCodeRequest{Auth: flow.state.Auth, State: flow.state, PhoneNumberID: &selected})
-		if err == nil {
-			flow.state = flow.result.State
-			notice := protocol.AuthBridgeFallbackNoticeValue
-			flow.state.DeliveryNotice = &notice
-			flow.responses = append(flow.responses, flow.result.Responses...)
-			flow.values = append(flow.values, true)
-		}
+		err = nativeBridgeSMSFallback(t, client, flow, err)
 	}
 	return flow, err
 }
 
-func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage, operation string, err error, session *icloud.NativeBridgeSession, lateFailure bool) {
+func nativeBridgeSMSFallback(t *testing.T, client *icloud.SDK, flow *sdkBridgeFlow, err error) error {
+	t.Helper()
+
+	if flow.session != nil {
+		progress, stateErr := flow.session.State()
+		if stateErr != nil {
+			t.Fatal(stateErr)
+		}
+		flow.state = progress.State
+	}
+	var failure *icloud.ClientError
+	if !errors.As(err, &failure) {
+		t.Fatal(err)
+	}
+	flow.responses = append(flow.responses, failure.PriorResponses()...)
+	if failure.StatusCode() != 0 {
+		flow.responses = append(flow.responses, icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
+			Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
+	}
+	selected := flow.state.Challenge.PhoneNumbers[0].ID
+	flow.result, err = client.RequestTwoFactorCode(t.Context(),
+		icloud.RequestTwoFactorCodeRequest{Auth: flow.state.Auth, State: flow.state,
+			PhoneNumberID: &selected})
+	if err == nil {
+		flow.state = flow.result.State
+		notice := protocol.AuthBridgeFallbackNoticeValue
+		flow.state.DeliveryNotice = &notice
+		flow.responses = append(flow.responses, flow.result.Responses...)
+		flow.values = append(flow.values, true)
+	}
+
+	return err
+}
+
+func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage,
+	operation string, err error, _ *icloud.NativeBridgeSession,
+	_ bool) {
 	t.Helper()
 	var failure *icloud.ClientError
 	if !errors.As(err, &failure) {
@@ -618,7 +712,8 @@ func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage, operation
 	}
 	metadata := failure.PriorResponses()
 	if failure.StatusCode() != 0 {
-		metadata = append(metadata, icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
+		metadata = append(metadata, icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
+			Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
 	}
 	nativeFlowResponses(t, raw, metadata)
 	operationLabel := "OpenNativeBridgeSession"
@@ -633,7 +728,7 @@ func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage, operation
 	if expected, ok := expectedFailure["message"]; ok {
 		authReplayDecode(t, expected, &message)
 	}
-	if strings.Contains(message, "status 503") && failure.StatusCode() != 503 {
+	if strings.Contains(message, "status 503") && failure.StatusCode() != http.StatusServiceUnavailable {
 		t.Fatal("Source HTTP failure stage lost")
 	}
 	if strings.Contains(message, "decrypt") {
@@ -645,10 +740,11 @@ func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage, operation
 	if strings.Contains(failure.Error(), "synthetic-") {
 		t.Fatal("safe bridge error exposed synthetic provider content")
 	}
-
 }
 
-func nativeBridgeSuccess(t *testing.T, raw map[string]json.RawMessage, name, operation string, state icloud.NativeAuthState, result *icloud.NativeAuthResult, values []any, responses []icloud.ResponseMetadata, session *icloud.NativeBridgeSession) {
+func nativeBridgeSuccess(t *testing.T, raw map[string]json.RawMessage,
+	name, operation string, state icloud.NativeAuthState, result *icloud.NativeAuthResult,
+	values []any, responses []icloud.ResponseMetadata, session *icloud.NativeBridgeSession) {
 	t.Helper()
 	expected := authReplayObjectBytes(t, raw["result"])
 	var want any
@@ -661,18 +757,24 @@ func nativeBridgeSuccess(t *testing.T, raw map[string]json.RawMessage, name, ope
 		t.Fatalf("operation values %v; expected %v", actual, want)
 	}
 	if result == nil {
-		result = &icloud.NativeAuthResult{}
+		result = new(icloud.NativeAuthResult)
 	}
 	result.State = state
 	if session != nil {
 		progress, _ := session.State()
-		result.Responses = append(responses, progress.Responses...)
+		result.Responses = nil
+		result.Responses = append(result.Responses, responses...)
+		result.Responses = append(result.Responses, progress.Responses...)
 	}
 	if session == nil || name == "auth-bridge-sms-fallback" {
 		result.Responses = responses
 	}
 	nativeAssertState(t, raw, result)
-	projection := icloud.ResumeSessionResult{Auth: result.State.Auth, TrustToken: result.State.TrustToken, AccountCountryCode: result.State.AccountCountryCode, AccountData: result.State.AccountData, Responses: result.Responses, TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep}
+	projection := icloud.ResumeSessionResult{Auth: result.State.Auth,
+		TrustToken: result.State.TrustToken, AccountCountryCode: result.State.AccountCountryCode,
+		AccountData: result.State.AccountData, Responses: result.Responses,
+		TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor,
+		RequiresTwoStep: result.RequiresTwoStep}
 	assertResumedAuth(t, raw, &projection)
 	nativeBridgeProjection(t, raw, session)
 	expectedState := authReplayObjectBytes(t, expected["auth_state"])
@@ -698,7 +800,7 @@ func nativeBridgeSuccess(t *testing.T, raw map[string]json.RawMessage, name, ope
 
 func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, session *icloud.NativeBridgeSession) {
 	t.Helper()
-	if result.Success || len(result.Responses) != 6 || result.Responses[5].StatusCode != 503 {
+	if result.Success || len(result.Responses) != 6 || result.Responses[5].StatusCode != http.StatusServiceUnavailable {
 		t.Fatal("partial trust response metadata lost")
 	}
 	progress, stateErr := session.State()
@@ -708,14 +810,17 @@ func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, ses
 	if progress.Active || progress.State.RequiresMFA || progress.State.CodeRequested {
 		t.Fatal("partial trust progress flags differ")
 	}
-	if progress.State.Auth.SessionToken == nil || *progress.State.Auth.SessionToken != "synthetic-rotated-token" || progress.State.TrustToken != "synthetic-rotated-trust" {
+	if progress.State.Auth.SessionToken == nil ||
+		*progress.State.Auth.SessionToken != "synthetic-rotated-token" ||
+		progress.State.TrustToken != "synthetic-rotated-trust" {
 		t.Fatal("partial trust token rotation lost")
 	}
 	headers := http.Header{}
 	for _, header := range progress.State.Auth.Headers {
 		headers.Add(header.Name, header.Value)
 	}
-	if headers.Get("scnt") != "synthetic-rotated-scnt" || headers.Get("X-Apple-ID-Session-Id") != "synthetic-rotated-session" {
+	if headers.Get("Scnt") != "synthetic-rotated-scnt" ||
+		headers.Get("X-Apple-ID-Session-Id") != "synthetic-rotated-session" {
 		t.Fatal("partial trust continuation headers lost")
 	}
 	found := false
@@ -731,32 +836,33 @@ func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, ses
 
 func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
 	var scalar *big.Int
-	if r.signing {
+	switch {
+	case r.signing:
 		r.signatureReads++
 		if r.signatureReads > 4 {
-			return 0, errors.New("unbounded signature entropy")
+			return 0, errUnboundedSignatureEntropy
 		}
 		scalar = big.NewInt(1)
-	} else if r.private == 0 {
+	case r.private == 0:
 		if len(r.replay.network.PrivateScalars) != 1 {
-			return 0, errors.New("undeclared bootstrap scalar")
+			return 0, errUndeclaredBootstrapScalar
 		}
 		scalar, _ = new(big.Int).SetString(r.replay.network.PrivateScalars[r.private], 16)
 		r.private++
-	} else {
+	default:
 		if r.prover >= len(r.replay.network.ProverRandom) {
-			return 0, errors.New("undeclared prover scalar")
+			return 0, errUndeclaredProverScalar
 		}
 		sample := r.replay.network.ProverRandom[r.prover]
 		r.prover++
 		upper, ok := new(big.Int).SetString(sample.Upper, 0)
 		if !ok || upper.Cmp(elliptic.P256().Params().N) != 0 {
-			return 0, errors.New("incorrect prover bound")
+			return 0, errIncorrectProverBound
 		}
 		scalar, _ = new(big.Int).SetString(sample.Value, 0)
 	}
 	if scalar == nil {
-		return 0, errors.New("invalid fixture scalar")
+		return 0, errInvalidFixtureScalar
 	}
 	scalar.FillBytes(destination)
 	return len(destination), nil
@@ -765,7 +871,7 @@ func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
 func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	lines := strings.Split(string(payload), "\r\n")
 	if len(lines) < 2 || !strings.HasPrefix(lines[0], "GET /v2/") || !strings.HasSuffix(lines[0], " HTTP/1.1") {
-		return nil, errors.New("invalid upgrade target")
+		return nil, errInvalidUpgradeTarget
 	}
 	path := strings.TrimSuffix(strings.TrimPrefix(lines[0], "GET /v2/"), " HTTP/1.1")
 	s.validateBootstrap(path)
@@ -774,13 +880,15 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	for index, line := range lines {
 		if strings.HasPrefix(line, "Sec-WebSocket-Key:") {
 			if line != "Sec-WebSocket-Key: "+key {
-				return nil, errors.New("websocket entropy differs")
+				return nil, errWebsocketEntropyDiffers
 			}
 			lines[index] = "Sec-WebSocket-Key: AAAAAAAAAAAAAAAAAAAAAA=="
 		}
 	}
+	//nolint:gosec // RFC 6455 fixture accept digest, not a cryptographic signature.
 	digest := sha1.Sum([]byte(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
-	s.events[1].Template = strings.ReplaceAll(s.events[1].Template, "{accept}", base64.StdEncoding.EncodeToString(digest[:]))
+	s.events[1].Template = strings.ReplaceAll(s.events[1].Template,
+		"{accept}", base64.StdEncoding.EncodeToString(digest[:]))
 	payload = []byte(strings.Join(lines, "\r\n"))
 	return payload, nil
 }
@@ -795,8 +903,9 @@ func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 		offset += 8
 	}
 	if len(payload) < offset+4 || !bytes.Equal(payload[offset:offset+4], []byte{0, 1, 2, 3}) {
-		return nil, errors.New("frame mask entropy differs")
+		return nil, errFrameMaskEntropyDiffers
 	}
+
 	for index := offset + 4; index < len(payload); index++ {
 		payload[index] ^= payload[offset+(index-offset-4)%4]
 	}
@@ -806,27 +915,32 @@ func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 
 // Synthetic caller cancellation occurs after the complete Source prompt boundary.
 func TestNativeBridgeSDKCancellationAndIdempotentClose(t *testing.T) {
-	nativeBridgeSDKScenario(t, "auth-bridge-modern-prompt", sdkBridgeControls{after: func(session *icloud.NativeBridgeSession) {
-		ctx, cancel := context.WithCancel(t.Context())
-		cancel()
-		_, err := session.VerifyCode(ctx, icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
-		var failure *icloud.ClientError
-		if !errors.Is(err, context.Canceled) || !errors.As(err, &failure) || failure.Kind() != icloud.Canceled {
-			t.Fatalf("SDK cancellation ownership: %v", err)
-		}
-		nativeBridgeConcurrentClose(t, session)
-		_, err = session.VerifyCode(t.Context(), icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
-		if !errors.Is(err, bridge.ErrClosed) || !errors.As(err, &failure) || failure.Kind() != icloud.Closed {
-			t.Fatalf("SDK closed owner: %v", err)
-		}
-		state, stateErr := session.State()
-		if stateErr != nil {
-			t.Fatal(stateErr)
-		}
-		if state.Active || state.State.CodeRequested {
-			t.Fatal("cancellation did not preserve closed progress")
-		}
-	}})
+	t.Parallel()
+	nativeBridgeSDKScenario(t, "auth-bridge-modern-prompt", sdkBridgeControls{lateFailure: false,
+		snapshot: false, overlap: false, after: func(session *icloud.NativeBridgeSession) {
+			ctx, cancel := context.WithCancel(t.Context())
+			cancel()
+			_, err := session.VerifyCode(ctx, icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
+
+			var failure *icloud.ClientError
+			if !errors.Is(err, context.Canceled) || !errors.As(err, &failure) || failure.Kind() != icloud.Canceled {
+				t.Fatalf("SDK cancellation ownership: %v", err)
+			}
+
+			nativeBridgeConcurrentClose(t, session)
+			_, err = session.VerifyCode(t.Context(), icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
+			if !errors.Is(err, bridge.ErrClosed) || !errors.As(err, &failure) || failure.Kind() != icloud.Closed {
+				t.Fatalf("SDK closed owner: %v", err)
+			}
+			state, stateErr := session.State()
+			if stateErr != nil {
+				t.Fatal(stateErr)
+			}
+
+			if state.Active || state.State.CodeRequested {
+				t.Fatal("cancellation did not preserve closed progress")
+			}
+		}})
 }
 
 func nativeBridgeConcurrentClose(t *testing.T, session *icloud.NativeBridgeSession) {
@@ -847,31 +961,47 @@ func nativeBridgeConcurrentClose(t *testing.T, session *icloud.NativeBridgeSessi
 
 // Synthetic overlapping call runs while the original step2 HTTP boundary is in flight.
 func TestNativeBridgeSDKOverlappingVerification(t *testing.T) {
-	nativeBridgeSDKScenario(t, "auth-bridge-modern-code-204", sdkBridgeControls{overlap: true})
+	t.Parallel()
+	nativeBridgeSDKScenario(t, "auth-bridge-modern-code-204", sdkBridgeControls{lateFailure: false,
+		snapshot: false, overlap: true, after: nil})
 }
 
 // The failed-open owner retains the provider's metadata and cannot emit a second
 // verification or close frame after its failed Source bootstrap boundary.
 func TestNativeBridgeFailedOpenReturnsClosedOwner(t *testing.T) {
-	nativeBridgeSDKScenario(t, "auth-bridge-step0-refused", sdkBridgeControls{after: func(session *icloud.NativeBridgeSession) {
-		if session == nil {
-			t.Fatal("failed open lost owned authentication progress")
-		}
-		state, err := session.State()
-		if err != nil {
-			t.Fatal(err)
-		}
-		if state.Active || state.SessionID != "" || state.NextStep != "" || !state.TransactionID.IsNull() {
-			t.Fatal("failed-open owner exposed active challenge")
-		}
-		if len(state.Responses) != 1 || state.Responses[0].StatusCode != 503 {
-			t.Fatal("failed-open owner lost current provider metadata")
-		}
-		_, err = session.VerifyCode(t.Context(), icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
-		var failure *icloud.ClientError
-		if !errors.Is(err, bridge.ErrClosed) || !errors.As(err, &failure) || failure.Kind() != icloud.Closed {
-			t.Fatalf("failed-open verification: %v", err)
-		}
-		nativeBridgeConcurrentClose(t, session)
-	}})
+	t.Parallel()
+	nativeBridgeSDKScenario(t, "auth-bridge-step0-refused", sdkBridgeControls{lateFailure: false,
+		snapshot: false, overlap: false, after: func(session *icloud.NativeBridgeSession) {
+			if session == nil {
+				t.Fatal("failed open lost owned authentication progress")
+			}
+			state, err := session.State()
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if state.Active || state.SessionID != "" || state.NextStep != "" || !state.TransactionID.IsNull() {
+				t.Fatal("failed-open owner exposed active challenge")
+			}
+			if len(state.Responses) != 1 || state.Responses[0].StatusCode != http.StatusServiceUnavailable {
+				t.Fatal("failed-open owner lost current provider metadata")
+			}
+			_, err = session.VerifyCode(t.Context(), icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
+
+			var failure *icloud.ClientError
+			if !errors.Is(err, bridge.ErrClosed) || !errors.As(err, &failure) || failure.Kind() != icloud.Closed {
+				t.Fatalf("failed-open verification: %v", err)
+			}
+
+			nativeBridgeConcurrentClose(t, session)
+		}})
+}
+
+func nativeBridgeMarshal(t *testing.T, value any) []byte {
+	t.Helper()
+	encoded, err := json.Marshal(value)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return encoded
 }

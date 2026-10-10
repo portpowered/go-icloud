@@ -72,6 +72,7 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	if err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
 	}
+
 	var boot bridgeModels.BridgeBootstrapDirect
 	if err := json.Unmarshal(progress.state.Challenge.BridgeBootstrap, &boot); err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
@@ -244,6 +245,7 @@ func (session *NativeBridgeSession) validate(ctx context.Context, identifier, co
 func (session *NativeBridgeSession) record(state NativeAuthState, metadata ResponseMetadata, succeeded bool) {
 	session.mutex.Lock()
 	defer session.mutex.Unlock()
+
 	session.state = cloneNativeAuthState(state)
 	if succeeded && metadata.StatusCode != 0 {
 		session.responses = append(session.responses, metadata)
@@ -253,6 +255,7 @@ func (session *NativeBridgeSession) record(state NativeAuthState, metadata Respo
 func (session *NativeBridgeSession) recordResult(result *NativeAuthResult) {
 	session.mutex.Lock()
 	defer session.mutex.Unlock()
+
 	session.state = cloneNativeAuthState(result.State)
 	session.responses = append(session.responses, cloneDriveResponses(result.Responses)...)
 }

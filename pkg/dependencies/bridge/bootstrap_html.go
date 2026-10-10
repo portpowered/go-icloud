@@ -27,11 +27,11 @@ func ParseBootstrap(body []byte) (*models.BridgeBootstrapDirect, error) {
 
 	err = json.Unmarshal(payload, &envelope)
 	if err != nil {
-		return nil, &ProtocolError{Stage: "bootstrap JSON", Cause: err}
+		return nil, &ProtocolError{Stage: stageBootstrapJSON, Cause: err}
 	}
 
 	if envelope.Direct == nil {
-		return nil, &ProtocolError{Stage: "bootstrap JSON", Cause: errBootstrap}
+		return nil, &ProtocolError{Stage: stageBootstrapJSON, Cause: errBootstrap}
 	}
 
 	return envelope.Direct, nil

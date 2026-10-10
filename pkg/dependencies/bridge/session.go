@@ -126,14 +126,14 @@ func bootstrapKey(ctx context.Context, entropy io.Reader) (*ecdsa.PrivateKey, er
 	for scalar == nil || scalar.Sign() == 0 {
 		contextError := ctx.Err()
 		if contextError != nil {
-			return nil, &ProtocolError{Stage: "bootstrap entropy", Cause: contextError}
+			return nil, &ProtocolError{Stage: stageBootstrapEntropy, Cause: contextError}
 		}
 
 		var err error
 
 		scalar, err = rand.Int(entropy, curve.Params().N)
 		if err != nil {
-			return nil, &ProtocolError{Stage: "bootstrap entropy", Cause: err}
+			return nil, &ProtocolError{Stage: stageBootstrapEntropy, Cause: err}
 		}
 	}
 
@@ -142,7 +142,7 @@ func bootstrapKey(ctx context.Context, entropy io.Reader) (*ecdsa.PrivateKey, er
 
 	private, err := ecdh.P256().NewPrivateKey(scalar.FillBytes(make([]byte, len(curve.Params().N.Bytes()))))
 	if err != nil {
-		return nil, &ProtocolError{Stage: "bootstrap key", Cause: err}
+		return nil, &ProtocolError{Stage: stageBootstrapKey, Cause: err}
 	}
 
 	public := private.PublicKey().Bytes()
@@ -177,7 +177,7 @@ func bootstrapURL(key *ecdsa.PrivateKey, timestamp uint64, options Options, host
 
 	private, err := ecdh.P256().NewPrivateKey(key.D.FillBytes(make([]byte, len(key.Params().N.Bytes()))))
 	if err != nil {
-		return "", &ProtocolError{Stage: "bootstrap key", Cause: err}
+		return "", &ProtocolError{Stage: stageBootstrapKey, Cause: err}
 	}
 
 	publicKey := private.PublicKey().Bytes()

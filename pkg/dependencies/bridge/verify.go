@@ -58,7 +58,7 @@ func (session *Session) VerifyCode(ctx context.Context, code string) (bool, erro
 	legacy := strings.HasSuffix(valueOrEmpty(push.Payload.Txnid), string(models.LegacyTransactionSuffix))
 
 	if push.NextStep != fmt.Sprint(models.ProverShareStep) || push.Payload.Salt == nil || legacy {
-		return false, &ProtocolError{Stage: "verification", Cause: errVerification}
+		return false, &ProtocolError{Stage: stageVerification, Cause: errVerification}
 	}
 
 	work, cancel := context.WithCancel(ctx)
@@ -73,7 +73,7 @@ func (session *Session) VerifyCode(ctx context.Context, code string) (bool, erro
 
 	err = work.Err()
 	if err != nil {
-		return false, &ProtocolError{Stage: "verification", Cause: err}
+		return false, &ProtocolError{Stage: stageVerification, Cause: err}
 	}
 
 	return session.verify(work, challenge.socket, push, code)
@@ -132,27 +132,27 @@ func (session *Session) verify(ctx context.Context, socket Socket, push *Push, c
 func processProof(prover *bridgeprover.Prover, encoded string) (string, bool, error) {
 	value, err := strictBase64(encoded)
 	if err != nil {
-		return "", false, &ProtocolError{Stage: "server proof", Cause: err}
+		return "", false, &ProtocolError{Stage: stageServerProof, Cause: err}
 	}
 
 	parts := strings.SplitN(string(value), string(models.ProofSeparator), int(models.ProofPartCount))
 	if len(parts) != int(models.ProofPartCount) {
-		return "", false, &ProtocolError{Stage: "server proof", Cause: errPushPayload}
+		return "", false, &ProtocolError{Stage: stageServerProof, Cause: errPushPayload}
 	}
 
 	share, err := strictBase64(parts[0])
 	if err != nil {
-		return "", false, &ProtocolError{Stage: "server share", Cause: err}
+		return "", false, &ProtocolError{Stage: stageServerShare, Cause: err}
 	}
 
 	serverConfirmation, err := strictBase64(parts[1])
 	if err != nil {
-		return "", false, &ProtocolError{Stage: "server confirmation", Cause: err}
+		return "", false, &ProtocolError{Stage: stageServerConfirmation, Cause: err}
 	}
 
 	confirmation, err := prover.ProcessMessage1(hex.EncodeToString(share))
 	if err != nil {
-		return "", false, &ProtocolError{Stage: "server share", Cause: err}
+		return "", false, &ProtocolError{Stage: stageServerShare, Cause: err}
 	}
 
 	_, err = prover.ProcessMessage2(hex.EncodeToString(serverConfirmation))
@@ -161,7 +161,7 @@ func processProof(prover *bridgeprover.Prover, encoded string) (string, bool, er
 			return "", false, nil
 		}
 
-		return "", false, &ProtocolError{Stage: "server confirmation", Cause: err}
+		return "", false, &ProtocolError{Stage: stageServerConfirmation, Cause: err}
 	}
 
 	result, err := hexBase64(confirmation)
@@ -223,7 +223,7 @@ func (session *Session) next(ctx context.Context, socket Socket) (*Push, error) 
 func (session *Session) exchange(ctx context.Context, step models.BridgeStep, data string, push *Push) error {
 	err := ctx.Err()
 	if err != nil {
-		return &ProtocolError{Stage: "HTTP exchange", Cause: err}
+		return &ProtocolError{Stage: stageHTTPExchange, Cause: err}
 	}
 
 	request := new(models.BridgeExchange)
@@ -232,7 +232,7 @@ func (session *Session) exchange(ctx context.Context, step models.BridgeStep, da
 
 	err = session.options.Exchange(ctx, *request)
 	if err != nil {
-		return &ProtocolError{Stage: "HTTP exchange", Cause: err}
+		return &ProtocolError{Stage: stageHTTPExchange, Cause: err}
 	}
 
 	return nil

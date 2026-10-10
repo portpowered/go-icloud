@@ -86,6 +86,7 @@ func DecodeServerMessage(payload []byte) (*bridgepb.ServerMessage, error) {
 // decoder, while retaining every repeated and unknown field.
 func canonicalFields(payload []byte, descriptor protoreflect.MessageDescriptor) ([]byte, error) {
 	var canonical []byte
+
 	seen := make(map[protowire.Number]bool)
 
 	for len(payload) != 0 {
@@ -96,7 +97,9 @@ func canonicalFields(payload []byte, descriptor protoreflect.MessageDescriptor) 
 
 		field := descriptor.Fields().ByNumber(number)
 		value := payload[count:]
+
 		remaining, err := validateField(value, wireType, field)
+
 		if err != nil {
 			return nil, err
 		}
@@ -125,7 +128,9 @@ func canonicalField(value []byte, wireType protowire.Type, field protoreflect.Fi
 	}
 
 	message, _ := protowire.ConsumeBytes(value)
+
 	canonical, err := canonicalFields(message, field.Message())
+
 	if err != nil {
 		return nil, err
 	}
