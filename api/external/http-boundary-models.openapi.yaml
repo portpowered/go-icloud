@@ -2,10 +2,22 @@ openapi: 3.0.3
 info:
   title: iCloud HTTP boundary models
   version: 0.1.0
-  description: Caller-owned HTTP extension headers supplied through the public Header API.
+  description: Caller-owned HTTP headers and validated content locators at the public transport boundary.
 paths: {}
 components:
   schemas:
+    CallerContentURL:
+      type: string
+      format: uri
+      minLength: 1
+      description: Exact content locator supplied by a caller or decoded provider field. Before use, require HTTPS, a nonempty host, no userinfo and no fragment. Preserve escaped path and provider query. SDK-invented locators are not caller-owned.
+    ContentLocator:
+      type: object
+      required: [url]
+      properties:
+        url: {$ref: '#/components/schemas/CallerContentURL'}
+      additionalProperties: false
+      description: One exact content URL. The generated record preserves the boundary shape; operation binding and URI validation remain mandatory before sending.
     CallerHeaderName:
       type: string
       description: Caller-supplied header name. The caller owns this extension key; SDK fixed header names use their generated protocol constants.

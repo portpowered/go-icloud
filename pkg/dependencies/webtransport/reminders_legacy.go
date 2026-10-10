@@ -35,7 +35,7 @@ func (client *Client) LegacyRemindersStartup(ctx context.Context,
 	}
 
 	request = request.WithContext(ctx)
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 	request.URL.RawQuery = orderedAccountQuery(auth.Params)
 
 	response, err := client.readPrepared(request, successfulContent, auth.Cookies)

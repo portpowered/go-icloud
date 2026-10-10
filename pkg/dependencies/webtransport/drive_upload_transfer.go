@@ -82,7 +82,7 @@ func (client *Client) transferDriveUpload(ctx context.Context, auth RequestConte
 	}
 
 	request.URL = target
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, contentType)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
@@ -107,7 +107,7 @@ func uploadHeaderName(value string) string {
 }
 
 func uploadTarget(contentURL string) (*url.URL, error) {
-	target, err := url.Parse(contentURL)
+	target, err := contentLocatorTarget(contentURL)
 	if err != nil || target.Scheme != protocol.DriveHTTPSchemeValue || target.Host == "" ||
 		target.User != nil || target.Fragment != "" {
 		return nil, errDriveShape

@@ -106,7 +106,7 @@ func (client *Client) prepareDriveUpload(ctx context.Context, auth RequestContex
 }
 
 func plainTextUploadAuth(auth RequestContext) RequestContext {
-	auth.Headers = CallerHeaders(auth.Headers)
+	auth.Headers = callerHeaders(auth.Headers)
 	auth.Headers.Set(protocol.HTTPContentTypeName, protocol.DriveMediaPlainText)
 
 	return auth

@@ -87,7 +87,7 @@ func (client *Client) photosScopedQueryBytes(ctx context.Context, auth RequestCo
 	}
 
 	request = request.WithContext(ctx)
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaApplicationJson)
 
 	if request.Header.Get(protocol.AcceptName) == "" {

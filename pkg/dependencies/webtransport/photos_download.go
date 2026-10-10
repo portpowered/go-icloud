@@ -3,7 +3,6 @@ package webtransport
 import (
 	"context"
 	"errors"
-	"net/url"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
@@ -17,7 +16,7 @@ var errPhotoContentURL = errors.New("invalid provider photo content URL")
 func (client *Client) DownloadPhotoContent(ctx context.Context, auth RequestContext,
 	contentURL string,
 ) (*BytesResponse, error) {
-	target, err := url.Parse(contentURL)
+	target, err := contentLocatorTarget(contentURL)
 	if err != nil || validateOrigin(target.Scheme+"://"+target.Host) != nil ||
 		target.User != nil || target.Fragment != "" {
 		return nil, failure(Decode, errPhotoContentURL, nil, nil)
@@ -31,7 +30,7 @@ func (client *Client) DownloadPhotoContent(ctx context.Context, auth RequestCont
 	// Bind the exact escaped provider URL, including repeated signed query values.
 	request.URL = target
 
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))

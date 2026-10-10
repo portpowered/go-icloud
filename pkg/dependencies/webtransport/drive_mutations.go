@@ -46,7 +46,7 @@ func (client *Client) CreateDriveFolder(ctx context.Context, auth RequestContext
 	payload := drive.DriveCreateFolders{DestinationDrivewsId: parent,
 		Folders: []drive.DriveFolderCreation{{ClientId: identifier, Name: name}}}
 
-	auth.Headers = CallerHeaders(auth.Headers)
+	auth.Headers = callerHeaders(auth.Headers)
 	auth.Headers.Set(protocol.HTTPContentTypeName, protocol.DriveMediaPlainText)
 
 	response, err := client.postDrive(ctx, auth, payload,

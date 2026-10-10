@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"net/url"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
@@ -78,7 +77,7 @@ func downloadTokenURL(tokens drive.DriveDownloadTokens) string {
 }
 
 func driveContentRequest(contentURL string, auth RequestContext) (*http.Request, error) {
-	target, err := url.Parse(contentURL)
+	target, err := contentLocatorTarget(contentURL)
 	if err != nil || target.Scheme != protocol.DriveHTTPSchemeValue || target.Host == "" ||
 		target.User != nil || target.Fragment != "" {
 		return nil, errDriveShape
@@ -98,7 +97,7 @@ func driveContentRequest(contentURL string, auth RequestContext) (*http.Request,
 
 	request.URL.RawQuery += orderedRequestQuery(auth)
 
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
 	}

@@ -51,7 +51,7 @@ func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
 
 	contentType := request.Header.Get(protocol.HTTPContentTypeName)
 
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 	if request.Header.Get(protocol.HTTPContentTypeName) == "" && contentType != "" {
 		request.Header.Set(protocol.HTTPContentTypeName, contentType)
 	}

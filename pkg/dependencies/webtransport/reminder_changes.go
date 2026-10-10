@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
@@ -197,7 +196,7 @@ func (client *Client) readReminderRequest(ctx context.Context, auth RequestConte
 	}
 
 	request = request.WithContext(ctx)
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 	request.Header.Set(protocol.HTTPContentTypeName, protocol.RemindersMediaApplicationJson)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
@@ -217,7 +216,7 @@ func (client *Client) readReminderRequest(ctx context.Context, auth RequestConte
 func (client *Client) DownloadReminderMembership(ctx context.Context, auth RequestContext,
 	asset cloudkit.CKAssetToken,
 ) (*BytesResponse, error) {
-	target, err := url.Parse(asset.DownloadURL.GetOrEmpty())
+	target, err := contentLocatorTarget(asset.DownloadURL.GetOrEmpty())
 	if err != nil || target.Scheme != protocol.DriveHTTPSchemeValue || target.Host == "" ||
 		target.User != nil || target.Fragment != "" {
 		return nil, failure(Decode, errReminderZonesShape, nil, nil)
@@ -231,7 +230,7 @@ func (client *Client) DownloadReminderMembership(ctx context.Context, auth Reque
 	request.URL = target
 	request = request.WithContext(ctx)
 
-	request.Header = CallerHeaders(auth.Headers)
+	request.Header = callerHeaders(auth.Headers)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
 		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
