@@ -1,16 +1,17 @@
-package webtransport
+package webtransport_test
 
 import (
 	"testing"
 
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 func TestPhotosGeneratedAssetQueryPreservesSourceBytes(t *testing.T) {
 	t.Parallel()
 
-	body, err := photosAssetBodyLimit(cloudkit.CPLAssetAndMasterByAddedDate, cloudkit.ASCENDING, -1,
-		[]PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldRecordName, Value: `synthetic<&>"`}}, 2)
+	body, err := webtransport.TestPhotosAssetBodyLimit(cloudkit.CPLAssetAndMasterByAddedDate, cloudkit.ASCENDING, -1,
+		[]webtransport.PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldRecordName, Value: `synthetic<&>"`}}, 2)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +35,7 @@ func TestPhotosGeneratedAlbumQueryPreservesSourceBytes(t *testing.T) {
 	zone.ZoneName = "synthetic-é"
 	zone.ZoneType.Set("REGULAR_CUSTOM_ZONE")
 	zone.OwnerRecordName.Set("synthetic-owner")
-	body, err := photosAlbumBody(&parent, &continuation, zone)
+	body, err := webtransport.TestPhotosAlbumBody(&parent, &continuation, zone)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -23,7 +23,9 @@ class SyntheticTests(unittest.TestCase):
             "photos-albums-parent-html-escaped-literal",
             "photos-assets-custom-html-escaped-literal",
         ]:
-            baseline = json.loads((FIXTURES / (name + ".json")).read_text(encoding="utf-8"))
+            baseline = json.loads(
+                (FIXTURES / (name + ".json")).read_text(encoding="utf-8")
+            )
             with self.subTest(name=name):
                 self.assertEqual(replay_synthetic(FIXTURES / (name + ".json")), 3)
             for mutation in ["html-spelling", "decoded-literal"]:

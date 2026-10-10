@@ -28,6 +28,7 @@ func photosQueryZone(selected ...*cloudkit.CKZoneIDReq) cloudkit.CKZoneIDReq {
 	zone := new(cloudkit.CKZoneIDReq)
 	zone.ZoneName = protocol.PhotosPhotoPrimaryZoneNameValue
 	zone.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
+
 	if len(selected) > 0 && selected[0] != nil {
 		zone = selected[0]
 	}

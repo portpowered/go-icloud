@@ -34,6 +34,7 @@ func photosAlbumBody(parent, continuation *string, selected ...*cloudkit.CKZoneI
 
 	zone := photosQueryZone(selected...)
 	input.ZoneID.Set(zone)
+
 	if continuation != nil {
 		input.ContinuationMarker.Set(*continuation)
 	}

@@ -67,6 +67,7 @@ func photosAssetFilters(direction cloudkit.PhotoDirection, offset int64,
 	}
 
 	filters := []cloudkit.CKQueryFilterBy{directionFilter, rankFilter}
+
 	for _, selector := range extra {
 		filter, filterErr := photosStringFilter(string(selector.Field), selector.Value)
 		if filterErr != nil {

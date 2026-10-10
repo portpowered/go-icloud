@@ -1,10 +1,18 @@
-package webtransport
+package webtransport_test
 
 import (
 	"encoding/json"
 	"reflect"
 	"testing"
+
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 )
+
+const literalJSON = `{"value":"\\u003c"}`
+
+const otherEscapeJSON = `{"value":"\u0041\u00e9"}`
+
+const otherValuesJSON = `{"value":null,"number":7,"text":"é"}`
 
 func TestReferenceJSONEscapesPreservesValuesAndSourceSpelling(t *testing.T) {
 	t.Parallel()
@@ -15,18 +23,18 @@ func TestReferenceJSONEscapesPreservesValuesAndSourceSpelling(t *testing.T) {
 		expected string
 	}{
 		{name: "HTML", input: `{"value":"\u003c\u003C\u003e\u003E\u0026"}`, expected: `{"value":"<<>>&"}`},
-		{name: "literal escape", input: `{"value":"\\u003c"}`, expected: `{"value":"\\u003c"}`},
+		{name: "literal escape", input: literalJSON, expected: literalJSON},
 		{name: "escaped quote", input: `{"value":"\"\u003c"}`, expected: `{"value":"\"<"}`},
 		{name: "escaped slash", input: `{"value":"\\\u003c"}`, expected: `{"value":"\\<"}`},
-		{name: "other escape", input: `{"value":"\u0041\u00e9"}`, expected: `{"value":"\u0041\u00e9"}`},
+		{name: "other escape", input: otherEscapeJSON, expected: otherEscapeJSON},
 		{name: "member name", input: `{"\u003c\u003e\u0026":"\\u003c"}`, expected: `{"<>&":"\\u003c"}`},
-		{name: "other values", input: `{"value":null,"number":7,"text":"é"}`,
-			expected: `{"value":null,"number":7,"text":"é"}`},
+		{name: "other values", input: otherValuesJSON, expected: otherValuesJSON},
 	}
 	for _, test := range cases {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
-			actual := referenceJSONEscapes([]byte(test.input))
+
+			actual := webtransport.TestReferenceJSONEscapes([]byte(test.input))
 			if string(actual) != test.expected {
 				t.Fatalf("normalized JSON = %s, want %s", actual, test.expected)
 			}

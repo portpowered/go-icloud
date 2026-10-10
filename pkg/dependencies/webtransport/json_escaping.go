@@ -8,16 +8,20 @@ func referenceJSONEscapes(encoded []byte) []byte {
 	var output bytes.Buffer
 
 	quoted, escaped := false, false
+
 	for index := 0; index < len(encoded); index++ {
 		character := encoded[index]
+
 		if decoded, ok := referenceJSONEscapeCharacter(encoded, index, quoted, escaped); ok {
 			output.WriteByte(decoded)
+
 			index += 5
 
 			continue
 		}
 
 		output.WriteByte(character)
+
 		if escaped {
 			escaped = false
 

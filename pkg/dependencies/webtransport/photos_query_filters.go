@@ -8,6 +8,7 @@ import (
 
 func photosStringFilter(name, value string) (cloudkit.CKQueryFilterBy, error) {
 	field := new(cloudkit.CKQueryFilterBy_FieldValue)
+
 	err := field.FromCKFVString(cloudkit.CKFVString{Type: cloudkit.CKFVStringTypeSTRING,
 		Value: value, AdditionalProperties: nil})
 	if err != nil {
@@ -21,6 +22,7 @@ func photosStringFilter(name, value string) (cloudkit.CKQueryFilterBy, error) {
 
 func photosRankFilter(offset int64) (cloudkit.CKQueryFilterBy, error) {
 	field := new(cloudkit.CKQueryFilterBy_FieldValue)
+
 	err := field.FromCKFVInt64(cloudkit.CKFVInt64{Type: cloudkit.CKFVInt64TypeINT64,
 		Value: max(offset, 0), AdditionalProperties: nil})
 	if err != nil {
@@ -36,6 +38,7 @@ func photosQueryFilter(name string, field cloudkit.CKQueryFilterBy_FieldValue) (
 	filter := new(cloudkit.CKQueryFilterBy)
 	filter.FieldName = name
 	filter.FieldValue = field
+
 	err := filter.Comparator.FromCKComparator(cloudkit.CKComparatorEQUALS)
 	if err != nil {
 		var empty cloudkit.CKQueryFilterBy
