@@ -6,9 +6,12 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
+	"syscall"
 	"testing"
 	"time"
 
@@ -21,6 +24,8 @@ const (
 	materializedPhotoPath   = "2024/01/02/synthetic-0.JPG"
 	materializedSyncCursor  = "synthetic-sync"
 	materializedResourceKey = "original"
+	// Windows ERROR_PRIVILEGE_NOT_HELD is the sole optional symlink capability failure.
+	materializationSymlinkPrivilegeError syscall.Errno = 1314
 )
 
 type materializationCase struct {
@@ -41,6 +46,19 @@ type materializationRecording struct {
 func TestPinnedSourceSDKMaterializationReplay(t *testing.T) {
 	t.Parallel()
 
+	recording := materializationFixture(t)
+	for _, variant := range recording.Cases {
+		t.Run(variant.Name, func(t *testing.T) {
+			t.Parallel()
+
+			replaySDKMaterialization(t, variant, recording.TargetIdentity, filepath.Join(t.TempDir(), "output"))
+		})
+	}
+}
+
+func materializationFixture(t *testing.T) *materializationRecording {
+	t.Helper()
+
 	data, err := os.ReadFile("fixtures/synthetic/filesystem/photos-materialize-sdk.json")
 	if err != nil {
 		t.Fatal(err)
@@ -53,16 +71,46 @@ func TestPinnedSourceSDKMaterializationReplay(t *testing.T) {
 		t.Fatal("pinned Source materialization pairs are absent")
 	}
 
-	for _, variant := range recording.Cases {
-		t.Run(variant.Name, func(t *testing.T) {
-			t.Parallel()
-
-			replaySDKMaterialization(t, variant, recording.TargetIdentity)
-		})
-	}
+	return recording
 }
 
-func replaySDKMaterialization(t *testing.T, variant materializationCase, targetIdentity json.RawMessage) {
+func TestPinnedSourceSDKMaterializationSymlinkDestinationReplay(t *testing.T) {
+	t.Parallel()
+
+	parent := t.TempDir()
+	alias := filepath.Join(t.TempDir(), "alias")
+
+	err := os.Symlink(parent, alias)
+	if err != nil {
+		if runtime.GOOS == "windows" && errors.Is(err, materializationSymlinkPrivilegeError) {
+			t.Skipf("Windows symlink creation requires permission: %v", err)
+		}
+
+		t.Fatal(err)
+	}
+
+	destination := filepath.Join(alias, "output")
+	_, err = os.Stat(destination)
+	if !errors.Is(err, os.ErrNotExist) {
+		t.Fatal("destination leaf must be absent before materialization", err)
+	}
+
+	canonicalParent, err := filepath.EvalSymlinks(parent)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if actual := materializationDestination(t, destination); actual != filepath.Join(canonicalParent, "output") {
+		t.Fatalf("independent destination relocation failed: %s", actual)
+	}
+
+	recording := materializationFixture(t)
+	replaySDKMaterialization(t, recording.Cases[0], recording.TargetIdentity, destination)
+}
+
+func replaySDKMaterialization(t *testing.T, variant materializationCase,
+	targetIdentity json.RawMessage, directory string,
+) {
 	t.Helper()
 
 	exchanges, auth := materializationTraffic(t, variant)
@@ -86,7 +134,7 @@ func replaySDKMaterialization(t *testing.T, variant materializationCase, targetI
 	}
 
 	engine := newEngine(t, provider)
-	input := request(filepath.Join(t.TempDir(), "output"))
+	input := request(directory)
 	input.Auth = auth
 	input.Options.SetExifDatetime, input.Options.XmpSidecar = true, true
 	input.Options.FolderStructure = "%Y/%m/%d"
@@ -238,7 +286,7 @@ func assertMaterializationManifest(t *testing.T, directory, key string,
 func materializationTargetKey(t *testing.T, identity json.RawMessage, directory string) string {
 	t.Helper()
 
-	encoded, err := json.Marshal(directory)
+	encoded, err := json.Marshal(materializationDestination(t, directory))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -262,6 +310,19 @@ func materializationTargetKey(t *testing.T, identity json.RawMessage, directory 
 	digest := sha256.Sum256(canonical.Bytes())
 
 	return hex.EncodeToString(digest[:])
+}
+
+// The replay owns an existing temporary parent and an initially absent output
+// leaf. Resolve that parent independently, preserving the leaf's exact spelling.
+func materializationDestination(t *testing.T, directory string) string {
+	t.Helper()
+
+	parent, err := filepath.EvalSymlinks(filepath.Dir(directory))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return filepath.Join(parent, filepath.Base(directory))
 }
 
 func materializationRoot(t *testing.T, directory string) *os.Root {
