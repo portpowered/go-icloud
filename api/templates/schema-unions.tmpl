@@ -8,6 +8,7 @@
     {{if $checked -}}
         {{$root := $schema.OAPISchema -}}
         {{$checked = and (gt (len $root.OneOf) 0) (eq (len $root.AnyOf) 0) (eq (len $root.AllOf) 0) (not $root.Not) (not $root.Nullable) (not $root.Type) (eq (len $root.Enum) 0) (eq (printf "%T" $root.Const) "<nil>") -}}
+        {{$checked = and $checked (eq (len $root.Required) 0) (eq (len $root.Properties) 0) (not $root.AdditionalProperties.Has) (not $root.AdditionalProperties.Schema) (eq $root.MinProps 0) (not $root.MaxProps) (eq (len $root.PatternProperties) 0) (eq (len $root.DependentSchemas) 0) (eq (len $root.DependentRequired) 0) (not $root.PropertyNames) (not $root.If) (not $root.Then) (not $root.Else) (not $root.UnevaluatedProperties.Has) (not $root.UnevaluatedProperties.Schema) -}}
         {{range $root.OneOf -}}
             {{if not .Value -}}{{$checked = false -}}{{else -}}
                 {{$member := .Value -}}
@@ -19,6 +20,7 @@
                     {{if not .Value -}}{{$checked = false -}}{{else -}}
                         {{$property := .Value -}}
                         {{$checked = and $checked (or ($property.Type.Is "string") ($property.Type.Is "boolean")) (eq (len $property.OneOf) 0) (eq (len $property.AnyOf) 0) (eq (len $property.AllOf) 0) (not $property.Not) (eq (len $property.Enum) 0) (eq (printf "%T" $property.Const) "<nil>") (eq $property.Format "") (eq $property.Pattern "") (eq $property.MinLength 0) (not $property.MaxLength) -}}
+                        {{$checked = and $checked (not $property.If) (not $property.Then) (not $property.Else) -}}
                     {{end -}}
                 {{end -}}
             {{end -}}
