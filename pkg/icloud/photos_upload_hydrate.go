@@ -93,7 +93,7 @@ func (read *photosRead) hydratePhotoUpload(ctx context.Context, request UploadPh
 			return nil, waitErr
 		}
 
-		delay = min(delay*photoHydrationBackoffFactor, photoHydrationMaximumInterval)
+		delay = min(delay, photoHydrationMaximumInterval/photoHydrationBackoffFactor) * photoHydrationBackoffFactor
 	}
 }
 

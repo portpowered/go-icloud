@@ -119,7 +119,7 @@ func photoUploadContentSize(content io.ReadSeeker) (int64, error) {
 		return 0, fmt.Errorf("size Photos content: %w", errors.Join(err, restoreErr))
 	}
 
-	return size, nil
+	return max(size-position, 0), nil
 }
 
 func (read *photosRead) uploadOnePhoto(ctx context.Context, request UploadPhotoRequest,
