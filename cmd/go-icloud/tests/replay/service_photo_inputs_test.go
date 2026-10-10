@@ -13,11 +13,12 @@ func TestPhotoTypedInputsPairedReferenceReplay(t *testing.T) {
 		{photoStatusCommand, "photos-index-ready"},
 		{photoAlbumsCommand, "photos-albums-1"},
 		{photoCountCommand, "photos-count-1"},
-		{photoAssetsCommand, "photos-assets-1"},
+		{photoAssetsCommand, expectedOneAssetFixture},
 		{photoLookupCommand, "photos-get-existing"},
 	} {
 		t.Run(scenario.fixture, func(t *testing.T) {
 			t.Parallel()
+
 			path := filepath.Join(writeFixtureDirectory, scenario.fixture+".json")
 			runPhotoReadInputScenario(t, scenario.operation, readObject(t, path), true)
 		})
@@ -27,7 +28,8 @@ func TestPhotoTypedInputsPairedReferenceReplay(t *testing.T) {
 func typedPhotoFixtureInput(t *testing.T, operation string, row map[string]json.RawMessage) map[string]any {
 	t.Helper()
 
-	input := map[string]any{"auth": map[string]any{"clientID": "foreign"}}
+	input := map[string]any{"auth": map[string]any{expectedClientID: "foreign"}}
+
 	if operation == photoCountCommand || operation == photoAssetsCommand || operation == photoLookupCommand {
 		album := "Library"
 		if value := row["album"]; len(value) != 0 {

@@ -18,8 +18,8 @@ func TestPhotoVisitorCommandsPairedReferenceReplay(t *testing.T) {
 	t.Parallel()
 
 	for _, scenario := range []writeReplayCase{
-		{"photo-assets-visit", "photos-assets-1"},
-		{"photos-recently-added-visit", "photos-recently-added-one"},
+		{expectedAssetVisitCommand, expectedOneAssetFixture},
+		{"photos-recently-added-visit", expectedRecentPhotoFixture},
 	} {
 		t.Run(scenario.fixture, func(t *testing.T) {
 			t.Parallel()
@@ -42,9 +42,12 @@ func runPhotoVisitorReplay(t *testing.T, scenario writeReplayCase) {
 	session := filepath.Join(directory, expectedReplaySessionJSON)
 	request := filepath.Join(directory, testRequestJSONFilename)
 	result := filepath.Join(directory, expectedReplayResultJSON)
+
 	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
+
 	input := map[string]any{}
-	if scenario.operation == "photo-assets-visit" {
+
+	if scenario.operation == expectedAssetVisitCommand {
 		input["album"] = "Library"
 	}
 
@@ -79,6 +82,7 @@ func runPhotoVisitorReplay(t *testing.T, scenario writeReplayCase) {
 
 	decodeWriteFixture(t, data, &receipt)
 	checkWriteResponses(t, receipt.Responses, fixture.Exchanges)
+
 	if len(receipt.Photos) != len(sourceServiceList(t, fixture.Result)) {
 		t.Fatal("photo visitor lost retained assets in private summary")
 	}
@@ -86,6 +90,7 @@ func runPhotoVisitorReplay(t *testing.T, scenario writeReplayCase) {
 
 func checkPhotoVisitorSourceStream(t *testing.T, fixture writeFixture, output io.Reader) {
 	t.Helper()
+
 	decoder := json.NewDecoder(output)
 	decoder.UseNumber()
 

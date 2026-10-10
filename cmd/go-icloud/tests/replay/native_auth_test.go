@@ -32,7 +32,7 @@ func TestNativeAuthenticationCommands(t *testing.T) {
 		{fixture: "auth-trust-refused", operation: "trust"},
 		{fixture: "auth-trust-untrusted-account", operation: "trust"},
 		{fixture: expectedCachedAuthFixture, operation: "login"},
-		{fixture: "auth-status-trusted", operation: expectedAuthStatusCommand},
+		{fixture: expectedTrustedStatusFixture, operation: expectedAuthStatusCommand},
 		{fixture: "auth-status-untrusted", operation: expectedAuthStatusCommand},
 		{fixture: "auth-status-rejected", operation: expectedAuthStatusCommand},
 		{fixture: "auth-status-no-token", operation: expectedAuthStatusCommand},
@@ -140,7 +140,8 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 	}
 
 	assertNativeCommandPersistence(t, path, operation, providerFailed, state, encoded)
-	if name == "auth-status-trusted" {
+
+	if name == expectedTrustedStatusFixture {
 		assertAuthenticatedCredentialExport(t, client, transport, path)
 	}
 }
@@ -177,6 +178,7 @@ func assertAuthenticatedCredentialExport(t *testing.T, client icloud.Client,
 	var summary map[string]string
 
 	decode(t, output.Bytes(), &summary)
+
 	if len(summary) != 1 || summary["sessionFile"] != destination {
 		t.Fatal("credential export exposed unexpected output", summary)
 	}

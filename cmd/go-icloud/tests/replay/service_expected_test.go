@@ -71,3 +71,15 @@ const (
 	testUploadURLsKey                   = "uploadURLs"
 	testVersionsKey                     = "versions"
 )
+
+// Independent Source fixture values shared by paired CLI scenarios.
+const (
+	expectedTrustedStatusFixture = "auth-status-trusted"
+	expectedSourceMasterID       = "master_id"
+	expectedSyntheticAccount     = "synthetic-account"
+	expectedParentReminderID     = "parentReminderID"
+	expectedOneAssetFixture      = "photos-assets-1"
+	expectedClientID             = "clientID"
+	expectedRecentPhotoFixture   = "photos-recently-added-one"
+	expectedAssetVisitCommand    = "photo-assets-visit"
+)

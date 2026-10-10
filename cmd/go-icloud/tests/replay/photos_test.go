@@ -61,7 +61,7 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 
 	var auth icloud.AuthContext
 
-	auth.AccountID, auth.ClientID = "synthetic-account", "synthetic-client"
+	auth.AccountID, auth.ClientID = expectedSyntheticAccount, "synthetic-client"
 	auth.PhotosServiceURL = "https://photos.example.invalid"
 	auth.Headers = []icloud.Header{}
 	writeSyncJSON(t, session, auth)
@@ -175,11 +175,13 @@ func runPhotoReadInputScenario(t *testing.T, operation string, row map[string]js
 
 	writeSyncJSON(t, session, fixtureAuth(t, row[expectedReplayInitialState]))
 	options := photoCLIArgs(t, operation, row)
+
 	if typed {
 		request := filepath.Join(directory, testRequestJSONFilename)
 		writeSyncJSON(t, request, typedPhotoFixtureInput(t, operation, row))
 		options = []string{expectedRequestOption, request}
 	}
+
 	args := make([]string, 0, 5+len(options))
 	args = append(args, sessionFlag, session, expectedReplaySaveResult, saved)
 	args = append(args, options...)

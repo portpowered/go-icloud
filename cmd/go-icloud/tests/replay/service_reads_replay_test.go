@@ -21,7 +21,7 @@ func TestTypedPhotoReadsPairedReferenceReplay(t *testing.T) {
 		{testPhotoCursorCommand, "photos-sync-cached"},
 		{testPhotoChangesCommand, "photos-changes-empty"},
 		{testPhotoLibraryChangesCommand, "photos-container-private-changes-0"},
-		{testPhotosRecentlyAddedCommand, "photos-recently-added-one"},
+		{testPhotosRecentlyAddedCommand, expectedRecentPhotoFixture},
 		{testSharedPhotoAlbumsCommand, "photos-upload-shared-albums-0"},
 		{testSharedPhotoCountCommand, "photos-upload-shared-count-1"},
 		{testSharedPhotosCommand, "photos-upload-shared-assets-1"},
@@ -51,7 +51,8 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 
 	directory := t.TempDir()
 	session := filepath.Join(directory, expectedReplaySessionJSON)
-	request, result := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, expectedReplayResultJSON)
+	request := filepath.Join(directory, testRequestJSONFilename)
+	result := filepath.Join(directory, expectedReplayResultJSON)
 
 	writeFixtureValue(t, session, auth)
 
@@ -61,7 +62,8 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 
 	var output, diagnostic bytes.Buffer
 
-	args := []string{sessionFlag, session, expectedRequestOption, request, expectedReplaySaveResult, result, scenario.operation}
+	args := []string{sessionFlag, session, expectedRequestOption, request,
+		expectedReplaySaveResult, result, scenario.operation}
 
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	if err != nil {
@@ -110,7 +112,7 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 	}
 
 	for _, secret := range []string{
-		"https://assets.example.invalid", "synthetic-next", "synthetic-cached", "synthetic-account",
+		"https://assets.example.invalid", "synthetic-next", "synthetic-cached", expectedSyntheticAccount,
 	} {
 		if strings.Contains(output.String(), secret) {
 			t.Fatal("private provider state reached ordinary output")

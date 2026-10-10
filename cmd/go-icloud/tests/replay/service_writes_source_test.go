@@ -67,12 +67,12 @@ func sourceWriteField(key string) string {
 	}
 
 	names := map[string]string{
-		"list_id": "listID", "reminder_id": expectedReplayReminderID, "parent_reminder_id": "parentReminderID",
+		"list_id": "listID", "reminder_id": expectedReplayReminderID, "parent_reminder_id": expectedParentReminderID,
 		"hashtag_ids": testHashtagIDsKey, "attachment_ids": testAttachmentIDsKey,
 		"alarm_ids": testAlarmIDsKey, "recurrence_rule_ids": testRecurrenceRuleIDsKey,
 		"alarm_id": "alarmID", "alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID",
-		"file_asset_url": "fileAssetURL",
-		"master_id":      testMasterIDKey,
+		"file_asset_url":       "fileAssetURL",
+		expectedSourceMasterID: testMasterIDKey,
 	}
 	if name, known := names[key]; known {
 		return name
@@ -141,7 +141,8 @@ func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map
 		request[reminderCommand] = inputs[0]
 	case testReminderDeleteCommand:
 		reminder := sourceServiceObject(t, inputs[0])
-		request[expectedReplayReminderID], request[reminderCLIRevisionField] = reminder["id"], reminder[reminderCLIRevisionField]
+		request[expectedReplayReminderID] = reminder["id"]
+		request[reminderCLIRevisionField] = reminder[reminderCLIRevisionField]
 	case testReminderHashtagCreateCommand:
 		request[reminderCommand], request["name"] = inputs[0], inputs[1]
 	case testReminderHashtagUpdateCommand:

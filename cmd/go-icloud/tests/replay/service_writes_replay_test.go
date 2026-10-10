@@ -211,7 +211,7 @@ func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 	client := fixtureWriteClient(t, fixture, transport)
 	request := fixtureWriteInput(t, scenario.operation, fixture)
 	// A foreign account in the request must never replace the selected stored session.
-	request["auth"] = map[string]any{"clientID": "foreign", testAccountIDKey: "foreign", "headers": []any{}}
+	request["auth"] = map[string]any{expectedClientID: "foreign", testAccountIDKey: "foreign", "headers": []any{}}
 	directory := t.TempDir()
 	session := filepath.Join(directory, expectedReplaySessionJSON)
 	input := filepath.Join(directory, testRequestJSONFilename)
@@ -222,7 +222,8 @@ func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 
 	var output, diagnostic bytes.Buffer
 
-	args := []string{sessionFlag, session, expectedRequestOption, input, expectedReplaySaveResult, result, scenario.operation}
+	args := []string{sessionFlag, session, expectedRequestOption, input,
+		expectedReplaySaveResult, result, scenario.operation}
 	err = command.Run(t.Context(), client, args,
 		&output, &diagnostic)
 	checkWriteReplayResult(t, scenario, fixture, output.Bytes(), result, err)
