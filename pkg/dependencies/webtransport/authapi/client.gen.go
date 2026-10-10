@@ -6,6 +6,7 @@ package authapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -991,6 +992,103 @@ type ValidateAuthSessionJSONRequestBody = externalRef0.AuthSessionValidationRequ
 // ValidateAuthVerificationCodeJSONRequestBody defines body for ValidateAuthVerificationCode for application/json ContentType.
 type ValidateAuthVerificationCodeJSONRequestBody = externalRef0.AuthTrustedDevice
 
+// validateLoginAuthTokenJSONBody checks the generated oneOf contract without rewriting bytes.
+func validateLoginAuthTokenJSONBody(data []byte) error {
+	var object map[string]interface{}
+	if err := json.Unmarshal(data, &object); err != nil {
+		return err
+	}
+	if object == nil {
+		return errors.New("LoginAuthTokenJSONBody requires an object")
+	}
+	matches := 0
+	if matchesLoginAuthTokenJSONBodyMember0(object) {
+		matches++
+	}
+	if matchesLoginAuthTokenJSONBodyMember1(object) {
+		matches++
+	}
+	if matches != 1 {
+		return errors.New("LoginAuthTokenJSONBody requires exactly one schema member")
+	}
+	return nil
+}
+func matchesLoginAuthTokenJSONBodyMember0(object map[string]interface{}) bool {
+	if _, present := object["accountCountryCode"]; !present {
+		return false
+	}
+	if _, present := object["dsWebAuthToken"]; !present {
+		return false
+	}
+	if _, present := object["extended_login"]; !present {
+		return false
+	}
+	if _, present := object["trustToken"]; !present {
+		return false
+	}
+	if value, present := object["accountCountryCode"]; present {
+		if value != nil {
+			if _, valid := value.(string); !valid {
+				return false
+			}
+		}
+	}
+	if value, present := object["dsWebAuthToken"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	if value, present := object["extended_login"]; present {
+		if _, valid := value.(bool); !valid {
+			return false
+		}
+	}
+	if value, present := object["trustToken"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	return true
+}
+func matchesLoginAuthTokenJSONBodyMember1(object map[string]interface{}) bool {
+	if _, present := object["appName"]; !present {
+		return false
+	}
+	if _, present := object["apple_id"]; !present {
+		return false
+	}
+	if _, present := object["password"]; !present {
+		return false
+	}
+	if value, present := object["appName"]; present {
+		if value != nil {
+			if _, valid := value.(string); !valid {
+				return false
+			}
+		}
+	}
+	if value, present := object["apple_id"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	if value, present := object["password"]; present {
+		if _, valid := value.(string); !valid {
+			return false
+		}
+	}
+	for name := range object {
+		switch name {
+		case "appName":
+		case "apple_id":
+		case "password":
+		default:
+			return false
+		}
+	}
+	return true
+}
+
 // AsExternalRef0AuthTokenLoginRequest returns the union data inside the LoginAuthTokenJSONBody as a externalRef0.AuthTokenLoginRequest
 func (t LoginAuthTokenJSONBody) AsExternalRef0AuthTokenLoginRequest() (externalRef0.AuthTokenLoginRequest, error) {
 	var body externalRef0.AuthTokenLoginRequest
@@ -1001,6 +1099,12 @@ func (t LoginAuthTokenJSONBody) AsExternalRef0AuthTokenLoginRequest() (externalR
 // FromExternalRef0AuthTokenLoginRequest overwrites any union data inside the LoginAuthTokenJSONBody as the provided externalRef0.AuthTokenLoginRequest
 func (t *LoginAuthTokenJSONBody) FromExternalRef0AuthTokenLoginRequest(v externalRef0.AuthTokenLoginRequest) error {
 	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	if err := validateLoginAuthTokenJSONBody(b); err != nil {
+		return err
+	}
 	t.union = b
 	return err
 }
@@ -1013,6 +1117,12 @@ func (t *LoginAuthTokenJSONBody) MergeExternalRef0AuthTokenLoginRequest(v extern
 	}
 
 	merged, err := runtime.JSONMerge(t.union, b)
+	if err != nil {
+		return err
+	}
+	if err := validateLoginAuthTokenJSONBody(merged); err != nil {
+		return err
+	}
 	t.union = merged
 	return err
 }
@@ -1027,6 +1137,12 @@ func (t LoginAuthTokenJSONBody) AsExternalRef0AuthCredentialsLoginRequest() (ext
 // FromExternalRef0AuthCredentialsLoginRequest overwrites any union data inside the LoginAuthTokenJSONBody as the provided externalRef0.AuthCredentialsLoginRequest
 func (t *LoginAuthTokenJSONBody) FromExternalRef0AuthCredentialsLoginRequest(v externalRef0.AuthCredentialsLoginRequest) error {
 	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	if err := validateLoginAuthTokenJSONBody(b); err != nil {
+		return err
+	}
 	t.union = b
 	return err
 }
@@ -1039,16 +1155,28 @@ func (t *LoginAuthTokenJSONBody) MergeExternalRef0AuthCredentialsLoginRequest(v 
 	}
 
 	merged, err := runtime.JSONMerge(t.union, b)
+	if err != nil {
+		return err
+	}
+	if err := validateLoginAuthTokenJSONBody(merged); err != nil {
+		return err
+	}
 	t.union = merged
 	return err
 }
 
 func (t LoginAuthTokenJSONBody) MarshalJSON() ([]byte, error) {
+	if err := validateLoginAuthTokenJSONBody(t.union); err != nil {
+		return nil, err
+	}
 	b, err := t.union.MarshalJSON()
 	return b, err
 }
 
 func (t *LoginAuthTokenJSONBody) UnmarshalJSON(b []byte) error {
+	if err := validateLoginAuthTokenJSONBody(b); err != nil {
+		return err
+	}
 	err := t.union.UnmarshalJSON(b)
 	return err
 }
