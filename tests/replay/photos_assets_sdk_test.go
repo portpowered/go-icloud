@@ -18,7 +18,7 @@ func TestPhotoAssetsSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 109 {
+	if len(paths) != 110 {
 		t.Fatal(replayLiteralPhotoAssetScenarioInventoryChanged)
 	}
 

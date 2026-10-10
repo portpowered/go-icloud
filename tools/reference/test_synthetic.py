@@ -18,6 +18,38 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_photo_selector_html_and_literal_escape_source_bytes(self):
+        for name in [
+            "photos-albums-parent-html-escaped-literal",
+            "photos-assets-custom-html-escaped-literal",
+        ]:
+            baseline = json.loads((FIXTURES / (name + ".json")).read_text(encoding="utf-8"))
+            with self.subTest(name=name):
+                self.assertEqual(replay_synthetic(FIXTURES / (name + ".json")), 3)
+            for mutation in ["html-spelling", "decoded-literal"]:
+                scenario = copy.deepcopy(baseline)
+                request = scenario["exchanges"][-1]["request"]
+                body = base64.b64decode(request["body"]["value"])
+                if mutation == "html-spelling":
+                    body = body.replace(b"<", b"\\u003c")
+                else:
+                    payload = json.loads(body)
+                    value = payload["query"]["filterBy"][-1]["fieldValue"]
+                    value["value"] = value["value"].replace("\\u003c", "<")
+                    body = json.dumps(payload).encode()
+                request["body"]["value"] = base64.b64encode(body).decode()
+                for header in request["headers"]:
+                    if header[0].lower() == "content-length":
+                        header[1] = str(len(body))
+                with (
+                    self.subTest(name=name, mutation=mutation),
+                    TemporaryDirectory() as directory,
+                ):
+                    path = Path(directory) / "changed.json"
+                    path.write_text(json.dumps(scenario), encoding="utf-8")
+                    with self.assertRaises(AssertionError):
+                        replay_synthetic(path)
+
     def test_photo_changes_bind_final_source_cursor_and_null(self):
         paths = [
             path
@@ -183,8 +215,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_photo_assets_matrix(self):
         paths = sorted(FIXTURES.glob("photos-assets-*.json"))
-        self.assertEqual(len(paths), 109)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 427)
+        self.assertEqual(len(paths), 110)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 430)
 
     def test_photo_assets_full_projection_and_consumption_are_bound(self):
         baseline = json.loads((FIXTURES / "photos-assets-1.json").read_text())
@@ -276,8 +308,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_photo_album_matrix(self):
         paths = sorted(FIXTURES.glob("photos-albums-*.json"))
-        self.assertEqual(len(paths), 41)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 98)
+        self.assertEqual(len(paths), 42)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 101)
 
     def test_photo_album_results_requests_and_consumption_are_bound(self):
         baseline = json.loads((FIXTURES / "photos-albums-1.json").read_text())
