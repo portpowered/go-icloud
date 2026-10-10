@@ -17,6 +17,7 @@ const (
 	guideTitle         = "Expected guide"
 	rootContent        = "root"
 	missingDestination = "missing local destination"
+	missingContent     = "expected rendered content absent"
 )
 
 type gateScenario struct {
@@ -36,9 +37,9 @@ func gateScenarios() []gateScenario {
 			"", missingDestination},
 		{"anchor", `<a href="/go-icloud/docs/guide/#missing">bad</a>`, guideTitle, "", "missing fragment"},
 		{"runtime-schema-link", rootContent, guideTitle, "/go-icloud/missing/", missingDestination},
-		{"fallback-content", rootContent, "Not found", "", "expected rendered content absent"},
+		{"fallback-content", rootContent, "Not found", "", missingContent},
 		{"hidden-content", rootContent, `<script>Expected guide</script><h1>Not found</h1>`,
-			"", "expected rendered content absent"},
+			"", missingContent},
 	}
 }
 
