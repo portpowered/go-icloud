@@ -1,0 +1,142 @@
+{
+  "format": "portos.bridge-host.v1",
+  "source": {
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e",
+    "function": "_resolve_websocket_host"
+  },
+  "cases": [
+    {
+      "name": "url-case",
+      "input": {
+        "webSocketUrl": "wss://MiXeD.ExAmPlE/a"
+      },
+      "host": "mixed.example"
+    },
+    {
+      "name": "bare-case",
+      "input": {
+        "webSocketUrl": "MiXeD.ExAmPlE/a"
+      },
+      "host": "MiXeD.ExAmPlE"
+    },
+    {
+      "name": "url-userinfo-port",
+      "input": {
+        "webSocketUrl": "wss://user@MiXeD.ExAmPlE:8443/a"
+      },
+      "host": "mixed.example"
+    },
+    {
+      "name": "zone-raw",
+      "input": {
+        "webSocketUrl": "wss://[FE80::ABCD%En0]/a"
+      },
+      "host": "fe80::abcd%En0"
+    },
+    {
+      "name": "zone-escaped",
+      "input": {
+        "webSocketUrl": "wss://[FE80::ABCD%25En0]/a"
+      },
+      "host": "fe80::abcd%25En0"
+    },
+    {
+      "name": "zone-case",
+      "input": {
+        "webSocketUrl": "wss://[FE80::ABCD%ETHERNET]/a"
+      },
+      "host": "fe80::abcd%ETHERNET"
+    },
+    {
+      "name": "ipv6",
+      "input": {
+        "webSocketUrl": "wss://[2001:DB8::ABCD]/a"
+      },
+      "host": "2001:db8::abcd"
+    },
+    {
+      "name": "unicode-dot",
+      "input": {
+        "webSocketUrl": "wss://\u0130.Example/a"
+      },
+      "host": "i\u0307.example"
+    },
+    {
+      "name": "unicode-final-sigma",
+      "input": {
+        "webSocketUrl": "wss://\u039f\u03a3.Example/a"
+      },
+      "host": "\u03bf\u03c3.example"
+    },
+    {
+      "name": "percent-malformed",
+      "input": {
+        "webSocketUrl": "wss://A%ZZ.Example/a"
+      },
+      "host": "a%ZZ.Example"
+    },
+    {
+      "name": "percent-preserved",
+      "input": {
+        "webSocketUrl": "wss://A%2F.Example/a"
+      },
+      "host": "a%2F.Example"
+    },
+    {
+      "name": "ipvfuture",
+      "input": {
+        "webSocketUrl": "wss://[v1.ABC]/a"
+      },
+      "host": "v1.abc"
+    },
+    {
+      "name": "empty-authority",
+      "input": {
+        "webSocketUrl": "wss:///path"
+      },
+      "host": "wss:"
+    },
+    {
+      "name": "production",
+      "input": {
+        "apnsEnvironment": "prod"
+      },
+      "host": "websocket.push.apple.com"
+    },
+    {
+      "name": "sandbox",
+      "input": {
+        "apnsEnvironment": "sandbox"
+      },
+      "host": "websocket.sandbox.push.apple.com"
+    },
+    {
+      "name": "empty-url-environment",
+      "input": {
+        "webSocketUrl": "",
+        "apnsEnvironment": "prod"
+      },
+      "host": "websocket.push.apple.com"
+    },
+    {
+      "name": "explicit-over-environment",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE/a",
+        "apnsEnvironment": "sandbox"
+      },
+      "host": "example"
+    },
+    {
+      "name": "missing",
+      "input": {},
+      "error": true
+    },
+    {
+      "name": "unknown-environment",
+      "input": {
+        "apnsEnvironment": "other"
+      },
+      "error": true
+    }
+  ]
+}

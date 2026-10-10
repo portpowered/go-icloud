@@ -12,6 +12,8 @@ import (
 
 	models "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 	"golang.org/x/net/html"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var errBootstrap = errors.New("missing or malformed HSA2 bootstrap")
@@ -103,19 +105,31 @@ func SocketHost(data models.BridgeInitiateData) (string, error) {
 
 func explicitSocketHost(candidate string) (string, error) {
 	if strings.Contains(candidate, "://") {
-		parsed, err := url.Parse(candidate)
+		// Python's hostname property retains percent spelling, including zone IDs.
+		// Escape percent for Go's parser so its decoding recovers the original text.
+		parsed, err := url.Parse(strings.ReplaceAll(candidate, "%", "%25"))
 		if err != nil {
 			return "", fmt.Errorf("parse bridge host: %w", err)
 		}
 
 		if parsed.Hostname() != "" {
-			return parsed.Hostname(), nil
+			return lowercaseSocketHostname(parsed.Hostname()), nil
 		}
 	}
 
 	first, _, _ := strings.Cut(candidate, "/")
 
 	return first, nil
+}
+
+func lowercaseSocketHostname(host string) string {
+	name, zone, zoned := strings.Cut(host, "%")
+	name = cases.Lower(language.Und).String(name)
+	if zoned {
+		return name + "%" + zone
+	}
+
+	return name
 }
 
 func valueOrEmpty(value *string) string {

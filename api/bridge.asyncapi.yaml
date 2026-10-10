@@ -7,13 +7,26 @@ servers:
   production:
     url: websocket.push.apple.com
     protocol: wss
+    x-environment:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeProtocolString/values/ProductionEnvironment'
   sandbox:
     url: websocket.sandbox.push.apple.com
     protocol: wss
+    x-environment:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeProtocolString/values/SandboxEnvironment'
   bootstrap:
     url: '{host}'
     protocol: wss
     description: Host normalized from the bridge bootstrap URL, with APNS environment fallback.
+    x-host-normalization:
+      version: 1
+      schemeSeparator: '://'
+      pathSeparator: '/'
+      uriField: hostname
+      fallback: first-path-segment
+      percentSpelling: preserve
+      hostnameCase: unicode-lowercase-before-zone
+      zoneDelimiter: '%'
     variables:
       host:
         default: websocket.push.apple.com

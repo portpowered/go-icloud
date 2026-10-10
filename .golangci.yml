@@ -41,7 +41,10 @@ linters:
             # Generated Reminders CRDT models and decoding use the pinned protobuf runtime.
             - google.golang.org/protobuf
             # Public Reminders text replaces malformed UTF-8 subsequences as Source does.
-            - golang.org/x/text/encoding/unicode
+              - golang.org/x/text/encoding/unicode
+              # Source URL hostnames use Unicode lowercase while retaining zone ID case.
+              - golang.org/x/text/cases
+              - golang.org/x/text/language
             # Pinned trusted-device bridge uses scrypt for its SPAKE2 password scalars.
             - golang.org/x/crypto/scrypt
             # HTML bootstrap parsing uses the standard maintained HTML tokenizer.
