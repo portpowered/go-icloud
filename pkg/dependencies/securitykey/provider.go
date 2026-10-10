@@ -173,7 +173,6 @@ func (provider *Provider) Assert(ctx context.Context, request Request) (Assertio
 	result, failure := provider.assertConnection(ctx, connection, request)
 
 	closeErr := connection.Close()
-
 	if closeErr != nil {
 		failure = errors.Join(failure, keyFailure("close", closeErr))
 	}
@@ -190,7 +189,6 @@ func (provider *Provider) inspectDevice(ctx context.Context, id string) error {
 	_, failure := provider.initializeConnection(ctx, connection)
 
 	closeErr := connection.Close()
-
 	if closeErr != nil {
 		return keyFailure("discovery close", errors.Join(failure, closeErr))
 	}
@@ -240,6 +238,7 @@ func (provider *Provider) assertConnection(
 
 func emptyAssertion() Assertion {
 	var result Assertion
+
 	return result
 }
 

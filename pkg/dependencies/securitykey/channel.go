@@ -207,6 +207,7 @@ func (channel *channel) readReport(ctx context.Context) ([]byte, error) {
 	if err != nil {
 		return nil, keyFailure("read", err)
 	}
+
 	if count != len(packet) {
 		return nil, keyFailure("report", ErrProtocol)
 	}

@@ -406,6 +406,7 @@ func (channel *channel) selectCredential(
 		if retryErr != nil {
 			return nil, retryErr
 		}
+
 		maximum = nextMaximum
 		filtered = filtered[skipped:]
 	}
