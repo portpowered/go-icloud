@@ -39,6 +39,7 @@ func readWriteRequest[Request any](ctx context.Context, path string) (*Request, 
 
 	request, decodeErr := decodeWriteRequest[Request](file)
 	closeErr := file.Close()
+
 	if decodeErr != nil {
 		return nil, &WriteRequestError{Cause: decodeErr}
 	}
@@ -83,6 +84,7 @@ func decodeWriteRequest[Request any](input io.Reader) (*Request, error) {
 		if err != nil {
 			return nil, fmt.Errorf("decode request end: %w", err)
 		}
+
 		return nil, errWriteTrailing
 	}
 
@@ -90,6 +92,7 @@ func decodeWriteRequest[Request any](input io.Reader) (*Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	typed := json.NewDecoder(bytes.NewReader(raw))
 	typed.DisallowUnknownFields()
 
@@ -99,6 +102,7 @@ func decodeWriteRequest[Request any](input io.Reader) (*Request, error) {
 	if err != nil {
 		return nil, fmt.Errorf("decode typed request: %w", err)
 	}
+
 	if request == nil {
 		return nil, errNullWriteRequest
 	}

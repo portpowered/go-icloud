@@ -106,6 +106,7 @@ func typedWriteProjection(result any) any {
 		if value == nil {
 			return value
 		}
+
 		copied := *value
 
 		copied.Registrations = make([]icloud.PhotoUploadRegistration, 0, len(value.Registrations))
@@ -113,20 +114,25 @@ func typedWriteProjection(result any) any {
 		for _, registration := range value.Registrations {
 			copied.Registrations = append(copied.Registrations, writePhotoRegistration(registration))
 		}
+
 		return &copied
 	case *icloud.UploadPhotoFileResult:
 		if value == nil {
 			return value
 		}
+
 		copied := *value
 		copied.Registration = writePhotoRegistration(copied.Registration)
+
 		return &copied
 	case *icloud.UploadPhotoResult:
 		if value == nil {
 			return value
 		}
+
 		copied := *value
 		copied.Registration = writePhotoRegistration(copied.Registration)
+
 		return &copied
 	default:
 		return result

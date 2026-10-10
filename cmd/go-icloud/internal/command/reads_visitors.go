@@ -27,12 +27,14 @@ func runPhotoVisit(ctx context.Context, client icloud.Client, auth icloud.AuthCo
 		result, err = invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.ListPhotoAssetsRequest) (*icloud.ListPhotoAssetsResult, error) {
 				input.Auth = auth
+
 				return client.VisitPhotoAssets(ctx, input, visitor)
 			})
 	case photosRecentVisitCommand:
 		result, err = invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.ListRecentlyAddedPhotosRequest) (*icloud.ListRecentlyAddedPhotosResult, error) {
 				input.Auth = auth
+
 				return client.VisitRecentlyAddedPhotos(ctx, input, visitor)
 			})
 	default:
@@ -47,6 +49,7 @@ func runPhotoVisit(ctx context.Context, client icloud.Client, auth icloud.AuthCo
 	if err != nil {
 		return fmt.Errorf("write photo stream summary: %w", err)
 	}
+
 	return nil
 }
 
@@ -66,6 +69,7 @@ func photoConsoleVisitor(ctx context.Context, output io.Writer) icloud.PhotoVisi
 		if err != nil {
 			return false, fmt.Errorf("write photo stream item: %w", err)
 		}
+
 		return true, nil
 	}
 }

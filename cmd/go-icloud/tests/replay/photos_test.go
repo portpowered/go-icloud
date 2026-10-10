@@ -39,7 +39,9 @@ func (client *photoPrivacyClient) ListPhotoAssets(
 // scenarios below; its opaque values are not a provider capture.
 func TestPhotoReadOpaquePrivacy(t *testing.T) {
 	t.Parallel()
+
 	var result icloud.ListPhotoAssetsResult
+
 	decode(t, json.RawMessage(`{"photos":[{"id":"public-id","masterID":"public-master","filename":"public.jpg",`+
 		`"itemType":"image","isLivePhoto":false,"created":"2020-01-01T00:00:00Z",`+
 		`"added":"2020-01-02T00:00:00Z",`+
@@ -51,16 +53,19 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 		`"size":{"opaque":["size-secret"]}}],"responses":[{"statusCode":200,`+
 		`"headers":[{"name":"Set-Cookie","value":"session=receipt-secret"}],`+
 		`"cookieScopeURL":"https://private.example.invalid/photos"}]}`), &result)
+
 	original := reminderCLIEncode(t, result)
 	directory := t.TempDir()
 	session := filepath.Join(directory, expectedReplaySessionJSON)
 	saved := filepath.Join(directory, expectedReplayResultJSON)
+
 	var auth icloud.AuthContext
 
 	auth.AccountID, auth.ClientID = "synthetic-account", "synthetic-client"
 	auth.PhotosServiceURL = "https://photos.example.invalid"
 	auth.Headers = []icloud.Header{}
 	writeSyncJSON(t, session, auth)
+
 	var output, diagnostic bytes.Buffer
 
 	err := command.Run(t.Context(), &photoPrivacyClient{Client: nil, result: &result},
@@ -68,19 +73,25 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if diagnostic.Len() != 0 {
 		t.Fatal("photo privacy control printed diagnostics")
 	}
+
 	private, err := readSyncFile(t, saved)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	checkReminderCLIValue(t, private, result)
+
 	var expected map[string]json.RawMessage
+
 	decode(t, json.RawMessage(`{"photos":[{"id":"public-id","masterID":"public-master","filename":"public.jpg",`+
 		`"itemType":"image","isLivePhoto":false,"created":"2020-01-01T00:00:00Z",`+
 		`"added":"2020-01-02T00:00:00Z"}]}`), &expected)
 	checkReminderCLIValue(t, output.Bytes(), expected)
+
 	for _, marker := range []string{
 		"asset-secret", "metadata-secret", "resource-secret", "checksum-secret", "dimension-secret",
 		"size-secret", "receipt-secret",
@@ -89,6 +100,7 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 			t.Fatal("opaque private value was lost from the private result or exposed on stdout")
 		}
 	}
+
 	if !bytes.Equal(original, reminderCLIEncode(t, result)) {
 		t.Fatal("console projection mutated the caller-owned SDK result")
 	}
@@ -137,29 +149,38 @@ func TestPhotoReadCommands(t *testing.T) {
 
 func runPhotoReadScenario(t *testing.T, operation string, row map[string]json.RawMessage) {
 	t.Helper()
+
 	var exchanges []replay.Exchange
+
 	decode(t, row[expectedReplayExchanges], &exchanges)
+
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	directory := t.TempDir()
 	session := filepath.Join(directory, expectedReplaySessionJSON)
 	saved := filepath.Join(directory, expectedReplayResultJSON)
+
 	writeSyncJSON(t, session, fixtureAuth(t, row[expectedReplayInitialState]))
 	options := photoCLIArgs(t, operation, row)
 	args := make([]string, 0, 5+len(options))
 	args = append(args, sessionFlag, session, expectedReplaySaveResult, saved)
 	args = append(args, options...)
 	args = append(args, operation)
+
 	var output, diagnostic bytes.Buffer
+
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	if len(row["error"]) != 0 {
 		checkPhotoCLIFailure(t, row, output.Bytes(), err)
+
 		_, readErr := readSyncFile(t, saved)
 		if !errors.Is(readErr, os.ErrNotExist) {
 			t.Fatal("failed photo read wrote a partial private result")
@@ -168,12 +189,16 @@ func runPhotoReadScenario(t *testing.T, operation string, row map[string]json.Ra
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		checkPhotoReadPrivateSource(t, operation, row, saved, output.Bytes(), exchanges)
 	}
+
 	if diagnostic.Len() != 0 {
 		t.Fatal("photo read printed unexpected diagnostics")
 	}
-	if err = transport.AssertConsumed(); err != nil {
+
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -182,12 +207,16 @@ func checkPhotoReadPrivateSource(t *testing.T, operation string, row map[string]
 	saved string, output []byte, exchanges []replay.Exchange,
 ) {
 	t.Helper()
+
 	data, err := readSyncFile(t, saved)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var complete map[string]json.RawMessage
+
 	decode(t, data, &complete)
+
 	if operation == photoStatusCommand {
 		checkReminderCLIValue(t, complete[expectedReplayMetadata], referenceResponseMetadata(exchanges[len(exchanges)-1]))
 		delete(complete, expectedReplayMetadata)
@@ -196,6 +225,7 @@ func checkPhotoReadPrivateSource(t *testing.T, operation string, row map[string]
 		for _, exchange := range exchanges {
 			metadata = append(metadata, referenceResponseMetadata(exchange))
 		}
+
 		checkReminderCLIValue(t, complete[expectedReplayResponses], metadata)
 		delete(complete, expectedReplayResponses)
 	}
@@ -209,6 +239,7 @@ func photoReadConsoleProjection(t *testing.T, operation string,
 	complete map[string]json.RawMessage,
 ) map[string]json.RawMessage {
 	t.Helper()
+
 	result := maps.Clone(complete)
 
 	switch operation {
@@ -216,19 +247,24 @@ func photoReadConsoleProjection(t *testing.T, operation string,
 		delete(result, expectedReplaySyncToken)
 	case photoAssetsCommand:
 		var photos []map[string]json.RawMessage
+
 		decode(t, result["photos"], &photos)
+
 		for _, photo := range photos {
 			deletePhotoConsoleContainers(photo)
 		}
+
 		result["photos"] = reminderCLIEncode(t, photos)
 	case photoLookupCommand:
 		if !bytes.Equal(bytes.TrimSpace(result["photo"]), []byte("null")) {
 			var photo map[string]json.RawMessage
+
 			decode(t, result["photo"], &photo)
 			deletePhotoConsoleContainers(photo)
 			result["photo"] = reminderCLIEncode(t, photo)
 		}
 	}
+
 	return result
 }
 

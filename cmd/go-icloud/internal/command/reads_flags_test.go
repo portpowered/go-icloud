@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -62,14 +61,17 @@ func TestLegacyPhotoFlagsKeepOriginalOnlyInPrivateResult(t *testing.T) {
 			t.Fatal("legacy flags exposed private provider data", marker)
 		}
 	}
-	private, err := os.ReadFile(saved)
+
+	private, err := readReplayFile(t, saved)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	original, err := json.Marshal(result)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(private, original) {
 		t.Fatal("legacy explicit receipt differs from original result")
 	}

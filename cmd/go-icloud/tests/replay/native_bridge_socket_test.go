@@ -99,6 +99,7 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 		if len(r.initial) != 256 {
 			return 0, errBridgeUndeclaredSRPEntropy
 		}
+
 		copy(destination, r.initial)
 		r.initial = nil
 	case 1:
@@ -106,6 +107,7 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 		if r.signatureReads > 4 {
 			return 0, errBridgeUnboundedOptionalSignatureEntropy
 		}
+
 		if !r.signing {
 			return 0, errBridgeUnexpectedOptionalECDSAEntropy
 		}
@@ -116,20 +118,25 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 		r.replay.mu.Lock()
 		index := r.replay.connectionIndex
 		r.replay.mu.Unlock()
+
 		if index >= len(r.replay.network.Connections) {
 			return 0, io.EOF
 		}
+
 		nonce, err := base64.StdEncoding.DecodeString(r.replay.network.Connections[index].Bootstrap.Nonce)
 		if err != nil || len(nonce) != 17 {
 			return 0, errBridgeInvalidFixtureNonce
 		}
+
 		copy(destination, nonce[9:])
+
 		r.signing = true
 	case 16:
 		r.wideReads++
 		if r.wideReads > len(r.replay.network.Connections)+1 {
 			return 0, errBridgeUndeclaredWebSocketOrUUIDEntropy
 		}
+
 		if r.uuid {
 			destination[3] = 1
 			r.uuid = false
@@ -137,10 +144,12 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 			for index := range destination {
 				destination[index] = byte(index)
 			}
+
 			r.uuid = true
 		}
 	case 4:
 		r.maskReads++
+
 		for index := range destination {
 			destination[index] = byte(index)
 		}
@@ -149,6 +158,7 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 	default:
 		return 0, fmt.Errorf("undeclared entropy length %d: %w", len(destination), errBridgeEntropyLength)
 	}
+
 	return len(destination), nil
 }
 
@@ -159,18 +169,22 @@ func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, erro
 	r.mu.Unlock()
 
 	r.take(map[string]any{"surface": "http", "exchange": float64(index)})
+
 	return r.http.RoundTrip(request)
 }
 func (r *sdkBridgeReplay) take(event map[string]any) {
 	r.t.Helper()
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
 	if r.timeline >= len(r.network.Timeline) {
 		r.t.Fatalf("extra combined timeline event %v", event)
 	}
+
 	if !reflect.DeepEqual(event, r.network.Timeline[r.timeline]) {
 		r.t.Fatalf("combined timeline[%d] = %v; expected %v", r.timeline, event, r.network.Timeline[r.timeline])
 	}
+
 	r.timeline++
 }
 
@@ -179,16 +193,21 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	if !bounded || time.Until(deadline) <= 0 || time.Until(deadline) > 30*time.Second {
 		return nil, errBridgeSecureDialDeadlineDiffers
 	}
+
 	r.mu.Lock()
 	index := r.connectionIndex
 	r.mu.Unlock()
+
 	if index >= len(r.network.Connections) {
 		return nil, errBridgeUndeclaredBridgeConnection
 	}
+
 	expected := r.network.Connections[index]
+
 	if network != "tcp" || address != "bridge.example.invalid:443" {
 		return nil, errBridgeUnexpectedSecureDialTarget
 	}
+
 	socket := &sdkBridgeSocket{owner: r, index: index, closeOnce: sync.Once{}, closeError: nil,
 		bridgeScriptSocket: &bridgeScriptSocket{mu: sync.Mutex{},
 			events: append([]bridgeSocketEvent(nil), expected.Events...), pending: nil,
@@ -197,9 +216,11 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	r.mu.Lock()
 	r.sockets = append(r.sockets, socket)
 	r.mu.Unlock()
+
 	for _, operation := range []string{"connect", "wrap", "timeout"} {
 		socket.mark(operation, 0)
 	}
+
 	r.mu.Lock()
 	r.connectionIndex++
 	r.mu.Unlock()
@@ -207,6 +228,7 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	r.entropy.mu.Lock()
 	r.entropy.signing = false
 	r.entropy.mu.Unlock()
+
 	return socket, nil
 }
 
@@ -225,17 +247,22 @@ func (s *sdkBridgeSocket) Write(payload []byte) (int, error) {
 	s.mu.Unlock()
 
 	s.mark("send", cursor)
+
 	original := len(payload)
+
 	var err error
 	if cursor == 0 {
 		payload, err = s.upgrade(payload)
 	} else {
 		payload, err = bridgeFixtureUnmask(payload)
 	}
+
 	if err != nil {
 		return 0, err
 	}
+
 	_, err = s.bridgeScriptSocket.Write(payload)
+
 	return original, err
 }
 
@@ -247,6 +274,7 @@ func (s *sdkBridgeSocket) Read(destination []byte) (int, error) {
 	if empty {
 		s.mark("receive", cursor)
 	}
+
 	return s.bridgeScriptSocket.Read(destination)
 }
 
@@ -268,49 +296,64 @@ func (s *sdkBridgeSocket) mark(operation string, event int) {
 	if operation == "send" || operation == "receive" || operation == "close" {
 		value["event"] = float64(event)
 	}
+
 	s.owner.take(value)
 }
 
 func (s *sdkBridgeSocket) validateBootstrap(path string) {
 	s.owner.t.Helper()
+
 	raw, err := hex.DecodeString(path)
 	if err != nil || hex.EncodeToString(raw) != path {
 		s.owner.t.Fatal("noncanonical bootstrap path")
 	}
+
 	message := new(bridgepb.ClientMessage)
+
 	err = proto.Unmarshal(raw, message)
 	if err != nil {
 		s.owner.t.Fatal(err)
 	}
+
 	canonical, err := proto.Marshal(message)
 	if err != nil || !bytes.Equal(canonical, raw) || message.GetConnection() == nil ||
 		message.GetSubscription() != nil || message.GetAcknowledgement() != nil ||
 		len(message.ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap envelope differs")
 	}
+
 	body := message.GetConnection()
+
 	expected := s.owner.network.Connections[s.index].Bootstrap
+
 	if base64.StdEncoding.EncodeToString(body.GetPublicKey()) != expected.Public ||
 		base64.StdEncoding.EncodeToString(body.GetNonce()) != expected.Nonce ||
 		body.GetExpiration().GetSeconds() != expected.Expiration || len(body.ProtoReflect().GetUnknown()) != 0 ||
 		len(body.GetExpiration().ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap public key, nonce, or expiration differs")
 	}
+
 	public := body.GetPublicKey()
 	nonce := body.GetNonce()
+
 	signature := body.GetSignature()
+
 	if len(public) != 65 || len(nonce) != 17 || nonce[0] != 0 || len(signature) < 2 ||
 		!bytes.Equal(signature[:2], []byte{1, 3}) {
 		s.owner.t.Fatal("bootstrap field layout differs")
 	}
+
 	validated, keyErr := ecdh.P256().NewPublicKey(public)
 	if keyErr != nil {
 		s.owner.t.Fatal(keyErr)
 	}
+
 	point := validated.Bytes()
 	x := new(big.Int).SetBytes(point[1:33])
 	y := new(big.Int).SetBytes(point[33:])
+
 	digest := sha256.Sum256(nonce)
+
 	if !ecdsa.VerifyASN1(&ecdsa.PublicKey{Curve: elliptic.P256(), X: x, Y: y}, digest[:], signature[2:]) {
 		s.owner.t.Fatal("bootstrap signature rejected")
 	}
@@ -325,29 +368,37 @@ func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
 		if r.signatureReads > 4 {
 			return 0, errBridgeUnboundedSignatureEntropy
 		}
+
 		scalar = big.NewInt(1)
 	case r.private == 0:
 		if len(r.replay.network.PrivateScalars) != 1 {
 			return 0, errBridgeUndeclaredBootstrapScalar
 		}
+
 		scalar, _ = new(big.Int).SetString(r.replay.network.PrivateScalars[r.private], 16)
 		r.private++
 	default:
 		if r.prover >= len(r.replay.network.ProverRandom) {
 			return 0, errBridgeUndeclaredProverScalar
 		}
+
 		sample := r.replay.network.ProverRandom[r.prover]
 		r.prover++
+
 		upper, ok := new(big.Int).SetString(sample.Upper, 0)
 		if !ok || upper.Cmp(elliptic.P256().Params().N) != 0 {
 			return 0, errBridgeIncorrectProverBound
 		}
+
 		scalar, _ = new(big.Int).SetString(sample.Value, 0)
 	}
+
 	if scalar == nil {
 		return 0, errBridgeInvalidFixtureScalar
 	}
+
 	scalar.FillBytes(destination)
+
 	return len(destination), nil
 }
 
@@ -356,15 +407,19 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	if len(lines) < 2 || !strings.HasPrefix(lines[0], "GET /v2/") || !strings.HasSuffix(lines[0], " HTTP/1.1") {
 		return nil, errBridgeInvalidUpgradeTarget
 	}
+
 	path := strings.TrimSuffix(strings.TrimPrefix(lines[0], "GET /v2/"), " HTTP/1.1")
 	s.validateBootstrap(path)
+
 	lines[0] = "GET /v2/{signed_bootstrap} HTTP/1.1"
 	key := base64.StdEncoding.EncodeToString([]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15})
+
 	for index, line := range lines {
 		if strings.HasPrefix(line, "Sec-WebSocket-Key:") {
 			if line != "Sec-WebSocket-Key: "+key {
 				return nil, errBridgeWebSocketEntropyDiffers
 			}
+
 			lines[index] = "Sec-WebSocket-Key: AAAAAAAAAAAAAAAAAAAAAA=="
 		}
 	}
@@ -373,6 +428,7 @@ func (s *sdkBridgeSocket) upgrade(payload []byte) ([]byte, error) {
 	s.events[1].Template = strings.ReplaceAll(s.events[1].Template, "{accept}",
 		base64.StdEncoding.EncodeToString(digest[:]))
 	payload = []byte(strings.Join(lines, "\r\n"))
+
 	return payload, nil
 }
 
@@ -386,6 +442,7 @@ func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 	case 127:
 		offset += 8
 	}
+
 	if len(payload) < offset+4 || !bytes.Equal(payload[offset:offset+4], []byte{0, 1, 2, 3}) {
 		return nil, errBridgeFrameMaskEntropyDiffers
 	}
@@ -393,7 +450,9 @@ func bridgeFixtureUnmask(payload []byte) ([]byte, error) {
 	for index := offset + 4; index < len(payload); index++ {
 		payload[index] ^= payload[offset+(index-offset-4)%4]
 	}
+
 	clear(payload[offset : offset+4])
+
 	return payload, nil
 }
 

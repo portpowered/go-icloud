@@ -16,25 +16,31 @@ func sourceWriteProjection(t *testing.T, value any) any {
 		for _, child := range node {
 			result = append(result, sourceWriteProjection(t, child))
 		}
+
 		return result
 	case map[string]any:
 		if text, wrapped := node["$datetime"].(string); wrapped {
 			return sourceWriteDate(text)
 		}
+
 		if model, wrapped := node["$model"].(string); wrapped {
 			result := sourceWriteProjection(t, node["value"])
 			if model == "Reminder" {
 				defaultWriteReminder(sourceServiceObject(t, result))
 			}
+
 			if model == "URLAttachment" {
 				attachment := sourceServiceObject(t, result)
 				if _, exists := attachment["uti"]; !exists {
 					attachment["uti"] = "public.url"
 				}
 			}
+
 			return result
 		}
+
 		result := make(map[string]any, len(node))
+
 		for key, child := range node {
 			name := sourceWriteField(key)
 			if text, ok := child.(string); ok && writeDateField(name) {
@@ -43,6 +49,7 @@ func sourceWriteProjection(t *testing.T, value any) any {
 				result[name] = sourceWriteProjection(t, child)
 			}
 		}
+
 		return result
 	default:
 		return value
@@ -58,6 +65,7 @@ func sourceWriteField(key string) string {
 	case "asset":
 		return testAssetMetadataKey
 	}
+
 	names := map[string]string{
 		"list_id": "listID", "reminder_id": testReminderIDKey, "parent_reminder_id": "parentReminderID",
 		"hashtag_ids": testHashtagIDsKey, "attachment_ids": testAttachmentIDsKey,
@@ -69,6 +77,7 @@ func sourceWriteField(key string) string {
 	if name, known := names[key]; known {
 		return name
 	}
+
 	parts := strings.Split(key, "_")
 
 	for index := 1; index < len(parts); index++ {
@@ -77,6 +86,7 @@ func sourceWriteField(key string) string {
 			parts[index] = strings.ToUpper(part[:1]) + part[1:]
 		}
 	}
+
 	return strings.Join(parts, "")
 }
 
@@ -113,10 +123,12 @@ func sourceWriteDate(text string) string {
 
 func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map[string]any {
 	t.Helper()
+
 	request := map[string]any{}
 	if fixture.Keywords != nil {
 		request = sourceServiceObject(t, sourceWriteProjection(t, fixture.Keywords))
 	}
+
 	inputs := sourceServiceList(t, sourceWriteProjection(t, fixture.Inputs))
 
 	switch operation {
@@ -153,6 +165,7 @@ func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map
 	default:
 		photoWriteInput(t, request, operation, inputs)
 	}
+
 	return request
 }
 
@@ -179,38 +192,48 @@ func photoWriteInput(t *testing.T, request map[string]any, operation string, inp
 
 func fixtureWriteExpected(t *testing.T, operation string, fixture writeFixture) any {
 	t.Helper()
+
 	result := sourceWriteProjection(t, fixture.Result)
 	if operation == testReminderCreateCommand {
 		return map[string]any{testReminderKey: result}
 	}
+
 	if operation == testPhotoDeleteCommand || operation == testPhotoAlbumDeleteCommand {
 		return map[string]any{"deleted": true}
 	}
+
 	if operation == testPhotoAlbumAddCommand {
 		return map[string]any{"added": true}
 	}
+
 	if operation == testPhotoAlbumCreateCommand {
 		return map[string]any{"album": result}
 	}
+
 	observed, objectPresent := result.(map[string]any)
 	if !objectPresent {
 		t.Fatal("Source write result is not an object", operation)
 	}
+
 	if operation == testPhotoAlbumRenameCommand {
 		return map[string]any{"album": observed["album"]}
 	}
+
 	if operation == testPhotoFavoriteCommand {
 		photo := sourceServiceObject(t, observed["photo"])
 		for _, key := range []string{testAssetMetadataKey, testMasterMetadataKey, testVersionsKey,
 			testDimensionsKey, "size", testChecksumKey} {
 			delete(photo, key)
 		}
+
 		return map[string]any{"photo": photo}
 	}
+
 	arguments, ok := observed["arguments"].([]any)
 	if !ok || len(arguments) == 0 {
 		t.Fatal("Source write result has no mutated argument", operation)
 	}
+
 	return expectedReminderWrite(t, operation, observed["value"], arguments)
 }
 
@@ -222,6 +245,7 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 		return map[string]any{testReminderKey: arguments[0]}
 	case testReminderDeleteCommand:
 		reminder := sourceServiceObject(t, arguments[0])
+
 		return map[string]any{
 			"deleted": true, testModifiedKey: reminder[testModifiedKey],
 			testRecordChangeTagKey: reminder[testRecordChangeTagKey],
@@ -251,10 +275,12 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 		}
 
 		projectSourceLocationNumbers(t, sourceServiceObject(t, returned[1]))
+
 		return map[string]any{"alarm": returned[0], "trigger": returned[1], testReminderKey: arguments[0]}
 	default:
 		t.Fatal("unknown Source result adapter: " + operation)
 	}
+
 	return nil
 }
 
@@ -269,24 +295,29 @@ func projectSourceLocationNumbers(t *testing.T, trigger map[string]any) {
 		if !ok {
 			t.Fatalf("Source location %s is not numeric", key)
 		}
+
 		value, err := number.Float64()
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		encoded, err := json.Marshal(value)
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		trigger[key] = json.Number(encoded)
 	}
 }
 
 func TestSourceLocationProjectionPreservesNumericValues(t *testing.T) {
 	t.Parallel()
+
 	trigger := map[string]any{testLatitudeKey: json.Number("1.25"), testLongitudeKey: json.Number("2.5"),
 		"radius": json.Number("50.0"), testProximityKey: json.Number("2"),
 		testOpaqueIntegerKey: json.Number(testOpaqueLargeInteger)}
 	projectSourceLocationNumbers(t, trigger)
+
 	for key, expected := range map[string]json.Number{testLatitudeKey: "1.25", testLongitudeKey: "2.5", "radius": "50",
 		testProximityKey: "2", testOpaqueIntegerKey: testOpaqueLargeInteger} {
 		if trigger[key] != expected {

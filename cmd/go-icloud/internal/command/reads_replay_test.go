@@ -3,7 +3,6 @@ package command_test
 import (
 	"bytes"
 	"encoding/json"
-	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -37,21 +36,25 @@ func TestTypedPhotoReadsPairedReferenceReplay(t *testing.T) {
 func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 	t.Helper()
 	fixture := loadWriteFixture(t, scenario.fixture)
+
 	transport, err := replay.NewHTTPTransport(fixture.Exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client := fixtureWriteClient(t, fixture, transport)
 
 	auth := fixtureWriteAuthentication(t, fixture)
 	if origin := fixture.Initial["shared_streams_origin"]; len(origin) != 0 {
 		decodeWriteFixture(t, origin, &auth.SharedPhotosServiceURL)
 	}
+
 	directory := t.TempDir()
 	session := filepath.Join(directory, testSessionJSONFilename)
 	request, result := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, testResultJSONFilename)
 
 	writeFixtureValue(t, session, auth)
+
 	input := typedReadFixtureRequest(scenario.operation, fixture)
 	input["auth"] = map[string]any{testAccountIDKey: "foreign", "photosServiceURL": "https://foreign.example.invalid"}
 	writeFixtureValue(t, request, input)
@@ -59,15 +62,18 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 	var output, diagnostic bytes.Buffer
 
 	args := []string{testSessionFlag, session, testRequestFlag, request, testSaveResultFlag, result, scenario.operation}
+
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
 	}
-	private, err := os.ReadFile(result)
+
+	private, err := readReplayFile(t, result)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,17 +89,21 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 
 	decodeWriteFixture(t, original[testResponsesKey], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
+
 	if scenario.operation == testPhotoLibrariesCommand {
 		libraries, listPresent := actual["libraries"].([]any)
 		if !listPresent || len(libraries) != 1 {
 			t.Fatal(testRootInventoryDiffers)
 		}
+
 		library, objectPresent := libraries[0].(map[string]any)
 		if !objectPresent || library["id"] != "root" {
 			t.Fatal(testRootInventoryDiffers)
 		}
+
 		return
 	}
+
 	expected := typedReadFixtureExpected(t, scenario.operation, fixture)
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("console projection differs\nactual: %#v\nSource: %#v", actual, expected)
@@ -145,6 +155,7 @@ func typedReadFixtureExpected(t *testing.T, operation string, fixture writeFixtu
 		return map[string]any{"photos": typedReadSourcePhotos(t, fixture.Result, operation == testSharedPhotosCommand)}
 	case testPhotoUploadStatusCommand:
 		jobs := make(map[string]any)
+
 		source, objectPresent := fixture.Result.(map[string]any)
 		if !objectPresent {
 			t.Fatal("Source upload status is not an object")
@@ -156,9 +167,11 @@ func typedReadFixtureExpected(t *testing.T, operation string, fixture writeFixtu
 			value["unknown"] = job["is_unknown"]
 			jobs[id] = value
 		}
+
 		return map[string]any{"jobs": jobs}
 	default:
 		t.Fatal("missing Source read projection", operation)
+
 		return nil
 	}
 }
@@ -173,9 +186,11 @@ func typedReadSourcePhotos(t *testing.T, source any, shared bool) []any {
 			testDimensionsKey, "size", testChecksumKey} {
 			delete(photo, key)
 		}
+
 		if _, exists := photo[testIsLivePhotoKey]; !exists {
 			photo[testIsLivePhotoKey] = false
 		}
+
 		if shared {
 			likeCount, liked := photo[testLikeCountKey], photo["liked"]
 			delete(photo, testLikeCountKey)
@@ -183,5 +198,6 @@ func typedReadSourcePhotos(t *testing.T, source any, shared bool) []any {
 			photos[index] = map[string]any{"photo": photo, testLikeCountKey: likeCount, "liked": liked}
 		}
 	}
+
 	return photos
 }

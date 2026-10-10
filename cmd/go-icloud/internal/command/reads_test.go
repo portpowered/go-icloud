@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -50,6 +49,7 @@ func (probe *readProbe) GetPhotoUploadStatus(
 ) (*icloud.GetPhotoUploadStatusResult, error) {
 	probe.calls++
 	probe.auth = request.Auth
+
 	return probe.result, nil
 }
 
@@ -77,6 +77,7 @@ func TestTypedReadUnknownProviderFieldsRemainPrivate(t *testing.T) {
 	writeFixtureValue(t, request, map[string]any{
 		"auth": map[string]any{testAccountIDKey: "foreign"}, "jobIDs": []string{testSyntheticJob},
 	})
+
 	original, err := json.Marshal(result)
 	if err != nil {
 		t.Fatal(err)
@@ -86,28 +87,35 @@ func TestTypedReadUnknownProviderFieldsRemainPrivate(t *testing.T) {
 
 	args := []string{testSessionFlag, session, testRequestFlag, request, testSaveResultFlag, saved,
 		testPhotoUploadStatusCommand}
+
 	err = command.Run(t.Context(), probe, args, &output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if probe.calls != 1 || !reflect.DeepEqual(probe.auth, auth) {
 		t.Fatal("stored authentication was not selected")
 	}
+
 	if strings.Contains(output.String(), "synthetic-private-status") ||
 		strings.Contains(output.String(), testUnreviewedProviderFieldKey) {
 		t.Fatal("opaque provider fields reached console")
 	}
-	private, err := os.ReadFile(saved)
+
+	private, err := readReplayFile(t, saved)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(private, original) {
 		t.Fatal("explicit private result differs from original")
 	}
+
 	after, err := json.Marshal(result)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(after, original) {
 		t.Fatal("console projection mutated original SDK result")
 	}
@@ -120,5 +128,6 @@ func resultAuth() icloud.AuthContext {
 	auth.ClientID = testStoredClient
 	auth.PhotosServiceURL = testPhotosServiceURL
 	auth.Headers = []icloud.Header{{Name: testAuthorizationKey, Value: writeSecret}}
+
 	return auth
 }

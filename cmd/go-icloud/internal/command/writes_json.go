@@ -22,6 +22,7 @@ func validateWriteJSON(data []byte) error {
 	if !utf8.Valid(data) {
 		return errWriteEncoding
 	}
+
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 
@@ -49,10 +50,12 @@ func walkWriteJSON(decoder *json.Decoder, depth int) error {
 	if depth > maxWriteJSONDepth {
 		return errWriteNesting
 	}
+
 	token, err := decoder.Token()
 	if err != nil {
 		return fmt.Errorf("inspect JSON value: %w", err)
 	}
+
 	opening, composite := token.(json.Delim)
 	if !composite {
 		return nil
@@ -66,10 +69,12 @@ func walkWriteJSON(decoder *json.Decoder, depth int) error {
 			if keyErr != nil {
 				return fmt.Errorf("inspect JSON field: %w", keyErr)
 			}
+
 			name, _ := key.(string)
 			if seen[name] {
 				return errWriteDuplicate
 			}
+
 			seen[name] = true
 		}
 
@@ -94,6 +99,7 @@ func validateWriteAttachment(data []byte) error {
 	if err != nil {
 		return fmt.Errorf("inspect attachment variant: %w", err)
 	}
+
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
 

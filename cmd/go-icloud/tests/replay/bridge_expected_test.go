@@ -34,3 +34,10 @@ const (
 	expectedSecurityKeyDevice         = "synthetic-device"
 	expectedCallerAssertionControl    = "caller assertion"
 )
+
+// Independent fixed values in synthetic authentication replay controls (LIB-05).
+const (
+	expectedSyntheticSessionValue    = "synthetic-token"
+	expectedSyntheticAccountName     = "synthetic@example.invalid"
+	expectedCancelledCeremonyControl = "cancelled ceremony"
+)

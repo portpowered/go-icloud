@@ -54,6 +54,7 @@ func (probe *visitorProbe) VisitPhotoAssets(_ context.Context, request icloud.Li
 
 	result.Photos = []icloud.Photo{}
 	result.Responses = []icloud.ResponseMetadata{}
+
 	return &result, nil
 }
 
@@ -69,6 +70,7 @@ func (probe *visitorProbe) VisitRecentlyAddedPhotos(_ context.Context, request i
 
 	result.Photos = []icloud.Photo{}
 	result.Responses = []icloud.ResponseMetadata{}
+
 	return &result, nil
 }
 
@@ -76,6 +78,7 @@ func (probe *visitorProbe) deliver(auth icloud.AuthContext, visitor icloud.Photo
 	if !reflect.DeepEqual(auth, probe.want) {
 		return errVisitorForeignAuth
 	}
+
 	if probe.cancel != nil {
 		probe.cancel()
 	}
@@ -85,18 +88,22 @@ func (probe *visitorProbe) deliver(auth icloud.AuthContext, visitor icloud.Photo
 
 		event.Photo.ID = identifier
 		event.Photo.AssetMetadata = json.RawMessage(`{"private":"synthetic-stream-secret"}`)
+
 		keepGoing, err := visitor(event)
 		if err != nil {
 			return err
 		}
+
 		if !keepGoing {
 			return errVisitorStopped
 		}
+
 		probe.visits++
 		if probe.output != nil && !strings.Contains(probe.output.String(), identifier) {
 			return errVisitorAsync
 		}
 	}
+
 	return nil
 }
 
@@ -120,6 +127,7 @@ func TestPhotoVisitorsStreamBeforeNextCallback(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if probe.visits != 2 || strings.Contains(output.String(), "synthetic-stream-secret") {
 				t.Fatal("stream count or privacy differs")
 			}
@@ -153,6 +161,7 @@ func TestPhotoVisitorCanceledBeforeEmissionPreservesReceipt(t *testing.T) {
 	if !errors.Is(err, context.Canceled) || output.Len() != 0 || probe.visits != 0 {
 		t.Fatal("cancellation did not stop emission", err)
 	}
+
 	actual := readVisitorReceipt(t, saved)
 	if !bytes.Equal(actual, previous) {
 		t.Fatal("cancellation overwrote existing receipt")
@@ -172,12 +181,16 @@ func TestPhotoVisitorStopsOnOutputFailure(t *testing.T) {
 	if writeErr != nil {
 		t.Fatal(writeErr)
 	}
+
 	failure := errPhotoWriter
+
 	err := runVisitorCLI(t.Context(), &probe, session, testPhotoAssetsVisitCommand, input, saved,
 		failingPhotoWriter{failure: failure})
+
 	if !errors.Is(err, failure) || probe.visits != 0 {
 		t.Fatal("output failure did not stop SDK visitor", err)
 	}
+
 	actual := readVisitorReceipt(t, saved)
 	if !bytes.Equal(actual, previous) {
 		t.Fatal("failed stream overwrote receipt")
@@ -189,6 +202,7 @@ func visitorPaths(t *testing.T, auth icloud.AuthContext) (string, string, string
 	directory := t.TempDir()
 	session := filepath.Join(directory, testSessionJSONFilename)
 	writeFixtureValue(t, session, auth)
+
 	input, saved := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, testResultJSONFilename)
 
 	err := os.WriteFile(input, []byte(`{"auth":{"accountID":"foreign"}}`), 0o600)
@@ -203,6 +217,7 @@ func runVisitorCLI(ctx context.Context, client icloud.Client, session, operation
 	output io.Writer,
 ) error {
 	args := []string{testSessionFlag, session, testRequestFlag, input, testSaveResultFlag, saved, operation}
+
 	err := command.Run(ctx, client, args, output, io.Discard)
 	if err != nil {
 		return fmt.Errorf("run visitor CLI: %w", err)
@@ -213,12 +228,14 @@ func runVisitorCLI(ctx context.Context, client icloud.Client, session, operation
 
 func readVisitorReceipt(t *testing.T, path string) []byte {
 	t.Helper()
+
 	directory, err := os.OpenRoot(filepath.Dir(path))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	defer func() { _ = directory.Close() }()
+
 	data, err := directory.ReadFile(filepath.Base(path))
 	if err != nil {
 		t.Fatal(err)
@@ -229,6 +246,7 @@ func readVisitorReceipt(t *testing.T, path string) []byte {
 
 func checkVisitorStream(t *testing.T, output io.Reader) {
 	t.Helper()
+
 	decoder := json.NewDecoder(output)
 
 	for _, identifier := range []string{firstVisitorPhoto, secondVisitorPhoto} {
@@ -260,6 +278,7 @@ func checkVisitorStream(t *testing.T, output io.Reader) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(summary["photos"], []byte("[]")) {
 		t.Fatal("stream summary differs")
 	}

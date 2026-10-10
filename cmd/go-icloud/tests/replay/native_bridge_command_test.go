@@ -74,6 +74,7 @@ func (c *nativeBridgeCommandClient) OpenNativeBridgeSession(ctx context.Context,
 	options = append(options, icloud.WithNativeBridgeDial(c.runner.dial))
 	owner, err := c.Client.OpenNativeBridgeSession(ctx, request, options...)
 	c.owner = owner
+
 	return owner, err
 }
 
@@ -83,8 +84,15 @@ type nativeBridgeCancelInput struct {
 	once   sync.Once
 }
 
-func (r *nativeBridgeCancelInput) Read([]byte) (int, error) { r.cancel(); <-r.closed; return 0, io.EOF }
-func (r *nativeBridgeCancelInput) Close() error             { r.once.Do(func() { close(r.closed) }); return nil }
+func (r *nativeBridgeCancelInput) Read([]byte) (int, error) {
+	r.cancel()
+	<-r.closed
+	return 0, io.EOF
+}
+func (r *nativeBridgeCancelInput) Close() error {
+	r.once.Do(func() { close(r.closed) })
+	return nil
+}
 
 func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) {
 	t.Helper()
@@ -103,35 +111,43 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 
 	arguments := []string{sessionFlag, savedPath}
 	input := io.NopCloser(strings.NewReader("123456\n"))
+
 	if stdin || promptOnly {
 		arguments = append(arguments, "--secret-stdin")
 	}
+
 	if promptOnly {
 		input = &nativeBridgeCancelInput{cancel: cancel, closed: make(chan struct{}), once: sync.Once{}}
 	}
 
 	arguments = append(arguments, "mfa-bridge")
+
 	err := command.RunWithInput(ctx, client, arguments, input, environment, &output, &diagnostic)
 	if client.owner == nil {
 		t.Fatalf("missing bridge owner: %v", err)
 	}
+
 	if strings.Contains(filepath.Base(path), "sms-fallback") {
 		if err == nil {
 			t.Fatal("failed bridge accepted before SMS fallback")
 		}
+
 		err = command.RunWithInput(t.Context(), client,
 			[]string{sessionFlag, savedPath, "--phone-id", "1", expectedMFARequestCommand},
 			io.NopCloser(strings.NewReader("")), environment, &output, &diagnostic)
 	}
+
 	expectedError := nativeBridgeCommandAcceptance(t, raw, path, promptOnly, lateFailure, err)
 	nativeBridgeCommandSavedState(t, raw, path, savedPath, client.owner, expectedError, lateFailure)
+
 	console := output.String() + diagnostic.String()
-	for _, secret := range []string{"123456", "synthetic-token", "synthetic-trust", expectedSyntheticAuthCookie,
-		"synthetic@example.invalid", "synthetic-rotated", expectedReplayResponsesField, expectedAccountDataField} {
+	for _, secret := range []string{"123456", expectedSyntheticSessionValue, "synthetic-trust", expectedSyntheticAuthCookie,
+		expectedSyntheticAccountName, "synthetic-rotated", expectedReplayResponsesField, expectedAccountDataField} {
 		if strings.Contains(console, secret) {
 			t.Fatal("console disclosed private bridge data")
 		}
 	}
+
 	nativeBridgeCommandConsumed(t, runner, transport)
 
 	err = client.owner.Close()
@@ -148,6 +164,7 @@ func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage,
 	var exchanges []replay.Exchange
 
 	decode(t, raw["exchanges"], &exchanges)
+
 	runner := new(sdkBridgeReplay)
 	runner.t = t
 	// Timeline events contain bounded fixture indexes. Decode this entire network
@@ -156,6 +173,7 @@ func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage,
 	if networkErr != nil {
 		t.Fatal(networkErr)
 	}
+
 	if lateFailure {
 		exchanges = exchanges[:6]
 		exchanges[5].Response = &replay.Response{BodyRepresentation: "", Status: 503, Headers: []replay.Pair{
@@ -168,13 +186,16 @@ func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage,
 			Matchers: nil, ContentTypePattern: "", Parts: nil}}
 		runner.network.Timeline = runner.network.Timeline[:len(runner.network.Timeline)-1]
 	}
+
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	runner.http = transport
 	runner.entropy.replay = runner
 	nativeBridgeCommandEntropy(t, raw, runner)
+
 	sdk, err := icloud.New(icloud.WithHTTPTransport(runner), icloud.WithRandomSource(&runner.entropy),
 		icloud.WithClock(func() time.Time { return time.Unix(1700000000, 0) }))
 	if err != nil {
@@ -186,22 +207,27 @@ func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage,
 
 func nativeBridgeCommandEntropy(t *testing.T, raw map[string]json.RawMessage, runner *sdkBridgeReplay) {
 	t.Helper()
+
 	value, ok := raw["entropy"]
 	if !ok {
 		return
 	}
+
 	entropy := readRawObject(t, value)
 
 	var random []string
 
 	decode(t, entropy["random_bytes"], &random)
+
 	if len(random) == 0 {
 		return
 	}
+
 	sample, sampleErr := base64.StdEncoding.DecodeString(random[0])
 	if sampleErr != nil {
 		t.Fatal(sampleErr)
 	}
+
 	if len(sample) == 256 {
 		runner.entropy.initial = sample
 	}
@@ -213,6 +239,7 @@ func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage,
 	t.Helper()
 	state := nativeBridgeCommandState(t, raw)
 	savedPath := filepath.Join(t.TempDir(), "private.json")
+
 	encoded, err := json.Marshal(state)
 	if err != nil {
 		t.Fatal(err)
@@ -222,6 +249,7 @@ func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage,
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if strings.Contains(filepath.Base(path), "-full-") {
 		// Source full-flow authentication prepares the saved state through the public
 		// SDK. The command under test is mfa-bridge; CLI login's explicit pause flag
@@ -234,6 +262,7 @@ func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage,
 		if prepareErr != nil {
 			t.Fatal(prepareErr)
 		}
+
 		preparedJSON, marshalErr := json.Marshal(prepared.State)
 		if marshalErr != nil {
 			t.Fatal(marshalErr)
@@ -265,6 +294,7 @@ func nativeBridgeCommandEnvironment(state icloud.NativeAuthState) func(string) s
 
 func nativeBridgeCommandPromptOnly(t *testing.T, raw map[string]json.RawMessage) bool {
 	t.Helper()
+
 	promptOnly := true
 
 	var actions []struct {
@@ -273,6 +303,7 @@ func nativeBridgeCommandPromptOnly(t *testing.T, raw map[string]json.RawMessage)
 
 	if string(raw["operation"]) == `"flow"` {
 		decode(t, raw["inputs"], &actions)
+
 		for _, action := range actions {
 			if action.Operation == "validate_2fa_code" {
 				promptOnly = false
@@ -287,6 +318,7 @@ func nativeBridgeCommandAcceptance(t *testing.T, raw map[string]json.RawMessage,
 	path string, promptOnly, lateFailure bool, err error,
 ) bool {
 	t.Helper()
+
 	_, expectedError := raw["error"]
 
 	switch {
@@ -311,20 +343,27 @@ func nativeBridgeCommandAcceptance(t *testing.T, raw map[string]json.RawMessage,
 
 func nativeBridgeCommandExpectedAcceptance(t *testing.T, raw map[string]json.RawMessage, lateFailure bool) bool {
 	t.Helper()
+
 	value, exists := raw["result"]
 	if !exists || string(raw["operation"]) != `"flow"` {
 		return !lateFailure
 	}
+
 	result := readRawObject(t, value)
+
 	var values []any
+
 	decode(t, result["value"], &values)
+
 	if len(values) == 0 {
 		return !lateFailure
 	}
+
 	final, ok := values[len(values)-1].(bool)
 	if !ok {
 		return !lateFailure
 	}
+
 	return final && !lateFailure
 }
 
@@ -332,50 +371,65 @@ func nativeBridgeCommandSavedState(t *testing.T, raw map[string]json.RawMessage,
 	path, savedPath string, owner *icloud.NativeBridgeSession, expectedError, lateFailure bool,
 ) {
 	t.Helper()
+
 	progress, stateErr := owner.State()
 	if stateErr != nil {
 		t.Fatal(stateErr)
 	}
+
 	if progress.Active {
 		t.Fatal("command retained active bridge")
 	}
+
 	data, readErr := os.ReadFile(filepath.Clean(savedPath))
 	if readErr != nil {
 		t.Fatal(readErr)
 	}
+
 	var saved icloud.NativeAuthState
+
 	decode(t, data, &saved)
+
 	if !strings.Contains(filepath.Base(path), "sms-fallback") {
 		actual, actualErr := json.Marshal(saved)
 		if actualErr != nil {
 			t.Fatal(actualErr)
 		}
+
 		expected, expectedErr := json.Marshal(progress.State)
 		if expectedErr != nil {
 			t.Fatal(expectedErr)
 		}
+
 		var actualValue, expectedValue any
+
 		decode(t, actual, &actualValue)
 		decode(t, expected, &expectedValue)
+
 		if !reflect.DeepEqual(actualValue, expectedValue) {
 			t.Fatal("private state differs from latest bridge credentials/progress")
 		}
 	}
+
 	if lateFailure {
 		if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != expectedRotatedSessionToken ||
 			saved.TrustToken != expectedRotatedTrustToken || saved.CodeRequested || saved.RequiresMFA {
 			t.Fatal("failed trust lost rotated tokens or completion progress")
 		}
+
 		found := false
+
 		for _, cookie := range saved.Auth.Cookies {
 			if cookie.Name == "synthetic-rotated-cookie" && cookie.Value == "synthetic-rotated-value" {
 				found = true
 			}
 		}
+
 		if !found {
 			t.Fatal("failed trust lost rotated cookie")
 		}
 	}
+
 	if !expectedError && !lateFailure {
 		nativeBridgeCommandSourceState(t, raw, saved)
 	}
@@ -388,6 +442,7 @@ func nativeBridgeCommandConsumed(t *testing.T, runner *sdkBridgeReplay, transpor
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	runner.mu.Lock()
 	timeline := runner.timeline
 	sockets := append([]*sdkBridgeSocket(nil), runner.sockets...)
@@ -401,10 +456,12 @@ func nativeBridgeCommandConsumed(t *testing.T, runner *sdkBridgeReplay, transpor
 		socket.mu.Lock()
 		complete := socket.closed && socket.cursor == len(socket.events) && socket.failure == nil
 		socket.mu.Unlock()
+
 		if !complete {
 			t.Fatal("socket transcript incomplete or left open")
 		}
 	}
+
 	runner.entropy.mu.Lock()
 	entropyComplete := runner.entropy.private == len(runner.network.PrivateScalars) &&
 		runner.entropy.prover == len(runner.network.ProverRandom) &&
@@ -420,25 +477,33 @@ func nativeBridgeCommandState(t *testing.T, raw map[string]json.RawMessage) iclo
 	t.Helper()
 	state := nativeCommandState(t, raw["initial_state"])
 	nativeSourceParameters(t, raw, &state)
+
 	initial := readRawObject(t, raw["initial_state"])
 	if value, exists := initial["requires_mfa"]; exists {
 		decode(t, value, &state.RequiresMFA)
 	}
+
 	challenge := readRawObject(t, initial["auth_data"])
 	state.Challenge.ProviderData = bytes.Clone(initial["auth_data"])
+
 	state.Challenge.BridgeBootstrap = []byte(`{"twoSV":` + string(initial["auth_data"]) + `}`)
+
 	if value, exists := challenge["authInitialRoute"]; exists {
 		decode(t, value, &state.Challenge.AuthInitialRoute)
 	}
+
 	if value, exists := challenge["hasTrustedDevices"]; exists {
 		decode(t, value, &state.Challenge.HasTrustedDevices)
 	}
+
 	if value, exists := challenge["authFactors"]; exists {
 		decode(t, value, &state.Challenge.AuthFactors)
 	}
+
 	var account struct {
 		Webservices map[string]map[string]string `json:"webservices"`
 	}
+
 	decode(t, initial["account_data"], &account)
 	state.Auth.DriveServiceURL = account.Webservices["drivews"]["url"]
 	state.Auth.FindMyServiceURL = account.Webservices["findme"]["url"]
@@ -446,52 +511,69 @@ func nativeBridgeCommandState(t *testing.T, raw map[string]json.RawMessage) iclo
 	for index := range state.Auth.Cookies {
 		state.Auth.Cookies[index].HTTPOnly = true
 	}
+
 	return state
 }
 
 func nativeBridgeCommandSourceState(t *testing.T, raw map[string]json.RawMessage, state icloud.NativeAuthState) {
 	t.Helper()
 	expected := readRawObject(t, readRawObject(t, raw["result"])[expectedAuthStateKey])
+
 	var account, actualAccount any
+
 	decode(t, expected["account"], &account)
 	decode(t, state.AccountData, &actualAccount)
+
 	if !reflect.DeepEqual(account, actualAccount) {
 		t.Fatal("Source account data changed")
 	}
+
 	session := readRawObject(t, expected["session_data"])
 	if value, ok := session["session_token"]; ok {
 		var token string
+
 		decode(t, value, &token)
+
 		if state.Auth.SessionToken == nil || *state.Auth.SessionToken != token {
 			t.Fatal("Source session token changed")
 		}
 	}
+
 	if value, ok := session["trust_token"]; ok {
 		var token string
+
 		decode(t, value, &token)
+
 		if state.TrustToken != token {
 			t.Fatal("Source trust token changed")
 		}
 	}
+
 	for _, field := range []struct {
 		name   string
 		actual bool
 	}{{"code_requested", state.CodeRequested}, {"requires_mfa", state.RequiresMFA}} {
 		if value, exists := expected[field.name]; exists {
 			var expectedFlag bool
+
 			decode(t, value, &expectedFlag)
+
 			if expectedFlag != field.actual {
 				t.Fatalf("Source %s changed", field.name)
 			}
 		}
 	}
+
 	var provider, actualProvider any
+
 	decode(t, expected["challenge"], &provider)
+
 	if len(state.Challenge.ProviderData) == 0 {
 		actualProvider = map[string]any{}
 	} else {
 		decode(t, state.Challenge.ProviderData, &actualProvider)
 	}
+
 	if !reflect.DeepEqual(provider, actualProvider) {
 		t.Fatal("Source challenge payload changed")
 	}

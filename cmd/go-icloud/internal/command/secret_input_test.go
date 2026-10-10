@@ -41,6 +41,7 @@ func TestSecretSources(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
+
 			input := io.NopCloser(strings.NewReader(test.text))
 
 			value, err := readSecret(t.Context(), input, test.environment, "SECRET", test.stdin)
@@ -89,6 +90,7 @@ type startedReader struct {
 
 func (reader *startedReader) Read(data []byte) (int, error) {
 	close(reader.started)
+
 	return reader.ReadCloser.Read(data)
 }
 
@@ -96,8 +98,10 @@ func TestSecretPreCancellationAvoidsReading(t *testing.T) {
 	t.Parallel()
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
+
 	environment := func(string) string {
 		t.Fatal("environment read after cancellation")
+
 		return ""
 	}
 

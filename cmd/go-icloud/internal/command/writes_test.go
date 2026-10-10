@@ -36,6 +36,7 @@ func (probe *writeProbe) CreateReminder(
 	_ context.Context, input icloud.CreateReminderRequest,
 ) (*icloud.ReminderMutationResult, error) {
 	probe.calls++
+
 	probe.received = input.Auth
 	if probe.cancel != nil {
 		probe.cancel()
@@ -67,10 +68,12 @@ func (probe *writeProbe) UploadPhotoFile(
 	probe.calls++
 	probe.received = input.Auth
 	probe.content = input.Content
+
 	_, err := io.Copy(io.Discard, input.Content)
 	if err != nil {
 		return nil, fmt.Errorf("consume synthetic upload content: %w", err)
 	}
+
 	if probe.uploadResult != nil {
 		return probe.uploadResult, nil
 	}
@@ -93,6 +96,7 @@ func TestTypedWriteInputFailures(t *testing.T) {
 	for name, body := range cases {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
+
 			probe := new(writeProbe)
 			_, output, err := runWriteProbe(t.Context(), t, probe, testReminderCreateCommand, body, nil)
 
@@ -101,6 +105,7 @@ func TestTypedWriteInputFailures(t *testing.T) {
 			if !errors.As(err, &failure) || probe.calls != 0 || output != "" {
 				t.Fatalf("invalid typed input accepted: %v", err)
 			}
+
 			if strings.Contains(err.Error(), writeSecret) {
 				t.Fatal("private input leaked into diagnostic")
 			}
@@ -110,15 +115,19 @@ func TestTypedWriteInputFailures(t *testing.T) {
 
 func TestWriteUsesCompleteStoredAuthentication(t *testing.T) {
 	t.Parallel()
+
 	probe := new(writeProbe)
+
 	auth, output, err := runWriteProbe(t.Context(), t, probe, testReminderCreateCommand,
 		`{"title":"safe","auth":{"clientID":"foreign","accountID":"foreign","headers":[]}}`, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !reflect.DeepEqual(probe.received, auth) || probe.calls != 1 {
 		t.Fatal("request replaced stored account boundary")
 	}
+
 	if strings.Contains(output, writeSecret) || strings.Contains(output, testResponsesKey) {
 		t.Fatal("credential response leaked into console")
 	}
@@ -126,8 +135,11 @@ func TestWriteUsesCompleteStoredAuthentication(t *testing.T) {
 
 func TestUploadPhaseRequiresExplicitPrivateResult(t *testing.T) {
 	t.Parallel()
+
 	probe := new(writeProbe)
+
 	_, output, err := runWriteProbe(t.Context(), t, probe, testPhotoUploadReserveCommand, `{"assets":{"file":3}}`, nil)
+
 	if err == nil || !strings.Contains(err.Error(), testSaveResultFlag) || probe.calls != 0 || output != "" {
 		t.Fatalf("phase executed without private receipt destination: %v", err)
 	}
@@ -135,17 +147,21 @@ func TestUploadPhaseRequiresExplicitPrivateResult(t *testing.T) {
 
 func TestPrivateUploadResultRetainsSignedDestination(t *testing.T) {
 	t.Parallel()
+
 	probe := new(writeProbe)
 	destination := filepath.Join(t.TempDir(), "receipt.json")
+
 	_, output, err := runWriteProbe(t.Context(), t, probe, testPhotoUploadReserveCommand,
 		`{"assets":{"file":3}}`, []string{testSaveResultFlag, destination})
 	if err != nil {
 		t.Fatal(err)
 	}
-	saved, err := os.ReadFile(destination)
+
+	saved, err := readReplayFile(t, destination)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Contains(saved, []byte(writeSecret)) ||
 		strings.Contains(output, writeSecret) || strings.Contains(output, testUploadURLsKey) {
 		t.Fatal("private upload receipt and console projection were conflated")
@@ -160,14 +176,17 @@ func TestCanceledWritePreservesPrivateResult(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
+
 	probe := new(writeProbe)
 	probe.cancel = cancel
+
 	_, output, err := runWriteProbe(ctx, t, probe, testReminderCreateCommand, `{"title":"safe"}`,
 		[]string{testSaveResultFlag, destination})
 	if !errors.Is(err, context.Canceled) || output != "" {
 		t.Fatalf("canceled result was published: %v", err)
 	}
-	saved, err := os.ReadFile(destination)
+
+	saved, err := readReplayFile(t, destination)
 	if err != nil || !bytes.Equal(saved, original) {
 		t.Fatal("cancellation replaced existing private result")
 	}
@@ -177,13 +196,16 @@ func TestUploadOwnsLocalFile(t *testing.T) {
 	t.Parallel()
 	content := filepath.Join(t.TempDir(), testContentJpgFilename)
 	writeProbeFile(t, content, []byte(testSyntheticPhotoContent))
+
 	probe := new(writeProbe)
+
 	_, _, err := runWriteProbe(t.Context(), t, probe, testPhotoUploadFileCommand,
 		`{"filename":"content.jpg","localTimeZoneID":"UTC","modificationTime":"2023-11-14T22:13:20Z","timeZoneOffset":0}`,
 		[]string{"--file", content})
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	_, err = probe.content.Read(make([]byte, 1))
 	if !errors.Is(err, fs.ErrClosed) {
 		t.Fatal("CLI left its local file open")
@@ -213,30 +235,37 @@ func TestWriteUnknownProviderFieldsOnlyInPrivateResult(t *testing.T) {
 	result.Registration = registration
 	probe := new(writeProbe)
 	probe.uploadResult = &result
+
 	before, err := json.Marshal(result)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	content := filepath.Join(t.TempDir(), testContentJpgFilename)
 	destination := filepath.Join(t.TempDir(), "private-result.json")
 	writeProbeFile(t, content, []byte(testSyntheticPhotoContent))
+
 	_, output, err := runWriteProbe(t.Context(), t, probe, testPhotoUploadFileCommand,
 		`{"filename":"content.jpg","localTimeZoneID":"UTC","modificationTime":"2023-11-14T22:13:20Z","timeZoneOffset":0}`,
 		[]string{"--file", content, testSaveResultFlag, destination})
 	if err != nil {
 		t.Fatal(err)
 	}
-	saved, err := os.ReadFile(destination)
+
+	saved, err := readReplayFile(t, destination)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	after, err := json.Marshal(result)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(before, after) || !bytes.Equal(before, saved) {
 		t.Fatal("projection changed original generated SDK result")
 	}
+
 	if strings.Contains(output, writeSecret) ||
 		strings.Contains(output, testOpaqueStatusKey) || strings.Contains(output, testOpaqueReceiptKey) {
 		t.Fatal("uninterpreted provider fields leaked into console")
@@ -245,6 +274,7 @@ func TestWriteUnknownProviderFieldsOnlyInPrivateResult(t *testing.T) {
 
 func TestUnknownAttachmentUnionFieldRejected(t *testing.T) {
 	t.Parallel()
+
 	probe := new(writeProbe)
 	_, output, err := runWriteProbe(t.Context(), t, probe, testReminderAttachmentUpdateCommand,
 		`{"attachment":{"url":"https://example.invalid","privateUnknown":"synthetic-private-secret"}}`, nil)
@@ -273,6 +303,7 @@ func runWriteProbe(ctx context.Context, t *testing.T, client icloud.Client, oper
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	session := filepath.Join(directory, testSessionJSONFilename)
 	input := filepath.Join(directory, testRequestJSONFilename)
 
@@ -290,6 +321,7 @@ func runWriteProbe(ctx context.Context, t *testing.T, client icloud.Client, oper
 
 func writeProbeFile(t *testing.T, path string, data []byte) {
 	t.Helper()
+
 	err := os.WriteFile(path, data, 0o600)
 	if err != nil {
 		t.Fatal(err)

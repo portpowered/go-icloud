@@ -49,54 +49,63 @@ func runTypedRead(ctx context.Context, client icloud.Client, auth icloud.AuthCon
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.GetPhotoLibraryChangesRequest) (*icloud.GetPhotoLibraryChangesResult, error) {
 				input.Auth = auth
+
 				return client.GetPhotoLibraryChanges(ctx, input)
 			})
 	case photosRecentCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.ListRecentlyAddedPhotosRequest) (*icloud.ListRecentlyAddedPhotosResult, error) {
 				input.Auth = auth
+
 				return client.ListRecentlyAddedPhotos(ctx, input)
 			})
 	case photoUploadStatusCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.GetPhotoUploadStatusRequest) (*icloud.GetPhotoUploadStatusResult, error) {
 				input.Auth = auth
+
 				return client.GetPhotoUploadStatus(ctx, input)
 			})
 	case photosStatusCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.GetPhotosStatusRequest) (*icloud.GetPhotosStatusResult, error) {
 				input.Auth = auth
+
 				return client.GetPhotosStatus(ctx, input)
 			})
 	case photoAlbumsCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.ListPhotoAlbumsRequest) (*icloud.ListPhotoAlbumsResult, error) {
 				input.Auth = auth
+
 				return client.ListPhotoAlbums(ctx, input)
 			})
 	case photoCountCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.GetPhotoAlbumCountRequest) (*icloud.GetPhotoAlbumCountResult, error) {
 				input.Auth = auth
+
 				return client.GetPhotoAlbumCount(ctx, input)
 			})
 	case photoAssetsCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.ListPhotoAssetsRequest) (*icloud.ListPhotoAssetsResult, error) {
 				input.Auth = auth
+
 				return client.ListPhotoAssets(ctx, input)
 			})
 	case photoCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.GetPhotoRequest) (*icloud.GetPhotoResult, error) {
 				input.Auth = auth
+
 				return client.GetPhoto(ctx, input)
 			})
 	case photoDownloadCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.DownloadPhotoRequest) (*icloud.DownloadPhotoResult, error) {
 				input.Auth = auth
+
 				return client.DownloadPhoto(ctx, input)
 			})
 	default:

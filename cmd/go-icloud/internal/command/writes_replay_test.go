@@ -74,7 +74,8 @@ func writeReplayCases() []writeReplayCase {
 
 func loadWriteFixture(t *testing.T, name string) writeFixture {
 	t.Helper()
-	data, err := os.ReadFile(filepath.Join(writeFixtureDirectory, name+".json"))
+
+	data, err := readReplayFile(t, filepath.Join(writeFixtureDirectory, name+".json"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -89,15 +90,19 @@ func loadWriteFixture(t *testing.T, name string) writeFixture {
 	decodeWriteFixture(t, row["exchanges"], &fixture.Exchanges)
 	decodeWriteFixture(t, row["inputs"], &fixture.Inputs)
 	decodeWriteFixture(t, row["initial_state"], &fixture.Initial)
+
 	if len(row["entropy"]) != 0 {
 		decodeWriteFixture(t, row["entropy"], &fixture.Entropy)
 	}
+
 	if len(row["file"]) != 0 {
 		decodeWriteFixture(t, row["file"], &fixture.File)
 	}
+
 	if len(row[testKeywordInputs]) != 0 {
 		decodeWriteFixture(t, row[testKeywordInputs], &fixture.Keywords)
 	}
+
 	if len(row["result"]) != 0 {
 		decodeWriteFixture(t, row["result"], &fixture.Result)
 	}
@@ -107,8 +112,10 @@ func loadWriteFixture(t *testing.T, name string) writeFixture {
 
 func decodeWriteFixture(t *testing.T, data []byte, target any) {
 	t.Helper()
+
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
+
 	err := decoder.Decode(target)
 	if err != nil {
 		t.Fatal(err)
@@ -134,6 +141,7 @@ func fixtureWriteAuthentication(t *testing.T, fixture writeFixture) icloud.AuthC
 	for name, value := range headers {
 		auth.Headers = append(auth.Headers, icloud.Header{Name: name, Value: value})
 	}
+
 	if value, exists := fixture.Initial["photos_upload_origin"]; exists {
 		decodeWriteFixture(t, value, &auth.PhotosUploadServiceURL)
 	}
@@ -151,6 +159,7 @@ func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HT
 	if value, exists := fixture.Entropy["uuid4"]; exists {
 		decodeWriteFixture(t, value, &identities)
 	}
+
 	if value, exists := fixture.Entropy["unix_seconds"]; exists {
 		decodeWriteFixture(t, value, &seconds)
 	}
@@ -165,6 +174,7 @@ func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HT
 
 		random.Write(data)
 	}
+
 	if data, exists := fixture.Entropy["random_bytes"]; exists {
 		var samples []string
 
@@ -179,6 +189,7 @@ func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HT
 			random.Write(value)
 		}
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(&random),
 		icloud.WithClock(func() time.Time { return time.Unix(seconds, 0) }))
 	if err != nil {
@@ -191,10 +202,12 @@ func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HT
 func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 	t.Helper()
 	fixture := loadWriteFixture(t, scenario.fixture)
+
 	transport, err := replay.NewHTTPTransport(fixture.Exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client := fixtureWriteClient(t, fixture, transport)
 	request := fixtureWriteInput(t, scenario.operation, fixture)
 	// A foreign account in the request must never replace the selected stored session.
@@ -213,6 +226,7 @@ func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 	err = command.Run(t.Context(), client, args,
 		&output, &diagnostic)
 	checkWriteReplayResult(t, scenario, fixture, output.Bytes(), result, err)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -221,6 +235,7 @@ func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 
 func writeFixtureValue(t *testing.T, path string, value any) {
 	t.Helper()
+
 	data, err := json.Marshal(value)
 	if err != nil {
 		t.Fatal(err)
@@ -233,12 +248,14 @@ func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writ
 	output []byte, resultPath string, callErr error,
 ) {
 	t.Helper()
+
 	if len(fixture.Failure) != 0 || scenario.fixture == testPhotosFavoriteRecordError {
 		var failure *icloud.ClientError
 
 		if !errors.As(callErr, &failure) || len(output) != 0 {
 			t.Fatalf("expected paired provider failure: %v", callErr)
 		}
+
 		if scenario.fixture == testPhotosFavoriteRecordError && failure.Kind() != icloud.Provider {
 			t.Fatal("Photos per-record error exception lost provider classification")
 		}
@@ -249,20 +266,25 @@ func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writ
 		if !errors.Is(statErr, fs.ErrNotExist) {
 			t.Fatal("failed write saved a successful result")
 		}
+
 		return
 	}
+
 	if callErr != nil {
 		t.Fatal(callErr)
 	}
+
 	expected := fixtureWriteExpected(t, scenario.operation, fixture)
 
 	var actual any
 
 	decodeWriteFixture(t, output, &actual)
+
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("Source console projection differs\nwant %#v\ngot %#v", expected, actual)
 	}
-	data, err := os.ReadFile(resultPath)
+
+	data, err := readReplayFile(t, resultPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -279,18 +301,22 @@ func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writ
 
 func checkFailedWriteReceipt(t *testing.T, fixture writeFixture, failure *icloud.ClientError) {
 	t.Helper()
+
 	last := fixture.Exchanges[len(fixture.Exchanges)-1]
 
 	var encoded string
 
 	decodeWriteFixture(t, last.Response.Body.Value, &encoded)
+
 	body, err := base64.StdEncoding.DecodeString(encoded)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if !bytes.Equal(failure.ResponseBody(), body) {
 		t.Fatal("CLI failure lost paired provider body")
 	}
+
 	response := icloud.ResponseMetadata{
 		StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL(),
 	}
@@ -300,6 +326,7 @@ func checkFailedWriteReceipt(t *testing.T, fixture writeFixture, failure *icloud
 
 func checkWriteResponses(t *testing.T, responses []icloud.ResponseMetadata, exchanges []replay.Exchange) {
 	t.Helper()
+
 	if len(responses) != len(exchanges) {
 		t.Fatal("private result lost completed response evidence")
 	}
@@ -309,17 +336,21 @@ func checkWriteResponses(t *testing.T, responses []icloud.ResponseMetadata, exch
 		if response.StatusCode != paired.Response.Status {
 			t.Fatal("private response status changed")
 		}
+
 		headers := make([]icloud.Header, 0, len(paired.Response.Headers))
 		for _, header := range paired.Response.Headers {
 			headers = append(headers, icloud.Header{Name: header[0], Value: header[1]})
 		}
+
 		if !reflect.DeepEqual(response.Headers, headers) {
 			t.Fatal("private result changed paired response headers")
 		}
+
 		address, err := url.Parse(paired.Request.Origin + paired.Request.Path)
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		address.RawQuery = ""
 		if response.CookieScopeURL != address.String() {
 			t.Fatal("private result changed response cookie scope")
