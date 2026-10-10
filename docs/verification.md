@@ -13,7 +13,9 @@ The portable replay corpus is evaluated independently by the pinned Python
 reference and the public Go SDK. Matcher interoperability, endpoint occurrence
 counts and Source function coverage each answer a narrower question; none proves
 public Go behavior by itself. Run `make endpoint-coverage` for current counts and
-`go run ./tools/wiregate/cmd -root .` for production network/model provenance.
+paired replay and schema tests for emitted requests and public results.
+Custom compiler provenance engines, exhaustive ownership proofs and symbolic lineage
+gates are not acceptance requirements; see library standard 4.
 See [reference capture](reference-capture.md) and
 [paired replay](../tests/replay/README.md) for artifact rules.
 

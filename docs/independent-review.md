@@ -9,6 +9,12 @@ implementation and test receipts belong in the
 [completion matrix](completion-matrix.md); later feature publication or passing
 checks do not extend an earlier verdict to a new commit.
 
+Reviews apply the current library standards: generated contracts, practical
+schema checks, functional replay, race tests, coverage, public consumers and
+ordinary lint. Historical provenance-engine findings below are superseded as
+acceptance requirements. Custom compiler or exhaustive ownership proofs are
+not required, and their isolated implementation is not shipping code.
+
 ## Reviewer A — initial blind audit
 
 Reviewer `blind_review` started with fresh context and only the repository path

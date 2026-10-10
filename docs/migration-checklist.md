@@ -7,6 +7,10 @@ retain their original counts, review results and words such as “now”, “cur
 and “next”; those words refer to the individual milestone, not today's checkout
 (LIB-12). A scoped milestone approval does not approve the complete library.
 
+The current standards explicitly exclude custom compiler provenance engines,
+exhaustive ownership proofs and symbolic lineage gates. Historical requests for
+those gates below are superseded; they do not block functional acceptance.
+
 ## Historical milestone snapshots
 
 Primary photo asset enumeration now has a stateless `ListPhotoAssets` SDK

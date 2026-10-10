@@ -46,7 +46,7 @@ complete-branch coverage.
 
 Subsequent bridge opaque-JSON/null/schema changes through `d363127b` are outside
 that receipt. The public SDK `12f42d49` and CLI pin `49e9368f` are now published;
-strict union/gate checks and exact-commit complete verification remain pending. The installation
+ordinary final checks and exact-commit CI remain pending. The installation
 pins below identify the latest documented published preview; they are not a
 final release. Keep final acceptance and independent reviews open.
 
@@ -119,9 +119,10 @@ above. The earlier `b3de8aec` results do not prove this newer runtime. The `df29
 failed a stale Reminders inventory count; `d6f5c1ab` corrects that assertion to
 366 scenarios/432 pairs. The corrected inventory is included in the passing
 `46878751` verification receipt.
-The complete production
-source/model/network audit and its blocking Make/CI integration remain open.
-Focused proof controls passing does not establish actual-source conformance.
+Custom compiler provenance and exhaustive source/model ownership gates are no
+longer acceptance requirements under library standard 4. Their isolated work is
+not part of the shipping library. Final acceptance uses ordinary lint, schema
+generation, functional replay, race tests, coverage and independent review.
 
 Local documentation verification passed with renderer `07bbcec`: 99 HTML files,
 82 OpenAPI operations, both bridge directions and ten guides, including visible
@@ -153,8 +154,8 @@ library publication are separate gates.
 The remaining final acceptance work is:
 
 - Complete `make lint` and `make check` for the final SDK and public-pin CLI,
-  including pinned Source tests, generation/module drift, source/model/socket
-  controls, supported Go/OS builds and consumer/compatibility verification.
+  including pinned Source tests, generation/module drift, socket replay,
+  supported Go/OS builds and consumer/compatibility verification.
 - Record fresh separate SDK and CLI replay, unit and combined coverage, with
   the required non-generated replay and combined thresholds and explicit gaps.
 - Verify exact-commit blocking CI, including the Windows/Linux/macOS and Go
@@ -169,9 +170,8 @@ The remaining final acceptance work is:
 ## Repository acceptance
 
 - [x] Recover the interrupted library-discovery/session-response merge and run full baseline checks.
-- [ ] Maintain a complete source operation and route/channel denominator, including active dependency traffic.
-- [ ] Generate all known wire models, nested payloads, keys and fixed values and bind them to actual sends.
-- [ ] Add blocking source/model/network provenance gates and the template's negative controls.
+- [ ] Maintain a supported-operation list and paired replay coverage, including active dependency traffic.
+- [ ] Generate supported wire contracts and check their emitted requests and public results with functional tests.
 - [ ] Move transport behavior to `pkg/dependencies/<transport>` and include it in coverage (template item 7).
 - [ ] Enforce formatting, tidy/generation drift, supported Go/OS builds, consumer and compatibility checks.
 - [ ] Report separate SDK/CLI replay, unit and combined coverage with explicit uncovered behavior.
