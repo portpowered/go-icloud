@@ -4,7 +4,6 @@
 package accountapi
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -372,201 +371,6 @@ type GetAccountStorageParams struct {
 
 // GetAccountStorageParamsAccept defines parameters for GetAccountStorage.
 type GetAccountStorageParamsAccept string
-
-// RequestEditorFn is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
-
-// Doer performs HTTP requests.
-//
-// The standard http.Client implements this interface.
-type HttpRequestDoer interface {
-	Do(req *http.Request) (*http.Response, error)
-}
-
-// Client which conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	Server string
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	Client HttpRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	RequestEditors []RequestEditorFn
-}
-
-// ClientOption allows setting custom parameters during construction
-type ClientOption func(*Client) error
-
-// Creates a new Client, with reasonable defaults
-func NewClient(server string, opts ...ClientOption) (*Client, error) {
-	// create a client with sane default values
-	client := Client{
-		Server: server,
-	}
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&client); err != nil {
-			return nil, err
-		}
-	}
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
-	}
-	// create httpClient, if not already present
-	if client.Client == nil {
-		client.Client = &http.Client{}
-	}
-	return &client, nil
-}
-
-// WithHTTPClient allows overriding the default Doer, which is
-// automatically created using http.Client. This is useful for tests.
-func WithHTTPClient(doer HttpRequestDoer) ClientOption {
-	return func(c *Client) error {
-		c.Client = doer
-		return nil
-	}
-}
-
-// WithRequestEditorFn allows setting up a callback function, which will be
-// called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
-	return func(c *Client) error {
-		c.RequestEditors = append(c.RequestEditors, fn)
-		return nil
-	}
-}
-
-// The interface specification for the client above.
-type ClientInterface interface {
-
-	// GetAccountPlanSummary Read the account subscription summary
-	//
-	// Uses the global or mainland China gateway. The reference preserves the JSON value without interpreting plan-specific fields.
-	//
-	// Corresponds with GET /acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary (the `GetAccountPlanSummary` operationId).
-	GetAccountPlanSummary(ctx context.Context, dsid string, params *GetAccountPlanSummaryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListAccountDevices List devices associated with an account
-	//
-	// Returns account device metadata and associated payment-method metadata.
-	//
-	// Corresponds with GET /setup/web/device/getDevices (the `ListAccountDevices` operationId).
-	ListAccountDevices(ctx context.Context, params *ListAccountDevicesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListAccountFamily List family members
-	//
-	// Returns family member metadata; an omitted familyMembers field is treated as an empty list by the reference.
-	//
-	// Corresponds with GET /setup/web/family/getFamilyDetails (the `ListAccountFamily` operationId).
-	ListAccountFamily(ctx context.Context, params *ListAccountFamilyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetFamilyMemberPhoto Download a family member photo
-	//
-	// Returns exact content bytes, including an empty successful body, for the selected member identifier.
-	//
-	// Corresponds with GET /setup/web/family/getMemberPhoto (the `GetFamilyMemberPhoto` operationId).
-	GetFamilyMemberPhoto(ctx context.Context, params *GetFamilyMemberPhotoParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetAccountStorage Read storage usage and quota information
-	//
-	// Sends an empty entity and returns account usage, quota flags and media usage entries. Byte counts are nonnegative.
-	//
-	// Corresponds with POST /setup/ws/1/storageUsageInfo (the `GetAccountStorage` operationId).
-	GetAccountStorage(ctx context.Context, params *GetAccountStorageParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-}
-
-// GetAccountPlanSummary Read the account subscription summary
-//
-// Uses the global or mainland China gateway. The reference preserves the JSON value without interpreting plan-specific fields.
-//
-// Corresponds with GET /acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary (the `GetAccountPlanSummary` operationId).
-func (c *Client) GetAccountPlanSummary(ctx context.Context, dsid string, params *GetAccountPlanSummaryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetAccountPlanSummaryRequest(c.Server, dsid, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// ListAccountDevices List devices associated with an account
-//
-// Returns account device metadata and associated payment-method metadata.
-//
-// Corresponds with GET /setup/web/device/getDevices (the `ListAccountDevices` operationId).
-func (c *Client) ListAccountDevices(ctx context.Context, params *ListAccountDevicesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListAccountDevicesRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// ListAccountFamily List family members
-//
-// Returns family member metadata; an omitted familyMembers field is treated as an empty list by the reference.
-//
-// Corresponds with GET /setup/web/family/getFamilyDetails (the `ListAccountFamily` operationId).
-func (c *Client) ListAccountFamily(ctx context.Context, params *ListAccountFamilyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListAccountFamilyRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// GetFamilyMemberPhoto Download a family member photo
-//
-// Returns exact content bytes, including an empty successful body, for the selected member identifier.
-//
-// Corresponds with GET /setup/web/family/getMemberPhoto (the `GetFamilyMemberPhoto` operationId).
-func (c *Client) GetFamilyMemberPhoto(ctx context.Context, params *GetFamilyMemberPhotoParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetFamilyMemberPhotoRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// GetAccountStorage Read storage usage and quota information
-//
-// Sends an empty entity and returns account usage, quota flags and media usage entries. Byte counts are nonnegative.
-//
-// Corresponds with POST /setup/ws/1/storageUsageInfo (the `GetAccountStorage` operationId).
-func (c *Client) GetAccountStorage(ctx context.Context, params *GetAccountStorageParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetAccountStorageRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
 
 // NewGetAccountPlanSummaryRequest constructs an http.Request for the GetAccountPlanSummary method
 func NewGetAccountPlanSummaryRequest(server string, dsid string, params *GetAccountPlanSummaryParams) (*http.Request, error) {
@@ -1388,96 +1192,6 @@ func NewGetAccountStorageRequest(server string, params *GetAccountStorageParams)
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
-	for _, r := range c.RequestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// ClientWithResponses builds on ClientInterface to offer response payloads
-type ClientWithResponses struct {
-	ClientInterface
-}
-
-// NewClientWithResponses creates a new ClientWithResponses, which wraps
-// Client with return type handling
-func NewClientWithResponses(server string, opts ...ClientOption) (*ClientWithResponses, error) {
-	client, err := NewClient(server, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &ClientWithResponses{client}, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
-}
-
-// ClientWithResponsesInterface is the interface specification for the client with responses above.
-type ClientWithResponsesInterface interface {
-
-	// GetAccountPlanSummaryWithResponse Read the account subscription summary
-	//
-	// Uses the global or mainland China gateway. The reference preserves the JSON value without interpreting plan-specific fields.
-	//
-	// Returns a wrapper object for the known response body format(s).
-	//
-	// Corresponds with GET /acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary (the `GetAccountPlanSummary` operationId).
-	GetAccountPlanSummaryWithResponse(ctx context.Context, dsid string, params *GetAccountPlanSummaryParams, reqEditors ...RequestEditorFn) (*GetAccountPlanSummaryResponse, error)
-
-	// ListAccountDevicesWithResponse List devices associated with an account
-	//
-	// Returns account device metadata and associated payment-method metadata.
-	//
-	// Returns a wrapper object for the known response body format(s).
-	//
-	// Corresponds with GET /setup/web/device/getDevices (the `ListAccountDevices` operationId).
-	ListAccountDevicesWithResponse(ctx context.Context, params *ListAccountDevicesParams, reqEditors ...RequestEditorFn) (*ListAccountDevicesResponse, error)
-
-	// ListAccountFamilyWithResponse List family members
-	//
-	// Returns family member metadata; an omitted familyMembers field is treated as an empty list by the reference.
-	//
-	// Returns a wrapper object for the known response body format(s).
-	//
-	// Corresponds with GET /setup/web/family/getFamilyDetails (the `ListAccountFamily` operationId).
-	ListAccountFamilyWithResponse(ctx context.Context, params *ListAccountFamilyParams, reqEditors ...RequestEditorFn) (*ListAccountFamilyResponse, error)
-
-	// GetFamilyMemberPhotoWithResponse Download a family member photo
-	//
-	// Returns exact content bytes, including an empty successful body, for the selected member identifier.
-	//
-	// Returns a wrapper object for the known response body format(s).
-	//
-	// Corresponds with GET /setup/web/family/getMemberPhoto (the `GetFamilyMemberPhoto` operationId).
-	GetFamilyMemberPhotoWithResponse(ctx context.Context, params *GetFamilyMemberPhotoParams, reqEditors ...RequestEditorFn) (*GetFamilyMemberPhotoResponse, error)
-
-	// GetAccountStorageWithResponse Read storage usage and quota information
-	//
-	// Sends an empty entity and returns account usage, quota flags and media usage entries. Byte counts are nonnegative.
-	//
-	// Returns a wrapper object for the known response body format(s).
-	//
-	// Corresponds with POST /setup/ws/1/storageUsageInfo (the `GetAccountStorage` operationId).
-	GetAccountStorageWithResponse(ctx context.Context, params *GetAccountStorageParams, reqEditors ...RequestEditorFn) (*GetAccountStorageResponse, error)
-}
-
 type GetAccountPlanSummaryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1711,82 +1425,7 @@ func (r GetAccountStorageResponse) ContentType() string {
 	return ""
 }
 
-// GetAccountPlanSummaryWithResponse Read the account subscription summary
-//
-// Uses the global or mainland China gateway. The reference preserves the JSON value without interpreting plan-specific fields.
-//
-// Returns a wrapper object for the known response body format(s).
-//
-// Corresponds with GET /acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary (the `GetAccountPlanSummary` operationId).
-func (c *ClientWithResponses) GetAccountPlanSummaryWithResponse(ctx context.Context, dsid string, params *GetAccountPlanSummaryParams, reqEditors ...RequestEditorFn) (*GetAccountPlanSummaryResponse, error) {
-	rsp, err := c.GetAccountPlanSummary(ctx, dsid, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetAccountPlanSummaryResponse(rsp)
-}
-
-// ListAccountDevicesWithResponse List devices associated with an account
-//
-// Returns account device metadata and associated payment-method metadata.
-//
-// Returns a wrapper object for the known response body format(s).
-//
-// Corresponds with GET /setup/web/device/getDevices (the `ListAccountDevices` operationId).
-func (c *ClientWithResponses) ListAccountDevicesWithResponse(ctx context.Context, params *ListAccountDevicesParams, reqEditors ...RequestEditorFn) (*ListAccountDevicesResponse, error) {
-	rsp, err := c.ListAccountDevices(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListAccountDevicesResponse(rsp)
-}
-
-// ListAccountFamilyWithResponse List family members
-//
-// Returns family member metadata; an omitted familyMembers field is treated as an empty list by the reference.
-//
-// Returns a wrapper object for the known response body format(s).
-//
-// Corresponds with GET /setup/web/family/getFamilyDetails (the `ListAccountFamily` operationId).
-func (c *ClientWithResponses) ListAccountFamilyWithResponse(ctx context.Context, params *ListAccountFamilyParams, reqEditors ...RequestEditorFn) (*ListAccountFamilyResponse, error) {
-	rsp, err := c.ListAccountFamily(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListAccountFamilyResponse(rsp)
-}
-
-// GetFamilyMemberPhotoWithResponse Download a family member photo
-//
-// Returns exact content bytes, including an empty successful body, for the selected member identifier.
-//
-// Returns a wrapper object for the known response body format(s).
-//
-// Corresponds with GET /setup/web/family/getMemberPhoto (the `GetFamilyMemberPhoto` operationId).
-func (c *ClientWithResponses) GetFamilyMemberPhotoWithResponse(ctx context.Context, params *GetFamilyMemberPhotoParams, reqEditors ...RequestEditorFn) (*GetFamilyMemberPhotoResponse, error) {
-	rsp, err := c.GetFamilyMemberPhoto(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetFamilyMemberPhotoResponse(rsp)
-}
-
-// GetAccountStorageWithResponse Read storage usage and quota information
-//
-// Sends an empty entity and returns account usage, quota flags and media usage entries. Byte counts are nonnegative.
-//
-// Returns a wrapper object for the known response body format(s).
-//
-// Corresponds with POST /setup/ws/1/storageUsageInfo (the `GetAccountStorage` operationId).
-func (c *ClientWithResponses) GetAccountStorageWithResponse(ctx context.Context, params *GetAccountStorageParams, reqEditors ...RequestEditorFn) (*GetAccountStorageResponse, error) {
-	rsp, err := c.GetAccountStorage(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetAccountStorageResponse(rsp)
-}
-
-// ParseGetAccountPlanSummaryResponse parses an HTTP response from a GetAccountPlanSummaryWithResponse call
+// ParseGetAccountPlanSummaryResponse parses an HTTP response for the GetAccountPlanSummary operation
 func ParseGetAccountPlanSummaryResponse(rsp *http.Response) (*GetAccountPlanSummaryResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
@@ -1822,7 +1461,7 @@ func ParseGetAccountPlanSummaryResponse(rsp *http.Response) (*GetAccountPlanSumm
 	return response, nil
 }
 
-// ParseListAccountDevicesResponse parses an HTTP response from a ListAccountDevicesWithResponse call
+// ParseListAccountDevicesResponse parses an HTTP response for the ListAccountDevices operation
 func ParseListAccountDevicesResponse(rsp *http.Response) (*ListAccountDevicesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
@@ -1858,7 +1497,7 @@ func ParseListAccountDevicesResponse(rsp *http.Response) (*ListAccountDevicesRes
 	return response, nil
 }
 
-// ParseListAccountFamilyResponse parses an HTTP response from a ListAccountFamilyWithResponse call
+// ParseListAccountFamilyResponse parses an HTTP response for the ListAccountFamily operation
 func ParseListAccountFamilyResponse(rsp *http.Response) (*ListAccountFamilyResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
@@ -1894,7 +1533,7 @@ func ParseListAccountFamilyResponse(rsp *http.Response) (*ListAccountFamilyRespo
 	return response, nil
 }
 
-// ParseGetFamilyMemberPhotoResponse parses an HTTP response from a GetFamilyMemberPhotoWithResponse call
+// ParseGetFamilyMemberPhotoResponse parses an HTTP response for the GetFamilyMemberPhoto operation
 func ParseGetFamilyMemberPhotoResponse(rsp *http.Response) (*GetFamilyMemberPhotoResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
@@ -1923,7 +1562,7 @@ func ParseGetFamilyMemberPhotoResponse(rsp *http.Response) (*GetFamilyMemberPhot
 	return response, nil
 }
 
-// ParseGetAccountStorageResponse parses an HTTP response from a GetAccountStorageWithResponse call
+// ParseGetAccountStorageResponse parses an HTTP response for the GetAccountStorage operation
 func ParseGetAccountStorageResponse(rsp *http.Response) (*GetAccountStorageResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
