@@ -110,6 +110,7 @@ func parseDateValueSpec(spec string) (dateValueSpec, error) {
 	result.sign, result.normalizeZero = match[4], match[5] != ""
 	result.sharp, result.zero = match[6] != "", match[7] != ""
 	result.group, result.kind = match[9], match[11]
+
 	result.width, _ = strconv.Atoi(match[8])
 	if result.width > dateMaximumWidth {
 		return *result, errFolderFormat
