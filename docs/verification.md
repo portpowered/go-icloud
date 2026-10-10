@@ -4,6 +4,10 @@ Run `make lint` and `make check` from the root before accepting a change.
 The root Makefile owns SDK and standalone CLI formatting, tidy, lint, build,
 race tests, schema generation drift, source pin, wire inventory and replay gates.
 Use the exact release commit for final checks (LIB-07, LIB-13, LIB-18).
+For the CLI, set `GOWORK=off` and use its published SDK dependency; an integration
+workspace pass is a separate receipt and does not prove the final public pin.
+Current receipts and unresolved gates are in the
+[completion matrix](completion-matrix.md).
 
 The portable replay corpus is evaluated independently by the pinned Python
 reference and the public Go SDK. Matcher interoperability, endpoint occurrence

@@ -1,8 +1,13 @@
 # Independent review record
 
-Review state: **not approved**. No final implementation/release commit exists.
+Review state: **not approved**. No complete-library final approval is recorded.
 Both final reviewer verdicts must independently prove all numbered template
 items; neither the implementer nor this initial audit signs off completion.
+
+The records below preserve historical and scoped reviewer receipts. Current
+implementation and test receipts belong in the
+[completion matrix](completion-matrix.md); later feature publication or passing
+checks do not extend an earlier verdict to a new commit.
 
 ## Reviewer A — initial blind audit
 
