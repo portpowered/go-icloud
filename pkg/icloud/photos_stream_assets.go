@@ -78,8 +78,8 @@ func projectSharedPairs(records []cloudkit.CKRecord) []photoPair {
 	masters := []cloudkit.CKRecord{}
 
 	for _, record := range records {
-		switch cloudkit.PhotoRecordKind(record.RecordType) {
-		case cloudkit.CPLAsset:
+		switch record.RecordType {
+		case string(cloudkit.CPLAsset):
 			value, err := photoFieldValue(record, string(cloudkit.MasterRef))
 			if err != nil {
 				continue
@@ -89,7 +89,7 @@ func projectSharedPairs(records []cloudkit.CKRecord) []photoPair {
 			if json.Unmarshal(value, &reference) == nil {
 				assets[reference.RecordName] = record
 			}
-		case cloudkit.CPLMaster:
+		case string(cloudkit.CPLMaster):
 			masters = append(masters, record)
 		}
 	}

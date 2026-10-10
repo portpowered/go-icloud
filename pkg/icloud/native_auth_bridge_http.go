@@ -71,16 +71,16 @@ func (sdk *SDK) nativeBridgeStep(ctx context.Context, state NativeAuthState, ste
 func nativeBridgeStepRequest(state NativeAuthState, step int,
 	body auth.AuthBridgeStepRequest,
 ) (webtransport.AuthenticationCall, error) {
-	switch auth.AuthBridgeStepRequestNextStep(step) {
-	case auth.N2:
+	switch step {
+	case int(auth.N2):
 		return nativeEncodedRequest(webtransport.AuthBridgeStep2Call{
 			Origin: nativeIDMSOrigin(state), Params: nil, Body: body,
 		})
-	case auth.N4:
+	case int(auth.N4):
 		return nativeEncodedRequest(webtransport.AuthBridgeStep4Call{
 			Origin: nativeIDMSOrigin(state), Params: nil, Body: body,
 		})
-	case auth.N6:
+	case int(auth.N6):
 		return nativeEncodedRequest(webtransport.AuthBridgeStep6Call{
 			Origin: nativeIDMSOrigin(state), Params: nil, Body: body,
 		})

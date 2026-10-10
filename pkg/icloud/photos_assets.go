@@ -177,8 +177,8 @@ func projectPhotoPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
 	masters := []cloudkit.CKRecord{}
 
 	for _, record := range records {
-		switch cloudkit.PhotoRecordKind(record.RecordType) {
-		case cloudkit.CPLAsset:
+		switch record.RecordType {
+		case string(cloudkit.CPLAsset):
 			master, err := reminderReference(record, string(cloudkit.MasterRef))
 			if err != nil {
 				return nil, err
@@ -189,7 +189,7 @@ func projectPhotoPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
 			}
 
 			assets[master] = record
-		case cloudkit.CPLMaster:
+		case string(cloudkit.CPLMaster):
 			masters = append(masters, record)
 		}
 	}
