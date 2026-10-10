@@ -15,6 +15,7 @@ func generationCommand(t *testing.T, config, schema string) *exec.Cmd {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	repository, err := filepath.Abs(filepath.Join("..", ".."))
 	if err != nil {
 		t.Fatal(err)
