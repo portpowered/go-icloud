@@ -138,3 +138,13 @@ This receipt verifies the observed response graph omission is repaired in that
 export. It does not award independent standards approval or establish Pages
 deployment. New schemas, scenarios, models or renderer changes still require
 exact-commit checks and a fresh artifact inspection before final acceptance.
+
+The later [documentation run 38048570050](https://github.com/portpowered/go-icloud/actions/runs/38048570050)
+passed at library commit `df29e1bd48d4098bcbfbdb010f0ef83f9649c92a`. Inspection
+of that exact downloaded artifact repeated the 100-page, 96-expectation, 7,342
+local-link/anchor, unique-ID, exact-protobuf and request snippet checks.
+Response-only table controls again verified required error codes, nullable
+progress/error/reason fields, record/tombstone/error and authentication
+alternatives, typed failures and the existing JSON examples. This receipt covers
+the newer authentication/bridge runtime source at that commit; its full Source
+suite, coverage profiles and complete-library acceptance are separate checks.

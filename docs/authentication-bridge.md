@@ -36,6 +36,11 @@ boundary. Its contract requires the caller to establish TLS when connecting to
 a real server; offline tests supply a scripted connection. Without this option,
 the transport establishes and verifies TLS itself. The socket implementation
 handles raw RFC 6455 upgrade, masking, fragmentation, ping/pong, and close frames.
+For direct low-level `bridgewebsocket.Open` calls, `Options.URL` must use `wss`
+and the canonical `/v2/<lowercase-hex-connection>` path, without query parameters
+or a trailing query delimiter. Noncanonical targets fail before the dialer is
+called. The native bridge constructs this target from its generated connection
+identifier. Use the native bridge flow for account verification.
 The SDK rejects incoming frames or reassembled messages above 64 MiB as a local
 resource policy (GO-06). The pinned Python raw-frame path does not impose this
 specific bound; the generated schema marks it as SDK policy, not a provider limit.

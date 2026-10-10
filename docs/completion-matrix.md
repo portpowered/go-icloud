@@ -24,7 +24,7 @@ operation parity. No row below grants final merge or release acceptance.
 | Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Implemented, including portable hardware adapter; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
 | Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Implemented, including resumed consent policy; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
 | Auth sockets | Injected raw WebSocket, protobuf bootstrap/subscription/ACK, signing/proofs, modern/legacy bridge, teardown | Implemented; 53 socket and 30 combined paired timelines plus lifecycle controls; integrated acceptance pending |
-| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `620a94af` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
+| CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `c49557a2` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
 
 For each port: bind source inputs/defaults and complete results/errors to named
 schema models, execute the public Go operation against every applicable paired
@@ -34,15 +34,17 @@ never ignore fields to accommodate the port (SCHEMA-10, LIB-05).
 
 ## Integration evidence and remaining blockers
 
-The CLI at `5bd9f0a4` pins the published SDK
-`v0.0.0-20261010102812-620a94af4ab3`, with no local replacement. Final
+The CLI at `5366cdcb` pins the published SDK
+`v0.0.0-20261010112114-c49557a2ffca`, with no local replacement. Final
 complete-library acceptance against this pin remains pending. The SDK includes
 Source-paired fixes for adding a photo to an album without prior membership,
 empty Photos change zones, exact nullable change cursors, and Reminders document
 base64 decoding. Full SDK race/replay tests passed at `bda83e1`, affected schema
 contracts passed at `a033a9d`, and all-enabled SDK lint passed at `0765205`.
-Those are exact-commit baseline receipts; subsequent generated Photos and
-Reminders body changes require fresh integrated checks.
+Those are exact-commit baseline receipts. The current SDK additionally fixes
+Source trust-session refusal for reason-bearing HTTP 200 replies and validates
+the canonical bridge request target before dialing. Its additional Auth, Photos
+and Reminders replay cases require fresh integrated checks and coverage.
 
 The full `make check` baseline at `7586fc3` passed SDK and CLI race tests,
 contracts, all 136 pinned Source tests, and the HTTP occurrence gate
@@ -86,7 +88,13 @@ pinned Source suite at `b3de8aec` passed in 372.252 seconds. The exact `b3de8aec
 [verification CI](https://github.com/portpowered/go-icloud/actions/runs/38045064715)
 passed every job, including the six supported Go/OS module combinations. The
 complete production gate and fresh checks for subsequent runtime/scenario
-changes remain open. The complete production
+changes remain open. At `df29e1bd`, the current HTTP inventory contains 1,107
+scenarios, 2,515 pairs and 15 multipart requests; the complete 144-test Source
+suite and new SDK/CLI coverage profiles remain pending. The earlier `b3de8aec`
+results above do not prove this newer runtime. The `df29e1bd` verification run
+failed a stale Reminders inventory count; `d6f5c1ab` corrects that assertion to
+366 scenarios/432 pairs. Its fresh exact-commit verification remains pending.
+The complete production
 source/model/network audit and its blocking Make/CI integration remain open.
 Focused proof controls passing does not establish actual-source conformance.
 
@@ -110,7 +118,10 @@ and downloaded artifact inspection passed: complete response field graphs,
 requiredness, nullable alternatives and the existing response examples now
 render alongside request graphs, snippets and exact protobuf source. This closes
 the observed rendering omission for that artifact; final independent review,
-deployment and checks after subsequent changes remain open. See
+deployment and checks after subsequent changes remain open. The later
+`df29e1bd` [documentation build](https://github.com/portpowered/go-icloud/actions/runs/38048570050)
+and downloaded artifact inspection also passed those same response/example,
+protobuf and navigation controls. See
 [the rendered inspection receipt](website.md). Final rendering and remote
 library publication are separate gates.
 
