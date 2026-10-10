@@ -42,6 +42,7 @@ func (client *Client) LookupPhotosRecords(
 func photosRecordLookupRequest(auth RequestContext, body []byte) (*http.Request, error) {
 	if auth.PhotoShared {
 		params := photosSharedLookupRecordsParams(auth)
+
 		request, err := photosapi.NewPhotosSharedLookupRecordsRequestWithBody(
 			auth.Origin,
 			params,
@@ -56,6 +57,7 @@ func photosRecordLookupRequest(auth RequestContext, body []byte) (*http.Request,
 	}
 
 	params := photosLookupRecordsParams(auth)
+
 	request, err := photosapi.NewPhotosLookupRecordsRequestWithBody(
 		auth.Origin,
 		params,
