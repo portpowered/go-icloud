@@ -25,7 +25,7 @@ func TestAuthenticationCallRejectsUnknownDynamicTypesBeforeTransport(t *testing.
 	} {
 		t.Run(name, func(t *testing.T) {
 			calls := 0
-			client := webtransport.New(findMyTestTransport(func(*http.Request) (*http.Response, error) {
+			client := webtransport.New(findMyRoundTrip(func(*http.Request) (*http.Response, error) {
 				calls++
 				return findMyTestResponse(`{}`), nil
 			}))
