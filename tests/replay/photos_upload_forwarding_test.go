@@ -92,7 +92,7 @@ func photoUploadOpaqueRequest(t *testing.T, request *replay.Request) {
 	request.Body.Value = marshalFindMyRecovery(t, base64.StdEncoding.EncodeToString(body))
 
 	for index := range request.Headers {
-		if request.Headers[index][0] == "content-length" {
+		if request.Headers[index][0] == contentLengthHeader {
 			request.Headers[index][1] = strconv.Itoa(len(body))
 		}
 	}
@@ -116,7 +116,7 @@ func photoUploadReceiptRegistration(t *testing.T, row map[string]json.RawMessage
 	var keywords map[string]json.RawMessage
 	var files []map[string]json.RawMessage
 
-	authReplayDecode(t, row["keyword_inputs"], &keywords)
+	authReplayDecode(t, row[replayLiteralKeywordInputs], &keywords)
 	authReplayDecode(t, keywords["files"], &files)
 	file := new(icloud.PhotoUploadFile)
 	file.Receipt = receipt

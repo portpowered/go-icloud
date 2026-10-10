@@ -53,7 +53,7 @@ type accountInitial struct {
 func TestGeneratedAccountClientPortableScenarios(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/account-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPAccountJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -174,7 +174,7 @@ func accountOperation(t *testing.T, client *accountapi.ClientWithResponses, scen
 	switch scenario.Operation {
 	case replayDevicesOperation:
 		return accountDevicesOperation(t, client, scenario)
-	case accountFamilyOperationName, "family_photos":
+	case accountFamilyOperationName, replayLiteralFamilyPhotos:
 		return accountFamilyOperation(t, client, scenario)
 	case "storage":
 		return accountStorageOperation(t, client, scenario)
@@ -331,8 +331,8 @@ func accountStorageOperation(t *testing.T, client *accountapi.ClientWithResponse
 	}
 
 	return map[string]int64{
-		"used_bytes":  response.JSON200.StorageUsageInfo.UsedStorageInBytes,
-		"total_bytes": response.JSON200.StorageUsageInfo.TotalStorageInBytes,
+		replayLiteralUsedBytes:  response.JSON200.StorageUsageInfo.UsedStorageInBytes,
+		replayLiteralTotalBytes: response.JSON200.StorageUsageInfo.TotalStorageInBytes,
 	}
 }
 
@@ -393,7 +393,7 @@ func accountProviderMessage(t *testing.T, status int, body []byte) string {
 
 	reason := "Unknown reason"
 
-	for _, key := range []string{"errorMessage", "reason", "errorReason", "error"} {
+	for _, key := range []string{replayLiteralErrorMessage, "reason", "errorReason", "error"} {
 		if text, matches := fields[key].(string); matches && text != "" {
 			reason = text
 

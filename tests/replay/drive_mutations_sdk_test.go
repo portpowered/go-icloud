@@ -14,15 +14,16 @@ import (
 )
 
 func driveMutationOperations() map[string]bool {
-	return map[string]bool{"create_folders": true, "rename_items": true, "move_nodes_to_node": true,
-		"delete_items": true, "delete_forever_from_trash": true,
-		"move_items_to_trash": true, "recover_items_from_trash": true}
+	return map[string]bool{
+		replayLiteralCreateFolders: true, replayLiteralRenameItems: true, replayLiteralMoveNodesToNode: true,
+		replayLiteralDeleteItems: true, replayLiteralDeleteForeverFromTrash: true,
+		replayLiteralMoveItemsToTrash: true, replayLiteralRecoverItemsFromTrash: true}
 }
 
 func TestDriveSDKPortableMutations(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/drive-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPDriveJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +96,7 @@ func callDriveSDKMutation(t *testing.T, client icloud.Client,
 	auth.DriveServiceURL = scenario.Initial.Origin
 	auth.AccountServiceURL = ""
 
-	if scenario.Operation == "create_folders" {
+	if scenario.Operation == replayLiteralCreateFolders {
 		result, err := client.CreateDriveFolder(t.Context(), icloud.CreateDriveFolderRequest{
 			Auth: auth, ParentID: driveStringInput(t, scenario.Inputs, 0), Name: driveStringInput(t, scenario.Inputs, 1),
 		})
@@ -121,7 +122,7 @@ func callDriveItemMutation(t *testing.T, client icloud.Client,
 ) (*icloud.DriveItemChangeResult, error) {
 	t.Helper()
 
-	if scenario.Operation == "move_nodes_to_node" {
+	if scenario.Operation == replayLiteralMoveNodesToNode {
 		return callDriveMove(t, client, auth, scenario)
 	}
 
@@ -133,17 +134,17 @@ func callDriveItemMutation(t *testing.T, client icloud.Client,
 	var err error
 
 	switch scenario.Operation {
-	case "rename_items":
+	case replayLiteralRenameItems:
 		result, err = client.RenameDriveNode(t.Context(), icloud.RenameDriveNodeRequest{
 			Auth: auth, Node: node, Name: driveStringInput(t, scenario.Inputs, 2),
 		})
-	case "move_items_to_trash":
+	case replayLiteralMoveItemsToTrash:
 		result, err = client.TrashDriveNode(t.Context(), icloud.TrashDriveNodeRequest{Auth: auth, Node: node})
-	case "recover_items_from_trash":
+	case replayLiteralRecoverItemsFromTrash:
 		result, err = client.RestoreDriveNode(t.Context(), icloud.RestoreDriveNodeRequest{Auth: auth, Node: node})
-	case "delete_items":
+	case replayLiteralDeleteItems:
 		result, err = client.DeleteDriveNode(t.Context(), icloud.DeleteDriveNodeRequest{Auth: auth, Node: node})
-	case "delete_forever_from_trash":
+	case replayLiteralDeleteForeverFromTrash:
 		result, err = client.PermanentlyDeleteDriveNode(t.Context(), icloud.PermanentlyDeleteDriveNodeRequest{
 			Auth: auth, Node: node,
 		})

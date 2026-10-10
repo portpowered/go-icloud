@@ -39,7 +39,7 @@ func TestSharedPhotosNestedProviderLocation(t *testing.T) {
 	auth.SharedPhotosServiceURL = syntheticSharedPhotosOrigin
 
 	result, err := client.ListSharedPhotos(t.Context(), icloud.ListSharedPhotosRequest{
-		Auth: auth, Album: "synthetic-stream-0"})
+		Auth: auth, Album: replayLiteralSyntheticStream0})
 	if err != nil {
 		t.Fatal(err, transport.AssertConsumed())
 	}

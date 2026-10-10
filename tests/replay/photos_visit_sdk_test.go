@@ -11,7 +11,8 @@ import (
 
 func TestPhotoVisitorStopsBeforeLaterPage(t *testing.T) {
 	t.Parallel()
-	scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", "photos-assets-pagination.json"))
+	scenario := readAccountScenario(t,
+		filepath.Join(replayExpectedFixturesSyntheticHTTP, replayLiteralPhotosAssetsPaginationJSON))
 	// The recorded next page is deliberately absent: any eager follow-up fails closed.
 	exchanges := scenario.Exchanges[:4]
 
@@ -63,7 +64,8 @@ func TestPhotoVisitorStopsBeforeLaterPage(t *testing.T) {
 
 func TestPhotoVisitorPreservesCallerFailure(t *testing.T) {
 	t.Parallel()
-	scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", "photos-assets-pagination.json"))
+	scenario := readAccountScenario(t,
+		filepath.Join(replayExpectedFixturesSyntheticHTTP, replayLiteralPhotosAssetsPaginationJSON))
 
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges[:4])
 	if err != nil {
@@ -101,7 +103,7 @@ var errPhotoVisitorCaller = errors.New("synthetic visitor failure")
 func TestRecentlyAddedVisitorStopsBeforeAnotherWindow(t *testing.T) {
 	t.Parallel()
 	scenario := readAccountScenario(t,
-		filepath.Join("fixtures/synthetic/http", "photos-recently-added-overlap-partial-next.json"))
+		filepath.Join(replayExpectedFixturesSyntheticHTTP, "photos-recently-added-overlap-partial-next.json"))
 	exchanges := scenario.Exchanges[:4]
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {

@@ -58,7 +58,7 @@ func runPhotosStatusSDK(t *testing.T, scenario accountScenario) {
 			t.Fatal(decodeErr)
 		}
 
-		expected["syncToken"] = expected[replayExpectedCursorField]
+		expected[replayLiteralSyncToken] = expected[replayExpectedCursorField]
 		delete(expected, replayExpectedCursorField)
 
 		encoded, encodeErr := json.Marshal(expected)

@@ -30,7 +30,7 @@ func runSharedPhotosSDK(t *testing.T, path string) {
 	scenario := readAccountScenario(t, path)
 	row := authReplayObject(t, path)
 	initial := map[string]json.RawMessage{}
-	authReplayDecode(t, row["initial_state"], &initial)
+	authReplayDecode(t, row[replayLiteralInitialState], &initial)
 
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {
@@ -45,8 +45,9 @@ func runSharedPhotosSDK(t *testing.T, path string) {
 	auth := sdkAccountAuth(scenario.Initial)
 
 	auth.PhotosServiceURL = scenario.Initial.Origin
-	if len(initial["shared_streams_origin"]) != 0 && string(initial["shared_streams_origin"]) != reminderChangeNullValue {
-		authReplayDecode(t, initial["shared_streams_origin"], &auth.SharedPhotosServiceURL)
+	if len(initial[replayLiteralSharedStreamsOrigin]) != 0 &&
+		string(initial[replayLiteralSharedStreamsOrigin]) != reminderChangeNullValue {
+		authReplayDecode(t, initial[replayLiteralSharedStreamsOrigin], &auth.SharedPhotosServiceURL)
 	}
 
 	var (
@@ -73,9 +74,9 @@ func checkSharedPhotosOperation(t *testing.T, client *icloud.SDK, auth icloud.Au
 	t.Helper()
 
 	switch scenario.Operation {
-	case "stream_albums", "shared_streams":
+	case replayLiteralStreamAlbums, "shared_streams":
 		checkSharedAlbumsCall(t, client, auth, scenario)
-	case "stream_count":
+	case replayLiteralStreamCount:
 		result, err := client.CountSharedPhotos(t.Context(), icloud.CountSharedPhotosRequest{Auth: auth, Album: album})
 		if err != nil {
 			t.Fatal(err)
@@ -83,7 +84,7 @@ func checkSharedPhotosOperation(t *testing.T, client *icloud.SDK, auth icloud.Au
 
 		checkSDKValue(t, result.Count, scenario.Result)
 		checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
-	case "stream_photos":
+	case replayLiteralStreamPhotos:
 		result, err := client.ListSharedPhotos(t.Context(), icloud.ListSharedPhotosRequest{Auth: auth, Album: album})
 		if err != nil {
 			t.Fatal(err)
@@ -91,9 +92,9 @@ func checkSharedPhotosOperation(t *testing.T, client *icloud.SDK, auth icloud.Au
 
 		checkSharedPhotosProjection(t, result.Photos, scenario.Result)
 		checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
-	case "stream_get":
+	case replayLiteralStreamGet:
 		checkSharedPhotoCall(t, client, auth, album, inputs[0], scenario)
-	case "stream_download":
+	case replayLiteralStreamDownload:
 		result, err := client.DownloadSharedPhoto(t.Context(), icloud.DownloadSharedPhotoRequest{
 			Auth: auth, Album: album, PhotoID: inputs[0], Version: nil})
 		if err != nil {
@@ -192,12 +193,12 @@ func checkSharedPhotosProjection(t *testing.T, actual []icloud.SharedPhoto, raw 
 	}
 
 	for index, photo := range actual {
-		checkSDKValue(t, photo.LikeCount, expected[index]["like_count"])
+		checkSDKValue(t, photo.LikeCount, expected[index][replayLiteralLikeCount])
 		checkSDKValue(t, photo.Liked, expected[index]["liked"])
-		delete(expected[index], "like_count")
+		delete(expected[index], replayLiteralLikeCount)
 		delete(expected[index], "liked")
 		checkSharedFields(t, photo.Photo, expected[index], map[string]string{
-			"master_id": "masterID", "item_type": "itemType"})
+			"master_id": replayLiteralMasterID, "item_type": replayLiteralItemType})
 	}
 }
 

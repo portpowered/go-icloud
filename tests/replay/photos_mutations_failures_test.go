@@ -95,7 +95,7 @@ func checkPhotoMutationFailure(t *testing.T, scenario accountScenario, prefix []
 
 func TestPhotoAlbumCreationEmptyAcknowledgement(t *testing.T) {
 	t.Parallel()
-	scenario := readAccountScenario(t, replayExpectedFixturesSyntheticHttpPhotosCreateAlbumJson)
+	scenario := readAccountScenario(t, replayExpectedAlbumFixturePath)
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
 	last.Body = replay.Entity{Encoding: testBase64Encoding,
 		Value: marshalFindMyRecovery(t,
@@ -208,7 +208,7 @@ func TestPhotoAlbumCreationExplicitTypeOverridesFolder(t *testing.T) {
 func runPhotoAlbumTypeControl(t *testing.T, kind icloud.PhotoAlbumType) {
 	t.Helper()
 
-	scenario := readAccountScenario(t, replayExpectedFixturesSyntheticHttpPhotosCreateAlbumJson)
+	scenario := readAccountScenario(t, replayExpectedAlbumFixturePath)
 	last := &scenario.Exchanges[len(scenario.Exchanges)-1]
 	body := contractAuthBody(t, last.Request.Body)
 	oldValue := []byte(`"albumType": {"type": "INT64", "value": 0}`)
@@ -239,7 +239,7 @@ func runPhotoAlbumTypeControl(t *testing.T, kind icloud.PhotoAlbumType) {
 func TestPhotoAlbumCreationEntropyFailurePreservesInitialization(t *testing.T) {
 	t.Parallel()
 
-	scenario := readAccountScenario(t, replayExpectedFixturesSyntheticHttpPhotosCreateAlbumJson)
+	scenario := readAccountScenario(t, replayExpectedAlbumFixturePath)
 	scenario.Exchanges = scenario.Exchanges[:1]
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {

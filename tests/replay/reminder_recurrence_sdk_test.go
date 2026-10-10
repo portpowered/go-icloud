@@ -23,10 +23,10 @@ func TestReminderRecurrenceSDKPortableScenarios(t *testing.T) {
 	t.Parallel()
 
 	for _, operation := range []string{"create", "update", "delete"} {
-		for _, outcome := range []string{reminderRecurrenceSuccess, "record-error"} {
+		for _, outcome := range []string{reminderRecurrenceSuccess, replayLiteralRecordError} {
 			t.Run(operation+"-"+outcome, func(t *testing.T) {
 				t.Parallel()
-				runReminderRecurrence(t, "fixtures/synthetic/http/reminders-"+operation+"-recurrence-rule-"+outcome+".json")
+				runReminderRecurrence(t, replayLiteralFixturesSyntheticHTTPReminders+operation+"-recurrence-rule-"+outcome+".json")
 			})
 		}
 	}
@@ -46,7 +46,7 @@ func runReminderRecurrence(t *testing.T, path string) {
 
 	var operation string
 
-	authReplayDecode(t, row["operation"], &operation)
+	authReplayDecode(t, row[replayExpectedOperation], &operation)
 
 	result, callErr := callReminderRecurrenceFixture(t, client, row, scenario, operation)
 	if len(scenario.Error) != 0 {
@@ -84,7 +84,7 @@ func callReminderRecurrenceFixture(t *testing.T, client *icloud.SDK, row map[str
 	authReplayDecode(t, row["inputs"], &inputs)
 
 	var options map[string]json.RawMessage
-	if raw := row["keyword_inputs"]; len(raw) != 0 {
+	if raw := row[replayLiteralKeywordInputs]; len(raw) != 0 {
 		authReplayDecode(t, raw, &options)
 	}
 
@@ -100,7 +100,7 @@ func callReminderRecurrenceFixture(t *testing.T, client *icloud.SDK, row map[str
 	}
 
 	index := 0
-	if operation == "delete_recurrence_rule" {
+	if operation == replayLiteralDeleteRecurrenceRule {
 		index = 1
 	}
 
@@ -185,14 +185,14 @@ func checkReminderRecurrenceProjection(t *testing.T, row map[string]json.RawMess
 
 	var arguments []json.RawMessage
 
-	authReplayDecode(t, expected["arguments"], &arguments)
+	authReplayDecode(t, expected[replayLiteralArguments], &arguments)
 
 	raw := expected["value"]
 
 	switch operation {
 	case reminderRecurrenceUpdate:
 		raw = arguments[0]
-	case "delete_recurrence_rule":
+	case replayLiteralDeleteRecurrenceRule:
 		raw = arguments[1]
 	}
 

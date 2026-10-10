@@ -20,7 +20,8 @@ import (
 func portableMultipart(t *testing.T) replay.Exchange {
 	t.Helper()
 
-	data, err := os.ReadFile(filepath.Join("fixtures", "synthetic", "http", "drive-upload-binary.json"))
+	data, err := os.ReadFile(filepath.Join(
+		replayExpectedFixtures, replayExpectedSynthetic, "http", "drive-upload-binary.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +36,7 @@ func portableMultipart(t *testing.T) replay.Exchange {
 	}
 
 	for _, exchange := range fixture.Exchanges {
-		if exchange.Request.Body.Encoding == "multipart" {
+		if exchange.Request.Body.Encoding == replayLiteralMultipart {
 			return exchange
 		}
 	}
@@ -73,12 +74,13 @@ func multipartRequest(t *testing.T, exchange replay.Exchange, boundary string) *
 	}
 
 	for _, header := range exchange.Request.Headers {
-		if !strings.EqualFold(header[0], "Content-Type") && !strings.EqualFold(header[0], "Content-Length") {
+		if !strings.EqualFold(header[0], replayExpectedContentType) &&
+			!strings.EqualFold(header[0], replayLiteralContentLength) {
 			request.Header.Add(header[0], header[1])
 		}
 	}
 
-	request.Header.Set("Content-Type", writer.FormDataContentType())
+	request.Header.Set(replayExpectedContentType, writer.FormDataContentType())
 
 	return request
 }
@@ -138,8 +140,9 @@ func TestPortableMultipartMatchesGoWriterWithNewBoundary(t *testing.T) {
 func TestMultipartChangesRejectBeforeResponse(t *testing.T) {
 	t.Parallel()
 
-	for _, change := range []string{"boundary", "format", "bytes", "filename", "preamble", "epilogue",
-		"extra_part", "interior_close", changeLength, "duplicate_type"} {
+	for _, change := range []string{
+		replayLiteralBoundary, "format", "bytes", replayLiteralFilename, replayLiteralPreamble, replayLiteralEpilogue,
+		replayLiteralExtraPart, replayLiteralInteriorClose, changeLength, replayLiteralDuplicateType} {
 		t.Run(change, func(t *testing.T) {
 			t.Parallel()
 
@@ -178,18 +181,18 @@ func mutateMultipart(t *testing.T, request *http.Request, change string) {
 func mutateMultipartBytes(body []byte, change string) []byte {
 	switch change {
 	case "bytes":
-		return bytes.Replace(body, []byte("synthetic upload"), []byte("different bytes"), 1)
-	case "filename":
-		return bytes.Replace(body, []byte("synthetic.txt"), []byte("different.txt"), 1)
-	case "preamble":
+		return bytes.Replace(body, []byte(replayLiteralSyntheticUpload), []byte("different bytes"), 1)
+	case replayLiteralFilename:
+		return bytes.Replace(body, []byte(replayLiteralSyntheticTxt), []byte("different.txt"), 1)
+	case replayLiteralPreamble:
 		return append([]byte("unrecorded\r\n"), body...)
-	case "epilogue":
+	case replayLiteralEpilogue:
 		return append(body, []byte("unrecorded")...)
-	case "extra_part":
+	case replayLiteralExtraPart:
 		return bytes.Replace(body, []byte("--\r\n"), []byte("\r\nExtra: value\r\n\r\nextra\r\n--"+
 			strings.Repeat("a", 32)+"--\r\n"), 1)
-	case "interior_close":
-		return bytes.Replace(body, []byte("synthetic upload"), []byte("\r\n--"+strings.Repeat("a", 32)+"--\r\n"), 1)
+	case replayLiteralInteriorClose:
+		return bytes.Replace(body, []byte(replayLiteralSyntheticUpload), []byte("\r\n--"+strings.Repeat("a", 32)+"--\r\n"), 1)
 	default:
 		return body
 	}
@@ -197,21 +200,21 @@ func mutateMultipartBytes(body []byte, change string) []byte {
 
 func mutateMultipartHeaders(request *http.Request, change string) {
 	switch change {
-	case "boundary":
-		request.Header.Set("Content-Type", "multipart/form-data; boundary="+strings.Repeat("b", 32))
+	case replayLiteralBoundary:
+		request.Header.Set(replayExpectedContentType, "multipart/form-data; boundary="+strings.Repeat("b", 32))
 	case "format":
-		request.Header.Set("Content-Type", "multipart/form-data; boundary=short")
+		request.Header.Set(replayExpectedContentType, "multipart/form-data; boundary=short")
 	case changeLength:
-		request.Header.Set("Content-Length", strconv.FormatInt(request.ContentLength+1, 10))
-	case "duplicate_type":
-		request.Header.Add("Content-Type", request.Header.Get("Content-Type"))
+		request.Header.Set(replayLiteralContentLength, strconv.FormatInt(request.ContentLength+1, 10))
+	case replayLiteralDuplicateType:
+		request.Header.Add(replayExpectedContentType, request.Header.Get(replayExpectedContentType))
 	}
 }
 
 func TestAllPortableExchangesInstantiateAndMultipartUsesGoWriter(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob(filepath.Join("fixtures", "synthetic", "http", "*.json"))
+	paths, err := filepath.Glob(filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", "*.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -225,7 +228,7 @@ func TestAllPortableExchangesInstantiateAndMultipartUsesGoWriter(t *testing.T) {
 		pairs += len(exchanges)
 
 		for _, exchange := range exchanges {
-			if exchange.Request.Body.Encoding == "multipart" {
+			if exchange.Request.Body.Encoding == replayLiteralMultipart {
 				checkPortableMultipart(t, exchange)
 
 				uploads++

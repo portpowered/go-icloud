@@ -107,7 +107,7 @@ func checkReminderLookupFailure(t *testing.T, scenario reminderLookupScenario,
 		kind = icloud.Unavailable
 	}
 
-	if expected["type"] == "LookupError" {
+	if expected["type"] == replayLiteralLookupError {
 		kind = icloud.NotFound
 	}
 

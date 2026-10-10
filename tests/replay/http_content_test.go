@@ -71,7 +71,7 @@ func replayCompressedContent(t *testing.T, item contentCase) {
 			t.Fatal(encodeErr)
 		}
 
-		assertAuthResponses(t, map[string]json.RawMessage{"exchanges": encoded}, result)
+		assertAuthResponses(t, map[string]json.RawMessage{replayExpectedExchanges: encoded}, result)
 	}
 
 	err = transport.AssertConsumed()

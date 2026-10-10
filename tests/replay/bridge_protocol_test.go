@@ -33,7 +33,7 @@ type bridgeProtocolFixture struct {
 func TestBridgeProtocolPairedTranscripts(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/socket/*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticSocketJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,24 +138,24 @@ func executeBridgeProtocol(ctx context.Context, socket bridge.Socket, actions []
 		case "wait_push_token":
 			value, err := bridge.WaitPushToken(ctx, socket, options)
 			if err != nil {
-				return results, fmt.Errorf("socket operation: %w", err)
+				return results, fmt.Errorf(replaySocketOperationErrorFormat, err)
 			}
 
 			results = append(results, base64.StdEncoding.EncodeToString(value))
 		case "subscribe":
 			value, err := bridge.SubscriptionMessage(action.Topics)
 			if err != nil {
-				return results, fmt.Errorf("socket operation: %w", err)
+				return results, fmt.Errorf(replaySocketOperationErrorFormat, err)
 			}
 
 			err = socket.SendBinary(ctx, value)
 			if err != nil {
-				return results, fmt.Errorf("socket operation: %w", err)
+				return results, fmt.Errorf(replaySocketOperationErrorFormat, err)
 			}
 		case "wait_push":
 			push, err := bridge.WaitPush(ctx, socket, action.Topic, options)
 			if err != nil {
-				return results, fmt.Errorf("socket operation: %w", err)
+				return results, fmt.Errorf(replaySocketOperationErrorFormat, err)
 			}
 
 			results = append(results, sourceBridgePush(push))
@@ -182,14 +182,14 @@ func fixtureBridgeClock(ticks []float64) func() time.Time {
 
 func sourceBridgePush(push *bridge.Push) map[string]any {
 	result := map[string]any{
-		"payload": push.Payload, "session_uuid": push.SessionID, "next_step": nil,
+		"payload": push.Payload, "session_uuid": push.SessionID, replayLiteralNextStep: nil,
 		"rui_url_key": push.Payload.RuiURLKey, "txnid": push.Payload.Txnid,
 		"salt": push.Payload.Salt, "mid": push.Payload.Mid, "idmsdata": push.Payload.Idmsdata,
 		"akdata": push.Payload.Akdata, "data": push.Payload.Data,
 		"encrypted_code": push.Payload.EncryptedCode, "error_code": push.Payload.Ec,
 	}
 	if push.NextStep != "" {
-		result["next_step"] = push.NextStep
+		result[replayLiteralNextStep] = push.NextStep
 	}
 
 	return result

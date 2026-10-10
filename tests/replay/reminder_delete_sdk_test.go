@@ -121,10 +121,10 @@ func checkDeleteReminderOutcome(t *testing.T, row map[string]json.RawMessage, sc
 
 	var arguments []map[string]json.RawMessage
 
-	authReplayDecode(t, expected["arguments"], &arguments)
+	authReplayDecode(t, expected[replayLiteralArguments], &arguments)
 	checkSDKValue(t, result.Deleted, arguments[0]["deleted"])
 	checkSDKValue(t, result.RecordChangeTag, arguments[0][reminderSourceRevisionField])
-	checkSDKValue(t, result.Modified, arguments[0]["modified"])
+	checkSDKValue(t, result.Modified, arguments[0][replayLiteralModified])
 
 	if len(result.Responses) != 1 {
 		t.Fatal("missing response evidence")

@@ -46,7 +46,7 @@ func discoveredAccountCredentials(t *testing.T, row map[string]json.RawMessage,
 	for _, login := range logins {
 		var filename string
 
-		authReplayDecode(t, login["filename"], &filename)
+		authReplayDecode(t, login[replayLiteralFilename], &filename)
 
 		if filename != expected {
 			continue
@@ -65,7 +65,7 @@ func discoveredAccountCredentials(t *testing.T, row map[string]json.RawMessage,
 		authReplayDecode(t, login["setupOrigin"], &request.Auth.SetupServiceURL)
 		authReplayDecode(t, identity["china"], &request.Auth.ChinaMainland)
 		request.Auth.ClientID = session["client_id"]
-		request.Auth.SessionToken = session["session_token"]
+		request.Auth.SessionToken = session[replayExpectedSessionStateField]
 		request.TrustToken = session["trust_token"]
 		request.AccountCountryCode.Set(session["account_country"])
 
@@ -90,7 +90,7 @@ func runDiscoveredAccountFlow(t *testing.T, row map[string]json.RawMessage,
 
 	var exchanges []replay.Exchange
 
-	authReplayDecode(t, row["exchanges"], &exchanges)
+	authReplayDecode(t, row[replayExpectedExchanges], &exchanges)
 
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {

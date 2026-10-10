@@ -146,7 +146,7 @@ func checkReminderQueryProjection(t *testing.T, actual *icloud.ListRemindersResu
 
 	var reminders []json.RawMessage
 
-	err = json.Unmarshal(expected["reminders"], &reminders)
+	err = json.Unmarshal(expected[replayLiteralReminders], &reminders)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,8 +182,8 @@ func checkReminderRelatedProjection(t *testing.T, actual any, source json.RawMes
 			reminderLocationSourceAlarmUID:    reminderLocationPublicAlarmUID,
 			reminderLocationSourceTriggerID:   reminderLocationPublicTriggerID,
 			reminderLocationSourceLocationUID: reminderLocationPublicLocationUID,
-			replayExpectedFileAssetUrl:        replayExpectedFileAssetURL,
-			"file_size":                       replayExpectedFileSize,
+			replayExpectedSourceFileAssetURL:  replayExpectedFileAssetURL,
+			replayLiteralFileSize:             replayExpectedFileSize,
 			reminderRecurrenceSourceCount:     reminderRecurrenceCount,
 			reminderRecurrenceSourceWeekday:   reminderRecurrenceWeekday,
 			reminderSourceRevisionField:       reminderPublicRevisionField,

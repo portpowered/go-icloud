@@ -276,7 +276,7 @@ func mutateRequestEntity(request *http.Request, change string) {
 	case changeLength:
 		request.ContentLength++
 	case replayExpectedHeaderLength:
-		request.Header.Set("Content-Length", "003")
+		request.Header.Set(replayLiteralContentLength, "003")
 	case chunkedEncoding:
 		request.TransferEncoding = []string{chunkedEncoding}
 	}
@@ -451,8 +451,14 @@ func closeAndInspect(t *testing.T, closer io.Closer, transport *replay.HTTPTrans
 func TestPortableAccountExchangeUsesGoHTTPClient(t *testing.T) {
 	t.Parallel()
 
-	path := filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", "account-devices-one.json")
-	data, err := os.ReadFile(path)
+	directory, err := os.OpenRoot(filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer func() { _ = directory.Close() }()
+
+	data, err := directory.ReadFile("account-devices-one.json")
 	if err != nil {
 		t.Fatal(err)
 	}

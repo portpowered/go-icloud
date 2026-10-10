@@ -28,7 +28,7 @@ const (
 func TestReminderLocationSDKPortableScenarios(t *testing.T) {
 	t.Parallel()
 
-	for _, name := range []string{reminderLocationSuccessFixture, "record-error"} {
+	for _, name := range []string{reminderLocationSuccessFixture, replayLiteralRecordError} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			runReminderLocation(t, "fixtures/synthetic/http/reminders-add-location-trigger-"+name+".json")
@@ -49,7 +49,7 @@ func runReminderLocation(t *testing.T, path string) {
 	client, entropy := reminderWriteClient(t, row, transport)
 	base := reminderUpdateFixture(t, row, scenario)
 	request := new(icloud.AddReminderLocationTriggerRequest)
-	authReplayDecode(t, row["keyword_inputs"], request)
+	authReplayDecode(t, row[replayLiteralKeywordInputs], request)
 	request.Auth, request.Reminder = base.Auth, base.Reminder
 	before := marshalFindMyRecovery(t, request)
 	result, callErr := client.AddReminderLocationTrigger(t.Context(), *request)

@@ -25,9 +25,9 @@ func (router driveSessionRouter) RoundTrip(request *http.Request) (*http.Respons
 	var transport *nodeReplayTraffic
 
 	switch {
-	case identity == "account-alpha" || strings.Contains(cookie, "session=alpha"):
+	case identity == "account-alpha" || strings.Contains(cookie, replayLiteralSessionAlpha):
 		transport = router.alpha
-	case identity == "account-beta" || strings.Contains(cookie, "session=beta"):
+	case identity == "account-beta" || strings.Contains(cookie, replayLiteralSessionBeta):
 		transport = router.beta
 	default:
 		return nil, errUnknownAccount

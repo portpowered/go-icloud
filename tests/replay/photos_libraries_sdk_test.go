@@ -17,7 +17,7 @@ func TestSharedPhotoLibraryAssetReads(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", name))
+			scenario := readAccountScenario(t, filepath.Join(replayExpectedFixturesSyntheticHTTP, name))
 
 			transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 			if err != nil {
@@ -58,7 +58,6 @@ func TestSharedPhotoLibraryAssetReads(t *testing.T) {
 			checkReminderSyncResponses(t, append(libraries.Responses, result.Responses...), scenario.Exchanges)
 
 			err = transport.AssertConsumed()
-
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -68,7 +67,7 @@ func TestSharedPhotoLibraryAssetReads(t *testing.T) {
 
 func TestEmptyPhotoLibraryDiscovery(t *testing.T) {
 	t.Parallel()
-	scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", "photos-libraries-empty.json"))
+	scenario := readAccountScenario(t, filepath.Join(replayExpectedFixturesSyntheticHTTP, "photos-libraries-empty.json"))
 
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {

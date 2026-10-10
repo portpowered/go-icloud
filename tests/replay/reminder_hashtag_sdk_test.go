@@ -15,10 +15,10 @@ func TestReminderHashtagSDKPortableScenarios(t *testing.T) {
 	t.Parallel()
 
 	for _, operation := range []string{"create", "update", "delete"} {
-		for _, outcome := range []string{reminderHashtagSuccess, "record-error"} {
+		for _, outcome := range []string{reminderHashtagSuccess, replayLiteralRecordError} {
 			t.Run(operation+"/"+outcome, func(t *testing.T) {
 				t.Parallel()
-				runReminderHashtag(t, "fixtures/synthetic/http/reminders-"+operation+"-hashtag-"+outcome+".json")
+				runReminderHashtag(t, replayLiteralFixturesSyntheticHTTPReminders+operation+"-hashtag-"+outcome+".json")
 			})
 		}
 	}
@@ -59,13 +59,13 @@ func callReminderHashtag(t *testing.T, row map[string]json.RawMessage,
 		inputs    []json.RawMessage
 	)
 
-	authReplayDecode(t, row["operation"], &operation)
+	authReplayDecode(t, row[replayExpectedOperation], &operation)
 	authReplayDecode(t, row["inputs"], &inputs)
 
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.RemindersServiceURL = scenario.Initial.Origin
 
-	if operation == "update_hashtag" {
+	if operation == replayLiteralUpdateHashtag {
 		request := new(icloud.UpdateReminderHashtagRequest)
 		request.Auth = auth
 		request.Hashtag = reminderHashtagFixture(t, inputs[0])
@@ -88,7 +88,7 @@ func callReminderHashtag(t *testing.T, row map[string]json.RawMessage,
 	reminderRow["inputs"] = marshalFindMyRecovery(t, inputs[:1])
 	reminder := reminderUpdateFixture(t, reminderRow, scenario).Reminder
 
-	if operation == "create_hashtag" {
+	if operation == replayLiteralCreateHashtag {
 		request := new(icloud.CreateReminderHashtagRequest)
 		request.Auth, request.Reminder = auth, reminder
 		authReplayDecode(t, inputs[1], &request.Name)
@@ -117,8 +117,8 @@ func reminderHashtagFixture(t *testing.T, raw json.RawMessage) icloud.ReminderHa
 
 	authReplayDecode(t, raw, &wrapper)
 	fields := sourceReminderFields(t, wrapper.Value)
-	fields["reminderID"] = fields["reminder_id"]
-	delete(fields, "reminder_id")
+	fields["reminderID"] = fields[reminderLocationSourceReminderID]
+	delete(fields, reminderLocationSourceReminderID)
 
 	if _, exists := fields[reminderSourceCreated]; !exists {
 		fields[reminderSourceCreated] = json.RawMessage(`null`)
@@ -162,18 +162,18 @@ func checkReminderHashtagOutcome(t *testing.T, row map[string]json.RawMessage, s
 		}
 	)
 
-	authReplayDecode(t, row["operation"], &operation)
+	authReplayDecode(t, row[replayExpectedOperation], &operation)
 	authReplayDecode(t, row["result"], &expected)
 
 	child := expected.Value
-	if operation != "create_hashtag" {
+	if operation != replayLiteralCreateHashtag {
 		child = expected.Arguments[len(expected.Arguments)-1]
 	}
 
 	checkReminderRelatedProjection(t, map[string]icloud.ReminderHashtag{"child": result.Hashtag},
 		marshalFindMyRecovery(t, map[string]json.RawMessage{"child": child}))
 
-	if operation != "update_hashtag" {
+	if operation != replayLiteralUpdateHashtag {
 		checkReminderProjection(t, result.Reminder, expected.Arguments[0])
 	}
 

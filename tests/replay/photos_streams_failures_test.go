@@ -16,14 +16,14 @@ const sharedProviderMutation = "provider"
 func TestSharedPhotosFailureEvidence(t *testing.T) {
 	t.Parallel()
 
-	for _, name := range []string{"albums-1", "count-1", "assets-1", "get-found", "download-binary"} {
+	for _, name := range []string{"albums-1", "count-1", "assets-1", "get-found", replayLiteralDownloadBinary} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			path := filepath.Join("fixtures/synthetic/http", "photos-upload-shared-"+name+".json")
+			path := filepath.Join(replayExpectedFixturesSyntheticHTTP, "photos-upload-shared-"+name+".json")
 
 			for _, bad := range []string{sharedProviderMutation, "invalid-json", reminderChangeNullValue} {
-				if name == "download-binary" && bad != sharedProviderMutation {
+				if name == replayLiteralDownloadBinary && bad != sharedProviderMutation {
 					continue
 				}
 
@@ -109,29 +109,29 @@ func callSharedPhotosFailure(t *testing.T, client *icloud.SDK, auth icloud.AuthC
 	t.Helper()
 
 	const (
-		album = "synthetic-stream-0"
+		album = replayLiteralSyntheticStream0
 		photo = "synthetic-asset-0"
 	)
 
 	switch operation {
-	case "stream_albums":
+	case replayLiteralStreamAlbums:
 		result, err := client.ListSharedPhotoAlbums(t.Context(), icloud.ListSharedPhotoAlbumsRequest{Auth: auth})
 
 		return result == nil, err
-	case "stream_count":
+	case replayLiteralStreamCount:
 		result, err := client.CountSharedPhotos(t.Context(), icloud.CountSharedPhotosRequest{Auth: auth, Album: album})
 
 		return result == nil, err
-	case "stream_photos":
+	case replayLiteralStreamPhotos:
 		result, err := client.ListSharedPhotos(t.Context(), icloud.ListSharedPhotosRequest{Auth: auth, Album: album})
 
 		return result == nil, err
-	case "stream_get":
+	case replayLiteralStreamGet:
 		result, err := client.GetSharedPhoto(t.Context(), icloud.GetSharedPhotoRequest{Auth: auth, Album: album,
 			PhotoID: photo})
 
 		return result == nil, err
-	case "stream_download":
+	case replayLiteralStreamDownload:
 		result, err := client.DownloadSharedPhoto(t.Context(), icloud.DownloadSharedPhotoRequest{
 			Auth: auth, Album: album, PhotoID: photo, Version: nil})
 

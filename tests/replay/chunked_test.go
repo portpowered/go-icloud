@@ -70,7 +70,7 @@ func TestDeclaredChunkedRejectsChangedFraming(t *testing.T) {
 			request.TransferEncoding = []string{chunkedEncoding, chunkedEncoding}
 		},
 		"known-length":    func(request *http.Request) { request.ContentLength = 3 },
-		"length-header":   func(request *http.Request) { request.Header.Set("Content-Length", "3") },
+		"length-header":   func(request *http.Request) { request.Header.Set(replayLiteralContentLength, "3") },
 		"wrong-body":      func(request *http.Request) { request.Body = io.NopCloser(bytes.NewReader([]byte("bad"))) },
 		"chunked-trailer": func(request *http.Request) { request.Trailer = http.Header{"Unexpected": []string{"value"}} },
 		"header-conflict": func(request *http.Request) { request.Header.Set("Transfer-Encoding", "gzip") },

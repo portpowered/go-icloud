@@ -21,7 +21,7 @@ type driveDownloadSnapshot struct {
 func TestDriveSDKPortableDownloads(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/drive-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPDriveJSON)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -41,8 +41,8 @@ func photoScenarioKeywords(t *testing.T, path string) map[string]json.RawMessage
 	authReplayDecode(t, data, &fields)
 
 	var keywords map[string]json.RawMessage
-	if len(fields["keyword_inputs"]) != 0 {
-		authReplayDecode(t, fields["keyword_inputs"], &keywords)
+	if len(fields[replayLiteralKeywordInputs]) != 0 {
+		authReplayDecode(t, fields[replayLiteralKeywordInputs], &keywords)
 	}
 
 	return keywords
@@ -75,7 +75,7 @@ func runPhotosDatabaseSDK(t *testing.T, path string) {
 		t.Context(),
 		icloud.GetPhotoLibraryChangesRequest{
 			Auth:   auth,
-			Shared: strings.Contains(filepath.Base(path), "-shared-"),
+			Shared: strings.Contains(filepath.Base(path), replayLiteralShared),
 			Since:  since,
 		},
 	)
@@ -97,7 +97,6 @@ func runPhotosDatabaseSDK(t *testing.T, path string) {
 	}
 
 	err = transport.AssertConsumed()
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -128,6 +127,6 @@ func checkPhotoDatabaseProjection(t *testing.T, result *icloud.GetPhotoLibraryCh
 	}
 
 	checkSDKValue(t, result.Zones, encoded)
-	checkSDKValue(t, result.SyncToken, fields["syncToken"])
+	checkSDKValue(t, result.SyncToken, fields[replayLiteralSyncToken])
 	checkSDKValue(t, result.MoreComing, fields["moreComing"])
 }

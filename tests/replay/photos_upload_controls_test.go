@@ -21,8 +21,8 @@ func TestPhotoUploadRejectsMalformedNullableContainers(t *testing.T) {
 	t.Parallel()
 
 	for name, control := range map[string]photoUploadInvalidControl{
-		"reservation-map":   {"photos-upload-reserve-1.json", `{"uploadUrls":null}`},
-		"reservation-url":   {"photos-upload-reserve-1.json", `{"uploadUrls":{"synthetic-client-0":null}}`},
+		"reservation-map":   {replayLiteralPhotosUploadReserve1JSON, `{"uploadUrls":null}`},
+		"reservation-url":   {replayLiteralPhotosUploadReserve1JSON, `{"uploadUrls":{"synthetic-client-0":null}}`},
 		"registration-item": {"photos-upload-register-1.json", `[null]`},
 		"status-item":       {"photos-upload-status-1.json", `{"synthetic-job-0":null}`},
 	} {
@@ -46,7 +46,7 @@ func TestPhotoUploadRejectsMalformedNullableContainers(t *testing.T) {
 
 func photoUploadControl(t *testing.T, filename, body string) (*photoUploadReplay, *replay.HTTPTransport) {
 	t.Helper()
-	path := filepath.Join("fixtures", "synthetic", "http", filename)
+	path := filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", filename)
 	row := authReplayObject(t, path)
 	scenario := readAccountScenario(t, path)
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
@@ -77,11 +77,11 @@ func checkPhotoUploadControlEvidence(t *testing.T, scenario accountScenario, fai
 
 func TestPhotoUploadPreservesUnknownNumberPrecision(t *testing.T) {
 	t.Parallel()
-	const number = "9007199254740993"
+	const number = photoUploadOpaqueInteger
 	const body = `{"singleFile":{"referenceChecksum":"synthetic-reference","size":3,` +
 		`"fileChecksum":"synthetic-checksum","wrappingKey":"synthetic-key",` +
 		`"receipt":"synthetic-receipt","opaque":` + number + `}}`
-	runner, transport := photoUploadControl(t, "photos-upload-bytes-binary.json", body)
+	runner, transport := photoUploadControl(t, replayLiteralPhotosUploadBytesBinaryJSON, body)
 	result, err := runner.call(t)
 	if err != nil {
 		t.Fatal(err)
@@ -109,7 +109,7 @@ func (reader *photoUploadOwnedReader) Close() error {
 
 func TestPhotoUploadPreservesCallerCursorAndReaderOwnership(t *testing.T) {
 	t.Parallel()
-	runner, transport := photoUploadControl(t, "photos-upload-bytes-binary.json", "")
+	runner, transport := photoUploadControl(t, replayLiteralPhotosUploadBytesBinaryJSON, "")
 	_, content, _ := photoUploadContent(t, runner.row)
 	data, err := io.ReadAll(content)
 	if err != nil {

@@ -83,7 +83,7 @@ func uploadShapeTransport(t *testing.T, sample uploadShapeCase) (driveUploadScen
 		accountScenario: readAccountScenario(t, "fixtures/synthetic/http/drive-upload-observed.json"), Inputs: nil,
 	}, Keywords: nil, Entropy: uploadEntropy{Seconds: 1700000000}, ErrorState: nil}
 	// Keep the control's caller input identical to the portable positive case.
-	input, err := json.Marshal(uploadFileInput{Name: "synthetic.txt",
+	input, err := json.Marshal(uploadFileInput{Name: replayLiteralSyntheticTxt,
 		Body: "AHN5bnRoZXRpYyB1cGxvYWT/", Position: 0})
 	if err != nil {
 		t.Fatal(err)

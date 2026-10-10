@@ -18,7 +18,10 @@ const sourceEmptyDocument = "eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJy
 func TestCompressedJSONBindsCompleteDecodedBytes(t *testing.T) {
 	t.Parallel()
 
-	for _, change := range []string{"valid", "different-document", "checksum", "trailing", "fixed", "base64-whitespace"} {
+	for _, change := range []string{
+		"valid", replayLiteralDifferentDocument, replayLiteralChecksum,
+		replayLiteralTrailing, "fixed", replayLiteralBase64Whitespace,
+	} {
 		t.Run(change, func(t *testing.T) {
 			t.Parallel()
 
@@ -27,7 +30,7 @@ func TestCompressedJSONBindsCompleteDecodedBytes(t *testing.T) {
 					Pattern: "base64-zlib-exact"}}, Parts: nil, ContentTypePattern: ""}
 			exchange := jsonExchange(entity)
 			exchange.Request.Headers = append(exchange.Request.Headers,
-				replay.Pair{"content-length", strconv.Itoa(len(entity.Value))})
+				replay.Pair{contentLengthHeader, strconv.Itoa(len(entity.Value))})
 			transport := newTransport(t, exchange)
 			actual := changedCompressedBody(t, change)
 			runJSONRequest(t, transport, actual, change == "valid")
@@ -43,7 +46,7 @@ func changedCompressedBody(t *testing.T, change string) string {
 	t.Helper()
 
 	text := ""
-	if change == "different-document" {
+	if change == replayLiteralDifferentDocument {
 		text = "x"
 	}
 
@@ -58,14 +61,14 @@ func changedCompressedBody(t *testing.T, change string) string {
 	}
 
 	switch change {
-	case "checksum":
+	case replayLiteralChecksum:
 		data[len(data)-1] ^= 1
-	case "trailing":
+	case replayLiteralTrailing:
 		data = append(data, 'x')
 	}
 
 	encoded = base64.StdEncoding.EncodeToString(data)
-	if change == "base64-whitespace" {
+	if change == replayLiteralBase64Whitespace {
 		encoded += "\n"
 	}
 

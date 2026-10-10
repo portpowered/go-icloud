@@ -99,7 +99,7 @@ func (scheduler *findMyReplayScheduler) Wait(ctx context.Context, request icloud
 func TestFindMySDKPortableScenarios(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/findmy-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPFindmyJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -216,7 +216,7 @@ func findMySDKAuth(t *testing.T, initial findMySDKInitial) icloud.AuthContext {
 	}
 
 	auth.SetupServiceURL = target.Scheme + "://" + target.Host
-	if token, exists := initial.SessionData["session_token"]; exists {
+	if token, exists := initial.SessionData[replayExpectedSessionStateField]; exists {
 		auth.SessionToken = &token
 	}
 

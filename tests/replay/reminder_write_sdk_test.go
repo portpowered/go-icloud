@@ -30,7 +30,7 @@ func TestReminderWriteSDKPortableScenarios(t *testing.T) {
 		"create-record-error", "update-basic", "update-completed", "update-dated-child", "update-record-error"} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			runReminderWrite(t, "fixtures/synthetic/http/reminders-"+name+".json")
+			runReminderWrite(t, replayLiteralFixturesSyntheticHTTPReminders+name+".json")
 		})
 	}
 }
@@ -82,7 +82,7 @@ func runReminderWrite(t *testing.T, path string) {
 
 	var operation string
 
-	authReplayDecode(t, row["operation"], &operation)
+	authReplayDecode(t, row[replayExpectedOperation], &operation)
 
 	var (
 		result  *icloud.ReminderMutationResult
@@ -123,8 +123,8 @@ func reminderCreateFixture(t *testing.T, row map[string]json.RawMessage,
 	authReplayDecode(t, row["inputs"], &inputs)
 
 	var options map[string]json.RawMessage
-	if len(row["keyword_inputs"]) != 0 {
-		authReplayDecode(t, row["keyword_inputs"], &options)
+	if len(row[replayLiteralKeywordInputs]) != 0 {
+		authReplayDecode(t, row[replayLiteralKeywordInputs], &options)
 	}
 
 	request := new(icloud.CreateReminderRequest)
@@ -160,8 +160,9 @@ func reminderUpdateFixture(t *testing.T, row map[string]json.RawMessage,
 
 	authReplayDecode(t, inputs[0]["value"], &value)
 
-	for _, key := range []string{reminderSourceCompletedDate, "due_date", "start_date", reminderSourceCreated, "modified",
-		reminderSourceParentID, reminderSourceRevisionField, "time_zone"} {
+	for _, key := range []string{
+		reminderSourceCompletedDate, replayLiteralDueDate, "start_date", reminderSourceCreated, replayLiteralModified,
+		reminderSourceParentID, reminderSourceRevisionField, replayLiteralTimeZone} {
 		if _, ok := value[key]; !ok {
 			value[key] = json.RawMessage(`null`)
 		}
@@ -188,8 +189,10 @@ func sourceReminderFields(t *testing.T, value map[string]json.RawMessage) map[st
 	t.Helper()
 
 	for source, target := range map[string]string{
-		"list_id": "listID", "desc": "description", reminderSourceCompletedDate: "completedDate", "due_date": "dueDate",
-		"start_date": "startDate", "all_day": "allDay", "time_zone": "timeZone", reminderSourceAlarmIDs: "alarmIDs",
+		"list_id": "listID", "desc": "description", reminderSourceCompletedDate: replayLiteralCompletedDate,
+		replayLiteralDueDate: "dueDate",
+		"start_date":         replayLiteralStartDate, "all_day": "allDay", replayLiteralTimeZone: "timeZone",
+		reminderSourceAlarmIDs:   "alarmIDs",
 		reminderSourceHashtagIDs: "hashtagIDs", reminderSourceAttachmentIDs: "attachmentIDs",
 		reminderSourceRecurrenceIDs: "recurrenceRuleIDs",
 		reminderSourceParentID:      "parentReminderID", reminderSourceRevisionField: reminderPublicRevisionField} {
@@ -199,7 +202,9 @@ func sourceReminderFields(t *testing.T, value map[string]json.RawMessage) map[st
 		}
 	}
 
-	for _, key := range []string{"completedDate", "dueDate", "startDate", reminderSourceCreated, "modified"} {
+	for _, key := range []string{
+		replayLiteralCompletedDate, "dueDate", replayLiteralStartDate, reminderSourceCreated, replayLiteralModified,
+	} {
 		raw := value[key]
 		if len(raw) == 0 || string(raw) == reminderChangeNullValue {
 			continue
@@ -276,7 +281,7 @@ func checkReminderWriteFailure(t *testing.T, scenario accountScenario,
 	var failure *icloud.ClientError
 
 	kind := icloud.Provider
-	if strings.Contains(string(scenario.Error), "LookupError") {
+	if strings.Contains(string(scenario.Error), replayLiteralLookupError) {
 		kind = icloud.NotFound
 	}
 

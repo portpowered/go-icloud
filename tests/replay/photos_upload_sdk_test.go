@@ -65,7 +65,7 @@ func TestPhotoUploadSDKPortableScenarios(t *testing.T) {
 
 	count := 0
 	for _, path := range paths {
-		if strings.Contains(filepath.Base(path), "-shared-") {
+		if strings.Contains(filepath.Base(path), replayLiteralShared) {
 			continue
 		}
 
@@ -134,11 +134,11 @@ func newPhotoUploadReplay(t *testing.T, row map[string]json.RawMessage,
 	clock := &photoUploadReplayClock{instant: start, trace: []photoUploadReplayWait{}, expected: entropy.WaitTrace}
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(random),
 		icloud.WithClock(func() time.Time { return start }), icloud.WithPhotoUploadClock(func() time.Time {
-			if len(clock.trace) < len(clock.expected) && clock.expected[len(clock.trace)].Kind == "monotonic" {
+			if len(clock.trace) < len(clock.expected) && clock.expected[len(clock.trace)].Kind == replayLiteralMonotonic {
 				clock.instant = start.Add(time.Duration(clock.expected[len(clock.trace)].Value * float64(time.Second)))
 			}
 			elapsed := clock.instant.Sub(start).Seconds()
-			clock.trace = append(clock.trace, photoUploadReplayWait{Kind: "monotonic", Value: elapsed})
+			clock.trace = append(clock.trace, photoUploadReplayWait{Kind: replayLiteralMonotonic, Value: elapsed})
 
 			return clock.instant
 		}), icloud.WithPhotoUploadWaiter(func(ctx context.Context, delay time.Duration) error {
@@ -160,7 +160,7 @@ func newPhotoUploadReplay(t *testing.T, row map[string]json.RawMessage,
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	var initial map[string]json.RawMessage
 
-	authReplayDecode(t, row["initial_state"], &initial)
+	authReplayDecode(t, row[replayLiteralInitialState], &initial)
 	authReplayDecode(t, initial["photos_upload_origin"], &auth.PhotosUploadServiceURL)
 
 	return &photoUploadReplay{row: row, scenario: scenario, client: client, auth: auth,
@@ -177,7 +177,7 @@ func (runner *photoUploadReplay) call(t *testing.T) (*photoUploadReplayResult, e
 			Assets map[string]int64 `json:"assets"`
 		}
 
-		authReplayDecode(t, runner.row["keyword_inputs"], &keywords)
+		authReplayDecode(t, runner.row[replayLiteralKeywordInputs], &keywords)
 		result, err := runner.client.ReservePhotoUploads(t.Context(), icloud.ReservePhotoUploadsRequest{
 			Auth: runner.auth, Library: nil, Assets: maps.Clone(keywords.Assets)})
 		if result == nil {
@@ -255,7 +255,7 @@ func (runner *photoUploadReplay) register(t *testing.T) (*photoUploadReplayResul
 		Zone string `json:"local_time_zone_id"`
 	}
 
-	authReplayDecode(t, runner.row["keyword_inputs"], &keywords)
+	authReplayDecode(t, runner.row[replayLiteralKeywordInputs], &keywords)
 
 	files := make([]icloud.PhotoUploadFile, 0, len(keywords.Files))
 
@@ -315,10 +315,10 @@ func (runner *photoUploadReplay) uploadRequest(t *testing.T) icloud.UploadPhotoR
 		authReplayDecode(t, parts[1], &request.TimeZoneOffset)
 	}
 
-	authReplayDecode(t, runner.row["initial_state"], &initial)
+	authReplayDecode(t, runner.row[replayLiteralInitialState], &initial)
 	request.HydrationTimeout = photoUploadDuration(t, initial["upload_hydration_timeout"])
 	request.HydrationInterval = photoUploadDuration(t, initial["upload_hydration_interval"])
-	authReplayDecode(t, runner.row["keyword_inputs"], &keywords)
+	authReplayDecode(t, runner.row[replayLiteralKeywordInputs], &keywords)
 	if raw := keywords["album"]; len(raw) != 0 {
 		var name string
 
@@ -399,7 +399,9 @@ func photoUploadRegistration(t *testing.T, raw json.RawMessage) json.RawMessage 
 	var source map[string]json.RawMessage
 
 	authReplayDecode(t, raw, &source)
-	for old, field := range map[string]string{"uploadJobId": "jobID", "cplMaster": "masterID", "cplAsset": "photoID"} {
+	for old, field := range map[string]string{
+		"uploadJobId": "jobID", "cplMaster": replayLiteralMasterID, "cplAsset": "photoID",
+	} {
 		source[field] = source[old]
 		if len(source[field]) == 0 {
 			source[field] = json.RawMessage(photoUploadNull)
@@ -407,28 +409,28 @@ func photoUploadRegistration(t *testing.T, raw json.RawMessage) json.RawMessage 
 		delete(source, old)
 	}
 
-	response := source["response"]
-	delete(source, "response")
+	response := source[replayLiteralResponse]
+	delete(source, replayLiteralResponse)
 	duplicate := false
 	if len(response) != 0 && string(response) != photoUploadNull {
 		var status map[string]json.RawMessage
 
 		authReplayDecode(t, response, &status)
-		status["retryable"] = status["isRetryable"]
+		status[replayLiteralRetryable] = status[replayLiteralIsRetryable]
 
-		for _, name := range []string{"retryable", "status", "errorMessage"} {
+		for _, name := range []string{replayLiteralRetryable, "status", replayLiteralErrorMessage} {
 			if len(status[name]) == 0 {
 				status[name] = json.RawMessage(photoUploadNull)
 			}
 		}
-		delete(status, "isRetryable")
+		delete(status, replayLiteralIsRetryable)
 		source["status"] = marshalFindMyRecovery(t, status)
 		duplicate = string(status["status"]) == "409"
 	} else {
 		source["status"] = json.RawMessage(photoUploadNull)
 	}
 
-	source["duplicate"] = marshalFindMyRecovery(t, duplicate)
+	source[replayLiteralDuplicate] = marshalFindMyRecovery(t, duplicate)
 
 	return marshalFindMyRecovery(t, source)
 }

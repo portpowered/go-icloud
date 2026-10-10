@@ -53,14 +53,14 @@ func photoChangesInputs(t *testing.T, path string) (string, *string) {
 	if raw := fields["library"]; raw != nil {
 		err = json.Unmarshal(raw, &library)
 		if err != nil {
-			t.Fatalf("%v / %v / %v", err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
+			t.Fatalf(replayCursorErrorsFormat, err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
 		}
 	}
 
-	if raw := fields["keyword_inputs"]; raw != nil {
+	if raw := fields[replayLiteralKeywordInputs]; raw != nil {
 		err = json.Unmarshal(raw, &keywords)
 		if err != nil {
-			t.Fatalf("%v / %v / %v", err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
+			t.Fatalf(replayCursorErrorsFormat, err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
 		}
 	}
 
@@ -98,7 +98,7 @@ func runPhotoChangesSDK(t *testing.T, path string, scenario accountScenario) {
 		checkSelectedPhotoFailure(t, scenario, prior, err, icloud.Unavailable)
 	} else {
 		if err != nil {
-			t.Fatalf("%v / %v / %v", err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
+			t.Fatalf(replayCursorErrorsFormat, err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
 		}
 
 		checkPhotoChangesProjection(t, actual.Changes, scenario.Result)
@@ -117,7 +117,7 @@ func TestPhotosCursorSDKPortableScenarios(t *testing.T) {
 	for _, name := range []string{"photos-sync-cached.json", "photos-sync-zone.json", "photos-sync-missing.json"} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			scenario := readAccountScenario(t, filepath.Join("fixtures/synthetic/http", name))
+			scenario := readAccountScenario(t, filepath.Join(replayExpectedFixturesSyntheticHTTP, name))
 
 			transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 			if err != nil {
@@ -198,19 +198,19 @@ func checkPhotoChangesProjection(t *testing.T, actual []icloud.PhotoChange, raw 
 
 	err := json.Unmarshal(raw, &expected)
 	if err != nil {
-		t.Fatalf("%v / %v / %v", err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
+		t.Fatalf(replayCursorErrorsFormat, err, errors.Unwrap(err), errors.Unwrap(errors.Unwrap(err)))
 	}
 
 	for _, change := range expected {
-		change["recordName"] = change["record_name"]
-		delete(change, "record_name")
-		change["recordType"] = change["record_type"]
-		delete(change, "record_type")
+		change["recordName"] = change[replayLiteralRecordName]
+		delete(change, replayLiteralRecordName)
+		change["recordType"] = change[replayLiteralRecordType]
+		delete(change, replayLiteralRecordType)
 
-		if string(change["modified"]) != "null" {
+		if string(change[replayLiteralModified]) != "null" {
 			var value string
 
-			decodeErr := json.Unmarshal(change["modified"], &value)
+			decodeErr := json.Unmarshal(change[replayLiteralModified], &value)
 			if decodeErr != nil {
 				t.Fatal(decodeErr)
 			}
@@ -220,7 +220,7 @@ func checkPhotoChangesProjection(t *testing.T, actual []icloud.PhotoChange, raw 
 				t.Fatal(parseErr)
 			}
 
-			change["modified"], err = json.Marshal(instant.UTC())
+			change[replayLiteralModified], err = json.Marshal(instant.UTC())
 			if err != nil {
 				t.Fatal(err)
 			}

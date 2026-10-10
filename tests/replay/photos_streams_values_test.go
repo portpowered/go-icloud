@@ -70,7 +70,7 @@ func runSharedValueRule(t *testing.T, mutation string) {
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	auth.SharedPhotosServiceURL = syntheticSharedPhotosOrigin
 	result, err := client.GetSharedPhoto(t.Context(), icloud.GetSharedPhotoRequest{
-		Auth: auth, Album: "synthetic-stream-0", PhotoID: photoMutationAssetID})
+		Auth: auth, Album: replayLiteralSyntheticStream0, PhotoID: photoMutationAssetID})
 	if mutation == sharedMissingWidthRule || mutation == sharedMissingHeightRule ||
 		mutation == sharedNullLikeCountRule || mutation == sharedStringLikeCountRule {
 		if err == nil || result != nil {

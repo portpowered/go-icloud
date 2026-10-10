@@ -63,7 +63,7 @@ type bridgeScriptSocket struct {
 func TestBridgeWebSocketPairedTranscripts(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/socket/*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticSocketJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +107,7 @@ func readBridgeSocketFixture(t *testing.T, path string) bridgeSocketFixture {
 
 func rawBridgeSocketFixture(fixture bridgeSocketFixture) bool {
 	for _, action := range fixture.Actions {
-		if action.Operation != "read_message" && action.Operation != "send_binary" {
+		if action.Operation != "read_message" && action.Operation != replayLiteralSendBinary {
 			return false
 		}
 	}
@@ -181,7 +181,7 @@ func runBridgeSocketActions(t *testing.T, conn *bridgewebsocket.Conn, actions []
 	results := []string{}
 
 	for _, action := range actions {
-		if action.Operation == "send_binary" {
+		if action.Operation == replayLiteralSendBinary {
 			payload, err := base64.StdEncoding.DecodeString(action.Payload)
 			if err != nil {
 				t.Fatal(err)
@@ -189,12 +189,12 @@ func runBridgeSocketActions(t *testing.T, conn *bridgewebsocket.Conn, actions []
 
 			err = conn.SendBinary(t.Context(), payload)
 			if err != nil {
-				return results, fmt.Errorf("socket action: %w", err)
+				return results, fmt.Errorf(replaySocketActionErrorFormat, err)
 			}
 		} else {
 			payload, err := conn.ReadMessage(t.Context())
 			if err != nil {
-				return results, fmt.Errorf("socket action: %w", err)
+				return results, fmt.Errorf(replaySocketActionErrorFormat, err)
 			}
 
 			results = append(results, base64.StdEncoding.EncodeToString(payload))

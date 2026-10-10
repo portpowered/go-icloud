@@ -34,7 +34,6 @@ func TestLocalPhotoSchemasValidate(t *testing.T) {
 		}
 
 		err = document.Validate(context.Background())
-
 		if err != nil {
 			t.Fatal(err)
 		}

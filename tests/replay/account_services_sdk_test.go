@@ -20,7 +20,7 @@ var errUnknownAccountOperation = errors.New("unsupported account SDK operation")
 func TestRemainingAccountSDKPortableScenarios(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/account-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPAccountJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,23 +82,23 @@ func accountSDKService(t *testing.T, client *icloud.SDK, scenario accountScenari
 	auth := sdkAccountAuth(scenario.Initial)
 
 	switch scenario.Operation {
-	case accountFamilyOperationName, "family_photos":
+	case accountFamilyOperationName, replayLiteralFamilyPhotos:
 		return accountSDKFamily(t, client, scenario, auth)
 	case "storage":
 		response, err := client.GetAccountStorage(t.Context(), icloud.GetAccountStorageRequest{Auth: auth})
 		if err != nil {
-			return nil, fmt.Errorf("account SDK service: %w", err)
+			return nil, fmt.Errorf(replayAccountServiceErrorFormat, err)
 		}
 
 		checkSDKMetadata(t, response.Metadata, scenario.Exchanges[0].Response)
 		checkSDKStorageProjection(t, response, scenario.Exchanges[0].Response)
 
-		return map[string]int64{"used_bytes": response.Usage.UsedStorageInBytes,
-			"total_bytes": response.Usage.TotalStorageInBytes}, nil
+		return map[string]int64{replayLiteralUsedBytes: response.Usage.UsedStorageInBytes,
+			replayLiteralTotalBytes: response.Usage.TotalStorageInBytes}, nil
 	case accountPlanOperationName:
 		response, err := client.GetAccountPlanSummary(t.Context(), icloud.GetAccountPlanSummaryRequest{Auth: auth})
 		if err != nil {
-			return nil, fmt.Errorf("account SDK service: %w", err)
+			return nil, fmt.Errorf(replayAccountServiceErrorFormat, err)
 		}
 
 		checkSDKMetadata(t, response.Metadata, scenario.Exchanges[0].Response)
@@ -118,7 +118,7 @@ func accountSDKFamily(t *testing.T, client *icloud.SDK, scenario accountScenario
 
 	response, err := client.GetAccountFamily(t.Context(), icloud.GetAccountFamilyRequest{Auth: auth})
 	if err != nil {
-		return nil, fmt.Errorf("account SDK service: %w", err)
+		return nil, fmt.Errorf(replayAccountServiceErrorFormat, err)
 	}
 
 	checkSDKMetadata(t, response.Metadata, scenario.Exchanges[0].Response)
@@ -156,7 +156,7 @@ func accountSDKPhotos(t *testing.T, client *icloud.SDK, scenario accountScenario
 			Auth: auth, MemberID: memberID,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("account SDK service: %w", err)
+			return nil, fmt.Errorf(replayAccountServiceErrorFormat, err)
 		}
 
 		checkSDKMetadata(t, response.Metadata, scenario.Exchanges[index+1].Response)
@@ -187,7 +187,7 @@ func checkSDKServiceFailure(t *testing.T, scenario accountScenario, result any, 
 		Headers: failure.ResponseHeaders()},
 		scenario.Exchanges[len(scenario.Exchanges)-1].Response)
 
-	if strings.Contains(failure.Error(), "synthetic failure") {
+	if strings.Contains(failure.Error(), replayLiteralSyntheticFailure) {
 		t.Fatal("provider content leaked into the display error")
 	}
 }

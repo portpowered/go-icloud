@@ -17,7 +17,7 @@ func TestReminderAttachmentWritePortableScenarios(t *testing.T) {
 		"delete-attachment-success", "delete-attachment-record-error", "delete-attachment-empty-id-success"} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			runReminderAttachmentWrite(t, "fixtures/synthetic/http/reminders-"+name+".json")
+			runReminderAttachmentWrite(t, replayLiteralFixturesSyntheticHTTPReminders+name+".json")
 		})
 	}
 }
@@ -36,7 +36,7 @@ func runReminderAttachmentWrite(t *testing.T, path string) {
 
 	var operation string
 
-	authReplayDecode(t, row["operation"], &operation)
+	authReplayDecode(t, row[replayExpectedOperation], &operation)
 
 	var (
 		attachment icloud.ReminderAttachment
@@ -48,9 +48,9 @@ func runReminderAttachmentWrite(t *testing.T, path string) {
 	switch operation {
 	case "create_url_attachment":
 		attachment, reminder, metadata, callErr = replayCreateAttachment(t, client, row, scenario)
-	case "update_attachment":
+	case replayLiteralUpdateAttachment:
 		attachment, metadata, callErr = replayUpdateAttachment(t, client, row, scenario)
-	case "delete_attachment":
+	case replayLiteralDeleteAttachment:
 		attachment, reminder, metadata, callErr = replayDeleteAttachment(t, client, row, scenario)
 	default:
 		t.Fatal("unknown attachment operation", operation)
@@ -93,8 +93,8 @@ func replayCreateAttachment(t *testing.T, client *icloud.SDK, row map[string]jso
 	request.Auth, request.Reminder = base.Auth, base.Reminder
 	authReplayDecode(t, inputs[1], &request.URL)
 
-	if len(row["keyword_inputs"]) != 0 {
-		authReplayDecode(t, row["keyword_inputs"], request)
+	if len(row[replayLiteralKeywordInputs]) != 0 {
+		authReplayDecode(t, row[replayLiteralKeywordInputs], request)
 	}
 
 	before := marshalFindMyRecovery(t, request)
@@ -121,7 +121,7 @@ func replayUpdateAttachment(t *testing.T, client *icloud.SDK, row map[string]jso
 
 	var options map[string]json.RawMessage
 
-	authReplayDecode(t, row["keyword_inputs"], &options)
+	authReplayDecode(t, row[replayLiteralKeywordInputs], &options)
 	renameReminderRelated(t, options)
 	authReplayDecode(t, marshalFindMyRecovery(t, options), request)
 	before := marshalFindMyRecovery(t, request)
@@ -179,8 +179,8 @@ func attachmentFixture(t *testing.T, row map[string]json.RawMessage, index int) 
 	}
 
 	if model == "ImageAttachment" {
-		if _, exists := value["fileAssetURL"]; !exists {
-			value["fileAssetURL"] = json.RawMessage(`""`)
+		if _, exists := value[replayExpectedFileAssetURL]; !exists {
+			value[replayExpectedFileAssetURL] = json.RawMessage(`""`)
 		}
 	}
 
@@ -204,12 +204,12 @@ func checkAttachmentWriteProjection(t *testing.T, row map[string]json.RawMessage
 	authReplayDecode(t, row["result"], &expected)
 
 	value := expected.Value
-	if operation == "update_attachment" {
+	if operation == replayLiteralUpdateAttachment {
 		value = expected.Arguments[0]
 	} else {
 		checkReminderProjection(t, *reminder, expected.Arguments[0])
 
-		if operation == "delete_attachment" {
+		if operation == replayLiteralDeleteAttachment {
 			value = expected.Arguments[1]
 		}
 	}

@@ -111,7 +111,7 @@ func assertDevicesSDKFailure(t *testing.T, scenario accountScenario,
 
 	accountProviderFailure(t, scenario.Error, failure.StatusCode(), failure.ResponseBody())
 
-	if strings.Contains(failure.Error(), "synthetic failure") {
+	if strings.Contains(failure.Error(), replayLiteralSyntheticFailure) {
 		t.Fatal("SDK display error disclosed provider content")
 	}
 

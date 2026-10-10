@@ -21,7 +21,7 @@ func tenantDriveDownloadReplay(t *testing.T, tenant string, structured bool,
 ) (icloud.AuthContext, *replay.HTTPTransport) {
 	t.Helper()
 
-	scenario := readAccountScenario(t, "fixtures/synthetic/http/drive-download-data_token-binary.json")
+	scenario := readAccountScenario(t, replayDriveBinaryFixturePath)
 	scenario.Initial.Params[protocol.ClientIDName] = "client-" + tenant
 	scenario.Initial.Params[protocol.DSIDName] = replayExpectedAccount + tenant
 
@@ -79,7 +79,7 @@ func tenantDriveDownloadReplay(t *testing.T, tenant string, structured bool,
 func TestDriveDownloadSDKConcurrentIsolation(t *testing.T) {
 	t.Parallel()
 
-	for name, structured := range map[string]bool{"explicit-header": false, "structured-cookies": true} {
+	for name, structured := range map[string]bool{replayLiteralExplicitHeader: false, "structured-cookies": true} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			checkDriveDownloadIsolation(t, structured)
@@ -115,7 +115,7 @@ func checkDriveDownloadIsolation(t *testing.T, structured bool) {
 
 			for range 2 {
 				result, downloadErr := client.DownloadDriveFile(t.Context(), icloud.DownloadDriveFileRequest{
-					Auth: auth, DocumentID: "synthetic-document", Zone: nil,
+					Auth: auth, DocumentID: replayLiteralSyntheticDocument, Zone: nil,
 				})
 				if downloadErr != nil {
 					t.Fatal(downloadErr)
@@ -128,7 +128,7 @@ func checkDriveDownloadIsolation(t *testing.T, structured bool) {
 }
 
 func driveDownloadCookieUpdate(stage, tenant string) string {
-	return replayExpectedSession + stage + "-" + tenant + "; Path=/; Secure; HttpOnly"
+	return replayExpectedSession + stage + "-" + tenant + replayLiteralPathSecureHTTPOnly
 }
 
 func checkDriveDownloadTenant(t *testing.T, result *icloud.DownloadDriveFileResult, tenant string, structured bool) {
