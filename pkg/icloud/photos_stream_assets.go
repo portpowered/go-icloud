@@ -193,13 +193,13 @@ func sharedPhotoResources(master, asset cloudkit.CKRecord) (Photo, error) {
 func sharedPhotoKind(master cloudkit.CKRecord, filename string) (PhotoItemType, error) {
 	value, err := photoFieldValue(master, string(cloudkit.ItemType))
 	if err != nil {
-		return "", err
+		return Image, err
 	}
 
 	if len(value) == 0 {
 		value, err = photoFieldValue(master, string(cloudkit.ResOriginalFileType))
 		if err != nil {
-			return "", err
+			return Image, err
 		}
 	}
 
