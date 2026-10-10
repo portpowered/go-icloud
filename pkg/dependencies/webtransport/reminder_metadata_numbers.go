@@ -10,6 +10,7 @@ import (
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/remindersdate"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 func reminderIntegerJSON(raw json.RawMessage) (json.RawMessage, error) {
@@ -64,9 +65,18 @@ func normalizeReminderAudit(fields map[string]json.RawMessage, name string) erro
 
 	audit[protocol.RemindersCKAuditInfoTimestamp] = json.RawMessage(strconv.FormatInt(value, 10))
 
-	fields[name], err = json.Marshal(audit)
+	body, err := json.Marshal(audit)
 	if err != nil {
 		return fmt.Errorf("encode reminder audit: %w", err)
+	}
+	var info cloudkit.CKAuditInfo
+	err = json.Unmarshal(body, &info)
+	if err != nil {
+		return fmt.Errorf("decode normalized reminder audit: %w", err)
+	}
+	fields[name], err = json.Marshal(info)
+	if err != nil {
+		return fmt.Errorf("encode normalized reminder audit: %w", err)
 	}
 
 	return nil

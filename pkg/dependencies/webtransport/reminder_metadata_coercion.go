@@ -6,6 +6,7 @@ import (
 	"maps"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 func normalizeReminderMetadata(fields map[string]json.RawMessage) error {
@@ -55,9 +56,18 @@ func normalizeReminderParticipantArrays(fields map[string]json.RawMessage) error
 			}
 		}
 
-		fields[name], err = json.Marshal(values)
+		body, err := json.Marshal(values)
 		if err != nil {
 			return fmt.Errorf("encode reminder participant array: %w", err)
+		}
+		var participants []cloudkit.CKParticipant
+		err = json.Unmarshal(body, &participants)
+		if err != nil {
+			return fmt.Errorf("decode normalized reminder participant array: %w", err)
+		}
+		fields[name], err = json.Marshal(participants)
+		if err != nil {
+			return fmt.Errorf("encode normalized reminder participant array: %w", err)
 		}
 	}
 
@@ -94,8 +104,17 @@ func normalizeReminderParticipant(raw json.RawMessage) (json.RawMessage, error) 
 	if err != nil {
 		return nil, fmt.Errorf("encode reminder participant: %w", err)
 	}
+	var participant cloudkit.CKParticipant
+	err = json.Unmarshal(body, &participant)
+	if err != nil {
+		return nil, fmt.Errorf("decode normalized reminder participant: %w", err)
+	}
+	encoded, err := json.Marshal(participant)
+	if err != nil {
+		return nil, fmt.Errorf("encode normalized reminder participant: %w", err)
+	}
 
-	return body, nil
+	return encoded, nil
 }
 
 func normalizeReminderParticipantBooleans(normalized map[string]json.RawMessage) error {
