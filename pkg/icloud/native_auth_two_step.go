@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
@@ -68,7 +67,7 @@ func (sdk *SDK) SendTwoStepCode(ctx context.Context, request SendTwoStepCodeRequ
 	wire, err := nativeEncodedRequest(device, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewSendAuthVerificationCodeRequestWithBody(
 			operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -116,7 +115,7 @@ func (sdk *SDK) VerifyTwoStepCode(ctx context.Context, request VerifyTwoStepCode
 	wire, err := nativeEncodedRequest(device, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewValidateAuthVerificationCodeRequestWithBody(
 			operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)

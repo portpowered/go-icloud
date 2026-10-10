@@ -9,7 +9,7 @@ import (
 func nativeAuthHeaders(state NativeAuthState, accept string) http.Header {
 	headers := requestHeaders(state.Auth.Headers)
 	headers.Set(protocol.AuthHTTPAcceptName, accept)
-	headers.Set(protocol.AuthHTTPContentTypeName, protocol.AuthMediaApplicationJson)
+	headers.Set(protocol.AuthHTTPContentTypeName, nativeJSONMedia())
 	headers.Set(protocol.AuthHTTPXAppleOAuthClientIdName, protocol.AuthOAuthClientIDValue)
 	headers.Set(protocol.AuthHTTPXAppleOAuthClientTypeName, protocol.AuthOAuthClientTypeValue)
 	headers.Set(protocol.AuthHTTPXAppleOAuthRedirectURIName, nativeHomeOrigin(state))

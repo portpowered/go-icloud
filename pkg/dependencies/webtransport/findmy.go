@@ -43,7 +43,7 @@ func (client *Client) InitializeFindMy(ctx context.Context, auth RequestContext,
 
 	response, err := client.postFindMy(ctx, auth, payload, true, func(body io.Reader) (*http.Request, error) {
 		return findmyapi.NewFindMyInitializeRequestWithBody(auth.Origin, &params,
-			protocol.FindMyMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 
 	return decodeFindMyDevices(response, err)
@@ -77,7 +77,7 @@ func (client *Client) RefreshFindMy(ctx context.Context, auth RequestContext,
 
 	response, err := client.postFindMy(ctx, auth, payload, true, func(body io.Reader) (*http.Request, error) {
 		return findmyapi.NewFindMyRefreshDevicesRequestWithBody(auth.Origin, &params,
-			protocol.FindMyMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 
 	return decodeFindMyDevices(response, err)
@@ -97,7 +97,7 @@ func (client *Client) ObtainFindMyEraseToken(ctx context.Context, auth RequestCo
 
 	response, err := client.postFindMy(ctx, auth, payload, false, func(body io.Reader) (*http.Request, error) {
 		return findmyapi.NewFindMyObtainEraseTokenRequestWithBody(auth.Origin, params,
-			protocol.FindMyMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 	if err != nil {
 		return nil, err

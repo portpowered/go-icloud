@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/remindersapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -35,7 +34,7 @@ func (client *Client) ReminderListChanges(ctx context.Context, auth RequestConte
 		Origin: nil, Referer: nil, UserAgent: nil, AcceptEncoding: nil, Connection: nil}
 
 	request, err := remindersapi.NewRemindersZoneChangesRequestWithBody(auth.Origin, params,
-		protocol.RemindersMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -197,10 +196,10 @@ func (client *Client) readReminderRequest(ctx context.Context, auth RequestConte
 
 	request = request.WithContext(ctx)
 	request.Header = callerHeaders(auth.Headers)
-	request.Header.Set(protocol.HTTPContentTypeName, protocol.RemindersMediaApplicationJson)
+	request.Header.Set(protocol.HTTPContentTypeName, jsonMedia())
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	remap := string(remindersapi.RemindersZoneChangesParamsRemapEnumsTrue)
@@ -235,7 +234,7 @@ func (client *Client) DownloadReminderMembership(ctx context.Context, auth Reque
 	request.Header = callerHeaders(auth.Headers)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	return client.readPrepared(request, successfulContent, auth.Cookies)

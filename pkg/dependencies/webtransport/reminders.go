@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/remindersapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -30,7 +29,7 @@ func (client *Client) ListReminderZones(ctx context.Context, auth RequestContext
 	params.GetCurrentSyncToken = remindersapi.RemindersListZonesParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersListZonesRequestWithBody(auth.Origin, params,
-		protocol.RemindersMediaApplicationJson, strings.NewReader("{}"))
+		jsonMedia(), strings.NewReader("{}"))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
@@ -42,10 +41,10 @@ func (client *Client) ListReminderZones(ctx context.Context, auth RequestContext
 
 	request = request.WithContext(ctx)
 	request.Header = callerHeaders(auth.Headers)
-	request.Header.Set(protocol.HTTPContentTypeName, protocol.RemindersMediaApplicationJson)
+	request.Header.Set(protocol.HTTPContentTypeName, jsonMedia())
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	request.URL.RawQuery = queryPart(protocol.RemindersRemapEnumsName, string(params.RemapEnums)) + "&" +

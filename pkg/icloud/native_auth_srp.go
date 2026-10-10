@@ -62,7 +62,7 @@ func (sdk *SDK) nativeAuthorize(ctx context.Context, operation *nativeAuthOperat
 		protocol.AuthOAuthResponseModeValue, nativeHomeOrigin(state)
 	params := authapi.AuthorizeAuthSignInParams{FrameId: &state.Auth.ClientID, SkVersion: &version,
 		Iframeid: &state.Auth.ClientID, ClientId: &widget, ResponseType: &responseType, RedirectUri: &home,
-		ResponseMode: &mode, State: &state.Auth.ClientID, AuthVersion: &latest}
+		ResponseMode: &mode, State: &state.Auth.ClientID, AuthVersion: &latest, Cookie: nil}
 
 	request, err := authapi.NewAuthorizeAuthSignInRequest(nativeIDMSOrigin(state), &params)
 	if err != nil {
@@ -85,7 +85,7 @@ func (sdk *SDK) nativeSRPChallenge(ctx context.Context, operation *nativeAuthOpe
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewInitAuthSRPRequestWithBody(nativeIDMSOrigin(operation.state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -131,11 +131,28 @@ func (sdk *SDK) nativeSRPComplete(ctx context.Context, operation *nativeAuthOper
 	}
 
 	remember := protocol.AuthRememberMeQueryValue
-	params := authapi.CompleteAuthSRPParams{IsRememberMeEnabled: &remember}
+	params := authapi.CompleteAuthSRPParams{IsRememberMeEnabled: &remember, Cookie: nil,
+		Accept:                      nil,
+		ContentType:                 nil,
+		XAppleOAuthClientId:         nil,
+		XAppleOAuthClientType:       nil,
+		XAppleOAuthRedirectURI:      nil,
+		XAppleOAuthRequireGrantCode: nil,
+		XAppleOAuthResponseMode:     nil,
+		XAppleOAuthResponseType:     nil,
+		XAppleOAuthState:            nil,
+		XAppleWidgetKey:             nil,
+		XAppleFDClientInfo:          nil,
+		Referer:                     nil,
+		XAppleFrameId:               nil,
+		Scnt:                        nil,
+		XAppleIDSessionId:           nil,
+		XAppleAuthAttributes:        nil,
+	}
 
 	request, err := nativeEncodedRequest(data, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewCompleteAuthSRPRequestWithBody(nativeIDMSOrigin(operation.state), &params,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)

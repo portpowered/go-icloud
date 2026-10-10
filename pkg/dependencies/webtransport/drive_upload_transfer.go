@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/drivecontentapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
 )
@@ -86,7 +85,7 @@ func (client *Client) transferDriveUpload(ctx context.Context, auth RequestConte
 	request.Header.Set(protocol.HTTPContentTypeName, contentType)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	response, err := client.readPrepared(request.WithContext(ctx), successfulContent, auth.Cookies)

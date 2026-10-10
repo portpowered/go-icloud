@@ -25,7 +25,7 @@ func (client *Client) ReminderEventChanges(ctx context.Context, auth RequestCont
 	params.GetCurrentSyncToken = remindersapi.RemindersZoneChangesParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersZoneChangesRequestWithBody(auth.Origin, params,
-		protocol.RemindersMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

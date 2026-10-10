@@ -72,10 +72,10 @@ func photoUploadLookupRequest(auth RequestContext, body string) (*http.Request, 
 
 	if auth.PhotoShared {
 		request, err = photosuploadapi.NewPhotosHydrateUploadedAssetSharedRequestWithBody(auth.Origin, nil,
-			protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
+			jsonMedia(), bytes.NewBufferString(body))
 	} else {
 		request, err = photosuploadapi.NewPhotosHydrateUploadedAssetRequestWithBody(auth.Origin, nil,
-			protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
+			jsonMedia(), bytes.NewBufferString(body))
 	}
 
 	if err != nil {

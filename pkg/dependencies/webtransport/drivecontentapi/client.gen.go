@@ -34,12 +34,18 @@ type DriveContentFailure = DriveError
 type DriveDownloadContentParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+
+	// Accept Caller content negotiation; the SDK default is the declared wildcard primitive.
+	Accept *externalRef1.ContentAccept `json:"Accept,omitempty"`
 }
 
 // DriveUploadContentParams defines parameters for DriveUploadContent.
 type DriveUploadContentParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+
+	// Accept Caller content negotiation; the SDK default is the declared wildcard primitive.
+	Accept *externalRef1.ContentAccept `json:"Accept,omitempty"`
 }
 
 // DriveUploadContentMultipartRequestBody defines body for DriveUploadContent for multipart/form-data ContentType.
@@ -216,6 +222,17 @@ func NewDriveDownloadContentRequest(server string, contentPath string, params *D
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
 	}
 
 	return req, nil
@@ -265,6 +282,17 @@ func NewDriveUploadContentRequestWithBody(server string, contentPath string, par
 			}
 
 			req.Header.Set("Cookie", headerParam0)
+		}
+
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
 		}
 
 	}

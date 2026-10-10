@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -87,7 +86,7 @@ func photosChangesRequest(auth RequestContext, body []byte) (*http.Request, erro
 		request, err := photosapi.NewPhotosSharedZoneChangesRequestWithBody(
 			auth.Origin,
 			params,
-			protocol.PhotosMediaApplicationJson,
+			jsonMedia(),
 			bytes.NewReader(body),
 		)
 		if err != nil {
@@ -102,7 +101,7 @@ func photosChangesRequest(auth RequestContext, body []byte) (*http.Request, erro
 	request, err := photosapi.NewPhotosZoneChangesRequestWithBody(
 		auth.Origin,
 		params,
-		protocol.PhotosMediaApplicationJson,
+		jsonMedia(),
 		bytes.NewReader(body),
 	)
 	if err != nil {
@@ -140,10 +139,10 @@ func (client *Client) readPhotosPrepared(ctx context.Context, auth RequestContex
 
 	request = request.WithContext(ctx)
 	request.Header = auth.Headers.Clone()
-	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaApplicationJson)
+	request.Header.Set(protocol.HTTPContentTypeName, jsonMedia())
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	request.URL.RawQuery = orderedAccountQuery(

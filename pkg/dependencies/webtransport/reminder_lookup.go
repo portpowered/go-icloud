@@ -58,7 +58,7 @@ func (client *Client) LookupReminders(ctx context.Context, auth RequestContext,
 	params.GetCurrentSyncToken = remindersapi.RemindersLookupRecordsParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersLookupRecordsRequestWithBody(auth.Origin, params,
-		protocol.RemindersMediaApplicationJson, bytes.NewBufferString(body))
+		jsonMedia(), bytes.NewBufferString(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

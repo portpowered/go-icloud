@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -88,10 +87,10 @@ func (client *Client) photosScopedQueryBytes(ctx context.Context, auth RequestCo
 
 	request = request.WithContext(ctx)
 	request.Header = callerHeaders(auth.Headers)
-	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaApplicationJson)
+	request.Header.Set(protocol.HTTPContentTypeName, jsonMedia())
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
@@ -123,7 +122,7 @@ func photosQueryRequest(auth RequestContext, body string, shared bool) (*http.Re
 		params.GetCurrentSyncToken = photosapi.PhotosQuerySharedRecordsParamsGetCurrentSyncTokenTrue
 
 		request, err := photosapi.NewPhotosQuerySharedRecordsRequestWithBody(auth.Origin, params,
-			protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
+			jsonMedia(), bytes.NewBufferString(body))
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo query: %w", err)
 		}
@@ -138,7 +137,7 @@ func photosQueryRequest(auth RequestContext, body string, shared bool) (*http.Re
 	params.GetCurrentSyncToken = photosapi.PhotosQueryRecordsParamsGetCurrentSyncTokenTrue
 
 	request, err := photosapi.NewPhotosQueryRecordsRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaApplicationJson, bytes.NewBufferString(body))
+		jsonMedia(), bytes.NewBufferString(body))
 	if err != nil {
 		return nil, fmt.Errorf("construct private photo query: %w", err)
 	}

@@ -44,7 +44,7 @@ func (client *Client) LoginAuthToken(ctx context.Context, origin string, headers
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, nil, protocol.AuthMediaApplicationJson,
+	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, nil, jsonMedia(),
 		bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
@@ -62,7 +62,7 @@ func (client *Client) LoginAuthCredentials(ctx context.Context, origin string, h
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, nil, protocol.AuthMediaApplicationJson,
+	request, err := authapi.NewLoginAuthTokenRequestWithBody(origin, nil, jsonMedia(),
 		bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
@@ -89,7 +89,7 @@ func (client *Client) readAuth(ctx context.Context, origin string, headers http.
 	}
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, protocol.Media)
+		request.Header.Set(protocol.AcceptName, jsonMedia())
 	}
 
 	response, err := client.readPrepared(request, successfulContent, cookies)

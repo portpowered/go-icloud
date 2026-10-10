@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/driveapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/drivecontentapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
@@ -101,7 +100,7 @@ func driveContentRequest(contentURL string, auth RequestContext) (*http.Request,
 
 	request.Header = callerHeaders(auth.Headers)
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	return request, nil

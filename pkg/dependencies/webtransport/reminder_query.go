@@ -26,7 +26,7 @@ func (client *Client) ReminderCompoundQuery(ctx context.Context, auth RequestCon
 	params.GetCurrentSyncToken = remindersapi.RemindersQueryRecordsParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersQueryRecordsRequestWithBody(auth.Origin, params,
-		protocol.RemindersMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

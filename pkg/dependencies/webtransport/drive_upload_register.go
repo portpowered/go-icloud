@@ -51,7 +51,7 @@ func (client *Client) registerDriveUpload(ctx context.Context, auth RequestConte
 		AcceptEncoding: nil, Connection: nil}
 
 	request, err := driveapi.NewDriveRegisterDocumentRequestWithBody(auth.Origin, input.Zone, &params,
-		protocol.DriveMediaPlainText, bytes.NewReader(body))
+		plainTextMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, data, failure(Configuration, err, nil, nil)
 	}

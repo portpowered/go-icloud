@@ -47,12 +47,12 @@ func (client *Client) CreateDriveFolder(ctx context.Context, auth RequestContext
 		Folders: []drive.DriveFolderCreation{{ClientId: identifier, Name: name}}}
 
 	auth.Headers = callerHeaders(auth.Headers)
-	auth.Headers.Set(protocol.HTTPContentTypeName, protocol.DriveMediaPlainText)
+	auth.Headers.Set(protocol.HTTPContentTypeName, plainTextMedia())
 
 	response, err := client.postDrive(ctx, auth, payload,
 		func(body io.Reader) (*http.Request, error) {
 			return driveapi.NewDriveCreateFoldersRequestWithBody(auth.Origin, &params,
-				protocol.DriveMediaPlainText, body)
+				plainTextMedia(), body)
 		})
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (client *Client) RenameDriveNode(ctx context.Context, auth RequestContext,
 
 	return client.changeDriveItems(ctx, auth, payload, func(body io.Reader) (*http.Request, error) {
 		return driveapi.NewDriveRenameItemsRequestWithBody(auth.Origin, &params,
-			protocol.DriveMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 }
 
@@ -96,7 +96,7 @@ func (client *Client) MoveDriveNodes(ctx context.Context, auth RequestContext,
 	payload := drive.DriveMoveItems{DestinationDrivewsId: destination, Items: items}
 
 	return client.changeDriveItems(ctx, auth, payload, func(body io.Reader) (*http.Request, error) {
-		return driveapi.NewDriveMoveItemsRequestWithBody(auth.Origin, &params, protocol.DriveMediaApplicationJson, body)
+		return driveapi.NewDriveMoveItemsRequestWithBody(auth.Origin, &params, jsonMedia(), body)
 	})
 }
 
@@ -110,7 +110,7 @@ func (client *Client) TrashDriveNode(ctx context.Context, auth RequestContext,
 	}}
 
 	return client.changeDriveItems(ctx, auth, payload, func(body io.Reader) (*http.Request, error) {
-		return driveapi.NewDriveTrashItemsRequestWithBody(auth.Origin, &params, protocol.DriveMediaApplicationJson, body)
+		return driveapi.NewDriveTrashItemsRequestWithBody(auth.Origin, &params, jsonMedia(), body)
 	})
 }
 
@@ -122,7 +122,7 @@ func (client *Client) RestoreDriveNode(ctx context.Context, auth RequestContext,
 	payload := drive.DriveRecoverItems{Items: []drive.DriveRecoveryItem{{Drivewsid: node.NodeID, Etag: node.ETag}}}
 
 	return client.changeDriveItems(ctx, auth, payload, func(body io.Reader) (*http.Request, error) {
-		return driveapi.NewDriveRecoverItemsRequestWithBody(auth.Origin, &params, protocol.DriveMediaApplicationJson, body)
+		return driveapi.NewDriveRecoverItemsRequestWithBody(auth.Origin, &params, jsonMedia(), body)
 	})
 }
 
@@ -149,7 +149,7 @@ func (client *Client) deleteDriveNode(ctx context.Context, auth RequestContext,
 	}}
 
 	return client.changeDriveItems(ctx, auth, payload, func(body io.Reader) (*http.Request, error) {
-		return driveapi.NewDriveDeleteItemsRequestWithBody(auth.Origin, &params, protocol.DriveMediaApplicationJson, body)
+		return driveapi.NewDriveDeleteItemsRequestWithBody(auth.Origin, &params, jsonMedia(), body)
 	})
 }
 

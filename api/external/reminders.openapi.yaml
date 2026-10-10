@@ -63,7 +63,12 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
         },
         "responses": {
           "200": {
@@ -159,7 +164,12 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
         },
         "responses": {
           "200": {
@@ -255,7 +265,12 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
         },
         "responses": {
           "200": {
@@ -351,7 +366,12 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
         },
         "responses": {
           "200": {
@@ -447,7 +467,12 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
         },
         "responses": {
           "200": {
@@ -531,6 +556,9 @@
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/ContentAccept"
           }
         ]
       }
@@ -650,7 +678,15 @@
         "name": "Accept",
         "in": "header",
         "schema": {
-          "type": "string"
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "*/*": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"
+            },
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
         }
       },
       "RemindersContentType": {

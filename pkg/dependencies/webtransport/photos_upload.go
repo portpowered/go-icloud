@@ -32,7 +32,7 @@ func (client *Client) PhotosReserveUploads(ctx context.Context, auth RequestCont
 	params := new(photosuploadapi.PhotosCreateUploadUrlParams)
 	params.ClientId, params.Dsid = &auth.Params.ClientId, &auth.Params.Dsid
 	request, err := photosuploadapi.NewPhotosCreateUploadUrlRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 
 	response, err := client.readPhotoUpload(ctx, auth, request, err, cloudKitFlags)
 	if err != nil {
@@ -93,7 +93,7 @@ func (client *Client) PhotosRegisterUploads(ctx context.Context, auth RequestCon
 	params := new(photosuploadapi.PhotosPutAssetParams)
 	params.ClientId, params.Dsid = &auth.Params.ClientId, &auth.Params.Dsid
 	request, err := photosuploadapi.NewPhotosPutAssetRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 
 	response, err := client.readPhotoUpload(ctx, auth, request, err, cloudKitFlags)
 	if err != nil {
@@ -138,7 +138,7 @@ func (client *Client) PhotosUploadStatuses(ctx context.Context, auth RequestCont
 	params := new(photosuploadapi.PhotosUploadStatusParams)
 	params.ClientId, params.Dsid = &auth.Params.ClientId, &auth.Params.Dsid
 	request, err := photosuploadapi.NewPhotosUploadStatusRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 
 	response, err := client.readPhotoUpload(ctx, auth, request, err, false)
 	if err != nil {

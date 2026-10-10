@@ -201,7 +201,7 @@ func (sdk *SDK) nativePCSRequest(ctx context.Context, operation *nativeAuthOpera
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewRequestAuthPCSRequestWithBody(
 			operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -229,7 +229,7 @@ func (sdk *SDK) nativePCSRequest(ctx context.Context, operation *nativeAuthOpera
 
 func nativeSetupJSONHeaders(state NativeAuthState) http.Header {
 	headers := requestHeaders(state.Auth.Headers)
-	headers.Set(protocol.AuthHTTPContentTypeName, protocol.AuthMediaApplicationJson)
+	headers.Set(protocol.AuthHTTPContentTypeName, nativeJSONMedia())
 
 	return headers
 }

@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosapi"
 )
 
@@ -33,7 +32,7 @@ func (client *Client) DownloadPhotoContent(ctx context.Context, auth RequestCont
 	request.Header = callerHeaders(auth.Headers)
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	return client.readPrepared(request.WithContext(ctx), successfulContent, auth.Cookies)

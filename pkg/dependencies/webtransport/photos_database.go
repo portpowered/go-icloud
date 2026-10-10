@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -58,7 +57,7 @@ func photosDatabaseRequest(auth RequestContext, body []byte) (*http.Request, err
 		request, err := photosapi.NewPhotosSharedDatabaseChangesRequestWithBody(
 			auth.Origin,
 			params,
-			protocol.PhotosMediaApplicationJson,
+			jsonMedia(),
 			bytes.NewReader(body),
 		)
 		if err != nil {
@@ -73,7 +72,7 @@ func photosDatabaseRequest(auth RequestContext, body []byte) (*http.Request, err
 	request, err := photosapi.NewPhotosDatabaseChangesRequestWithBody(
 		auth.Origin,
 		params,
-		protocol.PhotosMediaApplicationJson,
+		jsonMedia(),
 		bytes.NewReader(body),
 	)
 	if err != nil {

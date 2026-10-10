@@ -15,6 +15,7 @@ paths:
       operationId: DriveDownloadContent
       parameters:
         - {$ref: './http-boundary-models.openapi.yaml#/components/parameters/SessionCookie'}
+        - {$ref: './http-boundary-models.openapi.yaml#/components/parameters/ContentAccept'}
       summary: Download content from a provider-issued URL
       description: Select data_token.url before package_token.url and append caller authentication parameters as the reference does. Preserve exact bytes, including empty content.
       responses:
@@ -33,9 +34,11 @@ paths:
       operationId: DriveUploadContent
       parameters:
         - {$ref: './http-boundary-models.openapi.yaml#/components/parameters/SessionCookie'}
+        - {$ref: './http-boundary-models.openapi.yaml#/components/parameters/ContentAccept'}
       summary: Upload file content to a provider-issued URL
       description: Use the preceding upload destination URL. Send one multipart field whose name is the source filename; content starts at the caller's current file cursor. Do not append document-service authentication parameters.
       requestBody:
+        x-request-media-schema: {"multipart/form-data": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPMultipartFormMedia"}}
         required: true
         content:
           multipart/form-data:

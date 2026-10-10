@@ -85,7 +85,7 @@ func (client *Client) modifyReminder(ctx context.Context, auth RequestContext,
 	params.GetCurrentSyncToken = remindersapi.RemindersModifyRecordsParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersModifyRecordsRequestWithBody(auth.Origin, params,
-		protocol.RemindersMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

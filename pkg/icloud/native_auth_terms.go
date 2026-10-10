@@ -34,7 +34,7 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewGetAuthTermsRequestWithBody(
 			operation.state.Auth.SetupServiceURL, &params,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -76,7 +76,7 @@ func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOper
 		func(body io.Reader) (*http.Request, error) {
 			return nativeGeneratedRequest(authapi.NewAcceptAuthTermsRequestWithBody(
 				operation.state.Auth.SetupServiceURL, &params,
-				protocol.AuthMediaApplicationJson, body))
+				nativeJSONMedia(), body))
 		})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -93,7 +93,7 @@ func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOper
 func (sdk *SDK) nativeTermsRelogin(ctx context.Context, operation *nativeAuthOperation, login any) (bool, error) {
 	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL, nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -205,7 +205,7 @@ func (sdk *SDK) nativeOneFactorLogin(ctx context.Context, operation *nativeAuthO
 ) (*webtransport.BytesResponse, error) {
 	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL, nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)

@@ -69,6 +69,11 @@
                 "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedAlbumsRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "plain/text": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"
+            }
           }
         },
         "responses": {
@@ -143,6 +148,11 @@
               "schema": {
                 "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedAssetsRequest"
               }
+            }
+          },
+          "x-request-media-schema": {
+            "plain/text": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"
             }
           }
         },
@@ -225,6 +235,11 @@
                 "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedCountRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "plain/text": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"
+            }
           }
         },
         "responses": {
@@ -302,7 +317,15 @@
         "name": "Accept",
         "in": "header",
         "schema": {
-          "type": "string"
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "*/*": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"
+            },
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
         }
       },
       "PhotosContentType": {

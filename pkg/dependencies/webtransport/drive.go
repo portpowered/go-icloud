@@ -46,7 +46,7 @@ func (client *Client) GetDriveNode(ctx context.Context, auth RequestContext,
 	params := driveRequestParameters(auth)
 
 	request, err := driveapi.NewDriveRetrieveNodesRequestWithBody(auth.Origin, &params,
-		protocol.DriveMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

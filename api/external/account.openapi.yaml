@@ -207,7 +207,7 @@ components:
       in: header
       required: true
       description: Account service JSON negotiation; member-photo responses may contain binary content.
-      schema: {type: string, enum: [application/json, '*/*'], default: '*/*'}
+      schema: {"type": "string", "enum": ["application/json", "*/*"], "default": "*/*", "x-fixed-value-schemas": {"*/*": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"}, "application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}}
     Cookie:
       name: Cookie
       in: header

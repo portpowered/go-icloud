@@ -45,7 +45,7 @@ func (client *Client) PhotosAlbumCount(
 
 	request = request.WithContext(ctx)
 	request.Header = callerHeaders(auth.Headers)
-	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaPlainText)
+	request.Header.Set(protocol.HTTPContentTypeName, plainTextMedia())
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
 		queryPart(protocol.PhotosRemapEnumsName, string(photosapi.PhotosCountAlbumsParamsRemapEnumsTrue)) + "&" +
 		queryPart(
@@ -214,10 +214,10 @@ func photosCountRequest(auth RequestContext, body []byte) (*http.Request, error)
 		sharedParams.RemapEnums = photosapi.PhotosCountSharedAlbumsParamsRemapEnumsTrue
 		sharedParams.GetCurrentSyncToken = photosapi.PhotosCountSharedAlbumsParamsGetCurrentSyncTokenTrue
 		request, err = photosapi.NewPhotosCountSharedAlbumsRequestWithBody(auth.Origin, sharedParams,
-			protocol.PhotosMediaPlainText, bytes.NewReader(body))
+			plainTextMedia(), bytes.NewReader(body))
 	} else {
 		request, err = photosapi.NewPhotosCountAlbumsRequestWithBody(auth.Origin, params,
-			protocol.PhotosMediaPlainText, bytes.NewReader(body))
+			plainTextMedia(), bytes.NewReader(body))
 	}
 
 	if err != nil {

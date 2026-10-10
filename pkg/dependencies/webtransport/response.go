@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 )
 
 // BytesResponse owns read/closed content and copied response headers.
@@ -57,7 +56,7 @@ func (client *Client) readWithPolicy(ctx context.Context, auth RequestContext,
 	}
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	query := orderedAccountQuery(auth.Params)

@@ -59,14 +59,14 @@ func (sdk *SDK) nativeRequestCode(ctx context.Context, operation *nativeAuthOper
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewRequestAuthSMSRequestWithBody(nativeIDMSOrigin(operation.state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
 
 	response, err := sdk.nativeAuthExchange(ctx, operation, request,
-		nativeAuthHeaders(operation.state, protocol.AuthMediaApplicationJson))
+		nativeAuthHeaders(operation.state, nativeJSONMedia()))
 	if err != nil {
 		return err
 	}

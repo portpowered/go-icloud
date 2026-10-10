@@ -48,7 +48,7 @@ func (client *Client) PhotosSharedAlbums(ctx context.Context, auth RequestContex
 	params.GetCurrentSyncToken = sharedphotosapi.SharedAlbumsParamsGetCurrentSyncTokenTrue
 
 	request, err := sharedphotosapi.NewSharedAlbumsRequestWithBody(auth.Origin, auth.Params.Dsid, params,
-		protocol.SharedPhotosMediaPlainText, bytes.NewReader(body))
+		plainTextMedia(), bytes.NewReader(body))
 
 	response, err := client.readSharedPhotos(ctx, auth, request, err)
 	if err != nil {
@@ -86,7 +86,7 @@ func (client *Client) PhotosSharedCount(ctx context.Context, auth RequestContext
 	params.GetCurrentSyncToken = sharedphotosapi.SharedCountParamsGetCurrentSyncTokenTrue
 
 	request, err := sharedphotosapi.NewSharedCountRequestWithBody(location, params,
-		protocol.SharedPhotosMediaPlainText, bytes.NewReader(body))
+		plainTextMedia(), bytes.NewReader(body))
 
 	response, err := client.readSharedPhotos(ctx, auth, request, err)
 	if err != nil {
@@ -167,7 +167,7 @@ func (client *Client) PhotosSharedAssets(ctx context.Context, auth RequestContex
 	params.GetCurrentSyncToken = sharedphotosapi.SharedAssetsParamsGetCurrentSyncTokenTrue
 
 	request, err := sharedphotosapi.NewSharedAssetsRequestWithBody(location, params,
-		protocol.SharedPhotosMediaPlainText, bytes.NewReader(body))
+		plainTextMedia(), bytes.NewReader(body))
 
 	response, err := client.readSharedPhotos(ctx, auth, request, err)
 	if err != nil {

@@ -71,7 +71,7 @@ func (sdk *SDK) nativeProbeSecurityKey(ctx context.Context, operation *nativeAut
 	}
 
 	response, err := sdk.nativeAuthExchange(ctx, operation, request,
-		nativeAuthHeaders(operation.state, protocol.AuthMediaApplicationJson))
+		nativeAuthHeaders(operation.state, nativeJSONMedia()))
 	if err != nil {
 		if nativeCanRetry(err) {
 			return nil

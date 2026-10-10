@@ -38,7 +38,7 @@ func (client *Client) ReminderCurrentSyncQuery(ctx context.Context,
 	params.GetCurrentSyncToken = remindersapi.RemindersQueryRecordsParamsGetCurrentSyncTokenTrue
 
 	request, err := remindersapi.NewRemindersQueryRecordsRequestWithBody(auth.Origin, params,
-		protocol.RemindersMediaApplicationJson, bytes.NewBufferString(body))
+		jsonMedia(), bytes.NewBufferString(body))
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}

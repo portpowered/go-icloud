@@ -5,7 +5,6 @@ import (
 	"context"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 )
 
 func (client *Client) postFindMy(ctx context.Context, auth RequestContext,
@@ -35,11 +34,11 @@ func (client *Client) postFindMy(ctx context.Context, auth RequestContext,
 	}
 
 	if request.Header.Get(protocol.HTTPContentTypeName) == "" {
-		request.Header.Set(protocol.HTTPContentTypeName, protocol.FindMyMediaApplicationJson)
+		request.Header.Set(protocol.HTTPContentTypeName, jsonMedia())
 	}
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	if accountQuery {

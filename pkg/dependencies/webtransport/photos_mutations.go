@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/photosmutations"
 )
@@ -42,7 +41,7 @@ func photosModificationRequest(auth RequestContext, body []byte) (*http.Request,
 		params := photoSharedModificationParams(auth)
 
 		request, err := photosapi.NewPhotosSharedModifyRecordsRequestWithBody(auth.Origin, params,
-			protocol.PhotosMediaApplicationJson, bytes.NewReader(body))
+			jsonMedia(), bytes.NewReader(body))
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo modification: %w", err)
 		}
@@ -53,7 +52,7 @@ func photosModificationRequest(auth RequestContext, body []byte) (*http.Request,
 	params := photoPrivateModificationParams(auth)
 
 	request, err := photosapi.NewPhotosModifyRecordsRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaApplicationJson, bytes.NewReader(body))
+		jsonMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("construct private photo modification: %w", err)
 	}

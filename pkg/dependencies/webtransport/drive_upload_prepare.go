@@ -86,7 +86,7 @@ func (client *Client) prepareDriveUpload(ctx context.Context, auth RequestContex
 	}
 
 	request, err := driveapi.NewDriveGetUploadDestinationRequestWithBody(auth.Origin, input.Zone, &params,
-		protocol.DriveMediaPlainText, bytes.NewReader(body))
+		plainTextMedia(), bytes.NewReader(body))
 	if err != nil {
 		return nil, drive.DriveUploadDestination{}, token, failure(Configuration, err, nil, nil)
 	}
@@ -107,7 +107,7 @@ func (client *Client) prepareDriveUpload(ctx context.Context, auth RequestContex
 
 func plainTextUploadAuth(auth RequestContext) RequestContext {
 	auth.Headers = callerHeaders(auth.Headers)
-	auth.Headers.Set(protocol.HTTPContentTypeName, protocol.DriveMediaPlainText)
+	auth.Headers.Set(protocol.HTTPContentTypeName, plainTextMedia())
 
 	return auth
 }

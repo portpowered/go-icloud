@@ -22,6 +22,7 @@ paths:
         - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
         - {$ref: '#/components/parameters/FindMyConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -51,6 +52,7 @@ paths:
         - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
         - {$ref: '#/components/parameters/FindMyConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -80,6 +82,7 @@ paths:
         - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
         - {$ref: '#/components/parameters/FindMyConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -116,6 +119,7 @@ paths:
         - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
         - {$ref: '#/components/parameters/FindMyConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -152,6 +156,7 @@ paths:
         - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
         - {$ref: '#/components/parameters/FindMyConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -184,6 +189,7 @@ paths:
         - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
         - {$ref: '#/components/parameters/FindMyConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -213,6 +219,7 @@ paths:
         - {$ref: '#/components/parameters/FindMyAcceptEncoding'}
         - {$ref: '#/components/parameters/FindMyConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -237,7 +244,7 @@ components:
     FindMyDSID: {name: dsid, in: query, required: true, schema: {type: string, minLength: 1}}
     FindMyBuildNumber: {name: clientBuildNumber, in: query, schema: {type: string}}
     FindMyMasteringNumber: {name: clientMasteringNumber, in: query, schema: {type: string}}
-    FindMyAccept: {name: Accept, in: header, schema: {type: string}}
+    FindMyAccept: {name: Accept, in: header, schema: {"type": "string", "x-fixed-value-schemas": {"*/*": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"}, "application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}}}
     FindMyCookie: {name: Cookie, in: header, schema: {type: string}}
     FindMyOrigin: {name: Origin, in: header, schema: {type: string, format: uri}}
     FindMyReferer: {name: Referer, in: header, schema: {type: string, format: uri}}

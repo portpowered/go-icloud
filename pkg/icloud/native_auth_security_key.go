@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
@@ -125,14 +124,14 @@ func (sdk *SDK) VerifySecurityKey(ctx context.Context, request VerifySecurityKey
 
 	wire, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewVerifyAuthSecurityKeyRequestWithBody(nativeIDMSOrigin(operation.state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
 
 	response, err := sdk.nativeAuthExchange(ctx, operation, wire,
-		nativeAuthHeaders(operation.state, protocol.AuthMediaApplicationJson))
+		nativeAuthHeaders(operation.state, nativeJSONMedia()))
 	if err != nil {
 		return nil, err
 	}

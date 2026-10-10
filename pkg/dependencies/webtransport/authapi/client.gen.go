@@ -18,16 +18,201 @@ import (
 	externalRef1 "github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary"
 )
 
+// AuthBridgeStep0Accept defines model for AuthBridgeStep0Accept.
+type AuthBridgeStep0Accept = string
+
+// AuthBridgeStep2Accept defines model for AuthBridgeStep2Accept.
+type AuthBridgeStep2Accept = string
+
+// AuthBridgeStep4Accept defines model for AuthBridgeStep4Accept.
+type AuthBridgeStep4Accept = string
+
+// AuthBridgeStep6Accept defines model for AuthBridgeStep6Accept.
+type AuthBridgeStep6Accept = string
+
+// BridgeApplicationID defines model for BridgeApplicationID.
+type BridgeApplicationID = string
+
+// CompleteAuthSRPAccept defines model for CompleteAuthSRPAccept.
+type CompleteAuthSRPAccept = string
+
+// GetAuthChallengeAccept defines model for GetAuthChallengeAccept.
+type GetAuthChallengeAccept = string
+
+// InitAuthSRPAccept defines model for InitAuthSRPAccept.
+type InitAuthSRPAccept = string
+
+// LoginAuthTokenAccept defines model for LoginAuthTokenAccept.
+type LoginAuthTokenAccept = string
+
+// NativeContentType defines model for NativeContentType.
+type NativeContentType = string
+
+// NativeReferer defines model for NativeReferer.
+type NativeReferer = string
+
+// NativeScnt defines model for NativeScnt.
+type NativeScnt = string
+
+// NativeXAppleAuthAttributes defines model for NativeXAppleAuthAttributes.
+type NativeXAppleAuthAttributes = string
+
+// NativeXAppleFdClientInfo defines model for NativeXAppleFdClientInfo.
+type NativeXAppleFdClientInfo = string
+
+// NativeXAppleFrameId defines model for NativeXAppleFrameId.
+type NativeXAppleFrameId = string
+
+// NativeXAppleIdSessionId defines model for NativeXAppleIdSessionId.
+type NativeXAppleIdSessionId = string
+
+// NativeXAppleOauthClientId defines model for NativeXAppleOauthClientId.
+type NativeXAppleOauthClientId = string
+
+// NativeXAppleOauthClientType defines model for NativeXAppleOauthClientType.
+type NativeXAppleOauthClientType = string
+
+// NativeXAppleOauthRedirectUri defines model for NativeXAppleOauthRedirectUri.
+type NativeXAppleOauthRedirectUri = string
+
+// NativeXAppleOauthRequireGrantCode defines model for NativeXAppleOauthRequireGrantCode.
+type NativeXAppleOauthRequireGrantCode = string
+
+// NativeXAppleOauthResponseMode defines model for NativeXAppleOauthResponseMode.
+type NativeXAppleOauthResponseMode = string
+
+// NativeXAppleOauthResponseType defines model for NativeXAppleOauthResponseType.
+type NativeXAppleOauthResponseType = string
+
+// NativeXAppleOauthState defines model for NativeXAppleOauthState.
+type NativeXAppleOauthState = string
+
+// NativeXAppleWidgetKey defines model for NativeXAppleWidgetKey.
+type NativeXAppleWidgetKey = string
+
+// RequestAuthSMSAccept defines model for RequestAuthSMSAccept.
+type RequestAuthSMSAccept = string
+
+// TrustAuthSessionAccept defines model for TrustAuthSessionAccept.
+type TrustAuthSessionAccept = string
+
+// ValidateAuthBridgeCodeAccept defines model for ValidateAuthBridgeCodeAccept.
+type ValidateAuthBridgeCodeAccept = string
+
+// ValidateAuthSessionAccept defines model for ValidateAuthSessionAccept.
+type ValidateAuthSessionAccept = string
+
+// VerifyAuthSMSAccept defines model for VerifyAuthSMSAccept.
+type VerifyAuthSMSAccept = string
+
+// VerifyAuthSecurityKeyAccept defines model for VerifyAuthSecurityKeyAccept.
+type VerifyAuthSecurityKeyAccept = string
+
+// VerifyAuthTrustedCodeAccept defines model for VerifyAuthTrustedCodeAccept.
+type VerifyAuthTrustedCodeAccept = string
+
 // GetAuthChallengeParams defines parameters for GetAuthChallenge.
 type GetAuthChallengeParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *GetAuthChallengeAccept     `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // TrustAuthSessionParams defines parameters for TrustAuthSession.
 type TrustAuthSessionParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *TrustAuthSessionAccept     `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // AuthorizeAuthSignInParams defines parameters for AuthorizeAuthSignIn.
@@ -49,31 +234,276 @@ type AuthorizeAuthSignInParams struct {
 // ValidateAuthBridgeCodeParams defines parameters for ValidateAuthBridgeCode.
 type ValidateAuthBridgeCodeParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
-	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Cookie *externalRef1.SessionCookie   `json:"Cookie,omitempty"`
+	Accept *ValidateAuthBridgeCodeAccept `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
+
+	// XAppleAppId Caller or provider bridge application identity; only bridge HTTP requests emit this header.
+	XAppleAppId *BridgeApplicationID `json:"X-Apple-App-Id,omitempty"`
 }
 
 // AuthBridgeStep0Params defines parameters for AuthBridgeStep0.
 type AuthBridgeStep0Params struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *AuthBridgeStep0Accept      `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
+
+	// XAppleAppId Caller or provider bridge application identity; only bridge HTTP requests emit this header.
+	XAppleAppId *BridgeApplicationID `json:"X-Apple-App-Id,omitempty"`
 }
 
 // AuthBridgeStep2Params defines parameters for AuthBridgeStep2.
 type AuthBridgeStep2Params struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *AuthBridgeStep2Accept      `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
+
+	// XAppleAppId Caller or provider bridge application identity; only bridge HTTP requests emit this header.
+	XAppleAppId *BridgeApplicationID `json:"X-Apple-App-Id,omitempty"`
 }
 
 // AuthBridgeStep4Params defines parameters for AuthBridgeStep4.
 type AuthBridgeStep4Params struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *AuthBridgeStep4Accept      `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
+
+	// XAppleAppId Caller or provider bridge application identity; only bridge HTTP requests emit this header.
+	XAppleAppId *BridgeApplicationID `json:"X-Apple-App-Id,omitempty"`
 }
 
 // AuthBridgeStep6Params defines parameters for AuthBridgeStep6.
 type AuthBridgeStep6Params struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *AuthBridgeStep6Accept      `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
+
+	// XAppleAppId Caller or provider bridge application identity; only bridge HTTP requests emit this header.
+	XAppleAppId *BridgeApplicationID `json:"X-Apple-App-Id,omitempty"`
 }
 
 // CompleteAuthSRPParams defines parameters for CompleteAuthSRP.
@@ -82,36 +512,312 @@ type CompleteAuthSRPParams struct {
 
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *CompleteAuthSRPAccept      `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // InitAuthSRPParams defines parameters for InitAuthSRP.
 type InitAuthSRPParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *InitAuthSRPAccept          `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // RequestAuthSMSParams defines parameters for RequestAuthSMS.
 type RequestAuthSMSParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *RequestAuthSMSAccept       `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // VerifyAuthSMSParams defines parameters for VerifyAuthSMS.
 type VerifyAuthSMSParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *VerifyAuthSMSAccept        `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // VerifyAuthSecurityKeyParams defines parameters for VerifyAuthSecurityKey.
 type VerifyAuthSecurityKeyParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
-	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Cookie *externalRef1.SessionCookie  `json:"Cookie,omitempty"`
+	Accept *VerifyAuthSecurityKeyAccept `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // VerifyAuthTrustedCodeParams defines parameters for VerifyAuthTrustedCode.
 type VerifyAuthTrustedCodeParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
-	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Cookie *externalRef1.SessionCookie  `json:"Cookie,omitempty"`
+	Accept *VerifyAuthTrustedCodeAccept `json:"Accept,omitempty"`
+
+	// ContentType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	ContentType *NativeContentType `json:"Content-Type,omitempty"`
+
+	// XAppleOAuthClientId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientId *NativeXAppleOauthClientId `json:"X-Apple-OAuth-Client-Id,omitempty"`
+
+	// XAppleOAuthClientType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthClientType *NativeXAppleOauthClientType `json:"X-Apple-OAuth-Client-Type,omitempty"`
+
+	// XAppleOAuthRedirectURI Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRedirectURI *NativeXAppleOauthRedirectUri `json:"X-Apple-OAuth-Redirect-URI,omitempty"`
+
+	// XAppleOAuthRequireGrantCode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthRequireGrantCode *NativeXAppleOauthRequireGrantCode `json:"X-Apple-OAuth-Require-Grant-Code,omitempty"`
+
+	// XAppleOAuthResponseMode Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseMode *NativeXAppleOauthResponseMode `json:"X-Apple-OAuth-Response-Mode,omitempty"`
+
+	// XAppleOAuthResponseType Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthResponseType *NativeXAppleOauthResponseType `json:"X-Apple-OAuth-Response-Type,omitempty"`
+
+	// XAppleOAuthState Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleOAuthState *NativeXAppleOauthState `json:"X-Apple-OAuth-State,omitempty"`
+
+	// XAppleWidgetKey Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleWidgetKey *NativeXAppleWidgetKey `json:"X-Apple-Widget-Key,omitempty"`
+
+	// XAppleFDClientInfo Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFDClientInfo *NativeXAppleFdClientInfo `json:"X-Apple-FD-Client-Info,omitempty"`
+
+	// Referer Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Referer *NativeReferer `json:"Referer,omitempty"`
+
+	// XAppleFrameId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleFrameId *NativeXAppleFrameId `json:"X-Apple-Frame-Id,omitempty"`
+
+	// Scnt Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	Scnt *NativeScnt `json:"scnt,omitempty"`
+
+	// XAppleIDSessionId Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleIDSessionId *NativeXAppleIdSessionId `json:"X-Apple-ID-Session-Id,omitempty"`
+
+	// XAppleAuthAttributes Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership.
+	XAppleAuthAttributes *NativeXAppleAuthAttributes `json:"X-Apple-Auth-Attributes,omitempty"`
 }
 
 // LoginAuthTokenJSONBody defines parameters for LoginAuthToken.
@@ -123,6 +829,7 @@ type LoginAuthTokenJSONBody struct {
 type LoginAuthTokenParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *LoginAuthTokenAccept       `json:"Accept,omitempty"`
 }
 
 // EnableAuthPCSConsentParams defines parameters for EnableAuthPCSConsent.
@@ -220,6 +927,7 @@ type ValidateAuthSessionJSONBody = map[string]interface{}
 type ValidateAuthSessionParams struct {
 	// Cookie Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
 	Cookie *externalRef1.SessionCookie `json:"Cookie,omitempty"`
+	Accept *ValidateAuthSessionAccept  `json:"Accept,omitempty"`
 }
 
 // ValidateAuthVerificationCodeParams defines parameters for ValidateAuthVerificationCode.
@@ -271,9 +979,6 @@ type LoginAuthTokenJSONRequestBody LoginAuthTokenJSONBody
 
 // GetAuthTermsJSONRequestBody defines body for GetAuthTerms for application/json ContentType.
 type GetAuthTermsJSONRequestBody = externalRef0.AuthGetTermsRequest
-
-// LogoutAuthSessionJSONRequestBody defines body for LogoutAuthSession for application/json ContentType.
-type LogoutAuthSessionJSONRequestBody = externalRef0.AuthLogoutRequest
 
 // AcceptAuthTermsJSONRequestBody defines body for AcceptAuthTerms for application/json ContentType.
 type AcceptAuthTermsJSONRequestBody = externalRef0.AuthAcceptTermsRequest
@@ -703,15 +1408,6 @@ type ClientInterface interface {
 	//
 	// Corresponds with POST /setup/ws/1/logout (the `LogoutAuthSession` operationId).
 	LogoutAuthSessionWithBody(ctx context.Context, params *LogoutAuthSessionParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// LogoutAuthSession LogoutAuthSession
-	//
-	// Native account authentication operation with caller-owned credentials.
-	//
-	// Takes a body of the `application/json` content type.
-	//
-	// Corresponds with POST /setup/ws/1/logout (the `LogoutAuthSession` operationId).
-	LogoutAuthSession(ctx context.Context, params *LogoutAuthSessionParams, body LogoutAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AcceptAuthTermsWithBody AcceptAuthTerms
 	//
@@ -1409,25 +2105,6 @@ func (c *Client) LogoutAuthSessionWithBody(ctx context.Context, params *LogoutAu
 	return c.Client.Do(req)
 }
 
-// LogoutAuthSession LogoutAuthSession
-//
-// Native account authentication operation with caller-owned credentials.
-//
-// Takes a body of the `application/json` content type.
-//
-// Corresponds with POST /setup/ws/1/logout (the `LogoutAuthSession` operationId).
-func (c *Client) LogoutAuthSession(ctx context.Context, params *LogoutAuthSessionParams, body LogoutAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewLogoutAuthSessionRequest(c.Server, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 // AcceptAuthTermsWithBody AcceptAuthTerms
 //
 // Native account authentication operation with caller-owned credentials.
@@ -1672,6 +2349,182 @@ func NewGetAuthChallengeRequest(server string, params *GetAuthChallengeParams) (
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
 	}
 
 	return req, nil
@@ -1712,6 +2565,182 @@ func NewTrustAuthSessionRequest(server string, params *TrustAuthSessionParams) (
 			}
 
 			req.Header.Set("Cookie", headerParam0)
+		}
+
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
 		}
 
 	}
@@ -1934,6 +2963,193 @@ func NewValidateAuthBridgeCodeRequestWithBody(server string, params *ValidateAut
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
+		if params.XAppleAppId != nil {
+			var headerParam17 string
+
+			headerParam17, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-App-Id", *params.XAppleAppId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-App-Id", headerParam17)
+		}
+
 	}
 
 	return req, nil
@@ -1987,6 +3203,193 @@ func NewAuthBridgeStep0RequestWithBody(server string, params *AuthBridgeStep0Par
 			}
 
 			req.Header.Set("Cookie", headerParam0)
+		}
+
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
+		if params.XAppleAppId != nil {
+			var headerParam17 string
+
+			headerParam17, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-App-Id", *params.XAppleAppId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-App-Id", headerParam17)
 		}
 
 	}
@@ -2044,6 +3447,193 @@ func NewAuthBridgeStep2RequestWithBody(server string, params *AuthBridgeStep2Par
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
+		if params.XAppleAppId != nil {
+			var headerParam17 string
+
+			headerParam17, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-App-Id", *params.XAppleAppId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-App-Id", headerParam17)
+		}
+
 	}
 
 	return req, nil
@@ -2099,6 +3689,193 @@ func NewAuthBridgeStep4RequestWithBody(server string, params *AuthBridgeStep4Par
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
+		if params.XAppleAppId != nil {
+			var headerParam17 string
+
+			headerParam17, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-App-Id", *params.XAppleAppId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-App-Id", headerParam17)
+		}
+
 	}
 
 	return req, nil
@@ -2152,6 +3929,193 @@ func NewAuthBridgeStep6RequestWithBody(server string, params *AuthBridgeStep6Par
 			}
 
 			req.Header.Set("Cookie", headerParam0)
+		}
+
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
+		if params.XAppleAppId != nil {
+			var headerParam17 string
+
+			headerParam17, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-App-Id", *params.XAppleAppId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-App-Id", headerParam17)
 		}
 
 	}
@@ -2236,6 +4200,182 @@ func NewCompleteAuthSRPRequestWithBody(server string, params *CompleteAuthSRPPar
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
 	}
 
 	return req, nil
@@ -2289,6 +4429,182 @@ func NewInitAuthSRPRequestWithBody(server string, params *InitAuthSRPParams, con
 			}
 
 			req.Header.Set("Cookie", headerParam0)
+		}
+
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
 		}
 
 	}
@@ -2346,6 +4662,182 @@ func NewRequestAuthSMSRequestWithBody(server string, params *RequestAuthSMSParam
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
 	}
 
 	return req, nil
@@ -2399,6 +4891,182 @@ func NewVerifyAuthSMSRequestWithBody(server string, params *VerifyAuthSMSParams,
 			}
 
 			req.Header.Set("Cookie", headerParam0)
+		}
+
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
 		}
 
 	}
@@ -2456,6 +5124,182 @@ func NewVerifyAuthSecurityKeyRequestWithBody(server string, params *VerifyAuthSe
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
 	}
 
 	return req, nil
@@ -2511,6 +5355,182 @@ func NewVerifyAuthTrustedCodeRequestWithBody(server string, params *VerifyAuthTr
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
+		if params.ContentType != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "Content-Type", *params.ContentType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Content-Type", headerParam2)
+		}
+
+		if params.XAppleOAuthClientId != nil {
+			var headerParam3 string
+
+			headerParam3, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Id", *params.XAppleOAuthClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Id", headerParam3)
+		}
+
+		if params.XAppleOAuthClientType != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Client-Type", *params.XAppleOAuthClientType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Client-Type", headerParam4)
+		}
+
+		if params.XAppleOAuthRedirectURI != nil {
+			var headerParam5 string
+
+			headerParam5, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Redirect-URI", *params.XAppleOAuthRedirectURI, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Redirect-URI", headerParam5)
+		}
+
+		if params.XAppleOAuthRequireGrantCode != nil {
+			var headerParam6 string
+
+			headerParam6, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Require-Grant-Code", *params.XAppleOAuthRequireGrantCode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Require-Grant-Code", headerParam6)
+		}
+
+		if params.XAppleOAuthResponseMode != nil {
+			var headerParam7 string
+
+			headerParam7, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Mode", *params.XAppleOAuthResponseMode, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Mode", headerParam7)
+		}
+
+		if params.XAppleOAuthResponseType != nil {
+			var headerParam8 string
+
+			headerParam8, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-Response-Type", *params.XAppleOAuthResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-Response-Type", headerParam8)
+		}
+
+		if params.XAppleOAuthState != nil {
+			var headerParam9 string
+
+			headerParam9, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-OAuth-State", *params.XAppleOAuthState, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-OAuth-State", headerParam9)
+		}
+
+		if params.XAppleWidgetKey != nil {
+			var headerParam10 string
+
+			headerParam10, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Widget-Key", *params.XAppleWidgetKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Widget-Key", headerParam10)
+		}
+
+		if params.XAppleFDClientInfo != nil {
+			var headerParam11 string
+
+			headerParam11, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-FD-Client-Info", *params.XAppleFDClientInfo, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-FD-Client-Info", headerParam11)
+		}
+
+		if params.Referer != nil {
+			var headerParam12 string
+
+			headerParam12, err = runtime.StyleParamWithOptions("simple", false, "Referer", *params.Referer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Referer", headerParam12)
+		}
+
+		if params.XAppleFrameId != nil {
+			var headerParam13 string
+
+			headerParam13, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Frame-Id", *params.XAppleFrameId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Frame-Id", headerParam13)
+		}
+
+		if params.Scnt != nil {
+			var headerParam14 string
+
+			headerParam14, err = runtime.StyleParamWithOptions("simple", false, "scnt", *params.Scnt, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("scnt", headerParam14)
+		}
+
+		if params.XAppleIDSessionId != nil {
+			var headerParam15 string
+
+			headerParam15, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-ID-Session-Id", *params.XAppleIDSessionId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-ID-Session-Id", headerParam15)
+		}
+
+		if params.XAppleAuthAttributes != nil {
+			var headerParam16 string
+
+			headerParam16, err = runtime.StyleParamWithOptions("simple", false, "X-Apple-Auth-Attributes", *params.XAppleAuthAttributes, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Apple-Auth-Attributes", headerParam16)
+		}
+
 	}
 
 	return req, nil
@@ -2564,6 +5584,17 @@ func NewLoginAuthTokenRequestWithBody(server string, params *LoginAuthTokenParam
 			}
 
 			req.Header.Set("Cookie", headerParam0)
+		}
+
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
 		}
 
 	}
@@ -2897,17 +5928,6 @@ func NewListAuthTrustedDevicesRequest(server string, params *ListAuthTrustedDevi
 	}
 
 	return req, nil
-}
-
-// NewLogoutAuthSessionRequest calls the generic LogoutAuthSession builder with application/json body
-func NewLogoutAuthSessionRequest(server string, params *LogoutAuthSessionParams, body LogoutAuthSessionJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewLogoutAuthSessionRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewLogoutAuthSessionRequestWithBody constructs an http.Request for the LogoutAuthSession method, with any body, and a specified content type
@@ -3526,6 +6546,17 @@ func NewValidateAuthSessionRequestWithBody(server string, params *ValidateAuthSe
 			req.Header.Set("Cookie", headerParam0)
 		}
 
+		if params.Accept != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Accept", *params.Accept, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Accept", headerParam1)
+		}
+
 	}
 
 	return req, nil
@@ -3980,15 +7011,6 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with POST /setup/ws/1/logout (the `LogoutAuthSession` operationId).
 	LogoutAuthSessionWithBodyWithResponse(ctx context.Context, params *LogoutAuthSessionParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LogoutAuthSessionResponse, error)
-
-	// LogoutAuthSessionWithResponse LogoutAuthSession
-	//
-	// Native account authentication operation with caller-owned credentials.
-	//
-	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
-	//
-	// Corresponds with POST /setup/ws/1/logout (the `LogoutAuthSession` operationId).
-	LogoutAuthSessionWithResponse(ctx context.Context, params *LogoutAuthSessionParams, body LogoutAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*LogoutAuthSessionResponse, error)
 
 	// AcceptAuthTermsWithBodyWithResponse AcceptAuthTerms
 	//
@@ -5778,21 +8800,6 @@ func (c *ClientWithResponses) ListAuthTrustedDevicesWithResponse(ctx context.Con
 // Corresponds with POST /setup/ws/1/logout (the `LogoutAuthSession` operationId).
 func (c *ClientWithResponses) LogoutAuthSessionWithBodyWithResponse(ctx context.Context, params *LogoutAuthSessionParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LogoutAuthSessionResponse, error) {
 	rsp, err := c.LogoutAuthSessionWithBody(ctx, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseLogoutAuthSessionResponse(rsp)
-}
-
-// LogoutAuthSessionWithResponse LogoutAuthSession
-//
-// Native account authentication operation with caller-owned credentials.
-//
-// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
-//
-// Corresponds with POST /setup/ws/1/logout (the `LogoutAuthSession` operationId).
-func (c *ClientWithResponses) LogoutAuthSessionWithResponse(ctx context.Context, params *LogoutAuthSessionParams, body LogoutAuthSessionJSONRequestBody, reqEditors ...RequestEditorFn) (*LogoutAuthSessionResponse, error) {
-	rsp, err := c.LogoutAuthSession(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

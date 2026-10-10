@@ -52,7 +52,7 @@ func (sdk *SDK) nativeBridgeStart(ctx context.Context, state NativeAuthState, in
 ) (NativeAuthState, ResponseMetadata, *auth.AuthBridgeResponse, error) {
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewAuthBridgeStep0RequestWithBody(nativeIDMSOrigin(state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return state, ResponseMetadata{}, nil, newClientError("OpenNativeBridgeSession", Configuration, 0, nil, nil, err)
@@ -77,13 +77,13 @@ func nativeBridgeStepRequest(state NativeAuthState, step int, body io.Reader) (*
 	switch auth.AuthBridgeStepRequestNextStep(step) {
 	case auth.N2:
 		return nativeGeneratedRequest(authapi.NewAuthBridgeStep2RequestWithBody(nativeIDMSOrigin(state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	case auth.N4:
 		return nativeGeneratedRequest(authapi.NewAuthBridgeStep4RequestWithBody(nativeIDMSOrigin(state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	case auth.N6:
 		return nativeGeneratedRequest(authapi.NewAuthBridgeStep6RequestWithBody(nativeIDMSOrigin(state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	default:
 		return nil, errNativeAuthInput
 	}
@@ -124,7 +124,7 @@ func (sdk *SDK) nativeBridgeCode(ctx context.Context, state NativeAuthState, inp
 
 	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewValidateAuthBridgeCodeRequestWithBody(nativeIDMSOrigin(state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 	if err != nil {
 		return state, ResponseMetadata{}, 0, newClientError(operation.name, Configuration, 0, nil, nil, err)
@@ -153,7 +153,7 @@ func nativeBridgeFailureMetadata(operation *nativeAuthOperation) ResponseMetadat
 }
 
 func nativeBridgeHeaders(state NativeAuthState) http.Header {
-	headers := nativeAuthHeaders(state, protocol.AuthMediaApplicationJson)
+	headers := nativeAuthHeaders(state, nativeJSONMedia())
 
 	var bootstrap bridgemodels.BridgeBootstrapDirect
 

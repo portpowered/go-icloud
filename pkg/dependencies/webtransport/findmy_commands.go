@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/findmyapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/findmy"
 )
@@ -21,7 +20,7 @@ func (client *Client) PlayFindMySound(ctx context.Context, auth RequestContext,
 
 	return client.postFindMy(ctx, auth, payload, true, func(body io.Reader) (*http.Request, error) {
 		return findmyapi.NewFindMyPlaySoundRequestWithBody(auth.Origin, &params,
-			protocol.FindMyMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 }
 
@@ -33,7 +32,7 @@ func (client *Client) SendFindMyMessage(ctx context.Context, auth RequestContext
 
 	return client.postFindMy(ctx, auth, payload, true, func(body io.Reader) (*http.Request, error) {
 		return findmyapi.NewFindMySendMessageRequestWithBody(auth.Origin, &params,
-			protocol.FindMyMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 }
 
@@ -45,7 +44,7 @@ func (client *Client) MarkFindMyLost(ctx context.Context, auth RequestContext,
 
 	return client.postFindMy(ctx, auth, payload, true, func(body io.Reader) (*http.Request, error) {
 		return findmyapi.NewFindMyLostDeviceRequestWithBody(auth.Origin, &params,
-			protocol.FindMyMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 }
 
@@ -58,6 +57,6 @@ func (client *Client) EraseFindMyDevice(ctx context.Context, auth RequestContext
 
 	return client.postFindMy(ctx, auth, payload, true, func(body io.Reader) (*http.Request, error) {
 		return findmyapi.NewFindMyEraseDeviceRequestWithBody(auth.Origin, &params,
-			protocol.FindMyMediaApplicationJson, body)
+			jsonMedia(), body)
 	})
 }

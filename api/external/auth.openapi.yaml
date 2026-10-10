@@ -40,6 +40,14 @@
                 ]
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            },
+            "*/*": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"
+            }
           }
         },
         "responses": {
@@ -97,6 +105,9 @@
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/ValidateAuthSessionAccept"
           }
         ]
       }
@@ -133,6 +144,14 @@
                 ]
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            },
+            "*/*": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"
+            }
           }
         },
         "responses": {
@@ -190,6 +209,9 @@
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/LoginAuthTokenAccept"
           }
         ]
       }
@@ -295,6 +317,11 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTrustedDevice"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
@@ -371,6 +398,11 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTrustedDevice"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
@@ -442,12 +474,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "text/plain;charset=UTF-8": {
               "schema": {
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthLogoutRequest"
               }
             }
-          }
+          },
+          "x-request-media-schema": {
+            "text/plain;charset=UTF-8": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthLogoutContentType"
+            }
+          },
+          "description": "Source JSON-encodes the named logout fields while explicitly sending text/plain;charset=UTF-8. Preserve both the bytes and media header."
         },
         "parameters": [
           {
@@ -655,6 +693,11 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthPCSRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
@@ -731,6 +774,11 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthGetTermsRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
@@ -806,6 +854,11 @@
               "schema": {
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAcceptTermsRequest"
               }
+            }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
             }
           }
         },
@@ -989,11 +1042,64 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSRPInitRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/InitAuthSRPAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1033,6 +1139,11 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSRPCompleteRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
@@ -1046,6 +1157,54 @@
           },
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/CompleteAuthSRPAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1080,6 +1239,54 @@
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/GetAuthChallengeAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1119,11 +1326,64 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSMSRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/RequestAuthSMSAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1163,11 +1423,64 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSMSVerificationRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/VerifyAuthSMSAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1207,11 +1520,64 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthTrustedCodeRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/VerifyAuthTrustedCodeAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1251,11 +1617,64 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthWebAuthnAssertion"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/VerifyAuthSecurityKeyAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1290,6 +1709,54 @@
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/TrustAuthSessionAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
           }
         ]
       }
@@ -1329,11 +1796,67 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStartRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/AuthBridgeStep0Accept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
+          },
+          {
+            "$ref": "#/components/parameters/BridgeApplicationID"
           }
         ]
       }
@@ -1373,11 +1896,67 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStepRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/AuthBridgeStep2Accept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
+          },
+          {
+            "$ref": "#/components/parameters/BridgeApplicationID"
           }
         ]
       }
@@ -1417,11 +1996,67 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStepRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/AuthBridgeStep4Accept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
+          },
+          {
+            "$ref": "#/components/parameters/BridgeApplicationID"
           }
         ]
       }
@@ -1461,11 +2096,67 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeStepRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/AuthBridgeStep6Accept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
+          },
+          {
+            "$ref": "#/components/parameters/BridgeApplicationID"
           }
         ]
       }
@@ -1505,11 +2196,67 @@
                 "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthBridgeCodeRequest"
               }
             }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
           }
         },
         "parameters": [
           {
             "$ref": "./http-boundary-models.openapi.yaml#/components/parameters/SessionCookie"
+          },
+          {
+            "$ref": "#/components/parameters/ValidateAuthBridgeCodeAccept"
+          },
+          {
+            "$ref": "#/components/parameters/NativeContentType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthClientType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthRequireGrantCode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseMode"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleOauthState"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleWidgetKey"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFdClientInfo"
+          },
+          {
+            "$ref": "#/components/parameters/NativeReferer"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleFrameId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeScnt"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleIdSessionId"
+          },
+          {
+            "$ref": "#/components/parameters/NativeXAppleAuthAttributes"
+          },
+          {
+            "$ref": "#/components/parameters/BridgeApplicationID"
           }
         ]
       }
@@ -1642,6 +2389,403 @@
         "schema": {
           "type": "string"
         }
+      }
+    },
+    "parameters": {
+      "NativeContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleOauthClientId": {
+        "name": "X-Apple-OAuth-Client-Id",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/OAuthClientID"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleOauthClientType": {
+        "name": "X-Apple-OAuth-Client-Type",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "firstPartyAuth": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/OAuthClientType"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleOauthRedirectUri": {
+        "name": "X-Apple-OAuth-Redirect-URI",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "https://www.icloud.com": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/HomeOrigin"
+            },
+            "https://www.icloud.com.cn": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/HomeChinaOrigin"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleOauthRequireGrantCode": {
+        "name": "X-Apple-OAuth-Require-Grant-Code",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "true": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/OAuthRequireGrantCode"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleOauthResponseMode": {
+        "name": "X-Apple-OAuth-Response-Mode",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "web_message": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/OAuthResponseMode"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleOauthResponseType": {
+        "name": "X-Apple-OAuth-Response-Type",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "code": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/OAuthResponseType"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleOauthState": {
+        "name": "X-Apple-OAuth-State",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleWidgetKey": {
+        "name": "X-Apple-Widget-Key",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/OAuthClientID"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleFdClientInfo": {
+        "name": "X-Apple-FD-Client-Info",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthFDClientInfo"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeReferer": {
+        "name": "Referer",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "https://idmsa.apple.com": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/IDMSOrigin"
+            }
+          }
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleFrameId": {
+        "name": "X-Apple-Frame-Id",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeScnt": {
+        "name": "scnt",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleIdSessionId": {
+        "name": "X-Apple-ID-Session-Id",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "NativeXAppleAuthAttributes": {
+        "name": "X-Apple-Auth-Attributes",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Optional native authentication header emitted by the Source native-header constructor; caller/provider values retain their original ownership."
+      },
+      "ValidateAuthSessionAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "LoginAuthTokenAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "InitAuthSRPAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json, text/javascript": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccept"
+            }
+          }
+        }
+      },
+      "CompleteAuthSRPAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json, text/javascript": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccept"
+            }
+          }
+        }
+      },
+      "GetAuthChallengeAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            },
+            "text/html": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthHTMLAccept"
+            }
+          }
+        }
+      },
+      "RequestAuthSMSAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "VerifyAuthSMSAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json, plain/text": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/SMSAccept"
+            }
+          }
+        }
+      },
+      "VerifyAuthTrustedCodeAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "VerifyAuthSecurityKeyAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "TrustAuthSessionAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json, text/javascript": {
+              "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthAccept"
+            }
+          }
+        }
+      },
+      "AuthBridgeStep0Accept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "AuthBridgeStep2Accept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "AuthBridgeStep4Accept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "AuthBridgeStep6Accept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "ValidateAuthBridgeCodeAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "BridgeApplicationID": {
+        "name": "X-Apple-App-Id",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Caller or provider bridge application identity; only bridge HTTP requests emit this header."
       }
     }
   }

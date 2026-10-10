@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
@@ -35,10 +34,10 @@ func (client *Client) PhotosLibraryZones(ctx context.Context, auth RequestContex
 
 	request = request.WithContext(ctx)
 	request.Header = callerHeaders(auth.Headers)
-	request.Header.Set(protocol.HTTPContentTypeName, protocol.PhotosMediaApplicationJson)
+	request.Header.Set(protocol.HTTPContentTypeName, jsonMedia())
 
 	if request.Header.Get(protocol.AcceptName) == "" {
-		request.Header.Set(protocol.AcceptName, string(accountapi.AcceptAsterisk))
+		request.Header.Set(protocol.AcceptName, anyMedia())
 	}
 
 	request.URL.RawQuery = orderedAccountQuery(auth.Params) + "&" +
@@ -67,7 +66,7 @@ func photosZoneRequest(auth RequestContext, shared bool) (*http.Request, error) 
 		params.GetCurrentSyncToken = photosapi.PhotosListSharedZonesParamsGetCurrentSyncTokenTrue
 
 		request, err := photosapi.NewPhotosListSharedZonesRequestWithBody(auth.Origin, params,
-			protocol.PhotosMediaApplicationJson, bytes.NewBufferString("{}"))
+			jsonMedia(), bytes.NewBufferString("{}"))
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo zones request: %w", err)
 		}
@@ -82,7 +81,7 @@ func photosZoneRequest(auth RequestContext, shared bool) (*http.Request, error) 
 	params.GetCurrentSyncToken = photosapi.PhotosListPrivateZonesParamsGetCurrentSyncTokenTrue
 
 	request, err := photosapi.NewPhotosListPrivateZonesRequestWithBody(auth.Origin, params,
-		protocol.PhotosMediaApplicationJson, bytes.NewBufferString("{}"))
+		jsonMedia(), bytes.NewBufferString("{}"))
 	if err != nil {
 		return nil, fmt.Errorf("construct private photo zones request: %w", err)
 	}

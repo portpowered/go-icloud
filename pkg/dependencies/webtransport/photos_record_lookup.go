@@ -46,7 +46,7 @@ func photosRecordLookupRequest(auth RequestContext, body []byte) (*http.Request,
 		request, err := photosapi.NewPhotosSharedLookupRecordsRequestWithBody(
 			auth.Origin,
 			params,
-			protocol.PhotosMediaApplicationJson,
+			jsonMedia(),
 			bytes.NewReader(body),
 		)
 		if err != nil {
@@ -61,7 +61,7 @@ func photosRecordLookupRequest(auth RequestContext, body []byte) (*http.Request,
 	request, err := photosapi.NewPhotosLookupRecordsRequestWithBody(
 		auth.Origin,
 		params,
-		protocol.PhotosMediaApplicationJson,
+		jsonMedia(),
 		bytes.NewReader(body),
 	)
 	if err != nil {

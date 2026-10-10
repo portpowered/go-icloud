@@ -78,7 +78,7 @@ func (sdk *SDK) nativeVerifyCode(ctx context.Context, operation *nativeAuthOpera
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
 
-	accept := protocol.AuthMediaApplicationJson
+	accept := nativeJSONMedia()
 	if operation.state.DeliveryMethod == TwoFactorDeliverySMS {
 		accept = protocol.AuthSMSAcceptValue
 	}
@@ -120,7 +120,7 @@ func nativeVerificationRequest(state NativeAuthState, code string) (*http.Reques
 
 		return nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 			return nativeGeneratedRequest(authapi.NewVerifyAuthTrustedCodeRequestWithBody(nativeIDMSOrigin(state), nil,
-				protocol.AuthMediaApplicationJson, body))
+				nativeJSONMedia(), body))
 		})
 	}
 
@@ -143,6 +143,6 @@ func nativeVerificationRequest(state NativeAuthState, code string) (*http.Reques
 
 	return nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
 		return nativeGeneratedRequest(authapi.NewVerifyAuthSMSRequestWithBody(nativeIDMSOrigin(state), nil,
-			protocol.AuthMediaApplicationJson, body))
+			nativeJSONMedia(), body))
 	})
 }
