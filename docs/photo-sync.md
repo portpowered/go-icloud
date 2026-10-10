@@ -71,6 +71,17 @@ The Go manifest uses a generated JSON document and SHA-256 target identity rathe
 than Python's SQLite file and truncated SHA-1 filename. The target identity also
 includes account ID, preventing two accounts from sharing a manifest. The state
 format is intentionally Go-owned; resource and cursor behavior follows Source.
+Local filename reservations additionally use a conservative, portable Unicode
+case identity and ignore trailing dots/spaces in each path component. Colliding
+assets receive the existing deterministic asset-ID suffix before writing, while
+their selected filenames remain unchanged. This intentionally corrects Source's
+case-sensitive reservation behavior on Windows and keeps the same safe naming on
+case-sensitive hosts. The identity combines Unicode uppercase and simple folding;
+it is a conservative safety policy, not an exact reproduction of every volume's
+case table. An existing manifest assigning aliased paths to different resources
+is rejected before cursor reuse, preventing a historical overwrite from being
+treated as two durable downloads.
+
 The Go implementation returns typed local I/O failures rather than silently
 ignoring filesystem failures during materialization. `errors.Is` and `errors.As`
 recover the original cause without logging credentials.

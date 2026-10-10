@@ -118,16 +118,18 @@ func (engine *Engine) prepareRun(ctx context.Context, request Request) (*runStat
 		return nil, fmt.Errorf("read photo cursor: %w", err)
 	}
 
+	tracked, err := trackedPaths(manifest.Resources)
+	if err != nil {
+		return nil, err
+	}
+
 	result := Result{Directory: request.Options.Directory, StatePath: statePath, Library: request.Options.Library,
 		Albums: normalizedAlbums(request.Options.Albums), SyncCursor: cursor, ShortCircuited: false,
 		DownloadedCount: 0, SkippedCount: 0, DeletedCount: 0, ListedCount: 0, Items: []Item{}}
 
 	state := &runState{engine: engine, request: request, root: root, manifest: manifest, result: result,
-		tracked: map[string]resourceID{}, reserved: map[string]bool{}, current: map[resourceID]bool{},
+		tracked: tracked, reserved: map[string]bool{}, current: map[resourceID]bool{},
 		seenAssets: map[string]bool{}, consecutive: 0, complete: true, now: engine.now()}
-	for _, resource := range manifest.Resources {
-		state.tracked[resource.RelativePath] = resourceID{asset: resource.AssetID, key: resource.ResourceKey}
-	}
 
 	return state, nil
 }

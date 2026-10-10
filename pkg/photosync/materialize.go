@@ -21,7 +21,7 @@ func (state *runState) materialize(ctx context.Context, asset Asset, resource Re
 	}
 
 	relative = uniquePath(relative, asset.ID, resource.Key, state.reserved, state.tracked)
-	state.reserved[relative] = true
+	state.reserved[pathIdentity(relative)] = true
 	identity := resourceID{asset: asset.ID, key: resource.Key}
 	state.current[identity] = true
 

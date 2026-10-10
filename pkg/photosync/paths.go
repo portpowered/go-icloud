@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode"
 )
 
 var (
@@ -56,8 +57,9 @@ func relativePath(asset Asset, resource Resource, format string) (string, error)
 }
 
 func uniquePath(candidate, assetID, key string, reserved map[string]bool, tracked map[string]resourceID) string {
-	owner, occupied := tracked[candidate]
-	if !reserved[candidate] && (!occupied || owner == (resourceID{asset: assetID, key: key})) {
+	identity := pathIdentity(candidate)
+	owner, occupied := tracked[identity]
+	if !reserved[identity] && (!occupied || owner == (resourceID{asset: assetID, key: key})) {
 		return candidate
 	}
 
@@ -79,12 +81,55 @@ func uniquePath(candidate, assetID, key string, reserved map[string]bool, tracke
 
 		result := stem + suffix + extension
 
-		owner, occupied = tracked[result]
+		identity = pathIdentity(result)
+		owner, occupied = tracked[identity]
 
-		if !reserved[result] && (!occupied || owner == (resourceID{asset: assetID, key: key})) {
+		if !reserved[identity] && (!occupied || owner == (resourceID{asset: assetID, key: key})) {
 			return result
 		}
 	}
+}
+
+// pathIdentity conservatively reserves Unicode case aliases on every filesystem.
+// Uppercasing also covers Windows aliases such as Latin i and dotless i.
+func pathIdentity(value string) string {
+	components := strings.Split(value, "/")
+	for index, component := range components {
+		components[index] = strings.Map(foldPathRune, strings.TrimRight(component, ". "))
+	}
+
+	return strings.Join(components, "/")
+}
+
+func foldPathRune(value rune) rune {
+	value = unicode.ToUpper(value)
+	minimum := value
+
+	for folded := unicode.SimpleFold(value); folded != value; folded = unicode.SimpleFold(folded) {
+		if folded < minimum {
+			minimum = folded
+		}
+	}
+
+	return minimum
+}
+
+func trackedPaths(resources []SyncedResource) (map[string]resourceID, error) {
+	tracked := map[string]resourceID{}
+
+	for _, resource := range resources {
+		identity := pathIdentity(resource.RelativePath)
+		owner := resourceID{asset: resource.AssetID, key: resource.ResourceKey}
+
+		previous, occupied := tracked[identity]
+		if occupied && previous != owner {
+			return nil, errManifest
+		}
+
+		tracked[identity] = owner
+	}
+
+	return tracked, nil
 }
 
 const identifierPrefixLength = 8
