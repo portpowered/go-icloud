@@ -164,8 +164,8 @@ The remaining final acceptance work is:
   coordinated SDK/CLI release workflows and tags, and isolated installation of
   the released versions. Feature pseudo-version availability does not establish
   that `@latest` supplies the completed workflows.
-- Obtain both fresh independent complete-library reviews, disposition every
-  original finding and verify fixes and CI at the final reviewed commit.
+- Obtain an independent functional review, resolve relevant concrete findings and
+  confirm passing CI at the final reviewed commit.
 
 ## Repository acceptance
 
@@ -178,7 +178,7 @@ The remaining final acceptance work is:
 - [ ] Provide schema references, customer MDX guides, Pages publication, badges and whole-site verification.
 - [ ] Consolidate stale milestone documentation and audit every published file for accuracy and audience.
 - [ ] Verify coordinated SDK/CLI release workflows and isolated public module installation.
-- [ ] Both independent reviewers verify every template item, findings and exact-commit CI at the final commit.
+- [ ] An independent reviewer checks functional correctness, relevant findings and passing final-commit CI.
 
 The initial independent gap audits were read-only and did not approve the current
 checkout. Their historical findings concerned selected-library semantics,

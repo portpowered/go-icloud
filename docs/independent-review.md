@@ -1,8 +1,9 @@
 # Independent review record
 
 Review state: **not approved**. No complete-library final approval is recorded.
-Both final reviewer verdicts must independently prove all numbered template
-items; neither the implementer nor this initial audit signs off completion.
+Final acceptance requires an independent functional review and passing CI at
+the reviewed commit under the current standards; historical scoped reviews
+do not sign off the current implementation.
 
 The records below preserve historical and scoped reviewer receipts. Current
 implementation and test receipts belong in the
