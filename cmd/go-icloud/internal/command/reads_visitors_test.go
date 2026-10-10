@@ -23,6 +23,10 @@ type visitorProbe struct {
 	visits int
 }
 
+type failingPhotoWriter struct{ failure error }
+
+func (output failingPhotoWriter) Write(_ []byte) (int, error) { return 0, output.failure }
+
 func (probe *visitorProbe) VisitPhotoAssets(_ context.Context, request icloud.ListPhotoAssetsRequest,
 	visitor icloud.PhotoVisitor,
 ) (*icloud.ListPhotoAssetsResult, error) {
@@ -126,6 +130,29 @@ func TestPhotoVisitorCanceledBeforeEmissionPreservesReceipt(t *testing.T) {
 	}
 	if !bytes.Equal(actual, previous) {
 		t.Fatal("cancellation overwrote existing receipt")
+	}
+}
+
+func TestPhotoVisitorStopsOnOutputFailure(t *testing.T) {
+	t.Parallel()
+	var probe visitorProbe
+	input, saved := visitorPaths(t)
+	previous := []byte("previous receipt")
+	if err := os.WriteFile(saved, previous, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	failure := errors.New("synthetic writer failure")
+	err := runPhotoVisit(t.Context(), &probe, probe.want, "photo-assets-visit", input, saved,
+		failingPhotoWriter{failure: failure})
+	if !errors.Is(err, failure) || probe.visits != 0 {
+		t.Fatal("output failure did not stop SDK visitor", err)
+	}
+	actual, err := os.ReadFile(saved)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(actual, previous) {
+		t.Fatal("failed stream overwrote receipt")
 	}
 }
 

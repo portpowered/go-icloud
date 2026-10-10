@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -14,6 +15,21 @@ import (
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
+
+func TestTypedReadInputFailures(t *testing.T) {
+	t.Parallel()
+	for _, request := range []string{`{`, `null`, `{"unreviewed":true}`, `{} {}`, `{"auth":{"unknown":"private"}}`} {
+		t.Run(request, func(t *testing.T) {
+			t.Parallel()
+			var probe readProbe
+			_, output, err := runWriteProbe(t, t.Context(), &probe, "photo-upload-status", request, nil)
+			var inputError *command.WriteRequestError
+			if !errors.As(err, &inputError) || probe.calls != 0 || output != "" {
+				t.Fatal("invalid typed read reached SDK or output", err)
+			}
+		})
+	}
+}
 
 type readProbe struct {
 	icloud.Client
