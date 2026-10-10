@@ -28,18 +28,21 @@ func runTypedRead(ctx context.Context, client icloud.Client, auth icloud.AuthCon
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.ListPhotoLibrariesRequest) (*icloud.ListPhotoLibrariesResult, error) {
 				input.Auth = auth
+
 				return client.ListPhotoLibraries(ctx, input)
 			})
 	case photoCursorCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.GetPhotosCursorRequest) (*icloud.GetPhotosCursorResult, error) {
 				input.Auth = auth
+
 				return client.GetPhotosCursor(ctx, input)
 			})
 	case photoChangesCommand:
 		return invokeWrite(ctx, requestPath, resultPath,
 			func(input icloud.GetPhotoChangesRequest) (*icloud.GetPhotoChangesResult, error) {
 				input.Auth = auth
+
 				return client.GetPhotoChanges(ctx, input)
 			})
 	case photoLibraryChangesCommand:

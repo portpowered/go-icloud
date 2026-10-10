@@ -18,6 +18,7 @@ import (
 
 func TestPhotoUploadCommandsPairedReferenceReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, scenario := range []writeReplayCase{
 		{testPhotoUploadReserveCommand, "photos-upload-reserve-1"},
 		{testPhotoUploadSendCommand, "photos-upload-bytes-binary"},
@@ -38,9 +39,10 @@ func runUploadWriteReplay(t *testing.T, scenario writeReplayCase) {
 	}
 	client := fixtureWriteClient(t, fixture, transport)
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJsonFilename)
-	request := filepath.Join(directory, testRequestJsonFilename)
-	result := filepath.Join(directory, testResultJsonFilename)
+	session := filepath.Join(directory, testSessionJSONFilename)
+	request := filepath.Join(directory, testRequestJSONFilename)
+	result := filepath.Join(directory, testResultJSONFilename)
+
 	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
 	writeFixtureValue(t, request, uploadWriteRequest(t, scenario.operation, fixture))
 	args := []string{testSessionFlag, session, testRequestFlag, request, testSaveResultFlag, result}
@@ -54,6 +56,7 @@ func runUploadWriteReplay(t *testing.T, scenario writeReplayCase) {
 		if decodeErr != nil {
 			t.Fatal(decodeErr)
 		}
+
 		writeProbeFile(t, content, data)
 		args = append(args, "--file", content)
 	}
@@ -70,11 +73,13 @@ func runUploadWriteReplay(t *testing.T, scenario writeReplayCase) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	checkUploadWriteResult(t, scenario.operation, fixture, result, output.Bytes())
 }
 
 func uploadWriteRequest(t *testing.T, operation string, fixture writeFixture) map[string]any {
 	t.Helper()
+
 	switch operation {
 	case testPhotoUploadReserveCommand:
 		return map[string]any{"assets": fixture.Keywords["assets"]}
@@ -83,7 +88,6 @@ func uploadWriteRequest(t *testing.T, operation string, fixture writeFixture) ma
 	case testPhotoUploadRegisterCommand:
 		return uploadRegisterWriteRequest(t, fixture)
 	default:
-
 		var filename string
 
 		var seconds int64

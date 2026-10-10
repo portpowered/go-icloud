@@ -36,6 +36,7 @@ func validateWriteJSON(data []byte) error {
 	if err != nil {
 		return fmt.Errorf("inspect typed request: %w", err)
 	}
+
 	attachment, exists := object["attachment"]
 	if !exists {
 		return nil

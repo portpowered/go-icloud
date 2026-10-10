@@ -213,6 +213,7 @@ func TestPhotosSyncCancellationPreservesReceiptAndRotatesCredentials(t *testing.
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
+
 	client.cancel = cancel
 	receipt := filepath.Join(filepath.Dir(request), expectedReplayResultJSON)
 	if err := os.WriteFile(receipt, []byte(expectedReplayExistingReceipt), 0o600); err != nil {

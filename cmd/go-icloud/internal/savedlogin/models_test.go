@@ -32,6 +32,7 @@ func TestReferenceSessionCountryPresence(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			var fields map[string]json.RawMessage
 
 			err = json.Unmarshal(encoded, &fields)

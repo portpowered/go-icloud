@@ -273,8 +273,8 @@ func runWriteProbe(ctx context.Context, t *testing.T, client icloud.Client, oper
 	if err != nil {
 		t.Fatal(err)
 	}
-	session := filepath.Join(directory, testSessionJsonFilename)
-	input := filepath.Join(directory, testRequestJsonFilename)
+	session := filepath.Join(directory, testSessionJSONFilename)
+	input := filepath.Join(directory, testRequestJSONFilename)
 
 	writeProbeFile(t, session, data)
 	writeProbeFile(t, input, []byte(request))

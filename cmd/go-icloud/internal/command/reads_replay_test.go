@@ -42,13 +42,14 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 		t.Fatal(err)
 	}
 	client := fixtureWriteClient(t, fixture, transport)
+
 	auth := fixtureWriteAuthentication(t, fixture)
 	if origin := fixture.Initial["shared_streams_origin"]; len(origin) != 0 {
 		decodeWriteFixture(t, origin, &auth.SharedPhotosServiceURL)
 	}
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJsonFilename)
-	request, result := filepath.Join(directory, testRequestJsonFilename), filepath.Join(directory, testResultJsonFilename)
+	session := filepath.Join(directory, testSessionJSONFilename)
+	request, result := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, testResultJSONFilename)
 
 	writeFixtureValue(t, session, auth)
 	input := typedReadFixtureRequest(scenario.operation, fixture)

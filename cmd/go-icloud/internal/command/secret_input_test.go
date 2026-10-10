@@ -42,6 +42,7 @@ func TestSecretSources(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 			input := io.NopCloser(strings.NewReader(test.text))
+
 			value, err := readSecret(t.Context(), input, test.environment, "SECRET", test.stdin)
 			if test.failure {
 				if !errors.Is(err, errSecret) || value != "" {
@@ -58,6 +59,7 @@ func TestSecretCancellationClosesBlockedInput(t *testing.T) {
 	t.Parallel()
 
 	reader, writer := io.Pipe()
+
 	t.Cleanup(func() { _ = writer.Close() })
 
 	ctx, cancel := context.WithCancel(t.Context())
@@ -72,7 +74,9 @@ func TestSecretCancellationClosesBlockedInput(t *testing.T) {
 	<-started
 
 	cancel()
-	if err := <-result; !errors.Is(err, context.Canceled) {
+
+	err := <-result
+	if !errors.Is(err, context.Canceled) {
 		t.Fatal("secret read lost cancellation")
 	}
 }
@@ -96,6 +100,7 @@ func TestSecretPreCancellationAvoidsReading(t *testing.T) {
 		t.Fatal("environment read after cancellation")
 		return ""
 	}
+
 	_, err := readSecret(ctx, nil, environment, "SECRET", false)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatal("secret read lost prior cancellation")

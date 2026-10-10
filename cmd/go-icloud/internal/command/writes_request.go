@@ -42,6 +42,7 @@ func readWriteRequest[Request any](ctx context.Context, path string) (*Request, 
 	if decodeErr != nil {
 		return nil, &WriteRequestError{Cause: decodeErr}
 	}
+
 	if closeErr != nil {
 		return nil, &WriteRequestError{Cause: closeErr}
 	}

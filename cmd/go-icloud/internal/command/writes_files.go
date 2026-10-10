@@ -66,6 +66,7 @@ func invokeFileWrite[Request, Result any](ctx context.Context, requestPath, cont
 	if contentPath == "" {
 		return nil, errWriteFile
 	}
+
 	request, err := readWriteRequest[Request](ctx, requestPath)
 	if err != nil {
 		return nil, err
@@ -83,9 +84,11 @@ func invokeFileWrite[Request, Result any](ctx context.Context, requestPath, cont
 
 	result, writeErr := invoke(*request, content)
 	closeErr := content.Close()
+
 	if writeErr != nil {
 		return nil, fmt.Errorf("SDK file write: %w", writeErr)
 	}
+
 	if closeErr != nil {
 		return nil, &WriteRequestError{Cause: closeErr}
 	}

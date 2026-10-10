@@ -169,6 +169,7 @@ func fixtureWriteClient(t *testing.T, fixture writeFixture, transport *replay.HT
 		var samples []string
 
 		decodeWriteFixture(t, data, &samples)
+
 		for _, sample := range samples {
 			value, err := base64.StdEncoding.DecodeString(sample)
 			if err != nil {
@@ -199,9 +200,9 @@ func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 	// A foreign account in the request must never replace the selected stored session.
 	request["auth"] = map[string]any{"clientID": "foreign", testAccountIDKey: "foreign", "headers": []any{}}
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJsonFilename)
-	input := filepath.Join(directory, testRequestJsonFilename)
-	result := filepath.Join(directory, testResultJsonFilename)
+	session := filepath.Join(directory, testSessionJSONFilename)
+	input := filepath.Join(directory, testRequestJSONFilename)
+	result := filepath.Join(directory, testResultJSONFilename)
 
 	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
 	writeFixtureValue(t, input, request)
@@ -302,6 +303,7 @@ func checkWriteResponses(t *testing.T, responses []icloud.ResponseMetadata, exch
 	if len(responses) != len(exchanges) {
 		t.Fatal("private result lost completed response evidence")
 	}
+
 	for index, response := range responses {
 		paired := exchanges[index]
 		if response.StatusCode != paired.Response.Status {

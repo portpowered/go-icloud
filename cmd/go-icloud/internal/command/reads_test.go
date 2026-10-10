@@ -70,8 +70,8 @@ func TestTypedReadUnknownProviderFieldsRemainPrivate(t *testing.T) {
 	result.Responses = []icloud.ResponseMetadata{}
 	probe := &readProbe{Client: nil, calls: 0, auth: resultAuth(), result: &result}
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJsonFilename)
-	request, saved := filepath.Join(directory, testRequestJsonFilename), filepath.Join(directory, testResultJsonFilename)
+	session := filepath.Join(directory, testSessionJSONFilename)
+	request, saved := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, testResultJSONFilename)
 	auth := resultAuth()
 	writeFixtureValue(t, session, auth)
 	writeFixtureValue(t, request, map[string]any{

@@ -158,6 +158,7 @@ func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map
 
 func photoWriteInput(t *testing.T, request map[string]any, operation string, inputs []any) {
 	t.Helper()
+
 	switch operation {
 	case testPhotoAlbumCreateCommand:
 		request["name"] = inputs[0]
@@ -248,6 +249,7 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 		if !ok || len(returned) != 2 {
 			t.Fatal("Source location result lost alarm/trigger tuple")
 		}
+
 		projectSourceLocationNumbers(t, sourceServiceObject(t, returned[1]))
 		return map[string]any{"alarm": returned[0], "trigger": returned[1], testReminderKey: arguments[0]}
 	default:
@@ -261,6 +263,7 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 // schema fields; integer identifiers and exact provider request bytes stay intact.
 func projectSourceLocationNumbers(t *testing.T, trigger map[string]any) {
 	t.Helper()
+
 	for _, key := range []string{testLatitudeKey, testLongitudeKey, "radius"} {
 		number, ok := trigger[key].(json.Number)
 		if !ok {

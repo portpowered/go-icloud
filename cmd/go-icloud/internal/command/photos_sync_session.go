@@ -72,6 +72,7 @@ func (progress *photosSyncProgress) recordFailure(ctx context.Context, cause err
 func (progress *photosSyncProgress) persist(ctx context.Context) error {
 	stateContext, cancel := context.WithTimeout(context.WithoutCancel(ctx), photosCredentialSaveTimeout)
 	defer cancel()
+
 	if progress.source != nil {
 		session, err := progress.source.Snapshot(stateContext)
 		if err != nil {

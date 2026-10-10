@@ -43,7 +43,7 @@ func TestLegacyPhotoFlagsKeepOriginalOnlyInPrivateResult(t *testing.T) {
 	result.Responses = []icloud.ResponseMetadata{}
 	probe := legacyPhotoProbe{Client: nil, result: &result}
 	directory := t.TempDir()
-	session, saved := filepath.Join(directory, testSessionJsonFilename), filepath.Join(directory, testResultJsonFilename)
+	session, saved := filepath.Join(directory, testSessionJSONFilename), filepath.Join(directory, testResultJSONFilename)
 	writeFixtureValue(t, session, resultAuth())
 
 	var output, diagnostic bytes.Buffer
@@ -55,6 +55,7 @@ func TestLegacyPhotoFlagsKeepOriginalOnlyInPrivateResult(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, marker := range []string{"synthetic-private-url", "synthetic-private-metadata",
 		testVersionsKey, testAssetMetadataKey} {
 		if strings.Contains(output.String(), marker) {

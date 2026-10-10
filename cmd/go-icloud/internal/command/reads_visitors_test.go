@@ -187,9 +187,9 @@ func TestPhotoVisitorStopsOnOutputFailure(t *testing.T) {
 func visitorPaths(t *testing.T, auth icloud.AuthContext) (string, string, string) {
 	t.Helper()
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJsonFilename)
+	session := filepath.Join(directory, testSessionJSONFilename)
 	writeFixtureValue(t, session, auth)
-	input, saved := filepath.Join(directory, testRequestJsonFilename), filepath.Join(directory, testResultJsonFilename)
+	input, saved := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, testResultJSONFilename)
 
 	err := os.WriteFile(input, []byte(`{"auth":{"accountID":"foreign"}}`), 0o600)
 	if err != nil {
@@ -230,6 +230,7 @@ func readVisitorReceipt(t *testing.T, path string) []byte {
 func checkVisitorStream(t *testing.T, output io.Reader) {
 	t.Helper()
 	decoder := json.NewDecoder(output)
+
 	for _, identifier := range []string{firstVisitorPhoto, secondVisitorPhoto} {
 		var event map[string]json.RawMessage
 

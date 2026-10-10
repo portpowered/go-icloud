@@ -62,6 +62,7 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 	auth.Headers = []icloud.Header{}
 	writeSyncJSON(t, session, auth)
 	var output, diagnostic bytes.Buffer
+
 	err := command.Run(t.Context(), &photoPrivacyClient{Client: nil, result: &result},
 		[]string{sessionFlag, session, expectedReplaySaveResult, saved, photoAssetsCommand}, &output, &diagnostic)
 	if err != nil {
@@ -70,7 +71,7 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 	if diagnostic.Len() != 0 {
 		t.Fatal("photo privacy control printed diagnostics")
 	}
-	private, err := os.ReadFile(saved)
+	private, err := readSyncFile(t, saved)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -159,7 +160,8 @@ func runPhotoReadScenario(t *testing.T, operation string, row map[string]json.Ra
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	if len(row["error"]) != 0 {
 		checkPhotoCLIFailure(t, row, output.Bytes(), err)
-		if _, readErr := os.ReadFile(saved); !errors.Is(readErr, os.ErrNotExist) {
+		_, readErr := readSyncFile(t, saved)
+		if !errors.Is(readErr, os.ErrNotExist) {
 			t.Fatal("failed photo read wrote a partial private result")
 		}
 	} else {
@@ -180,7 +182,7 @@ func checkPhotoReadPrivateSource(t *testing.T, operation string, row map[string]
 	saved string, output []byte, exchanges []replay.Exchange,
 ) {
 	t.Helper()
-	data, err := os.ReadFile(saved)
+	data, err := readSyncFile(t, saved)
 	if err != nil {
 		t.Fatal(err)
 	}
