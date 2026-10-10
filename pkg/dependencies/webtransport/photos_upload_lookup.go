@@ -28,7 +28,13 @@ func (client *Client) PhotosHydrateUpload(ctx context.Context, auth RequestConte
 		{RecordName: masterName, AdditionalProperties: nil}, {RecordName: assetName, AdditionalProperties: nil},
 	}
 	input.ZoneID = *zone
-	input.DesiredKeys.Set(photoUploadDesiredKeys())
+	desired := photoUploadDesiredKeys()
+	keys := make([]string, len(desired))
+	for index, key := range desired {
+		keys[index] = string(key)
+	}
+
+	input.DesiredKeys.Set(keys)
 
 	body, err := referenceJSONFields(input, []string{protocol.PhotosUploadCKLookupRequestRecords,
 		protocol.PhotosUploadCKLookupRequestZoneID, protocol.PhotosUploadCKLookupRequestDesiredKeys})
