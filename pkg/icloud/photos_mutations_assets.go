@@ -14,7 +14,7 @@ func (sdk *SDK) AddPhotoToAlbum(ctx context.Context,
 		return nil, err
 	}
 
-	_, asset, err := read.mutationPhoto(ctx, &request.AlbumID, request.PhotoID)
+	_, asset, err := read.mutationPhoto(ctx, nil, request.PhotoID)
 	if err != nil {
 		return nil, err
 	}

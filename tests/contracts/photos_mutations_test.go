@@ -15,7 +15,7 @@ func TestPhotoMutationVariantsRejectMalformedRequests(t *testing.T) {
 			"photos-shared-library-create-album", "photos-shared-library-create-album-refused-4"},
 		"PhotoAlbumRenameRequest":   {"photos-rename-album"},
 		"PhotoAlbumDeletionRequest": {"photos-delete-album"},
-		"PhotoAlbumRelationRequest": {"photos-add-to-album"},
+		"PhotoAlbumRelationRequest": {"photos-add-to-album", "photos-add-to-empty-album"},
 		"PhotoFavoriteRequest":      {"photos-favorite-true", "photos-favorite-false", "photos-shared-library-favorite-true"},
 		"PhotoAssetDeletionRequest": {"photos-delete-asset"},
 	} {

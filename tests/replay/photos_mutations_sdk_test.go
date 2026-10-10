@@ -22,6 +22,7 @@ func TestPhotoMutationSDKPortableScenarios(t *testing.T) {
 		replayExpectedPhotosRenameAlbum,
 		replayExpectedPhotosDeleteAlbum,
 		replayExpectedPhotosAddToAlbum,
+		"photos-add-to-empty-album",
 		replayExpectedPhotosFavoriteTrue,
 		"photos-favorite-false",
 		"photos-favorite-refresh",

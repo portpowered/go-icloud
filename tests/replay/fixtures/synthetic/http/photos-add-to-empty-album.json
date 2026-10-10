@@ -20,7 +20,7 @@
   "inputs": [
     "synthetic-asset-0"
   ],
-  "album": "Synthetic 0",
+  "album": "Empty destination",
   "result": true,
   "exchanges": [
     {
@@ -131,7 +131,7 @@
         ],
         "body": {
           "encoding": "base64",
-          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtYWxidW0tMCIsICJyZWNvcmRUeXBlIjogIkNQTEFsYnVtIiwgImZpZWxkcyI6IHsiYWxidW1OYW1lRW5jIjogeyJ0eXBlIjogIkVOQ1JZUFRFRF9CWVRFUyIsICJ2YWx1ZSI6ICJVM2x1ZEdobGRHbGpJREE9In0sICJhbGJ1bVR5cGUiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAwfSwgImlzRGVsZXRlZCI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDB9LCAic29ydEFzY2VuZGluZyI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDF9fSwgInJlY29yZENoYW5nZVRhZyI6ICJzeW50aGV0aWMtb2xkLXRhZyJ9XX0="
+          "value": "eyJyZWNvcmRzIjogW3sicmVjb3JkTmFtZSI6ICJzeW50aGV0aWMtYWxidW0tMCIsICJyZWNvcmRUeXBlIjogIkNQTEFsYnVtIiwgImZpZWxkcyI6IHsiYWxidW1OYW1lRW5jIjogeyJ0eXBlIjogIkVOQ1JZUFRFRF9CWVRFUyIsICJ2YWx1ZSI6ICJSVzF3ZEhrZ1pHVnpkR2x1WVhScGIyND0ifSwgImFsYnVtVHlwZSI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDB9LCAiaXNEZWxldGVkIjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMH0sICJzb3J0QXNjZW5kaW5nIjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMX19LCAicmVjb3JkQ2hhbmdlVGFnIjogInN5bnRoZXRpYy1vbGQtdGFnIn1dfQ=="
         }
       }
     },

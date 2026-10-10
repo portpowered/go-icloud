@@ -163,7 +163,8 @@ def execute_photos(service, scenario):
         return {"value": value, "album": album_result(album)}
     if operation == "album_delete":
         return {"value": album.delete(), "albums": [item.id for item in service.albums]}
-    photo = album.get(scenario["inputs"][0])
+    source_album = service.albums["Library"] if operation == "album_add_photo" else album
+    photo = source_album.get(scenario["inputs"][0])
     if operation == "photo_get":
         return photo_result(photo)
     assert photo is not None, "scenario expected an existing photo"

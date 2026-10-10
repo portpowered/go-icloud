@@ -18,6 +18,36 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_photo_relation_uses_library_asset_independent_of_destination(self):
+        for name in ["photos-add-to-album", "photos-add-to-empty-album"]:
+            with self.subTest(name=name):
+                self.assertEqual(replay_synthetic(FIXTURES / (name + ".json")), 4)
+
+        scenario = json.loads(
+            (FIXTURES / "photos-add-to-empty-album.json").read_text(encoding="utf-8")
+        )
+        request = scenario["exchanges"][2]["request"]
+        payload = json.loads(base64.b64decode(request["body"]["value"]))
+        filters = payload["query"]["filterBy"]
+        self.assertNotIn("parentId", [item["fieldName"] for item in filters])
+        filters.append(
+            {
+                "comparator": "EQUALS",
+                "fieldName": "parentId",
+                "fieldValue": {"type": "STRING", "value": "synthetic-album-0"},
+            }
+        )
+        body = json.dumps(payload).encode()
+        request["body"]["value"] = base64.b64encode(body).decode()
+        for header in request["headers"]:
+            if header[0].lower() == "content-length":
+                header[1] = str(len(body))
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "destination-filtered.json"
+            path.write_text(json.dumps(scenario), encoding="utf-8")
+            with self.assertRaises(AssertionError):
+                replay_synthetic(path)
+
     def test_findmy_saved_token_recovery_matrix(self):
         paths = sorted(FIXTURES.glob("session-findmy-autorefresh-*.json"))
         self.assertEqual(len(paths), 5)

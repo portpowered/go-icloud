@@ -60,6 +60,8 @@ cursor. Save cursors privately only after handling the corresponding result.
 
 Album writes use `CreatePhotoAlbum`, `RenamePhotoAlbum`, `DeletePhotoAlbum` and
 `AddPhotoToAlbum`. Select album and photo IDs from current discovery results.
+`AddPhotoToAlbum` looks up the photo in the library; it need not already belong
+to the destination album.
 `SetPhotoFavorite` returns an updated photo snapshot; `DeletePhoto` performs
 a soft delete. Per-record rejection produces a typed provider error. In
 particular, Go surfaces a Photos mutation `CKErrorItem` instead of preserving
