@@ -1,0 +1,101 @@
+openapi: 3.0.3
+info:
+  title: iCloud HTTP boundary models
+  version: 0.1.0
+  description: Caller-owned HTTP headers and validated content locators at the public transport boundary.
+paths: {}
+components:
+  parameters:
+    ContentAccept:
+      name: Accept
+      in: header
+      required: false
+      description: Caller content negotiation; the SDK default is the declared wildcard primitive.
+      schema:
+        type: string
+        x-fixed-value-schemas:
+          '*/*': {$ref: '#/components/schemas/HTTPAnyMedia'}
+    SessionCookie:
+      name: Cookie
+      in: header
+      required: false
+      description: Optional caller or provider session cookies selected by the operation-local jar for this exact URL. Source PyiCloudSession inherits requests.Session cookie domain/path/secure selection; absent or nonmatching cookies emit no Cookie header, and an explicit caller Cookie header takes precedence.
+      schema: {$ref: '#/components/schemas/SessionCookieValue'}
+  schemas:
+    HTTPJSONMedia:
+      type: string
+      enum: ["application/json"]
+      x-enum-varnames: [HTTPJSONMediaApplicationJSON]
+      description: Canonical HTTP media primitive. Endpoint fixed header/body use requires this exact declared role; equal sibling literals are not ownership.
+    HTTPAnyMedia:
+      type: string
+      enum: ["*/*"]
+      x-enum-varnames: [HTTPAnyMediaWildcard]
+      description: Canonical HTTP media primitive. Endpoint fixed header/body use requires this exact declared role; equal sibling literals are not ownership.
+    HTTPPlainTextMedia:
+      type: string
+      enum: ["plain/text"]
+      x-enum-varnames: [HTTPPlainTextMediaPlainText]
+      description: Canonical HTTP media primitive. Endpoint fixed header/body use requires this exact declared role; equal sibling literals are not ownership.
+    HTTPTextJSONMedia:
+      type: string
+      enum: ["text/json"]
+      x-enum-varnames: [HTTPTextJSONMediaTextJSON]
+      description: Canonical HTTP media primitive. Endpoint fixed header/body use requires this exact declared role; equal sibling literals are not ownership.
+    HTTPTextPlainMedia:
+      type: string
+      enum: ["text/plain"]
+      x-enum-varnames: [HTTPTextPlainMediaTextPlain]
+      description: Canonical HTTP media primitive. Endpoint fixed header/body use requires this exact declared role; equal sibling literals are not ownership.
+    HTTPOctetStreamMedia:
+      type: string
+      enum: ["application/octet-stream"]
+      x-enum-varnames: [HTTPOctetStreamMediaApplicationOctetStream]
+      description: Canonical HTTP media primitive. Endpoint fixed header/body use requires this exact declared role; equal sibling literals are not ownership.
+    HTTPMultipartFormMedia:
+      type: string
+      enum: ["multipart/form-data"]
+      x-enum-varnames: [HTTPMultipartFormMediaMultipartFormData]
+      description: Canonical HTTP media primitive. Endpoint fixed header/body use requires this exact declared role; equal sibling literals are not ownership.
+    SessionCookieValue:
+      type: string
+      description: Serialized session cookie pairs originating from caller seeds or provider Set-Cookie responses. Preserve ordering, native quoting, and exact values; this declaration does not authorize SDK-invented credentials.
+
+    CallerContentURL:
+      type: string
+      format: uri
+      minLength: 1
+      description: Exact content locator supplied by a caller or decoded provider field. Before use, require HTTPS, a nonempty host, no userinfo and no fragment. Preserve escaped path and provider query. SDK-invented locators are not caller-owned.
+    ContentLocator:
+      type: object
+      required: [url]
+      properties:
+        url: {$ref: '#/components/schemas/CallerContentURL'}
+      additionalProperties: false
+      description: One exact content URL. The generated record preserves the boundary shape; operation binding and URI validation remain mandatory before sending.
+    CallerHeaderName:
+      type: string
+      description: Caller-supplied header name. The caller owns this extension key; SDK fixed header names use their generated protocol constants.
+    CallerHeaderValue:
+      type: string
+      description: Caller-supplied HTTP header value, preserved without normalization.
+    CallerHeaderValues:
+      type: array
+      items: {$ref: '#/components/schemas/CallerHeaderValue'}
+      description: Ordered caller-supplied values for one header name, including duplicates and empty values.
+    CallerHeader:
+      type: object
+      required: [name, values]
+      properties:
+        name: {$ref: '#/components/schemas/CallerHeaderName'}
+        values: {$ref: '#/components/schemas/CallerHeaderValues'}
+      additionalProperties: false
+      description: One caller-owned header and its ordered values.
+    CallerHeaderRecords:
+      type: array
+      items: {$ref: '#/components/schemas/CallerHeader'}
+      description: Ordered caller-owned header records; repeated names remain distinct before HTTP canonicalization.
+    CallerHeaderMap:
+      type: object
+      additionalProperties: {$ref: '#/components/schemas/CallerHeaderValues'}
+      description: Caller-owned extension names map to their ordered string values. Each key must originate from caller input; this open shape does not authorize SDK-invented fixed header names.

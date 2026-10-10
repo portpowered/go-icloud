@@ -1,0 +1,71 @@
+---
+title: Shared photo streams
+description: Discover shared albums and retrieve their photos.
+---
+
+Use the authenticated account context returned by login. Its `SharedPhotosServiceURL`
+contains the account's shared streams origin. Accounts without that service return
+an `Unavailable` client error.
+
+```go
+albums, err := client.ListSharedPhotoAlbums(ctx, icloud.ListSharedPhotoAlbumsRequest{
+    Auth: auth,
+})
+if err != nil {
+    return err
+}
+for _, album := range albums.Albums {
+    fmt.Println(album.ID, album.Name)
+}
+```
+
+Choose an album ID from that result. Album names are also accepted; identifiers
+remain unambiguous when albums share a name.
+
+```go
+photos, err := client.ListSharedPhotos(ctx, icloud.ListSharedPhotosRequest{
+    Auth: auth,
+    Album: albumID,
+})
+if err != nil {
+    return err
+}
+for _, shared := range photos.Photos {
+    fmt.Println(shared.Photo.ID, shared.Photo.Filename, shared.LikeCount)
+}
+```
+
+`CountSharedPhotos` reads the album's current count. `GetSharedPhoto` searches by
+photo ID and returns an explicit null when the photo is absent. `DownloadSharedPhoto`
+returns the selected rendition's bytes; its optional `Version` defaults to the
+original. An unavailable rendition has null content. An available empty file has
+non-null empty content.
+
+Each operation returns ordered `Responses` metadata. Apply returned cookie changes
+to the caller-owned credentials before later operations. Failures expose the failed
+response and metadata from earlier completed requests through `ClientError`.
+All calls accept cancellation through their context.
+
+Shared streams support these read operations. Their legacy API does not support
+album edits or uploads. CloudKit shared libraries use the regular Photos library
+selection APIs.
+
+To reproduce the Python library inventory, compose `ListPhotoLibraries` for
+CloudKit libraries with `ListSharedPhotoAlbums` for the optional legacy shared
+streams service. The Python `libraries["shared"]` entry represents this separate
+stream library; its albums are returned by `ListSharedPhotoAlbums`. Legacy streams
+have no Source sync operation, so use their enumeration methods to read them.
+
+The pinned Source's shared album `delete` returns false and `rename` returns None.
+Shared stream libraries have no `upload_file` method and shared albums have no
+`upload` method. These inert or absent methods do not define
+supported mutation routes and are excluded from the SDK's writable operations.
+
+The Source's `like_count` annotation does not validate provider values. The SDK
+keeps an integer count contract and returns `InvalidResponse` for null or noninteger
+counts. The `liked` property follows Python truthiness, including nonempty strings
+and empty collections. Missing required dimensions also return `InvalidResponse`.
+
+The wire reference describes [album discovery](/docs/openapi/unknown/SharedAlbums),
+[asset counting](/docs/openapi/unknown/SharedCount), and
+[asset pages](/docs/openapi/unknown/SharedAssets).

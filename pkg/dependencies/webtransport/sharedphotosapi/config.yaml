@@ -1,0 +1,14 @@
+package: sharedphotosapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/sharedphotosapi/client.gen.go
+output-options:
+  user-templates:
+    client.tmpl: api/templates/http-request-builders.tmpl
+    client-with-responses.tmpl: api/templates/http-response-parsers.tmpl
+  nullable-type: true
+import-mapping:
+  ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit
+  ./sharedphotos-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/sharedphotos
+  ./photos.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosapi

@@ -114,8 +114,121 @@
           ]
         ],
         "body": {
-          "encoding": "base64",
-          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJjcmVhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyLzAwMDAwMDAxLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMCIsICJyZWNvcmRUeXBlIjogIlJlbWluZGVyIiwgImZpZWxkcyI6IHsiQWxsRGF5IjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogMX0sICJDb21wbGV0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAwfSwgIkNvbXBsZXRpb25EYXRlIjogeyJ0eXBlIjogIlRJTUVTVEFNUCJ9LCAiQ3JlYXRpb25EYXRlIjogeyJ0eXBlIjogIlRJTUVTVEFNUCIsICJ2YWx1ZSI6IDE3MDAwMDAwMDAwMDB9LCAiRGVsZXRlZCI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDB9LCAiRmxhZ2dlZCI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDF9LCAiSW1wb3J0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAwfSwgIkxhc3RNb2RpZmllZERhdGUiOiB7InR5cGUiOiAiVElNRVNUQU1QIiwgInZhbHVlIjogMTcwMDAwMDAwMDAwMH0sICJMaXN0IjogeyJ0eXBlIjogIlJFRkVSRU5DRSIsICJ2YWx1ZSI6IHsicmVjb3JkTmFtZSI6ICJMaXN0L3N5bnRoZXRpYy1saXN0IiwgImFjdGlvbiI6ICJWQUxJREFURSJ9fSwgIk5vdGVzRG9jdW1lbnQiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogImVKempZQkFLNEdBUVlKRHlFbUtRRXVCaUFiR0JQREN0d1NnbHhzVUJaUDBIQW42Z0tKeXRKTU1seFNWd0pmdlVFK24ydElPOXBlOGZ4MHgwUFN6RXhNRUF4SXdBaFJrVXBnPT0ifSwgIlByaW9yaXR5IjogeyJ0eXBlIjogIklOVDY0IiwgInZhbHVlIjogNX0sICJSZXNvbHV0aW9uVG9rZW5NYXAiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIntcIm1hcFwiOntcImFsbERheVwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwMi0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn0sXCJ0aXRsZURvY3VtZW50XCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDAzLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifSxcIm5vdGVzRG9jdW1lbnRcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDQtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwicGFyZW50UmVtaW5kZXJcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDUtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwicHJpb3JpdHlcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDYtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwiaWNzRGlzcGxheU9yZGVyXCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDA3LTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifSxcImNyZWF0aW9uRGF0ZVwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwOC0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn0sXCJsaXN0XCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDA5LTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifSxcImZsYWdnZWRcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMEEtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwiY29tcGxldGVkXCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDBCLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifSxcImNvbXBsZXRpb25EYXRlXCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDBDLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifSxcImxhc3RNb2RpZmllZERhdGVcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMEQtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwicmVjdXJyZW5jZVJ1bGVJRHNcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMEUtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwiZHVlRGF0ZVwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwRi0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn0sXCJ0aW1lWm9uZVwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAxMC0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn19fSJ9LCAiVGl0bGVEb2N1bWVudCI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiZUp6allCQ3E0bUFRWUpBcUVSSUpyc3dyeVVndHlVeFdLTWtzeVVsVitEQi9Sb09VQUJjTFNCNm9Ba3hyTUlKRkdJRWlRbEpnV29OSlNveUxBeWozSHdqNGdlcmdiQ1VaTGlrdWdTdlpwNTVJdDZjZDdDMTkvemhtb3V0aElTWU9JU0JtMUFMU0FBSTdIdjQ9In0sICJEdWVEYXRlIjogeyJ0eXBlIjogIlRJTUVTVEFNUCIsICJ2YWx1ZSI6IDE3MDAwMTE4MDAwMDB9LCAiVGltZVpvbmUiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIlVUQyJ9LCAiUGFyZW50UmVtaW5kZXIiOiB7InR5cGUiOiAiUkVGRVJFTkNFIiwgInZhbHVlIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy1wYXJlbnQiLCAiYWN0aW9uIjogIlZBTElEQVRFIn19fSwgInBsdWdpbkZpZWxkcyI6IHt9LCAicGFyZW50IjogeyJyZWNvcmROYW1lIjogIkxpc3Qvc3ludGhldGljLWxpc3QifX19XSwgInpvbmVJRCI6IHsiem9uZU5hbWUiOiAiUmVtaW5kZXJzIiwgInpvbmVUeXBlIjogIlJFR1VMQVJfQ1VTVE9NX1pPTkUifX0="
+          "encoding": "json-pattern",
+          "value": {
+            "operations": [
+              {
+                "operationType": "create",
+                "record": {
+                  "recordName": "Reminder/00000001-0000-4000-8000-000000000000",
+                  "recordType": "Reminder",
+                  "fields": {
+                    "AllDay": {
+                      "type": "INT64",
+                      "value": 1
+                    },
+                    "Completed": {
+                      "type": "INT64",
+                      "value": 0
+                    },
+                    "CompletionDate": {
+                      "type": "TIMESTAMP"
+                    },
+                    "CreationDate": {
+                      "type": "TIMESTAMP",
+                      "value": 1700000000000
+                    },
+                    "Deleted": {
+                      "type": "INT64",
+                      "value": 0
+                    },
+                    "Flagged": {
+                      "type": "INT64",
+                      "value": 1
+                    },
+                    "Imported": {
+                      "type": "INT64",
+                      "value": 0
+                    },
+                    "LastModifiedDate": {
+                      "type": "TIMESTAMP",
+                      "value": 1700000000000
+                    },
+                    "List": {
+                      "type": "REFERENCE",
+                      "value": {
+                        "recordName": "List/synthetic-list",
+                        "action": "VALIDATE"
+                      }
+                    },
+                    "NotesDocument": {
+                      "type": "STRING",
+                      "value": "eJzjYBAK4GAQYJDyEmKQEuBiAbGBPDCtwSglxsUBZP0HAn6gKJytJMMlxSVwJfvUE+n2tIO9pe8fx0x0PSzExMEAxIwAhRkUpg=="
+                    },
+                    "Priority": {
+                      "type": "INT64",
+                      "value": 5
+                    },
+                    "ResolutionTokenMap": {
+                      "type": "STRING",
+                      "value": "{\"map\":{\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"icsDisplayOrder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"creationDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"list\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000C-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000D-0000-4000-8000-000000000000\"},\"recurrenceRuleIDs\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000E-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000F-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000010-0000-4000-8000-000000000000\"}}}"
+                    },
+                    "TitleDocument": {
+                      "type": "STRING",
+                      "value": "eJzjYBCq4mAQYJAqERIJrswryUgtyUxWKMksyUlV+DB/RoOUABcLSB6oAkxrMIJFGIEiQlJgWoNJSoyLAyj3Hwj4gergbCUZLikugSvZp55It6cd7C19/zhmouthISYOISBm1ALSAAI7Hv4="
+                    },
+                    "DueDate": {
+                      "type": "TIMESTAMP",
+                      "value": 1700011800000
+                    },
+                    "TimeZone": {
+                      "type": "STRING",
+                      "value": "UTC"
+                    },
+                    "ParentReminder": {
+                      "type": "REFERENCE",
+                      "value": {
+                        "recordName": "Reminder/synthetic-parent",
+                        "action": "VALIDATE"
+                      }
+                    }
+                  },
+                  "pluginFields": {},
+                  "parent": {
+                    "recordName": "List/synthetic-list"
+                  }
+                }
+              }
+            ],
+            "zoneID": {
+              "zoneName": "Reminders",
+              "zoneType": "REGULAR_CUSTOM_ZONE"
+            }
+          },
+          "matchers": [
+            {
+              "path": [
+                "operations",
+                0,
+                "record",
+                "fields",
+                "TitleDocument",
+                "value"
+              ],
+              "pattern": "base64-zlib-exact"
+            },
+            {
+              "path": [
+                "operations",
+                0,
+                "record",
+                "fields",
+                "NotesDocument",
+                "value"
+              ],
+              "pattern": "base64-zlib-exact"
+            }
+          ]
         }
       },
       "response": {

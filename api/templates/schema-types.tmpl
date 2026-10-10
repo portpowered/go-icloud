@@ -1,0 +1,28 @@
+{{/* Derived from oapi-codegen v2.8.0, Apache-2.0. Preserve referenced codecs and exact null-only schemas. */}}
+{{range .Types}}
+{{ .DocComment }}
+{{if .Schema.RefType -}}
+type {{.TypeName}} = {{.Schema.TypeDecl}}
+{{else if and .Schema.OAPISchema.Nullable (eq (len .Schema.OAPISchema.Enum) 1) (eq (index .Schema.OAPISchema.Enum 0) nil) -}}
+type {{.TypeName}} struct{}
+
+// MarshalJSON emits the schema's only permitted JSON value.
+func ({{.TypeName}}) MarshalJSON() ([]byte, error) {
+    return []byte("null"), nil
+}
+
+// UnmarshalJSON rejects every non-null value.
+func (*{{.TypeName}}) UnmarshalJSON(data []byte) error {
+    var decoded *struct{}
+    if err := json.Unmarshal(data, &decoded); err != nil {
+        return err
+    }
+    if decoded != nil {
+        return fmt.Errorf("expected null JSON value")
+    }
+    return nil
+}
+{{else -}}
+type {{.TypeName}} {{if .IsAlias }}={{end}} {{.Schema.TypeDecl}}
+{{end}}
+{{end}}

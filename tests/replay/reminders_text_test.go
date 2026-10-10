@@ -123,7 +123,7 @@ func checkReminderTextProvenance(t *testing.T, corpus reminderTextCorpus) {
 	t.Helper()
 
 	if corpus.Source.URL != "https://github.com/timlaing/pyicloud.git" ||
-		corpus.Source.Commit != "e2e44ab875d47dab4475096021da60030f26c35e" ||
+		corpus.Source.Commit != replayExpectedPinnedSourceCommit ||
 		corpus.Evidence != "synthetic; implementation-derived" {
 		t.Fatal("Reminders text corpus provenance changed")
 	}

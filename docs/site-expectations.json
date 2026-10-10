@@ -1,0 +1,375 @@
+{
+  "/go-icloud": [
+    "go-icloud"
+  ],
+  "/go-icloud/docs": [
+    "go-icloud",
+    "Browse the API reference"
+  ],
+  "/go-icloud/docs/asyncapi/unknown/publish_v2_connection": [
+    "ClientMessage",
+    "connection",
+    "application/x-protobuf",
+    "SEND",
+    "Source schema:",
+    "bridge.proto",
+    "application/vnd.google.protobuf;version=2",
+    "optional ConnectionRequest connection = 1"
+  ],
+  "/go-icloud/docs/asyncapi/unknown/subscribe_v2_connection": [
+    "ServerMessage",
+    "connection",
+    "application/x-protobuf",
+    "RECEIVE",
+    "Source schema:",
+    "bridge.proto",
+    "application/vnd.google.protobuf;version=2",
+    "optional bytes push_token_base64 = 1"
+  ],
+  "/go-icloud/docs/guides": [
+    "Use go-icloud",
+    "caller-owned"
+  ],
+  "/go-icloud/docs/guides/account": [
+    "Read account information",
+    "GetAccountDevices"
+  ],
+  "/go-icloud/docs/guides/authentication": [
+    "Authentication and credential ownership",
+    "Authenticate",
+    "NativeAuthState",
+    "ResumeSession",
+    "OpenNativeBridgeSession",
+    "SecurityKeyAuthenticator"
+  ],
+  "/go-icloud/docs/guides/cli": [
+    "Standalone CLI",
+    "go install",
+    "NativeAuthState",
+    "photo-upload-send",
+    "photos-recently-added-visit",
+    "reminder-hashtag-create"
+  ],
+  "/go-icloud/docs/guides/configuration": [
+    "Configuration and errors",
+    "ClientError"
+  ],
+  "/go-icloud/docs/guides/drive": [
+    "Navigate and change Drive",
+    "OpenDriveSession"
+  ],
+  "/go-icloud/docs/guides/findmy": [
+    "Find My devices",
+    "OpenFindMySession",
+    "Close"
+  ],
+  "/go-icloud/docs/guides/photos": [
+    "Photos libraries, uploads and synchronization",
+    "ListPhotoLibraries",
+    "UploadPhoto",
+    "VisitPhotoAssets",
+    "UnsupportedDateFormatError"
+  ],
+  "/go-icloud/docs/guides/reminders": [
+    "Read and change Reminders",
+    "CreateReminder",
+    "CreateReminderHashtag",
+    "AddReminderLocationTrigger",
+    "revision"
+  ],
+  "/go-icloud/docs/guides/shared-photos": [
+    "Shared photo streams",
+    "ListSharedPhotoAlbums",
+    "DownloadSharedPhoto"
+  ],
+  "/go-icloud/docs/openapi/unknown/AcceptAuthTerms": [
+    "AcceptAuthTerms"
+  ],
+  "/go-icloud/docs/openapi/unknown/AuthBridgeStep0": [
+    "AuthBridgeStep0"
+  ],
+  "/go-icloud/docs/openapi/unknown/AuthBridgeStep2": [
+    "AuthBridgeStep2"
+  ],
+  "/go-icloud/docs/openapi/unknown/AuthBridgeStep4": [
+    "AuthBridgeStep4"
+  ],
+  "/go-icloud/docs/openapi/unknown/AuthBridgeStep6": [
+    "AuthBridgeStep6"
+  ],
+  "/go-icloud/docs/openapi/unknown/AuthorizeAuthSignIn": [
+    "AuthorizeAuthSignIn"
+  ],
+  "/go-icloud/docs/openapi/unknown/CompleteAuthSRP": [
+    "CompleteAuthSRP",
+    "AuthSRPCompleteRequest",
+    "$.m1",
+    "$.m2"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveCreateFolders": [
+    "Create folders"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveDeleteItems": [
+    "Delete selected items"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveDownloadContent": [
+    "Download content from a provider-issued URL"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveGetDownloadTokens": [
+    "Locate downloadable file content"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveGetUploadDestination": [
+    "Prepare a document upload"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveListAppLibraries": [
+    "List Drive application libraries"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveMoveItems": [
+    "Move selected items"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveRecoverItems": [
+    "Restore selected trash items"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveRegisterDocument": [
+    "Register uploaded document content"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveRenameItems": [
+    "Rename selected items"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveRetrieveNodes": [
+    "Read Drive node details"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveTrashItems": [
+    "Move selected items to trash"
+  ],
+  "/go-icloud/docs/openapi/unknown/DriveUploadContent": [
+    "Upload file content to a provider-issued URL"
+  ],
+  "/go-icloud/docs/openapi/unknown/EnableAuthPCSConsent": [
+    "EnableAuthPCSConsent"
+  ],
+  "/go-icloud/docs/openapi/unknown/FindMyEraseDevice": [
+    "Request remote erase of the selected device"
+  ],
+  "/go-icloud/docs/openapi/unknown/FindMyInitialize": [
+    "Initialize device discovery"
+  ],
+  "/go-icloud/docs/openapi/unknown/FindMyLostDevice": [
+    "Enable lost mode on the selected device"
+  ],
+  "/go-icloud/docs/openapi/unknown/FindMyObtainEraseToken": [
+    "Obtain authorization for a remote erase"
+  ],
+  "/go-icloud/docs/openapi/unknown/FindMyPlaySound": [
+    "Play a sound on the selected device"
+  ],
+  "/go-icloud/docs/openapi/unknown/FindMyRefreshDevices": [
+    "Refresh devices and locations"
+  ],
+  "/go-icloud/docs/openapi/unknown/FindMySendMessage": [
+    "Display a message on the selected device"
+  ],
+  "/go-icloud/docs/openapi/unknown/GetAccountPlanSummary": [
+    "Read the account subscription summary"
+  ],
+  "/go-icloud/docs/openapi/unknown/GetAccountStorage": [
+    "Read storage usage and quota information"
+  ],
+  "/go-icloud/docs/openapi/unknown/GetAuthChallenge": [
+    "GetAuthChallenge",
+    "AuthChallenge",
+    "AuthFailure",
+    "$.trustedPhoneNumber",
+    "$.fsaChallenge",
+    "$.sourceAppId",
+    "anyOf"
+  ],
+  "/go-icloud/docs/openapi/unknown/GetAuthTerms": [
+    "GetAuthTerms"
+  ],
+  "/go-icloud/docs/openapi/unknown/GetAuthWebAccessState": [
+    "GetAuthWebAccessState"
+  ],
+  "/go-icloud/docs/openapi/unknown/GetFamilyMemberPhoto": [
+    "Download a family member photo"
+  ],
+  "/go-icloud/docs/openapi/unknown/InitAuthSRP": [
+    "InitAuthSRP",
+    "AuthSRPInitRequest",
+    "s2k",
+    "s2k_fo"
+  ],
+  "/go-icloud/docs/openapi/unknown/ListAccountDevices": [
+    "List devices associated with an account",
+    "List devices associated",
+    "clientId"
+  ],
+  "/go-icloud/docs/openapi/unknown/ListAccountFamily": [
+    "List family members"
+  ],
+  "/go-icloud/docs/openapi/unknown/ListAuthTrustedDevices": [
+    "ListAuthTrustedDevices"
+  ],
+  "/go-icloud/docs/openapi/unknown/LoginAuthToken": [
+    "Refresh a saved web token"
+  ],
+  "/go-icloud/docs/openapi/unknown/LogoutAuthSession": [
+    "LogoutAuthSession",
+    "Content-Type: text/plain;charset=UTF-8",
+    "--data-raw",
+    "\"trustBrowser\": true",
+    "\"allBrowsers\": true"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosCountAlbums": [
+    "Count photos in an album"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosCountSharedAlbums": [
+    "Count photos in an album"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosCreateUploadUrl": [
+    "Reserve URLs for photo bytes"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosDatabaseChanges": [
+    "Read changed photo libraries"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosDownloadContent": [
+    "Download an available photo or video rendition"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosHydrateUploadedAsset": [
+    "Read the uploaded asset after CloudKit indexing"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosHydrateUploadedAssetShared": [
+    "Read the uploaded asset after CloudKit indexing"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosListPrivateZones": [
+    "Discover private photo libraries"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosListSharedZones": [
+    "Discover shared photo libraries"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosLookupRecords": [
+    "Look up photo records"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosModifyRecords": [
+    "Update photo library records",
+    "PhotoAlbumCreationRequest",
+    "PhotoAlbumRenameRequest",
+    "PhotoAlbumDeletionRequest",
+    "PhotoAlbumRelationRequest",
+    "PhotoFavoriteRequest",
+    "PhotoAssetDeletionRequest",
+    "albumNameEnc",
+    "recordChangeTag"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosPutAsset": [
+    "Register uploaded bytes as photo assets"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosQueryRecords": [
+    "Read photo library indexing state",
+    "query",
+    "recordType",
+    "CKQueryResponse",
+    "CKRecord",
+    "CKTombstoneRecord",
+    "CKErrorItem",
+    "$.serverErrorCode",
+    "$.reason",
+    "anyOf[2]"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosQuerySharedRecords": [
+    "Read shared photo library records"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosSendUploadBytes": [
+    "Store raw photo bytes at the reserved HTTPS URL"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosSharedDatabaseChanges": [
+    "Read changed photo libraries"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosSharedLookupRecords": [
+    "Look up photo records"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosSharedModifyRecords": [
+    "Update photo library records"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosSharedZoneChanges": [
+    "Read photo library changes"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosUploadStatus": [
+    "Read photo ingest progress",
+    "PhotosUploadStatusEntries",
+    "PhotosSessionErrorResponse",
+    "$.progress",
+    "$.errorCode",
+    "429"
+  ],
+  "/go-icloud/docs/openapi/unknown/PhotosZoneChanges": [
+    "Read photo library changes"
+  ],
+  "/go-icloud/docs/openapi/unknown/RemindersDownloadAsset": [
+    "Download provider-issued reminder membership asset bytes"
+  ],
+  "/go-icloud/docs/openapi/unknown/RemindersLegacyStartup": [
+    "Read legacy reminder startup"
+  ],
+  "/go-icloud/docs/openapi/unknown/RemindersListZones": [
+    "Discover available reminder zones"
+  ],
+  "/go-icloud/docs/openapi/unknown/RemindersLookupRecords": [
+    "Fetch named reminder records"
+  ],
+  "/go-icloud/docs/openapi/unknown/RemindersModifyRecords": [
+    "Create, update or delete reminder records",
+    "operations",
+    "recordChangeTag",
+    "TitleDocument",
+    "Deleted"
+  ],
+  "/go-icloud/docs/openapi/unknown/RemindersQueryRecords": [
+    "Query reminder records and continuation pages"
+  ],
+  "/go-icloud/docs/openapi/unknown/RemindersZoneChanges": [
+    "Fetch changed reminder records for a zone"
+  ],
+  "/go-icloud/docs/openapi/unknown/RequestAuthPCS": [
+    "RequestAuthPCS"
+  ],
+  "/go-icloud/docs/openapi/unknown/RequestAuthSMS": [
+    "RequestAuthSMS"
+  ],
+  "/go-icloud/docs/openapi/unknown/SendAuthVerificationCode": [
+    "SendAuthVerificationCode"
+  ],
+  "/go-icloud/docs/openapi/unknown/SharedAlbums": [
+    "Read shared photo albums"
+  ],
+  "/go-icloud/docs/openapi/unknown/SharedAssets": [
+    "Read shared photo assets"
+  ],
+  "/go-icloud/docs/openapi/unknown/SharedCount": [
+    "Read shared photo count"
+  ],
+  "/go-icloud/docs/openapi/unknown/TrustAuthSession": [
+    "TrustAuthSession"
+  ],
+  "/go-icloud/docs/openapi/unknown/upgradeBridge": [
+    "Upgrade Bridge"
+  ],
+  "/go-icloud/docs/openapi/unknown/ValidateAuthBridgeCode": [
+    "ValidateAuthBridgeCode"
+  ],
+  "/go-icloud/docs/openapi/unknown/ValidateAuthSession": [
+    "Validate saved session"
+  ],
+  "/go-icloud/docs/openapi/unknown/ValidateAuthVerificationCode": [
+    "ValidateAuthVerificationCode"
+  ],
+  "/go-icloud/docs/openapi/unknown/VerifyAuthSecurityKey": [
+    "VerifyAuthSecurityKey"
+  ],
+  "/go-icloud/docs/openapi/unknown/VerifyAuthSMS": [
+    "VerifyAuthSMS"
+  ],
+  "/go-icloud/docs/openapi/unknown/VerifyAuthTrustedCode": [
+    "VerifyAuthTrustedCode"
+  ]
+}

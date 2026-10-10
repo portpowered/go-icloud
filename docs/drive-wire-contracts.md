@@ -1,5 +1,10 @@
 # Drive wire contracts
 
+Contributor contract history: measured counts and remaining-work statements below
+refer to their individual milestones. Current acceptance is maintained in
+[completion matrix](completion-matrix.md); customer usage belongs in MDX guides.
+
+
 The pinned reference's Drive service uses eleven fixed or zone-parameterized
 operations for node details, app libraries, folder creation, rename, move, trash,
 recovery, deletion, download tokens, upload destinations and document registration.
@@ -71,7 +76,11 @@ pinned Source arithmetic instead, including its negative-minute offset bug
 (`09:34:05Z` in that example). Full node replays bind that distinction; callers
 can use the raw timestamp for standard UTC conversion (SCHEMA-09, LIB-05).
 
-## Remaining work
+## Historical implementation milestones
+
+The following receipts retain their milestone-specific status and totals; they
+do not enumerate current implementation gaps. See the
+[completion matrix](completion-matrix.md) for the current work list.
 
 The public SDK now exposes `GetDriveNode` and `ListDriveLibraries`. Nine existing
 portable scenarios execute the public methods and compare the full semantic

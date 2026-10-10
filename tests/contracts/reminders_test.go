@@ -63,7 +63,7 @@ func TestPortableRemindersWireContracts(t *testing.T) {
 
 	got := remindersContractInventory{Scenarios: len(paths), Pairs: pairs, Operations: len(operations), Invalid: invalid}
 
-	want := remindersContractInventory{Scenarios: 357, Pairs: 423, Operations: 7, Invalid: 51}
+	want := remindersContractInventory{Scenarios: 366, Pairs: 432, Operations: 7, Invalid: 51}
 	if got != want {
 		t.Fatalf("Reminders contract inventory changed: %+v", got)
 	}
@@ -130,16 +130,16 @@ func bindRemindersOperation(document *openapi3.T, request replay.Request,
 
 func remindersRequestTarget(operation string) any {
 	switch operation {
-	case "RemindersLookupRecords":
+	case remindersLookupOperation:
 		return new(cloudkit.CKLookupRequest)
-	case "RemindersQueryRecords":
-		return new(cloudkit.CKQueryRequest)
-	case "RemindersModifyRecords":
+	case remindersQueryOperation:
+		return new(cloudkit.RemindersReadQueryRequest)
+	case remindersModifyOperation:
 		return new(cloudkit.CKModifyRequest)
-	case "RemindersZoneChanges":
+	case remindersChangesOperation:
 		return new(cloudkit.CKZoneChangesRequest)
-	case "RemindersListZones":
-		return new(cloudkit.CKEmptyRequest)
+	case remindersZonesOperation:
+		return new(cloudkit.ReminderZoneListRequest)
 	default:
 		panic("unknown Reminders request model")
 	}
@@ -147,15 +147,15 @@ func remindersRequestTarget(operation string) any {
 
 func remindersReplyTarget(operation string) any {
 	switch operation {
-	case "RemindersLookupRecords":
+	case remindersLookupOperation:
 		return new(cloudkit.CKLookupResponse)
-	case "RemindersQueryRecords":
+	case remindersQueryOperation:
 		return new(cloudkit.CKQueryResponse)
-	case "RemindersModifyRecords":
+	case remindersModifyOperation:
 		return new(cloudkit.CKModifyResponse)
-	case "RemindersZoneChanges":
+	case remindersChangesOperation:
 		return new(cloudkit.CKZoneChangesResponse)
-	case "RemindersListZones":
+	case remindersZonesOperation:
 		return new(cloudkit.CKZoneListResponse)
 	default:
 		panic("unknown Reminders reply model")
@@ -168,8 +168,8 @@ func TestRemindersGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: cloudKitModelsPath, Config: "../../pkg/dependencymodels/cloudkit/config.yaml",
 			Output: "../../pkg/dependencymodels/cloudkit/models.gen.go"},
-		{Schema: remindersSchemaPath, Config: "../../internal/remindersapi/config.yaml",
-			Output: "../../internal/remindersapi/client.gen.go"},
+		{Schema: remindersSchemaPath, Config: "../../pkg/dependencies/webtransport/remindersapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/remindersapi/client.gen.go"},
 	} {
 		t.Run(filepath.Base(artifact.Output), func(t *testing.T) { t.Parallel(); verifyGeneration(t, artifact) })
 	}
@@ -196,7 +196,7 @@ func TestRemindersBindingsRejectUnknownPostRoutes(t *testing.T) {
 	document := loadDriveDocument(t, remindersSchemaPath)
 	request := new(replay.Request)
 	request.Method = http.MethodPost
-	request.Path = "/unknown"
+	request.Path = unknownContractPath
 
 	_, err := bindRemindersOperation(document, *request, nil)
 	if !errors.Is(err, errRemindersBinding) {
@@ -319,7 +319,9 @@ func TestRemindersAssetBindingRejectsUnissuedRequests(t *testing.T) {
 
 	document := loadDriveDocument(t, remindersSchemaPath)
 
-	for _, mutation := range []string{"asset-origin", mutationPath, "asset-query", "orphan", mutationMethod} {
+	for _, mutation := range []string{
+		reminderAssetOriginControl, mutationPath, reminderAssetQueryControl, "orphan", mutationMethod,
+	} {
 		t.Run(mutation, func(t *testing.T) {
 			t.Parallel()
 			exchanges := accountExchanges(t, "../replay/fixtures/synthetic/http/reminders-lists-asset-membership-1.json")
@@ -327,11 +329,11 @@ func TestRemindersAssetBindingRejectsUnissuedRequests(t *testing.T) {
 			preceding := exchanges[:1]
 
 			switch mutation {
-			case "asset-origin":
-				request.Origin = "https://unissued.example.invalid"
+			case reminderAssetOriginControl:
+				request.Origin = unissuedContractOrigin
 			case mutationPath:
 				request.Path = "/unissued.json"
-			case "asset-query":
+			case reminderAssetQueryControl:
 				request.Query = []replay.Pair{{"unissued", "value"}}
 			case "orphan":
 				preceding = nil
@@ -365,7 +367,7 @@ func TestCloudKitModelExamplesValidate(t *testing.T) {
 		count++
 	}
 
-	if count != 10 {
+	if count != 24 {
 		t.Fatalf("CloudKit example inventory changed: %d", count)
 	}
 }
@@ -412,7 +414,9 @@ func validateRemindersExchange(t *testing.T, operation *openapi3.Operation, exch
 func TestCloudKitNormalRecordsAreExplicitResponseMembers(t *testing.T) {
 	t.Parallel()
 	document := loadDriveDocument(t, cloudKitModelsPath)
-	value := map[string]any{"recordName": "Reminder/synthetic", "recordType": "Reminder", "fields": map[string]any{}}
+	value := map[string]any{
+		"recordName": "Reminder/synthetic", "recordType": reminderRecordTypeName, "fields": map[string]any{},
+	}
 
 	for _, name := range []string{"CKLookupResponse", "CKModifyResponse", "CKQueryResponse", "CKZoneChangesZone"} {
 		item := document.Components.Schemas[name].Value.Properties["records"].Value.Items.Value

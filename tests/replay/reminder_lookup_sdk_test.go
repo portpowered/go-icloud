@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
@@ -28,7 +27,7 @@ func TestReminderLookupSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 19 {
+	if len(paths) != 24 {
 		t.Fatal("reminder lookup scenario inventory changed")
 	}
 
@@ -108,7 +107,7 @@ func checkReminderLookupFailure(t *testing.T, scenario reminderLookupScenario,
 		kind = icloud.Unavailable
 	}
 
-	if expected["type"] == "LookupError" {
+	if expected["type"] == replayLiteralLookupError {
 		kind = icloud.NotFound
 	}
 
@@ -136,38 +135,7 @@ func checkReminderProjection(t *testing.T, actual icloud.Reminder, expected json
 		t.Fatal(err)
 	}
 
-	for source, target := range map[string]string{
-		"list_id": "listID", "desc": "description", "completed_date": "completedDate",
-		"due_date": "dueDate", "start_date": "startDate", "all_day": "allDay", "time_zone": "timeZone",
-		"alarm_ids": "alarmIDs", "hashtag_ids": "hashtagIDs", "attachment_ids": "attachmentIDs",
-		"recurrence_rule_ids": "recurrenceRuleIDs", "parent_reminder_id": "parentReminderID",
-		"record_change_tag": "recordChangeTag"} {
-		value[target] = value[source]
-		delete(value, source)
-	}
-	// Source emits six fractional digits; compare the same instants in Go's RFC3339 form.
-	for _, name := range []string{"completedDate", "dueDate", "startDate", "created", "modified"} {
-		if string(value[name]) == "null" {
-			continue
-		}
-
-		var text string
-
-		err = json.Unmarshal(value[name], &text)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		instant, parseErr := time.Parse(time.RFC3339Nano, text)
-		if parseErr != nil {
-			t.Fatal(parseErr)
-		}
-
-		value[name], err = json.Marshal(instant)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
+	value = sourceReminderFields(t, value)
 
 	encoded, err := json.Marshal(value)
 	if err != nil {

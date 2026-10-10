@@ -15,7 +15,7 @@ func TestRecentlyAddedPhotosWireContracts(t *testing.T) {
 	document := loadDriveDocument(t, "../../api/external/photos.openapi.yaml")
 
 	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/photos-recently-added-*.json")
-	if err != nil || len(paths) != 21 {
+	if err != nil || len(paths) != 31 {
 		t.Fatal("recently added contract inventory changed", err)
 	}
 
@@ -56,7 +56,7 @@ func recentlyAddedInvalidSharedReply(path string) bool {
 	switch filepath.Base(path) {
 	case "photos-recently-added-shared-invalid-zone.json", "photos-recently-added-shared-null-zones.json",
 		"photos-recently-added-shared-object-zones.json", "photos-recently-added-shared-array-envelope.json",
-		"photos-recently-added-shared-invalid-json.json":
+		photoRecentInvalidJSONFixture:
 		return true
 	default:
 		return false
@@ -70,7 +70,7 @@ func validateRecentlyAddedInvalidSharedReply(t *testing.T, operation *openapi3.O
 
 	value, err := driveJSONValue(response.Body)
 
-	if filepath.Base(path) == "photos-recently-added-shared-invalid-json.json" {
+	if filepath.Base(path) == photoRecentInvalidJSONFixture {
 		var syntax *json.SyntaxError
 		if !errors.As(err, &syntax) {
 			t.Fatal("invalid shared reply lost JSON syntax failure", err)

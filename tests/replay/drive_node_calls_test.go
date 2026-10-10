@@ -22,11 +22,11 @@ func (runner *driveNodeRunner) call(t *testing.T, call driveNodeCall) (any, erro
 
 		result, err := runner.node.Children(t.Context(), icloud.DriveChildrenRequest{Force: force})
 		if err != nil {
-			return nil, fmt.Errorf("node replay: %w", err)
+			return nil, fmt.Errorf(replayNodeErrorFormat, err)
 		}
 
 		return portableDriveChildren(t, result.Entries), nil
-	case "get", "getitem", "service_getitem":
+	case "get", "getitem", replayLiteralServiceGetitem:
 		return runner.lookup(t, call)
 	case "metadata":
 		return portableDriveSnapshot(t, runner.node), nil
@@ -53,7 +53,7 @@ func (runner *driveNodeRunner) location(t *testing.T, operation string) (any, er
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("node replay: %w", err)
+		return nil, fmt.Errorf(replayNodeErrorFormat, err)
 	}
 
 	runner.node = entry
@@ -70,14 +70,14 @@ func (runner *driveNodeRunner) lookup(t *testing.T, call driveNodeCall) (any, er
 		err  error
 	)
 
-	if call.Operation == "service_getitem" {
+	if call.Operation == replayLiteralServiceGetitem {
 		node, err = runner.session.Lookup(t.Context(), request)
 	} else {
 		node, err = runner.node.Lookup(t.Context(), request)
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("node replay: %w", err)
+		return nil, fmt.Errorf(replayNodeErrorFormat, err)
 	}
 
 	runner.node = node
@@ -89,12 +89,12 @@ func (runner *driveNodeRunner) endpoint(t *testing.T, call driveNodeCall) (any, 
 	t.Helper()
 
 	switch call.Operation {
-	case "dir", "service_dir":
+	case "dir", replayLiteralServiceDir:
 		return runner.directory(t, call.Operation)
 	case "open":
 		value, err := runner.node.Download(t.Context(), icloud.DriveEntryRequest{})
 		if err != nil {
-			return nil, fmt.Errorf("node replay: %w", err)
+			return nil, fmt.Errorf(replayNodeErrorFormat, err)
 		}
 
 		return portableDriveDownloaded(t, value), nil
@@ -104,7 +104,7 @@ func (runner *driveNodeRunner) endpoint(t *testing.T, call driveNodeCall) (any, 
 		value, err := runner.node.CreateFolder(t.Context(), icloud.DriveFolderRequest{
 			Name: driveStringInput(t, call.Inputs, 0)})
 		if err != nil {
-			return nil, fmt.Errorf("node replay: %w", err)
+			return nil, fmt.Errorf(replayNodeErrorFormat, err)
 		}
 
 		fields := make(map[string]any, len(value.AdditionalMetadata)+1)
@@ -130,14 +130,14 @@ func (runner *driveNodeRunner) directory(t *testing.T, operation string) (any, e
 		err   error
 	)
 
-	if operation == "service_dir" {
+	if operation == replayLiteralServiceDir {
 		value, err = runner.session.Directory(t.Context(), icloud.DriveEntryRequest{})
 	} else {
 		value, err = runner.node.Directory(t.Context(), icloud.DriveEntryRequest{})
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("node replay: %w", err)
+		return nil, fmt.Errorf(replayNodeErrorFormat, err)
 	}
 
 	return value.Names, nil
@@ -167,7 +167,7 @@ func (runner *driveNodeRunner) mutate(t *testing.T, call driveNodeCall) (any, er
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("node replay: %w", err)
+		return nil, fmt.Errorf(replayNodeErrorFormat, err)
 	}
 
 	return portableDriveChanged(t, value), nil
@@ -209,14 +209,14 @@ func (runner *driveNodeRunner) upload(t *testing.T, call driveNodeCall) (any, er
 		params["token"] = token
 	}
 
-	state := map[string]any{"params": params, "file_position": position}
+	state := map[string]any{"params": params, replayLiteralFilePosition: position}
 
 	if err != nil {
 		if len(scenario.ErrorState) != 0 {
 			checkSDKValue(t, state, scenario.ErrorState)
 		}
 
-		return nil, fmt.Errorf("node replay: %w", err)
+		return nil, fmt.Errorf(replayNodeErrorFormat, err)
 	}
 
 	start := runner.traffic.count - 3

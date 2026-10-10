@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: Trusted device bridge protocol models
+  version: 0.1.0
+paths: {}
+components:
+  schemas:
+    BridgeProtocolString:
+      type: string
+      enum: ['0103', '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', websocket.push.apple.com, websocket.sandbox.push.apple.com, 'wss://%s/v2/%s', com.apple.idms, prod, sandbox, boot_args, script, class, _W, _, '%x-%x-%x-%x-%x-%d']
+      x-enum-varnames: [SignaturePrefixHex, WebSocketGUID, ProductionHost, SandboxHost, SocketURLTemplate, DefaultTopic, ProductionEnvironment, SandboxEnvironment, BootScriptClass, BootScriptTag, BootClassAttribute, LegacyTransactionSuffix, ProofSeparator, SessionIdentifierTemplate]
+    BridgeUUIDInteger:
+      type: integer
+      enum: [6, 8, 15, 64, 63, 128, 4, 10, 2]
+      x-enum-varnames: [UUIDVersionIndex, UUIDVariantIndex, UUIDVersionMask, UUIDVersionValue, UUIDVariantMask, UUIDVariantValue, UUIDGroup1End, UUIDGroup4End, CoordinateParts]
+    BridgeProofPartCount:
+      type: integer
+      enum: [2]
+      x-enum-varnames: [ProofPartCount]
+    BridgePushErrorCode:
+      type: integer
+      enum: [0]
+      x-enum-varnames: [BridgePushErrorSuccess]
+    BridgeBootstrapEnvelope:
+      type: object
+      required: [direct]
+      additionalProperties: true
+      properties:
+        direct:
+          $ref: '#/components/schemas/BridgeBootstrapDirect'
+          x-go-type: '*BridgeBootstrapDirect'
+    BridgeBootstrapDirect:
+      type: object
+      additionalProperties: true
+      properties:
+        authInitialRoute: {type: string}
+        hasTrustedDevices: {type: boolean}
+        twoSV: {$ref: '#/components/schemas/BridgeBootstrapSecondFactor'}
+    BridgeBootstrapSecondFactor:
+      type: object
+      additionalProperties: true
+      properties:
+        authFactors:
+          type: array
+          items: {type: string}
+        sourceAppId:
+          oneOf:
+            - {type: string}
+            - {type: integer}
+        bridgeInitiateData: {$ref: '#/components/schemas/BridgeInitiateData'}
+        phoneNumberVerification: {$ref: '#/components/schemas/BridgePhoneNumberVerification'}
+    BridgeInitiateData:
+      type: object
+      additionalProperties: true
+      properties:
+        webSocketUrl: {type: string}
+        apnsEnvironment: {type: string}
+        apnsTopic: {type: string}
+        phoneNumberVerification: {$ref: '#/components/schemas/BridgePhoneNumberVerification'}
+    BridgePhoneNumberVerification:
+      type: object
+      additionalProperties: true
+      properties:
+        trustedPhoneNumber: {$ref: '#/components/schemas/BridgeTrustedPhoneNumber'}
+        trustedPhoneNumbers:
+          type: array
+          items: {$ref: '#/components/schemas/BridgeTrustedPhoneNumber'}
+        preferredPhoneNumberId: {type: integer}
+    BridgeTrustedPhoneNumber:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          oneOf:
+            - {type: integer}
+            - {type: string}
+        numberWithDialCode: {type: string}
+        nonFTEU: {type: boolean}
+        obfuscatedNumber: {type: string}
+        pushMode: {type: string}
+    BridgePushPayload:
+      type: object
+      additionalProperties: true
+      properties:
+        sessionUUID: {type: string, minLength: 1, pattern: '\S'}
+        flowid: {type: string, minLength: 1, pattern: '\S'}
+        nextStep:
+          oneOf:
+            - {type: string, minLength: 1, pattern: '\S'}
+            - {type: integer}
+        ruiURLKey: {type: string, nullable: true}
+        txnid: {type: string, minLength: 1, pattern: '\S'}
+        salt: {type: string, minLength: 1, pattern: '\S'}
+        mid: {type: string, minLength: 1, pattern: '\S'}
+        idmsdata: {type: string, minLength: 1, pattern: '\S'}
+        akdata: {$ref: '#/components/schemas/BridgeOpaqueData'}
+        data: {type: string, minLength: 1, pattern: '\S'}
+        encryptedCode: {type: string, minLength: 1, pattern: '\S'}
+        ec: {type: integer}
+      anyOf:
+        - required: [sessionUUID]
+        - required: [flowid]
+    BridgeOpaqueData:
+      nullable: true
+      oneOf:
+        - {type: object, additionalProperties: true}
+        - {type: array, items: {}}
+        - {type: string}
+        - {type: boolean}
+        - {type: number}
+    BridgeStep:
+      type: integer
+      enum: [0, 2, 4, 6]
+      x-enum-varnames: [BootstrapStep, ProverShareStep, ProverConfirmationStep, CompletionStep]
+    BridgeExchange:
+      type: object
+      additionalProperties: false
+      required: [sessionUUID, ptkn, nextStep]
+      properties:
+        sessionUUID: {type: string}
+        ptkn: {type: string}
+        nextStep: {$ref: '#/components/schemas/BridgeStep'}
+        data: {type: string}
+        idmsdata: {type: string}
+        akdata:
+          $ref: '#/components/schemas/BridgeExchangeAkdata'
+          x-go-type-skip-optional-pointer: true
+    BridgeExchangeAkdata:
+      description: Uninterpreted provider JSON supplied to the native bridge exchange.
+      nullable: true
+    BridgeCompletionData:
+      type: string
+      enum: [ZG9uZQ==]
+      x-enum-varnames: [DoneDataBase64]

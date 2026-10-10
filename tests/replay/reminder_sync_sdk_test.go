@@ -107,7 +107,7 @@ func checkReminderSyncFailure(t *testing.T, scenario accountScenario,
 		t.Fatal(decodeErr)
 	}
 
-	if expected["message"] == "Changes response validation failed" {
+	if expected["message"] == replayExpectedChangesResponseValidationFailed {
 		kind = icloud.InvalidResponse
 	}
 

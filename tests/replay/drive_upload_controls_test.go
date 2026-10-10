@@ -67,7 +67,7 @@ func checkSDKUploadShapeFailure(t *testing.T, sample uploadShapeCase) {
 
 	if result != nil || !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse ||
 		failure.StatusCode() != 200 || string(failure.ResponseBody()) != sample.Body ||
-		len(failure.PriorResponses()) != sample.Stage || failure.UploadToken() != "synthetic-upload" {
+		len(failure.PriorResponses()) != sample.Stage || failure.UploadToken() != replayExpectedSyntheticUpload {
 		t.Fatalf("incomplete provider reply reached another write or lost response evidence: %v", err)
 	}
 
@@ -83,7 +83,7 @@ func uploadShapeTransport(t *testing.T, sample uploadShapeCase) (driveUploadScen
 		accountScenario: readAccountScenario(t, "fixtures/synthetic/http/drive-upload-observed.json"), Inputs: nil,
 	}, Keywords: nil, Entropy: uploadEntropy{Seconds: 1700000000}, ErrorState: nil}
 	// Keep the control's caller input identical to the portable positive case.
-	input, err := json.Marshal(uploadFileInput{Name: "synthetic.txt",
+	input, err := json.Marshal(uploadFileInput{Name: replayLiteralSyntheticTxt,
 		Body: "AHN5bnRoZXRpYyB1cGxvYWT/", Position: 0})
 	if err != nil {
 		t.Fatal(err)

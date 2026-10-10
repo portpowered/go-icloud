@@ -7,14 +7,14 @@ import (
 
 func TestReminderSnapshotCommands(t *testing.T) {
 	t.Parallel()
-	testReminderCLIInventory(t, "snapshot", "reminder-snapshot", 28)
+	testReminderCLIInventory(t, "snapshot", expectedReplayReminderSnapshot, 28)
 }
 
 func checkReminderCLISnapshotOutcome(t *testing.T, row map[string]json.RawMessage, output []byte, err error) {
 	t.Helper()
 
 	if len(row["error"]) != 0 {
-		checkReminderCommandOutcome(t, "reminder-snapshot", row, output, err)
+		checkReminderCommandOutcome(t, expectedReplayReminderSnapshot, row, output, err)
 
 		return
 	}
@@ -27,13 +27,13 @@ func checkReminderCLISnapshotOutcome(t *testing.T, row map[string]json.RawMessag
 
 	decode(t, output, &actual)
 
-	if len(actual) != 1 || string(actual["reminders"]) == reminderCLINullValue {
+	if len(actual) != 1 || string(actual[expectedReplayReminders]) == reminderCLINullValue {
 		t.Fatal("CLI snapshot contains unexpected fields or null reminders")
 	}
 
 	var reminders, expected []json.RawMessage
 
-	decode(t, actual["reminders"], &reminders)
+	decode(t, actual[expectedReplayReminders], &reminders)
 	decode(t, row["result"], &expected)
 
 	if len(reminders) != len(expected) {

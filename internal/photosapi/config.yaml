@@ -1,9 +1,0 @@
-package: photosapi
-generate:
-  models: true
-  client: true
-output: internal/photosapi/client.gen.go
-output-options:
-  nullable-type: true
-import-mapping:
-  ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit

@@ -54,9 +54,9 @@ func TestApplyFailedFindMyRetryResponses(t *testing.T) {
 	}
 
 	checkAppliedFailedFindMyState(t, row, scenario, updated.Session)
-	updated.Session.Auth.Cookies[0].Value = "mutated-result"
+	updated.Session.Auth.Cookies[0].Value = replayLiteralMutatedResult
 	updated.Session.AccountData[0] = ' '
-	updated.Session.Responses[0].Headers[0].Value = "mutated-result"
+	updated.Session.Responses[0].Headers[0].Value = replayLiteralMutatedResult
 
 	if string(before) != string(marshalFindMyRecovery(t, request)) {
 		t.Fatal("response result aliases caller-owned data")
@@ -85,7 +85,7 @@ func resumeForFailedFindMyUpdate(t *testing.T, client icloud.Client, row map[str
 	checkFindMyRecoveryFailure(t, err, icloud.AuthenticationRequired, scenario.Exchanges[0], nil)
 
 	input := maps.Clone(row)
-	input["keyword_inputs"] = json.RawMessage(`{"force_refresh":true}`)
+	input[replayLiteralKeywordInputs] = json.RawMessage(replayExpectedForceRefreshInput)
 	request := authReplayRequest(t, input)
 	request.ForceRefresh = true
 	request.ResponseUpdates = []icloud.ResponseMetadata{publicFindMyFailure(t, err)}
@@ -96,8 +96,9 @@ func resumeForFailedFindMyUpdate(t *testing.T, client icloud.Client, row map[str
 	}
 
 	expected := maps.Clone(row)
-	expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row["refresh_auth_state"]...), '}')
-	expected["exchanges"] = marshalFindMyRecovery(t, scenario.Exchanges[:2])
+	expected["result"] = append(append(json.RawMessage(replayExpectedAuthStateObjectPrefix),
+		row[replayLiteralRefreshAuthState]...), '}')
+	expected[replayExpectedExchanges] = marshalFindMyRecovery(t, scenario.Exchanges[:2])
 	assertResumedAuth(t, expected, result)
 
 	return result
@@ -109,13 +110,14 @@ func checkAppliedFailedFindMyState(t *testing.T, row map[string]json.RawMessage,
 	t.Helper()
 
 	expected := maps.Clone(row)
-	expected["result"] = append(append(json.RawMessage(`{"auth_state":`), row["error_auth_state"]...), '}')
+	expected["result"] = append(append(json.RawMessage(replayExpectedAuthStateObjectPrefix),
+		row[replayLiteralErrorAuthState]...), '}')
 	assertResumedAuth(t, expected, &result)
 	checkFindMyRecoveryResponses(t, result.Responses, scenario.Exchanges)
 
 	var state map[string]json.RawMessage
 
-	authReplayDecode(t, row["error_auth_state"], &state)
+	authReplayDecode(t, row[replayLiteralErrorAuthState], &state)
 	checkAppliedFindMyCookies(t, result.Auth.Cookies, state["cookies"])
 }
 

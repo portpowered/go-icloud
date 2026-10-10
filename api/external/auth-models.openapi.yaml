@@ -3,11 +3,23 @@
   "info": {
     "title": "iCloud saved-session authentication models",
     "version": "0.1.0",
-    "description": "Token validation and refresh account discovery; unknown provider metadata remains preserved."
+    "description": "Native account authentication wire models; unknown provider metadata remains preserved."
   },
   "paths": {},
   "components": {
     "schemas": {
+      "AuthLoginRequest": {
+        "oneOf": [
+          {"$ref": "#/components/schemas/AuthTokenLoginRequest"},
+          {"$ref": "#/components/schemas/AuthCredentialsLoginRequest"}
+        ]
+      },
+      "AuthSessionValidationRequest": {
+        "description": "Saved-session validation submits only the JSON null value.",
+        "type": "object",
+        "nullable": true,
+        "enum": [null]
+      },
       "UnknownJSONValue": {
         "description": "Uninterpreted provider metadata retained without loss.",
         "anyOf": [
@@ -38,7 +50,8 @@
         "properties": {
           "url": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "x-order": 0
           }
         },
         "additionalProperties": {
@@ -49,13 +62,16 @@
         "type": "object",
         "properties": {
           "dsid": {
-            "type": "string"
+            "type": "string",
+            "x-order": 0
           },
           "hsaVersion": {
-            "type": "integer"
+            "type": "integer",
+            "x-order": 1
           },
           "languageCode": {
-            "type": "string"
+            "type": "string",
+            "x-order": 2
           }
         },
         "additionalProperties": {
@@ -66,24 +82,37 @@
         "type": "object",
         "properties": {
           "account": {
-            "$ref": "#/components/schemas/AuthService"
+            "$ref": "#/components/schemas/AuthService",
+            "x-order": 0
           },
           "drivews": {
-            "$ref": "#/components/schemas/AuthService"
+            "$ref": "#/components/schemas/AuthService",
+            "x-order": 1
           },
           "docws": {
-            "$ref": "#/components/schemas/AuthService"
+            "$ref": "#/components/schemas/AuthService",
+            "x-order": 2
           },
           "findme": {
-            "$ref": "#/components/schemas/AuthService"
+            "$ref": "#/components/schemas/AuthService",
+            "x-order": 3
           },
           "photos": {
-            "$ref": "#/components/schemas/AuthService"
+            "$ref": "#/components/schemas/AuthService",
+            "x-order": 4
           },
           "ckdatabasews": {
-            "$ref": "#/components/schemas/AuthService"
+            "$ref": "#/components/schemas/AuthService",
+            "x-order": 5
           },
           "reminders": {
+            "$ref": "#/components/schemas/AuthService",
+            "x-order": 6
+          },
+          "sharedstreams": {
+            "$ref": "#/components/schemas/AuthService"
+          },
+          "photosupload": {
             "$ref": "#/components/schemas/AuthService"
           }
         },
@@ -95,19 +124,30 @@
         "type": "object",
         "properties": {
           "dsInfo": {
-            "$ref": "#/components/schemas/AuthIdentity"
+            "$ref": "#/components/schemas/AuthIdentity",
+            "x-order": 0
           },
           "hsaTrustedBrowser": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-order": 1
           },
           "hsaChallengeRequired": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-order": 2
           },
           "termsUpdateNeeded": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-order": 3
           },
           "webservices": {
-            "$ref": "#/components/schemas/AuthWebServices"
+            "$ref": "#/components/schemas/AuthWebServices",
+            "x-order": 4
+          },
+          "apps": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AuthApp"
+            }
           }
         },
         "additionalProperties": {
@@ -119,16 +159,20 @@
         "properties": {
           "accountCountryCode": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "x-order": 0
           },
           "dsWebAuthToken": {
-            "type": "string"
+            "type": "string",
+            "x-order": 1
           },
           "extended_login": {
-            "type": "boolean"
+            "type": "boolean",
+            "x-order": 2
           },
           "trustToken": {
-            "type": "string"
+            "type": "string",
+            "x-order": 3
           }
         },
         "required": [
@@ -142,7 +186,8 @@
         "type": "object",
         "properties": {
           "reason": {
-            "type": "string"
+            "type": "string",
+            "x-order": 0
           },
           "errorCode": {
             "anyOf": [
@@ -152,7 +197,14 @@
               {
                 "type": "string"
               }
-            ]
+            ],
+            "x-order": 1
+          },
+          "serviceErrors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthServiceError"
+            }
           }
         },
         "additionalProperties": {
@@ -188,6 +240,978 @@
         ],
         "enum": [
           450
+        ]
+      },
+      "AuthSRPProtocol": {
+        "type": "string",
+        "enum": [
+          "s2k",
+          "s2k_fo"
+        ]
+      },
+      "AuthSRPInitRequest": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 0
+          },
+          "accountName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "protocols": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthSRPProtocol"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "x-order": 2
+          }
+        },
+        "required": [
+          "a",
+          "accountName",
+          "protocols"
+        ],
+        "additionalProperties": false
+      },
+      "AuthSRPInitResponse": {
+        "type": "object",
+        "properties": {
+          "salt": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 0
+          },
+          "b": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 1
+          },
+          "c": {
+            "type": "string",
+            "x-order": 2
+          },
+          "iteration": {
+            "type": "integer",
+            "minimum": 1,
+            "x-order": 3
+          },
+          "protocol": {
+            "$ref": "#/components/schemas/AuthSRPProtocol",
+            "x-order": 4
+          }
+        },
+        "required": [
+          "salt",
+          "b",
+          "c",
+          "iteration",
+          "protocol"
+        ],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthSRPCompleteRequest": {
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "x-order": 0
+          },
+          "c": {
+            "type": "string",
+            "x-order": 1
+          },
+          "m1": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 2
+          },
+          "m2": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 3
+          },
+          "rememberMe": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 4
+          },
+          "trustTokens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-order": 5
+          },
+          "pause2FA": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "x-order": 6
+          }
+        },
+        "required": [
+          "accountName",
+          "c",
+          "m1",
+          "m2",
+          "rememberMe",
+          "trustTokens"
+        ],
+        "additionalProperties": false
+      },
+      "AuthSecurityCode": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "x-order": 0
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      },
+      "AuthPhoneNumber": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/AuthPhoneID",
+            "x-order": 0
+          },
+          "nonFTEU": {
+            "type": "boolean",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthSMSRequest": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "$ref": "#/components/schemas/AuthPhoneNumber",
+            "x-order": 0
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "sms"
+            ],
+            "x-order": 1
+          }
+        },
+        "required": [
+          "phoneNumber",
+          "mode"
+        ],
+        "additionalProperties": false
+      },
+      "AuthSMSVerificationRequest": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "$ref": "#/components/schemas/AuthPhoneNumber",
+            "x-order": 0
+          },
+          "securityCode": {
+            "$ref": "#/components/schemas/AuthSecurityCode",
+            "x-order": 1
+          },
+          "mode": {
+            "type": "string",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "phoneNumber",
+          "securityCode",
+          "mode"
+        ],
+        "additionalProperties": false
+      },
+      "AuthTrustedCodeRequest": {
+        "type": "object",
+        "properties": {
+          "securityCode": {
+            "$ref": "#/components/schemas/AuthSecurityCode",
+            "x-order": 0
+          }
+        },
+        "required": [
+          "securityCode"
+        ],
+        "additionalProperties": false
+      },
+      "AuthSecurityCodeVerdict": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "x-order": 0
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "securityCode": {
+            "$ref": "#/components/schemas/AuthSecurityCodeVerdict",
+            "x-order": 0
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthWebAuthnAssertion": {
+        "type": "object",
+        "properties": {
+          "challenge": {
+            "type": "string",
+            "x-order": 0
+          },
+          "clientData": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 1,
+            "x-string-content-schema": {
+              "$ref": "#/components/schemas/AuthWebAuthnClientData"
+            }
+          },
+          "signatureData": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 2
+          },
+          "authenticatorData": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 3
+          },
+          "userHandle": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true,
+            "x-order": 4
+          },
+          "credentialID": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 5
+          },
+          "rpId": {
+            "type": "string",
+            "x-order": 6
+          }
+        },
+        "required": [
+          "challenge",
+          "clientData",
+          "signatureData",
+          "authenticatorData",
+          "userHandle",
+          "credentialID",
+          "rpId"
+        ],
+        "additionalProperties": false
+      },
+      "AuthTrustedDevice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-order": 0
+          },
+          "deviceName": {
+            "type": "string",
+            "x-order": 1
+          },
+          "deviceType": {
+            "type": "string",
+            "x-order": 2
+          },
+          "phoneNumber": {
+            "type": "string",
+            "x-order": 3
+          },
+          "verificationCode": {
+            "type": "string",
+            "x-order": 4
+          },
+          "trustBrowser": {
+            "type": "boolean",
+            "x-order": 5
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthTrustedDevicesResponse": {
+        "type": "object",
+        "properties": {
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthTrustedDevice"
+            },
+            "x-order": 0
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "x-order": 0
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthLogoutRequest": {
+        "type": "object",
+        "properties": {
+          "trustBrowser": {
+            "type": "boolean",
+            "x-order": 0
+          },
+          "allBrowsers": {
+            "type": "boolean",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "trustBrowser",
+          "allBrowsers"
+        ],
+        "additionalProperties": false
+      },
+      "AuthCredentialsLoginRequest": {
+        "type": "object",
+        "properties": {
+          "appName": {
+            "type": "string",
+            "nullable": true,
+            "x-order": 0
+          },
+          "apple_id": {
+            "type": "string",
+            "x-order": 1
+          },
+          "password": {
+            "type": "string",
+            "x-order": 2
+          }
+        },
+        "required": [
+          "appName",
+          "apple_id",
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "AuthWebAccessResponse": {
+        "type": "object",
+        "properties": {
+          "isICDRSDisabled": {
+            "type": "boolean",
+            "x-order": 0
+          },
+          "isDeviceConsentedForPCS": {
+            "type": "boolean",
+            "nullable": true,
+            "x-order": 1
+          },
+          "isDeviceConsentNotificationSent": {
+            "type": "boolean",
+            "x-order": 2
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthPCSRequest": {
+        "type": "object",
+        "properties": {
+          "appName": {
+            "type": "string",
+            "x-order": 0
+          },
+          "derivedFromUserAction": {
+            "type": "boolean",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "appName",
+          "derivedFromUserAction"
+        ],
+        "additionalProperties": false
+      },
+      "AuthPCSResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "x-order": 0
+          },
+          "message": {
+            "type": "string",
+            "x-order": 1
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthBridgeStartRequest": {
+        "type": "object",
+        "properties": {
+          "sessionUUID": {
+            "type": "string",
+            "x-order": 0
+          },
+          "ptkn": {
+            "type": "string",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "sessionUUID",
+          "ptkn"
+        ],
+        "additionalProperties": false
+      },
+      "AuthBridgeStepRequest": {
+        "type": "object",
+        "properties": {
+          "sessionUUID": {
+            "type": "string",
+            "x-order": 0
+          },
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "x-order": 1
+          },
+          "ptkn": {
+            "type": "string",
+            "x-order": 2
+          },
+          "nextStep": {
+            "type": "integer",
+            "enum": [
+              2,
+              4,
+              6
+            ],
+            "x-order": 3
+          },
+          "idmsdata": {
+            "type": "string",
+            "x-order": 4
+          },
+          "akdata": {
+            "$ref": "#/components/schemas/UnknownJSONValue",
+            "x-order": 5,
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": [
+          "sessionUUID",
+          "data",
+          "ptkn",
+          "nextStep"
+        ],
+        "additionalProperties": false
+      },
+      "AuthBridgeCodeRequest": {
+        "type": "object",
+        "properties": {
+          "sessionUUID": {
+            "type": "string",
+            "x-order": 0
+          },
+          "code": {
+            "type": "string",
+            "x-order": 1
+          }
+        },
+        "required": [
+          "sessionUUID",
+          "code"
+        ],
+        "additionalProperties": false
+      },
+      "AuthBridgeResponse": {
+        "type": "object",
+        "properties": {
+          "sessionUUID": {
+            "type": "string",
+            "x-order": 0
+          },
+          "data": {
+            "type": "string",
+            "x-order": 1
+          },
+          "nextStep": {
+            "type": "integer",
+            "x-order": 2
+          },
+          "idmsdata": {
+            "type": "string",
+            "x-order": 3
+          },
+          "akdata": {
+            "$ref": "#/components/schemas/UnknownJSONValue",
+            "x-go-type-skip-optional-pointer": true
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthChallenge": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "x-order": 0
+          },
+          "trustedPhoneNumber": {
+            "$ref": "#/components/schemas/AuthTrustedPhoneNumber"
+          },
+          "phoneNumberVerification": {
+            "$ref": "#/components/schemas/AuthPhoneNumberVerification"
+          },
+          "fsaChallenge": {
+            "$ref": "#/components/schemas/AuthWebAuthnChallenge"
+          },
+          "keyNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-order": 4
+          },
+          "direct": {
+            "$ref": "./bridge-models.openapi.yaml#/components/schemas/BridgeBootstrapDirect"
+          },
+          "bridgeInitiateData": {
+            "$ref": "./bridge-models.openapi.yaml#/components/schemas/BridgeInitiateData"
+          },
+          "authInitialRoute": {
+            "type": "string"
+          },
+          "hasTrustedDevices": {
+            "type": "boolean"
+          },
+          "authFactors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceAppId": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthGetTermsRequest": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "x-order": 0
+          }
+        },
+        "required": [
+          "locale"
+        ],
+        "additionalProperties": false
+      },
+      "AuthAcceptTermsRequest": {
+        "type": "object",
+        "properties": {
+          "acceptedICloudTerms": {
+            "type": "integer",
+            "x-order": 0
+          }
+        },
+        "required": [
+          "acceptedICloudTerms"
+        ],
+        "additionalProperties": false
+      },
+      "AuthTermsResponse": {
+        "type": "object",
+        "properties": {
+          "iCloudTerms": {
+            "$ref": "#/components/schemas/AuthTermsVersion"
+          }
+        },
+        "required": [],
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "OAuthClientID": {
+        "type": "string",
+        "enum": [
+          "d39ba9916b7251055b22c7f910e2ea796ee65e98b2ddecea8f5dde8d9d1a815d"
+        ]
+      },
+      "OAuthClientType": {
+        "type": "string",
+        "enum": [
+          "firstPartyAuth"
+        ]
+      },
+      "OAuthRequireGrantCode": {
+        "type": "string",
+        "enum": [
+          "true"
+        ]
+      },
+      "OAuthResponseMode": {
+        "type": "string",
+        "enum": [
+          "web_message"
+        ]
+      },
+      "OAuthResponseType": {
+        "type": "string",
+        "enum": [
+          "code"
+        ]
+      },
+      "AuthAccept": {
+        "type": "string",
+        "enum": [
+          "application/json, text/javascript"
+        ]
+      },
+      "SMSAccept": {
+        "type": "string",
+        "enum": [
+          "application/json, plain/text"
+        ]
+      },
+      "IDMSOrigin": {
+        "type": "string",
+        "enum": [
+          "https://idmsa.apple.com"
+        ]
+      },
+      "HomeOrigin": {
+        "type": "string",
+        "enum": [
+          "https://www.icloud.com"
+        ]
+      },
+      "HomeChinaOrigin": {
+        "type": "string",
+        "enum": [
+          "https://www.icloud.com.cn"
+        ]
+      },
+      "AuthSkVersion": {
+        "type": "string",
+        "enum": [
+          "7"
+        ]
+      },
+      "AuthVersion": {
+        "type": "string",
+        "enum": [
+          "latest"
+        ]
+      },
+      "RememberMeQuery": {
+        "type": "string",
+        "enum": [
+          "true"
+        ]
+      },
+      "PCSWaitingCookies": {
+        "type": "string",
+        "enum": [
+          "Requested the device to upload cookies."
+        ]
+      },
+      "PCSNoCookies": {
+        "type": "string",
+        "enum": [
+          "Cookies not available yet on server."
+        ]
+      },
+      "AuthUserAgent": {
+        "type": "string",
+        "enum": [
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+        ]
+      },
+      "AuthFDClientInfo": {
+        "type": "string",
+        "enum": [
+          "{\"U\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15\",\"L\":\"en-US\",\"Z\":\"GMT+00:00\",\"V\":\"1.1\",\"F\":\"\"}"
+        ]
+      },
+      "AuthApp": {
+        "type": "object",
+        "properties": {
+          "canLaunchWithOneFactor": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthDefaultLocale": {
+        "type": "string",
+        "enum": [
+          "en_US"
+        ]
+      },
+      "AuthPhoneID": {
+        "oneOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "AuthTrustedPhoneNumber": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/AuthPhoneID"
+          },
+          "nonFTEU": {
+            "type": "boolean"
+          },
+          "pushMode": {
+            "type": "string"
+          },
+          "numberWithDialCode": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthPhoneNumberVerification": {
+        "type": "object",
+        "properties": {
+          "trustedPhoneNumber": {
+            "$ref": "#/components/schemas/AuthTrustedPhoneNumber"
+          },
+          "trustedPhoneNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthTrustedPhoneNumber"
+            }
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthLogoutContentType": {
+        "type": "string",
+        "enum": [
+          "text/plain;charset=UTF-8"
+        ]
+      },
+      "AuthPCSSuccessStatus": {
+        "type": "string",
+        "enum": [
+          "success"
+        ]
+      },
+      "AuthHTMLAccept": {
+        "type": "string",
+        "enum": [
+          "text/html"
+        ]
+      },
+      "AuthBridgeInitialRoute": {
+        "type": "string",
+        "enum": [
+          "auth/bridge/step"
+        ]
+      },
+      "AuthWebAuthnOrigin": {
+        "type": "string",
+        "enum": [
+          "https://apple.com"
+        ]
+      },
+      "AuthWebAuthnClientDataType": {
+        "type": "string",
+        "enum": [
+          "webauthn.get"
+        ]
+      },
+      "AuthWebAuthnClientData": {
+        "type": "object",
+        "required": [
+          "type",
+          "challenge",
+          "origin"
+        ],
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/AuthWebAuthnClientDataType"
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/AuthWebAuthnOrigin"
+          },
+          "crossOrigin": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthWrongVerificationCode": {
+        "type": "integer",
+        "enum": [
+          -21669
+        ],
+        "x-enum-varnames": [
+          "WrongVerificationCode"
+        ]
+      },
+      "AuthTermsVersion": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "AuthWebAuthnChallenge": {
+        "type": "object",
+        "properties": {
+          "challenge": {
+            "type": "string"
+          },
+          "keyHandles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rpId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        },
+        "x-order": 3
+      },
+      "AuthAccountLockedCode": {
+        "type": "integer",
+        "enum": [
+          -20209
+        ],
+        "x-enum-varnames": [
+          "AccountLockedCode"
+        ]
+      },
+      "AuthServiceError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "BridgeFallbackNotice": {
+        "type": "string",
+        "enum": [
+          "Trusted-device prompt failed; falling back to SMS."
+        ]
+      },
+      "AuthenticatorDataMinimumBytes": {
+        "type": "integer",
+        "enum": [
+          37
+        ],
+        "description": "WebAuthn authenticator data begins with 32-byte RP hash, flags and 4-byte signature counter.",
+        "x-enum-varnames": [
+          "AuthenticatorDataMinimum"
         ]
       }
     }

@@ -1,0 +1,6 @@
+package: srp
+generate:
+  models: true
+output: pkg/dependencymodels/srp/models.gen.go
+output-options:
+  skip-prune: true

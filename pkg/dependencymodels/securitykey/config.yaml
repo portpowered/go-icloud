@@ -1,0 +1,6 @@
+package: securitykey
+generate:
+  models: true
+output: pkg/dependencymodels/securitykey/models.gen.go
+output-options:
+  skip-prune: true

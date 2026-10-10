@@ -25,9 +25,9 @@ func (router driveSessionRouter) RoundTrip(request *http.Request) (*http.Respons
 	var transport *nodeReplayTraffic
 
 	switch {
-	case identity == "account-alpha" || strings.Contains(cookie, "session=alpha"):
+	case identity == "account-alpha" || strings.Contains(cookie, replayLiteralSessionAlpha):
 		transport = router.alpha
-	case identity == "account-beta" || strings.Contains(cookie, "session=beta"):
+	case identity == "account-beta" || strings.Contains(cookie, replayLiteralSessionBeta):
 		transport = router.beta
 	default:
 		return nil, errUnknownAccount
@@ -49,8 +49,10 @@ func tenantDriveNodeScenario(t *testing.T, tenant string) driveNodeScenario {
 		t.Fatal(err)
 	}
 
-	replace := strings.NewReplacer("synthetic-client", "client-"+tenant, "synthetic-account", "account-"+tenant,
-		"synthetic-root", "root-"+tenant, "synthetic-upload", "token-"+tenant, "session=uploaded", "session=uploaded-"+tenant)
+	replace := strings.NewReplacer(
+		replayExpectedSyntheticClient, "client-"+tenant, "synthetic-account", replayExpectedAccount+tenant,
+		"synthetic-root", "root-"+tenant, replayExpectedSyntheticUpload, "token-"+tenant,
+		"session=uploaded", replayExpectedSessionUploaded+tenant)
 
 	var scenario driveNodeScenario
 
@@ -60,7 +62,8 @@ func tenantDriveNodeScenario(t *testing.T, tenant string) driveNodeScenario {
 	}
 
 	cookie := new(referenceCookie)
-	cookie.Name, cookie.Value, cookie.Domain, cookie.Path = nodeSessionCookieName, tenant, ".example.invalid", "/"
+	cookie.Name, cookie.Value = nodeSessionCookieName, tenant
+	cookie.Domain, cookie.Path = replayExpectedExampleInvalid, "/"
 
 	scenario.Initial.Cookies = append(scenario.Initial.Cookies, *cookie)
 	for index := range scenario.Exchanges {
@@ -71,9 +74,9 @@ func tenantDriveNodeScenario(t *testing.T, tenant string) driveNodeScenario {
 
 		for headerIndex := range exchange.Request.Headers {
 			if exchange.Request.Headers[headerIndex][0] == nodeCookieHeaderKey {
-				value := "session=" + tenant
+				value := replayExpectedSession + tenant
 				if index == len(scenario.Exchanges)-1 {
-					value = "session=uploaded-" + tenant
+					value = replayExpectedSessionUploaded + tenant
 				}
 				// Replace the fixture's post-upload session cookie before adding the seed value.
 				parts := strings.Split(exchange.Request.Headers[headerIndex][1], "; session=")
@@ -105,7 +108,7 @@ func fixTenantDriveLength(t *testing.T, request *replay.Request) {
 	}
 
 	for index := range request.Headers {
-		if request.Headers[index][0] == "content-length" {
+		if request.Headers[index][0] == contentLengthHeader {
 			request.Headers[index][1] = strconv.Itoa(len(data))
 		}
 	}

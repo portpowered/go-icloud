@@ -29,6 +29,68 @@ const saveSessionFlag = "--save-session"
 
 const resumeCommand = "resume"
 
+// Independent spellings for portable Source and CLI boundary expectations.
+const (
+	expectedReplayAccountFamily                       = "account-family"
+	expectedReplayAccountPlan                         = "account-plan"
+	expectedReplayAdditionalMetadata                  = "additionalMetadata"
+	expectedSourceAlarmID                             = "alarm_id"
+	expectedSourceAlarmIDs                            = "alarm_ids"
+	expectedReplayAlarmUID                            = "alarmUID"
+	expectedSourceAlarmUID                            = "alarm_uid"
+	expectedReplayAssetMetadata                       = "assetMetadata"
+	expectedSourceAttachmentIDs                       = "attachment_ids"
+	expectedReplayCLIReminderScenarioInventoryChanged = "CLI reminder scenario inventory changed"
+	expectedReplayCompletedDate                       = "completedDate"
+	expectedReplayDownloadSecret                      = "download-secret"
+	expectedReplayDriveLibraries                      = "drive-libraries"
+	expectedReplayExchanges                           = "exchanges"
+	expectedReplayExistingReceipt                     = "existing-receipt"
+	expectedReplayFileAssetURL                        = "fileAssetURL"
+	expectedSourceFileAssetURL                        = "file_asset_url"
+	expectedReplayFileSize                            = "file_size"
+	expectedReplayFirstDayOfWeek                      = "first_day_of_week"
+	expectedReplayFullName                            = "fullName"
+	expectedReplayFullname                            = "fullname"
+	expectedSourceHashtagIDs                          = "hashtag_ids"
+	expectedReplayInitialState                        = "initial_state"
+	expectedReplayKeywordInputs                       = "keyword_inputs"
+	expectedReplayLocationUID                         = "locationUID"
+	expectedSourceLocationUID                         = "location_uid"
+	expectedReplayMetadata                            = "metadata"
+	expectedReplayOccurrenceCount                     = "occurrence_count"
+	expectedReplayOriginal                            = "original"
+	expectedReplayOwnerRecordName                     = "ownerRecordName"
+	expectedReplayPageSecret                          = "page-secret"
+	expectedReplayPhotosSync                          = "photos-sync"
+	expectedReplayPhotosWatch                         = "photos-watch"
+	expectedReplayRecurrence                          = "recurrence"
+	expectedSourceRecurrenceRuleIDs                   = "recurrence_rule_ids"
+	expectedReplayRecurrenceRules                     = "recurrence_rules"
+	expectedReplayReminderID                          = "reminderID"
+	expectedSourceReminderID                          = "reminder_id"
+	expectedReplayReminderLists                       = "reminder-lists"
+	expectedReplayReminderSnapshot                    = "reminder-snapshot"
+	expectedReplayReminders                           = "reminders"
+	expectedReplayResponses                           = "responses"
+	expectedReplayResultJSON                          = "result.json"
+	expectedReplaySaveResult                          = "--save-result"
+	expectedReplaySelected                            = "selected"
+	expectedReplaySessionJSON                         = "session.json"
+	expectedReplaySourceFileSize                      = "fileSize"
+	expectedReplaySourceFirstDayOfWeek                = "firstDayOfWeek"
+	expectedReplaySourceOccurrenceCount               = "occurrenceCount"
+	expectedReplaySourceSyncToken                     = "sync_token"
+	expectedReplayStartDate                           = "startDate"
+	expectedReplayStoredAccount                       = "stored-account"
+	expectedReplaySyncToken                           = "syncToken"
+	expectedReminderFixturePrefix                     = "../../../../tests/replay/fixtures/synthetic/http/reminders-"
+	expectedReplayTriggerID                           = "triggerID"
+	expectedSourceTriggerID                           = "trigger_id"
+	expectedReplayZoneName                            = "zoneName"
+	expectedReplayZoneType                            = "zoneType"
+)
+
 func TestReadCommands(t *testing.T) {
 	t.Parallel()
 
@@ -37,14 +99,14 @@ func TestReadCommands(t *testing.T) {
 			"account-devices-empty", "account-devices-many", "account-devices-one",
 			"account-devices-error", "account-devices-envelope-reason",
 		},
-		"account-family":  {"account-family-empty", "account-family-many", "account-family-error"},
-		"account-storage": {"account-storage-zero", "account-storage-media", "account-storage-error"},
-		"account-plan": {
+		expectedReplayAccountFamily: {"account-family-empty", "account-family-many", "account-family-error"},
+		"account-storage":           {"account-storage-zero", "account-storage-media", "account-storage-error"},
+		expectedReplayAccountPlan: {
 			"account-summary-empty", "account-summary-array", "account-summary-error", "account-summary-china-plan",
 		},
-		"drive-libraries": {"drive-apps-empty", "drive-apps-many", "drive-apps-one-refused-0"},
-		driveNodeCommand:  {"drive-folder-empty", "drive-folder-many", "drive-folder-one-refused-0"},
-		"findmy":          {"findmy-devices-empty", "findmy-devices-many", "findmy-devices-one-refused-0"},
+		expectedReplayDriveLibraries: {"drive-apps-empty", "drive-apps-many", "drive-apps-one-refused-0"},
+		driveNodeCommand:             {"drive-folder-empty", "drive-folder-many", "drive-folder-one-refused-0"},
+		"findmy":                     {"findmy-devices-empty", "findmy-devices-many", "findmy-devices-one-refused-0"},
 	}
 	for operation, fixtures := range cases {
 		for _, name := range fixtures {
@@ -63,7 +125,7 @@ func TestAuthenticationRefusal(t *testing.T) {
 
 	var exchanges []replay.Exchange
 
-	decode(t, raw["exchanges"], &exchanges)
+	decode(t, raw[expectedReplayExchanges], &exchanges)
 	exchanges[0].Response.Status = 401
 
 	encoded, err := json.Marshal(exchanges)
@@ -71,7 +133,7 @@ func TestAuthenticationRefusal(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	raw["exchanges"] = encoded
+	raw[expectedReplayExchanges] = encoded
 	raw["error"] = json.RawMessage(`{"type":"synthetic authentication refusal"}`)
 	runScenario(t, accountDevicesCommand, raw)
 }
@@ -88,7 +150,7 @@ func runScenario(t *testing.T, operation string, raw map[string]json.RawMessage)
 
 	var exchanges []replay.Exchange
 
-	decode(t, raw["exchanges"], &exchanges)
+	decode(t, raw[expectedReplayExchanges], &exchanges)
 
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
@@ -100,10 +162,10 @@ func runScenario(t *testing.T, operation string, raw map[string]json.RawMessage)
 		t.Fatal(err)
 	}
 
-	session := filepath.Join(t.TempDir(), "session.json")
+	session := filepath.Join(t.TempDir(), expectedReplaySessionJSON)
 
 	//nolint:gosec // Only synthetic fixture credentials are serialized into a temporary test directory.
-	encoded, err := json.Marshal(fixtureAuth(t, raw["initial_state"]))
+	encoded, err := json.Marshal(fixtureAuth(t, raw[expectedReplayInitialState]))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -216,7 +278,7 @@ func assertOutcome(t *testing.T, operation string, raw map[string]json.RawMessag
 
 		decode(t, output, &object)
 
-		if _, exists := object["metadata"]; exists {
+		if _, exists := object[expectedReplayMetadata]; exists {
 			t.Fatal("CLI exposed response headers")
 		}
 
@@ -236,8 +298,8 @@ func projectResult(t *testing.T, operation string, object map[string]json.RawMes
 	t.Helper()
 
 	fields := map[string]string{
-		accountDevicesCommand: "devices", "account-plan": "summary",
-		"drive-libraries": "libraries", driveNodeCommand: "node",
+		accountDevicesCommand: "devices", expectedReplayAccountPlan: "summary",
+		expectedReplayDriveLibraries: "libraries", driveNodeCommand: "node",
 	}
 	if field, exists := fields[operation]; exists {
 		var value any
@@ -247,7 +309,7 @@ func projectResult(t *testing.T, operation string, object map[string]json.RawMes
 		return value
 	}
 
-	if operation == "account-family" {
+	if operation == expectedReplayAccountFamily {
 		var members []map[string]json.RawMessage
 
 		decode(t, object["members"], &members)
@@ -257,7 +319,7 @@ func projectResult(t *testing.T, operation string, object map[string]json.RawMes
 		for _, member := range members {
 			var name any
 
-			decode(t, member["fullName"], &name)
+			decode(t, member[expectedReplayFullName], &name)
 			names = append(names, name)
 		}
 
@@ -319,7 +381,7 @@ func assertFailure(t *testing.T, raw map[string]json.RawMessage, failure *icloud
 
 	var exchanges []replay.Exchange
 
-	decode(t, raw["exchanges"], &exchanges)
+	decode(t, raw[expectedReplayExchanges], &exchanges)
 	response := exchanges[0].Response
 
 	var encoded string

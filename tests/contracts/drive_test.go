@@ -84,7 +84,7 @@ func TestPortableDriveExchangesMatchContracts(t *testing.T) {
 		for index, exchange := range exchanges {
 			operation, err := bindDriveOperation(documents, exchanges, index)
 			if err != nil {
-				t.Fatalf("%s exchange %d: %v", path, index, err)
+				t.Fatalf(contractExchangeFailureFormat, path, index, err)
 			}
 
 			validateDriveRequest(t, operation, exchange.Request)
@@ -301,7 +301,7 @@ func validateDriveResponse(t *testing.T, operation *openapi3.Operation, response
 
 func contractResponseMedia(content openapi3.Content, headers []replay.Pair) (*openapi3.MediaType, error) {
 	for _, header := range headers {
-		if !strings.EqualFold(header[0], "Content-Type") {
+		if !strings.EqualFold(header[0], contractContentTypeField) {
 			continue
 		}
 
@@ -354,7 +354,7 @@ func driveHeaderMedia(t *testing.T, headers []replay.Pair) string {
 	t.Helper()
 
 	for _, header := range headers {
-		if strings.EqualFold(header[0], "Content-Type") {
+		if strings.EqualFold(header[0], contractContentTypeField) {
 			value, _, err := mime.ParseMediaType(header[1])
 			if err != nil {
 				t.Fatal(err)
@@ -412,10 +412,10 @@ func TestDriveGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: driveModelsPath, Config: "../../pkg/dependencymodels/drive/config.yaml",
 			Output: "../../pkg/dependencymodels/drive/models.gen.go"},
-		{Schema: driveSchemaPath, Config: "../../internal/driveapi/config.yaml",
-			Output: "../../internal/driveapi/client.gen.go"},
-		{Schema: driveContentSchemaPath, Config: "../../internal/drivecontentapi/config.yaml",
-			Output: "../../internal/drivecontentapi/client.gen.go"},
+		{Schema: driveSchemaPath, Config: "../../pkg/dependencies/webtransport/driveapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/driveapi/client.gen.go"},
+		{Schema: driveContentSchemaPath, Config: "../../pkg/dependencies/webtransport/drivecontentapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/drivecontentapi/client.gen.go"},
 	} {
 		t.Run(artifact.Config, func(t *testing.T) {
 			t.Parallel()
@@ -470,7 +470,7 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 	documents := loadDriveDocuments(t)
 
 	for _, mutation := range []string{
-		"origin", mutationPath, mutationMethod, "issuer", "issuer-prefix", "issuer-method", "first",
+		"origin", mutationPath, mutationMethod, "issuer", contractExpectedIssuerPrefix, issuerMethodControl, "first",
 	} {
 		t.Run(mutation, func(t *testing.T) {
 			t.Parallel()
@@ -480,16 +480,16 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 
 			switch mutation {
 			case "origin":
-				exchanges[index].Request.Origin = "https://unissued.example.invalid"
+				exchanges[index].Request.Origin = unissuedContractOrigin
 			case mutationPath:
 				exchanges[index].Request.Path += "/unissued"
 			case mutationMethod:
 				exchanges[index].Request.Method = http.MethodPost
 			case "issuer":
-				exchanges[0].Request.Path = "/unregistered"
-			case "issuer-prefix":
-				exchanges[0].Request.Path = "/unregistered" + exchanges[0].Request.Path
-			case "issuer-method":
+				exchanges[0].Request.Path = unregisteredContractPath
+			case contractExpectedIssuerPrefix:
+				exchanges[0].Request.Path = unregisteredContractPath + exchanges[0].Request.Path
+			case issuerMethodControl:
 				exchanges[0].Request.Method = http.MethodPost
 			case "first":
 				exchanges = exchanges[1:]
@@ -517,7 +517,7 @@ func TestDriveRouteBindingRejectsUnknownMethodOrPath(t *testing.T) {
 			if mutation == mutationMethod {
 				exchanges[0].Request.Method = http.MethodGet
 			} else {
-				exchanges[0].Request.Path = "/unregistered"
+				exchanges[0].Request.Path = unregisteredContractPath
 			}
 
 			_, err := bindDriveOperation(documents, exchanges, 0)

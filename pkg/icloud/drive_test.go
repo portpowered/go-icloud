@@ -47,7 +47,9 @@ func TestDriveNodeRejectsInvalidProviderShapes(t *testing.T) {
 func TestDriveLibrariesRejectsInvalidProviderShapes(t *testing.T) {
 	t.Parallel()
 
-	for _, body := range []string{`null`, `{}`, `[]`, `{"items":null}`, `{"items":false}`, `{"items":[{"name":false}]}`} {
+	for _, body := range []string{
+		`null`, `{}`, `[]`, `{"items":null}`, testExpectedDriveFalseItems, `{"items":[{"name":false}]}`,
+	} {
 		t.Run(body, func(t *testing.T) {
 			t.Parallel()
 
@@ -95,7 +97,7 @@ func assertDriveScalarMetadata(t *testing.T, node icloud.DriveNode) {
 	t.Helper()
 
 	if node.Size == nil || string(*node.Size) != `"0"` || node.Type == nil || *node.Type != "FUTURE_KIND" ||
-		string(node.AdditionalProperties["future"]) != "18446744073709551615" {
+		string(node.AdditionalProperties["future"]) != testMaximumUint64 {
 		t.Fatal("Drive projection lost scalar metadata")
 	}
 }
@@ -131,7 +133,7 @@ func TestDriveRequestPreservesReferenceStringEncodingAndEmptyShareOmission(t *te
 		response := new(http.Response)
 		response.StatusCode = http.StatusOK
 		response.Header = make(http.Header)
-		response.Header.Set("Content-Type", "application/json")
+		response.Header.Set(testExpectedContentType, testJSONMedia)
 		response.Body = io.NopCloser(strings.NewReader(`[{}]`))
 
 		return response, nil

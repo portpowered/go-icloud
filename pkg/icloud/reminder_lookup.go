@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
@@ -66,7 +66,7 @@ func selectReminderRecord(data cloudkit.CKLookupResponse, name string) (cloudkit
 		}
 
 		if record.RecordType != "" && record.RecordName == name {
-			return record, "", nil
+			return record, InvalidResponse, nil
 		}
 	}
 

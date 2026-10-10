@@ -10,7 +10,7 @@ import (
 // DownloadPhoto retrieves a rendition without evaluating unrelated date or metadata getters.
 // Unavailable rendition URLs return explicit null; available empty files return empty bytes.
 func (sdk *SDK) DownloadPhoto(ctx context.Context, request DownloadPhotoRequest) (*DownloadPhotoResult, error) {
-	read, err := sdk.beginPhotosRead(ctx, request.Auth, "DownloadPhoto")
+	read, err := sdk.beginPhotosRead(ctx, request.Auth, "DownloadPhoto", request.Library)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func (sdk *SDK) DownloadPhoto(ctx context.Context, request DownloadPhotoRequest)
 		return nil, err
 	}
 
-	entries, err := projectPhotoAlbums(albums)
+	entries, err := read.projectAlbums(albums)
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}

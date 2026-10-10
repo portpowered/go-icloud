@@ -1,0 +1,13 @@
+package: remindersapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/remindersapi/client.gen.go
+output-options:
+  user-templates:
+    client.tmpl: api/templates/http-request-builders.tmpl
+    client-with-responses.tmpl: api/templates/http-response-parsers.tmpl
+  nullable-type: true
+import-mapping:
+  ./http-boundary-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary
+  ./cloudkit-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit

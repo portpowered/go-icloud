@@ -39,7 +39,7 @@ The receipt measures this capture batch, not complete service coverage.
 | Reminder lists | reminders.lists | CloudKit Reminders `/changes/zone` | HTTP 200 envelope with nested `ZONE_NOT_FOUND` for zone `Reminders`; reference raises RemindersApiError. Failure replays offline. |
 | Reminder zone discovery | reminders raw client's zones_list | CloudKit Reminders `/zones/list` | HTTP 200; one zone returned, but the requested `Reminders` zone is absent. This does not establish why it is absent. |
 
-## Remaining functional coverage
+## Gaps in this historical live capture batch
 
 - Authentication: complete socket transcript, expiry/invalid-session transitions,
   wrong/expired code, session-trust rejection, concurrent accounts, and security
@@ -56,7 +56,6 @@ The receipt measures this capture batch, not complete service coverage.
 - All areas: labeled synthetic malformed responses, auth failures, throttling,
   provider failures, timeouts/cancellation, and oversize limits as applicable.
 
-Private captures still require sanitation, provenance review, schema binding,
-and export into portable public fixtures. Generate the Go wire models and rebuild
-each operation against those artifacts after reference replay is established.
-No complete-library coverage or migration sign-off is claimed by this inventory.
+These gaps describe this capture batch, not current SDK implementation status.
+Private captures require sanitation and provenance review before portable export.
+See [completion matrix](completion-matrix.md) for current implementation acceptance.

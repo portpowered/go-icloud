@@ -16,8 +16,8 @@ func TestRecentlyAddedPhotosSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 21 {
-		t.Fatal("photo asset scenario inventory changed")
+	if len(paths) != 31 {
+		t.Fatal(replayLiteralPhotoAssetScenarioInventoryChanged)
 	}
 
 	for _, path := range paths {
@@ -45,16 +45,19 @@ func runRecentlyAddedPhotosSDK(t *testing.T, path string) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.ListRecentlyAddedPhotos(t.Context(), icloud.ListRecentlyAddedPhotosRequest{Auth: auth})
+	actual, err := client.ListRecentlyAddedPhotos(
+		t.Context(),
+		icloud.ListRecentlyAddedPhotosRequest{Library: nil, Auth: auth},
+	)
 	if len(scenario.Error) != 0 {
 		if actual != nil {
-			t.Fatal("photo enumeration returned partial results on failure")
+			t.Fatal(replayEnumerationFailureMessage)
 		}
 
 		checkPhotoReadFailure(t, scenario, nil, err)
 	} else {
 		if err != nil || actual == nil {
-			t.Fatalf("photo asset read failed: %v", err)
+			t.Fatalf(replayAssetFailureFormat, err)
 		}
 
 		checkPhotoAssetsProjection(t, actual.Photos, scenario.Result)

@@ -1,0 +1,73 @@
+---
+title: Read and change Reminders
+description: Discover lists, consume changes, and write revision-aware snapshots.
+---
+
+Discover list identifiers after [authentication](/docs/guides/authentication), then read a
+complete list including its related records:
+
+```go
+lists, err := client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth})
+if err != nil { return err }
+snapshot, err := client.ListReminders(ctx, icloud.ListRemindersRequest{
+    Auth: auth, ListID: listID,
+})
+if err != nil { return err }
+_ = lists.Lists
+_ = snapshot.Reminders
+```
+
+Use the complete list record name returned by discovery. `IncludeCompleted`
+defaults to false. The method consumes continuation pages and resolves linked
+alarms, location triggers, hashtags, attachments and recurrence rules.
+`ListReminderSnapshot` collects all discovered lists or an optional selected list.
+`GetReminder` accepts a raw or complete reminder identifier.
+
+For incremental reads, obtain `GetReminderSyncCursor` and pass its token to
+`ListReminderChanges`. Omission starts an initial read. Results preserve event
+order and duplicates; deletion events have a null reminder. Persist the returned
+cursor only after processing the complete result.
+
+Create a reminder in a discovered list:
+
+```go
+created, err := client.CreateReminder(ctx, icloud.CreateReminderRequest{
+    Auth: auth, ListID: listID, Title: "Review the plan",
+})
+if err != nil { return err }
+updated := created.Reminder
+updated.Title = "Review the revised plan"
+result, err := client.UpdateReminder(ctx, icloud.UpdateReminderRequest{
+    Auth: auth, Reminder: updated,
+})
+if err != nil { return err }
+_ = result.Reminder
+```
+
+Update uses the complete snapshot and its revision. Missing due date, time zone
+and parent values clear those fields. `DeleteReminder` performs a revision-aware
+soft deletion. Writes are sent once; creation hydrates its acknowledged record.
+Returned snapshots do not share mutable storage with input values. Store returned
+revisions before another edit.
+
+Related-record reads accept the identifiers carried by a reminder. Empty ID lists
+make no request. `CreateReminderHashtag`, `UpdateReminderHashtag` and
+`DeleteReminderHashtag` maintain reminder links and hashtag revisions.
+`CreateReminderRecurrenceRule`, `UpdateReminderRecurrenceRule` and
+`DeleteReminderRecurrenceRule` maintain recurrence settings and parent links.
+`CreateReminderURLAttachment` adds a URL attachment; `UpdateReminderAttachment`
+changes URL text or image metadata, and `DeleteReminderAttachment` removes its
+parent link while soft-deleting the attachment. `AddReminderLocationTrigger`
+atomically creates the location alarm/trigger and links it to the reminder.
+Use complete returned snapshots and revisions for subsequent writes; an image
+metadata update does not upload image bytes.
+
+`GetLegacyRemindersSnapshot`
+reads the separately discovered legacy service; it does not silently replace
+CloudKit access.
+
+Reminders reads and core writes are covered by synthetic paired reference replay.
+The live account used for exploration did not establish successful CloudKit reminder
+contents. See [record modification](/docs/openapi/unknown/RemindersModifyRecords),
+[changes](/docs/openapi/unknown/RemindersZoneChanges), and
+[lookup](/docs/openapi/unknown/RemindersLookupRecords) for the wire contract.

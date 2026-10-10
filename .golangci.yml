@@ -6,6 +6,18 @@ run:
 linters:
   default: all
   settings:
+    # GO-11 permits 120 lines and 200 statements; keep the same analyzer bounds as the standard template.
+    funlen:
+      lines: 120
+      statements: 200
+    cyclop:
+      max-complexity: 25
+    goconst:
+      min-len: 8
+      min-occurrences: 2
+    mnd:
+      checks: [argument, case, condition, operation, return]
+      ignored-numbers: ['0', '1', '2', '10', '64', '100', '0o600']
     depguard:
       rules:
         Main:
@@ -18,29 +30,58 @@ linters:
             - github.com/portpowered/go-icloud
             # Account wire-contract verification uses this pinned schema validator.
             - github.com/getkin/kin-openapi
+            # Blocking wire/source inventory reads the pinned OpenAPI and AsyncAPI YAML contracts.
+            - gopkg.in/yaml.v3
             # Generated nullable values preserve absent and explicit-null metadata.
             - github.com/oapi-codegen/nullable
             # Generated request builders use the pinned OpenAPI runtime.
             - github.com/oapi-codegen/runtime
+            # Source Photos metadata uses binary and XML property lists.
+            - howett.net/plist
             # Generated Reminders CRDT models and decoding use the pinned protobuf runtime.
             - google.golang.org/protobuf
             # Public Reminders text replaces malformed UTF-8 subsequences as Source does.
             - golang.org/x/text/encoding/unicode
+            # Python urlsplit rejects NFKC authority text that introduces URL separators.
+            - golang.org/x/text/unicode/norm
+            # Pinned trusted-device bridge uses scrypt for its SPAKE2 password scalars.
+            - golang.org/x/crypto/scrypt
+            # HTML bootstrap parsing uses the standard maintained HTML tokenizer.
+            - golang.org/x/net/html
+            # Native FIDO discovery uses the pinned cgo-free HID backend.
+            - github.com/telesma-app/hid
+            # Generated CTAP payload models use the pinned canonical CBOR codec.
+            - github.com/fxamacker/cbor/v2
+            # FIDO relying-party delegation follows the maintained suffix list.
+            - golang.org/x/net/publicsuffix
   exclusions:
     generated: strict
     rules:
+      # GO-13: generated materialization models own the package documentation.
+      - path: internal/photomaterialize/exif\.go
+        linters: [revive]
+        text: package-comments
+      # GO-13: generated local sync models own the package documentation.
+      - path: pkg/photosync/engine\.go
+        linters: [revive]
+        text: package-comments
       # GO-13: the generated sibling owns protocol's package godoc.
       - path: internal/protocol/http_content\.go
         linters: [revive]
         text: package-comments
       # GO-13: the generated sibling owns the package godoc; a second one fails godoclint.
-      - path: internal/accountapi/photo\.go
+      - path: pkg/dependencies/webtransport/accountapi/photo\.go
         linters: [revive]
         text: package-comments
       # GO-13: models.gen.go owns this package godoc; only the named handwritten file is exempt.
       - path: pkg/icloud/account_projection\.go
         linters: [revive]
         text: package-comments
+      # SPAKE2 requires masked point addition; crypto/ecdh cannot expose this operation.
+      # The P-256 standard library implementations provide constant-time scalar multiplication.
+      - path: pkg/dependencies/bridgeprover/(points|prover)\.go
+        linters: [staticcheck]
+        text: SA1019
 
 formatters:
   enable:

@@ -48,7 +48,7 @@ func TestSourceCompressedWireResponses(t *testing.T) {
 
 func replayCompressedContent(t *testing.T, item contentCase) {
 	t.Helper()
-	raw := authReplayObject(t, "fixtures/synthetic/http/auth-authenticate-cached.json")
+	raw := authReplayObject(t, replayExpectedCachedAuthFixturePath)
 	request := authReplayRequest(t, raw)
 	request.Auth.Headers = append(request.Auth.Headers, icloud.Header{Name: "Accept-Encoding", Value: "gzip, deflate"})
 
@@ -71,7 +71,7 @@ func replayCompressedContent(t *testing.T, item contentCase) {
 			t.Fatal(encodeErr)
 		}
 
-		assertAuthResponses(t, map[string]json.RawMessage{"exchanges": encoded}, result)
+		assertAuthResponses(t, map[string]json.RawMessage{replayExpectedExchanges: encoded}, result)
 	}
 
 	err = transport.AssertConsumed()

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
@@ -16,7 +16,7 @@ var errPhotosIndexing = errors.New("photo library indexing is not finished")
 // GetPhotosStatus initializes the primary photo library and retains its current cursor.
 // A library that has not finished indexing returns an Unavailable error with response evidence.
 func (sdk *SDK) GetPhotosStatus(ctx context.Context, request GetPhotosStatusRequest) (*GetPhotosStatusResult, error) {
-	auth, err := accountRequestContext(request.Auth)
+	auth, err := photosRequestContext(request.Auth, request.Library)
 	if err != nil {
 		return nil, newClientError(photosStatusOperation, Configuration, 0, nil, nil, err)
 	}
@@ -37,7 +37,7 @@ func (sdk *SDK) GetPhotosStatus(ctx context.Context, request GetPhotosStatusRequ
 		return nil, photosStatusFailure(Unavailable, errPhotosIndexing, response.Metadata)
 	}
 
-	result := &GetPhotosStatusResult{State: GetPhotosStatusResultState(state), SyncToken: response.Data.SyncToken,
+	result := &GetPhotosStatusResult{State: GetPhotosStatusResultStateFINISHED, SyncToken: response.Data.SyncToken,
 		Metadata: publicMetadata(response.Metadata)}
 	if !result.SyncToken.IsSpecified() {
 		result.SyncToken.SetNull()

@@ -13,6 +13,24 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// Defines values for AddReminderLocationTriggerRequestProximity.
+const (
+	LocationArriving AddReminderLocationTriggerRequestProximity = 1
+	LocationLeaving  AddReminderLocationTriggerRequestProximity = 2
+)
+
+// Valid indicates whether the value is a known member of the AddReminderLocationTriggerRequestProximity enum.
+func (e AddReminderLocationTriggerRequestProximity) Valid() bool {
+	switch e {
+	case LocationArriving:
+		return true
+	case LocationLeaving:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AuthCookieSameSite.
 const (
 	AuthCookieSameSiteDefault AuthCookieSameSite = "default"
@@ -39,7 +57,9 @@ func (e AuthCookieSameSite) Valid() bool {
 
 // Defines values for ErrorKind.
 const (
+	AccountLocked          ErrorKind = "account-locked"
 	AuthenticationRequired ErrorKind = "authentication-required"
+	Busy                   ErrorKind = "busy"
 	Canceled               ErrorKind = "canceled"
 	Closed                 ErrorKind = "closed"
 	Configuration          ErrorKind = "configuration"
@@ -61,7 +81,11 @@ const (
 // Valid indicates whether the value is a known member of the ErrorKind enum.
 func (e ErrorKind) Valid() bool {
 	switch e {
+	case AccountLocked:
+		return true
 	case AuthenticationRequired:
+		return true
+	case Busy:
 		return true
 	case Canceled:
 		return true
@@ -120,13 +144,13 @@ func (e FindMyWaitKind) Valid() bool {
 
 // Defines values for GetPhotosStatusResultState.
 const (
-	FINISHED GetPhotosStatusResultState = "FINISHED"
+	GetPhotosStatusResultStateFINISHED GetPhotosStatusResultState = "FINISHED"
 )
 
 // Valid indicates whether the value is a known member of the GetPhotosStatusResultState enum.
 func (e GetPhotosStatusResultState) Valid() bool {
 	switch e {
-	case FINISHED:
+	case GetPhotosStatusResultStateFINISHED:
 		return true
 	default:
 		return false
@@ -145,6 +169,60 @@ func (e PhotoItemType) Valid() bool {
 	case Image:
 		return true
 	case Movie:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoAlbumType.
+const (
+	PhotoAlbumTypeAlbum      PhotoAlbumType = 0
+	PhotoAlbumTypeFolder     PhotoAlbumType = 3
+	PhotoAlbumTypeSmartAlbum PhotoAlbumType = 6
+)
+
+// Valid indicates whether the value is a known member of the PhotoAlbumType enum.
+func (e PhotoAlbumType) Valid() bool {
+	switch e {
+	case PhotoAlbumTypeAlbum:
+		return true
+	case PhotoAlbumTypeFolder:
+		return true
+	case PhotoAlbumTypeSmartAlbum:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoChangeKind.
+const (
+	PhotoDeleted PhotoChangeKind = "deleted"
+	PhotoUpdated PhotoChangeKind = "updated"
+)
+
+// Valid indicates whether the value is a known member of the PhotoChangeKind enum.
+func (e PhotoChangeKind) Valid() bool {
+	switch e {
+	case PhotoDeleted:
+		return true
+	case PhotoUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PhotoLibraryIndexingState.
+const (
+	PhotoLibraryIndexingStateFINISHED PhotoLibraryIndexingState = "FINISHED"
+)
+
+// Valid indicates whether the value is a known member of the PhotoLibraryIndexingState enum.
+func (e PhotoLibraryIndexingState) Valid() bool {
+	switch e {
+	case PhotoLibraryIndexingStateFINISHED:
 		return true
 	default:
 		return false
@@ -247,6 +325,60 @@ func (e ReminderRecurrenceRuleFrequency) Valid() bool {
 	case ReminderWeekly:
 		return true
 	case ReminderYearly:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SecurityKeyCeremonyOrigin.
+const (
+	HttpsappleCom SecurityKeyCeremonyOrigin = "https://apple.com"
+)
+
+// Valid indicates whether the value is a known member of the SecurityKeyCeremonyOrigin enum.
+func (e SecurityKeyCeremonyOrigin) Valid() bool {
+	switch e {
+	case HttpsappleCom:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SecurityKeyCeremonyUserVerification.
+const (
+	Discouraged SecurityKeyCeremonyUserVerification = "discouraged"
+)
+
+// Valid indicates whether the value is a known member of the SecurityKeyCeremonyUserVerification enum.
+func (e SecurityKeyCeremonyUserVerification) Valid() bool {
+	switch e {
+	case Discouraged:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TwoFactorDeliveryMethod.
+const (
+	TwoFactorDeliverySMS           TwoFactorDeliveryMethod = "sms"
+	TwoFactorDeliverySecurityKey   TwoFactorDeliveryMethod = "security_key"
+	TwoFactorDeliveryTrustedDevice TwoFactorDeliveryMethod = "trusted_device"
+	TwoFactorDeliveryUnknown       TwoFactorDeliveryMethod = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the TwoFactorDeliveryMethod enum.
+func (e TwoFactorDeliveryMethod) Valid() bool {
+	switch e {
+	case TwoFactorDeliverySMS:
+		return true
+	case TwoFactorDeliverySecurityKey:
+		return true
+	case TwoFactorDeliveryTrustedDevice:
+		return true
+	case TwoFactorDeliveryUnknown:
 		return true
 	default:
 		return false
@@ -364,6 +496,69 @@ type AccountStorageUsage struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
+// AddPhotoToAlbumRequest AddPhotoToAlbum operation input.
+//
+// Example: {"albumID":"synthetic-album-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset-0"}
+type AddPhotoToAlbumRequest struct {
+	// AlbumID Provider album record identifier.
+	AlbumID string `json:"albumID"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// PhotoID Provider asset identifier.
+	PhotoID string `json:"photoID"`
+}
+
+// AddReminderLocationTriggerRequest Add an atomic location alarm to a revision-aware reminder snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic","clientID":"synthetic","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic","listID":"List/synthetic","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type AddReminderLocationTriggerRequest struct {
+	Address string `json:"address,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth      AuthContext                                 `json:"auth"`
+	Latitude  float64                                     `json:"latitude,omitempty"`
+	Longitude float64                                     `json:"longitude,omitempty"`
+	Proximity *AddReminderLocationTriggerRequestProximity `json:"proximity,omitempty"`
+	Radius    *float64                                    `json:"radius,omitempty"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+	Title    string   `json:"title,omitempty"`
+}
+
+// AddReminderLocationTriggerRequestProximity defines model for AddReminderLocationTriggerRequest.Proximity.
+type AddReminderLocationTriggerRequestProximity int
+
+// AddReminderLocationTriggerResult Acknowledged alarm, trigger, independent updated reminder and response evidence.
+//
+// Example: {"alarm":{"alarmUID":"synthetic","id":"Alarm/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","triggerID":"synthetic"},"reminder":{"alarmIDs":["synthetic"],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic","listID":"List/synthetic","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[],"trigger":{"address":"","alarmID":"Alarm/synthetic","id":"AlarmTrigger/synthetic","latitude":0,"locationUID":"synthetic","longitude":0,"proximity":1,"radius":100,"recordChangeTag":null,"title":""}}
+type AddReminderLocationTriggerResult struct {
+	// Alarm Alarm linked to a reminder and an optional trigger identifier.
+	//
+	// Example: {"alarmUID":"synthetic","id":"Alarm/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","triggerID":"synthetic"}
+	Alarm ReminderAlarm `json:"alarm"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+
+	// Trigger Location alarm geometry and proximity direction.
+	//
+	// Example: {"address":"","alarmID":"Alarm/synthetic","id":"AlarmTrigger/synthetic","latitude":0,"locationUID":"","longitude":0,"proximity":1,"radius":0,"recordChangeTag":null,"title":""}
+	Trigger ReminderLocationTrigger `json:"trigger"`
+}
+
 // ApplySessionResponsesRequest Apply observed response cookie/token updates to a copied native session without making a network request.
 //
 // Example: {"responses":[],"session":{"accountCountryCode":null,"accountData":{},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"requiresTwoFactor":false,"requiresTwoStep":false,"responses":[],"trustToken":"synthetic-trust","trustedSession":true}}
@@ -384,7 +579,7 @@ type ApplySessionResponsesResult struct {
 
 // AuthContext Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 type AuthContext struct {
-	// AccountID Authenticated account identifier returned by login.
+	// AccountID Authenticated account identifier returned by login; empty only before authentication completes.
 	AccountID string `json:"accountID"`
 
 	// AccountServiceURL HTTPS account origin from authenticated discovery; required by account reads except regional plan summaries.
@@ -426,6 +621,9 @@ type AuthContext struct {
 	// PhotosServiceURL HTTPS CloudKit origin from authenticated discovery; required by Photos operations.
 	PhotosServiceURL string `json:"photosServiceURL,omitempty"`
 
+	// PhotosUploadServiceURL Account-discovered Photos upload reservation origin.
+	PhotosUploadServiceURL string `json:"photosUploadServiceURL,omitempty"`
+
 	// RemindersServiceURL HTTPS Reminders origin from authenticated discovery; required by reminders operations.
 	RemindersServiceURL string `json:"remindersServiceURL,omitempty"`
 
@@ -434,6 +632,9 @@ type AuthContext struct {
 
 	// SetupServiceURL HTTPS setup origin from authentication; required for remote erase token lookup.
 	SetupServiceURL string `json:"setupServiceURL,omitempty"`
+
+	// SharedPhotosServiceURL Account-discovered legacy shared-stream Photos origin.
+	SharedPhotosServiceURL string `json:"sharedPhotosServiceURL,omitempty"`
 }
 
 // AuthCookie Caller-owned web cookie state; credential values may contain secrets.
@@ -474,6 +675,63 @@ type AuthCookie struct {
 // AuthCookieSameSite Optional browser same-site attribute; native HTTP requests preserve this state without a browser navigation policy.
 type AuthCookieSameSite string
 
+// AuthenticateRequest Authenticate with an optional saved session, otherwise perform native SRP with the supplied password.
+type AuthenticateRequest struct {
+	AcceptTerms        bool                      `json:"acceptTerms,omitempty"`
+	AccountCountryCode nullable.Nullable[string] `json:"accountCountryCode,omitempty"`
+	AccountName        string                    `json:"accountName"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth           AuthContext `json:"auth"`
+	ForceRefresh   bool        `json:"forceRefresh,omitempty"`
+	Password       string      `json:"password"`
+	PauseTwoFactor bool        `json:"pauseTwoFactor,omitempty"`
+
+	// SavedState Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	SavedState *NativeAuthState `json:"savedState,omitempty"`
+
+	// Service Optional provider service for verified one-factor credential login.
+	Service    *string `json:"service,omitempty"`
+	TrustToken string  `json:"trustToken"`
+}
+
+// AuthenticationStatusResult defines model for AuthenticationStatusResult.
+type AuthenticationStatusResult struct {
+	Authenticated     bool               `json:"authenticated"`
+	RequiresTwoFactor bool               `json:"requiresTwoFactor"`
+	RequiresTwoStep   bool               `json:"requiresTwoStep"`
+	Responses         []ResponseMetadata `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State          NativeAuthState `json:"state"`
+	TrustedSession bool            `json:"trustedSession"`
+}
+
+// ConfirmSecurityKeyRequest defines model for ConfirmSecurityKeyRequest.
+type ConfirmSecurityKeyRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth     AuthContext `json:"auth"`
+	DeviceID string      `json:"deviceID,omitempty"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// CountSharedPhotosRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
+type CountSharedPhotosRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// CountSharedPhotosResult Example: {"count":0,"responses":[]}
+type CountSharedPhotosResult struct {
+	Count     int64              `json:"count"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // CreateDriveFolderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"name":"Synthetic","parentID":"FOLDER::synthetic::root"}
 type CreateDriveFolderRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -497,6 +755,99 @@ type CreateDriveFolderResult struct {
 	Metadata ResponseMetadata `json:"metadata"`
 }
 
+// CreatePhotoAlbumRequest CreatePhotoAlbum operation input.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"name":"Album"}
+type CreatePhotoAlbumRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Folder Create a folder when true and a regular album when false.
+	Folder bool `json:"folder,omitempty"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// Name Decoded album or folder display name.
+	Name string `json:"name"`
+
+	// Type Source ALBUM, FOLDER, and SMART_ALBUM values.
+	//
+	// Example: 0
+	Type *PhotoAlbumType `json:"type,omitempty"`
+}
+
+// CreateReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"name":"Synthetic tag","reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type CreateReminderHashtagRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+	Name string      `json:"name"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
+// CreateReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type CreateReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// FirstDayOfWeek Provider weekday index; omission uses zero.
+	FirstDayOfWeek *int64 `json:"firstDayOfWeek,omitempty"`
+
+	// Frequency Daily through yearly recurrence; omission uses daily.
+	Frequency *ReminderRecurrenceRuleFrequency `json:"frequency,omitempty"`
+
+	// Interval Frequency multiplier; omission uses one.
+	Interval *int64 `json:"interval,omitempty"`
+
+	// OccurrenceCount Occurrence count; omission uses zero.
+	OccurrenceCount *int64 `json:"occurrenceCount,omitempty"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
+// CreateReminderRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"listID":"List/synthetic-list","title":"Synthetic title"}
+type CreateReminderRequest struct {
+	AllDay bool `json:"allDay,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth             AuthContext                  `json:"auth"`
+	Completed        bool                         `json:"completed,omitempty"`
+	Description      string                       `json:"description,omitempty"`
+	DueDate          nullable.Nullable[time.Time] `json:"dueDate,omitempty"`
+	Flagged          bool                         `json:"flagged,omitempty"`
+	ListID           string                       `json:"listID"`
+	ParentReminderID string                       `json:"parentReminderID,omitempty"`
+	Priority         int64                        `json:"priority,omitempty"`
+	TimeZone         string                       `json:"timeZone,omitempty"`
+	Title            string                       `json:"title"`
+}
+
+// CreateReminderURLAttachmentRequest Create a URL attachment and atomically link it to the supplied reminder snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"url":"https://example.invalid/attachment"}
+type CreateReminderURLAttachmentRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+	URL      string   `json:"url"`
+	UTI      *string  `json:"uti,omitempty"`
+}
+
 // DeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
 type DeleteDriveNodeRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -508,6 +859,122 @@ type DeleteDriveNodeRequest struct {
 
 // DeleteDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type DeleteDriveNodeResult = DriveItemChangeResult
+
+// DeletePhotoAlbumRequest DeletePhotoAlbum operation input.
+//
+// Example: {"albumID":"synthetic-album-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type DeletePhotoAlbumRequest struct {
+	// AlbumID Provider album record identifier.
+	AlbumID string `json:"albumID"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// DeletePhotoRequest DeletePhoto operation input.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset-0"}
+type DeletePhotoRequest struct {
+	// Album The updated album projection.
+	Album *string `json:"album,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// PhotoID Provider asset identifier.
+	PhotoID string `json:"photoID"`
+}
+
+// DeleteReminderAttachmentRequest Soft-delete an attachment and atomically remove every matching link from its reminder.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderAttachmentRequest struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
+// DeleteReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderHashtagRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag ReminderHashtag `json:"hashtag"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
+// DeleteReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type DeleteReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
+
+// DeleteReminderRequest Soft-delete a reminder by raw or complete record identifier using its current revision.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"recordChangeTag":"synthetic-old-tag","reminderID":"Reminder/synthetic-item"}
+type DeleteReminderRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// RecordChangeTag Current provider revision, or null when absent.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+
+	// ReminderID Raw identifier or complete Reminder record name.
+	ReminderID string `json:"reminderID"`
+}
+
+// DeleteReminderResult Acknowledged soft deletion with the refreshed revision and all response evidence.
+//
+// Example: {"deleted":true,"modified":"2023-11-14T22:13:20Z","recordChangeTag":"synthetic-new-tag","responses":[]}
+type DeleteReminderResult struct {
+	// Deleted True after the provider accepts every record operation.
+	Deleted bool `json:"deleted"`
+
+	// Modified Modification instant sent to the provider.
+	Modified time.Time `json:"modified"`
+
+	// RecordChangeTag Last nonempty matching acknowledgement revision, or the supplied revision.
+	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
+	Responses       []ResponseMetadata        `json:"responses"`
+}
 
 // DownloadDriveFileRequest Download a document using its node-provided document identifier and zone.
 //
@@ -547,6 +1014,11 @@ type DownloadPhotoRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
 
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
 	// PhotoID Requested asset identifier.
 	PhotoID string `json:"photoID"`
 
@@ -561,6 +1033,27 @@ type DownloadPhotoRequest struct {
 // Example: {"content":null,"responses":[]}
 type DownloadPhotoResult struct {
 	// Content Exact bytes; JSON uses base64. Null means unavailable and empty means an empty file.
+	Content   nullable.Nullable[[]byte] `json:"content"`
+	Responses []ResponseMetadata        `json:"responses"`
+}
+
+// DownloadSharedPhotoRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"},"photoID":"synthetic-photo"}
+type DownloadSharedPhotoRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth    AuthContext `json:"auth"`
+	PhotoID string      `json:"photoID"`
+
+	// Version Known photo/video resource key; a rendition unavailable on the selected asset returns null.
+	//
+	// Example: original
+	Version *PhotoVersion `json:"version,omitempty"`
+}
+
+// DownloadSharedPhotoResult Example: {"content":null,"responses":[]}
+type DownloadSharedPhotoResult struct {
 	Content   nullable.Nullable[[]byte] `json:"content"`
 	Responses []ResponseMetadata        `json:"responses"`
 }
@@ -1182,6 +1675,11 @@ type GetPhotoAlbumCountRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // GetPhotoAlbumCountResult Nonnegative indexed photo count and every response from initialization, discovery and counting.
@@ -1193,6 +1691,43 @@ type GetPhotoAlbumCountResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// GetPhotoChangesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"since":"synthetic-old"}
+type GetPhotoChangesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// Since Omission reads available initial changes.
+	Since *string `json:"since,omitempty"`
+}
+
+// GetPhotoChangesResult Example: {"changes":[{"deleted":false,"kind":"updated","modified":null,"recordName":"synthetic-asset","recordType":"CPLAsset"}],"responses":[],"syncToken":"synthetic-next"}
+type GetPhotoChangesResult struct {
+	Changes   []PhotoChange             `json:"changes"`
+	Responses []ResponseMetadata        `json:"responses"`
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
+}
+
+// GetPhotoLibraryChangesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"shared":false,"since":"synthetic-old"}
+type GetPhotoLibraryChangesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext `json:"auth"`
+	Shared bool        `json:"shared,omitempty"`
+	Since  *string     `json:"since,omitempty"`
+}
+
+// GetPhotoLibraryChangesResult Example: {"moreComing":false,"responses":[],"syncToken":"synthetic-next","zones":[{"deleted":false,"ownerRecordName":null,"zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}]}
+type GetPhotoLibraryChangesResult struct {
+	MoreComing nullable.Nullable[bool]   `json:"moreComing"`
+	Responses  []ResponseMetadata        `json:"responses"`
+	SyncToken  nullable.Nullable[string] `json:"syncToken"`
+	Zones      []PhotoLibraryChange      `json:"zones"`
+}
+
 // GetPhotoRequest Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.
 //
 // Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset"}
@@ -1202,6 +1737,11 @@ type GetPhotoRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 
 	// PhotoID Requested asset identifier.
 	PhotoID string `json:"photoID"`
@@ -1215,12 +1755,52 @@ type GetPhotoResult struct {
 	Responses []ResponseMetadata       `json:"responses"`
 }
 
+// GetPhotoUploadStatusRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"jobIDs":["synthetic-job"]}
+type GetPhotoUploadStatusRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext `json:"auth"`
+	JobIDs []string    `json:"jobIDs"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// GetPhotoUploadStatusResult Example: {"jobs":{"synthetic-job":{"errorCode":null,"progress":100,"unknown":false}},"responses":[{"headers":[],"statusCode":200}]}
+type GetPhotoUploadStatusResult struct {
+	Jobs      map[string]PhotoUploadStatus `json:"jobs"`
+	Responses []ResponseMetadata           `json:"responses"`
+}
+
+// GetPhotosCursorRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type GetPhotosCursorRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// GetPhotosCursorResult Example: {"responses":[],"syncToken":"synthetic-sync"}
+type GetPhotosCursorResult struct {
+	Responses []ResponseMetadata `json:"responses"`
+	SyncToken string             `json:"syncToken"`
+}
+
 // GetPhotosStatusRequest Check the primary photo library using caller-owned authentication.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
 type GetPhotosStatusRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // GetPhotosStatusResult Ready primary photo library indexing state and current change cursor.
@@ -1279,6 +1859,22 @@ type GetReminderSyncCursorResult struct {
 	SyncToken string `json:"syncToken"`
 }
 
+// GetSharedPhotoRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"},"photoID":"synthetic-photo"}
+type GetSharedPhotoRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth    AuthContext `json:"auth"`
+	PhotoID string      `json:"photoID"`
+}
+
+// GetSharedPhotoResult Example: {"photo":null,"responses":[]}
+type GetSharedPhotoResult struct {
+	Photo     nullable.Nullable[SharedPhoto] `json:"photo"`
+	Responses []ResponseMetadata             `json:"responses"`
+}
+
 // Header One HTTP response or caller-owned authentication header value; repeated headers remain separate entries.
 type Header struct {
 	// Name Header name.
@@ -1314,6 +1910,11 @@ type ListDriveLibrariesResult struct {
 type ListPhotoAlbumsRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListPhotoAlbumsResult Ordered smart and custom albums with response evidence from initialization and every page.
@@ -1334,6 +1935,11 @@ type ListPhotoAssetsRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListPhotoAssetsResult Complete deduplicated photos and every initialization, discovery, count and page response.
@@ -1344,12 +1950,29 @@ type ListPhotoAssetsResult struct {
 	Responses []ResponseMetadata `json:"responses"`
 }
 
+// ListPhotoLibrariesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
+type ListPhotoLibrariesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListPhotoLibrariesResult Example: {"libraries":[{"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}],"responses":[]}
+type ListPhotoLibrariesResult struct {
+	Libraries []PhotoLibrary     `json:"libraries"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ListRecentlyAddedPhotosRequest Enumerate the primary library newest first using the recently-added trailing window index.
 //
 // Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}
 type ListRecentlyAddedPhotosRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
 }
 
 // ListRecentlyAddedPhotosResult Complete deduplicated newest-first photos and every initialization, library discovery and page response.
@@ -1541,6 +2164,64 @@ type ListRemindersResult struct {
 	Triggers        map[string]ReminderLocationTrigger `json:"triggers"`
 }
 
+// ListSecurityKeyDevicesRequest defines model for ListSecurityKeyDevicesRequest.
+type ListSecurityKeyDevicesRequest = struct{}
+
+// ListSecurityKeyDevicesResult defines model for ListSecurityKeyDevicesResult.
+type ListSecurityKeyDevicesResult struct {
+	Devices []SecurityKeyDevice `json:"devices"`
+}
+
+// ListSharedPhotoAlbumsRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
+type ListSharedPhotoAlbumsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListSharedPhotoAlbumsResult Example: {"albums":[],"responses":[]}
+type ListSharedPhotoAlbumsResult struct {
+	Albums    []SharedPhotoAlbum `json:"albums"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ListSharedPhotosRequest Example: {"album":"synthetic-stream-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid","sharedPhotosServiceURL":"https://shared.example.invalid"}}
+type ListSharedPhotosRequest struct {
+	// Album Shared stream album ID or name.
+	Album string `json:"album"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+}
+
+// ListSharedPhotosResult Example: {"photos":[],"responses":[]}
+type ListSharedPhotosResult struct {
+	Photos    []SharedPhoto      `json:"photos"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// LogoutRequest defines model for LogoutRequest.
+type LogoutRequest struct {
+	AllSessions bool `json:"allSessions,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth                 AuthContext `json:"auth"`
+	KeepTrusted          bool        `json:"keepTrusted,omitempty"`
+	PreserveLocalSession bool        `json:"preserveLocalSession,omitempty"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// LogoutResult defines model for LogoutResult.
+type LogoutResult struct {
+	LocalCleared    bool               `json:"localCleared"`
+	RemoteConfirmed bool               `json:"remoteConfirmed"`
+	Responses       []ResponseMetadata `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
 // MoveDriveNodesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"destinationID":"FOLDER::synthetic::destination","nodes":[]}
 type MoveDriveNodesRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -1555,6 +2236,79 @@ type MoveDriveNodesRequest struct {
 
 // MoveDriveNodesResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type MoveDriveNodesResult = DriveItemChangeResult
+
+// NativeAuthChallenge defines model for NativeAuthChallenge.
+type NativeAuthChallenge struct {
+	AuthFactors      []string `json:"authFactors"`
+	AuthInitialRoute string   `json:"authInitialRoute"`
+
+	// BridgeBootstrap Schema-owned bridge bootstrap for the explicit native bridge lifecycle.
+	BridgeBootstrap   []byte               `json:"bridgeBootstrap,omitempty"`
+	HasTrustedDevices bool                 `json:"hasTrustedDevices"`
+	Mode              string               `json:"mode"`
+	PhoneNumbers      []TrustedPhoneNumber `json:"phoneNumbers"`
+
+	// ProviderData Detached normalized provider authentication options.
+	ProviderData         []byte                `json:"providerData,omitempty"`
+	SecurityKeyChallenge *SecurityKeyChallenge `json:"securityKeyChallenge,omitempty"`
+	SecurityKeyNames     []string              `json:"securityKeyNames"`
+}
+
+// NativeAuthRequest defines model for NativeAuthRequest.
+type NativeAuthRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// NativeAuthResult defines model for NativeAuthResult.
+type NativeAuthResult struct {
+	RequiresTwoFactor bool               `json:"requiresTwoFactor"`
+	RequiresTwoStep   bool               `json:"requiresTwoStep"`
+	Responses         []ResponseMetadata `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+
+	// Success Whether the requested authentication step was accepted. Pending MFA remains explicit in state.
+	Success        bool `json:"success"`
+	TrustedSession bool `json:"trustedSession"`
+}
+
+// NativeAuthState Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+type NativeAuthState struct {
+	// AcceptTerms Caller authorization to accept provider terms during resumed authentication.
+	AcceptTerms        bool                      `json:"acceptTerms"`
+	AccountCountryCode nullable.Nullable[string] `json:"accountCountryCode"`
+	AccountData        []byte                    `json:"accountData"`
+	AccountName        string                    `json:"accountName"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth           AuthContext             `json:"auth"`
+	Challenge      NativeAuthChallenge     `json:"challenge"`
+	CodeRequested  bool                    `json:"codeRequested"`
+	DeliveryMethod TwoFactorDeliveryMethod `json:"deliveryMethod"`
+
+	// DeliveryNotice Provider-derived explanation of the selected MFA delivery route.
+	DeliveryNotice *string `json:"deliveryNotice,omitempty"`
+	RequiresMFA    bool    `json:"requiresMFA"`
+	TrustToken     string  `json:"trustToken"`
+}
+
+// NativeBridgeSessionState Detached progress of an explicit trusted-device bridge lifecycle. Values contain secrets.
+type NativeBridgeSessionState struct {
+	Active    bool               `json:"active"`
+	Legacy    bool               `json:"legacy"`
+	NextStep  string             `json:"nextStep"`
+	Responses []ResponseMetadata `json:"responses"`
+	SessionID string             `json:"sessionID"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State         NativeAuthState           `json:"state"`
+	TransactionID nullable.Nullable[string] `json:"transactionID"`
+}
 
 // NullableJSONValue An uninterpreted named provider value; distinguish omitted values from explicit JSON null.
 type NullableJSONValue = json.RawMessage
@@ -1572,6 +2326,15 @@ type OpenFindMySessionRequest struct {
 
 	// IncludeFamily Include family devices and bounded readiness polling.
 	IncludeFamily bool `json:"includeFamily"`
+}
+
+// OpenNativeBridgeSessionRequest defines model for OpenNativeBridgeSessionRequest.
+type OpenNativeBridgeSessionRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
 }
 
 // PermanentlyDeleteDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
@@ -1644,6 +2407,102 @@ type PhotoAlbum struct {
 	RecordChangeTag nullable.Nullable[string] `json:"recordChangeTag"`
 }
 
+// PhotoAlbumMutationResult PhotoAlbumMutation operation output.
+//
+// Example: {"album":{"fullName":"Album","id":"synthetic-album-0","name":"Album","recordChangeTag":null},"responses":[]}
+type PhotoAlbumMutationResult struct {
+	// Album The updated album projection.
+	Album nullable.Nullable[PhotoAlbum] `json:"album"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// PhotoAlbumRelationResult PhotoAlbumRelation operation output.
+//
+// Example: {"added":true,"responses":[]}
+type PhotoAlbumRelationResult struct {
+	// Added The provider acknowledged creation of the album relation.
+	Added bool `json:"added"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// PhotoAlbumType Source ALBUM, FOLDER, and SMART_ALBUM values.
+//
+// Example: 0
+type PhotoAlbumType int
+
+// PhotoChange Example: {"deleted":false,"kind":"updated","modified":null,"recordName":"synthetic-asset","recordType":"CPLAsset"}
+type PhotoChange struct {
+	Deleted bool            `json:"deleted"`
+	Kind    PhotoChangeKind `json:"kind"`
+
+	// Modified Provider modification instant.
+	Modified   nullable.Nullable[time.Time] `json:"modified"`
+	RecordName string                       `json:"recordName"`
+	RecordType nullable.Nullable[string]    `json:"recordType"`
+}
+
+// PhotoChangeKind defines model for PhotoChange.Kind.
+type PhotoChangeKind string
+
+// PhotoDeletionResult PhotoDeletion operation output.
+//
+// Example: {"deleted":true,"responses":[]}
+type PhotoDeletionResult struct {
+	// Deleted The provider acknowledged the soft-delete request without per-record rejection.
+	Deleted bool `json:"deleted"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// PhotoLibrary Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+//
+// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+type PhotoLibrary struct {
+	ID string `json:"id"`
+
+	// IndexingState Discovery initialization receipt; omission checks readiness.
+	IndexingState PhotoLibraryIndexingState `json:"indexingState,omitempty"`
+
+	// IsSharedLibrary Shared-library capabilities independent of database scope.
+	IsSharedLibrary bool                      `json:"isSharedLibrary"`
+	OwnerRecordName nullable.Nullable[string] `json:"ownerRecordName"`
+
+	// Shared Selects the shared CloudKit database.
+	Shared    bool                      `json:"shared"`
+	SyncToken nullable.Nullable[string] `json:"syncToken"`
+	ZoneName  string                    `json:"zoneName"`
+	ZoneType  nullable.Nullable[string] `json:"zoneType"`
+}
+
+// PhotoLibraryIndexingState Discovery initialization receipt; omission checks readiness.
+type PhotoLibraryIndexingState string
+
+// PhotoLibraryChange Example: {"deleted":false,"ownerRecordName":null,"zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+type PhotoLibraryChange struct {
+	Deleted         nullable.Nullable[bool]   `json:"deleted"`
+	OwnerRecordName nullable.Nullable[string] `json:"ownerRecordName"`
+	ZoneName        string                    `json:"zoneName"`
+	ZoneType        nullable.Nullable[string] `json:"zoneType"`
+}
+
+// PhotoMutationResult PhotoMutation operation output.
+//
+// Example: {"photo":{"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}},"responses":[]}
+type PhotoMutationResult struct {
+	// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+	//
+	// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+	Photo Photo `json:"photo"`
+
+	// Responses Ordered provider responses including initialization, discovery, writes and refreshes.
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // PhotoResource One downloadable photo/video rendition with nullable provider details.
 //
 // Example: {"checksum":null,"filename":"photo.JPG","height":null,"size":null,"type":null,"url":null,"width":null}
@@ -1670,15 +2529,96 @@ type PhotoResource struct {
 	Width UnknownJSONValue `json:"width"`
 }
 
+// PhotoUploadFile defines model for PhotoUploadFile.
+type PhotoUploadFile struct {
+	Filename         string    `json:"filename"`
+	ModificationTime time.Time `json:"modificationTime"`
+
+	// Receipt Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.
+	Receipt PhotoUploadReceipt `json:"receipt"`
+
+	// TimeZoneOffset UTC minus local time, in minutes.
+	TimeZoneOffset int `json:"timeZoneOffset"`
+}
+
+// PhotoUploadReceipt Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.
+type PhotoUploadReceipt struct {
+	FileChecksum         nullable.Nullable[string]   `json:"fileChecksum"`
+	Receipt              nullable.Nullable[string]   `json:"receipt"`
+	ReferenceChecksum    nullable.Nullable[string]   `json:"referenceChecksum"`
+	Size                 nullable.Nullable[int64]    `json:"size"`
+	WrappingKey          nullable.Nullable[string]   `json:"wrappingKey"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// PhotoUploadRegistration defines model for PhotoUploadRegistration.
+type PhotoUploadRegistration struct {
+	Duplicate            bool                                             `json:"duplicate"`
+	JobID                nullable.Nullable[string]                        `json:"jobID"`
+	MasterID             nullable.Nullable[string]                        `json:"masterID"`
+	PhotoID              nullable.Nullable[string]                        `json:"photoID"`
+	Status               nullable.Nullable[PhotoUploadRegistrationStatus] `json:"status"`
+	AdditionalProperties map[string]UnknownJSONValue                      `json:"-"`
+}
+
+// PhotoUploadRegistrationStatus defines model for PhotoUploadRegistrationStatus.
+type PhotoUploadRegistrationStatus struct {
+	ErrorMessage         nullable.Nullable[string]   `json:"errorMessage"`
+	Retryable            nullable.Nullable[bool]     `json:"retryable"`
+	Status               nullable.Nullable[int]      `json:"status"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// PhotoUploadStatus defines model for PhotoUploadStatus.
+type PhotoUploadStatus struct {
+	ErrorCode nullable.Nullable[int] `json:"errorCode"`
+	Progress  nullable.Nullable[int] `json:"progress"`
+
+	// Unknown True when the provider does not recognize this job.
+	Unknown              bool                        `json:"unknown"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
 // PhotoVersion Known photo/video resource key; a rendition unavailable on the selected asset returns null.
 //
 // Example: original
 type PhotoVersion string
 
+// PhotoVisitEvent Owned photo projection and ordered response metadata available before the callback.
+//
+// Example: {"photo":{"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}},"responses":[]}
+type PhotoVisitEvent struct {
+	// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+	//
+	// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+	Photo     Photo              `json:"photo"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // RefreshFindMyRequest Example: {"locate":true}
 type RefreshFindMyRequest struct {
 	// Locate Request fresh locations when a provider refresh context exists.
 	Locate bool `json:"locate"`
+}
+
+// RegisterPhotoUploadsRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"files":[{"filename":"synthetic.jpg","modificationTime":"2023-11-14T22:13:20Z","receipt":{"fileChecksum":null,"receipt":"synthetic-receipt","referenceChecksum":null,"size":3,"wrappingKey":null},"timeZoneOffset":0}],"importGroup":"synthetic-import","localTimeZoneID":"UTC"}
+type RegisterPhotoUploadsRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth        AuthContext       `json:"auth"`
+	Files       []PhotoUploadFile `json:"files"`
+	ImportGroup string            `json:"importGroup"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library         *PhotoLibrary `json:"library,omitempty"`
+	LocalTimeZoneID string        `json:"localTimeZoneID"`
+}
+
+// RegisterPhotoUploadsResult Example: {"registrations":[{"duplicate":false,"jobID":"synthetic-job","masterID":"synthetic-master","photoID":"synthetic-photo","status":{"errorMessage":null,"retryable":false,"status":200}}],"responses":[{"headers":[],"statusCode":200}]}
+type RegisterPhotoUploadsResult struct {
+	Registrations []PhotoUploadRegistration `json:"registrations"`
+	Responses     []ResponseMetadata        `json:"responses"`
 }
 
 // RegisteredDriveDocument defines model for RegisteredDriveDocument.
@@ -1796,6 +2736,30 @@ type ReminderAttachment struct {
 	union json.RawMessage
 }
 
+// ReminderAttachmentMutationResult Acknowledged parent and attachment snapshots with ordered provider evidence.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderAttachmentMutationResult struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ReminderAttachmentSelection Generated semantic projection used to select the URL or image attachment variant.
+//
+// Example: {"url":""}
+type ReminderAttachmentSelection struct {
+	FileAssetURL *string `json:"fileAssetURL,omitempty"`
+	URL          *string `json:"url,omitempty"`
+}
+
 // ReminderChangeEvent One ordered reminder update or deletion; duplicate events remain distinct.
 //
 // Example: {"reminder":null,"reminderID":"Reminder/synthetic-deleted","type":"deleted"}
@@ -1831,6 +2795,29 @@ type ReminderHashtag struct {
 
 	// ReminderID Complete parent reminder record name.
 	ReminderID string `json:"reminderID"`
+}
+
+// ReminderHashtagMutationResult Example: {"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"responses":[]}
+type ReminderHashtagMutationResult struct {
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag   ReminderHashtag    `json:"hashtag"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// ReminderHashtagRelationResult Example: {"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderHashtagRelationResult struct {
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag ReminderHashtag `json:"hashtag"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
 }
 
 // ReminderImageAttachment Image attachment metadata and provider download URL.
@@ -1944,6 +2931,17 @@ type ReminderLocationTriggerProximity int
 // ReminderMetadata Uninterpreted provider metadata preserved without changing JSON numbers or nulls.
 type ReminderMetadata map[string]UnknownJSONValue
 
+// ReminderMutationResult Updated or freshly hydrated reminder with ordered response evidence.
+//
+// Example: {"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderMutationResult struct {
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
 // ReminderRecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
 //
 // Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
@@ -1972,6 +2970,33 @@ type ReminderRecurrenceRule struct {
 
 // ReminderRecurrenceRuleFrequency Daily through yearly recurrence; unknown values default to daily.
 type ReminderRecurrenceRuleFrequency int
+
+// ReminderRecurrenceRuleMutationResult Acknowledged recurrence settings and response evidence.
+//
+// Example: {"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"responses":[]}
+type ReminderRecurrenceRuleMutationResult struct {
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+	Responses      []ResponseMetadata     `json:"responses"`
+}
+
+// ReminderRecurrenceRuleRelationResult Acknowledged recurrence settings and response evidence.
+//
+// Example: {"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"},"responses":[]}
+type ReminderRecurrenceRuleRelationResult struct {
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder  Reminder           `json:"reminder"`
+	Responses []ResponseMetadata `json:"responses"`
+}
 
 // ReminderURLAttachment URL attachment linked to a reminder.
 //
@@ -2033,6 +3058,65 @@ type RenameDriveNodeRequest struct {
 
 // RenameDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type RenameDriveNodeResult = DriveItemChangeResult
+
+// RenamePhotoAlbumRequest RenamePhotoAlbum operation input.
+//
+// Example: {"albumID":"synthetic-album-0","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"name":"Album"}
+type RenamePhotoAlbumRequest struct {
+	// AlbumID Provider album record identifier.
+	AlbumID string `json:"albumID"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// Name Decoded album or folder display name.
+	Name string `json:"name"`
+}
+
+// RequestPCSAccessRequest defines model for RequestPCSAccessRequest.
+type RequestPCSAccessRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth    AuthContext `json:"auth"`
+	Service string      `json:"service"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// RequestTwoFactorCodeRequest defines model for RequestTwoFactorCodeRequest.
+type RequestTwoFactorCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth          AuthContext           `json:"auth"`
+	PhoneNumberID *TrustedPhoneNumberID `json:"phoneNumberID,omitempty"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// ReservePhotoUploadsRequest Example: {"assets":{"synthetic-file":3},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]}}
+type ReservePhotoUploadsRequest struct {
+	// Assets Caller-generated identities mapped to complete byte lengths.
+	Assets map[string]int64 `json:"assets"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+}
+
+// ReservePhotoUploadsResult Example: {"responses":[{"headers":[],"statusCode":200}],"uploadURLs":{"synthetic-file":"https://content.example.invalid/upload?token=synthetic"}}
+type ReservePhotoUploadsResult struct {
+	Responses  []ResponseMetadata `json:"responses"`
+	UploadURLs map[string]string  `json:"uploadURLs"`
+}
 
 // ResponseMetadata Response status and headers, including Set-Cookie values for caller-owned session updates.
 type ResponseMetadata struct {
@@ -2115,6 +3199,139 @@ type SavedSessionCredentials struct {
 	SetupServiceURL string `json:"setupServiceURL"`
 }
 
+// SecurityKeyAssertion defines model for SecurityKeyAssertion.
+type SecurityKeyAssertion struct {
+	AuthenticatorData []byte                    `json:"authenticatorData"`
+	ClientData        []byte                    `json:"clientData"`
+	CredentialID      []byte                    `json:"credentialID"`
+	Signature         []byte                    `json:"signature"`
+	UserHandle        nullable.Nullable[[]byte] `json:"userHandle"`
+}
+
+// SecurityKeyCeremony defines model for SecurityKeyCeremony.
+type SecurityKeyCeremony struct {
+	Challenge        SecurityKeyChallenge                `json:"challenge"`
+	DeviceID         string                              `json:"deviceID"`
+	Origin           SecurityKeyCeremonyOrigin           `json:"origin"`
+	UserVerification SecurityKeyCeremonyUserVerification `json:"userVerification"`
+}
+
+// SecurityKeyCeremonyOrigin defines model for SecurityKeyCeremony.Origin.
+type SecurityKeyCeremonyOrigin string
+
+// SecurityKeyCeremonyUserVerification defines model for SecurityKeyCeremony.UserVerification.
+type SecurityKeyCeremonyUserVerification string
+
+// SecurityKeyChallenge defines model for SecurityKeyChallenge.
+type SecurityKeyChallenge struct {
+	Challenge      string   `json:"challenge"`
+	CredentialIDs  []string `json:"credentialIDs"`
+	RelyingPartyID string   `json:"relyingPartyID"`
+}
+
+// SecurityKeyDevice defines model for SecurityKeyDevice.
+type SecurityKeyDevice struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// SendPhotoUploadBytesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"content":"synthetic-bytes","url":"https://content.example.invalid/upload?token=synthetic"}
+type SendPhotoUploadBytesRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Content Caller-owned reader; bytes start at its current position. The SDK does not close it.
+	Content io.ReadSeeker `json:"content"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// URL Signed HTTPS URL returned by ReservePhotoUploads.
+	URL string `json:"url"`
+}
+
+// SendPhotoUploadBytesResult Example: {"receipt":{"fileChecksum":null,"receipt":"synthetic-receipt","referenceChecksum":null,"size":3,"wrappingKey":null},"responses":[{"headers":[],"statusCode":200}]}
+type SendPhotoUploadBytesResult struct {
+	// Receipt Stored content receipt echoed unchanged when registering the upload. Unknown provider receipt members are retained.
+	Receipt   PhotoUploadReceipt `json:"receipt"`
+	Responses []ResponseMetadata `json:"responses"`
+}
+
+// SendTwoStepCodeRequest defines model for SendTwoStepCodeRequest.
+type SendTwoStepCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext       `json:"auth"`
+	Device TrustedAuthDevice `json:"device"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// SetPhotoFavoriteRequest SetPhotoFavorite operation input.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"favorite":true,"photoID":"synthetic-asset-0"}
+type SetPhotoFavoriteRequest struct {
+	// Album The updated album projection.
+	Album *string `json:"album,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Favorite Desired favorite state.
+	Favorite bool `json:"favorite"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// PhotoID Provider asset identifier.
+	PhotoID string `json:"photoID"`
+}
+
+// SharedPhoto defines model for SharedPhoto.
+type SharedPhoto struct {
+	LikeCount int64 `json:"likeCount"`
+	Liked     bool  `json:"liked"`
+
+	// Photo Logical photo with downloadable resources and preserved normalized asset metadata.
+	//
+	// Example: {"added":"1970-01-01T00:00:00Z","assetMetadata":{},"created":"1970-01-01T00:00:00Z","dimensions":[null,null],"filename":"photo.jpg","id":"synthetic-asset","isLivePhoto":false,"itemType":"image","masterID":"synthetic-master","size":null,"versions":{}}
+	Photo Photo `json:"photo"`
+}
+
+// SharedPhotoAlbum Example: {"allowContributions":false,"changeTag":"synthetic-tag","created":"1970-01-01T00:00:00Z","fullName":"Example","id":"synthetic-stream","isPublic":false,"isWebUploadSupported":false,"location":"https://shared.example.invalid/album/","name":"Example","ownerID":"synthetic-owner","publicURL":null,"sharingType":"owned"}
+type SharedPhotoAlbum struct {
+	AllowContributions bool `json:"allowContributions"`
+
+	// ChangeTag Provider string.
+	ChangeTag string    `json:"changeTag"`
+	Created   time.Time `json:"created"`
+
+	// FullName Provider string.
+	FullName string `json:"fullName"`
+
+	// ID Provider string.
+	ID                   string `json:"id"`
+	IsPublic             bool   `json:"isPublic"`
+	IsWebUploadSupported bool   `json:"isWebUploadSupported"`
+
+	// Location Provider string.
+	Location string `json:"location"`
+
+	// Name Provider string.
+	Name string `json:"name"`
+
+	// OwnerID Provider string.
+	OwnerID   string                    `json:"ownerID"`
+	PublicURL nullable.Nullable[string] `json:"publicURL"`
+
+	// SharingType Provider string.
+	SharingType string `json:"sharingType"`
+}
+
 // TrashDriveNodeRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","driveServiceURL":"https://drive.example.invalid","headers":[]},"node":{"etag":"synthetic-etag","nodeID":"FILE::synthetic::one"}}
 type TrashDriveNodeRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
@@ -2127,8 +3344,127 @@ type TrashDriveNodeRequest struct {
 // TrashDriveNodeResult Provider acknowledgement and item metadata; this does not assert that background movement has completed.
 type TrashDriveNodeResult = DriveItemChangeResult
 
+// TrustedAuthDevice defines model for TrustedAuthDevice.
+type TrustedAuthDevice struct {
+	ID string `json:"id"`
+
+	// Metadata Detached provider device metadata, including unknown future fields.
+	Metadata []byte `json:"metadata"`
+}
+
+// TrustedDevicesResult defines model for TrustedDevicesResult.
+type TrustedDevicesResult struct {
+	Devices   []TrustedAuthDevice `json:"devices"`
+	Responses []ResponseMetadata  `json:"responses"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// TrustedPhoneNumber defines model for TrustedPhoneNumber.
+type TrustedPhoneNumber struct {
+	ID       TrustedPhoneNumberID `json:"id"`
+	NonFTEU  *bool                `json:"nonFTEU,omitempty"`
+	Number   string               `json:"number"`
+	PushMode string               `json:"pushMode"`
+}
+
+// TrustedPhoneNumberID defines model for TrustedPhoneNumberID.
+type TrustedPhoneNumberID struct {
+	union json.RawMessage
+}
+
+// TrustedPhoneNumberID0 defines model for TrustedPhoneNumberID.0.
+type TrustedPhoneNumberID0 = int
+
+// TrustedPhoneNumberID1 defines model for TrustedPhoneNumberID.1.
+type TrustedPhoneNumberID1 = string
+
+// TwoFactorDeliveryMethod defines model for TwoFactorDeliveryMethod.
+type TwoFactorDeliveryMethod string
+
 // UnknownJSONValue Uninterpreted provider metadata, preserved as its original JSON value; its shape is genuinely unknown.
 type UnknownJSONValue = json.RawMessage
+
+// UpdateReminderAttachmentRequest Update URL text or image metadata; omitted fields retain their current values.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"url":""}
+type UpdateReminderAttachmentRequest struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth     AuthContext `json:"auth"`
+	FileSize *int64      `json:"fileSize,omitempty"`
+	Filename *string     `json:"filename,omitempty"`
+	Height   *int64      `json:"height,omitempty"`
+	URL      *string     `json:"url,omitempty"`
+	UTI      *string     `json:"uti,omitempty"`
+	Width    *int64      `json:"width,omitempty"`
+}
+
+// UpdateReminderAttachmentResult Updated attachment snapshot and provider response evidence.
+//
+// Example: {"attachment":{"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"},"responses":[]}
+type UpdateReminderAttachmentResult struct {
+	// Attachment Complete URL or image attachment projection.
+	//
+	// Example: {"id":"Attachment/synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic","url":"","uti":"public.url"}
+	Attachment ReminderAttachment `json:"attachment"`
+	Responses  []ResponseMetadata `json:"responses"`
+}
+
+// UpdateReminderHashtagRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"hashtag":{"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"},"name":"Synthetic tag"}
+type UpdateReminderHashtagRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Hashtag Hashtag text and optional creation instant.
+	//
+	// Example: {"created":null,"id":"Hashtag/synthetic","name":"synthetic","recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	Hashtag ReminderHashtag `json:"hashtag"`
+	Name    string          `json:"name"`
+}
+
+// UpdateReminderRecurrenceRuleRequest Recurrence rule creation, update, or unlink inputs.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"interval":2,"recurrenceRule":{"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}}
+type UpdateReminderRecurrenceRuleRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// FirstDayOfWeek Provider weekday index; omission uses zero.
+	FirstDayOfWeek *int64 `json:"firstDayOfWeek,omitempty"`
+
+	// Frequency Daily through yearly recurrence; omission uses daily.
+	Frequency *ReminderRecurrenceRuleFrequency `json:"frequency,omitempty"`
+
+	// Interval Frequency multiplier; omission uses one.
+	Interval *int64 `json:"interval,omitempty"`
+
+	// OccurrenceCount Occurrence count; omission uses zero.
+	OccurrenceCount *int64 `json:"occurrenceCount,omitempty"`
+
+	// RecurrenceRule Recurrence frequency and count settings; unknown frequencies default to daily.
+	//
+	// Example: {"firstDayOfWeek":0,"frequency":1,"id":"RecurrenceRule/synthetic","interval":1,"occurrenceCount":0,"recordChangeTag":null,"reminderID":"Reminder/synthetic"}
+	RecurrenceRule ReminderRecurrenceRule `json:"recurrenceRule"`
+}
+
+// UpdateReminderRequest Write the supplied reminder snapshot and return an independent updated snapshot.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"reminder":{"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}}
+type UpdateReminderRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Reminder Complete reminder projection with decoded documents and related identifiers.
+	//
+	// Example: {"alarmIDs":[],"allDay":false,"attachmentIDs":[],"completed":false,"completedDate":null,"created":null,"deleted":false,"description":"","dueDate":null,"flagged":false,"hashtagIDs":[],"id":"Reminder/synthetic-reminder","listID":"List/synthetic-list","modified":null,"parentReminderID":null,"priority":0,"recordChangeTag":null,"recurrenceRuleIDs":[],"startDate":null,"timeZone":null,"title":"Untitled"}
+	Reminder Reminder `json:"reminder"`
+}
 
 // UploadDriveFileRequest Prepare, transfer and register a file; content starts at the current cursor while declared size is the complete seekable file length. The caller owns and closes the content reader.
 type UploadDriveFileRequest struct {
@@ -2181,6 +3517,82 @@ type UploadDriveFileResult struct {
 	UploadedFile UploadedDriveFile `json:"uploadedFile"`
 }
 
+// UploadPhotoFileRequest Transfer and register one file through the composable uploader; the result does not wait for CloudKit indexing.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"content":"synthetic-bytes","filename":"synthetic.jpg","localTimeZoneID":"UTC","modificationTime":"2023-11-14T22:13:20Z","timeZoneOffset":0}
+type UploadPhotoFileRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Content Caller-owned seekable file bytes starting at the current cursor.
+	Content     io.ReadSeeker `json:"content"`
+	Filename    string        `json:"filename"`
+	ImportGroup *string       `json:"importGroup,omitempty"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library          *PhotoLibrary `json:"library,omitempty"`
+	LocalTimeZoneID  string        `json:"localTimeZoneID"`
+	ModificationTime time.Time     `json:"modificationTime"`
+
+	// TimeZoneOffset UTC minus local time in minutes.
+	TimeZoneOffset int `json:"timeZoneOffset"`
+}
+
+// UploadPhotoFileResult Provider registration including duplicate acknowledgement and ordered response metadata; background indexing may continue.
+//
+// Example: {"registration":{"duplicate":false,"jobID":"synthetic-job","masterID":"synthetic-master","photoID":"synthetic-photo","status":{"errorMessage":null,"retryable":false,"status":200}},"responses":[{"headers":[],"statusCode":200}]}
+type UploadPhotoFileResult struct {
+	Registration PhotoUploadRegistration `json:"registration"`
+	Responses    []ResponseMetadata      `json:"responses"`
+}
+
+// UploadPhotoRequest Reserve, transfer and register one file. Optional hydration waits for CloudKit indexing; registration remains available when the indexing deadline expires.
+//
+// Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[]},"content":"synthetic-bytes","filename":"synthetic.jpg","hydrate":true,"localTimeZoneID":"UTC","modificationTime":"2023-11-14T22:13:20Z","timeZoneOffset":0}
+type UploadPhotoRequest struct {
+	// AlbumID Optional destination album; membership is requested after successful hydration.
+	AlbumID *string `json:"albumID,omitempty"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// Content Caller-owned seekable content; starts from the current cursor.
+	Content  io.ReadSeeker `json:"content"`
+	Filename string        `json:"filename"`
+
+	// Hydrate Retry CloudKit lookup until the photo is indexed or the deadline expires.
+	Hydrate bool `json:"hydrate"`
+
+	// HydrationInterval Initial retry interval; omission uses two seconds, doubling up to eight seconds.
+	HydrationInterval *time.Duration `json:"hydrationInterval,omitempty"`
+
+	// HydrationTimeout Maximum indexing wait; omission uses 60 seconds.
+	HydrationTimeout *time.Duration `json:"hydrationTimeout,omitempty"`
+	ImportGroup      *string        `json:"importGroup,omitempty"`
+
+	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
+	//
+	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
+	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// LocalTimeZoneID IANA time zone; use UTC for a deterministic upload.
+	LocalTimeZoneID  string    `json:"localTimeZoneID"`
+	ModificationTime time.Time `json:"modificationTime"`
+
+	// TimeZoneOffset UTC minus local time in minutes.
+	TimeZoneOffset int `json:"timeZoneOffset"`
+}
+
+// UploadPhotoResult Example: {"indexed":false,"photo":null,"registration":{"duplicate":false,"jobID":"synthetic-job","masterID":"synthetic-master","photoID":"synthetic-photo","status":{"errorMessage":null,"retryable":false,"status":200}},"responses":[{"headers":[],"statusCode":200}]}
+type UploadPhotoResult struct {
+	Indexed      bool                     `json:"indexed"`
+	Photo        nullable.Nullable[Photo] `json:"photo"`
+	Registration PhotoUploadRegistration  `json:"registration"`
+	Responses    []ResponseMetadata       `json:"responses"`
+}
+
 // UploadedDriveFile defines model for UploadedDriveFile.
 type UploadedDriveFile struct {
 	FileChecksum string `json:"fileChecksum"`
@@ -2191,6 +3603,43 @@ type UploadedDriveFile struct {
 	Size                 int64                       `json:"size"`
 	WrappingKey          string                      `json:"wrappingKey"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// VerifyNativeBridgeCodeRequest defines model for VerifyNativeBridgeCodeRequest.
+type VerifyNativeBridgeCodeRequest struct {
+	Code string `json:"code"`
+}
+
+// VerifySecurityKeyRequest defines model for VerifySecurityKeyRequest.
+type VerifySecurityKeyRequest struct {
+	Assertion SecurityKeyAssertion `json:"assertion"`
+
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// VerifyTwoFactorCodeRequest defines model for VerifyTwoFactorCodeRequest.
+type VerifyTwoFactorCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth AuthContext `json:"auth"`
+	Code string      `json:"code"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
+}
+
+// VerifyTwoStepCodeRequest defines model for VerifyTwoStepCodeRequest.
+type VerifyTwoStepCodeRequest struct {
+	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
+	Auth   AuthContext       `json:"auth"`
+	Code   string            `json:"code"`
+	Device TrustedAuthDevice `json:"device"`
+
+	// State Caller-owned native authentication progress. Treat all credentials and challenge data as secrets.
+	State NativeAuthState `json:"state"`
 }
 
 // Getter for additional properties for AccountDevice. Returns the specified
@@ -5703,6 +7152,426 @@ func (a FindMyUserInfo) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for PhotoUploadReceipt. Returns the specified
+// element and whether it was found
+func (a PhotoUploadReceipt) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadReceipt
+func (a *PhotoUploadReceipt) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadReceipt to handle AdditionalProperties
+func (a *PhotoUploadReceipt) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["fileChecksum"]; found {
+		err = json.Unmarshal(raw, &a.FileChecksum)
+		if err != nil {
+			return fmt.Errorf("error reading 'fileChecksum': %w", err)
+		}
+		delete(object, "fileChecksum")
+	}
+
+	if raw, found := object["receipt"]; found {
+		err = json.Unmarshal(raw, &a.Receipt)
+		if err != nil {
+			return fmt.Errorf("error reading 'receipt': %w", err)
+		}
+		delete(object, "receipt")
+	}
+
+	if raw, found := object["referenceChecksum"]; found {
+		err = json.Unmarshal(raw, &a.ReferenceChecksum)
+		if err != nil {
+			return fmt.Errorf("error reading 'referenceChecksum': %w", err)
+		}
+		delete(object, "referenceChecksum")
+	}
+
+	if raw, found := object["size"]; found {
+		err = json.Unmarshal(raw, &a.Size)
+		if err != nil {
+			return fmt.Errorf("error reading 'size': %w", err)
+		}
+		delete(object, "size")
+	}
+
+	if raw, found := object["wrappingKey"]; found {
+		err = json.Unmarshal(raw, &a.WrappingKey)
+		if err != nil {
+			return fmt.Errorf("error reading 'wrappingKey': %w", err)
+		}
+		delete(object, "wrappingKey")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadReceipt to handle AdditionalProperties
+func (a PhotoUploadReceipt) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["fileChecksum"], err = json.Marshal(a.FileChecksum)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'fileChecksum': %w", err)
+	}
+
+	object["receipt"], err = json.Marshal(a.Receipt)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'receipt': %w", err)
+	}
+
+	object["referenceChecksum"], err = json.Marshal(a.ReferenceChecksum)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'referenceChecksum': %w", err)
+	}
+
+	object["size"], err = json.Marshal(a.Size)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'size': %w", err)
+	}
+
+	object["wrappingKey"], err = json.Marshal(a.WrappingKey)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'wrappingKey': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotoUploadRegistration. Returns the specified
+// element and whether it was found
+func (a PhotoUploadRegistration) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadRegistration
+func (a *PhotoUploadRegistration) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadRegistration to handle AdditionalProperties
+func (a *PhotoUploadRegistration) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["duplicate"]; found {
+		err = json.Unmarshal(raw, &a.Duplicate)
+		if err != nil {
+			return fmt.Errorf("error reading 'duplicate': %w", err)
+		}
+		delete(object, "duplicate")
+	}
+
+	if raw, found := object["jobID"]; found {
+		err = json.Unmarshal(raw, &a.JobID)
+		if err != nil {
+			return fmt.Errorf("error reading 'jobID': %w", err)
+		}
+		delete(object, "jobID")
+	}
+
+	if raw, found := object["masterID"]; found {
+		err = json.Unmarshal(raw, &a.MasterID)
+		if err != nil {
+			return fmt.Errorf("error reading 'masterID': %w", err)
+		}
+		delete(object, "masterID")
+	}
+
+	if raw, found := object["photoID"]; found {
+		err = json.Unmarshal(raw, &a.PhotoID)
+		if err != nil {
+			return fmt.Errorf("error reading 'photoID': %w", err)
+		}
+		delete(object, "photoID")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadRegistration to handle AdditionalProperties
+func (a PhotoUploadRegistration) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["duplicate"], err = json.Marshal(a.Duplicate)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'duplicate': %w", err)
+	}
+
+	object["jobID"], err = json.Marshal(a.JobID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'jobID': %w", err)
+	}
+
+	object["masterID"], err = json.Marshal(a.MasterID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'masterID': %w", err)
+	}
+
+	object["photoID"], err = json.Marshal(a.PhotoID)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'photoID': %w", err)
+	}
+
+	object["status"], err = json.Marshal(a.Status)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'status': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotoUploadRegistrationStatus. Returns the specified
+// element and whether it was found
+func (a PhotoUploadRegistrationStatus) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadRegistrationStatus
+func (a *PhotoUploadRegistrationStatus) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadRegistrationStatus to handle AdditionalProperties
+func (a *PhotoUploadRegistrationStatus) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["errorMessage"]; found {
+		err = json.Unmarshal(raw, &a.ErrorMessage)
+		if err != nil {
+			return fmt.Errorf("error reading 'errorMessage': %w", err)
+		}
+		delete(object, "errorMessage")
+	}
+
+	if raw, found := object["retryable"]; found {
+		err = json.Unmarshal(raw, &a.Retryable)
+		if err != nil {
+			return fmt.Errorf("error reading 'retryable': %w", err)
+		}
+		delete(object, "retryable")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadRegistrationStatus to handle AdditionalProperties
+func (a PhotoUploadRegistrationStatus) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["errorMessage"], err = json.Marshal(a.ErrorMessage)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'errorMessage': %w", err)
+	}
+
+	object["retryable"], err = json.Marshal(a.Retryable)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'retryable': %w", err)
+	}
+
+	object["status"], err = json.Marshal(a.Status)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'status': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for PhotoUploadStatus. Returns the specified
+// element and whether it was found
+func (a PhotoUploadStatus) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for PhotoUploadStatus
+func (a *PhotoUploadStatus) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for PhotoUploadStatus to handle AdditionalProperties
+func (a *PhotoUploadStatus) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["errorCode"]; found {
+		err = json.Unmarshal(raw, &a.ErrorCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'errorCode': %w", err)
+		}
+		delete(object, "errorCode")
+	}
+
+	if raw, found := object["progress"]; found {
+		err = json.Unmarshal(raw, &a.Progress)
+		if err != nil {
+			return fmt.Errorf("error reading 'progress': %w", err)
+		}
+		delete(object, "progress")
+	}
+
+	if raw, found := object["unknown"]; found {
+		err = json.Unmarshal(raw, &a.Unknown)
+		if err != nil {
+			return fmt.Errorf("error reading 'unknown': %w", err)
+		}
+		delete(object, "unknown")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for PhotoUploadStatus to handle AdditionalProperties
+func (a PhotoUploadStatus) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	object["errorCode"], err = json.Marshal(a.ErrorCode)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'errorCode': %w", err)
+	}
+
+	object["progress"], err = json.Marshal(a.Progress)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'progress': %w", err)
+	}
+
+	object["unknown"], err = json.Marshal(a.Unknown)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'unknown': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for RegisteredDriveDocument. Returns the specified
 // element and whether it was found
 func (a RegisteredDriveDocument) Get(fieldName string) (value UnknownJSONValue, found bool) {
@@ -5964,6 +7833,68 @@ func (t ReminderAttachment) MarshalJSON() ([]byte, error) {
 }
 
 func (t *ReminderAttachment) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsTrustedPhoneNumberID0 returns the union data inside the TrustedPhoneNumberID as a TrustedPhoneNumberID0
+func (t TrustedPhoneNumberID) AsTrustedPhoneNumberID0() (TrustedPhoneNumberID0, error) {
+	var body TrustedPhoneNumberID0
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTrustedPhoneNumberID0 overwrites any union data inside the TrustedPhoneNumberID as the provided TrustedPhoneNumberID0
+func (t *TrustedPhoneNumberID) FromTrustedPhoneNumberID0(v TrustedPhoneNumberID0) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeTrustedPhoneNumberID0 performs a merge with any union data inside the TrustedPhoneNumberID, using the provided TrustedPhoneNumberID0
+func (t *TrustedPhoneNumberID) MergeTrustedPhoneNumberID0(v TrustedPhoneNumberID0) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsTrustedPhoneNumberID1 returns the union data inside the TrustedPhoneNumberID as a TrustedPhoneNumberID1
+func (t TrustedPhoneNumberID) AsTrustedPhoneNumberID1() (TrustedPhoneNumberID1, error) {
+	var body TrustedPhoneNumberID1
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTrustedPhoneNumberID1 overwrites any union data inside the TrustedPhoneNumberID as the provided TrustedPhoneNumberID1
+func (t *TrustedPhoneNumberID) FromTrustedPhoneNumberID1(v TrustedPhoneNumberID1) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeTrustedPhoneNumberID1 performs a merge with any union data inside the TrustedPhoneNumberID, using the provided TrustedPhoneNumberID1
+func (t *TrustedPhoneNumberID) MergeTrustedPhoneNumberID1(v TrustedPhoneNumberID1) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t TrustedPhoneNumberID) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *TrustedPhoneNumberID) UnmarshalJSON(b []byte) error {
 	err := t.union.UnmarshalJSON(b)
 	return err
 }

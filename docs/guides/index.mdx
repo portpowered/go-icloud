@@ -1,0 +1,22 @@
+---
+title: Use go-icloud
+description: Start with caller-owned authentication, then choose an iCloud service.
+---
+
+Install `github.com/portpowered/go-icloud/pkg/icloud`, [authenticate or renew your session](/docs/guides/authentication),
+and use the returned authentication context for subsequent requests.
+
+Choose an operation guide:
+
+- [Account](/docs/guides/account): devices, family, member pictures, storage, and plan information.
+- [Find My](/docs/guides/findmy): device discovery, location refresh, and explicit controls.
+- [Drive](/docs/guides/drive): folder navigation, file transfers, and item changes.
+- [Photos](/docs/guides/photos): libraries, assets, album changes, uploads and local synchronization.
+- [Shared Photos](/docs/guides/shared-photos): legacy shared-stream discovery and downloads.
+- [Reminders](/docs/guides/reminders): lists, snapshots, changes, and revision-aware writes.
+- [Configuration and errors](/docs/guides/configuration): injection, deadlines, and response evidence.
+- [CLI](/docs/guides/cli): install the separate command-line module and reuse private credentials.
+
+Each request carries caller-owned account state. Keep credentials and complete
+provider receipts private, use contexts to bound work, and close owned sessions
+when finished. Choose returned resource identifiers before reads or changes.

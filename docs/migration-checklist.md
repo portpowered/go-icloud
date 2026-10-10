@@ -1,5 +1,18 @@
 # iCloud migration checklist
 
+The [completion matrix](completion-matrix.md) is the current implementation and
+acceptance work list. This file preserves the migration objective, unchecked
+acceptance requirements and original milestone receipts. The historical notes
+retain their original counts, review results and words such as “now”, “current”
+and “next”; those words refer to the individual milestone, not today's checkout
+(LIB-12). A scoped milestone approval does not approve the complete library.
+
+The current standards explicitly exclude custom compiler provenance engines,
+exhaustive ownership proofs and symbolic lineage gates. Historical requests for
+those gates below are superseded; they do not block functional acceptance.
+
+## Historical milestone snapshots
+
 Primary photo asset enumeration now has a stateless `ListPhotoAssets` SDK
 operation and schema-generated photo/resource models. One hundred and nine strict
 Source/Go scenarios consume 427 pairs; one hundred and five new cases bring the HTTP
@@ -131,6 +144,8 @@ lookup cases, entered 592/905 functions and covered 3,293/5,398 body statements
 (61.0%) and 1,012/2,076 branch exits. Public Go Photos semantic parity, remaining
 Reminders operations, native login and full template acceptance remain open.
 
+## Migration objective
+
 Objective: cover every relevant endpoint/function in Photos, Find My/devices,
 Drive, account, and reminders; establish portable reference scenarios; implement
 the equivalent Go library and CLI; publish, verify, and iterate until two fresh
@@ -187,7 +202,12 @@ See [independent review](independent-review.md) for findings and verification.
 | 15 | Portable paired replay with strict match/bindings, failures, and teardown | Open |
 | 16 | Separate published SDK-consuming CLI; guide workflow, controls/logout, offline tests | Open |
 
-## Current coverage baseline
+## Historical coverage and implementation snapshots
+
+The entries below preserve earlier coverage baselines and implementation steps.
+Their then-open gaps and branch-local totals are historical evidence; use the
+[completion matrix](completion-matrix.md) and current verification commands for
+the integrated checkout. No original receipt below is a final acceptance verdict.
 
 The owner clarified that endpoint behavior for the selected five services and
 required authentication is the priority. Further generic malformed-input and
@@ -508,3 +528,15 @@ initialization while the root read continues. Go retains each failed HTTP 200
 response and matches the complete Source result. Recently Added now has 21
 scenarios / 81 exchanges; the combined corpus is 1,062 / 2,374 before the
 pending automatic CLI recovery milestone. Full checks and CI are being rerun.
+
+PR66 Recently Added SDK passed full checks, blocking CI and exact-SHA review and
+merged. A subsequent private live read exposed nonempty discovered-library
+initialization, which was absent from the original fixtures. Ten Source-first
+cases add 47 pairs for extra private/shared libraries, deletion, duplicate shared
+identity, provider refusal and indexing readiness. Go now matches those requests
+and full results; Recent coverage is 31 scenarios / 128 pairs. Exact owner-bearing
+zone JSON uses schema-owned fields in Source order (LIB-05, SCHEMA-10).
+Private live Python and Go reads succeeded, and Go strict replay consumed all
+five captured Python exchanges and matched the complete photo projection.
+This branch corpus is 1,072 scenarios / 2,421 pairs before the merged session
+updater and pending automatic CLI recovery changes. Full gates are pending.

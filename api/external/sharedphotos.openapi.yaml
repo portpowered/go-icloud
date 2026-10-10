@@ -1,0 +1,400 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Shared Photos",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/{accountID}/sharedstreams/webgetalbumslist": {
+      "post": {
+        "operationId": "SharedAlbums",
+        "summary": "Read shared photo albums",
+        "parameters": [
+          {
+            "name": "accountID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "plain/text": {
+              "schema": {
+                "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedAlbumsRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "plain/text": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedAlbumsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "./photos.openapi.yaml#/components/responses/PhotosFailure"
+          }
+        }
+      }
+    },
+    "/webgetassets": {
+      "post": {
+        "operationId": "SharedAssets",
+        "summary": "Read shared photo assets",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "plain/text": {
+              "schema": {
+                "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedAssetsRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "plain/text": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedRecordsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "./photos.openapi.yaml#/components/responses/PhotosFailure"
+          }
+        },
+        "servers": [
+          {
+            "url": "https://stream-content.example.invalid/synthetic/",
+            "description": "Synthetic example of the HTTPS albumlocation returned by shared album discovery. Resolve this operation against that full per-album base URL."
+          }
+        ]
+      }
+    },
+    "/webgetassetcount": {
+      "post": {
+        "operationId": "SharedCount",
+        "summary": "Read shared photo count",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosClientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosDsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosRemapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosGetCurrentSyncToken"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosClientMasteringNumber"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "plain/text": {
+              "schema": {
+                "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedCountRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "plain/text": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./sharedphotos-models.openapi.yaml#/components/schemas/SharedCountResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "./photos.openapi.yaml#/components/responses/PhotosFailure"
+          }
+        },
+        "servers": [
+          {
+            "url": "https://stream-content.example.invalid/synthetic/",
+            "description": "Synthetic example of the HTTPS albumlocation returned by shared album discovery. Resolve this operation against that full per-album base URL."
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "parameters": {
+      "PhotosClientId": {
+        "name": "clientId",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "PhotosDsid": {
+        "name": "dsid",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "PhotosRemapEnums": {
+        "name": "remapEnums",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "True"
+          ],
+          "default": "True"
+        },
+        "description": "Photos initialization forces this query control to the Python boolean text True."
+      },
+      "PhotosGetCurrentSyncToken": {
+        "name": "getCurrentSyncToken",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "True"
+          ],
+          "default": "True"
+        },
+        "description": "Photos initialization forces this query control to the Python boolean text True."
+      },
+      "PhotosAccept": {
+        "name": "Accept",
+        "in": "header",
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "*/*": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"
+            },
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "PhotosContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosCookie": {
+        "name": "Cookie",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosOrigin": {
+        "name": "Origin",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosReferer": {
+        "name": "Referer",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUserAgent": {
+        "name": "User-Agent",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosAcceptEncoding": {
+        "name": "Accept-Encoding",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosConnection": {
+        "name": "Connection",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosClientBuildNumber": {
+        "name": "clientBuildNumber",
+        "in": "query",
+        "required": false,
+        "description": "Optional authentication client build parameter; preserve omission and the exact supplied value.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosClientMasteringNumber": {
+        "name": "clientMasteringNumber",
+        "in": "query",
+        "required": false,
+        "description": "Optional authentication client mastering parameter; preserve omission and the exact supplied value.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

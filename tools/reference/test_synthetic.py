@@ -18,6 +18,131 @@ from synthetic import execute as execute_scenario
 
 
 class SyntheticTests(unittest.TestCase):
+    def test_direct_authentication_challenge(self):
+        for name, exchanges in [
+            ("auth-challenge-direct-sms", 2),
+            ("auth-challenge-direct-refused", 1),
+        ]:
+            with self.subTest(name=name):
+                self.assertEqual(
+                    replay_synthetic(FIXTURES / (name + ".json")), exchanges
+                )
+
+    def test_authentication_delivery_edges_and_success_status_refusal(self):
+        for name, exchanges in [
+            ("auth-srp-direct-phone-nonfteu-true", 6),
+            ("auth-srp-nested-phone-nonfteu-false", 6),
+            ("auth-srp-security-key-delivery", 4),
+            ("auth-srp-non-sms-delivery", 5),
+            ("auth-trust-locked-success-status", 1),
+            ("auth-trust-locked-forbidden", 1),
+            ("auth-trust-service-errors-without-reason", 2),
+        ]:
+            with self.subTest(name=name):
+                self.assertEqual(
+                    replay_synthetic(FIXTURES / (name + ".json")), exchanges
+                )
+
+    def test_image_attachment_deletion(self):
+        self.assertEqual(
+            replay_synthetic(FIXTURES / "reminders-delete-image-success.json"), 1
+        )
+
+    def test_photo_selector_html_and_literal_escape_source_bytes(self):
+        for name in [
+            "photos-albums-parent-html-escaped-literal",
+            "photos-assets-custom-html-escaped-literal",
+        ]:
+            baseline = json.loads(
+                (FIXTURES / (name + ".json")).read_text(encoding="utf-8")
+            )
+            with self.subTest(name=name):
+                self.assertEqual(replay_synthetic(FIXTURES / (name + ".json")), 3)
+            for mutation in ["html-spelling", "decoded-literal"]:
+                scenario = copy.deepcopy(baseline)
+                request = scenario["exchanges"][-1]["request"]
+                body = base64.b64decode(request["body"]["value"])
+                if mutation == "html-spelling":
+                    body = body.replace(b"<", b"\\u003c")
+                else:
+                    payload = json.loads(body)
+                    value = payload["query"]["filterBy"][-1]["fieldValue"]
+                    value["value"] = value["value"].replace("\\u003c", "<")
+                    body = json.dumps(payload).encode()
+                request["body"]["value"] = base64.b64encode(body).decode()
+                for header in request["headers"]:
+                    if header[0].lower() == "content-length":
+                        header[1] = str(len(body))
+                with (
+                    self.subTest(name=name, mutation=mutation),
+                    TemporaryDirectory() as directory,
+                ):
+                    path = Path(directory) / "changed.json"
+                    path.write_text(json.dumps(scenario), encoding="utf-8")
+                    with self.assertRaises(AssertionError):
+                        replay_synthetic(path)
+
+    def test_photo_changes_bind_final_source_cursor_and_null(self):
+        paths = [
+            path
+            for path in sorted(FIXTURES.glob("photos-*changes*.json"))
+            if json.loads(path.read_text(encoding="utf-8"))["operation"]
+            == "iter_changes"
+        ]
+        self.assertEqual(len(paths), 11)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 37)
+        for name in [
+            "photos-changes-one",
+            "photos-changes-empty-zones",
+            "photos-shared-library-changes-one-refused-4",
+        ]:
+            for mutation in ["changed", "missing"]:
+                scenario = json.loads(
+                    (FIXTURES / (name + ".json")).read_text(encoding="utf-8")
+                )
+                if mutation == "changed":
+                    scenario["photos_sync_token"] = "forged-cursor"
+                else:
+                    del scenario["photos_sync_token"]
+                with (
+                    self.subTest(name=name, mutation=mutation),
+                    TemporaryDirectory() as directory,
+                ):
+                    path = Path(directory) / "changed.json"
+                    path.write_text(json.dumps(scenario), encoding="utf-8")
+                    with self.assertRaises(AssertionError):
+                        replay_synthetic(path)
+
+    def test_photo_relation_uses_library_asset_independent_of_destination(self):
+        for name in ["photos-add-to-album", "photos-add-to-empty-album"]:
+            with self.subTest(name=name):
+                self.assertEqual(replay_synthetic(FIXTURES / (name + ".json")), 4)
+
+        scenario = json.loads(
+            (FIXTURES / "photos-add-to-empty-album.json").read_text(encoding="utf-8")
+        )
+        request = scenario["exchanges"][2]["request"]
+        payload = json.loads(base64.b64decode(request["body"]["value"]))
+        filters = payload["query"]["filterBy"]
+        self.assertNotIn("parentId", [item["fieldName"] for item in filters])
+        filters.append(
+            {
+                "comparator": "EQUALS",
+                "fieldName": "parentId",
+                "fieldValue": {"type": "STRING", "value": "synthetic-album-0"},
+            }
+        )
+        body = json.dumps(payload).encode()
+        request["body"]["value"] = base64.b64encode(body).decode()
+        for header in request["headers"]:
+            if header[0].lower() == "content-length":
+                header[1] = str(len(body))
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "destination-filtered.json"
+            path.write_text(json.dumps(scenario), encoding="utf-8")
+            with self.assertRaises(AssertionError):
+                replay_synthetic(path)
+
     def test_findmy_saved_token_recovery_matrix(self):
         paths = sorted(FIXTURES.glob("session-findmy-autorefresh-*.json"))
         self.assertEqual(len(paths), 5)
@@ -122,8 +247,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_photo_assets_matrix(self):
         paths = sorted(FIXTURES.glob("photos-assets-*.json"))
-        self.assertEqual(len(paths), 109)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 427)
+        self.assertEqual(len(paths), 110)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 430)
 
     def test_photo_assets_full_projection_and_consumption_are_bound(self):
         baseline = json.loads((FIXTURES / "photos-assets-1.json").read_text())
@@ -215,8 +340,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_photo_album_matrix(self):
         paths = sorted(FIXTURES.glob("photos-albums-*.json"))
-        self.assertEqual(len(paths), 41)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 98)
+        self.assertEqual(len(paths), 42)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 101)
 
     def test_photo_album_results_requests_and_consumption_are_bound(self):
         baseline = json.loads((FIXTURES / "photos-albums-1.json").read_text())
@@ -438,12 +563,12 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_compound_query_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-query-compound-*.json"))
-        self.assertEqual(len(paths), 31)
+        self.assertEqual(len(paths), 32)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 32)
+        self.assertEqual(pairs, 33)
         complete = json.loads(
             (FIXTURES / "reminders-query-compound-all-types.json").read_text()
         )["result"]
@@ -552,12 +677,12 @@ class SyntheticTests(unittest.TestCase):
 
     def test_reminder_change_iteration_matrix(self):
         paths = sorted(FIXTURES.glob("reminders-changes-*.json"))
-        self.assertEqual(len(paths), 72)
+        self.assertEqual(len(paths), 73)
         pairs = 0
         for path in paths:
             with self.subTest(case=path.name):
                 pairs += replay_synthetic(path)
-        self.assertEqual(pairs, 75)
+        self.assertEqual(pairs, 76)
         full = json.loads(
             (FIXTURES / "reminders-changes-full-deleted.json").read_text()
         )
@@ -625,7 +750,16 @@ class SyntheticTests(unittest.TestCase):
                     replay_synthetic(path)
 
     def test_reminder_lookup_complete_projection_and_text_fallbacks(self):
-        for name in ["full", "audit-dates", "unreadable-documents"]:
+        for name in [
+            "full",
+            "audit-dates",
+            "unreadable-documents",
+            "unpadded-string",
+            "ignored-base64",
+            "empty-decoded-bytes",
+            "nonascii-string",
+            "nonascii-bytes",
+        ]:
             path = FIXTURES / f"reminders-get-{name}.json"
             scenario = json.loads(path.read_text(encoding="utf-8"))
             with self.subTest(case=name):
@@ -740,8 +874,8 @@ class SyntheticTests(unittest.TestCase):
 
     def test_recently_added_matrix_preserves_newest_first_without_count_requests(self):
         paths = sorted(FIXTURES.glob("photos-recently-added-*.json"))
-        self.assertEqual(len(paths), 21)
-        self.assertEqual(sum(replay_synthetic(path) for path in paths), 81)
+        self.assertEqual(len(paths), 31)
+        self.assertEqual(sum(replay_synthetic(path) for path in paths), 128)
         for path in paths:
             scenario = json.loads(path.read_text(encoding="utf-8"))
             if "error" in scenario:
@@ -761,6 +895,31 @@ class SyntheticTests(unittest.TestCase):
                     )
                 )
                 self.assertEqual(replay_synthetic(path), len(scenario["exchanges"]))
+
+    def test_recently_added_discovered_library_requests_are_bound(self):
+        for name, mutation in [
+            ("private-zone", "identity"),
+            ("shared-zone", "scope"),
+            ("private-zones-many", "unused"),
+        ]:
+            scenario = json.loads(
+                (FIXTURES / f"photos-recently-added-discovery-{name}.json").read_text()
+            )
+            if mutation == "identity":
+                entity = scenario["exchanges"][2]["request"]["body"]
+                value = json.loads(base64.b64decode(entity["value"]))
+                value["zoneID"]["zoneName"] = "ChangedZone"
+                entity["value"] = base64.b64encode(json.dumps(value).encode()).decode()
+            elif mutation == "scope":
+                request = scenario["exchanges"][3]["request"]
+                request["path"] = request["path"].replace("/shared/", "/private/")
+            else:
+                scenario["exchanges"].append(copy.deepcopy(scenario["exchanges"][-1]))
+            with self.subTest(name=name), TemporaryDirectory() as directory:
+                path = Path(directory) / "changed.json"
+                path.write_text(json.dumps(scenario))
+                with self.assertRaises(AssertionError):
+                    replay_synthetic(path)
 
     def test_recently_added_order_rank_and_consumption_are_bound(self):
         name = "photos-recently-added-overlap-partial-next.json"

@@ -57,7 +57,7 @@ func (traffic *nodeReplayTraffic) RoundTrip(request *http.Request) (*http.Respon
 func TestDriveSDKPortableNodes(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/drive-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPDriveJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -157,7 +157,7 @@ func (runner *driveNodeRunner) execute(t *testing.T) (any, error) {
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("node replay: %w", err)
+		return nil, fmt.Errorf(replayNodeErrorFormat, err)
 	}
 
 	runner.node = runner.root
@@ -225,7 +225,7 @@ func checkDriveNodeError(t *testing.T, scenario driveNodeScenario, err error) {
 		t.Fatalf("node failure is not typed: %v", err)
 	}
 
-	if source.Type == "PyiCloudAPIResponseException" {
+	if source.Type == replayExpectedPyiCloudAPIResponseException {
 		if failure.Kind() != icloud.Unavailable {
 			t.Fatal("node upload refusal classification changed")
 		}
@@ -264,7 +264,7 @@ func driveNodeLocalKind(kind, message string) icloud.ErrorKind {
 	switch kind {
 	case "NotADirectoryError":
 		want = icloud.NotDirectory
-	case "ValueError":
+	case replayExpectedSourceValueError:
 		want = icloud.NotInTrash
 	}
 
@@ -287,6 +287,6 @@ func checkDriveNodeFailureState(t *testing.T, scenario driveNodeScenario, runner
 			params["token"] = token
 		}
 
-		checkSDKValue(t, map[string]any{"params": params, "file_position": nil}, scenario.ErrorState)
+		checkSDKValue(t, map[string]any{"params": params, replayLiteralFilePosition: nil}, scenario.ErrorState)
 	}
 }

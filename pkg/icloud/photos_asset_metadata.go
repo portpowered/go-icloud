@@ -42,7 +42,7 @@ func photoAssetMetadata(record cloudkit.CKRecord) (json.RawMessage, error) {
 		}
 	}
 
-	object[protocol.PhotosCKRecordFields], err = json.Marshal(fields)
+	object[protocol.PhotosCKRecordFields], err = photoTypedMetadata[map[string]cloudkit.CKFieldOpen](fields)
 	if err != nil {
 		return nil, fmt.Errorf("encode photo fields: %w", err)
 	}
@@ -51,7 +51,7 @@ func photoAssetMetadata(record cloudkit.CKRecord) (json.RawMessage, error) {
 		object[protocol.PhotosCKRecordPluginFields] = json.RawMessage(`{}`)
 	}
 
-	metadata, err := json.Marshal(object)
+	metadata, err := photoTypedMetadata[cloudkit.CKRecord](object)
 	if err != nil {
 		return nil, fmt.Errorf("encode normalized photo metadata: %w", err)
 	}
@@ -91,7 +91,7 @@ func photoMetadataField(raw json.RawMessage) (json.RawMessage, error) {
 		return nil, err
 	}
 
-	encoded, err := json.Marshal(object)
+	encoded, err := photoTypedMetadata[cloudkit.CKFieldOpen](object)
 	if err != nil {
 		return nil, fmt.Errorf("encode photo metadata field: %w", err)
 	}
@@ -172,7 +172,7 @@ func photoObjectValue(value json.RawMessage, asset bool) (json.RawMessage, error
 	}
 
 	if !asset {
-		err = photoNormalizeChild(object, protocol.PhotosCKReferenceZoneID, photoPlainModel)
+		err = photoNormalizeChild(object, protocol.PhotosCKReferenceZoneID, photoZoneModel)
 		if err != nil {
 			return nil, err
 		}
@@ -194,7 +194,11 @@ func photoObjectValue(value json.RawMessage, asset bool) (json.RawMessage, error
 		}
 	}
 
-	encoded, err := json.Marshal(object)
+	if asset {
+		return photoTypedMetadata[cloudkit.CKAssetToken](object)
+	}
+
+	encoded, err := photoTypedMetadata[cloudkit.CKReference](object)
 	if err != nil {
 		return nil, fmt.Errorf("encode photo object: %w", err)
 	}

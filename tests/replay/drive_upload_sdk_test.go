@@ -194,8 +194,8 @@ func checkSDKUploadResult(t *testing.T, scenario driveUploadScenario, result *ic
 	checkSDKMetadata(t, result.TransferMetadata, scenario.Exchanges[1].Response)
 	checkSDKMetadata(t, result.RegistrationMetadata, scenario.Exchanges[2].Response)
 	receipt := sdkResponseFields(t, scenario.Exchanges[1].Response)
-	checkSDKValue(t, result.UploadedFile, receipt["singleFile"])
-	delete(receipt, "singleFile")
+	checkSDKValue(t, result.UploadedFile, receipt[replayLiteralSingleFile])
+	delete(receipt, replayLiteralSingleFile)
 
 	encoded, err := json.Marshal(receipt)
 	if err != nil {
@@ -217,7 +217,7 @@ func checkSDKUploadResult(t *testing.T, scenario driveUploadScenario, result *ic
 	var destinations []map[string]string
 
 	decodeErr = json.Unmarshal(destinationBody, &destinations)
-	if decodeErr != nil || len(destinations) == 0 || result.DocumentID != destinations[0]["document_id"] {
+	if decodeErr != nil || len(destinations) == 0 || result.DocumentID != destinations[0][replayLiteralDocumentID] {
 		t.Fatal("upload selected a different document", decodeErr)
 	}
 
@@ -234,7 +234,7 @@ func checkSDKUploadCursor(t *testing.T, scenario driveUploadScenario, reader *by
 		expectedState = scenario.ErrorState
 	}
 
-	if len(expectedState) == 0 || string(expectedState) == "null" {
+	if len(expectedState) == 0 || string(expectedState) == reminderChangeNullValue {
 		return
 	}
 
@@ -276,7 +276,7 @@ func checkSDKUploadRegistration(t *testing.T, scenario driveUploadScenario, resu
 	t.Helper()
 
 	fields := sdkResponseFields(t, scenario.Exchanges[2].Response)
-	if records, exists := fields["documents"]; exists {
+	if records, exists := fields[replayLiteralDocuments]; exists {
 		var documents []map[string]json.RawMessage
 
 		err := json.Unmarshal(records, &documents)
@@ -285,9 +285,9 @@ func checkSDKUploadRegistration(t *testing.T, scenario driveUploadScenario, resu
 		}
 
 		for _, document := range documents {
-			if value, found := document["document_id"]; found {
+			if value, found := document[replayLiteralDocumentID]; found {
 				document["documentID"] = value
-				delete(document, "document_id")
+				delete(document, replayLiteralDocumentID)
 			}
 		}
 
@@ -307,7 +307,7 @@ func checkSDKUploadRegistration(t *testing.T, scenario driveUploadScenario, resu
 		t.Fatal("registration invented status")
 	}
 
-	delete(fields, "documents")
+	delete(fields, replayLiteralDocuments)
 	delete(fields, "status")
 
 	encoded, err := json.Marshal(fields)

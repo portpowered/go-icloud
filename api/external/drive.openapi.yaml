@@ -23,6 +23,7 @@ paths:
         - {$ref: '#/components/parameters/DriveAcceptEncoding'}
         - {$ref: '#/components/parameters/DriveConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -78,6 +79,7 @@ paths:
         - {$ref: '#/components/parameters/DriveAcceptEncoding'}
         - {$ref: '#/components/parameters/DriveConnection'}
       requestBody:
+        x-request-media-schema: {"plain/text": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"}}
         required: true
         content:
           plain/text:
@@ -108,6 +110,7 @@ paths:
         - {$ref: '#/components/parameters/DriveAcceptEncoding'}
         - {$ref: '#/components/parameters/DriveConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -138,6 +141,7 @@ paths:
         - {$ref: '#/components/parameters/DriveAcceptEncoding'}
         - {$ref: '#/components/parameters/DriveConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -168,6 +172,7 @@ paths:
         - {$ref: '#/components/parameters/DriveAcceptEncoding'}
         - {$ref: '#/components/parameters/DriveConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -198,6 +203,7 @@ paths:
         - {$ref: '#/components/parameters/DriveAcceptEncoding'}
         - {$ref: '#/components/parameters/DriveConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -228,6 +234,7 @@ paths:
         - {$ref: '#/components/parameters/DriveAcceptEncoding'}
         - {$ref: '#/components/parameters/DriveConnection'}
       requestBody:
+        x-request-media-schema: {"application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}
         required: true
         content:
           application/json:
@@ -302,6 +309,7 @@ paths:
           description: Upload authorization extracted from the caller-owned validation cookie.
           schema: {type: string, minLength: 1}
       requestBody:
+        x-request-media-schema: {"plain/text": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"}}
         required: true
         content:
           plain/text:
@@ -346,6 +354,7 @@ paths:
           description: Upload token retained in the reference request parameters after upload setup.
           schema: {type: string}
       requestBody:
+        x-request-media-schema: {"plain/text": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPPlainTextMedia"}}
         required: true
         content:
           plain/text:
@@ -399,7 +408,7 @@ components:
       in: header
       required: false
       description: Caller content negotiation.
-      schema: {type: string}
+      schema: {"type": "string", "x-fixed-value-schemas": {"*/*": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"}, "application/json": {"$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"}}}
     DriveCookie:
       name: Cookie
       in: header

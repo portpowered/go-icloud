@@ -5,6 +5,7 @@ import io
 import json
 import shutil
 import unittest
+import zlib
 from contextlib import ExitStack
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -32,6 +33,52 @@ def prepared(url="https://example.invalid/items?q=one&q=two", **kwargs):
 
 
 class ReplayTests(unittest.TestCase):
+    def test_compressed_json_binds_full_payload_and_actual_framing(self):
+        original = zlib.compress(b"complete protobuf bytes", level=1)
+        different = zlib.compress(b"complete protobuf bytes", level=9)
+
+        def document(data):
+            return {"document": base64.b64encode(data).decode(), "fixed": "synthetic"}
+
+        expected = pair(prepared(json=document(original)))
+        expected["request"]["body"] = {
+            "encoding": "json-pattern",
+            "value": document(original),
+            "matchers": [{"path": ["document"], "pattern": "base64-zlib-exact"}],
+        }
+        adapter = ReplayAdapter([expected])
+        adapter.send(prepared(json=document(different)))
+        adapter.assert_consumed()
+        for data in [
+            zlib.compress(b"mutated protobuf bytes"),
+            different[:-1] + bytes([different[-1] ^ 1]),
+            different + b"trailing",
+            different[:-1],
+        ]:
+            with self.subTest(data=data):
+                adapter = ReplayAdapter([expected])
+                with self.assertRaises(AssertionError):
+                    adapter.send(prepared(json=document(data)))
+                self.assertEqual(adapter.index, 0)
+                with self.assertRaises(AssertionError):
+                    adapter.assert_consumed()
+        for request in [
+            prepared(json={**document(different), "fixed": "mutated"}),
+            prepared(
+                json={
+                    **document(different),
+                    "document": document(different)["document"] + "\n",
+                }
+            ),
+        ]:
+            adapter = ReplayAdapter([expected])
+            with self.assertRaises(AssertionError):
+                adapter.send(request)
+        request = prepared(json=document(different))
+        request.headers["Content-Length"] = "1"
+        with self.assertRaises(AssertionError):
+            ReplayAdapter([expected]).send(request)
+
     def test_file_entity_bytes_and_position_are_bound(self):
         stream = io.BytesIO(b"prefix\x00\xffx")
         stream.seek(6)

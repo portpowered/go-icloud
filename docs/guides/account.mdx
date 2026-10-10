@@ -1,0 +1,29 @@
+---
+title: Read account information
+description: Retrieve devices, family, storage, and subscription details.
+---
+
+Use authentication returned by [session renewal](/docs/guides/authentication):
+
+```go
+devices, err := client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth})
+if err != nil { return err }
+family, err := client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth})
+if err != nil { return err }
+storage, err := client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth})
+if err != nil { return err }
+_ = devices
+_ = family
+_ = storage
+```
+
+`GetAccountMemberPhoto` accepts a discovered family member's DSID and returns exact
+image bytes. `GetAccountPlanSummary` reads the account's regional subscription
+gateway. Unknown provider metadata stays available in the result; do not assume
+that every account has a family or subscription.
+
+Results retain response status, headers and scoped cookie updates. Account reads
+are covered by synthetic paired reference replay. Refer to the generated
+[device operation](/docs/openapi/unknown/ListAccountDevices),
+[family operation](/docs/openapi/unknown/ListAccountFamily), and
+[storage operation](/docs/openapi/unknown/GetAccountStorage) for wire fields.

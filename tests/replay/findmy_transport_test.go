@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/findmy"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
@@ -56,7 +56,7 @@ type findMyTransportState struct {
 func TestFindMyTransportPortableExchanges(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/findmy-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPFindmyJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -141,7 +141,7 @@ func findMyInitialTransportState(t *testing.T, initial findMyTransportInitial) f
 	}
 
 	var token *string
-	if value, exists := initial.SessionData["session_token"]; exists {
+	if value, exists := initial.SessionData[replayExpectedSessionStateField]; exists {
 		token = &value
 	}
 

@@ -18,16 +18,17 @@ func checkReminderCLIReminder(t *testing.T, actual, source json.RawMessage) {
 	decode(t, source, &expected)
 
 	for before, after := range map[string]string{
-		"list_id": "listID", "desc": "description", "completed_date": "completedDate",
-		"due_date": "dueDate", "start_date": "startDate", "all_day": "allDay", "time_zone": "timeZone",
-		"alarm_ids": "alarmIDs", "hashtag_ids": "hashtagIDs", "attachment_ids": "attachmentIDs",
-		"recurrence_rule_ids": "recurrenceRuleIDs", "parent_reminder_id": "parentReminderID",
+		"list_id": "listID", "desc": "description", "completed_date": expectedReplayCompletedDate,
+		"due_date": "dueDate", "start_date": expectedReplayStartDate, "all_day": "allDay", "time_zone": "timeZone",
+		expectedSourceAlarmIDs: "alarmIDs", expectedSourceHashtagIDs: "hashtagIDs",
+		expectedSourceAttachmentIDs:     "attachmentIDs",
+		expectedSourceRecurrenceRuleIDs: "recurrenceRuleIDs", expectedSourceParentID: expectedParentReminderID,
 		reminderCLISourceRevisionField: reminderCLIRevisionField} {
 		expected[after] = expected[before]
 		delete(expected, before)
 	}
 	// Bind Source's six fractional digits to the same public RFC3339 instant.
-	for _, name := range []string{"completedDate", "dueDate", "startDate", "created", "modified"} {
+	for _, name := range []string{expectedReplayCompletedDate, "dueDate", expectedReplayStartDate, "created", "modified"} {
 		if string(expected[name]) == reminderCLINullValue {
 			continue
 		}

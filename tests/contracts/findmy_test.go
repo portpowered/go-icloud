@@ -25,9 +25,9 @@ var errFindMyBinding = errors.New("find my exchange has no verified contract bin
 func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 	t.Parallel()
 	document := loadDriveDocument(t, findMySchemaPath)
-	authDocument := loadDriveDocument(t, "../../api/external/auth.openapi.yaml")
+	authDocument := loadDriveDocument(t, contractAuthAPIPath)
 
-	paths, err := filepath.Glob("../replay/fixtures/synthetic/http/findmy-*.json")
+	paths, err := filepath.Glob(contractFindMyFixturePattern)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func TestPortableFindMyExchangesMatchContracts(t *testing.T) {
 
 			operation, err := bindFindMyOperation(selected, exchange.Request)
 			if err != nil {
-				t.Fatalf("%s exchange %d: %v", path, index, err)
+				t.Fatalf(contractExchangeFailureFormat, path, index, err)
 			}
 
 			validateFindMyExchange(t, operation, exchange)
@@ -90,7 +90,7 @@ func TestFindMyCommandsPreserveOpaqueReplyContracts(t *testing.T) {
 			response := driveResponseContract(operation, status)
 			for _, contentType := range []string{"application/json; charset=utf-8", "text/json", "application/octet-stream"} {
 				media, err := contractResponseMedia(response.Value.Content,
-					[]replay.Pair{{"Content-Type", contentType}})
+					[]replay.Pair{{contractContentTypeField, contentType}})
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -201,8 +201,8 @@ func TestFindMyGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: findMyModelsPath, Config: "../../pkg/dependencymodels/findmy/config.yaml",
 			Output: "../../pkg/dependencymodels/findmy/models.gen.go"},
-		{Schema: findMySchemaPath, Config: "../../internal/findmyapi/config.yaml",
-			Output: "../../internal/findmyapi/client.gen.go"},
+		{Schema: findMySchemaPath, Config: "../../pkg/dependencies/webtransport/findmyapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/findmyapi/client.gen.go"},
 	} {
 		t.Run(filepath.Base(artifact.Output), func(t *testing.T) {
 			t.Parallel()
@@ -217,7 +217,9 @@ func TestFindMyRouteAndQueryBindingRejectsUnknowns(t *testing.T) {
 
 	exchange := accountExchanges(t, "../replay/fixtures/synthetic/http/findmy-devices-one.json")[0]
 
-	for _, mutation := range []string{"path", "method", "required", "repeated", "unknown", "token-query"} {
+	for _, mutation := range []string{
+		"path", "method", contractExpectedRequired, repeatedParameterControl, "unknown", contractQueryControl,
+	} {
 		t.Run(mutation, func(t *testing.T) {
 			t.Parallel()
 
@@ -240,16 +242,16 @@ func TestFindMyRouteAndQueryBindingRejectsUnknowns(t *testing.T) {
 func mutateFindMyBinding(request *replay.Request, query url.Values, mutation string) {
 	switch mutation {
 	case "path":
-		request.Path += "/unknown"
+		request.Path += unknownContractPath
 	case "method":
 		request.Method = "GET"
-	case "required":
+	case contractExpectedRequired:
 		delete(query, "dsid")
-	case "repeated":
+	case repeatedParameterControl:
 		query.Add("dsid", "another-account")
 	case "unknown":
 		query.Set("unexpected", "value")
-	case "token-query":
+	case contractQueryControl:
 		request.Path = "/setup/ws/1/fmipWebAuthenticate"
 	}
 }
@@ -294,13 +296,13 @@ func TestFindMyModelExamplesAndProtocolConstraints(t *testing.T) {
 		}
 	}
 
-	context, ok := document.Components.Schemas["FindMyInitializeRequest"].Value.Example.(map[string]any)
+	context, ok := document.Components.Schemas[contractExpectedFindMyInitializeRequest].Value.Example.(map[string]any)
 	if !ok {
 		t.Fatal("initial setup example lost its object shape")
 	}
 
 	context["serverContext"] = map[string]any{"future": true}
-	if document.Components.Schemas["FindMyInitializeRequest"].Value.VisitJSON(context) == nil {
+	if document.Components.Schemas[contractExpectedFindMyInitializeRequest].Value.VisitJSON(context) == nil {
 		t.Fatal("initial setup accepted a refresh context")
 	}
 }

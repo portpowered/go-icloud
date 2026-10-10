@@ -1,5 +1,10 @@
 # Reminders wire contracts
 
+Contributor contract history: measured counts and remaining-work statements below
+refer to their individual milestones. Current acceptance is maintained in
+[completion matrix](completion-matrix.md); customer usage belongs in MDX guides.
+
+
 The Go `ListReminders` implementation passes all thirty-nine
 portable compound query cases. It sends the literal list identifier, completion
 filter, optional page size and continuation marker; consumes all pages; and
@@ -79,7 +84,7 @@ request builders and models establish wire infrastructure; MIME-selected generat
 response convenience parsers do not replace the reference's unconditional JSON
 parsing, error classification or public service orchestration.
 
-## Evidence and checks
+## Historical evidence and checks
 
 The current 302 implementation-derived synthetic Reminders scenarios contain
 363 paired exchanges: 360 POST pairs and three membership-asset downloads. Contract
@@ -143,7 +148,11 @@ normal-record union membership, unknown/null/large values, schema examples,
 generation and protocol-constant drift, and unissued assets. No fixture matching
 rule was relaxed and no live operation was performed.
 
-## Remaining work
+## Historical implementation milestones
+
+The following receipts retain their milestone-specific status and totals; they
+do not enumerate current implementation gaps. See the
+[completion matrix](completion-matrix.md) for the current work list.
 
 The internal [text protocol adapter](reminders-text-protocol.md) now decodes
 versioned CRDT title and notes bytes against a separate portable Source corpus.
@@ -155,7 +164,8 @@ IDs, sentinel and fractional dates, document fallbacks, unrelated records,
 alternate success status/cookies, missing records, provider errors and malformed
 replies. `ListReminders` reuses that complete reminder projection while consuming
 every compound query page and mapping related records. The all-lists snapshot
-facade and related-record lookup methods are implemented; write encoding remains pending.
+facade and related-record lookup methods are implemented. Write encoding and
+core mutation behavior are documented separately in [reminder writes](reminder-writes.md).
 
 The public Go `ListReminderZones` operation now passes ten semantic replays,
 including empty, one and multiple zones, provider and schema failures, and
@@ -176,14 +186,11 @@ rejection, numeric/container truthiness and display conversion, embedded asset
 precedence, invalid membership, and empty pagination tokens. An additional nested
 display case binds control-character escaping to the reference. Five malformed
 responses must fail external schema validation as well as Source and Go decoding.
-The remaining public Reminders API must still port
-reminder and related-record mutations, CRDT write
-encoding, write receipts/state updates, and their typed failures and portable
-functional outcomes. Implemented query pagination and domain/text decoding are
-covered by the preceding Source/Go cases. Native authentication,
-Photos, CLI/publication/release, complete source/schema/runtime/socket gates and
-both final independent full audits remain open. Wire schema checks alone do not increase
-handwritten SDK replay coverage or establish full migration acceptance (LIB-07).
+The preceding paragraphs record read-contract milestones and their measured
+cases. Current mutation receipts, typed failures and linked-record behavior belong
+in [reminder writes](reminder-writes.md); full acceptance belongs in
+[completion matrix](completion-matrix.md). Wire schema checks alone do not
+establish handwritten SDK replay coverage or migration acceptance (LIB-07).
 
 ## Related lookup projections
 

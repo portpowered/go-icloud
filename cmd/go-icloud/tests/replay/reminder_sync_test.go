@@ -43,7 +43,7 @@ func checkReminderCLISyncOutcome(t *testing.T, row map[string]json.RawMessage, o
 		t.Fatal("CLI sync result contains unexpected fields")
 	}
 
-	checkReminderCLIValue(t, actual["syncToken"], expected)
+	checkReminderCLIValue(t, actual[expectedReplaySyncToken], expected)
 }
 
 func checkReminderCLIPrior(t *testing.T, row map[string]json.RawMessage, failure *icloud.ClientError) {
@@ -51,7 +51,7 @@ func checkReminderCLIPrior(t *testing.T, row map[string]json.RawMessage, failure
 
 	var exchanges []replay.Exchange
 
-	decode(t, row["exchanges"], &exchanges)
+	decode(t, row[expectedReplayExchanges], &exchanges)
 
 	actual := failure.PriorResponses()
 	if len(actual) != len(exchanges)-1 {

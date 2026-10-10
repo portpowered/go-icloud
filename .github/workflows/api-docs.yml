@@ -1,0 +1,74 @@
+name: API documentation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GOWORK: 'off'
+      GOMAXPROCS: '2'
+      GOFLAGS: '-p=2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+      - name: Measure library coverage
+        run: |
+          go test -race -coverpkg=./pkg/...,./internal/... -coverprofile=coverage-combined.out ./tests/replay ./pkg/... ./internal/...
+          go run ./tools/coverage -profile coverage-combined.out -min 80 -filtered-profile coverage-public.out
+      - name: Build guides and canonical API references
+        uses: portpowered/api-docs-website-github-action@bc213a78372cbe8200ebd442103b454cbcf55966
+        with:
+          openapi: 'api/**/*.openapi.yaml'
+          asyncapi: 'api/**/*.asyncapi.yaml'
+          discover: 'false'
+          guides-directory: docs/guides
+          title: go-icloud
+          base-path: /go-icloud
+          output: site
+          json-media-types: 'plain/text,text/plain;charset=UTF-8,*/*'
+          schema-view: references
+      - name: Add public coverage report
+        run: |
+          mkdir -p site/coverage
+          go tool cover -html=coverage-public.out -o site/coverage/index.html
+          percentage=$(go run ./tools/coverage -profile coverage-combined.out -min 80 -percent-only)
+          printf '{"schemaVersion":1,"label":"coverage","message":"%s%%","color":"brightgreen"}\n' "$percentage" > site/coverage/badge.json
+      - name: Check every rendered page and schema documentation link
+        run: go run ./tools/docsite
+      - uses: actions/upload-artifact@v4
+        with:
+          name: api-docs
+          path: site
+          if-no-files-found: error
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: site
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy documentation and coverage
+        id: deployment
+        uses: actions/deploy-pages@v4

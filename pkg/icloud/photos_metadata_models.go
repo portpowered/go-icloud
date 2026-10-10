@@ -4,11 +4,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/portpowered/go-icloud/internal/remindersdate"
 	"math"
 	"strconv"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/internal/remindersdate"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
 type photoNormalizer func(json.RawMessage) (json.RawMessage, error)
@@ -29,18 +30,13 @@ func photoNormalizeChild(object map[string]json.RawMessage, key string, normaliz
 	return nil
 }
 
-func photoPlainModel(raw json.RawMessage) (json.RawMessage, error) {
+func photoPlainModel[T any](raw json.RawMessage) (json.RawMessage, error) {
 	object, err := photoModelObject(raw)
 	if err != nil {
 		return nil, err
 	}
 
-	encoded, err := json.Marshal(object)
-	if err != nil {
-		return nil, fmt.Errorf("encode photo model: %w", err)
-	}
-
-	return encoded, nil
+	return photoTypedMetadata[T](object)
 }
 
 func photoBase64Value(raw json.RawMessage) (json.RawMessage, error) {
@@ -65,12 +61,23 @@ func photoBase64Value(raw json.RawMessage) (json.RawMessage, error) {
 }
 
 func photoValueList(raw json.RawMessage, tag string) (json.RawMessage, error) {
-	return photoNormalizeList(raw, func(value json.RawMessage) (json.RawMessage, error) {
+	normalize := func(value json.RawMessage) (json.RawMessage, error) {
 		return photoNormalizedValue(tag, value)
-	})
+	}
+
+	switch tag {
+	case string(cloudkit.CKInt64FieldTypeINT64):
+		return photoNormalizeList[cloudkit.CKIntegerInput](raw, normalize)
+	case string(cloudkit.DOUBLE):
+		return photoNormalizeList[cloudkit.CKDoubleInput](raw, normalize)
+	case string(cloudkit.CKReferenceFieldTypeREFERENCE):
+		return photoNormalizeList[cloudkit.CKReference](raw, normalize)
+	default:
+		return photoNormalizeList[cloudkit.CKAssetToken](raw, normalize)
+	}
 }
 
-func photoNormalizeList(raw json.RawMessage, normalize photoNormalizer) (json.RawMessage, error) {
+func photoNormalizeList[T any](raw json.RawMessage, normalize photoNormalizer) (json.RawMessage, error) {
 	var values []json.RawMessage
 
 	err := json.Unmarshal(raw, &values)
@@ -87,12 +94,7 @@ func photoNormalizeList(raw json.RawMessage, normalize photoNormalizer) (json.Ra
 		values[index] = normalized
 	}
 
-	encoded, err := json.Marshal(values)
-	if err != nil {
-		return nil, fmt.Errorf("encode photo list: %w", err)
-	}
-
-	return encoded, nil
+	return photoTypedMetadata[[]T](values)
 }
 
 func photoMetadataRecord(raw json.RawMessage) (map[string]json.RawMessage, error) {
@@ -105,18 +107,18 @@ func photoMetadataRecord(raw json.RawMessage) (map[string]json.RawMessage, error
 		protocol.PhotosCKRecordExpirationTime:         photoExpirationValue,
 		protocol.PhotosCKRecordCreated:                photoMetadataAudit,
 		protocol.PhotosCKRecordModified:               photoMetadataAudit,
-		protocol.PhotosCKRecordZoneID:                 photoPlainModel,
-		protocol.PhotosCKRecordParent:                 photoPlainModel,
-		protocol.PhotosCKRecordStableUrl:              photoPlainModel,
+		protocol.PhotosCKRecordZoneID:                 photoZoneModel,
+		protocol.PhotosCKRecordParent:                 photoParentModel,
+		protocol.PhotosCKRecordStableUrl:              photoStableURLModel,
 		protocol.PhotosCKRecordShare:                  photoMetadataShare,
 		protocol.PhotosCKRecordOwner:                  photoMetadataParticipant,
 		protocol.PhotosCKRecordCurrentUserParticipant: photoMetadataParticipant,
 		protocol.PhotosCKRecordParticipants:           photoMetadataParticipants,
 		protocol.PhotosCKRecordRequesters:             photoMetadataParticipants,
 		protocol.PhotosCKRecordBlocked:                photoMetadataParticipants,
-		protocol.PhotosCKRecordInvitedPCS:             photoMetadataProtection,
-		protocol.PhotosCKRecordSelfAddedPCS:           photoMetadataProtection,
-		protocol.PhotosCKRecordChainProtectionInfo:    photoMetadataProtection,
+		protocol.PhotosCKRecordInvitedPCS:             photoPCSModel,
+		protocol.PhotosCKRecordSelfAddedPCS:           photoPCSModel,
+		protocol.PhotosCKRecordChainProtectionInfo:    photoChainProtection,
 	}
 	for key, normalize := range normalizers {
 		err := photoNormalizeChild(object, key, normalize)
@@ -128,7 +130,8 @@ func photoMetadataRecord(raw json.RawMessage) (map[string]json.RawMessage, error
 	return object, nil
 }
 
-func photoMetadataChildren(raw json.RawMessage, normalizers map[string]photoNormalizer) (json.RawMessage, error) {
+func photoMetadataChildren[T any](raw json.RawMessage, normalizers map[string]photoNormalizer,
+) (json.RawMessage, error) {
 	object, err := photoModelObject(raw)
 	if err != nil {
 		return nil, err
@@ -141,16 +144,11 @@ func photoMetadataChildren(raw json.RawMessage, normalizers map[string]photoNorm
 		}
 	}
 
-	encoded, err := json.Marshal(object)
-	if err != nil {
-		return nil, fmt.Errorf("encode nested photo metadata: %w", err)
-	}
-
-	return encoded, nil
+	return photoTypedMetadata[T](object)
 }
 
 func photoMetadataAudit(raw json.RawMessage) (json.RawMessage, error) {
-	return photoMetadataChildren(raw, map[string]photoNormalizer{
+	return photoMetadataChildren[cloudkit.CKAuditInfo](raw, map[string]photoNormalizer{
 		protocol.PhotosCKAuditInfoTimestamp: func(value json.RawMessage) (json.RawMessage, error) {
 			return photoTimestampValue(value), nil
 		},
@@ -158,29 +156,31 @@ func photoMetadataAudit(raw json.RawMessage) (json.RawMessage, error) {
 }
 
 func photoMetadataShare(raw json.RawMessage) (json.RawMessage, error) {
-	return photoMetadataChildren(raw, map[string]photoNormalizer{protocol.PhotosCKShareZoneID: photoPlainModel})
+	return photoMetadataChildren[cloudkit.CKShare](raw, map[string]photoNormalizer{
+		protocol.PhotosCKShareZoneID: photoZoneModel,
+	})
 }
 
 func photoMetadataParticipant(raw json.RawMessage) (json.RawMessage, error) {
-	return photoMetadataChildren(raw, map[string]photoNormalizer{
+	return photoMetadataChildren[cloudkit.CKParticipant](raw, map[string]photoNormalizer{
 		protocol.PhotosCKParticipantUserIdentity:   photoMetadataIdentity,
-		protocol.PhotosCKParticipantProtectionInfo: photoMetadataProtection,
+		protocol.PhotosCKParticipantProtectionInfo: photoParticipantProtection,
 	})
 }
 
 func photoMetadataParticipants(raw json.RawMessage) (json.RawMessage, error) {
-	return photoNormalizeList(raw, photoMetadataParticipant)
+	return photoNormalizeList[cloudkit.CKParticipant](raw, photoMetadataParticipant)
 }
 
 func photoMetadataIdentity(raw json.RawMessage) (json.RawMessage, error) {
-	return photoMetadataChildren(raw, map[string]photoNormalizer{
-		protocol.PhotosCKUserIdentityNameComponents: photoPlainModel,
-		protocol.PhotosCKUserIdentityLookupInfo:     photoPlainModel,
+	return photoMetadataChildren[cloudkit.CKUserIdentity](raw, map[string]photoNormalizer{
+		protocol.PhotosCKUserIdentityNameComponents: photoNameModel,
+		protocol.PhotosCKUserIdentityLookupInfo:     photoLookupModel,
 	})
 }
 
-func photoMetadataProtection(raw json.RawMessage) (json.RawMessage, error) {
-	return photoMetadataChildren(raw, map[string]photoNormalizer{
+func photoMetadataProtection[T any](raw json.RawMessage) (json.RawMessage, error) {
+	return photoMetadataChildren[T](raw, map[string]photoNormalizer{
 		protocol.PhotosCKChainProtectionInfoBytes: photoBase64Value,
 	})
 }

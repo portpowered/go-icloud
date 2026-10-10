@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: Photo local materialization metadata
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    Metadata:
+      type: object
+      additionalProperties: false
+      required: [toolkit]
+      properties:
+        toolkit: {type: string}
+        title: {type: string}
+        description: {type: string}
+        orientation: {type: integer}
+        make: {type: string}
+        digitalSourceType: {type: string}
+        keywords: {type: array, items: {type: string}}
+        gpsAltitude: {type: number, format: double}
+        gpsLatitude: {type: number, format: double}
+        gpsLongitude: {type: number, format: double}
+        gpsSpeed: {type: number, format: double}
+        gpsTimestamp: {type: string, format: date-time}
+        createDate: {type: string, format: date-time}
+        rating: {type: integer}
+    Adjustment:
+      type: object
+      description: Decoded raw DEFLATE adjustmentSimpleDataEnc JSON. Unknown adjustment operations are accepted and ignored.
+      properties:
+        metadata: {$ref: '#/components/schemas/AdjustmentMetadata'}
+    AdjustmentMetadata:
+      type: object
+      properties:
+        orientation: {type: integer}
+    Location:
+      type: object
+      description: Decoded locationEnc binary or XML plist dictionary; timestamp is a plist date.
+      properties:
+        alt: {type: number, format: double, x-oapi-codegen-extra-tags: {plist: alt}}
+        lat: {type: number, format: double, x-oapi-codegen-extra-tags: {plist: lat}}
+        lon: {type: number, format: double, x-oapi-codegen-extra-tags: {plist: lon}}
+        speed: {type: number, format: double, x-oapi-codegen-extra-tags: {plist: speed}}
+        timestamp: {type: string, format: date-time, x-oapi-codegen-extra-tags: {plist: timestamp}}
+    AssetFields:
+      type: object
+      description: Known CloudKit asset field names used for local metadata extraction.
+      properties:
+        captionEnc: {$ref: '#/components/schemas/Field'}
+        extendedDescEnc: {$ref: '#/components/schemas/Field'}
+        adjustmentSimpleDataEnc:
+          allOf: [{$ref: '#/components/schemas/Field'}]
+          description: Base64 raw DEFLATE JSON adjustment; crdt and binary plist variants are deliberately ignored by Source.
+          x-content-encoding: [base64, deflate-raw]
+          x-string-content-schema: {$ref: '#/components/schemas/Adjustment'}
+        keywordsEnc:
+          allOf: [{$ref: '#/components/schemas/Field'}]
+          description: Base64 binary or XML plist array, with each item converted to a keyword string.
+          x-content-encoding: [base64, plist]
+          x-string-content-schema: {$ref: '#/components/schemas/KeywordValues'}
+        locationEnc:
+          allOf: [{$ref: '#/components/schemas/Field'}]
+          description: Base64 binary or XML plist dictionary of optional location fields.
+          x-content-encoding: [base64, plist]
+          x-string-content-schema: {$ref: '#/components/schemas/Location'}
+        assetDate: {$ref: '#/components/schemas/Field'}
+        timeZoneOffset: {$ref: '#/components/schemas/Field'}
+        assetSubtypeV2: {$ref: '#/components/schemas/Field'}
+        isHidden: {$ref: '#/components/schemas/Field'}
+        isDeleted: {$ref: '#/components/schemas/Field'}
+        isFavorite: {$ref: '#/components/schemas/Field'}
+    AssetRecord:
+      type: object
+      description: CloudKit asset metadata accepting both raw and normalized field values.
+      properties:
+        fields: {$ref: '#/components/schemas/AssetFields'}
+    KeywordValues:
+      type: array
+      description: Plist values are open; Source converts each scalar into a string for the XMP projection.
+      items: {}
+    Field:
+      type: object
+      properties:
+        value:
+          description: Field type selects the value; local adaptation tolerates absent or invalid metadata.
+          x-go-type: json.RawMessage
+    Toolkit:
+      type: string
+      enum: [pyicloud photos-cloudkit]
+      x-enum-varnames: [SourceToolkit]
+    MaterializationOracle:
+      type: object
+      required: [provenance, xmp, exifHex]
+      properties:
+        provenance: {type: string}
+        xmp: {type: string}
+        exifHex: {type: string}
+        exifCases: {type: array, items: {$ref: '#/components/schemas/ExifCase'}}
+    ExifCase:
+      type: object
+      required: [name, inputHex, outputHex]
+      properties:
+        name: {type: string}
+        inputHex: {type: string}
+        outputHex: {type: string}
+    LocationKey:
+      type: string
+      enum: [alt, lat, lon, speed, timestamp]
+      x-enum-varnames: [AltitudeKey, LatitudeKey, LongitudeKey, SpeedKey, TimestampKey]
+    ExifTag:
+      type: integer
+      enum: [306, 34665, 36867, 36868]
+      x-enum-varnames: [DateTimeTag, ExifIFDTag, OriginalTag, DigitizedTag]
+    TiffFieldType:
+      type: integer
+      enum: [2, 4]
+      x-enum-varnames: [ASCIIFieldType, LongFieldType]
+    TiffVersion:
+      type: integer
+      enum: [42]
+      x-enum-varnames: [ExifTiffVersion]
+    BinarySignature:
+      type: string
+      description: EXIF ASCII signature is followed by two NUL bytes in the APP1 segment.
+      enum: [Exif, II, MM]
+      x-enum-varnames: [ExifSignature, LittleEndianSignature, BigEndianSignature]
+    JPEGMarker:
+      type: integer
+      enum: [255, 225, 216, 217, 218]
+      x-enum-varnames: [MarkerPrefix, MarkerAPP1, MarkerSOI, MarkerEOI, MarkerSOS]

@@ -18,8 +18,8 @@ func TestPhotoAssetsSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 109 {
-		t.Fatal("photo asset scenario inventory changed")
+	if len(paths) != 110 {
+		t.Fatal(replayLiteralPhotoAssetScenarioInventoryChanged)
 	}
 
 	for _, path := range paths {
@@ -47,17 +47,17 @@ func runPhotoAssetsSDK(t *testing.T, path string) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.ListPhotoAssets(t.Context(), icloud.ListPhotoAssetsRequest{
+	actual, err := client.ListPhotoAssets(t.Context(), icloud.ListPhotoAssetsRequest{Library: nil,
 		Auth: auth, Album: photoCountFixtureAlbum(t, path)})
 	if len(scenario.Error) != 0 {
 		if actual != nil {
-			t.Fatal("photo enumeration returned partial results on failure")
+			t.Fatal(replayEnumerationFailureMessage)
 		}
 
 		checkPhotoReadFailure(t, scenario, nil, err)
 	} else {
 		if err != nil || actual == nil {
-			t.Fatalf("photo asset read failed: %v", err)
+			t.Fatalf(replayAssetFailureFormat, err)
 		}
 
 		checkPhotoAssetsProjection(t, actual.Photos, scenario.Result)
@@ -81,13 +81,14 @@ func checkPhotoAssetsProjection(t *testing.T, actual []icloud.Photo, raw json.Ra
 	}
 
 	for _, photo := range expected {
-		for old, name := range map[string]string{"master_id": "masterID", "item_type": "itemType",
+		for old, name := range map[string]string{
+			replayExpectedSourceMasterID: replayLiteralMasterID, replayExpectedItemType: replayLiteralItemType,
 			"is_live_photo": "isLivePhoto", "asset": "assetMetadata"} {
 			photo[name] = photo[old]
 			delete(photo, old)
 		}
 
-		for _, field := range []string{"created", "added"} {
+		for _, field := range []string{reminderSourceCreated, "added"} {
 			var instant time.Time
 
 			err := json.Unmarshal(photo[field], &instant)

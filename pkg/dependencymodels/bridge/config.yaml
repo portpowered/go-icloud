@@ -1,0 +1,6 @@
+package: bridge
+generate:
+  models: true
+output: pkg/dependencymodels/bridge/models.gen.go
+output-options:
+  skip-prune: true

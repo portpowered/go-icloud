@@ -15,6 +15,7 @@ import (
 const (
 	testDirectoryMode = 0o700
 	testFileMode      = 0o600
+	testContentOrigin = "https://content.invalid"
 	testInventory     = `{"format":"portos.reference-wire-inventory.v1",
 "source":{"url":"https://example.invalid/reference","commit":"synthetic-pin"},
 "entries":[{"service":"drive","transport":"http","method":"GET","path":"/ws/{zone}/download/by_id"}]}`
@@ -156,7 +157,7 @@ func TestProviderURLMustPrecedeExchange(t *testing.T) {
 	document.Exchanges[0].Response.Body.Value = base64.StdEncoding.EncodeToString(
 		[]byte(`{"token":{"url":"https://content.invalid/file?token=synthetic"}}`),
 	)
-	request := wireRequest{Method: "GET", Origin: "https://content.invalid", Path: "/file"}
+	request := wireRequest{Method: "GET", Origin: testContentOrigin, Path: "/file"}
 
 	if matchesRoute(providerURLTemplate, request, document, 0) {
 		t.Fatal("future response URL accepted")
@@ -171,7 +172,7 @@ func TestProviderURLMustPrecedeExchange(t *testing.T) {
 		t.Fatal("different authority accepted")
 	}
 
-	request.Origin, request.Path = "https://content.invalid", "/file/extra"
+	request.Origin, request.Path = testContentOrigin, "/file/extra"
 	if matchesRoute(providerURLTemplate, request, document, 1) {
 		t.Fatal("different escaped path accepted")
 	}

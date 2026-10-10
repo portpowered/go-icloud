@@ -1,5 +1,10 @@
 # Find My wire contracts
 
+Contributor contract history: measured counts and remaining-work statements below
+refer to their individual milestones. Current acceptance is maintained in
+[completion matrix](completion-matrix.md); customer usage belongs in MDX guides.
+
+
 `api/external/findmy.openapi.yaml` describes seven Find My HTTP operations:
 device initialization and refresh, sound, messaging, lost mode, erase-token
 lookup and remote erase. Authenticated discovery supplies the caller's Find My
@@ -7,7 +12,7 @@ and setup origins. Token lookup uses `/setup/ws/1/fmipWebAuthenticate` on the
 setup origin and omits the ordinary account query parameters.
 
 `api/external/findmy-models.openapi.yaml` owns canonical models and generates
-`pkg/dependencymodels/findmy`. The internal generated client imports those models.
+`pkg/dependencymodels/findmy`. The internal generated request builders import those models.
 Protocol paths, methods, parameter names, fields and fixed string values come
 from these schema documents. `make generate-api` regenerates them; contract and
 generator checks reject drift and ambiguous operation/model constants
@@ -79,7 +84,11 @@ remain opaque and do not establish completed device action. The SDK returns
 typed refusal evidence, preserves account isolation and sends each command once
 without automatic retries (API-11, API-14).
 
-## Remaining acceptance
+## Historical acceptance snapshot
+
+The following receipt preserves its milestone scenario totals and then-open
+work. Current implementation and acceptance work is in the
+[completion matrix](completion-matrix.md).
 
 The [public Find My session](findmy-session.md) now executes all 71 current
 portable scenarios and 140 pairs through the SDK with semantic projection checks.

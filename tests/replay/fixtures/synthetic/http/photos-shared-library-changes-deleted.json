@@ -312,5 +312,6 @@
         }
       }
     }
-  ]
+  ],
+  "photos_sync_token": "synthetic-new"
 }

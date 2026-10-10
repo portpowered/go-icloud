@@ -60,7 +60,7 @@ func TestDriveDownloadPreservesIssuedURLAndBinaryJSON(t *testing.T) {
 				response.StatusCode = http.StatusOK
 
 				response.Header = make(http.Header)
-				response.Header.Set("Content-Type", "application/json")
+				response.Header.Set("Content-Type", testJSONMedia)
 				response.Body = io.NopCloser(strings.NewReader(body))
 
 				return response, nil

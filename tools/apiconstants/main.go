@@ -58,6 +58,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	err = generateExternalConstants("SharedPhotos", "sharedphotos")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
 	err = generateExternalConstants("Reminders", "cloudkit")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -66,12 +72,29 @@ func main() {
 }
 
 func generateExternalConstants(prefix, modelsName string) error {
+	name := strings.ToLower(prefix)
+
+	err := generateExternalConstantsFromFiles(prefix, "api/external/"+name+".openapi.yaml",
+		"api/external/"+modelsName+"-models.openapi.yaml")
+	if err != nil {
+		return err
+	}
+
+	if prefix == "Photos" {
+		return generateExternalConstantsFromFiles("PhotosUpload", "api/external/photos-upload.openapi.yaml",
+			"api/external/photos-upload-models.openapi.yaml")
+	}
+
+	return nil
+}
+
+func generateExternalConstantsFromFiles(prefix, schemaPath, modelsPath string) error {
 	loader := openapi3.NewLoader()
 	loader.IsExternalRefsAllowed = true
 
 	name := strings.ToLower(prefix)
 
-	document, err := loader.LoadFromFile("api/external/" + name + ".openapi.yaml")
+	document, err := loader.LoadFromFile(schemaPath)
 	if err != nil {
 		return fmt.Errorf("load %s schema: %w", prefix, err)
 	}
@@ -81,12 +104,12 @@ func generateExternalConstants(prefix, modelsName string) error {
 		return fmt.Errorf("validate %s schema: %w", prefix, err)
 	}
 
-	models, err := loader.LoadFromFile("api/external/" + modelsName + "-models.openapi.yaml")
+	models, err := loader.LoadFromFile(modelsPath)
 	if err != nil {
 		return fmt.Errorf("load %s models: %w", prefix, err)
 	}
 
-	values, err := externalConstants(document, models)
+	values, err := externalDocumentConstants(document, models, schemaPath == modelsPath)
 	if err != nil {
 		return err
 	}
@@ -102,6 +125,14 @@ func generateExternalConstants(prefix, modelsName string) error {
 	}
 
 	return nil
+}
+
+func externalDocumentConstants(routes, models *openapi3.T, combined bool) (map[string]string, error) {
+	if combined {
+		return accountConstants(routes)
+	}
+
+	return externalConstants(routes, models)
 }
 
 func generateAccountConstants() error {

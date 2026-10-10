@@ -37,9 +37,9 @@ func TestDriveModelsPreserveUnknownValuesAndPresence(t *testing.T) {
 	t.Parallel()
 
 	for name, target := range map[string]any{
-		"node":           new(drive.DriveNode),
-		"nullable-error": new(drive.DriveError),
-		"token":          new(drive.DriveDownloadTokens),
+		"node":               new(drive.DriveNode),
+		nullableErrorControl: new(drive.DriveError),
+		"token":              new(drive.DriveDownloadTokens),
 	} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
@@ -50,7 +50,7 @@ func TestDriveModelsPreserveUnknownValuesAndPresence(t *testing.T) {
 			case "node":
 				input = `{"size":"0","type":"FUTURE_KIND","status":"FUTURE_STATUS",` +
 					`"shareID":{"future":null},"items":[],"future":9007199254740993}`
-			case "nullable-error":
+			case nullableErrorControl:
 				input = `{"reason":null,"error":null,"errorCode":null,"future":null}`
 			}
 
@@ -83,14 +83,14 @@ func TestDriveTemporaryFolderIDsRequireUUIDv4(t *testing.T) {
 		"FOLDER::UNKNOWN_ZONE::TempId-00000000-0000-4000-0000-000000000000",
 		"FOLDER::UNKNOWN_ZONE::TempId-AAAAAAAA-0000-4000-8000-000000000000",
 	} {
-		value := map[string]any{contractClientIDKey: identifier, "name": "synthetic"}
+		value := map[string]any{contractClientIDKey: identifier, "name": contractSyntheticName}
 		if schema.VisitJSON(value) == nil {
 			t.Fatalf("non-reference temporary identifier accepted: %s", identifier)
 		}
 	}
 
 	value := map[string]any{contractClientIDKey: "FOLDER::UNKNOWN_ZONE::TempId-aaaaaaaa-0000-4000-8000-000000000000",
-		"name": "synthetic"}
+		"name": contractSyntheticName}
 
 	err := schema.VisitJSON(value)
 	if err != nil {

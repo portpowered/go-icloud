@@ -96,9 +96,10 @@ func callReminderRelated(t *testing.T, client icloud.Client, auth icloud.AuthCon
 ) (any, []icloud.ResponseMetadata, error) {
 	t.Helper()
 
-	key := map[string]string{"tags_for": "hashtag_ids", "attachments_for": "attachment_ids",
-		"recurrence_rules_for": "recurrence_rule_ids",
-		"alarms_for":           "alarm_ids"}[scenario.Operation]
+	key := map[string]string{
+		replayExpectedTagsFor: reminderSourceHashtagIDs, replayExpectedAttachmentsFor: reminderSourceAttachmentIDs,
+		replayExpectedRecurrenceRulesFor: reminderSourceRecurrenceIDs,
+		"alarms_for":                     reminderSourceAlarmIDs}[scenario.Operation]
 
 	var ids []string
 
@@ -108,32 +109,32 @@ func callReminderRelated(t *testing.T, client icloud.Client, auth icloud.AuthCon
 	}
 
 	switch scenario.Operation {
-	case "tags_for":
+	case replayExpectedTagsFor:
 		value, err := client.ListReminderTags(t.Context(), icloud.ListReminderTagsRequest{Auth: auth, IDs: ids})
 		if err != nil {
-			return nil, nil, fmt.Errorf("execute related reminder scenario: %w", err)
+			return nil, nil, fmt.Errorf(replayExpectedRelatedCallFormat, err)
 		}
 
 		return value.Items, value.Responses, nil
-	case "attachments_for":
+	case replayExpectedAttachmentsFor:
 		value, err := client.ListReminderAttachments(t.Context(), icloud.ListReminderAttachmentsRequest{Auth: auth, IDs: ids})
 		if err != nil {
-			return nil, nil, fmt.Errorf("execute related reminder scenario: %w", err)
+			return nil, nil, fmt.Errorf(replayExpectedRelatedCallFormat, err)
 		}
 
 		return value.Items, value.Responses, nil
-	case "recurrence_rules_for":
+	case replayExpectedRecurrenceRulesFor:
 		value, err := client.ListReminderRecurrenceRules(t.Context(),
 			icloud.ListReminderRecurrenceRulesRequest{Auth: auth, IDs: ids})
 		if err != nil {
-			return nil, nil, fmt.Errorf("execute related reminder scenario: %w", err)
+			return nil, nil, fmt.Errorf(replayExpectedRelatedCallFormat, err)
 		}
 
 		return value.Items, value.Responses, nil
 	default:
 		value, err := client.ListReminderAlarms(t.Context(), icloud.ListReminderAlarmsRequest{Auth: auth, IDs: ids})
 		if err != nil {
-			return nil, nil, fmt.Errorf("execute related reminder scenario: %w", err)
+			return nil, nil, fmt.Errorf(replayExpectedRelatedCallFormat, err)
 		}
 
 		return value.Items, value.Responses, nil
@@ -223,12 +224,18 @@ func checkReminderRelatedArray(t *testing.T, actual any, source json.RawMessage)
 func renameReminderRelated(t *testing.T, row map[string]json.RawMessage) {
 	t.Helper()
 
-	for source, target := range map[string]string{"reminder_id": "reminderID", "alarm_id": "alarmID",
-		"alarm_uid": "alarmUID", "trigger_id": "triggerID",
-		"location_uid": "locationUID", "file_asset_url": "fileAssetURL",
-		"file_size": "fileSize", "occurrence_count": "occurrenceCount",
-		"first_day_of_week":         "firstDayOfWeek",
-		reminderSourceRevisionField: reminderPublicRevisionField} {
+	for source, target := range map[string]string{
+		reminderLocationSourceReminderID:  reminderLocationPublicReminderID,
+		reminderLocationSourceAlarmID:     "alarmID",
+		reminderLocationSourceAlarmUID:    reminderLocationPublicAlarmUID,
+		reminderLocationSourceTriggerID:   reminderLocationPublicTriggerID,
+		reminderLocationSourceLocationUID: reminderLocationPublicLocationUID,
+		replayExpectedSourceFileAssetURL:  replayExpectedFileAssetURL,
+		replayLiteralFileSize:             replayExpectedFileSize,
+		reminderRecurrenceSourceCount:     reminderRecurrenceCount,
+		reminderRecurrenceSourceWeekday:   reminderRecurrenceWeekday,
+		reminderSourceRevisionField:       reminderPublicRevisionField,
+	} {
 		if raw, exists := row[source]; exists {
 			row[target] = raw
 			delete(row, source)

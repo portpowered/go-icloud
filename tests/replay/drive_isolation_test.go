@@ -16,17 +16,17 @@ func tenantDriveRenameReplay(t *testing.T, tenant string) (icloud.AuthContext, *
 
 	scenario := readAccountScenario(t, "fixtures/synthetic/http/drive-rename-success.json")
 	scenario.Initial.Params[protocol.ClientIDName] = "client-" + tenant
-	scenario.Initial.Params[protocol.DSIDName] = "account-" + tenant
-	scenario.Initial.Headers[protocol.CookieName] = "session=" + tenant
+	scenario.Initial.Params[protocol.DSIDName] = replayExpectedAccount + tenant
+	scenario.Initial.Headers[protocol.CookieName] = replayExpectedSession + tenant
 
 	exchange := scenario.Exchanges[0]
 	for index, pair := range exchange.Request.Query {
 		exchange.Request.Query[index][1] = scenario.Initial.Params[pair[0]]
 	}
 
-	exchange.Request.Headers = append(exchange.Request.Headers, replay.Pair{"cookie", "session=" + tenant})
+	exchange.Request.Headers = append(exchange.Request.Headers, replay.Pair{"cookie", replayExpectedSession + tenant})
 	exchange.Response.Headers = append(exchange.Response.Headers,
-		replay.Pair{accountCookieUpdateHeader, "session=updated-" + tenant + "; Path=/; Secure; HttpOnly"})
+		replay.Pair{accountCookieUpdateHeader, replayLiteralSessionUpdated + tenant + replayLiteralPathSecureHTTPOnly})
 
 	encoded, err := json.Marshal(base64.StdEncoding.EncodeToString([]byte(
 		`{"items":[{"name":"node-` + tenant + `"}]}`)))
@@ -95,7 +95,8 @@ func checkDriveTenantRename(t *testing.T, client icloud.Client, tenant string, a
 		t.Fatal("Drive mutation result crossed account contexts")
 	}
 
-	if len(result.Metadata.Headers) != 2 || !strings.Contains(result.Metadata.Headers[1].Value, "updated-"+tenant) {
+	if len(result.Metadata.Headers) != 2 ||
+		!strings.Contains(result.Metadata.Headers[1].Value, replayLiteralUpdated+tenant) {
 		t.Fatal("Drive session update headers were lost")
 	}
 }

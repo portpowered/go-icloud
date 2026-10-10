@@ -8,15 +8,19 @@ PYTHON ?= .venv/bin/python
 endif
 
 .DEFAULT_GOAL := check
-.PHONY: check lint build test reference-coverage endpoint-coverage generate-api generate-proto sdk-coverage cli-coverage
+.PHONY: check lint build test module-check reference-coverage endpoint-coverage generate-api generate-proto sdk-coverage cli-coverage
 
-# Selected iCloud SDK migration and reference-capture verification.
-check: lint build test endpoint-coverage sdk-coverage cli-coverage
+# Complete shipped SDK, CLI and pinned Source verification.
+check: lint module-check build test endpoint-coverage sdk-coverage cli-coverage
+
+# LIB-02, GO-01: audit every tracked shipping module with no local replacements or tidy drift.
+module-check:
+	$(GO) run ./tools/modulecheck
 
 lint:
 	$(GO) vet ./...
 	cd cmd/go-icloud && $(GO) vet ./...
-	$(GOLANGCI_LINT) run --timeout=5m ./...
+	"$(GOLANGCI_LINT)" run --timeout=5m ./...
 	cd cmd/go-icloud && "$(CLI_GOLANGCI_LINT)" run --config ../../.golangci.yml --timeout=5m ./...
 	"$(PYTHON)" -m ruff check tools/reference
 	"$(PYTHON)" -m ruff format --check tools/reference
@@ -35,39 +39,55 @@ test:
 reference-coverage:
 	"$(PYTHON)" tools/reference/measure.py
 
-# Diagnostic route occurrences; completeness/schema/socket gates remain open.
+# HTTP route occurrence gate; source/schema/socket completeness is audited separately.
 endpoint-coverage:
-	$(GO) run ./tools/endpointcoverage -summary
+	$(GO) run ./tools/endpointcoverage -summary -require-covered
 
-# Schema-owned account, Drive, Find My and Reminders wire models; Photos/auth contracts remain pending.
+# Pinned generation of all shipping schemas, local configuration and output projections.
 generate-api:
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/httpboundary/config.yaml api/external/http-boundary-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/photosmutations/config.yaml api/external/photos-mutations-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config cmd/go-icloud/internal/commandmodels/config.yaml cmd/go-icloud/api/command-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config cmd/go-icloud/internal/photosynccommand/config.yaml cmd/go-icloud/api/photo-sync-command.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config cmd/go-icloud/internal/referenceconfig/config.yaml cmd/go-icloud/api/reference-login.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/auth/config.yaml api/external/auth-models.openapi.yaml
-	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/authapi/config.yaml api/external/auth.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/srp/config.yaml api/external/srp-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/securitykey/config.yaml api/external/securitykey-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/bridge/config.yaml api/external/bridge-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/bridgeprover/config.yaml api/external/bridge-prover-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/bridgewebsocket/config.yaml api/external/bridge-websocket.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/authapi/config.yaml api/external/auth.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/account/config.yaml api/external/account-models.openapi.yaml
-	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/accountapi/config.yaml api/external/account.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/accountapi/config.yaml api/external/account.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/drive/config.yaml api/external/drive-models.openapi.yaml
-	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/driveapi/config.yaml api/external/drive.openapi.yaml
-	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/drivecontentapi/config.yaml api/external/drive-content.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/driveapi/config.yaml api/external/drive.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/drivecontentapi/config.yaml api/external/drive-content.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/findmy/config.yaml api/external/findmy-models.openapi.yaml
-	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/findmyapi/config.yaml api/external/findmy.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/findmyapi/config.yaml api/external/findmy.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/cloudkit/config.yaml api/external/cloudkit-models.openapi.yaml
-	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/remindersapi/config.yaml api/external/reminders.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/remindersapi/config.yaml api/external/reminders.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/icloud/config.yaml api/client-models.openapi.yaml
-	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/photosapi/config.yaml api/external/photos.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/photosapi/config.yaml api/external/photos.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/photosupload/config.yaml api/external/photos-upload-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/photosuploadapi/config.yaml api/external/photos-upload.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/sharedphotos/config.yaml api/external/sharedphotos-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencies/webtransport/sharedphotosapi/config.yaml api/external/sharedphotos.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/photosync/config.yaml api/photo-sync-models.openapi.yaml
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config internal/photomaterialize/config.yaml api/photo-materialize.openapi.yaml
 	$(GO) run ./tools/apiconstants
 
 # Pinned compiler and local plugin generate the source-identical Reminders protocols.
 generate-proto:
 	$(GO) run github.com/bufbuild/buf/cmd/buf@v1.47.2 generate api/external/reminders-proto --template api/external/reminders-proto/buf.gen.yaml
+	$(GO) run ./tools/protogen
 
 # LIB-07: measure replay, unit and combined separately, including internal transport.
 sdk-coverage:
-	$(GO) test -race "-coverpkg=./pkg/icloud,./internal/..." "-coverprofile=coverage-replay.out" ./tests/replay
+	$(GO) test -race "-coverpkg=./pkg/...,./internal/..." "-coverprofile=coverage-replay.out" ./tests/replay
 	$(GO) run ./tools/coverage -profile coverage-replay.out -min 80
-	$(GO) test -race "-coverpkg=./pkg/icloud,./internal/..." "-coverprofile=coverage-unit.out" ./pkg/icloud ./internal/...
+	$(GO) test -race "-coverpkg=./pkg/...,./internal/..." "-coverprofile=coverage-unit.out" ./pkg/... ./internal/...
 	$(GO) run ./tools/coverage -profile coverage-unit.out -min 0
-	$(GO) test -race "-coverpkg=./pkg/icloud,./internal/..." "-coverprofile=coverage-combined.out" ./tests/replay ./pkg/icloud ./internal/...
+	$(GO) test -race "-coverpkg=./pkg/...,./internal/..." "-coverprofile=coverage-combined.out" ./tests/replay ./pkg/... ./internal/...
 	$(GO) run ./tools/coverage -profile coverage-combined.out -min 80
 
 # LIB-07: command package coverage is separate from SDK and the main entry point.

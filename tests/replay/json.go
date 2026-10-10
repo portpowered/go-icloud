@@ -283,6 +283,12 @@ func checkPattern(value any, matcher JSONMatcher) error {
 		return fmt.Errorf("%w: matcher target is not a string", ErrFixture)
 	}
 
+	if matcher.Pattern == compressedJSONRule {
+		_, err = decodeCompressedJSON(text)
+
+		return err
+	}
+
 	pattern, err := regexp.Compile("^(?:" + matcher.Pattern + ")$")
 	if err != nil {
 		return fmt.Errorf("%w: pattern: %w", ErrFixture, err)
@@ -374,6 +380,13 @@ func replacePatterns(actual, expected any, matchers []JSONMatcher) error {
 		err := checkPattern(actual, matcher)
 		if err != nil {
 			return err
+		}
+
+		if matcher.Pattern == compressedJSONRule {
+			err = matchCompressedJSON(actual, expected, matcher)
+			if err != nil {
+				return err
+			}
 		}
 	}
 

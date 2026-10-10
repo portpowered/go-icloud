@@ -13,15 +13,16 @@ import (
 )
 
 const (
-	patternBody  = `{"items":[{"id":"TempId-aa","flag":true}],"big":9007199254740993}`
-	redactedBody = `{"Password":"<redacted:nonempty-password>",` +
+	testJSONPattern = "json-pattern"
+	patternBody     = `{"items":[{"id":"TempId-aa","flag":true}],"big":9007199254740993}`
+	redactedBody    = `{"Password":"<redacted:nonempty-password>",` +
 		`"items":[{"verificationCode":"<redacted:six-digit-code>"}],"fixed":true}`
 	unknownRule = "unknown"
 )
 
 func patternEntity() replay.Entity {
 	return replay.Entity{
-		Encoding: "json-pattern", Value: json.RawMessage(patternBody), ContentTypePattern: "", Parts: nil,
+		Encoding: testJSONPattern, Value: json.RawMessage(patternBody), ContentTypePattern: "", Parts: nil,
 		Matchers: []replay.JSONMatcher{{
 			Path:    []json.RawMessage{json.RawMessage(`"items"`), json.RawMessage(`0`), json.RawMessage(`"id"`)},
 			Pattern: "TempId-[a-z]{2}",
@@ -68,15 +69,15 @@ func TestJSONPatternBindsAllUndeclaredFieldsAndFullFormat(t *testing.T) {
 
 	for _, body := range []string{
 		`{"big":9007199254740993,"items":[{"flag":true,"id":"TempId-bb"}]}`,
-		strings.Replace(patternBody, "TempId-aa", "prefix-TempId-aa", 1),
-		strings.Replace(patternBody, "TempId-aa", "TempId-aa-suffix", 1),
+		strings.Replace(patternBody, replayLiteralTempIDAa, "prefix-TempId-aa", 1),
+		strings.Replace(patternBody, replayLiteralTempIDAa, "TempId-aa-suffix", 1),
 		strings.Replace(patternBody, "true", "false", 1),
-		strings.Replace(patternBody, "9007199254740993", "9007199254740992", 1),
-		strings.Replace(patternBody, `"TempId-aa"`, "null", 1),
+		strings.Replace(patternBody, photoUploadOpaqueInteger, "9007199254740992", 1),
+		strings.Replace(patternBody, `"TempId-aa"`, reminderChangeNullValue, 1),
 		strings.Replace(patternBody, `"id":"TempId-aa"`, `"missing":"TempId-aa"`, 1),
-		strings.Replace(patternBody, `"flag":true`, `"flag":true,"extra":1`, 1),
+		strings.Replace(patternBody, replayExpectedFlagTrue, `"flag":true,"extra":1`, 1),
 		patternBody + `{}`,
-		strings.Replace(patternBody, `"flag":true`, `"flag":false,"flag":true`, 1),
+		strings.Replace(patternBody, replayExpectedFlagTrue, `"flag":false,"flag":true`, 1),
 	} {
 		t.Run(body, func(t *testing.T) {
 			t.Parallel()
@@ -90,14 +91,14 @@ func TestJSONPatternBindsAllUndeclaredFieldsAndFullFormat(t *testing.T) {
 func TestJSONRedactionChecksNestedTypesAndCodeShape(t *testing.T) {
 	t.Parallel()
 
-	entity := replay.Entity{Encoding: "json-redacted", Value: json.RawMessage(redactedBody),
+	entity := replay.Entity{Encoding: replayLiteralJSONRedacted, Value: json.RawMessage(redactedBody),
 		Matchers: nil, ContentTypePattern: "", Parts: nil,
 	}
-	valid := `{"Password":"invented","items":[{"verificationCode":"654321"}],"fixed":true}`
+	valid := replayExpectedNestedRedactionInput
 
 	for _, body := range []string{
 		valid,
-		strings.Replace(valid, "invented", "", 1),
+		strings.Replace(valid, replayExpectedInvented, "", 1),
 		strings.Replace(valid, `"invented"`, "false", 1),
 		strings.Replace(valid, "654321", "123", 1),
 		strings.Replace(valid, "654321", "１２３４５６", 1),
@@ -116,10 +117,10 @@ func TestJSONRedactionChecksNestedTypesAndCodeShape(t *testing.T) {
 func TestRedactedLengthIsVerifiedBeforeIgnoringRecordedSize(t *testing.T) {
 	t.Parallel()
 
-	entity := replay.Entity{Encoding: "json-redacted", Value: json.RawMessage(redactedBody),
+	entity := replay.Entity{Encoding: replayLiteralJSONRedacted, Value: json.RawMessage(redactedBody),
 		Matchers: nil, ContentTypePattern: "", Parts: nil,
 	}
-	body := `{"Password":"invented","items":[{"verificationCode":"654321"}],"fixed":true}`
+	body := replayExpectedNestedRedactionInput
 
 	for _, length := range []string{"1", "999"} {
 		t.Run(length, func(t *testing.T) {
@@ -131,7 +132,7 @@ func TestRedactedLengthIsVerifiedBeforeIgnoringRecordedSize(t *testing.T) {
 			request := sampleRequest(t)
 			request.Body = io.NopCloser(strings.NewReader(body))
 			request.ContentLength = int64(len(body))
-			request.Header.Set("Content-Length", length)
+			request.Header.Set(replayLiteralContentLength, length)
 			assertRejected(t, transport, request)
 		})
 	}
@@ -144,7 +145,8 @@ func TestRedactedLengthIsVerifiedBeforeIgnoringRecordedSize(t *testing.T) {
 func TestInvalidJSONRuleDeclarationsFailConstruction(t *testing.T) {
 	t.Parallel()
 
-	for _, change := range []string{"no_matchers", "path", "index", "duplicate", "escaped_duplicate",
+	for _, change := range []string{
+		replayLiteralNoMatchers, "path", "index", replayLiteralDuplicate, replayLiteralEscapedDuplicate,
 		"regex", "sample", unknownRule} {
 		t.Run(change, func(t *testing.T) {
 			t.Parallel()
@@ -169,18 +171,18 @@ func TestInvalidJSONRuleDeclarationsFailConstruction(t *testing.T) {
 
 func changeMatcher(entity *replay.Entity, change string) {
 	switch change {
-	case "no_matchers":
+	case replayLiteralNoMatchers:
 		entity.Matchers = nil
 	case "path":
 		entity.Matchers[0].Path = nil
 	case "index":
 		entity.Matchers[0].Path[1] = json.RawMessage(`5`)
-	case "duplicate":
+	case replayLiteralDuplicate:
 		entity.Matchers = append(entity.Matchers, entity.Matchers[0])
-	case "escaped_duplicate":
+	case replayLiteralEscapedDuplicate:
 		alias := replay.JSONMatcher{
 			Path:    []json.RawMessage{json.RawMessage(`"items"`), json.RawMessage(`0`), json.RawMessage(`"\u0069d"`)},
-			Pattern: "TempId-aa",
+			Pattern: replayLiteralTempIDAa,
 		}
 		entity.Matchers = append(entity.Matchers, alias)
 	case "regex":
@@ -195,7 +197,7 @@ func changeMatcher(entity *replay.Entity, change string) {
 func TestPortableJSONDeclarationsAreAccepted(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob(filepath.Join("fixtures", "synthetic", "http", "*.json"))
+	paths, err := filepath.Glob(filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", "*.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -220,7 +222,7 @@ func TestPortableJSONDeclarationsAreAccepted(t *testing.T) {
 		count += checkPortableJSON(t, fixture.Exchanges)
 	}
 
-	if count != 17 {
+	if count != 26 {
 		t.Fatalf("portable JSON declaration count changed: %d", count)
 	}
 }

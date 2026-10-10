@@ -2,12 +2,17 @@ package replay_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
+	"maps"
+	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
+	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
@@ -17,6 +22,89 @@ const photoAlbumsCommand = "photo-albums"
 const photoCountCommand = "photo-count"
 const photoAssetsCommand = "photo-assets"
 const photoLookupCommand = "photo"
+
+type photoPrivacyClient struct {
+	icloud.Client
+
+	result *icloud.ListPhotoAssetsResult
+}
+
+func (client *photoPrivacyClient) ListPhotoAssets(
+	context.Context, icloud.ListPhotoAssetsRequest,
+) (*icloud.ListPhotoAssetsResult, error) {
+	return client.result, nil
+}
+
+// This synthetic SDK boundary control complements the complete paired Source
+// scenarios below; its opaque values are not a provider capture.
+func TestPhotoReadOpaquePrivacy(t *testing.T) {
+	t.Parallel()
+
+	var result icloud.ListPhotoAssetsResult
+
+	decode(t, json.RawMessage(`{"photos":[{"id":"public-id","masterID":"public-master","filename":"public.jpg",`+
+		`"itemType":"image","isLivePhoto":false,"created":"2020-01-01T00:00:00Z",`+
+		`"added":"2020-01-02T00:00:00Z",`+
+		`"assetMetadata":{"nested":[{"url":"https://private.example.invalid/asset?token=asset-secre`+
+		`t","opaque":{"headers":["metadata-secret"]}}]},`+
+		`"versions":{"original":{"url":{"nested":["https://private.example.invalid/download?token=r`+
+		`esource-secret"]},"checksum":{"opaque":"checksum-secret"},"size":42,`+
+		`"type":"public.jpeg"}},"dimensions":[{"opaque":"dimension-secret"},null],`+
+		`"size":{"opaque":["size-secret"]}}],"responses":[{"statusCode":200,`+
+		`"headers":[{"name":"Set-Cookie","value":"session=receipt-secret"}],`+
+		`"cookieScopeURL":"https://private.example.invalid/photos"}]}`), &result)
+
+	original := reminderCLIEncode(t, result)
+	directory := t.TempDir()
+	session := filepath.Join(directory, expectedReplaySessionJSON)
+	saved := filepath.Join(directory, expectedReplayResultJSON)
+
+	var auth icloud.AuthContext
+
+	auth.AccountID, auth.ClientID = expectedSyntheticAccount, "synthetic-client"
+	auth.PhotosServiceURL = "https://photos.example.invalid"
+	auth.Headers = []icloud.Header{}
+	writeSyncJSON(t, session, auth)
+
+	var output, diagnostic bytes.Buffer
+
+	err := command.Run(t.Context(), &photoPrivacyClient{Client: nil, result: &result},
+		[]string{sessionFlag, session, expectedReplaySaveResult, saved, photoAssetsCommand}, &output, &diagnostic)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if diagnostic.Len() != 0 {
+		t.Fatal("photo privacy control printed diagnostics")
+	}
+
+	private, err := readSyncFile(t, saved)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	checkReminderCLIValue(t, private, result)
+
+	var expected map[string]json.RawMessage
+
+	decode(t, json.RawMessage(`{"photos":[{"id":"public-id","masterID":"public-master","filename":"public.jpg",`+
+		`"itemType":"image","isLivePhoto":false,"created":"2020-01-01T00:00:00Z",`+
+		`"added":"2020-01-02T00:00:00Z"}]}`), &expected)
+	checkReminderCLIValue(t, output.Bytes(), expected)
+
+	for _, marker := range []string{
+		"asset-secret", "metadata-secret", "resource-secret", "checksum-secret", "dimension-secret",
+		"size-secret", "receipt-secret",
+	} {
+		if !bytes.Contains(private, []byte(marker)) || strings.Contains(output.String(), marker) {
+			t.Fatal("opaque private value was lost from the private result or exposed on stdout")
+		}
+	}
+
+	if !bytes.Equal(original, reminderCLIEncode(t, result)) {
+		t.Fatal("console projection mutated the caller-owned SDK result")
+	}
+}
 
 func TestPhotoReadCommands(t *testing.T) {
 	t.Parallel()
@@ -31,7 +119,7 @@ func TestPhotoReadCommands(t *testing.T) {
 
 		want := 27
 		if prefix == "albums" {
-			want = 41
+			want = 42
 		}
 
 		if prefix == "count" {
@@ -39,7 +127,7 @@ func TestPhotoReadCommands(t *testing.T) {
 		}
 
 		if prefix == "assets" {
-			want = 109
+			want = 110
 		}
 
 		if prefix == lookupFixturePrefix {
@@ -53,9 +141,151 @@ func TestPhotoReadCommands(t *testing.T) {
 		for _, path := range paths {
 			t.Run(filepath.Base(path), func(t *testing.T) {
 				t.Parallel()
-				runReminderCommand(t, operation, readObject(t, path))
+				runPhotoReadScenario(t, operation, readObject(t, path))
 			})
 		}
+	}
+}
+
+func runPhotoReadScenario(t *testing.T, operation string, row map[string]json.RawMessage) {
+	t.Helper()
+	runPhotoReadInputScenario(t, operation, row, false)
+}
+
+func runPhotoReadInputScenario(t *testing.T, operation string, row map[string]json.RawMessage, typed bool) {
+	t.Helper()
+
+	var exchanges []replay.Exchange
+
+	decode(t, row[expectedReplayExchanges], &exchanges)
+
+	transport, err := replay.NewHTTPTransport(exchanges)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client, err := icloud.New(icloud.WithHTTPTransport(transport))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	directory := t.TempDir()
+	session := filepath.Join(directory, expectedReplaySessionJSON)
+	saved := filepath.Join(directory, expectedReplayResultJSON)
+
+	writeSyncJSON(t, session, fixtureAuth(t, row[expectedReplayInitialState]))
+	options := photoCLIArgs(t, operation, row)
+
+	if typed {
+		request := filepath.Join(directory, testRequestJSONFilename)
+		writeSyncJSON(t, request, typedPhotoFixtureInput(t, operation, row))
+		options = []string{expectedRequestOption, request}
+	}
+
+	args := make([]string, 0, 5+len(options))
+	args = append(args, sessionFlag, session, expectedReplaySaveResult, saved)
+	args = append(args, options...)
+	args = append(args, operation)
+
+	var output, diagnostic bytes.Buffer
+
+	err = command.Run(t.Context(), client, args, &output, &diagnostic)
+	if len(row["error"]) != 0 {
+		checkPhotoCLIFailure(t, row, output.Bytes(), err)
+
+		_, readErr := readSyncFile(t, saved)
+		if !errors.Is(readErr, os.ErrNotExist) {
+			t.Fatal("failed photo read wrote a partial private result")
+		}
+	} else {
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		checkPhotoReadPrivateSource(t, operation, row, saved, output.Bytes(), exchanges)
+	}
+
+	if diagnostic.Len() != 0 {
+		t.Fatal("photo read printed unexpected diagnostics")
+	}
+
+	err = transport.AssertConsumed()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func checkPhotoReadPrivateSource(t *testing.T, operation string, row map[string]json.RawMessage,
+	saved string, output []byte, exchanges []replay.Exchange,
+) {
+	t.Helper()
+
+	data, err := readSyncFile(t, saved)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var complete map[string]json.RawMessage
+
+	decode(t, data, &complete)
+
+	if operation == photoStatusCommand {
+		checkReminderCLIValue(t, complete[expectedReplayMetadata], referenceResponseMetadata(exchanges[len(exchanges)-1]))
+		delete(complete, expectedReplayMetadata)
+	} else {
+		metadata := make([]icloud.ResponseMetadata, 0, len(exchanges))
+		for _, exchange := range exchanges {
+			metadata = append(metadata, referenceResponseMetadata(exchange))
+		}
+
+		checkReminderCLIValue(t, complete[expectedReplayResponses], metadata)
+		delete(complete, expectedReplayResponses)
+	}
+	// Compare every business field, including URLs and opaque asset/resource
+	// values, with pinned Source before applying the explicit console omissions.
+	checkPhotoCLIOutcome(t, operation, row, reminderCLIEncode(t, complete), nil)
+	checkReminderCLIValue(t, output, photoReadConsoleProjection(t, operation, complete))
+}
+
+func photoReadConsoleProjection(t *testing.T, operation string,
+	complete map[string]json.RawMessage,
+) map[string]json.RawMessage {
+	t.Helper()
+
+	result := maps.Clone(complete)
+
+	switch operation {
+	case photoStatusCommand:
+		delete(result, expectedReplaySyncToken)
+	case photoAssetsCommand:
+		var photos []map[string]json.RawMessage
+
+		decode(t, result["photos"], &photos)
+
+		for _, photo := range photos {
+			deletePhotoConsoleContainers(photo)
+		}
+
+		result["photos"] = reminderCLIEncode(t, photos)
+	case photoLookupCommand:
+		if !bytes.Equal(bytes.TrimSpace(result["photo"]), []byte("null")) {
+			var photo map[string]json.RawMessage
+
+			decode(t, result["photo"], &photo)
+			deletePhotoConsoleContainers(photo)
+			result["photo"] = reminderCLIEncode(t, photo)
+		}
+	}
+
+	return result
+}
+
+func deletePhotoConsoleContainers(photo map[string]json.RawMessage) {
+	// These four generated photo containers are the privacy contract. All
+	// remaining scalar semantic fields must survive unchanged; no recursive
+	// production sanitizer or arbitrary field selection is used as an oracle.
+	for _, name := range []string{expectedReplayAssetMetadata, "versions", "dimensions", "size"} {
+		delete(photo, name)
 	}
 }
 
@@ -105,8 +335,8 @@ func checkPhotoCLIOutcome(t *testing.T, operation string, row map[string]json.Ra
 		var expected map[string]json.RawMessage
 
 		decode(t, row["result"], &expected)
-		expected["syncToken"] = expected["sync_token"]
-		delete(expected, "sync_token")
+		expected[expectedReplaySyncToken] = expected[expectedReplaySourceSyncToken]
+		delete(expected, expectedReplaySourceSyncToken)
 		checkReminderCLIValue(t, output, expected)
 
 		return
@@ -127,10 +357,10 @@ func checkPhotoAlbumsCLI(t *testing.T, row, actual map[string]json.RawMessage) {
 	decode(t, row["result"], &expected)
 
 	for _, album := range expected {
-		album["fullName"] = album["fullname"]
-		delete(album, "fullname")
-		album["recordChangeTag"] = album["record_change_tag"]
-		delete(album, "record_change_tag")
+		album[expectedReplayFullName] = album[expectedReplayFullname]
+		delete(album, expectedReplayFullname)
+		album[reminderCLIRevisionField] = album[reminderCLISourceRevisionField]
+		delete(album, reminderCLISourceRevisionField)
 	}
 
 	checkReminderCLIValue(t, actual["albums"], expected)
@@ -149,7 +379,7 @@ func checkPhotoCLIFailure(t *testing.T, row map[string]json.RawMessage, output [
 		sourceError map[string]string
 	)
 
-	decode(t, row["exchanges"], &exchanges)
+	decode(t, row[expectedReplayExchanges], &exchanges)
 	decode(t, row["error"], &sourceError)
 
 	last := exchanges[len(exchanges)-1]

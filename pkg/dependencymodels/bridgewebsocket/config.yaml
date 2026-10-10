@@ -1,0 +1,6 @@
+package: bridgewebsocket
+generate:
+  models: true
+output: pkg/dependencymodels/bridgewebsocket/models.gen.go
+output-options:
+  skip-prune: true

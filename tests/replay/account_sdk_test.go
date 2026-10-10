@@ -1,9 +1,9 @@
 package replay_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
-	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -13,26 +13,6 @@ import (
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
-
-func TestAccountDevicesSDKPortableScenarios(t *testing.T) {
-	t.Parallel()
-
-	paths, err := filepath.Glob("fixtures/synthetic/http/account-devices-*.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(paths) != 11 {
-		t.Fatal("SDK device scenario inventory changed")
-	}
-
-	for _, path := range paths {
-		t.Run(filepath.Base(path), func(t *testing.T) {
-			t.Parallel()
-			accountDevicesSDK(t, readAccountScenario(t, path))
-		})
-	}
-}
 
 func accountDevicesSDK(t *testing.T, scenario accountScenario) {
 	t.Helper()
@@ -69,6 +49,8 @@ func sdkAccountAuth(initial accountInitial) icloud.AuthContext {
 	}
 
 	auth := icloud.AuthContext{
+		PhotosUploadServiceURL:    "",
+		SharedPhotosServiceURL:    "",
 		PhotosServiceURL:          "",
 		LegacyRemindersServiceURL: "", RemindersServiceURL: "",
 		DriveToken:       "",
@@ -109,12 +91,21 @@ func assertDevicesSDKFailure(t *testing.T, scenario accountScenario,
 
 	accountProviderFailure(t, scenario.Error, failure.StatusCode(), failure.ResponseBody())
 
-	if strings.Contains(failure.Error(), "synthetic failure") {
+	expected := scenario.Exchanges[0].Response
+	if !bytes.Equal(failure.ResponseBody(), contractAuthBody(t, expected.Body)) || len(failure.PriorResponses()) != 0 {
+		t.Fatal("SDK device failure lost exact response evidence")
+	}
+
+	checkSDKMetadata(t, icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
+		Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()}, expected)
+
+	if strings.Contains(failure.Error(), replayLiteralSyntheticFailure) {
 		t.Fatal("SDK display error disclosed provider content")
 	}
 
 	headers := failure.ResponseHeaders()
-	if len(headers) != 1 || headers[0].Name != protocol.HTTPContentTypeName || headers[0].Value != "application/json" {
+	if len(headers) != 1 ||
+		headers[0].Name != protocol.HTTPContentTypeName || headers[0].Value != replayExpectedJSONMedia {
 		t.Fatal("SDK provider failure lost headers")
 	}
 }
@@ -139,7 +130,7 @@ func assertDevicesSDKSuccess(t *testing.T, scenario accountScenario,
 
 	if response.Metadata.StatusCode != scenario.Exchanges[0].Response.Status ||
 		len(response.Metadata.Headers) != 1 || response.Metadata.Headers[0].Name != protocol.HTTPContentTypeName ||
-		response.Metadata.Headers[0].Value != "application/json" {
+		response.Metadata.Headers[0].Value != replayExpectedJSONMedia {
 		t.Fatal("SDK device metadata changed")
 	}
 }

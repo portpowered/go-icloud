@@ -54,7 +54,9 @@ func runLegacyRemindersSDK(t *testing.T, scenario accountScenario) {
 			t.Fatal(err)
 		}
 
-		projection, marshalErr := json.Marshal(map[string]any{"lists": result.Lists, "reminders": result.Reminders})
+		projection, marshalErr := json.Marshal(map[string]any{
+			"lists": result.Lists, replayLiteralReminders: result.Reminders,
+		})
 		if marshalErr != nil || !reflect.DeepEqual(accountJSON(t, projection), accountJSON(t, scenario.Result)) {
 			t.Fatal("legacy reminder records lost fields or order", marshalErr)
 		}

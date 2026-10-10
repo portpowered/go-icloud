@@ -1,0 +1,222 @@
+package icloud
+
+import (
+	"context"
+	"encoding/json"
+	"net/http"
+
+	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencies/srp"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
+	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
+	srpmodels "github.com/portpowered/go-icloud/pkg/dependencymodels/srp"
+)
+
+func (sdk *SDK) nativePassword(ctx context.Context, operation *nativeAuthOperation,
+	input AuthenticateRequest,
+) error {
+	authorizeErr := sdk.nativeAuthorize(ctx, operation)
+	if authorizeErr != nil {
+		return authorizeErr
+	}
+
+	user, err := srp.New(operation.state.AccountName, input.Password, sdk.random)
+	if err != nil {
+		failure := newClientError(operation.name, Configuration, 0, nil, nil, err)
+		failure.prior = cloneDriveResponses(operation.responses)
+
+		return failure
+	}
+
+	challenge, err := sdk.nativeSRPChallenge(ctx, operation, user.Public())
+	if err != nil {
+		return err
+	}
+
+	proof, err := user.Challenge(challenge.Salt, challenge.B, challenge.Iteration,
+		srpmodels.Protocol(challenge.Protocol))
+	if err != nil {
+		return nativeResponseError(operation, operation.response, err, InvalidResponse)
+	}
+
+	err = sdk.nativeSRPComplete(ctx, operation, input, challenge.C, proof)
+	if err != nil {
+		return err
+	}
+
+	if operation.state.RequiresMFA || operation.passwordTokenLogged {
+		return nil
+	}
+
+	_, err = sdk.nativeLoginToken(ctx, operation, !input.PauseTwoFactor, input.AcceptTerms)
+
+	return err
+}
+
+func (sdk *SDK) nativeAuthorize(ctx context.Context, operation *nativeAuthOperation) error {
+	state := operation.state
+	widget, version, latest := protocol.AuthOAuthClientIDValue, protocol.AuthSkVersionValue, protocol.AuthVersionValue
+	responseType, mode, home := protocol.AuthOAuthResponseTypeValue,
+		protocol.AuthOAuthResponseModeValue, nativeHomeOrigin(state)
+	params := authapi.AuthorizeAuthSignInParams{FrameId: &state.Auth.ClientID, SkVersion: &version,
+		Iframeid: &state.Auth.ClientID, ClientId: &widget, ResponseType: &responseType, RedirectUri: &home,
+		ResponseMode: &mode, State: &state.Auth.ClientID, AuthVersion: &latest, Cookie: nil}
+
+	request, err := nativeEncodedRequest(webtransport.AuthorizeAuthSignInCall{
+		Origin: nativeIDMSOrigin(state), Params: &params,
+	})
+	if err != nil {
+		return newClientError(operation.name, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.nativeAuthExchange(ctx, operation, request, requestHeaders(state.Auth.Headers))
+	if err != nil {
+		return err
+	}
+
+	return nativeRequireSuccess(operation, response)
+}
+
+func (sdk *SDK) nativeSRPChallenge(ctx context.Context, operation *nativeAuthOperation,
+	public []byte,
+) (*auth.AuthSRPInitResponse, error) {
+	input := auth.AuthSRPInitRequest{A: public, AccountName: operation.state.AccountName,
+		Protocols: []auth.AuthSRPProtocol{auth.S2k, auth.S2kFo}}
+
+	request, err := nativeEncodedRequest(webtransport.InitAuthSRPCall{
+		Origin: nativeIDMSOrigin(operation.state), Params: nil, Body: input,
+	})
+	if err != nil {
+		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.nativeAuthExchange(ctx, operation, request,
+		nativeAuthHeaders(operation.state, protocol.AuthAcceptValue))
+	if err != nil {
+		return nil, err
+	}
+
+	err = nativeRequireSuccess(operation, response)
+	if err != nil {
+		return nil, err
+	}
+
+	var challenge auth.AuthSRPInitResponse
+
+	err = json.Unmarshal(response.Body, &challenge)
+	if err != nil {
+		return nil, nativeResponseError(operation, response, err, InvalidResponse)
+	}
+
+	if challenge.C == "" || len(challenge.Salt) == 0 || len(challenge.B) == 0 {
+		return nil, nativeResponseError(operation, response, errNativeAuthInput, InvalidResponse)
+	}
+
+	return &challenge, nil
+}
+
+func (sdk *SDK) nativeSRPComplete(ctx context.Context, operation *nativeAuthOperation,
+	input AuthenticateRequest, challenge string, proof srp.Proof,
+) error {
+	data := auth.AuthSRPCompleteRequest{AccountName: operation.state.AccountName, C: challenge,
+		M1: proof.M1, M2: proof.M2, RememberMe: auth.AuthSRPCompleteRequestRememberMeTrue,
+		TrustTokens: []string{}, Pause2FA: nil}
+	if operation.state.TrustToken != "" {
+		data.TrustTokens = append(data.TrustTokens, operation.state.TrustToken)
+	}
+
+	if input.PauseTwoFactor {
+		pause := auth.AuthSRPCompleteRequestPause2FATrue
+		data.Pause2FA = &pause
+	}
+
+	remember := protocol.AuthRememberMeQueryValue
+	params := authapi.CompleteAuthSRPParams{IsRememberMeEnabled: &remember, Cookie: nil,
+		Accept:                      nil,
+		ContentType:                 nil,
+		XAppleOAuthClientId:         nil,
+		XAppleOAuthClientType:       nil,
+		XAppleOAuthRedirectURI:      nil,
+		XAppleOAuthRequireGrantCode: nil,
+		XAppleOAuthResponseMode:     nil,
+		XAppleOAuthResponseType:     nil,
+		XAppleOAuthState:            nil,
+		XAppleWidgetKey:             nil,
+		XAppleFDClientInfo:          nil,
+		Referer:                     nil,
+		XAppleFrameId:               nil,
+		Scnt:                        nil,
+		XAppleIDSessionId:           nil,
+		XAppleAuthAttributes:        nil,
+	}
+
+	request, err := nativeEncodedRequest(webtransport.CompleteAuthSRPCall{
+		Origin: nativeIDMSOrigin(operation.state), Params: &params, Body: data,
+	})
+	if err != nil {
+		return newClientError(operation.name, Configuration, 0, nil, nil, err)
+	}
+
+	response, err := sdk.nativeAuthExchange(ctx, operation, request,
+		nativeAuthHeaders(operation.state, protocol.AuthAcceptValue))
+	if err != nil {
+		return err
+	}
+
+	return sdk.nativeSRPVerdict(ctx, operation, input, response)
+}
+
+func (sdk *SDK) nativeSRPVerdict(ctx context.Context, operation *nativeAuthOperation,
+	input AuthenticateRequest, response *webtransport.BytesResponse,
+) error {
+	if nativeLockedBody(response.Body) {
+		return nativeResponseError(operation, response, errNativeAuthInput, AccountLocked)
+	}
+
+	if response.Status != http.StatusConflict {
+		return nativeRequireSuccess(operation, response)
+	}
+
+	logged, err := sdk.nativePausedSRPToken(ctx, operation, input)
+	if err != nil {
+		return err
+	}
+
+	if logged {
+		return nil
+	}
+
+	operation.state.RequiresMFA = true
+
+	err = sdk.nativeGetChallenge(ctx, operation)
+	if err != nil {
+		return err
+	}
+
+	err = sdk.nativeRequestCode(ctx, operation, nil)
+	if nativeCanRetry(err) {
+		return nil
+	}
+
+	return err
+}
+
+func (sdk *SDK) nativePausedSRPToken(ctx context.Context, operation *nativeAuthOperation,
+	input AuthenticateRequest,
+) (bool, error) {
+	if !input.PauseTwoFactor || !nativeHasToken(operation.state) {
+		return false, nil
+	}
+
+	accepted, tokenErr := sdk.nativeLoginToken(ctx, operation, false, input.AcceptTerms)
+	if tokenErr != nil && !nativeCanRetry(tokenErr) {
+		return false, tokenErr
+	}
+
+	if accepted {
+		operation.passwordTokenLogged = true
+	}
+
+	return accepted, nil
+}

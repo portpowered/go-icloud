@@ -7,7 +7,7 @@
   "evidence": "synthetic; implementation-derived",
   "operation": "token-empty",
   "connection": {
-    "url": "wss://bridge.example.invalid/v2/synthetic?channel=1",
+    "url": "wss://bridge.example.invalid/v2/abcdef0123456789",
     "timeout": 5,
     "origin": "https://www.icloud.com",
     "user_agent": "synthetic-agent"
@@ -17,7 +17,7 @@
       "direction": "send",
       "kind": "upgrade",
       "lines": [
-        "GET /v2/synthetic?channel=1 HTTP/1.1",
+        "GET /v2/abcdef0123456789 HTTP/1.1",
         "Host: bridge.example.invalid",
         "Upgrade: websocket",
         "Connection: Upgrade",

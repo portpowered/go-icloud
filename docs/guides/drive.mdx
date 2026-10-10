@@ -1,0 +1,45 @@
+---
+title: Navigate and change Drive
+description: Own a Drive session, select entries, and transfer files.
+---
+
+Use authenticated service discovery and close the account-bound navigation session
+when finished:
+
+```go
+session, err := client.OpenDriveSession(ctx, icloud.OpenDriveSessionRequest{Auth: auth})
+if err != nil { return err }
+defer session.Close()
+root, err := session.Root(ctx, icloud.DriveLocationRequest{})
+if err != nil { return err }
+children, err := root.Children(ctx, icloud.DriveChildrenRequest{})
+if err != nil { return err }
+for _, child := range children.Entries {
+    snapshot, err := child.Snapshot()
+    if err != nil { return err }
+    _ = snapshot.Name
+}
+```
+
+`Lookup` chooses a child by exact display name. `Directory` lists names. Root and
+trash locations are cached; `Refresh` and `Force` request fresh provider metadata.
+Select a fresh entry before a revision-sensitive change.
+
+Entries expose `CreateFolder`, `Rename`, `Trash`, `Delete`, `Restore`, and
+`PermanentlyDelete`. Recovery and permanent deletion require trash metadata.
+Invoke only the change you intend; acknowledgements can precede background
+processing and uncertain writes are not retried automatically.
+
+`Download` returns exact file bytes. A recorded zero-sized file returns local empty
+content without a network transfer. `Upload` accepts a caller-owned seekable reader
+and filename; it prepares, transfers, and registers the content in order. Preserve
+the returned evidence if a later stage fails.
+
+The session retains credential updates for subsequent calls. Store a copy from
+`Authentication()` when finished. `LastResponses()` reports the latest network
+operation; cache reads leave it unchanged. Drive navigation, controls and transfers
+are covered by paired synthetic reference replay.
+
+See [node reads](/docs/openapi/unknown/DriveRetrieveNodes),
+[folder creation](/docs/openapi/unknown/DriveCreateFolders), and
+[upload preparation](/docs/openapi/unknown/DriveGetUploadDestination).

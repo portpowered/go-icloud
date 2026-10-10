@@ -84,11 +84,11 @@ func checkFindMyTenant(t *testing.T, client *icloud.SDK, tenant string) {
 		t.Fatal("opening the session mutated caller credentials")
 	}
 
-	auth.Cookies[0].Value = "caller-mutated"
-	*auth.SessionToken = "caller-mutated"
+	auth.Cookies[0].Value = testCallerMutation
+	*auth.SessionToken = testCallerMutation
 
 	copyAuth := session.Authentication()
-	if *copyAuth.SessionToken != "synthetic-session-token" || len(copyAuth.Cookies) != 1 {
+	if *copyAuth.SessionToken != testSessionToken || len(copyAuth.Cookies) != 1 {
 		t.Fatal("credential alias or foreign cookie escaped the session boundary")
 	}
 

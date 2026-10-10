@@ -19,23 +19,23 @@ import (
 func TestResumeSavedSessions(t *testing.T) {
 	t.Parallel()
 
-	for _, name := range []string{"auth-authenticate-cloudkit-discovery",
-		"auth-authenticate-cached", "auth-authenticate-paused", "auth-authenticate-refresh",
-		"auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation",
-		"auth-authenticate-validation-201", "auth-authenticate-refresh-202",
-		"auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh",
-		"auth-authenticate-quoted-cookie", "auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie"} {
+	for _, name := range []string{nativeCloudKitDiscoveryFixture,
+		replayExpectedAuthAuthenticateCached, nativePausedAuthenticationFixture, nativeRefreshAuthenticationFixture,
+		nativeUntrustedRefreshFixture, nativeStaleTokenFixture, nativeTokenRotationFixture,
+		nativeValidation201Fixture, nativeRefresh202Fixture,
+		nativeEmptyHeadersFixture, nativeEmptyHeadersRefreshFixture,
+		nativeQuotedCookieFixture, nativeQuotedCookieRotationFixture, nativeExplicitCookieFixture} {
 		t.Run(name, func(t *testing.T) { t.Parallel(); resumeSavedSession(t, name) })
 	}
 }
 
 func resumeSavedSession(t *testing.T, name string) {
 	t.Helper()
-	raw := authReplayObject(t, filepath.Join("fixtures/synthetic/http", name+".json"))
+	raw := authReplayObject(t, filepath.Join(replayExpectedFixturesSyntheticHTTP, name+".json"))
 
 	var exchanges []replay.Exchange
 
-	authReplayDecode(t, raw["exchanges"], &exchanges)
+	authReplayDecode(t, raw[replayExpectedExchanges], &exchanges)
 
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
@@ -86,7 +86,7 @@ func authReplayRequest(t *testing.T, raw map[string]json.RawMessage) icloud.Resu
 	var params, session, headers map[string]string
 
 	authReplayDecode(t, initial["params"], &params)
-	authReplayDecode(t, initial["session_data"], &session)
+	authReplayDecode(t, initial[replayExpectedSessionData], &session)
 	authReplayDecode(t, initial["headers"], &headers)
 
 	var cookies []referenceCookie
@@ -97,7 +97,7 @@ func authReplayRequest(t *testing.T, raw map[string]json.RawMessage) icloud.Resu
 
 	request.Auth.ClientID = params[protocol.ClientIDName]
 	request.Auth.SetupServiceURL = protocol.AuthAccountServer0
-	request.Auth.SessionToken = session["session_token"]
+	request.Auth.SessionToken = session[replayExpectedSessionStateField]
 
 	request.Auth.Cookies = sdkAccountCookies(cookies)
 	for index := range request.Auth.Cookies {
@@ -108,8 +108,8 @@ func authReplayRequest(t *testing.T, raw map[string]json.RawMessage) icloud.Resu
 		request.Auth.Headers = append(request.Auth.Headers, icloud.Header{Name: key, Value: value})
 	}
 
-	request.TrustToken = session["trust_token"]
-	if country, exists := session["account_country"]; exists {
+	request.TrustToken = session[replayExpectedTrustedStateField]
+	if country, exists := session[replayExpectedAccountCountry]; exists {
 		request.AccountCountryCode.Set(country)
 	}
 
@@ -141,11 +141,11 @@ func assertResumedAuth(t *testing.T, raw map[string]json.RawMessage, result *icl
 	var params, session map[string]string
 
 	authReplayDecode(t, state["params"], &params)
-	authReplayDecode(t, state["session_data"], &session)
+	authReplayDecode(t, state[replayExpectedSessionData], &session)
 
 	if result.Auth.AccountID != params[protocol.DSIDName] || result.Auth.ClientID != params[protocol.ClientIDName] ||
-		result.Auth.SessionToken == nil || *result.Auth.SessionToken != session["session_token"] ||
-		result.TrustToken != session["trust_token"] {
+		result.Auth.SessionToken == nil || *result.Auth.SessionToken != session[replayExpectedSessionStateField] ||
+		result.TrustToken != session[replayExpectedTrustedStateField] {
 		t.Fatal("resumption lost account identity or rotated tokens")
 	}
 
@@ -156,7 +156,7 @@ func assertResumedAuth(t *testing.T, raw map[string]json.RawMessage, result *icl
 func assertResumedCountry(t *testing.T, session map[string]string, result *icloud.ResumeSessionResult) {
 	t.Helper()
 
-	if country, exists := session["account_country"]; exists &&
+	if country, exists := session[replayExpectedAccountCountry]; exists &&
 		(!result.AccountCountryCode.IsSpecified() || result.AccountCountryCode.IsNull() ||
 			result.AccountCountryCode.MustGet() != country) {
 		t.Fatal("resumption changed account country")
@@ -223,18 +223,18 @@ func TestResumeAuthenticationFailures(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string]icloud.ErrorKind{
-		"auth-terms-refused":                      icloud.TermsRequired,
+		nativeTermsRefusedFixture:                 icloud.TermsRequired,
 		"auth-token-login-needs-2fa":              icloud.AuthenticationRequired,
 		"auth-authenticate-untrusted-no-password": icloud.AuthenticationRequired,
 	}
 	for name, kind := range cases {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			raw := authReplayObject(t, filepath.Join("fixtures/synthetic/http", name+".json"))
+			raw := authReplayObject(t, filepath.Join(replayExpectedFixturesSyntheticHTTP, name+".json"))
 
 			var exchanges []replay.Exchange
 
-			authReplayDecode(t, raw["exchanges"], &exchanges)
+			authReplayDecode(t, raw[replayExpectedExchanges], &exchanges)
 
 			transport, err := replay.NewHTTPTransport(exchanges)
 			if err != nil {
@@ -265,6 +265,7 @@ func assertResumeFailure(t *testing.T, result *icloud.ResumeSessionResult, err e
 	t.Helper()
 
 	var failure *icloud.ClientError
+
 	if result != nil || !errors.As(err, &failure) || failure.Kind() != kind {
 		t.Fatalf("authentication failure: %v", err)
 	}
@@ -324,18 +325,18 @@ func TestResumeCookieScopeAndCrossServiceReuse(t *testing.T) {
 
 	exchanges := make([]replay.Exchange, 0, 2)
 
-	authReplayDecode(t, raw["exchanges"], &exchanges)
+	authReplayDecode(t, raw[replayExpectedExchanges], &exchanges)
 	exchanges[0].Response.Headers = append(exchanges[0].Response.Headers,
 		replay.Pair{accountCookieUpdateHeader, "X-APPLE-WEBAUTH-TOKEN=synthetic-scoped; Path=/setup/ws/1; Secure"})
 	drive := authReplayObject(t, "fixtures/synthetic/http/drive-apps-empty.json")
 
 	var driveExchanges []replay.Exchange
 
-	authReplayDecode(t, drive["exchanges"], &driveExchanges)
+	authReplayDecode(t, drive[replayExpectedExchanges], &driveExchanges)
 	driveExchanges[0].Request.Query = []replay.Pair{
 		{protocol.ClientBuildNumberName, protocol.AuthClientBuildNumberValue},
 		{protocol.ClientMasteringNumberName, protocol.AuthClientMasteringNumberValue},
-		{protocol.ClientIDName, "synthetic-client"},
+		{protocol.ClientIDName, replayExpectedSyntheticClient},
 		{protocol.DSIDName, "synthetic-dsid"},
 	}
 	exchanges = append(exchanges, driveExchanges...)
@@ -387,7 +388,7 @@ func assertAuthResponses(t *testing.T, raw map[string]json.RawMessage, result *i
 
 	var exchanges []replay.Exchange
 
-	authReplayDecode(t, raw["exchanges"], &exchanges)
+	authReplayDecode(t, raw[replayExpectedExchanges], &exchanges)
 
 	if len(result.Responses) != len(exchanges) {
 		t.Fatal("authentication lost intermediate responses")

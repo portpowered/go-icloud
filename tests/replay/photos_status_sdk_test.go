@@ -3,10 +3,11 @@ package replay_test
 import (
 	"encoding/json"
 	"errors"
-	"github.com/portpowered/go-icloud/pkg/icloud"
-	"github.com/portpowered/go-icloud/tests/replay"
 	"path/filepath"
 	"testing"
+
+	"github.com/portpowered/go-icloud/pkg/icloud"
+	"github.com/portpowered/go-icloud/tests/replay"
 )
 
 func TestPhotosStatusSDKPortableScenarios(t *testing.T) {
@@ -42,7 +43,7 @@ func runPhotosStatusSDK(t *testing.T, scenario accountScenario) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.GetPhotosStatus(t.Context(), icloud.GetPhotosStatusRequest{Auth: auth})
+	actual, err := client.GetPhotosStatus(t.Context(), icloud.GetPhotosStatusRequest{Library: nil, Auth: auth})
 	if len(scenario.Error) != 0 {
 		checkPhotosStatusFailure(t, scenario, actual, err)
 	} else {
@@ -57,8 +58,8 @@ func runPhotosStatusSDK(t *testing.T, scenario accountScenario) {
 			t.Fatal(decodeErr)
 		}
 
-		expected["syncToken"] = expected["sync_token"]
-		delete(expected, "sync_token")
+		expected[replayLiteralSyncToken] = expected[replayExpectedCursorField]
+		delete(expected, replayExpectedCursorField)
 
 		encoded, encodeErr := json.Marshal(expected)
 		if encodeErr != nil {
@@ -97,7 +98,7 @@ func checkPhotosStatusFailure(t *testing.T, scenario accountScenario, actual *ic
 		kind = icloud.InvalidResponse
 	}
 
-	if expected["type"] == "PyiCloudServiceNotActivatedException" {
+	if expected["type"] == replayExpectedPyiCloudServiceNotActivatedException {
 		kind = icloud.Unavailable
 	}
 

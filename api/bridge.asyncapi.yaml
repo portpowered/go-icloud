@@ -1,0 +1,74 @@
+asyncapi: 2.6.0
+info:
+  title: Apple trusted device bridge
+  version: 0.1.0
+  description: Source-matched synthetic APNS webcourier bootstrap, subscription and push acknowledgement protocol.
+servers:
+  production:
+    url: websocket.push.apple.com
+    protocol: wss
+    x-environment:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeProtocolString/values/ProductionEnvironment'
+  sandbox:
+    url: websocket.sandbox.push.apple.com
+    protocol: wss
+    x-environment:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeProtocolString/values/SandboxEnvironment'
+  bootstrap:
+    url: '{host}'
+    protocol: wss
+    description: Host normalized from the bridge bootstrap URL, with APNS environment fallback.
+    x-host-normalization:
+      version: 2
+      schemeSeparator: '://'
+      pathSeparator: '/'
+      uriField: hostname
+      fallback: first-path-segment
+      percentSpelling: preserve
+      hostnameCase: unicode-lowercase-before-zone
+      unicodeProfile: {$ref: './dependency-profiles/bridge-host-unicode.json'}
+      zoneDelimiter: '%'
+      preprocessing: python-urlsplit-c0-tab-cr-lf
+      scheme: ascii-letter-then-letter-digit-plus-minus-dot
+      authorityPrefix: '//'
+      authorityTerminators: '/?#'
+      userinfoDelimiter: '@'
+      portDelimiter: ':'
+      bracketedHost: python-ipv6-or-ipvfuture
+      authorityNormalization: nfkc-reject-introduced-separators
+      portValidation: none
+    variables:
+      host:
+        default: websocket.push.apple.com
+        description: Authority returned by the typed bridge bootstrap host normalizer.
+    x-host-schema:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeInitiateData/properties/webSocketUrl'
+    x-environment-schema:
+      $ref: './external/bridge-models.openapi.yaml#/components/schemas/BridgeInitiateData/properties/apnsEnvironment'
+channels:
+  /v2/{connection}:
+    x-framing-schema:
+      $ref: './external/bridge-websocket.openapi.yaml#/components/schemas/Frame'
+    x-upgrade-operation:
+      $ref: './external/bridge-websocket.openapi.yaml#/paths/~1v2~1{connection}/get'
+    parameters:
+      connection:
+        description: Hex protobuf ClientMessage connection request with signed nonce.
+        x-message: {$ref: '#/channels/~1v2~1{connection}/publish/message'}
+        schema: {type: string, pattern: '^[0-9a-f]+$'}
+    publish:
+      message:
+        name: ClientMessage
+        contentType: application/x-protobuf
+        schemaFormat: application/vnd.google.protobuf;version=2
+        payload:
+          $ref: './external/bridge-proto/bridge.proto'
+        x-protobuf-message: icloud.bridge.ClientMessage
+    subscribe:
+      message:
+        name: ServerMessage
+        contentType: application/x-protobuf
+        schemaFormat: application/vnd.google.protobuf;version=2
+        payload:
+          $ref: './external/bridge-proto/bridge.proto'
+        x-protobuf-message: icloud.bridge.ServerMessage

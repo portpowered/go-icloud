@@ -22,7 +22,7 @@ type driveReadScenario struct {
 func TestDriveSDKPortableReads(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/drive-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPDriveJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,7 +42,7 @@ func TestDriveSDKPortableReads(t *testing.T) {
 			t.Fatal(decodeErr)
 		}
 
-		if scenario.Operation != "get_node_data" && scenario.Operation != "get_app_data" {
+		if scenario.Operation != "get_node_data" && scenario.Operation != replayLiteralGetAppData {
 			continue
 		}
 
@@ -129,10 +129,10 @@ func callDriveSDKRead(t *testing.T, client icloud.Client,
 	auth.AccountServiceURL = ""
 	auth.DriveServiceURL = scenario.Initial.Origin
 
-	if scenario.Operation == "get_app_data" {
+	if scenario.Operation == replayLiteralGetAppData {
 		result, err := client.ListDriveLibraries(t.Context(), icloud.ListDriveLibrariesRequest{Auth: auth})
 		if err != nil {
-			return nil, icloud.ResponseMetadata{}, fmt.Errorf("Drive SDK read: %w", err)
+			return nil, icloud.ResponseMetadata{}, fmt.Errorf(replayDriveReadErrorFormat, err)
 		}
 
 		return result.Libraries, result.Metadata, nil
@@ -154,7 +154,7 @@ func callDriveSDKRead(t *testing.T, client icloud.Client,
 
 	result, err := client.GetDriveNode(t.Context(), request)
 	if err != nil {
-		return nil, icloud.ResponseMetadata{}, fmt.Errorf("Drive SDK read: %w", err)
+		return nil, icloud.ResponseMetadata{}, fmt.Errorf(replayDriveReadErrorFormat, err)
 	}
 
 	return result.Node, result.Metadata, nil

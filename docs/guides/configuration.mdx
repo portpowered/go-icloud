@@ -1,0 +1,39 @@
+---
+title: Configuration and errors
+description: Inject dependencies, cancel work, and inspect typed failures.
+---
+
+`icloud.New` creates a reusable client with default HTTP transport, cryptographic
+entropy and wall clock. Options supply concurrent-safe dependencies:
+
+```go
+client, err := icloud.New(
+    icloud.WithHTTPTransport(transport),
+    icloud.WithClock(clock),
+    icloud.WithRandomSource(entropy),
+)
+if err != nil { return err }
+```
+
+The SDK owns its HTTP client and scoped cookies. It does not use a shared account
+cookie jar. The caller owns injected dependencies and request deadlines; closing a
+session leaves those dependencies open. Do not give an injected transport mutable
+account-wide authorization state.
+
+Use a context with a deadline for network operations. Closing a session cancels its
+owned activity; repeated close is safe. Local snapshots copy data and remain usable
+after close where documented by the session API.
+
+Failures use `ClientError`. Inspect its kind and cause with the standard `errors`
+package. Known failures distinguish configuration, cancellation, timeout,
+unauthorized, not found, unavailable, transport, provider and invalid response.
+The error retains response bytes, headers and scoped cookie updates; multistep
+operations retain preceding evidence through `PriorResponses()`.
+
+Keep this evidence private. Console output or telemetry should contain a safe
+failure category, not credentials or full provider bodies. A successful HTTP reply
+can still contain per-record failures. An acknowledged write can remain pending;
+retry only when your application's operation semantics make that safe.
+
+See [Go Reference](https://pkg.go.dev/github.com/portpowered/go-icloud/pkg/icloud)
+for exported option and error methods.

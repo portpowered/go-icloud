@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/commandmodels"
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/savedlogin"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
@@ -17,12 +18,7 @@ const privateSessionDirectoryMode = 0o700
 
 var errNativeSession = errors.New("native saved-session credentials are unavailable")
 
-type resumeSummary struct {
-	SessionFile       string `json:"sessionFile"`
-	Trusted           bool   `json:"trusted"`
-	RequiresTwoFactor bool   `json:"requiresTwoFactor"`
-	RequiresTwoStep   bool   `json:"requiresTwoStep"`
-}
+type resumeSummary = commandmodels.ResumeSummary
 
 func resumeSession(ctx context.Context, client icloud.Client, config options, output io.Writer) error {
 	login, err := resumeInput(config)
@@ -97,12 +93,21 @@ func resumeInput(config options) (*savedlogin.Login, error) {
 func saveNativeSession(ctx context.Context, path string, result *icloud.ResumeSessionResult) error {
 	err := ctx.Err()
 	if err != nil {
-		return fmt.Errorf("private session canceled: %w", err)
+		return fmt.Errorf(privateSessionCanceledError, err)
 	}
 
 	data, err := json.Marshal(result)
 	if err != nil {
 		return fmt.Errorf("encode private session: %w", err)
+	}
+
+	return savePrivateData(ctx, path, data)
+}
+
+func savePrivateData(ctx context.Context, path string, data []byte) error {
+	err := ctx.Err()
+	if err != nil {
+		return fmt.Errorf(privateSessionCanceledError, err)
 	}
 
 	path = filepath.Clean(path)
@@ -126,7 +131,7 @@ func saveNativeSession(ctx context.Context, path string, result *icloud.ResumeSe
 
 	err = ctx.Err()
 	if err != nil {
-		return cleanupSessionFailure(temporary, fmt.Errorf("private session canceled: %w", err))
+		return cleanupSessionFailure(temporary, fmt.Errorf(privateSessionCanceledError, err))
 	}
 
 	err = os.Rename(temporary, path)

@@ -70,7 +70,7 @@ func TestAccountServicesOwnBodiesOnReadAndCloseFailure(t *testing.T) {
 				response := new(http.Response)
 				response.StatusCode = http.StatusOK
 				response.Header = make(http.Header)
-				response.Header.Set("Content-Type", "application/json")
+				response.Header.Set("Content-Type", testJSONMedia)
 				response.Body = body
 
 				return response, nil

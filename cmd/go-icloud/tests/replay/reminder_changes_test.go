@@ -17,11 +17,11 @@ func reminderCLIChangesArgs(t *testing.T, row map[string]json.RawMessage) []stri
 
 	var keywords map[string]json.RawMessage
 
-	if len(row["keyword_inputs"]) == 0 {
+	if len(row[expectedReplayKeywordInputs]) == 0 {
 		return nil
 	}
 
-	decode(t, row["keyword_inputs"], &keywords)
+	decode(t, row[expectedReplayKeywordInputs], &keywords)
 
 	raw, supplied := keywords["since"]
 	if !supplied || string(raw) == reminderCLINullValue {
@@ -84,12 +84,12 @@ func checkReminderCLIChanges(t *testing.T, actual, source json.RawMessage) {
 		}
 
 		checkReminderCLIValue(t, event["type"], before["type"])
-		checkReminderCLIValue(t, event["reminderID"], before["reminder_id"])
+		checkReminderCLIValue(t, event[expectedReplayReminderID], before[expectedSourceReminderID])
 
-		if string(before["reminder"]) == reminderCLINullValue {
-			checkReminderCLIValue(t, event["reminder"], before["reminder"])
+		if string(before[reminderCommand]) == reminderCLINullValue {
+			checkReminderCLIValue(t, event[reminderCommand], before[reminderCommand])
 		} else {
-			checkReminderCLIReminder(t, event["reminder"], before["reminder"])
+			checkReminderCLIReminder(t, event[reminderCommand], before[reminderCommand])
 		}
 	}
 }

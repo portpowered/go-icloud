@@ -1,0 +1,487 @@
+{
+  "format": "portos.bridge-host.v1",
+  "source": {
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e",
+    "function": "_resolve_websocket_host"
+  },
+  "cases": [
+    {
+      "name": "url-case",
+      "input": {
+        "webSocketUrl": "wss://MiXeD.ExAmPlE/a"
+      },
+      "host": "mixed.example"
+    },
+    {
+      "name": "bare-case",
+      "input": {
+        "webSocketUrl": "MiXeD.ExAmPlE/a"
+      },
+      "host": "MiXeD.ExAmPlE"
+    },
+    {
+      "name": "url-userinfo-port",
+      "input": {
+        "webSocketUrl": "wss://user@MiXeD.ExAmPlE:8443/a"
+      },
+      "host": "mixed.example"
+    },
+    {
+      "name": "zone-raw",
+      "input": {
+        "webSocketUrl": "wss://[FE80::ABCD%En0]/a"
+      },
+      "host": "fe80::abcd%En0"
+    },
+    {
+      "name": "zone-escaped",
+      "input": {
+        "webSocketUrl": "wss://[FE80::ABCD%25En0]/a"
+      },
+      "host": "fe80::abcd%25En0"
+    },
+    {
+      "name": "zone-case",
+      "input": {
+        "webSocketUrl": "wss://[FE80::ABCD%ETHERNET]/a"
+      },
+      "host": "fe80::abcd%ETHERNET"
+    },
+    {
+      "name": "ipv6",
+      "input": {
+        "webSocketUrl": "wss://[2001:DB8::ABCD]/a"
+      },
+      "host": "2001:db8::abcd"
+    },
+    {
+      "name": "unicode-dot",
+      "input": {
+        "webSocketUrl": "wss://\u0130.Example/a"
+      },
+      "host": "i\u0307.example"
+    },
+    {
+      "name": "unicode-final-sigma",
+      "input": {
+        "webSocketUrl": "wss://\u039f\u03a3.Example/a"
+      },
+      "host": "\u03bf\u03c3.example"
+    },
+    {
+      "name": "percent-malformed",
+      "input": {
+        "webSocketUrl": "wss://A%ZZ.Example/a"
+      },
+      "host": "a%ZZ.Example"
+    },
+    {
+      "name": "percent-preserved",
+      "input": {
+        "webSocketUrl": "wss://A%2F.Example/a"
+      },
+      "host": "a%2F.Example"
+    },
+    {
+      "name": "ipvfuture",
+      "input": {
+        "webSocketUrl": "wss://[v1.ABC]/a"
+      },
+      "host": "v1.abc"
+    },
+    {
+      "name": "empty-authority",
+      "input": {
+        "webSocketUrl": "wss:///path"
+      },
+      "host": "wss:"
+    },
+    {
+      "name": "production",
+      "input": {
+        "apnsEnvironment": "prod"
+      },
+      "host": "websocket.push.apple.com"
+    },
+    {
+      "name": "sandbox",
+      "input": {
+        "apnsEnvironment": "sandbox"
+      },
+      "host": "websocket.sandbox.push.apple.com"
+    },
+    {
+      "name": "empty-url-environment",
+      "input": {
+        "webSocketUrl": "",
+        "apnsEnvironment": "prod"
+      },
+      "host": "websocket.push.apple.com"
+    },
+    {
+      "name": "explicit-over-environment",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE/a",
+        "apnsEnvironment": "sandbox"
+      },
+      "host": "example"
+    },
+    {
+      "name": "missing",
+      "input": {},
+      "error": true,
+      "errorType": "PyiCloudTrustedDevicePromptException",
+      "errorMessage": "Missing HSA2 websocket host for the trusted-device bridge."
+    },
+    {
+      "name": "unknown-environment",
+      "input": {
+        "apnsEnvironment": "other"
+      },
+      "error": true,
+      "errorType": "PyiCloudTrustedDevicePromptException",
+      "errorMessage": "Missing HSA2 websocket host for the trusted-device bridge."
+    },
+    {
+      "name": "invalid-port-text",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE:bad/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "invalid-port-range",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE:999999/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "invalid-scheme-fallback",
+      "input": {
+        "webSocketUrl": "not a scheme://EXAMPLE/a"
+      },
+      "host": "not a scheme:"
+    },
+    {
+      "name": "numeric-scheme-fallback",
+      "input": {
+        "webSocketUrl": "123://EXAMPLE/a"
+      },
+      "host": "123:"
+    },
+    {
+      "name": "unicode-scheme-fallback",
+      "input": {
+        "webSocketUrl": "\u00e9://EXAMPLE/a"
+      },
+      "host": "\u00e9:"
+    },
+    {
+      "name": "scheme-plus",
+      "input": {
+        "webSocketUrl": "wss+test://EXAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "embedded-tab",
+      "input": {
+        "webSocketUrl": "wss://EX\tAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "embedded-newlines",
+      "input": {
+        "webSocketUrl": "wss://EX\r\nAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "leading-controls",
+      "input": {
+        "webSocketUrl": "\u0001 \tWSS://EXAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "trailing-space",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE /a"
+      },
+      "host": "example "
+    },
+    {
+      "name": "query-end",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE?query"
+      },
+      "host": "example"
+    },
+    {
+      "name": "fragment-end",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE#fragment"
+      },
+      "host": "example"
+    },
+    {
+      "name": "multiple-userinfo",
+      "input": {
+        "webSocketUrl": "wss://a@b@EXAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "empty-host",
+      "input": {
+        "webSocketUrl": "wss://user@:bad/a"
+      },
+      "host": "wss:"
+    },
+    {
+      "name": "bare-controls-preserved",
+      "input": {
+        "webSocketUrl": "MiX\tED/a"
+      },
+      "host": "MiX\tED"
+    },
+    {
+      "name": "invalid-ipv6",
+      "input": {
+        "webSocketUrl": "wss://[nonsense]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'nonsense' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "bracketed-ipv4",
+      "input": {
+        "webSocketUrl": "wss://[127.0.0.1]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "An IPv4 address cannot be in brackets"
+    },
+    {
+      "name": "missing-close-bracket",
+      "input": {
+        "webSocketUrl": "wss://[::1/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "Invalid IPv6 URL"
+    },
+    {
+      "name": "missing-open-bracket",
+      "input": {
+        "webSocketUrl": "wss://::1]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "Invalid IPv6 URL"
+    },
+    {
+      "name": "invalid-ipvfuture-version",
+      "input": {
+        "webSocketUrl": "wss://[vZ.ABC]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "IPvFuture address is invalid"
+    },
+    {
+      "name": "invalid-ipvfuture-empty",
+      "input": {
+        "webSocketUrl": "wss://[v1.]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "IPvFuture address is invalid"
+    },
+    {
+      "name": "uppercase-ipvfuture",
+      "input": {
+        "webSocketUrl": "wss://[V1.ABC]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'V1.ABC' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "empty-zone",
+      "input": {
+        "webSocketUrl": "wss://[fe80::1%]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'fe80::1%' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "multiple-zone",
+      "input": {
+        "webSocketUrl": "wss://[fe80::1%a%b]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'fe80::1%a%b' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "nfkc-slash",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE\u2100/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "netloc 'EXAMPLE\u2100' contains invalid characters under NFKC normalization"
+    },
+    {
+      "name": "nfkc-colon",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE\uff1a80/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "netloc 'EXAMPLE\uff1a80' contains invalid characters under NFKC normalization"
+    },
+    {
+      "name": "nfkc-at",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE\uff20HOST/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "netloc 'EXAMPLE\uff20HOST' contains invalid characters under NFKC normalization"
+    },
+    {
+      "name": "nfkc-safe",
+      "input": {
+        "webSocketUrl": "wss://\uff25XAMPLE/a"
+      },
+      "host": "\uff45xample"
+    },
+    {
+      "name": "invalid-ip-single-quote",
+      "input": {
+        "webSocketUrl": "wss://[bad'ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "\"bad'ip\" does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-double-quote",
+      "input": {
+        "webSocketUrl": "wss://[bad\"ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'bad\"ip' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-both-quotes",
+      "input": {
+        "webSocketUrl": "wss://[bad'\"ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'bad\\'\"ip' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-backslash",
+      "input": {
+        "webSocketUrl": "wss://[bad\\ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'bad\\\\ip' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-nul",
+      "input": {
+        "webSocketUrl": "wss://[ab\u0000]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'ab\\x00' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-nonbreaking-space",
+      "input": {
+        "webSocketUrl": "wss://[ab\u00a0]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'ab\\xa0' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-zone-quote",
+      "input": {
+        "webSocketUrl": "wss://[fe80::1%a'%b]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "\"fe80::1%a'%b\" does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "bracketed-scoped-ipv4",
+      "input": {
+        "webSocketUrl": "wss://[127.0.0.1%Zone]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'127.0.0.1%Zone' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "sigma-long-dots-cased",
+      "input": {
+        "webSocketUrl": "wss://\u039f\u03a3...............................A/"
+      },
+      "host": "\u03bf\u03c3...............................a"
+    },
+    {
+      "name": "sigma-long-dots-terminal",
+      "input": {
+        "webSocketUrl": "wss://\u039f\u03a3................................................................................................................................/"
+      },
+      "host": "\u03bf\u03c2................................................................................................................................"
+    },
+    {
+      "name": "sigma-long-combining-cased",
+      "input": {
+        "webSocketUrl": "wss://\u039f\u03a3\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301A/"
+      },
+      "host": "\u03bf\u03c3\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301a"
+    },
+    {
+      "name": "sigma-long-combining-terminal",
+      "input": {
+        "webSocketUrl": "wss://\u039f\u03a3\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301/"
+      },
+      "host": "\u03bf\u03c2\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301\u0301"
+    },
+    {
+      "name": "sigma-previous-ignored",
+      "input": {
+        "webSocketUrl": "wss://A................................................................................................................................\u03a3/"
+      },
+      "host": "a................................................................................................................................\u03c2"
+    },
+    {
+      "name": "sigma-uncased-prefix",
+      "input": {
+        "webSocketUrl": "wss://1\u03a3/"
+      },
+      "host": "1\u03c3"
+    },
+    {
+      "name": "sigma-cased-ignorable",
+      "input": {
+        "webSocketUrl": "wss://A\u03a3\u0345/"
+      },
+      "host": "a\u03c2\u0345"
+    }
+  ]
+}

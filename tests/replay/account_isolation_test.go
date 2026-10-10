@@ -24,9 +24,9 @@ func (router accountRouter) RoundTrip(request *http.Request) (*http.Response, er
 	var transport *replay.HTTPTransport
 
 	switch request.Header.Get(protocol.CookieName) {
-	case "session=alpha", "session=token-alpha":
+	case replayLiteralSessionAlpha, "session=token-alpha":
 		transport = router.alpha
-	case "session=beta", "session=token-beta":
+	case replayLiteralSessionBeta, "session=token-beta":
 		transport = router.beta
 	default:
 		return nil, errUnknownAccount
@@ -45,10 +45,10 @@ func tenantDeviceReplay(t *testing.T, tenant string) (icloud.AuthContext, *repla
 
 	scenario := readAccountScenario(t, "fixtures/synthetic/http/account-devices-one.json")
 	scenario.Initial.Params[protocol.ClientIDName] = "client-" + tenant
-	scenario.Initial.Params[protocol.DSIDName] = "account-" + tenant
-	scenario.Initial.Headers[protocol.CookieName] = "session=" + tenant
-	scenario.Initial.Params[protocol.ClientBuildNumberName] = "synthetic-build"
-	scenario.Initial.Params[protocol.ClientMasteringNumberName] = "synthetic-mastering"
+	scenario.Initial.Params[protocol.DSIDName] = replayExpectedAccount + tenant
+	scenario.Initial.Headers[protocol.CookieName] = replayExpectedSession + tenant
+	scenario.Initial.Params[protocol.ClientBuildNumberName] = replayLiteralSyntheticBuild
+	scenario.Initial.Params[protocol.ClientMasteringNumberName] = replayLiteralSyntheticMastering
 
 	exchange := scenario.Exchanges[0]
 	for index, pair := range exchange.Request.Query {
@@ -56,13 +56,13 @@ func tenantDeviceReplay(t *testing.T, tenant string) (icloud.AuthContext, *repla
 	}
 
 	exchange.Request.Query = append([]replay.Pair{
-		{protocol.ClientBuildNumberName, "synthetic-build"},
-		{protocol.ClientMasteringNumberName, "synthetic-mastering"},
+		{protocol.ClientBuildNumberName, replayLiteralSyntheticBuild},
+		{protocol.ClientMasteringNumberName, replayLiteralSyntheticMastering},
 	}, exchange.Request.Query...)
 
-	exchange.Request.Headers = append(exchange.Request.Headers, replay.Pair{"cookie", "session=" + tenant})
+	exchange.Request.Headers = append(exchange.Request.Headers, replay.Pair{"cookie", replayExpectedSession + tenant})
 	exchange.Response.Headers = append(exchange.Response.Headers,
-		replay.Pair{accountCookieUpdateHeader, "session=updated-" + tenant + "; Path=/; Secure; HttpOnly"})
+		replay.Pair{accountCookieUpdateHeader, replayLiteralSessionUpdated + tenant + replayLiteralPathSecureHTTPOnly})
 
 	encoded, err := json.Marshal(base64.StdEncoding.EncodeToString([]byte(
 		`{"devices":[{"name":"device-` + tenant + `","modelDisplayName":"Synthetic Model"}]}`)))
@@ -139,7 +139,7 @@ func checkSDKAccountDevice(t *testing.T, response *icloud.GetAccountDevicesResul
 	}
 
 	if len(response.Metadata.Headers) != 2 ||
-		!strings.Contains(response.Metadata.Headers[1].Value, "updated-"+tenant) {
+		!strings.Contains(response.Metadata.Headers[1].Value, replayLiteralUpdated+tenant) {
 		t.Fatal("caller-owned session update headers were lost")
 	}
 }

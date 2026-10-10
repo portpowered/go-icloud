@@ -19,8 +19,8 @@ func checkPhotoAssetsCLI(t *testing.T, row, actual map[string]json.RawMessage) {
 
 	for _, photo := range expected {
 		for old, name := range map[string]string{
-			"master_id": "masterID", "item_type": "itemType",
-			"is_live_photo": "isLivePhoto", "asset": "assetMetadata",
+			expectedSourceMasterID: "masterID", "item_type": "itemType",
+			"is_live_photo": "isLivePhoto", "asset": expectedReplayAssetMetadata,
 		} {
 			photo[name] = photo[old]
 			delete(photo, old)

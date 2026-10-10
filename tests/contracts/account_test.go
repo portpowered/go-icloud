@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"mime"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -87,12 +86,12 @@ func validateAccountConstraints(t *testing.T, document *openapi3.T) {
 	t.Helper()
 
 	for name, invalid := range map[string]string{
-		"AccountDevicesResponse": `{}`,
-		"AccountDevice":          `{"name":false}`,
-		"AccountStorageResponse": `{"storageUsageInfo":{"usedStorageInBytes":-1,"totalStorageInBytes":100}}`,
-		"AccountStorageUsage":    `{"usedStorageInBytes":"15","totalStorageInBytes":100}`,
-		"AccountQuota":           `{"overQuota":"true"}`,
-		"AccountMediaUsage":      `{}`,
+		accountDevicesResponseSchema: `{}`,
+		"AccountDevice":              `{"name":false}`,
+		accountStorageResponseSchema: `{"storageUsageInfo":{"usedStorageInBytes":-1,"totalStorageInBytes":100}}`,
+		"AccountStorageUsage":        `{"usedStorageInBytes":"15","totalStorageInBytes":100}`,
+		"AccountQuota":               `{"overQuota":"true"}`,
+		"AccountMediaUsage":          `{}`,
 	} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
@@ -165,7 +164,7 @@ func validateAccountExchange(t *testing.T, document *openapi3.T, exchange replay
 
 	planPath := regexp.MustCompile(`^/acsegateway/v3/accounts/[^/]+/subscriptions/features/cloud\.storage/plan-summary$`)
 	if planPath.MatchString(path) {
-		path = "/acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary"
+		path = accountStorageSubscriptionPath
 	}
 
 	item := document.Paths.Value(path)
@@ -287,12 +286,12 @@ func accountJSONBody(t *testing.T, entity replay.Entity) any {
 func accountComponent(path string) string {
 	switch path {
 	case "/setup/web/device/getDevices":
-		return "AccountDevicesResponse"
+		return accountDevicesResponseSchema
 	case "/setup/web/family/getFamilyDetails":
 		return "AccountFamilyResponse"
 	case "/setup/ws/1/storageUsageInfo":
-		return "AccountStorageResponse"
-	case "/acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary":
+		return accountStorageResponseSchema
+	case accountStorageSubscriptionPath:
 		return "AccountPlanSummary"
 	case "/setup/web/family/getMemberPhoto":
 		return binaryComponent
@@ -365,9 +364,9 @@ func TestAccountGenerationHasNoDrift(t *testing.T) {
 	for _, artifact := range []generationArtifact{
 		{Schema: accountModelsPath, Config: "../../pkg/dependencymodels/account/config.yaml",
 			Output: "../../pkg/dependencymodels/account/models.gen.go"},
-		{Schema: accountSchemaPath, Config: "../../internal/accountapi/config.yaml",
-			Output: "../../internal/accountapi/client.gen.go"},
-		{Schema: "../../api/client-models.openapi.yaml", Config: "../../pkg/icloud/config.yaml",
+		{Schema: accountSchemaPath, Config: "../../pkg/dependencies/webtransport/accountapi/config.yaml",
+			Output: "../../pkg/dependencies/webtransport/accountapi/client.gen.go"},
+		{Schema: clientModelsSchemaPath, Config: "../../pkg/icloud/config.yaml",
 			Output: "../../pkg/icloud/models.gen.go"},
 	} {
 		t.Run(filepath.Base(artifact.Output), func(t *testing.T) {
@@ -412,8 +411,7 @@ func verifyGeneration(t *testing.T, artifact generationArtifact) {
 		t.Fatal(err)
 	}
 
-	//nolint:gosec // SCHEMA-16: fixed generator and checked-in inputs; test-owned output paths vary.
-	command := exec.CommandContext(t.Context(), "go", "run", generatorTool, "-config", config, artifact.Schema)
+	command := generationCommand(t, config, artifact.Schema)
 
 	log, err := command.CombinedOutput()
 	if err != nil {

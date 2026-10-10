@@ -18,7 +18,7 @@ func TestPhotoAlbumsSDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 41 {
+	if len(paths) != 42 {
 		t.Fatal("photo album scenario inventory changed")
 	}
 
@@ -46,7 +46,7 @@ func runPhotoAlbumsSDK(t *testing.T, scenario accountScenario) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
-	actual, err := client.ListPhotoAlbums(t.Context(), icloud.ListPhotoAlbumsRequest{Auth: auth})
+	actual, err := client.ListPhotoAlbums(t.Context(), icloud.ListPhotoAlbumsRequest{Library: nil, Auth: auth})
 	if len(scenario.Error) != 0 {
 		checkPhotoReadFailure(t, scenario, actual, err)
 	} else {
@@ -62,10 +62,10 @@ func runPhotoAlbumsSDK(t *testing.T, scenario accountScenario) {
 		}
 
 		for _, album := range expected {
-			album["fullName"] = album["fullname"]
-			delete(album, "fullname")
-			album["recordChangeTag"] = album["record_change_tag"]
-			delete(album, "record_change_tag")
+			album[replayExpectedFullName] = album[replayExpectedFullname]
+			delete(album, replayExpectedFullname)
+			album[reminderPublicRevisionField] = album[reminderSourceRevisionField]
+			delete(album, reminderSourceRevisionField)
 		}
 
 		encoded, encodeErr := json.Marshal(expected)
@@ -105,7 +105,7 @@ func checkPhotoReadFailure(t *testing.T, scenario accountScenario, actual *iclou
 		kind = icloud.NotFound
 	}
 
-	if expected["type"] == "PyiCloudServiceNotActivatedException" {
+	if expected["type"] == replayExpectedPyiCloudServiceNotActivatedException {
 		kind = icloud.Unavailable
 	}
 

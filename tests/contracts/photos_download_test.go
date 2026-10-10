@@ -161,7 +161,8 @@ func photoContractMasterID(record map[string]any, fallback string) string {
 }
 
 func photoContractMasterURL(record map[string]any, version string) string {
-	keys := map[string]string{"": "resOriginalRes", "original": "resOriginalRes", "alternative": "resOriginalAltRes",
+	keys := map[string]string{
+		"": photoOriginalResourceKey, "original": photoOriginalResourceKey, "alternative": "resOriginalAltRes",
 		"medium": "resJPEGMedRes", "original_video": "resOriginalVidComplRes"}
 	fields, _ := record["fields"].(map[string]any)
 	field, _ := fields[keys[version]].(map[string]any)

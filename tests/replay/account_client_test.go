@@ -2,17 +2,14 @@ package replay_test
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"maps"
 	"net/http"
 	"os"
 	"path/filepath"
-	"reflect"
 	"testing"
 
-	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
@@ -50,10 +47,10 @@ type accountInitial struct {
 	China bool `json:"china_mainland"`
 }
 
-func TestGeneratedAccountClientPortableScenarios(t *testing.T) {
+func TestAccountSDKPortableScenarios(t *testing.T) {
 	t.Parallel()
 
-	paths, err := filepath.Glob("fixtures/synthetic/http/account-*.json")
+	paths, err := filepath.Glob(replayLiteralFixturesSyntheticHTTPAccountJSON)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,12 +59,36 @@ func TestGeneratedAccountClientPortableScenarios(t *testing.T) {
 		t.Fatal("account scenario inventory changed")
 	}
 
+	operations := make(map[string]int)
+
 	for _, path := range paths {
+		scenario := readAccountScenario(t, path)
+		operations[scenario.Operation]++
+
 		t.Run(filepath.Base(path), func(t *testing.T) {
 			t.Parallel()
-			runGeneratedAccount(t, readAccountScenario(t, path))
+			runAccountSDKScenario(t, scenario)
 		})
 	}
+
+	if !maps.Equal(operations, map[string]int{
+		replayDevicesOperation: 11, accountFamilyOperationName: 6,
+		replayLiteralFamilyPhotos: 5, "storage": 4, accountPlanOperationName: 8,
+	}) {
+		t.Fatal("account operation scenario inventory changed", operations)
+	}
+}
+
+func runAccountSDKScenario(t *testing.T, scenario accountScenario) {
+	t.Helper()
+
+	if scenario.Operation == replayDevicesOperation {
+		accountDevicesSDK(t, scenario)
+
+		return
+	}
+
+	runAccountSDKService(t, scenario)
 }
 
 func readAccountScenario(t *testing.T, path string) accountScenario {
@@ -110,48 +131,6 @@ func accountParameters[T any](t *testing.T, initial accountInitial) *T {
 	return parameters
 }
 
-func runGeneratedAccount(t *testing.T, scenario accountScenario) {
-	t.Helper()
-
-	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	doer := new(http.Client)
-	doer.Transport = transport
-
-	origin := scenario.Initial.Origin
-	if scenario.Operation == accountPlanOperationName {
-		origin = "https://gatewayws.icloud.com"
-		if scenario.Initial.China {
-			origin += ".cn"
-		}
-	}
-
-	client, err := accountapi.NewClientWithResponses(origin, accountapi.WithHTTPClient(doer))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	result := accountOperation(t, client, scenario)
-	if len(scenario.Error) == 0 {
-		actual, marshalErr := json.Marshal(result)
-		if marshalErr != nil {
-			t.Fatal(marshalErr)
-		}
-
-		if !reflect.DeepEqual(accountJSON(t, actual), accountJSON(t, scenario.Result)) {
-			t.Fatalf("account result changed: %s", actual)
-		}
-	}
-
-	err = transport.AssertConsumed()
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
 func accountJSON(t *testing.T, data []byte) any {
 	t.Helper()
 
@@ -168,194 +147,12 @@ func accountJSON(t *testing.T, data []byte) any {
 	return value
 }
 
-func accountOperation(t *testing.T, client *accountapi.ClientWithResponses, scenario accountScenario) any {
-	t.Helper()
-
-	switch scenario.Operation {
-	case replayDevicesOperation:
-		return accountDevicesOperation(t, client, scenario)
-	case accountFamilyOperationName, "family_photos":
-		return accountFamilyOperation(t, client, scenario)
-	case "storage":
-		return accountStorageOperation(t, client, scenario)
-	case accountPlanOperationName:
-		return accountPlanOperation(t, client, scenario)
-	default:
-		t.Fatalf("unimplemented account operation: %s", scenario.Operation)
-
-		return nil
-	}
-}
-
-func accountFamilyOperation(t *testing.T, client *accountapi.ClientWithResponses, scenario accountScenario) any {
-	t.Helper()
-
-	response, err := client.ListAccountFamilyWithResponse(t.Context(),
-		accountParameters[accountapi.ListAccountFamilyParams](t, scenario.Initial))
-	if err != nil || response == nil {
-		t.Fatalf("account family: %v", err)
-	}
-
-	if scenario.Operation == accountFamilyOperationName && len(scenario.Error) != 0 {
-		accountProviderFailure(t, scenario.Error, response.StatusCode(), response.Body)
-
-		return nil
-	}
-
-	if response.JSON200 == nil {
-		t.Fatal("account family has no decoded success")
-	}
-
-	return projectGeneratedFamily(t, client, scenario, response)
-}
-
-func projectGeneratedFamily(t *testing.T, client *accountapi.ClientWithResponses,
-	scenario accountScenario, response *accountapi.ListAccountFamilyResponse,
-) any {
-	t.Helper()
-
-	names := make([]string, 0)
-	photos := make([]*accountPhotoResult, 0)
-
-	if response.JSON200.FamilyMembers == nil {
-		return names
-	}
-
-	for _, member := range *response.JSON200.FamilyMembers {
-		if scenario.Operation == accountFamilyOperationName {
-			name, nameErr := member.FullName.Get()
-			if nameErr != nil {
-				t.Fatal(nameErr)
-			}
-
-			names = append(names, name)
-		} else {
-			photo := accountMemberPhoto(t, client, scenario, member.Dsid.MustGet())
-			if photo == nil {
-				return nil
-			}
-
-			photos = append(photos, photo)
-		}
-	}
-
-	if scenario.Operation == accountFamilyOperationName {
-		return names
-	}
-
-	return photos
-}
-
-func accountMemberPhoto(t *testing.T, client *accountapi.ClientWithResponses,
-	scenario accountScenario, memberID string,
-) *accountPhotoResult {
-	t.Helper()
-
-	parameters := accountParameters[accountapi.GetFamilyMemberPhotoParams](t, scenario.Initial)
-	parameters.MemberId = memberID
-
-	response, err := accountapi.ReadFamilyMemberPhoto(t.Context(), client, parameters)
-	if err != nil || response == nil {
-		t.Fatalf("member photo: %v", err)
-	}
-
-	if len(scenario.Error) != 0 {
-		if response.Status != http.StatusServiceUnavailable {
-			t.Fatal("member photo lost provider failure")
-		}
-
-		accountProviderFailure(t, scenario.Error, response.Status, response.Body)
-
-		return nil
-	}
-
-	return &accountPhotoResult{
-		MemberID: memberID, Status: response.Status,
-		Headers: []replay.Pair{{"Content-Type", response.Headers.Get("Content-Type")}},
-		Body:    base64.StdEncoding.EncodeToString(response.Body),
-	}
-}
-
 type accountPhotoResult struct {
 	//nolint:tagliatelle // LIB-05: the portable result fixes this field spelling.
 	MemberID string        `json:"member_id"`
 	Status   int           `json:"status"`
 	Headers  []replay.Pair `json:"headers"`
 	Body     string        `json:"body"`
-}
-
-func accountDevicesOperation(t *testing.T, client *accountapi.ClientWithResponses, scenario accountScenario) any {
-	t.Helper()
-
-	response, err := client.ListAccountDevicesWithResponse(t.Context(),
-		accountParameters[accountapi.ListAccountDevicesParams](t, scenario.Initial))
-	if err != nil || response == nil {
-		t.Fatalf("account devices: %v", err)
-	}
-
-	if len(scenario.Error) != 0 {
-		if response.StatusCode() != scenario.Exchanges[0].Response.Status ||
-			(response.JSONDefault == nil && response.JSON200 == nil) {
-			t.Fatal("account devices lost provider failure")
-		}
-
-		accountProviderFailure(t, scenario.Error, response.StatusCode(), response.Body)
-
-		return nil
-	}
-
-	if response.JSON200 == nil {
-		t.Fatal("account devices has no decoded success")
-	}
-
-	return response.JSON200.Devices
-}
-
-func accountStorageOperation(t *testing.T, client *accountapi.ClientWithResponses, scenario accountScenario) any {
-	t.Helper()
-
-	response, err := client.GetAccountStorageWithResponse(t.Context(),
-		accountParameters[accountapi.GetAccountStorageParams](t, scenario.Initial))
-	if err != nil || response == nil {
-		t.Fatalf("account storage: %v", err)
-	}
-
-	if len(scenario.Error) != 0 {
-		accountProviderFailure(t, scenario.Error, response.StatusCode(), response.Body)
-
-		return nil
-	}
-
-	if response.JSON200 == nil {
-		t.Fatal("account storage has no decoded success")
-	}
-
-	return map[string]int64{
-		"used_bytes":  response.JSON200.StorageUsageInfo.UsedStorageInBytes,
-		"total_bytes": response.JSON200.StorageUsageInfo.TotalStorageInBytes,
-	}
-}
-
-func accountPlanOperation(t *testing.T, client *accountapi.ClientWithResponses, scenario accountScenario) any {
-	t.Helper()
-
-	response, err := client.GetAccountPlanSummaryWithResponse(t.Context(), scenario.Initial.Params["dsid"],
-		accountParameters[accountapi.GetAccountPlanSummaryParams](t, scenario.Initial))
-	if err != nil || response == nil {
-		t.Fatalf("account plan: %v", err)
-	}
-
-	if len(scenario.Error) != 0 {
-		if response.StatusCode() != http.StatusServiceUnavailable || response.JSONDefault == nil {
-			t.Fatal("account plan lost provider failure")
-		}
-
-		accountProviderFailure(t, scenario.Error, response.StatusCode(), response.Body)
-
-		return nil
-	}
-
-	return response.JSON200
 }
 
 type accountFailureExpectation struct {
@@ -373,7 +170,7 @@ func accountProviderFailure(t *testing.T, encoded json.RawMessage, status int, b
 		t.Fatal(err)
 	}
 
-	if expected.Type != "PyiCloudAPIResponseException" ||
+	if expected.Type != replayExpectedPyiCloudAPIResponseException ||
 		expected.Message != accountProviderMessage(t, status, body) {
 		t.Fatal("account provider failure lost its recorded class/status/body")
 	}
@@ -393,7 +190,7 @@ func accountProviderMessage(t *testing.T, status int, body []byte) string {
 
 	reason := "Unknown reason"
 
-	for _, key := range []string{"errorMessage", "reason", "errorReason", "error"} {
+	for _, key := range []string{replayLiteralErrorMessage, "reason", "errorReason", "error"} {
 		if text, matches := fields[key].(string); matches && text != "" {
 			reason = text
 

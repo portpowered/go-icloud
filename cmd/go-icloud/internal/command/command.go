@@ -22,7 +22,7 @@ const reminderCommand = "reminder"
 var (
 	errArguments = errors.New("provide a private session and command, or --reference-state <directory> resume")
 	errSession   = errors.New("cannot access private session data")
-	errCommand   = errors.New("unsupported read command")
+	errCommand   = errors.New("unsupported command")
 	errReminder  = errors.New("provide --reminder <identifier> for reminder")
 )
 
@@ -45,11 +45,36 @@ type options struct {
 	saveSession      string
 	forceRefresh     bool
 	allowUntrusted   bool
+	deviceID         string
+	message          *string
+	subject          *string
+	phoneNumber      string
+	exportSession    string
+	phoneID          string
+	trustedDeviceID  string
+	secretStdin      bool
+	acceptTerms      bool
+	china            bool
+	keepTrusted      bool
+	allSessions      bool
+	securityKeyID    string
+	requestFile      string
+	contentFile      string
+	saveResult       string
+	authService      string
 }
 
 // Run executes one bounded public SDK operation.
 // Resume saves copied credentials privately; console output omits secret session state.
 func Run(ctx context.Context, client icloud.Client, args []string, output, diagnostic io.Writer) error {
+	return RunWithInput(ctx, client, args, os.Stdin, os.Getenv, output, diagnostic)
+}
+
+// RunWithInput executes one command with explicit secret input and environment seams.
+// A cancelled secret read closes input; its Close must unblock Read.
+func RunWithInput(ctx context.Context, client icloud.Client, args []string,
+	input io.ReadCloser, environment Environment, output, diagnostic io.Writer,
+) error {
 	config, err := parse(args, diagnostic)
 	if errors.Is(err, flag.ErrHelp) {
 		return nil
@@ -62,8 +87,20 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 	requestContext, cancel := context.WithTimeout(ctx, config.timeout)
 	defer cancel()
 
+	if authenticationCommand(config.operation) {
+		return authenticateCommand(requestContext, client, config, input, environment, output)
+	}
+
+	if config.operation == "credentials-export" {
+		return exportCredentials(requestContext, config, output)
+	}
+
 	if config.operation == "resume" {
 		return resumeSession(requestContext, client, config, output)
+	}
+
+	if photosSyncCommand(config.operation) {
+		return runPhotosSync(requestContext, client, config, output)
 	}
 
 	auth, err := loadSession(config.session)
@@ -71,9 +108,13 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 		return err
 	}
 
-	result, err := read(requestContext, client, auth, config)
+	if photoVisitCommand(config.operation) {
+		return runPhotoVisit(requestContext, client, auth, config.operation, config.requestFile, config.saveResult, output)
+	}
+
+	result, err := executeService(requestContext, client, auth, config)
 	if err != nil {
-		return fmt.Errorf("read service: %w", err)
+		return fmt.Errorf("service operation: %w", err)
 	}
 
 	return writeResult(output, result)
@@ -85,13 +126,20 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags := flag.NewFlagSet("go-icloud", flag.ContinueOnError)
 	flags.SetOutput(diagnostic)
 	flags.StringVar(&config.session, "session", "", "Private JSON containing an icloud.AuthContext")
+	flags.StringVar(&config.requestFile, "request", "",
+		"Private JSON containing the generated request for the selected command")
+	flags.StringVar(&config.contentFile, "file", "", "Local content file for a named upload")
+	flags.StringVar(&config.saveResult, "save-result", "",
+		"Explicit private destination for complete generated results and receipts")
+	authenticationFlags(flags, &config)
 	flags.StringVar(&config.referenceState, "reference-state", "", "Existing reference login directory for resume")
 	flags.StringVar(&config.saveSession, "save-session", "", "Private native-session destination for resume")
 	flags.BoolVar(&config.forceRefresh, "force-refresh", false, "Skip cookie validation during resume")
 	flags.BoolVar(&config.allowUntrusted, "allow-untrusted", false, "Save paused MFA discovery during resume")
+	controlFlags(flags, &config)
 	flags.StringVar(&config.node, "node", "", "Drive node identifier for drive-node")
 	photoFlags(flags, &config)
-	flags.StringVar(&config.reminderID, "reminder", "", "Raw or complete reminder identifier for reminder")
+	flags.StringVar(&config.reminderID, reminderCommand, "", "Raw or complete reminder identifier for reminder")
 	flags.Func("since", "Optional cursor for reminder-changes; omission starts an initial read", func(value string) error {
 		config.since = &value
 
@@ -107,13 +155,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags.DurationVar(&config.timeout, "timeout", defaultTimeout, "Request deadline")
 
 	flags.Usage = func() {
-		_, _ = fmt.Fprintln(diagnostic, "Usage: go-icloud [flags] <command>\nCommands: account-devices, account-family, "+
-			"account-storage, account-plan, drive-libraries, drive-node, findmy, "+
-			"reminder-legacy-snapshot, reminder-zones, reminder-lists, reminder, reminder-sync, reminder-changes, "+
-			"reminders, reminder-snapshot, "+
-			"reminder-tags, reminder-attachments, reminder-recurrence-rules, reminder-alarms, "+
-			"photos-status, photo-albums, photo-count, photo-assets, photo, photo-download, resume")
-
+		printUsage(diagnostic)
 		flags.PrintDefaults()
 	}
 
@@ -127,6 +169,13 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	}
 
 	config.operation = flags.Arg(0)
+	if config.session == "" && config.referenceState == "" {
+		config.session, err = defaultSessionPath()
+		if err != nil {
+			return config, err
+		}
+	}
+
 	if config.operation == reminderCommand && config.reminderID == "" {
 		return config, errReminder
 	}
@@ -162,19 +211,24 @@ func loadSession(path string) (icloud.AuthContext, error) {
 		auth = saved.Auth
 	}
 
+	if auth.ClientID == "" {
+		return auth, &SessionError{Cause: errNativeSession}
+	}
+
 	return auth, nil
 }
 
 func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-legacy-snapshot", "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync",
-		"reminder-changes",
-		"reminders", "reminder-snapshot",
-		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", "reminder-alarms":
+	case reminderLegacySnapshotCommand, reminderZonesCommand, reminderListsCommand, reminderCommand, reminderSyncCommand,
+		reminderChangesCommand,
+		remindersCommand, reminderSnapshotCommand,
+		reminderTagsCommand, reminderAttachmentsCommand, reminderRecurrencesCommand, reminderAlarmsCommand:
 		return readReminders(ctx, client, auth, config)
-	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo", "photo-download":
-		return readPhotos(ctx, client, auth, config)
-	case "account-devices", "account-family", "account-storage", "account-plan":
+	case photosStatusCommand, photoAlbumsCommand, photoCountCommand,
+		photoAssetsCommand, photoCommand, photoDownloadCommand:
+		return photoFlagResult(ctx, client, auth, config)
+	case accountDevicesCommand, accountFamilyCommand, accountStorageCommand, accountPlanCommand:
 		return readAccount(ctx, client, auth, config.operation)
 	case "drive-libraries":
 		return wrap(client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth}))
@@ -182,6 +236,8 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		return wrap(client.GetDriveNode(ctx, icloud.GetDriveNodeRequest{Auth: auth, NodeID: config.node, ShareID: nil}))
 	case "findmy":
 		return findMy(ctx, client, auth, config.family)
+	case findMyDeviceCommand, findMySoundCommand, findMyMessageCommand, findMyLostCommand, findMyEraseCommand:
+		return controlFindMy(ctx, client, auth, config)
 	default:
 		return nil, errCommand
 	}
@@ -189,23 +245,23 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 
 func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-legacy-snapshot":
+	case reminderLegacySnapshotCommand:
 		return wrap(client.GetLegacyRemindersSnapshot(ctx, icloud.GetLegacyRemindersSnapshotRequest{Auth: auth}))
-	case "reminder-zones":
+	case reminderZonesCommand:
 		return wrap(client.ListReminderZones(ctx, icloud.ListReminderZonesRequest{Auth: auth}))
 	case reminderCommand:
 		return wrap(client.GetReminder(ctx, icloud.GetReminderRequest{Auth: auth, ReminderID: config.reminderID}))
-	case "reminder-sync":
+	case reminderSyncCommand:
 		return wrap(client.GetReminderSyncCursor(ctx, icloud.GetReminderSyncCursorRequest{Auth: auth}))
-	case "reminder-changes":
+	case reminderChangesCommand:
 		return wrap(client.ListReminderChanges(ctx, icloud.ListReminderChangesRequest{Auth: auth, Since: config.since}))
-	case "reminders":
+	case remindersCommand:
 		return wrap(client.ListReminders(ctx, icloud.ListRemindersRequest{Auth: auth, ListID: config.listID,
 			IncludeCompleted: &config.includeCompleted, ResultsLimit: config.resultsLimit}))
-	case "reminder-snapshot":
+	case reminderSnapshotCommand:
 		return wrap(client.ListReminderSnapshot(ctx,
 			icloud.ListReminderSnapshotRequest{Auth: auth, ListID: &config.listID}))
-	case "reminder-lists":
+	case reminderListsCommand:
 		return wrap(client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth}))
 	default:
 		return readReminderRelated(ctx, client, auth, config)
@@ -216,7 +272,7 @@ func findMy(ctx context.Context, client icloud.Client, auth icloud.AuthContext, 
 	session, err := client.OpenFindMySession(ctx, icloud.OpenFindMySessionRequest{Auth: auth, IncludeFamily: family},
 		icloud.WithFindMyMonitorInterval(0))
 	if err != nil {
-		return nil, fmt.Errorf("discover Find My devices: %w", err)
+		return nil, fmt.Errorf(findMyDiscoveryError, err)
 	}
 
 	snapshot, snapshotErr := session.Snapshot()
@@ -238,9 +294,10 @@ func writeResult(output io.Writer, result any) error {
 	}
 
 	var object map[string]json.RawMessage
+
 	if json.Unmarshal(data, &object) == nil && object != nil {
-		delete(object, "metadata")
-		delete(object, "responses")
+		delete(object, privateMetadataField)
+		delete(object, privateResponsesField)
 		result = object
 	}
 
@@ -279,48 +336,60 @@ func readReminderRelated(ctx context.Context, client icloud.Client,
 	auth icloud.AuthContext, config options,
 ) (any, error) {
 	switch config.operation {
-	case "reminder-tags":
+	case reminderTagsCommand:
 		return wrap(client.ListReminderTags(ctx, icloud.ListReminderTagsRequest{Auth: auth, IDs: config.relatedIDs}))
-	case "reminder-attachments":
+	case reminderAttachmentsCommand:
 		return wrap(client.ListReminderAttachments(ctx,
 			icloud.ListReminderAttachmentsRequest{Auth: auth, IDs: config.relatedIDs}))
-	case "reminder-recurrence-rules":
+	case reminderRecurrencesCommand:
 		return wrap(client.ListReminderRecurrenceRules(ctx,
 			icloud.ListReminderRecurrenceRulesRequest{Auth: auth, IDs: config.relatedIDs}))
-	case "reminder-alarms":
+	case reminderAlarmsCommand:
 		return wrap(client.ListReminderAlarms(ctx, icloud.ListReminderAlarmsRequest{Auth: auth, IDs: config.relatedIDs}))
 	default:
 		return nil, errCommand
 	}
 }
 
+func photoFlagResult(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
+	result, err := readPhotos(ctx, client, auth, config)
+	if err != nil {
+		return nil, err
+	}
+
+	return finishWriteResult(ctx, result, config.saveResult)
+}
+
 func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "photos-status":
-		return wrap(client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{Auth: auth}))
-	case "photo-count":
-		return wrap(client.GetPhotoAlbumCount(ctx, icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: config.album}))
-	case "photo-assets":
-		return wrap(client.ListPhotoAssets(ctx, icloud.ListPhotoAssetsRequest{Auth: auth, Album: config.album}))
-	case "photo-download":
+	case photosStatusCommand:
+		return wrap(client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{Auth: auth, Library: nil}))
+	case photoCountCommand:
+		return wrap(client.GetPhotoAlbumCount(ctx,
+			icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: config.album, Library: nil}))
+	case photoAssetsCommand:
+		return wrap(client.ListPhotoAssets(ctx,
+			icloud.ListPhotoAssetsRequest{Auth: auth, Album: config.album, Library: nil}))
+	case photoDownloadCommand:
 		return wrap(client.DownloadPhoto(ctx, icloud.DownloadPhotoRequest{Auth: auth, Album: config.album,
-			PhotoID: config.photoID, Version: config.photoVersion}))
-	case "photo":
-		return wrap(client.GetPhoto(ctx, icloud.GetPhotoRequest{Auth: auth, Album: config.album, PhotoID: config.photoID}))
+			PhotoID: config.photoID, Version: config.photoVersion, Library: nil}))
+	case photoCommand:
+		return wrap(client.GetPhoto(ctx, icloud.GetPhotoRequest{Auth: auth, Album: config.album,
+			PhotoID: config.photoID, Library: nil}))
 	default:
-		return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth}))
+		return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth, Library: nil}))
 	}
 }
 
 func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthContext, operation string) (any, error) {
 	switch operation {
-	case "account-devices":
+	case accountDevicesCommand:
 		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
-	case "account-family":
+	case accountFamilyCommand:
 		return wrap(client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth}))
-	case "account-storage":
+	case accountStorageCommand:
 		return wrap(client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth}))
-	case "account-plan":
+	case accountPlanCommand:
 		return wrap(client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth}))
 
 	default:
@@ -330,7 +399,7 @@ func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthCont
 
 func photoFlags(flags *flag.FlagSet, config *options) {
 	flags.StringVar(&config.album, "album", "Library", "Photo album identifier or display/full name")
-	flags.StringVar(&config.photoID, "photo", "", "Photo asset identifier for photo or photo-download")
+	flags.StringVar(&config.photoID, photoCommand, "", "Photo asset identifier for photo or photo-download")
 	flags.Func("version", "Photo rendition for photo-download; omission selects original", func(value string) error {
 		version := icloud.PhotoVersion(value)
 		config.photoVersion = &version

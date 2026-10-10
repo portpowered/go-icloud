@@ -10,24 +10,24 @@ import (
 
 func TestReminderQueryCommands(t *testing.T) {
 	t.Parallel()
-	testReminderCLIInventory(t, "query", "reminders", 39)
+	testReminderCLIInventory(t, "query", expectedReplayReminders, 40)
 }
 
 func TestReminderListUnionCommands(t *testing.T) {
 	t.Parallel()
-	testReminderCLIInventory(t, "list-union", "reminder-lists", 13)
+	testReminderCLIInventory(t, "list-union", expectedReplayReminderLists, 13)
 }
 
 func testReminderCLIInventory(t *testing.T, prefix, operation string, count int) {
 	t.Helper()
 
-	paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/reminders-" + prefix + "-*.json")
+	paths, err := filepath.Glob(expectedReminderFixturePrefix + prefix + "-*.json")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if len(paths) != count {
-		t.Fatal("CLI reminder scenario inventory changed")
+		t.Fatal(expectedReplayCLIReminderScenarioInventoryChanged)
 	}
 
 	for _, path := range paths {
@@ -48,7 +48,7 @@ func reminderCLIQueryArgs(t *testing.T, row map[string]json.RawMessage) []string
 
 	var keywords map[string]json.RawMessage
 
-	if raw := row["keyword_inputs"]; len(raw) != 0 {
+	if raw := row[expectedReplayKeywordInputs]; len(raw) != 0 {
 		decode(t, raw, &keywords)
 	}
 
@@ -73,7 +73,7 @@ func checkReminderCLIQueryOutcome(t *testing.T, row map[string]json.RawMessage, 
 	t.Helper()
 
 	if len(row["error"]) != 0 {
-		checkReminderCommandOutcome(t, "reminders", row, output, err)
+		checkReminderCommandOutcome(t, expectedReplayReminders, row, output, err)
 
 		return
 	}
@@ -93,8 +93,8 @@ func checkReminderCLIQueryOutcome(t *testing.T, row map[string]json.RawMessage, 
 
 	var reminders, expected []json.RawMessage
 
-	decode(t, actual["reminders"], &reminders)
-	decode(t, source["reminders"], &expected)
+	decode(t, actual[expectedReplayReminders], &reminders)
+	decode(t, source[expectedReplayReminders], &expected)
 
 	if len(reminders) != len(expected) {
 		t.Fatal("CLI query reminder count differs")
@@ -105,9 +105,9 @@ func checkReminderCLIQueryOutcome(t *testing.T, row map[string]json.RawMessage, 
 	}
 
 	for _, name := range []string{reminderCLIAlarmsField, "triggers", reminderCLIAttachmentsField,
-		"hashtags", "recurrence_rules"} {
+		"hashtags", expectedReplayRecurrenceRules} {
 		target := name
-		if name == "recurrence_rules" {
+		if name == expectedReplayRecurrenceRules {
 			target = "recurrenceRules"
 		}
 
@@ -124,9 +124,13 @@ func checkReminderCLIQueryRelated(t *testing.T, actual, source json.RawMessage) 
 
 	for _, record := range records {
 		for before, after := range map[string]string{
-			"reminder_id": "reminderID", "alarm_id": "alarmID", "alarm_uid": "alarmUID",
-			"trigger_id": "triggerID", "location_uid": "locationUID", "file_asset_url": "fileAssetURL",
-			"file_size": "fileSize", "occurrence_count": "occurrenceCount", "first_day_of_week": "firstDayOfWeek",
+			expectedSourceReminderID: expectedReplayReminderID, expectedSourceAlarmID: "alarmID",
+			expectedSourceAlarmUID:  expectedReplayAlarmUID,
+			expectedSourceTriggerID: expectedReplayTriggerID, expectedSourceLocationUID: expectedReplayLocationUID,
+			expectedSourceFileAssetURL:     expectedReplayFileAssetURL,
+			expectedReplayFileSize:         expectedReplaySourceFileSize,
+			expectedReplayOccurrenceCount:  expectedReplaySourceOccurrenceCount,
+			expectedReplayFirstDayOfWeek:   expectedReplaySourceFirstDayOfWeek,
 			reminderCLISourceRevisionField: reminderCLIRevisionField,
 		} {
 			if value, exists := record[before]; exists {

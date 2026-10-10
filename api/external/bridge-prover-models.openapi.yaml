@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: Trusted device bridge prover primitives
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ScryptN:
+      type: integer
+      enum: [16384]
+      x-enum-varnames: [ScryptCost]
+    ScryptR:
+      type: integer
+      enum: [8]
+      x-enum-varnames: [ScryptBlockSize]
+    ScryptP:
+      type: integer
+      enum: [1]
+      x-enum-varnames: [ScryptParallelism]
+    DerivedLength:
+      type: integer
+      enum: [64]
+      x-enum-varnames: [PasswordKeyLength]
+    KeyLength:
+      type: integer
+      enum: [32]
+      x-enum-varnames: [BridgeKeyLength]
+    NonceLength:
+      type: integer
+      enum: [12]
+      x-enum-varnames: [GCMNonceLength]
+    TagLength:
+      type: integer
+      enum: [16]
+      x-enum-varnames: [GCMTagLength]
+    PayloadVersion:
+      type: integer
+      enum: [0]
+      x-enum-varnames: [GCMVersion]
+    ProverIdentity:
+      type: string
+      enum: [com.apple.security.webprover]
+      x-enum-varnames: [ClientIdentity]
+    VerifierIdentity:
+      type: string
+      enum: [com.apple.security.webverifier]
+      x-enum-varnames: [ServerIdentity]
+    ContextLabel:
+      type: string
+      enum: [SPAKE2Web]
+      x-enum-varnames: [SPAKEContext]
+    ConfirmationLabel:
+      type: string
+      enum: [ConfirmationKeys]
+      x-enum-varnames: [ConfirmationInfo]
+    SharedLabel:
+      type: string
+      enum: [SharedKey]
+      x-enum-varnames: [SharedInfo]
+    VerifierLabel:
+      type: string
+      enum: [webVerifier]
+      x-enum-varnames: [VerifierInfo]
+    ProverLabel:
+      type: string
+      enum: [webProver]
+      x-enum-varnames: [ProverInfo]
+    MaskM:
+      type: string
+      enum: ['02886e2f97ace46e55ba9dd7242579f2993b64e16ef3dcab95afd497333d8fa12f']
+      x-enum-varnames: [SPAKEM]
+    MaskN:
+      type: string
+      enum: ['03d8bbd6c639c62937b04d997f38c3770719c629d7014d49a24b4f98baa1292b49']
+      x-enum-varnames: [SPAKEN]
+    PasswordScalarLength:
+      type: integer
+      enum: [32]
+      x-enum-varnames: [PasswordScalarBytes]
+    ConfirmationLength:
+      type: integer
+      enum: [64]
+      x-enum-varnames: [ConfirmationKeyBytes]
+    ConfirmationHalfLength:
+      type: integer
+      enum: [32]
+      x-enum-varnames: [ConfirmationHalfBytes]

@@ -39,7 +39,7 @@ func TestReminderQuerySDKPortableScenarios(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 39 {
+	if len(paths) != 40 {
 		t.Fatal("compound reminder query inventory changed")
 	}
 
@@ -117,7 +117,7 @@ func checkReminderQueryFailure(t *testing.T, scenario reminderQueryScenario,
 		t.Fatal(decodeErr)
 	}
 
-	if expected["type"] == "ValidationError" || expected["message"] == "Changes response validation failed" {
+	if expected["type"] == "ValidationError" || expected["message"] == replayExpectedChangesResponseValidationFailed {
 		kind = icloud.InvalidResponse
 	}
 
@@ -146,7 +146,7 @@ func checkReminderQueryProjection(t *testing.T, actual *icloud.ListRemindersResu
 
 	var reminders []json.RawMessage
 
-	err = json.Unmarshal(expected["reminders"], &reminders)
+	err = json.Unmarshal(expected[replayLiteralReminders], &reminders)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -176,10 +176,18 @@ func checkReminderRelatedProjection(t *testing.T, actual any, source json.RawMes
 	}
 
 	for _, record := range records {
-		for source, target := range map[string]string{"reminder_id": "reminderID", "alarm_id": "alarmID",
-			"alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID",
-			"file_asset_url": "fileAssetURL", "file_size": "fileSize", "occurrence_count": "occurrenceCount",
-			"first_day_of_week": "firstDayOfWeek", reminderSourceRevisionField: reminderPublicRevisionField} {
+		for source, target := range map[string]string{
+			reminderLocationSourceReminderID:  reminderLocationPublicReminderID,
+			reminderLocationSourceAlarmID:     "alarmID",
+			reminderLocationSourceAlarmUID:    reminderLocationPublicAlarmUID,
+			reminderLocationSourceTriggerID:   reminderLocationPublicTriggerID,
+			reminderLocationSourceLocationUID: reminderLocationPublicLocationUID,
+			replayExpectedSourceFileAssetURL:  replayExpectedFileAssetURL,
+			replayLiteralFileSize:             replayExpectedFileSize,
+			reminderRecurrenceSourceCount:     reminderRecurrenceCount,
+			reminderRecurrenceSourceWeekday:   reminderRecurrenceWeekday,
+			reminderSourceRevisionField:       reminderPublicRevisionField,
+		} {
 			if raw, exists := record[source]; exists {
 				record[target] = raw
 				delete(record, source)
@@ -216,7 +224,7 @@ func normalizeReminderRelatedValues(t *testing.T, record map[string]json.RawMess
 		}
 	}
 
-	if raw, exists := record["created"]; exists && string(raw) != reminderChangeNullValue {
+	if raw, exists := record[reminderSourceCreated]; exists && string(raw) != reminderChangeNullValue {
 		var instant time.Time
 
 		err := json.Unmarshal(raw, &instant)
@@ -224,7 +232,7 @@ func normalizeReminderRelatedValues(t *testing.T, record map[string]json.RawMess
 			t.Fatal(err)
 		}
 
-		record["created"], err = json.Marshal(instant)
+		record[reminderSourceCreated], err = json.Marshal(instant)
 		if err != nil {
 			t.Fatal(err)
 		}

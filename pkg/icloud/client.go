@@ -2,14 +2,16 @@ package icloud
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
-	"github.com/portpowered/go-icloud/internal/accountapi"
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/internal/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/accountapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/drive"
 )
 
@@ -18,8 +20,153 @@ import (
 //
 //nolint:interfacebloat // API-01: trace selected operations on one Client.
 type Client interface {
+	// CreateReminderHashtag creates a tag and atomically links it to a reminder.
+	CreateReminderHashtag(ctx context.Context,
+		request CreateReminderHashtagRequest,
+	) (*ReminderHashtagRelationResult, error)
+	// UpdateReminderHashtag renames a tag using its supplied revision.
+	UpdateReminderHashtag(ctx context.Context,
+		request UpdateReminderHashtagRequest,
+	) (*ReminderHashtagMutationResult, error)
+	// DeleteReminderHashtag soft-deletes a tag and atomically removes its parent link.
+	DeleteReminderHashtag(ctx context.Context,
+		request DeleteReminderHashtagRequest,
+	) (*ReminderHashtagRelationResult, error)
+	// CreatePhotoAlbum creates a regular album or folder in the selected library.
+	CreatePhotoAlbum(ctx context.Context, request CreatePhotoAlbumRequest) (*PhotoAlbumMutationResult, error)
+	// RenamePhotoAlbum renames the selected provider album.
+	RenamePhotoAlbum(ctx context.Context, request RenamePhotoAlbumRequest) (*PhotoAlbumMutationResult, error)
+	// DeletePhotoAlbum marks the selected provider album deleted.
+	DeletePhotoAlbum(ctx context.Context, request DeletePhotoAlbumRequest) (*PhotoDeletionResult, error)
+	// AddPhotoToAlbum creates an album membership relation for one existing photo.
+	AddPhotoToAlbum(ctx context.Context, request AddPhotoToAlbumRequest) (*PhotoAlbumRelationResult, error)
+	// SetPhotoFavorite sets the selected photo's favorite flag and returns its updated snapshot.
+	SetPhotoFavorite(ctx context.Context, request SetPhotoFavoriteRequest) (*PhotoMutationResult, error)
+	// DeletePhoto soft-deletes the selected photo after validating acknowledgement.
+	DeletePhoto(ctx context.Context, request DeletePhotoRequest) (*PhotoDeletionResult, error)
+
+	// GetPhotoLibraryChanges returns changed/deleted zones and an explicit database cursor.
+	GetPhotoLibraryChanges(
+		ctx context.Context,
+		request GetPhotoLibraryChangesRequest,
+	) (*GetPhotoLibraryChangesResult, error)
+
+	// VisitPhotoAssets visits assets until the visitor returns false.
+	VisitPhotoAssets(
+		ctx context.Context,
+		request ListPhotoAssetsRequest,
+		visitor PhotoVisitor,
+	) (*ListPhotoAssetsResult, error)
+	// VisitRecentlyAddedPhotos visits newest-first assets until the visitor returns false.
+	VisitRecentlyAddedPhotos(
+		ctx context.Context,
+		request ListRecentlyAddedPhotosRequest,
+		visitor PhotoVisitor,
+	) (*ListRecentlyAddedPhotosResult, error)
+
+	// ListPhotoLibraries discovers initialized private and shared photo libraries.
+	ListPhotoLibraries(ctx context.Context, request ListPhotoLibrariesRequest) (*ListPhotoLibrariesResult, error)
+	// GetPhotosCursor resolves the selected library change cursor.
+	GetPhotosCursor(ctx context.Context, request GetPhotosCursorRequest) (*GetPhotosCursorResult, error)
+	// GetPhotoChanges returns ordered updates, tombstones and the final cursor.
+	GetPhotoChanges(ctx context.Context, request GetPhotoChangesRequest) (*GetPhotoChangesResult, error)
+
+	// AddReminderLocationTrigger atomically links a new location alarm to a reminder.
+	AddReminderLocationTrigger(ctx context.Context,
+		request AddReminderLocationTriggerRequest,
+	) (*AddReminderLocationTriggerResult, error)
+	// CreateReminderURLAttachment creates and atomically links a URL attachment.
+	CreateReminderURLAttachment(ctx context.Context,
+		request CreateReminderURLAttachmentRequest,
+	) (*ReminderAttachmentMutationResult, error)
+	// UpdateReminderAttachment changes URL text or image metadata.
+	UpdateReminderAttachment(ctx context.Context,
+		request UpdateReminderAttachmentRequest,
+	) (*UpdateReminderAttachmentResult, error)
+	// DeleteReminderAttachment soft-deletes an attachment and removes its links.
+	DeleteReminderAttachment(ctx context.Context,
+		request DeleteReminderAttachmentRequest,
+	) (*ReminderAttachmentMutationResult, error)
+	// CreateReminderRecurrenceRule atomically creates and links a validated rule.
+	CreateReminderRecurrenceRule(ctx context.Context,
+		request CreateReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleRelationResult, error)
+	// UpdateReminderRecurrenceRule writes supplied recurrence settings.
+	UpdateReminderRecurrenceRule(ctx context.Context,
+		request UpdateReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleMutationResult, error)
+	// DeleteReminderRecurrenceRule atomically unlinks and soft-deletes a recurrence rule.
+	DeleteReminderRecurrenceRule(ctx context.Context,
+		request DeleteReminderRecurrenceRuleRequest,
+	) (*ReminderRecurrenceRuleRelationResult, error)
+	// ReservePhotoUploads reserves signed upload destinations for caller-selected file sizes.
+	ReservePhotoUploads(ctx context.Context, request ReservePhotoUploadsRequest) (*ReservePhotoUploadsResult, error)
+	// SendPhotoUploadBytes sends bytes to a reserved HTTPS destination.
+	SendPhotoUploadBytes(ctx context.Context, request SendPhotoUploadBytesRequest) (*SendPhotoUploadBytesResult, error)
+	// RegisterPhotoUploads registers stored-byte receipts as Photos assets.
+	RegisterPhotoUploads(ctx context.Context, request RegisterPhotoUploadsRequest) (*RegisterPhotoUploadsResult, error)
+	// GetPhotoUploadStatus reports ingest progress separately from CloudKit indexing.
+	GetPhotoUploadStatus(ctx context.Context, request GetPhotoUploadStatusRequest) (*GetPhotoUploadStatusResult, error)
+	// UploadPhoto transfers one file and optionally waits for its indexed photo projection.
+	UploadPhoto(ctx context.Context, request UploadPhotoRequest) (*UploadPhotoResult, error)
+	// UploadPhotoFile reserves and registers a file without waiting for indexing.
+	UploadPhotoFile(ctx context.Context, request UploadPhotoFileRequest) (*UploadPhotoFileResult, error)
+	// ListSharedPhotoAlbums reads legacy shared stream data.
+	ListSharedPhotoAlbums(ctx context.Context, request ListSharedPhotoAlbumsRequest) (*ListSharedPhotoAlbumsResult, error)
+	// CountSharedPhotos reads legacy shared stream data.
+	CountSharedPhotos(ctx context.Context, request CountSharedPhotosRequest) (*CountSharedPhotosResult, error)
+	// ListSharedPhotos reads legacy shared stream data.
+	ListSharedPhotos(ctx context.Context, request ListSharedPhotosRequest) (*ListSharedPhotosResult, error)
+	// GetSharedPhoto reads legacy shared stream data.
+	GetSharedPhoto(ctx context.Context, request GetSharedPhotoRequest) (*GetSharedPhotoResult, error)
+	// DownloadSharedPhoto reads legacy shared stream data.
+	DownloadSharedPhoto(ctx context.Context, request DownloadSharedPhotoRequest) (*DownloadSharedPhotoResult, error)
+
+	// Authenticate completes native SRP or returns caller-owned MFA progress.
+	Authenticate(ctx context.Context, request AuthenticateRequest) (*NativeAuthResult, error)
+	// GetAuthenticationChallenge reads the current MFA choices and bridge bootstrap.
+	GetAuthenticationChallenge(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
+	// GetAuthenticationStatus probes saved credentials without initiating password login or MFA delivery.
+	GetAuthenticationStatus(ctx context.Context, request NativeAuthRequest) (*AuthenticationStatusResult, error)
+	// UseExistingTrustedDeviceCode selects a code already displayed on a trusted device.
+	UseExistingTrustedDeviceCode(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
+	// RequestTwoFactorCode requests SMS delivery or returns the explicit bridge/security-key route.
+	RequestTwoFactorCode(ctx context.Context, request RequestTwoFactorCodeRequest) (*NativeAuthResult, error)
+	// OpenNativeBridgeSession owns one account's trusted-device prompt and verification socket.
+	OpenNativeBridgeSession(ctx context.Context, request OpenNativeBridgeSessionRequest,
+		options ...NativeBridgeOption) (*NativeBridgeSession, error)
+	// VerifyTwoFactorCode validates a trusted-device or SMS code and refreshes session trust.
+	VerifyTwoFactorCode(ctx context.Context, request VerifyTwoFactorCodeRequest) (*NativeAuthResult, error)
+	// VerifySecurityKey submits a caller-owned WebAuthn assertion and refreshes session trust.
+	VerifySecurityKey(ctx context.Context, request VerifySecurityKeyRequest) (*NativeAuthResult, error)
+	// ListSecurityKeyDevices enumerates devices through the injected hardware authenticator.
+	ListSecurityKeyDevices(ctx context.Context,
+		request ListSecurityKeyDevicesRequest) (*ListSecurityKeyDevicesResult, error)
+	// ConfirmSecurityKey selects a hardware device and completes its assertion ceremony.
+	ConfirmSecurityKey(ctx context.Context, request ConfirmSecurityKeyRequest) (*NativeAuthResult, error)
+	// TrustSession exchanges session trust and refreshes account service discovery.
+	TrustSession(ctx context.Context, request NativeAuthRequest) (*NativeAuthResult, error)
+	// ListTrustedDevices enumerates the provider's two-step authentication devices.
+	ListTrustedDevices(ctx context.Context, request NativeAuthRequest) (*TrustedDevicesResult, error)
+	// SendTwoStepCode requests a code on one caller-selected trusted device.
+	SendTwoStepCode(ctx context.Context, request SendTwoStepCodeRequest) (*NativeAuthResult, error)
+	// VerifyTwoStepCode verifies a selected device's code and refreshes session trust.
+	VerifyTwoStepCode(ctx context.Context, request VerifyTwoStepCodeRequest) (*NativeAuthResult, error)
+	// RequestPCSAccess obtains cancellable provider consent for a service.
+	RequestPCSAccess(ctx context.Context, request RequestPCSAccessRequest) (*NativeAuthResult, error)
+	// Logout terminates remote sessions and returns explicit local credential clearing.
+	Logout(ctx context.Context, request LogoutRequest) (*LogoutResult, error)
+	// CreateReminder creates a reminder and hydrates its acknowledged record.
+	CreateReminder(ctx context.Context, request CreateReminderRequest) (*ReminderMutationResult, error)
+	// UpdateReminder writes a snapshot and returns an independent updated snapshot.
+	UpdateReminder(ctx context.Context, request UpdateReminderRequest) (*ReminderMutationResult, error)
+	// DeleteReminder soft-deletes a reminder using its supplied revision.
+	DeleteReminder(ctx context.Context, request DeleteReminderRequest) (*DeleteReminderResult, error)
 	// ApplySessionResponses copies a native session and applies response updates without network I/O.
-	ApplySessionResponses(ctx context.Context, request ApplySessionResponsesRequest) (*ApplySessionResponsesResult, error)
+	ApplySessionResponses(
+		ctx context.Context,
+		request ApplySessionResponsesRequest,
+	) (*ApplySessionResponsesResult, error)
 	// ListRecentlyAddedPhotos reads the primary library newest first with overlap deduplication.
 	ListRecentlyAddedPhotos(ctx context.Context,
 		request ListRecentlyAddedPhotosRequest,
@@ -59,7 +206,10 @@ type Client interface {
 	// ListReminderChanges consumes ordered reminder updates and deletions from an optional cursor.
 	ListReminderChanges(ctx context.Context, request ListReminderChangesRequest) (*ListReminderChangesResult, error)
 	// GetReminderSyncCursor discovers a usable token, consuming fallback pages when required.
-	GetReminderSyncCursor(ctx context.Context, request GetReminderSyncCursorRequest) (*GetReminderSyncCursorResult, error)
+	GetReminderSyncCursor(
+		ctx context.Context,
+		request GetReminderSyncCursorRequest,
+	) (*GetReminderSyncCursorResult, error)
 	// GetReminder reads one complete reminder by raw or full record identifier.
 	GetReminder(ctx context.Context, request GetReminderRequest) (*GetReminderResult, error)
 	// ListReminderLists reads the complete ordered list snapshot and membership.
@@ -103,11 +253,17 @@ type Client interface {
 	// GetAccountFamily returns fresh family records.
 	GetAccountFamily(ctx context.Context, request GetAccountFamilyRequest) (*GetAccountFamilyResult, error)
 	// GetAccountMemberPhoto returns exact photo bytes for a member DSID.
-	GetAccountMemberPhoto(ctx context.Context, request GetAccountMemberPhotoRequest) (*GetAccountMemberPhotoResult, error)
+	GetAccountMemberPhoto(
+		ctx context.Context,
+		request GetAccountMemberPhotoRequest,
+	) (*GetAccountMemberPhotoResult, error)
 	// GetAccountStorage returns fresh usage, quota and media metadata.
 	GetAccountStorage(ctx context.Context, request GetAccountStorageRequest) (*GetAccountStorageResult, error)
 	// GetAccountPlanSummary returns opaque JSON from the account's regional gateway.
-	GetAccountPlanSummary(ctx context.Context, request GetAccountPlanSummaryRequest) (*GetAccountPlanSummaryResult, error)
+	GetAccountPlanSummary(
+		ctx context.Context,
+		request GetAccountPlanSummaryRequest,
+	) (*GetAccountPlanSummaryResult, error)
 }
 
 var (
@@ -115,13 +271,19 @@ var (
 	errNilOption       = errors.New("nil client option")
 	errAuthIdentifiers = errors.New("account and client identifiers are required")
 	errMemberID        = errors.New("family member identifier is required")
+	errRandomSource    = errors.New("random source must be nonnil")
 	errDriveNodeID     = errors.New("drive node identifier is required")
 )
 
 type configuration struct {
-	transport  http.RoundTripper
-	configured bool
-	clock      func() time.Time
+	transport        http.RoundTripper
+	configured       bool
+	clock            func() time.Time
+	random           io.Reader
+	photoUploadWait  func(context.Context, time.Duration) error
+	photoUploadClock func() time.Time
+	authWait         AuthenticationWaiter
+	securityKey      SecurityKeyAuthenticator
 }
 
 // Option configures a reusable client without storing account credentials.
@@ -144,14 +306,20 @@ func WithHTTPTransport(transport http.RoundTripper) Option {
 
 // SDK implements Client with immutable transport configuration.
 type SDK struct {
-	web   *webtransport.Client
-	clock func() time.Time
+	web              *webtransport.Client
+	clock            func() time.Time
+	random           io.Reader
+	photoUploadWait  func(context.Context, time.Duration) error
+	photoUploadClock func() time.Time
+	authWait         AuthenticationWaiter
+	securityKey      SecurityKeyAuthenticator
 }
 
 // New creates a reusable stateless client. The caller supplies request deadlines.
 // The default is http.DefaultTransport; automatic redirects are disabled.
 func New(options ...Option) (*SDK, error) {
-	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now}
+	config := configuration{transport: http.DefaultTransport, configured: false, clock: time.Now, random: rand.Reader,
+		photoUploadWait: waitPhotoUpload, photoUploadClock: time.Now, authWait: authenticationWait, securityKey: nil}
 
 	for _, option := range options {
 		if option == nil {
@@ -164,7 +332,32 @@ func New(options ...Option) (*SDK, error) {
 		}
 	}
 
-	return &SDK{web: webtransport.New(config.transport), clock: config.clock}, nil
+	if config.securityKey == nil {
+		provider, err := newNativeSecurityKeyProvider(config.random)
+		if err != nil {
+			return nil, newClientError("New", Configuration, 0, nil, nil, err)
+		}
+
+		config.securityKey = provider
+	}
+
+	return &SDK{web: webtransport.New(config.transport), clock: config.clock, random: config.random,
+		photoUploadWait: config.photoUploadWait, photoUploadClock: config.photoUploadClock,
+		authWait: config.authWait, securityKey: config.securityKey}, nil
+}
+
+// WithRandomSource supplies a concurrency-safe entropy reader for generated identities and authentication.
+// Production callers normally use the default cryptographic source.
+func WithRandomSource(source io.Reader) Option {
+	return func(config *configuration) error {
+		if source == nil {
+			return errRandomSource
+		}
+
+		config.random = source
+
+		return nil
+	}
 }
 
 // GetAccountDevices fetches fresh account devices using caller-owned authentication state.
@@ -514,8 +707,15 @@ func accountRequestContext(auth AuthContext) (webtransport.RequestContext, error
 		return boundary, fmt.Errorf("account cookie context: %w", err)
 	}
 
-	boundary = webtransport.RequestContext{Origin: auth.AccountServiceURL, DriveToken: "", Params: *params,
-		Headers: requestHeaders(auth.Headers), Cookies: cookies}
+	boundary = webtransport.RequestContext{
+		PhotoZone:   nil,
+		PhotoShared: false,
+		Origin:      auth.AccountServiceURL,
+		DriveToken:  "",
+		Params:      *params,
+		Headers:     requestHeaders(auth.Headers),
+		Cookies:     cookies,
+	}
 
 	return boundary, nil
 }
@@ -528,15 +728,6 @@ func copyString(value *string) *string {
 	copyValue := *value
 
 	return &copyValue
-}
-
-func requestHeaders(headers []Header) http.Header {
-	result := make(http.Header)
-	for _, header := range headers {
-		result.Add(header.Name, header.Value)
-	}
-
-	return result
 }
 
 func driveRequestContext(auth AuthContext) (webtransport.RequestContext, error) {

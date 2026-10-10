@@ -1,0 +1,16 @@
+package: authapi
+generate:
+  models: true
+  client: true
+output: pkg/dependencies/webtransport/authapi/client.gen.go
+output-options:
+  user-templates:
+    union.tmpl: api/templates/schema-unions.tmpl
+    request-bodies.tmpl: api/templates/schema-request-bodies.tmpl
+    typedef.tmpl: api/templates/schema-types.tmpl
+    client.tmpl: api/templates/http-request-builders.tmpl
+    client-with-responses.tmpl: api/templates/http-response-parsers.tmpl
+  nullable-type: true
+import-mapping:
+  ./http-boundary-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/httpboundary
+  ./auth-models.openapi.yaml: github.com/portpowered/go-icloud/pkg/dependencymodels/auth

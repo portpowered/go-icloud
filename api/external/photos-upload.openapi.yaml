@@ -1,0 +1,940 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "iCloud Photos upload wire operations",
+    "version": "0.1.0",
+    "description": "Modern reservation, raw content transfer, registration, ingest status and indexed asset hydration."
+  },
+  "paths": {
+    "/photosupload/createUploadUrl": {
+      "post": {
+        "operationId": "PhotosCreateUploadUrl",
+        "summary": "Reserve URLs for photo bytes",
+        "description": "Reserve URLs for photo bytes.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosCreateUploadUrlRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadReservationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{contentPath}": {
+      "post": {
+        "operationId": "PhotosSendUploadBytes",
+        "summary": "Store raw photo bytes at the reserved HTTPS URL",
+        "description": "Store raw photo bytes at the reserved HTTPS URL.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentPath"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadTransferEncoding"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "application/octet-stream": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPOctetStreamMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSingleFileUploadResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/photosupload/putAsset": {
+      "post": {
+        "operationId": "PhotosPutAsset",
+        "summary": "Register uploaded bytes as photo assets",
+        "description": "Register uploaded bytes as photo assets.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosPutAssetRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosPutAssetResults"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/photosupload/uploadStatus": {
+      "post": {
+        "operationId": "PhotosUploadStatus",
+        "summary": "Read photo ingest progress",
+        "description": "Read photo ingest progress.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotosUploadStatusRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosUploadStatusEntries"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/private/records/lookup": {
+      "post": {
+        "operationId": "PhotosHydrateUploadedAsset",
+        "summary": "Read the uploaded asset after CloudKit indexing",
+        "description": "Read the uploaded asset after CloudKit indexing.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKLookupRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/database/1/com.apple.photos.cloud/production/shared/records/lookup": {
+      "post": {
+        "operationId": "PhotosHydrateUploadedAssetShared",
+        "summary": "Read the uploaded asset after CloudKit indexing",
+        "description": "Read the uploaded asset after CloudKit indexing.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientId"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploaddsid"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientBuildNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadclientMasteringNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAccept"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadContentType"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadCookie"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadOrigin"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadReferer"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadUserAgent"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadAcceptEncoding"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadConnection"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadremapEnums"
+          },
+          {
+            "$ref": "#/components/parameters/PhotosUploadgetCurrentSyncToken"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CKLookupRequest"
+              }
+            }
+          },
+          "x-request-media-schema": {
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "2XX": {
+            "description": "Successful provider result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CKLookupResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Provider failure body.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or session error; a nonempty session reason raises before CloudKit retry adaptation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotosSessionErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "PhotosUploadclientId": {
+        "name": "clientId",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploaddsid": {
+        "name": "dsid",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadclientBuildNumber": {
+        "name": "clientBuildNumber",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadclientMasteringNumber": {
+        "name": "clientMasteringNumber",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadAccept": {
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "x-fixed-value-schemas": {
+            "*/*": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPAnyMedia"
+            },
+            "application/json": {
+              "$ref": "./http-boundary-models.openapi.yaml#/components/schemas/HTTPJSONMedia"
+            }
+          }
+        }
+      },
+      "PhotosUploadContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadCookie": {
+        "name": "Cookie",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadOrigin": {
+        "name": "Origin",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadReferer": {
+        "name": "Referer",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadUserAgent": {
+        "name": "User-Agent",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadAcceptEncoding": {
+        "name": "Accept-Encoding",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadConnection": {
+        "name": "Connection",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PhotosUploadremapEnums": {
+        "name": "remapEnums",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "enum": [
+            "True"
+          ],
+          "x-enum-varnames": [
+            "PhotosUploadRemapEnumsTrue"
+          ],
+          "type": "string"
+        }
+      },
+      "PhotosUploadgetCurrentSyncToken": {
+        "name": "getCurrentSyncToken",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "enum": [
+            "True"
+          ],
+          "x-enum-varnames": [
+            "PhotosUploadCurrentSyncTokenTrue"
+          ],
+          "type": "string"
+        }
+      },
+      "PhotosUploadContentPath": {
+        "name": "contentPath",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": ".+"
+        },
+        "description": "Provider-reserved content path. The server origin and query are taken from the HTTPS reservation URL."
+      },
+      "PhotosUploadTransferEncoding": {
+        "schema": {
+          "$ref": "#/components/schemas/PhotosUploadTransferEncoding"
+        },
+        "name": "Transfer-Encoding",
+        "in": "header",
+        "required": false
+      }
+    },
+    "schemas": {
+      "PhotosCreateUploadUrlRequest": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosCreateUploadUrlRequest"
+      },
+      "PhotosUploadReservationResponse": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadReservationResponse"
+      },
+      "PhotosSingleFileUpload": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosSingleFileUpload"
+      },
+      "PhotosSingleFileUploadResponse": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosSingleFileUploadResponse"
+      },
+      "PhotosPutAssetFile": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetFile"
+      },
+      "PhotosPutAssetRequest": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetRequest"
+      },
+      "PhotosUploadStatusRequest": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadStatusRequest"
+      },
+      "PhotosUploadStatus": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadStatus"
+      },
+      "PhotosUploadStatusEntries": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadStatusEntries"
+      },
+      "PhotosPutAssetStatus": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetStatus"
+      },
+      "PhotosPutAssetResult": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetResult"
+      },
+      "PhotosPutAssetResults": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosPutAssetResults"
+      },
+      "PhotosDuplicateStatus": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosDuplicateStatus"
+      },
+      "PhotosUnknownJobErrorCode": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUnknownJobErrorCode"
+      },
+      "CKLookupRequest": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupRequest"
+      },
+      "CKLookupResponse": {
+        "$ref": "./cloudkit-models.openapi.yaml#/components/schemas/CKLookupResponse"
+      },
+      "PhotosUploadDesiredKey": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadDesiredKey"
+      },
+      "PhotosUploadTransferEncoding": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosUploadTransferEncoding"
+      },
+      "PhotosSessionErrorResponse": {
+        "$ref": "./photos-upload-models.openapi.yaml#/components/schemas/PhotosSessionErrorResponse"
+      }
+    },
+    "headers": {
+      "Retry-After": {
+        "schema": {
+          "type": "string"
+        },
+        "description": "Provider retry delay, expressed as seconds or an HTTP date."
+      }
+    }
+  }
+}

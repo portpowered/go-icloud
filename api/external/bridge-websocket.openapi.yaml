@@ -1,0 +1,232 @@
+openapi: 3.0.3
+info:
+  title: Trusted device bridge WebSocket upgrade
+  version: 1.0.0
+paths:
+  /v2/{connection}:
+    get:
+      operationId: upgradeBridge
+      description: Upgrade a configured trusted device bridge connection to WebSocket.
+      x-upgrade-layout:
+        version: 1
+        requestLine: {$ref: '#/components/schemas/RequestLine/values/UpgradeRequestLine'}
+        headerLines:
+          - {$ref: '#/components/schemas/HeaderLine/values/HostLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/UpgradeLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/ConnectionLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/OriginLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/UserAgentLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/VersionLine'}
+          - {$ref: '#/components/schemas/HeaderLine/values/KeyLine'}
+        separator:
+          - {$ref: '#/components/schemas/LineSeparator/values/CarriageReturn'}
+          - {$ref: '#/components/schemas/LineSeparator/values/LineFeed'}
+        emptyLines: 2
+        acceptHeader: {$ref: '#/components/schemas/AcceptHeader/values/UpgradeAcceptHeader'}
+        guid: {$ref: './bridge-models.openapi.yaml#/components/schemas/BridgeProtocolString/values/WebSocketGUID'}
+        nonceBytes: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_KEY_BYTES'}
+        endpoint:
+          scheme: {$ref: '#/components/schemas/Scheme/values/SecureScheme'}
+          defaultPort: {$ref: '#/components/schemas/DefaultPort/values/SecurePort'}
+          network: {$ref: '#/components/schemas/Network/values/DialNetwork'}
+          forbidUserinfo: true
+          forbidFragment: true
+          forbidQuery: true
+          requestTargetPattern: {$ref: '#/components/schemas/RequestTargetPattern/values/CanonicalRequestTarget'}
+          requireHostname: true
+          forbiddenHeaderBytes:
+            - {$ref: '#/components/schemas/LineSeparator/values/CarriageReturn'}
+            - {$ref: '#/components/schemas/LineSeparator/values/LineFeed'}
+        digest: sha1
+        encoding: base64
+        status: 101
+      parameters:
+        - name: connection
+          in: path
+          required: true
+          schema: {type: string, pattern: '^[a-f0-9]+$'}
+        - {name: Origin, in: header, required: true, schema: {type: string}}
+        - {name: User-Agent, in: header, required: true, schema: {type: string}}
+        - {name: Upgrade, in: header, required: true, schema: {type: string, enum: [websocket]}}
+        - {name: Connection, in: header, required: true, schema: {type: string, enum: [Upgrade]}}
+        - {name: Sec-WebSocket-Version, in: header, required: true, schema: {type: string, enum: ['13']}}
+        - {name: Sec-WebSocket-Key, in: header, required: true, schema: {type: string, format: byte}}
+      responses:
+        '101':
+          description: An authenticated WebSocket upgrade.
+          headers:
+            Sec-WebSocket-Accept: {schema: {type: string, format: byte}}
+components:
+  schemas:
+    RequestTargetPattern:
+      type: string
+      enum: ['^/v2/[0-9a-f]+$']
+      x-enum-varnames: [CanonicalRequestTarget]
+    RequestLine:
+      type: string
+      enum: ['GET %s HTTP/1.1']
+      x-enum-varnames: [UpgradeRequestLine]
+    HeaderLine:
+      type: string
+      enum: ['Host: %s', 'Upgrade: websocket', 'Connection: Upgrade', 'Origin: %s', 'User-Agent: %s', 'Sec-WebSocket-Version: 13', 'Sec-WebSocket-Key: %s']
+      x-enum-varnames: [HostLine, UpgradeLine, ConnectionLine, OriginLine, UserAgentLine, VersionLine, KeyLine]
+    LineSeparator:
+      type: integer
+      enum: [13,10]
+      x-enum-varnames: [CarriageReturn, LineFeed]
+    AcceptHeader:
+      type: string
+      enum: [Sec-WebSocket-Accept]
+      x-enum-varnames: [UpgradeAcceptHeader]
+    Scheme:
+      type: string
+      enum: [wss]
+      x-enum-varnames: [SecureScheme]
+    OpcodeMask:
+      type: integer
+      enum: [15]
+      x-enum-varnames: [FrameOpcodeMask]
+    HeaderPosition:
+      type: integer
+      enum: [0,1]
+      x-enum-varnames: [FrameOpcodePosition,FrameLengthPosition]
+    ExtensionLengths:
+      type: integer
+      enum: [2,8]
+      x-enum-varnames: [MediumLengthBytes,LongLengthBytes]
+    DefaultPort:
+      type: string
+      enum: ['443']
+      x-enum-varnames: [SecurePort]
+    Network:
+      type: string
+      enum: [tcp]
+      x-enum-varnames: [DialNetwork]
+    PayloadLimit:
+      type: integer
+      description: SDK local 64 MiB receive resource policy (GO-06), not a Source or provider wire limit.
+      x-sdk-resource-policy: true
+      enum: [67108864]
+      x-enum-varnames: [MaxMessageBytes]
+    Mask:
+      type: string
+      format: byte
+      x-byte-length:
+        $ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_MASK_BYTES'
+    Frame:
+      type: object
+      required: [opcode, finished, payload]
+      x-binary-layout:
+        version: 1
+        inputs:
+          - {name: opcode, argument: 0, schema: '#/components/schemas/Frame/properties/opcode'}
+          - {name: payload, argument: 1, schema: '#/components/schemas/Frame/properties/payload'}
+          - {name: mask, argument: 2, schema: '#/components/schemas/Mask'}
+        encode:
+          - kind: byte
+            value:
+              kind: binary
+              operator: '|'
+              args:
+                - {kind: cast, operator: byte, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}]}
+                - {kind: cast, operator: byte, args: [{kind: input, input: opcode}]}
+          - kind: select
+            cases:
+              - when:
+                  kind: binary
+                  operator: '<'
+                  args:
+                    - {kind: length, args: [{kind: input, input: payload}]}
+                    - {kind: cast, operator: int, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_SHORT_LIMIT'}]}
+                program:
+                  - kind: byte
+                    value:
+                      kind: binary
+                      operator: '|'
+                      args:
+                        - {kind: cast, operator: byte, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}]}
+                        - {kind: cast, operator: byte, args: [{kind: length, args: [{kind: input, input: payload}]}]}
+              - when:
+                  kind: binary
+                  operator: '<'
+                  args:
+                    - {kind: length, args: [{kind: input, input: payload}]}
+                    - {kind: cast, operator: int, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_MEDIUM_LIMIT'}]}
+                program:
+                  - kind: byte
+                    value:
+                      kind: binary
+                      operator: '|'
+                      args:
+                        - {kind: cast, operator: byte, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}]}
+                        - {kind: cast, operator: byte, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_SHORT_LIMIT'}]}
+                  - {kind: integer, width: 16, order: big, value: {kind: cast, operator: u16, args: [{kind: length, args: [{kind: input, input: payload}]}]}}
+              - program:
+                  - kind: byte
+                    value:
+                      kind: binary
+                      operator: '|'
+                      args:
+                        - {kind: cast, operator: byte, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}]}
+                        - {kind: cast, operator: byte, args: [{kind: ref, ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_LONG_MARKER'}]}
+                  - {kind: integer, width: 64, order: big, value: {kind: cast, operator: u64, args: [{kind: length, args: [{kind: input, input: payload}]}]}}
+          - {kind: bytes, value: {kind: input, input: mask}}
+          - kind: repeat
+            source: {kind: input, input: payload}
+            program:
+              - kind: byte
+                value:
+                  kind: binary
+                  operator: '^'
+                  args:
+                    - {kind: item}
+                    - kind: at
+                      args:
+                        - {kind: input, input: mask}
+                        - kind: binary
+                          operator: '%'
+                          args:
+                            - {kind: index}
+                            - {kind: length, args: [{kind: input, input: mask}]}
+        frameDecode:
+          headerWidth: {$ref: '#/components/schemas/ExtensionLengths/values/MediumLengthBytes'}
+          maxPayload: {$ref: '#/components/schemas/PayloadLimit/values/MaxMessageBytes'}
+          opcode:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameOpcodePosition'}
+            mask: {$ref: '#/components/schemas/OpcodeMask/values/FrameOpcodeMask'}
+          finished:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameOpcodePosition'}
+            mask: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}
+          length:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameLengthPosition'}
+            mask: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_LONG_MARKER'}
+            markers:
+              - marker: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_SHORT_LIMIT'}
+                width: 16
+                byteWidth: {$ref: '#/components/schemas/ExtensionLengths/values/MediumLengthBytes'}
+                order: big
+              - marker: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_LONG_MARKER'}
+                width: 64
+                byteWidth: {$ref: '#/components/schemas/ExtensionLengths/values/LongLengthBytes'}
+                order: big
+            default: short
+          mask:
+            offset: {$ref: '#/components/schemas/HeaderPosition/values/FrameLengthPosition'}
+            flag: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_FIN_MASK'}
+            width: {$ref: './bridge-proto/bridge.proto#/enums/Framing/values/FRAMING_MASK_BYTES'}
+          payload: {width: length, xor: mask, indexModulo: mask.length}
+      properties:
+        opcode:
+          type: integer
+          minimum: 0
+          maximum: 15
+          x-go-type: bridgepb.Opcode
+          x-go-type-import:
+            path: github.com/portpowered/go-icloud/pkg/dependencymodels/bridgepb
+            name: bridgepb
+        finished:
+          type: boolean
+        payload:
+          type: string
+          format: byte
+          x-byte-max-length: {$ref: '#/components/schemas/PayloadLimit/values/MaxMessageBytes'}

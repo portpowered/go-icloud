@@ -18,9 +18,9 @@ const persistedContentCookie = "session=content; Secure; HttpOnly"
 func cookiePersistenceSequence(t *testing.T) (icloud.AuthContext, *replay.HTTPTransport) {
 	t.Helper()
 
-	first := readAccountScenario(t, "fixtures/synthetic/http/drive-download-data_token-binary.json")
-	second := readAccountScenario(t, "fixtures/synthetic/http/drive-download-data_token-binary.json")
-	third := readAccountScenario(t, "fixtures/synthetic/http/drive-download-data_token-binary.json")
+	first := readAccountScenario(t, replayDriveBinaryFixturePath)
+	second := readAccountScenario(t, replayDriveBinaryFixturePath)
+	third := readAccountScenario(t, replayDriveBinaryFixturePath)
 
 	first.Exchanges[1].Response.Headers = append(first.Exchanges[1].Response.Headers,
 		replay.Pair{accountCookieUpdateHeader, persistedContentCookie})
@@ -62,7 +62,7 @@ func TestDriveDownloadCallerPersistsHostOnlyCookie(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	request := icloud.DownloadDriveFileRequest{Auth: auth, DocumentID: "synthetic-document", Zone: nil}
+	request := icloud.DownloadDriveFileRequest{Auth: auth, DocumentID: replayLiteralSyntheticDocument, Zone: nil}
 
 	first, err := client.DownloadDriveFile(t.Context(), request)
 	if err != nil {

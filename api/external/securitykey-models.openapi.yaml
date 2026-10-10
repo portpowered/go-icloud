@@ -1,0 +1,198 @@
+openapi: 3.0.3
+info:
+  title: FIDO authenticator HID and CTAP2 protocol
+  version: 1.0.0
+  description: CTAPHID transport and CTAP2 assertion messages used by native authentication.
+paths: {}
+components:
+  schemas:
+    FrameValue:
+      type: integer
+      format: int64
+      enum: [64, 7, 5, 128, 7609, 8, 4294967295, 61904, 1, 4, 6, 16, 17, 59, 63]
+      x-enum-varnames: [ReportBytes, InitialHeaderBytes, ContinuationHeaderBytes, InitialFlag, MaxPayloadBytes, NonceBytes, BroadcastChannel, UsagePage, Usage, CBORCapability, InitCommand, CBORCommand, CancelCommand, KeepaliveCommand, ErrorCommand]
+    InitResponseSize:
+      type: integer
+      enum: [17]
+      x-enum-varnames: [InitResponseBytes]
+    U2FValue:
+      type: integer
+      enum: [3, 2, 36864, 27013, 5, 255, 7, 9]
+      x-enum-varnames: [MessageCommand, AuthenticateInstruction, APDUSuccess, PresenceRequired, U2FHeaderBytes, MaxKeyHandleBytes, APDUHeaderBytes, APDUOverheadBytes]
+    InfoOption:
+      type: string
+      enum: [alwaysUv, uv, pinUvAuthToken, clientPin, bioEnroll]
+    ClientDataTemplate:
+      type: string
+      enum: ['{"type":%s,"challenge":%s,"origin":%s,"crossOrigin":false}']
+      x-enum-varnames: [CollectedClientDataTemplate]
+    AuthenticatorHeaderSize:
+      type: integer
+      enum: [37]
+      x-enum-varnames: [AuthenticatorHeaderBytes]
+    AuthenticatorFlag:
+      type: integer
+      enum: [1, 4]
+      x-enum-varnames: [UserPresenceFlag, UserVerificationFlag]
+    DefaultMessageSize:
+      type: integer
+      enum: [1024]
+      x-enum-varnames: [DefaultMaxMessageBytes]
+    KeepaliveStatus:
+      type: integer
+      enum: [1, 2]
+      x-enum-varnames: [Processing, UserPresenceNeeded]
+    CTAPCommand:
+      type: integer
+      enum: [2, 4, 8, 6]
+      x-enum-varnames: [GetAssertion, GetInfo, GetNextAssertion, ClientPIN]
+    Status:
+      type: integer
+      enum: [0, 6, 46, 57, 54, 60]
+      x-enum-varnames: [Success, ChannelBusy, NoCredentials, RequestTooLarge, TokenRequired, UVBlocked]
+    CredentialType:
+      type: string
+      enum: [public-key]
+    ClientDataType:
+      type: string
+      enum: [webauthn.get]
+    ClientData:
+      type: object
+      required: [type, challenge, origin, crossOrigin]
+      properties:
+        type: { $ref: '#/components/schemas/ClientDataType' }
+        challenge: { type: string }
+        origin: { type: string }
+        crossOrigin: { type: boolean }
+    Credential:
+      type: object
+      required: [type, id]
+      properties:
+        type: { $ref: '#/components/schemas/CredentialType', x-oapi-codegen-extra-tags: { cbor: type } }
+        id: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: id } }
+    AssertionOptions:
+      type: object
+      properties:
+        up: { type: boolean, x-oapi-codegen-extra-tags: { cbor: 'up,omitempty' } }
+        uv: { type: boolean, x-oapi-codegen-extra-tags: { cbor: 'uv,omitempty' } }
+    AssertionRequest:
+      type: object
+      required: [rpId, clientDataHash]
+      properties:
+        rpId: { type: string, x-oapi-codegen-extra-tags: { cbor: '1,keyasint' } }
+        clientDataHash: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '2,keyasint' } }
+        allowList: { type: array, items: { $ref: '#/components/schemas/Credential' }, x-oapi-codegen-extra-tags: { cbor: '3,keyasint,omitempty' } }
+        pinUvAuthParam: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '6,keyasint,omitempty' } }
+        pinUvAuthProtocol: { type: integer, x-oapi-codegen-extra-tags: { cbor: '7,keyasint,omitempty' } }
+        options: { $ref: '#/components/schemas/AssertionOptions', x-oapi-codegen-extra-tags: { cbor: '5,keyasint,omitempty' } }
+    AssertionUser:
+      type: object
+      properties:
+        id: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: 'id,omitempty' } }
+    AssertionResponse:
+      type: object
+      required: [authData, signature]
+      properties:
+        credential: { $ref: '#/components/schemas/Credential', x-oapi-codegen-extra-tags: { cbor: '1,keyasint,omitempty' } }
+        authData: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '2,keyasint' } }
+        signature: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '3,keyasint' } }
+        user: { $ref: '#/components/schemas/AssertionUser', x-oapi-codegen-extra-tags: { cbor: '4,keyasint,omitempty' } }
+        numberOfCredentials: { type: integer, minimum: 1, x-oapi-codegen-extra-tags: { cbor: '5,keyasint,omitempty' } }
+    InfoResponse:
+      type: object
+      required: [versions, aaguid]
+      properties:
+        versions: { type: array, items: { type: string }, x-oapi-codegen-extra-tags: { cbor: '1,keyasint' } }
+        aaguid: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '3,keyasint' } }
+        options: { type: object, additionalProperties: { type: boolean }, x-oapi-codegen-extra-tags: { cbor: '4,keyasint,omitempty' } }
+        pinUvAuthProtocols: { type: array, items: { type: integer }, x-oapi-codegen-extra-tags: { cbor: '6,keyasint,omitempty' } }
+        maxMsgSize: { type: integer, minimum: 1, x-oapi-codegen-extra-tags: { cbor: '5,keyasint,omitempty' } }
+        maxCredentialCountInList: { type: integer, minimum: 1, x-oapi-codegen-extra-tags: { cbor: '7,keyasint,omitempty' } }
+        maxCredentialIdLength: { type: integer, minimum: 0, x-oapi-codegen-extra-tags: { cbor: '8,keyasint,omitempty' } }
+
+
+
+    PINProtocol:
+      type: integer
+      enum: [1, 2]
+      x-enum-varnames: [PINProtocolV1, PINProtocolV2]
+    PINCommand:
+      type: integer
+      enum: [2, 6]
+      x-enum-varnames: [GetKeyAgreement, GetUVToken]
+    KDFLabel:
+      type: string
+      enum: [CTAP2 HMAC key, CTAP2 AES key]
+      x-enum-varnames: [HMACKeyLabel, AESKeyLabel]
+    COSEKey:
+      type: object
+      required: [keyType, algorithm, curve, x, y]
+      properties:
+        keyType: { type: integer, enum: [2], x-oapi-codegen-extra-tags: { cbor: '1,keyasint' } }
+        algorithm: { type: integer, enum: [-25], x-oapi-codegen-extra-tags: { cbor: '3,keyasint' } }
+        curve: { type: integer, enum: [1], x-oapi-codegen-extra-tags: { cbor: '-1,keyasint' } }
+        x: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '-2,keyasint' } }
+        y: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '-3,keyasint' } }
+    PINRequest:
+      type: object
+      required: [protocol, command]
+      properties:
+        protocol: { $ref: '#/components/schemas/PINProtocol', x-oapi-codegen-extra-tags: { cbor: '1,keyasint' } }
+        command: { $ref: '#/components/schemas/PINCommand', x-oapi-codegen-extra-tags: { cbor: '2,keyasint' } }
+        keyAgreement: { $ref: '#/components/schemas/COSEKey', x-oapi-codegen-extra-tags: { cbor: '3,keyasint,omitempty' } }
+        permissions: { type: integer, enum: [2], x-oapi-codegen-extra-tags: { cbor: '9,keyasint,omitempty' } }
+        permissionsRpId: { type: string, x-oapi-codegen-extra-tags: { cbor: '10,keyasint,omitempty' } }
+    PINResponse:
+      type: object
+      properties:
+        keyAgreement: { $ref: '#/components/schemas/COSEKey', x-oapi-codegen-extra-tags: { cbor: '1,keyasint,omitempty' } }
+        token: { type: string, format: byte, x-oapi-codegen-extra-tags: { cbor: '2,keyasint,omitempty' } }
+
+
+
+
+    ChannelID:
+      type: integer
+      format: int64
+      minimum: 0
+      maximum: 4294967295
+      x-go-type: uint32
+    PacketByte:
+      type: integer
+      minimum: 0
+      maximum: 255
+      x-go-type: uint8
+    PayloadLength:
+      type: integer
+      minimum: 0
+      maximum: 7609
+      x-go-type: uint16
+    InitialFrame:
+      type: object
+      description: Big-endian channel ID, command with initial bit, two-byte payload length, and up to 57 payload bytes in a 64-byte report.
+      required: [channelId, command, payloadLength, payload]
+      properties:
+        channelId: { $ref: '#/components/schemas/ChannelID' }
+        command: { $ref: '#/components/schemas/PacketByte' }
+        payloadLength: { $ref: '#/components/schemas/PayloadLength' }
+        payload: { type: string, format: byte }
+    ContinuationFrame:
+      type: object
+      description: Big-endian channel ID, seven-bit sequence, and up to 59 payload bytes in a 64-byte report.
+      required: [channelId, sequence, payload]
+      properties:
+        channelId: { $ref: '#/components/schemas/ChannelID' }
+        sequence: { type: integer, minimum: 0, maximum: 127, x-go-type: uint8 }
+        payload: { type: string, format: byte }
+    InitializationResponse:
+      type: object
+      description: INIT response containing an eight-byte nonce echo, four-byte allocated channel, and five protocol, firmware and capability bytes.
+      required: [nonce, allocatedChannelId, protocolVersion, majorVersion, minorVersion, buildVersion, capabilities]
+      properties:
+        nonce: { type: string, format: byte }
+        allocatedChannelId: { $ref: '#/components/schemas/ChannelID' }
+        protocolVersion: { $ref: '#/components/schemas/PacketByte' }
+        majorVersion: { $ref: '#/components/schemas/PacketByte' }
+        minorVersion: { $ref: '#/components/schemas/PacketByte' }
+        buildVersion: { $ref: '#/components/schemas/PacketByte' }
+        capabilities: { $ref: '#/components/schemas/PacketByte' }

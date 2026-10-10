@@ -27,9 +27,9 @@ func TestReminderCommands(t *testing.T) {
 	t.Parallel()
 
 	for prefix, operation := range map[string]string{"zones": "reminder-zones",
-		"lists": "reminder-lists", lookupFixturePrefix: reminderCommand, "sync": reminderSyncCommand,
+		"lists": expectedReplayReminderLists, lookupFixturePrefix: reminderCommand, "sync": reminderSyncCommand,
 		"changes": reminderChangesCommand} {
-		paths, err := filepath.Glob("../../../../tests/replay/fixtures/synthetic/http/reminders-" + prefix + "-*.json")
+		paths, err := filepath.Glob(expectedReminderFixturePrefix + prefix + "-*.json")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -40,7 +40,7 @@ func TestReminderCommands(t *testing.T) {
 		}
 
 		if prefix == lookupFixturePrefix {
-			want = 19
+			want = 24
 		}
 
 		if prefix == "sync" {
@@ -48,11 +48,11 @@ func TestReminderCommands(t *testing.T) {
 		}
 
 		if prefix == "changes" {
-			want = 72
+			want = 73
 		}
 
 		if len(paths) != want {
-			t.Fatal("CLI reminder scenario inventory changed")
+			t.Fatal(expectedReplayCLIReminderScenarioInventoryChanged)
 		}
 
 		for _, path := range paths {
@@ -69,7 +69,7 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 
 	var exchanges []replay.Exchange
 
-	decode(t, row["exchanges"], &exchanges)
+	decode(t, row[expectedReplayExchanges], &exchanges)
 
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
@@ -81,8 +81,8 @@ func runReminderCommand(t *testing.T, operation string, row map[string]json.RawM
 		t.Fatal(err)
 	}
 
-	auth := fixtureAuth(t, row["initial_state"])
-	session := filepath.Join(t.TempDir(), "session.json")
+	auth := fixtureAuth(t, row[expectedReplayInitialState])
+	session := filepath.Join(t.TempDir(), expectedReplaySessionJSON)
 
 	//nolint:gosec // Only synthetic credentials are marshaled for the private replay session.
 	encoded, err := json.Marshal(auth)
@@ -131,9 +131,9 @@ func checkReminderCLIOutcome(t *testing.T, operation string, row map[string]json
 		checkReminderCLISyncOutcome(t, row, output, err)
 	case reminderChangesCommand:
 		checkReminderCLIChangesOutcome(t, row, output, err)
-	case "reminders":
+	case expectedReplayReminders:
 		checkReminderCLIQueryOutcome(t, row, output, err)
-	case "reminder-snapshot":
+	case expectedReplayReminderSnapshot:
 		checkReminderCLISnapshotOutcome(t, row, output, err)
 	default:
 		checkReminderCommandOutcome(t, operation, row, output, err)
@@ -158,11 +158,11 @@ func reminderCLIArgs(t *testing.T, operation, session string, row map[string]jso
 		args = append(args, reminderCLIChangesArgs(t, row)...)
 	}
 
-	if operation == "reminders" {
+	if operation == expectedReplayReminders {
 		args = append(args, reminderCLIQueryArgs(t, row)...)
 	}
 
-	if operation == "reminder-snapshot" {
+	if operation == expectedReplayReminderSnapshot {
 		var inputs []string
 
 		decode(t, row["inputs"], &inputs)
@@ -204,13 +204,13 @@ func checkReminderCommandOutcome(t *testing.T, operation string, row map[string]
 
 	decode(t, output, &actual)
 
-	for _, field := range []string{"metadata", "responses"} {
+	for _, field := range []string{expectedReplayMetadata, expectedReplayResponses} {
 		if _, exists := actual[field]; exists {
 			t.Fatal("CLI exposed authentication response metadata")
 		}
 	}
 
-	if operation == "reminder-lists" {
+	if operation == expectedReplayReminderLists {
 		checkReminderCLILists(t, actual["lists"], row["result"])
 
 		return
@@ -221,7 +221,7 @@ func checkReminderCommandOutcome(t *testing.T, operation string, row map[string]
 			t.Fatal("CLI reminder result contains unexpected fields")
 		}
 
-		checkReminderCLIReminder(t, actual["reminder"], row["result"])
+		checkReminderCLIReminder(t, actual[reminderCommand], row["result"])
 
 		return
 	}
@@ -237,7 +237,7 @@ func checkReminderCLIFailure(t *testing.T, row map[string]json.RawMessage, failu
 		sourceError map[string]string
 	)
 
-	decode(t, row["exchanges"], &exchanges)
+	decode(t, row[expectedReplayExchanges], &exchanges)
 	decode(t, row["error"], &sourceError)
 
 	last := exchanges[len(exchanges)-1]
@@ -315,7 +315,7 @@ func checkReminderCLIZones(t *testing.T, actual map[string]json.RawMessage, sour
 	delete(expected, "zones")
 
 	if len(expected) != 0 {
-		checkReminderCLIValue(t, actual["additionalMetadata"], expected)
+		checkReminderCLIValue(t, actual[expectedReplayAdditionalMetadata], expected)
 	}
 }
 
@@ -326,14 +326,16 @@ func projectReminderCLIZone(t *testing.T, zone map[string]json.RawMessage) map[s
 
 	decode(t, zone["zoneID"], &identity)
 
-	result := map[string]json.RawMessage{"name": identity["zoneName"], "owner": identity["ownerRecordName"],
-		"type": identity["zoneType"], "syncToken": zone["syncToken"], "deleted": zone["deleted"]}
+	result := map[string]json.RawMessage{"name": identity[expectedReplayZoneName],
+		"owner": identity[expectedReplayOwnerRecordName],
+		"type":  identity[expectedReplayZoneType], expectedReplaySyncToken: zone[expectedReplaySyncToken],
+		"deleted": zone["deleted"]}
 
-	for _, name := range []string{"zoneName", "ownerRecordName", "zoneType"} {
+	for _, name := range []string{expectedReplayZoneName, expectedReplayOwnerRecordName, expectedReplayZoneType} {
 		delete(identity, name)
 	}
 
-	for _, name := range []string{"zoneID", "syncToken", "deleted"} {
+	for _, name := range []string{"zoneID", expectedReplaySyncToken, "deleted"} {
 		delete(zone, name)
 	}
 
@@ -342,7 +344,7 @@ func projectReminderCLIZone(t *testing.T, zone map[string]json.RawMessage) map[s
 	}
 
 	if len(zone) != 0 {
-		result["additionalMetadata"] = reminderCLIEncode(t, zone)
+		result[expectedReplayAdditionalMetadata] = reminderCLIEncode(t, zone)
 	}
 
 	return result

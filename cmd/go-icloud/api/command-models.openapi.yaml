@@ -1,0 +1,82 @@
+openapi: 3.0.3
+info:
+  title: Command output projections
+  version: 0.1.0
+  description: Safe local CLI output. These models omit passwords, tokens, cookies, bridge bootstrap, provider account data, and response headers.
+paths: {}
+components:
+  schemas:
+    AuthenticationStatusSummary:
+      type: object
+      additionalProperties: false
+      required: [sessionFile, authenticated, trusted, requiresTwoFactor, requiresTwoStep]
+      properties:
+        sessionFile: {type: string}
+        authenticated: {type: boolean}
+        trusted: {type: boolean}
+        requiresTwoFactor: {type: boolean}
+        requiresTwoStep: {type: boolean}
+    ResumeSummary:
+      type: object
+      additionalProperties: false
+      required: [sessionFile, trusted, requiresTwoFactor, requiresTwoStep]
+      properties:
+        sessionFile: {type: string}
+        trusted: {type: boolean}
+        requiresTwoFactor: {type: boolean}
+        requiresTwoStep: {type: boolean}
+    ExportSummary:
+      type: object
+      additionalProperties: false
+      required: [sessionFile]
+      properties:
+        sessionFile: {type: string}
+    LogoutSummary:
+      type: object
+      additionalProperties: false
+      required: [remoteConfirmed, localCleared]
+      properties:
+        remoteConfirmed: {type: boolean}
+        localCleared: {type: boolean}
+    TrustedDevicesSummary:
+      type: object
+      additionalProperties: false
+      required: [sessionFile, deviceIDs]
+      properties:
+        sessionFile: {type: string}
+        deviceIDs:
+          type: array
+          items: {type: string}
+    PhoneChoice:
+      type: object
+      additionalProperties: false
+      description: Visible selection values derived from the SDK challenge; integer and string provider identifiers remain preserved in private state.
+      required: [id, number]
+      properties:
+        id:
+          type: string
+          x-go-name: ID
+        number: {type: string}
+    AuthenticationSummary:
+      type: object
+      additionalProperties: false
+      required: [sessionFile, success, trusted, requiresTwoFactor, requiresTwoStep, codeRequested, deliveryMethod, phoneNumbers, securityKeyNames]
+      properties:
+        sessionFile: {type: string}
+        success: {type: boolean}
+        trusted: {type: boolean}
+        requiresTwoFactor: {type: boolean}
+        requiresTwoStep: {type: boolean}
+        codeRequested: {type: boolean}
+        deliveryMethod:
+          type: string
+          description: Display of the SDK's schema-owned TwoFactorDeliveryMethod value; future SDK values remain visible.
+        deliveryNotice:
+          type: string
+          description: SDK-provided public explanation of the selected authentication delivery route.
+        phoneNumbers:
+          type: array
+          items: {$ref: '#/components/schemas/PhoneChoice'}
+        securityKeyNames:
+          type: array
+          items: {type: string}

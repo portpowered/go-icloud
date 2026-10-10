@@ -157,5 +157,6 @@
       "deleted": false,
       "modified": null
     }
-  ]
+  ],
+  "photos_sync_token": "synthetic-new"
 }

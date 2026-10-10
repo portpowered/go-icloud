@@ -1,0 +1,344 @@
+name: Verify and publish coordinated modules
+
+on:
+  push:
+    tags: ['v*', 'cmd/go-icloud/v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GOWORK: 'off'
+  GOTOOLCHAIN: local
+  GOMAXPROCS: '2'
+  GOFLAGS: '-p=2'
+  GOPROXY: https://proxy.golang.org
+  GOSUMDB: sum.golang.org
+  PUBLIC_MODULE: github.com/portpowered/go-icloud
+  CLI_MODULE: github.com/portpowered/go-icloud/cmd/go-icloud
+
+jobs:
+  release-policy:
+    runs-on: ubuntu-latest
+    outputs:
+      kind: ${{ steps.policy.outputs.kind }}
+      version: ${{ steps.policy.outputs.version }}
+      sdk-version: ${{ steps.policy.outputs.sdk-version }}
+      cli-version: ${{ steps.policy.outputs.cli-version }}
+      cli-sdk-version: ${{ steps.policy.outputs.cli-sdk-version }}
+      commit: ${{ steps.policy.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: false
+      - name: Enforce tag ownership and SDK-before-CLI policy
+        id: policy
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version_pattern='^v(0|1)\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$'
+          commit=$(git rev-parse HEAD)
+          test "$(git rev-parse "refs/tags/${RELEASE_TAG}^{commit}")" = "$commit"
+          test "$(go list -m)" = "$PUBLIC_MODULE"
+          test "$(cd cmd/go-icloud && go list -m)" = "$CLI_MODULE"
+          sdk_required=$(cd cmd/go-icloud && go mod edit -json | jq -er --arg module "$PUBLIC_MODULE" '.Require[] | select(.Path == $module) | .Version')
+          if [[ "$RELEASE_TAG" == cmd/go-icloud/* ]]; then
+            kind=CLI
+            version=${RELEASE_TAG#cmd/go-icloud/}
+            [[ "$version" =~ $version_pattern ]]
+            [[ "$sdk_required" =~ $version_pattern ]]
+            sdk_version=$sdk_required
+            cli_version=$version
+            published=$(gh release view "$sdk_version" --repo "$GITHUB_REPOSITORY" --json isDraft,isPrerelease,tagName)
+            echo "$published" | jq -e --arg tag "$sdk_version" '.tagName == $tag and .isDraft == false'
+            if [[ "$version" != *-* ]]; then
+              [[ "$sdk_version" != *-* ]]
+              echo "$published" | jq -e '.isPrerelease == false'
+            fi
+            # A CLI pin update must not silently include unreleased SDK sources.
+            git diff --exit-code "$sdk_version" HEAD -- go.mod go.sum pkg internal api
+          else
+            kind=SDK
+            version=$RELEASE_TAG
+            [[ "$version" =~ $version_pattern ]]
+            sdk_version=$version
+            # The SDK tag does not publish a nested CLI tag. Verify the exact
+            # candidate CLI commit publicly before publishing the SDK notes.
+            cli_version=$commit
+          fi
+          printf 'kind=%s\nversion=%s\nsdk-version=%s\ncli-version=%s\ncli-sdk-version=%s\ncommit=%s\n' \
+            "$kind" "$version" "$sdk_version" "$cli_version" "$sdk_required" "$commit" >> "$GITHUB_OUTPUT"
+
+  tag-checks:
+    needs: release-policy
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-policy.outputs.commit }}
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read pinned Source reference
+        id: source-reference
+        shell: pwsh
+        run: |
+          $sourcePin = (Get-Content tools/reference/source.json -Raw | ConvertFrom-Json).live
+          if ($sourcePin.url -notmatch '^https://github\.com/([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)\.git$') {
+            throw 'Source reference must name a GitHub repository'
+          }
+          $sourceRepository = $Matches[1]
+          if ($sourcePin.commit -notmatch '^[0-9a-f]{40}$') {
+            throw 'Source reference must use an exact commit'
+          }
+          "repository=$sourceRepository" >> $env:GITHUB_OUTPUT
+          "commit=$($sourcePin.commit)" >> $env:GITHUB_OUTPUT
+      - name: Check out pinned Source protocol definitions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.source-reference.outputs.repository }}
+          ref: ${{ steps.source-reference.outputs.commit }}
+          path: .reference/pyicloud-live
+          persist-credentials: false
+      - name: Prepare pinned bridge protobuf compiler
+        uses: arduino/setup-protoc@f4d5893b897028ff5739576ea0409746887fa536 # v3.0.0
+        with:
+          version: '31.1'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prepare pinned full-check tooling and reference
+        shell: pwsh
+        run: |
+          choco install make --version=4.4.1 --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ((make --version | Select-Object -First 1) -ne 'GNU Make 4.4.1') { throw 'Wrong GNU make version' }
+          go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.14.0
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./setup-reference.ps1
+      - name: Regenerate every schema and protocol without drift
+        shell: pwsh
+        run: |
+          make generate-api generate-proto
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git diff --exit-code
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (git ls-files --others --exclude-standard) { throw 'Generation produced unregistered files' }
+      - name: Run blocking all-enabled lint and complete checks
+        shell: pwsh
+        run: |
+          make check GOLANGCI_LINT=golangci-lint
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Check every public package against the previous stable SDK
+        shell: pwsh
+        env:
+          SDK_VERSION: ${{ needs.release-policy.outputs.sdk-version }}
+        run: |
+          go run ./tools/compatibility -policy release -base previous-release -version "$env:SDK_VERSION" -module "$env:PUBLIC_MODULE" -packages all-public
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-coverage
+          path: |
+            coverage-*.out
+            cmd/go-icloud/coverage-*.out
+          if-no-files-found: error
+
+  portable-modules:
+    needs: release-policy
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      SDK_VERSION: ${{ needs.release-policy.outputs.sdk-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go: [1.25.x, 1.26.x]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-policy.outputs.commit }}
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '${{ matrix.go }}'
+          cache: false
+      - name: Prepare pinned bridge protobuf compiler
+        uses: arduino/setup-protoc@f4d5893b897028ff5739576ea0409746887fa536 # v3.0.0
+        with:
+          version: '31.1'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check all shipping modules and formatting
+        run: go run ./tools/modulecheck
+      - name: Build, vet and replay the SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          go build ./...
+          go vet ./...
+          go test -race ./...
+      - name: Check platform-specific public API compatibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          go run ./tools/compatibility -policy release -base previous-release -version "$SDK_VERSION" -module "$PUBLIC_MODULE" -packages all-public
+      - name: Build, vet and replay the standalone CLI
+        working-directory: cmd/go-icloud
+        shell: bash
+        run: |
+          set -euo pipefail
+          go build ./...
+          go vet ./...
+          go test -race ./...
+
+  public-consumers:
+    needs: release-policy
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      SDK_VERSION: ${{ needs.release-policy.outputs.sdk-version }}
+      CLI_VERSION: ${{ needs.release-policy.outputs.cli-version }}
+      CLI_SDK_VERSION: ${{ needs.release-policy.outputs.cli-sdk-version }}
+    steps:
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.x'
+          cache: false
+      - name: Download SDK and install nested CLI from the public proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          consumer=$(mktemp -d)
+          export GOPATH="$consumer/gopath"
+          export GOMODCACHE="$consumer/modules"
+          export GOCACHE="$consumer/build-cache"
+          export GOBIN="$consumer/bin"
+          mkdir -p "$GOBIN"
+          cd "$consumer"
+          go mod init example.com/icloud-release-consumer
+          sdk_ready=false
+          for attempt in {1..6}; do
+            if go get "${PUBLIC_MODULE}@${SDK_VERSION}"; then sdk_ready=true; break; fi
+            sleep 10
+          done
+          test "$sdk_ready" = true
+          cat > consumer_test.go <<'EOF'
+          package consumer
+          import (
+            "testing"
+            "github.com/portpowered/go-icloud/pkg/icloud"
+            "github.com/portpowered/go-icloud/pkg/photosync"
+            "github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
+          )
+          var _ icloud.Client = (*icloud.SDK)(nil)
+          var _ = icloud.AuthenticateRequest{}
+          var _ = icloud.AddReminderLocationTriggerRequest{}
+          var _ = icloud.UploadPhotoRequest{}
+          var _ = photosync.Request{}
+          var _ = cloudkit.CKRecord{}
+          func TestOfflineConstruction(t *testing.T) {
+            if _, err := icloud.New(); err != nil { t.Fatal(err) }
+          }
+          EOF
+          go test ./...
+          test "$(go list -m -f '{{.Version}}' "$PUBLIC_MODULE")" = "$SDK_VERSION"
+          test -z "$(go list -m -f '{{if .Replace}}replaced{{end}}' all)"
+          cli_ready=false
+          for attempt in {1..6}; do
+            if go install "${CLI_MODULE}@${CLI_VERSION}"; then cli_ready=true; break; fi
+            sleep 10
+          done
+          test "$cli_ready" = true
+          suffix=''
+          if [[ "$RUNNER_OS" == Windows ]]; then suffix='.exe'; fi
+          "$GOBIN/go-icloud$suffix" --help
+          build_info=$(go version -m "$GOBIN/go-icloud$suffix")
+          printf '%s\n' "$build_info"
+          test "$(printf '%s\n' "$build_info" | awk '$1 == "mod" { print $2 }')" = "$CLI_MODULE"
+          test "$(printf '%s\n' "$build_info" | awk -v module="$PUBLIC_MODULE" '$1 == "dep" && $2 == module { print $3 }')" = "$CLI_SDK_VERSION"
+
+  rendered-docs:
+    needs: release-policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-policy.outputs.commit }}
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: false
+      - name: Measure documented public coverage
+        run: |
+          go test -race -coverpkg=./pkg/...,./internal/... -coverprofile=coverage-combined.out ./tests/replay ./pkg/... ./internal/...
+          go run ./tools/coverage -profile coverage-combined.out -min 80 -filtered-profile coverage-public.out
+      - name: Render canonical references and all customer guides
+        uses: portpowered/api-docs-website-github-action@bc213a78372cbe8200ebd442103b454cbcf55966
+        with:
+          openapi: 'api/**/*.openapi.yaml'
+          asyncapi: 'api/**/*.asyncapi.yaml'
+          discover: 'false'
+          guides-directory: docs/guides
+          title: go-icloud
+          base-path: /go-icloud
+          output: site
+          json-media-types: 'plain/text,text/plain;charset=UTF-8,*/*'
+          schema-view: references
+      - name: Add public coverage report and inspect every rendered link
+        run: |
+          mkdir -p site/coverage
+          go tool cover -html=coverage-public.out -o site/coverage/index.html
+          percentage=$(go run ./tools/coverage -profile coverage-combined.out -min 80 -percent-only)
+          printf '{"schemaVersion":1,"label":"coverage","message":"%s%%","color":"brightgreen"}\n' "$percentage" > site/coverage/badge.json
+          go run ./tools/docsite
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-rendered-docs
+          path: site
+          if-no-files-found: error
+
+  publish:
+    needs: [release-policy, tag-checks, portable-modules, public-consumers, rendered-docs]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-policy.outputs.commit }}
+          fetch-depth: 0
+      - name: Publish verified module release notes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_KIND: ${{ needs.release-policy.outputs.kind }}
+          RELEASE_VERSION: ${{ needs.release-policy.outputs.version }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse "refs/tags/${RELEASE_TAG}^{commit}")" = "$(git rev-parse HEAD)"
+          args=("$RELEASE_TAG" --verify-tag --generate-notes --title "go-icloud $RELEASE_KIND $RELEASE_VERSION")
+          if [[ "$RELEASE_VERSION" == *-* ]]; then args+=(--prerelease); fi
+          gh release create "${args[@]}"

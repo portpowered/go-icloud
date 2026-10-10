@@ -1,0 +1,132 @@
+---
+title: Standalone CLI
+description: Authenticate, select account resources, and run typed commands with private receipts.
+---
+
+Install the development CLI containing these commands with Go 1.25 or newer:
+
+```sh
+go install github.com/portpowered/go-icloud/cmd/go-icloud@49e9368f
+go-icloud --help
+```
+
+This published development version pins the public SDK
+`v0.0.0-20261010121958-12f42d499619`. Final conformance and stable SDK/CLI
+releases remain pending. After release, select its explicit CLI version; `@latest`
+may currently resolve to an earlier feature set.
+
+Supply your account through `GO_ICLOUD_ACCOUNT` and your password through
+`GO_ICLOUD_PASSWORD` from your secret store, or pipe it to `--secret-stdin login`.
+Flags precede the command. Native authentication uses a private session file:
+
+```sh
+go-icloud login
+go-icloud auth-status
+go-icloud auth-challenge
+```
+
+The default file is `go-icloud/session.json` in the platform user configuration
+directory. `GO_ICLOUD_SESSION` or `--session` selects another path. Native commands
+persist the complete `NativeAuthState`, including MFA progress and rotated
+credentials. Select IDs from discovery output rather than constructing them.
+
+For SMS, select `--phone-id ID mfa-request`, then use `mfa-verify` with
+`GO_ICLOUD_CODE` or a code piped to `--secret-stdin`. `mfa-existing-code` selects
+a code already displayed on a trusted device; `mfa-bridge` performs its bridge
+lifecycle in one process. `mfa-security-keys` lists local hardware keys and
+`--security-key ID mfa-security-key` selects one. Two-step verification uses
+`mfa-devices`, `--trusted-device ID mfa-send-two-step` and
+`--trusted-device ID mfa-verify-two-step`. Complete the selected route before
+service calls. See [authentication](/docs/guides/authentication).
+
+Applications that own a WebAuthn assertion can use
+`--request private/assertion.json mfa-security-key-assertion` with the generated
+`VerifySecurityKeyRequest`. `--service SERVICE pcs-access` requests explicit
+service consent. `--accept-terms login` records caller authorization to accept
+updated terms; `--china login` selects Mainland China on first login.
+
+Saved-session migration remains available:
+
+```powershell
+go-icloud --reference-state "$env:LOCALAPPDATA/go-icloud/reference" --save-session "$env:LOCALAPPDATA/go-icloud/session.json" resume
+go-icloud --session "$env:LOCALAPPDATA/go-icloud/session.json" account-devices
+go-icloud --session "$env:LOCALAPPDATA/go-icloud/session.json" --album Library photo-assets
+```
+
+Existing Photos flag commands accept `--album`, `--photo` and `--version`.
+Providing `--request` instead selects their complete generated SDK request type,
+including a discovered `library` object:
+
+```sh
+go-icloud photo-albums
+go-icloud --album Library photo-count
+go-icloud --album Library --photo RETURNED_ASSET_ID photo
+go-icloud --request private/libraries.json --save-result private/libraries-result.json photo-libraries
+go-icloud --request private/assets.json --save-result private/assets-result.json photo-assets
+```
+
+The library-discovery request can be `{}`; an asset request can start with
+`{"album":"Library"}`. Copy a returned library from the private discovery receipt
+into `library` to select it. Request fields follow the generated SDK types. The CLI
+overrides `auth` with the full selected session. Malformed JSON, unknown fields,
+duplicate keys, null requests and multiple JSON values are rejected before calls.
+
+| Workflow | Commands |
+| --- | --- |
+| Albums and assets | `photos-status`, `photo-albums`, `photo-count`, `photo-assets`, `photo`, `photo-download` |
+| Libraries and changes | `photo-libraries`, `photo-cursor`, `photo-changes`, `photo-library-changes`, `photos-recently-added` |
+| Stream photos | `photo-assets-visit`, `photos-recently-added-visit` |
+| Legacy shared streams | `shared-photo-albums`, `shared-photo-count`, `shared-photos`, `shared-photo`, `shared-photo-download` |
+| Change albums and photos | `photo-album-create`, `photo-album-rename`, `photo-album-delete`, `photo-album-add`, `photo-favorite`, `photo-delete` |
+| Upload a file | `photo-upload-file`, `photo-upload` |
+| Upload phases | `photo-upload-reserve`, `photo-upload-send`, `photo-upload-register`, `photo-upload-status` |
+| Local synchronization | `photos-sync`, `photos-watch` |
+
+New reads and all writes use `--request private/request.json`. The upload commands
+`photo-upload`, `photo-upload-file` and `photo-upload-send` also require `--file`;
+omit `content` from JSON. Reserve, send and register require `--save-result` for
+their private signed destinations and receipts. Transfer those values using the
+generated phase request types.
+
+```sh
+go-icloud --request private/upload.json --file private/photo.jpg --save-result private/upload-result.json photo-upload
+go-icloud --request private/assets.json --save-result private/visit-result.json photo-assets-visit
+go-icloud --request private/sync.json --save-result private/sync-result.json photos-sync
+go-icloud --request private/watch.json photos-watch
+go-icloud reminder-lists
+go-icloud --list RETURNED_LIST_ID reminders
+go-icloud --request private/reminder.json --save-result private/reminder-result.json reminder-create
+```
+
+Visitors synchronously write one compact JSON object per photo and a terminal
+result. `photos-sync` accepts a generated `photosync.Request`; `photos-watch`
+accepts `PhotosWatchRequest` with `request` and `watch` fields. The selected
+session replaces `request.auth`. See [Photos](/docs/guides/photos).
+
+Reminders writes are `reminder-create`, `reminder-update`, `reminder-delete`,
+`reminder-location-add`, `reminder-hashtag-create`, `reminder-hashtag-update`,
+`reminder-hashtag-delete`, `reminder-recurrence-create`,
+`reminder-recurrence-update`, `reminder-recurrence-delete`,
+`reminder-attachment-create`, `reminder-attachment-update` and
+`reminder-attachment-delete`. Supply complete generated snapshots and revisions
+where required. Creation adds a URL attachment; updates accept URL or image
+metadata. See [Reminders](/docs/guides/reminders).
+
+Find My controls select `--device` from `findmy`, then use `findmy-device`,
+`findmy-sound`, `findmy-message`, `findmy-lost` or `findmy-erase`. Relevant
+options are `--subject`, `--message` and `--phone`; passcodes use
+`GO_ICLOUD_DEVICE_PASSCODE`.
+
+Ordinary JSON output omits credentials, headers, signed resource URLs, change
+cursors and uninterpreted provider fields. `--save-result` explicitly saves the
+complete generated result privately. Downloads return base64, null when
+unavailable and an empty string for available empty bytes.
+`credentials-export --export-session PATH` explicitly copies the saved session.
+`renew` refreshes it, `trust` updates trust, and `logout` terminates the remote
+session and applies returned local credential clearing. `--all-sessions` broadens
+logout; `--keep-trusted` preserves trusted browser registration.
+
+Failures use a nonzero exit code. `--timeout` bounds an operation; interruption
+cancels active work and closes owned sessions. Failed or canceled operations
+preserve an existing private result file. Keep requests, complete receipts,
+downloads and sessions outside ordinary logs and source control.

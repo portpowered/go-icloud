@@ -123,8 +123,101 @@
           ]
         ],
         "body": {
-          "encoding": "base64",
-          "value": "eyJvcGVyYXRpb25zIjogW3sib3BlcmF0aW9uVHlwZSI6ICJ1cGRhdGUiLCAicmVjb3JkIjogeyJyZWNvcmROYW1lIjogIlJlbWluZGVyL3N5bnRoZXRpYy1pdGVtIiwgInJlY29yZFR5cGUiOiAiUmVtaW5kZXIiLCAiZmllbGRzIjogeyJUaXRsZURvY3VtZW50IjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJlSnpqWUJBcTVXQVFZSkRLRitJUHJzd3J5VWd0eVV4V0tNa3N5VW1WRXVCaUFVa0JKY0cwQmlOWWhCRW93aThGcGpXWXBNUzRPSUJ5LzRHQUg2Z096bGFTNFpMaUVyaVNmZXFKZEh2YXdkN1M5NDlqSnJvZUZtTGk0QWRpUmkwZ0RRREl2UndmIn0sICJOb3Rlc0RvY3VtZW50IjogeyJ0eXBlIjogIlNUUklORyIsICJ2YWx1ZSI6ICJlSnpqWUJBcTVXQVFZSkRLRitJUHJzd3J5VWd0eVV4V3lNc3ZTUzJXRXVCaUFVa0JKY0cwQmlOWWhCRW93aThGcGpXWXBNUzRPSUJ5LzRHQUg2Z096bGFTNFpMaUVyaVNmZXFKZEh2YXdkN1M5NDlqSnJvZUZtTGk0QWRpUmkwZ0RRRExTUndtIn0sICJDb21wbGV0ZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAxfSwgIkNvbXBsZXRpb25EYXRlIjogeyJ0eXBlIjogIlRJTUVTVEFNUCIsICJ2YWx1ZSI6IDE2OTk5MjM2MDAwMDB9LCAiUHJpb3JpdHkiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiA1fSwgIkZsYWdnZWQiOiB7InR5cGUiOiAiSU5UNjQiLCAidmFsdWUiOiAxfSwgIkFsbERheSI6IHsidHlwZSI6ICJJTlQ2NCIsICJ2YWx1ZSI6IDF9LCAiTGFzdE1vZGlmaWVkRGF0ZSI6IHsidHlwZSI6ICJUSU1FU1RBTVAiLCAidmFsdWUiOiAxNzAwMDAwMDAwMDAwfSwgIkR1ZURhdGUiOiB7InR5cGUiOiAiVElNRVNUQU1QIiwgInZhbHVlIjogMTcwMDAxMDAwMDAwMH0sICJUaW1lWm9uZSI6IHsidHlwZSI6ICJTVFJJTkciLCAidmFsdWUiOiAiVVRDIn0sICJQYXJlbnRSZW1pbmRlciI6IHsidHlwZSI6ICJSRUZFUkVOQ0UiLCAidmFsdWUiOiB7InJlY29yZE5hbWUiOiAiUmVtaW5kZXIvc3ludGhldGljLXBhcmVudCIsICJhY3Rpb24iOiAiVkFMSURBVEUifX0sICJSZXNvbHV0aW9uVG9rZW5NYXAiOiB7InR5cGUiOiAiU1RSSU5HIiwgInZhbHVlIjogIntcIm1hcFwiOntcInRpdGxlRG9jdW1lbnRcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDEtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwibm90ZXNEb2N1bWVudFwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwMi0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn0sXCJjb21wbGV0ZWRcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDMtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwiY29tcGxldGlvbkRhdGVcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDQtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwicHJpb3JpdHlcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDUtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwiZmxhZ2dlZFwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwNi0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn0sXCJhbGxEYXlcIjp7XCJjb3VudGVyXCI6MSxcIm1vZGlmaWNhdGlvblRpbWVcIjo3MjE2OTI4MDAuMCxcInJlcGxpY2FJRFwiOlwiMDAwMDAwMDctMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAwXCJ9LFwibGFzdE1vZGlmaWVkRGF0ZVwiOntcImNvdW50ZXJcIjoxLFwibW9kaWZpY2F0aW9uVGltZVwiOjcyMTY5MjgwMC4wLFwicmVwbGljYUlEXCI6XCIwMDAwMDAwOC0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDBcIn0sXCJkdWVEYXRlXCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDA5LTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifSxcInRpbWVab25lXCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDBBLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifSxcInBhcmVudFJlbWluZGVyXCI6e1wiY291bnRlclwiOjEsXCJtb2RpZmljYXRpb25UaW1lXCI6NzIxNjkyODAwLjAsXCJyZXBsaWNhSURcIjpcIjAwMDAwMDBCLTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMFwifX19In19LCAicGx1Z2luRmllbGRzIjoge30sICJyZWNvcmRDaGFuZ2VUYWciOiAic3ludGhldGljLW9sZC10YWcifX1dLCAiem9uZUlEIjogeyJ6b25lTmFtZSI6ICJSZW1pbmRlcnMiLCAiem9uZVR5cGUiOiAiUkVHVUxBUl9DVVNUT01fWk9ORSJ9fQ=="
+          "encoding": "json-pattern",
+          "value": {
+            "operations": [
+              {
+                "operationType": "update",
+                "record": {
+                  "recordName": "Reminder/synthetic-item",
+                  "recordType": "Reminder",
+                  "fields": {
+                    "TitleDocument": {
+                      "type": "STRING",
+                      "value": "eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWKMksyUmVEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDIvRwf"
+                    },
+                    "NotesDocument": {
+                      "type": "STRING",
+                      "value": "eJzjYBAq5WAQYJDKF+IPrswryUgtyUxWyMsvSS2WEuBiAUkBJcG0BiNYhBEowi8FpjWYpMS4OIBy/4GAH6gOzlaS4ZLiEriSfeqJdHvawd7S949jJroeFmLi4AdiRi0gDQDLSRwm"
+                    },
+                    "Completed": {
+                      "type": "INT64",
+                      "value": 1
+                    },
+                    "CompletionDate": {
+                      "type": "TIMESTAMP",
+                      "value": 1699923600000
+                    },
+                    "Priority": {
+                      "type": "INT64",
+                      "value": 5
+                    },
+                    "Flagged": {
+                      "type": "INT64",
+                      "value": 1
+                    },
+                    "AllDay": {
+                      "type": "INT64",
+                      "value": 1
+                    },
+                    "LastModifiedDate": {
+                      "type": "TIMESTAMP",
+                      "value": 1700000000000
+                    },
+                    "DueDate": {
+                      "type": "TIMESTAMP",
+                      "value": 1700010000000
+                    },
+                    "TimeZone": {
+                      "type": "STRING",
+                      "value": "UTC"
+                    },
+                    "ParentReminder": {
+                      "type": "REFERENCE",
+                      "value": {
+                        "recordName": "Reminder/synthetic-parent",
+                        "action": "VALIDATE"
+                      }
+                    },
+                    "ResolutionTokenMap": {
+                      "type": "STRING",
+                      "value": "{\"map\":{\"titleDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000001-0000-4000-8000-000000000000\"},\"notesDocument\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000002-0000-4000-8000-000000000000\"},\"completed\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000003-0000-4000-8000-000000000000\"},\"completionDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000004-0000-4000-8000-000000000000\"},\"priority\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000005-0000-4000-8000-000000000000\"},\"flagged\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000006-0000-4000-8000-000000000000\"},\"allDay\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000007-0000-4000-8000-000000000000\"},\"lastModifiedDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000008-0000-4000-8000-000000000000\"},\"dueDate\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"00000009-0000-4000-8000-000000000000\"},\"timeZone\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000A-0000-4000-8000-000000000000\"},\"parentReminder\":{\"counter\":1,\"modificationTime\":721692800.0,\"replicaID\":\"0000000B-0000-4000-8000-000000000000\"}}}"
+                    }
+                  },
+                  "pluginFields": {},
+                  "recordChangeTag": "synthetic-old-tag"
+                }
+              }
+            ],
+            "zoneID": {
+              "zoneName": "Reminders",
+              "zoneType": "REGULAR_CUSTOM_ZONE"
+            }
+          },
+          "matchers": [
+            {
+              "path": [
+                "operations",
+                0,
+                "record",
+                "fields",
+                "TitleDocument",
+                "value"
+              ],
+              "pattern": "base64-zlib-exact"
+            },
+            {
+              "path": [
+                "operations",
+                0,
+                "record",
+                "fields",
+                "NotesDocument",
+                "value"
+              ],
+              "pattern": "base64-zlib-exact"
+            }
+          ]
         }
       },
       "response": {

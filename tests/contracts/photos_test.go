@@ -1,10 +1,11 @@
 package contracts_test
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 func TestPhotoAlbumWireContracts(t *testing.T) {
@@ -16,7 +17,7 @@ func TestPhotoAlbumWireContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 41 {
+	if len(paths) != 42 {
 		t.Fatal("photo album contract inventory changed")
 	}
 
@@ -81,7 +82,8 @@ func TestPhotosInitializationWireContracts(t *testing.T) {
 func TestPhotosGenerationHasNoDrift(t *testing.T) {
 	t.Parallel()
 	verifyGeneration(t, generationArtifact{Schema: "../../api/external/photos.openapi.yaml",
-		Config: "../../internal/photosapi/config.yaml", Output: "../../internal/photosapi/client.gen.go"})
+		Config: "../../pkg/dependencies/webtransport/photosapi/config.yaml",
+		Output: "../../pkg/dependencies/webtransport/photosapi/client.gen.go"})
 }
 
 func validatePhotosInitialization(t *testing.T, document *openapi3.T, path string) {
@@ -135,7 +137,7 @@ func TestPhotoAssetsWireContracts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(paths) != 109 {
+	if len(paths) != 110 {
 		t.Fatal("photo asset contract inventory changed")
 	}
 
@@ -154,4 +156,11 @@ func photoQueryInvalidReply(path string) bool {
 	}
 
 	return false
+}
+
+func TestPhotosMutationsGenerationHasNoDrift(t *testing.T) {
+	t.Parallel()
+	verifyGeneration(t, generationArtifact{Schema: "../../api/external/photos-mutations-models.openapi.yaml",
+		Config: "../../pkg/dependencymodels/photosmutations/config.yaml",
+		Output: "../../pkg/dependencymodels/photosmutations/models.gen.go"})
 }

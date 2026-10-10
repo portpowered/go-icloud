@@ -1,0 +1,16 @@
+{{/* Derived from oapi-codegen v2.8.0, Apache-2.0. Referenced bodies retain their canonical model codecs. */}}
+{{range .}}{{$opid := .OperationId}}
+{{range .Bodies}}
+{{if .IsSupported -}}
+{{$contentType := .ContentType -}}
+{{with .TypeDef $opid}}
+// {{.TypeName}} defines body for {{$opid}} for {{$contentType}} ContentType.
+{{- with .DeprecationComment}}
+//
+{{.}}
+{{- end}}
+type {{.TypeName}} {{if or .IsAlias .Schema.RefType}}={{end}} {{.Schema.TypeDecl}}
+{{end}}
+{{end}}
+{{end}}
+{{end}}

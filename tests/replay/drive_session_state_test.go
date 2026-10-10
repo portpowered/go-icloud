@@ -30,10 +30,12 @@ func TestDriveSessionCookieUpdatesAndDeletion(t *testing.T) {
 		"uppercase-host-deletion": {update: "session=; Path=/; Max-Age=0", next: "other=second", count: 1, explicit: false},
 		"case-insensitive-rotation": {
 			update: "session=new; Domain=DRIVE.EXAMPLE.INVALID; Path=/; Secure; HttpOnly; SameSite=Lax",
-			next:   "session=new; other=second", count: 2, explicit: false},
+			next:   replayLiteralSessionNewOtherSecond, count: 2, explicit: false},
 		"foreign-domain": {update: "session=foreign; Domain=foreign.invalid; Path=/",
-			next: "session=old; other=second", count: 2, explicit: false},
-		"explicit-header": {update: "session=new; Path=/", next: "explicit=fixed", count: 2, explicit: true},
+			next: replayLiteralSessionOldOtherSecond, count: 2, explicit: false},
+		replayLiteralExplicitHeader: {
+			update: "session=new; Path=/", next: replayLiteralExplicitFixed, count: 2, explicit: true,
+		},
 	}
 	for name, testCase := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -57,7 +59,7 @@ func checkDriveSessionCookie(t *testing.T, testCase driveCookieCase) {
 		t.Fatal("deleted or foreign cookie survived the credential snapshot")
 	}
 
-	if testCase.next == "session=new; other=second" {
+	if testCase.next == replayLiteralSessionNewOtherSecond {
 		checkDriveCookieAttributes(t, saved.Cookies[0])
 	}
 
@@ -93,16 +95,16 @@ func openDriveCookieControl(t *testing.T, testCase driveCookieCase) (
 	*icloud.DriveSession, *replay.HTTPTransport, replay.Exchange,
 ) {
 	t.Helper()
-	scenario := readAccountScenario(t, "fixtures/synthetic/http/drive-root-listing-1.json")
+	scenario := readAccountScenario(t, replayDriveRootFixturePath)
 	first := scenario.Exchanges[0]
 	second := scenario.Exchanges[0]
 
 	first.Request.Headers = append([]replay.Pair{}, first.Request.Headers...)
 	second.Request.Headers = append([]replay.Pair{}, second.Request.Headers...)
 
-	initial := "session=old; other=second"
+	initial := replayLiteralSessionOldOtherSecond
 	if testCase.explicit {
-		initial = "explicit=fixed"
+		initial = replayLiteralExplicitFixed
 	}
 
 	first.Request.Headers = append(first.Request.Headers, replay.Pair{nodeCookieHeaderKey, initial})
@@ -181,7 +183,7 @@ func (driveFailingReader) Seek(_ int64, _ int) (int64, error) { return 0, errDri
 
 func TestDriveSessionLocalFailureKeepsPriorResponses(t *testing.T) {
 	t.Parallel()
-	scenario := readAccountScenario(t, "fixtures/synthetic/http/drive-root-listing-1.json")
+	scenario := readAccountScenario(t, replayDriveRootFixturePath)
 
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges[:1])
 	if err != nil {
@@ -215,7 +217,8 @@ func TestDriveSessionLocalFailureKeepsPriorResponses(t *testing.T) {
 	}
 
 	before := session.LastResponses()
-	_, err = root.Upload(t.Context(), icloud.DriveUploadRequest{Content: driveFailingReader{}, Filename: "synthetic.txt",
+	_, err = root.Upload(t.Context(), icloud.DriveUploadRequest{
+		Content: driveFailingReader{}, Filename: replayLiteralSyntheticTxt,
 		CreationTime: nil, ModificationTime: nil})
 
 	var failure *icloud.ClientError

@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Local photo synchronization
+  version: 1.0.0
+  description: Account-scoped offline materialization and manifest projections.
+paths: {}
+components:
+  schemas:
+    LibraryIdentity:
+      type: string
+      description: Built-in library identities; discovered library identifiers remain caller-owned strings.
+      enum: [root, shared]
+      x-enum-varnames: [RootLibrary, LegacySharedLibrary]
+    Options:
+      type: object
+      additionalProperties: false
+      required: [directory, library, albums, size, livePhotoSize, folderStructure, skipVideos, skipLivePhotos, alignRaw, xmpSidecar, setExifDatetime, onlyPrintFilenames, dryRun, autoDelete]
+      properties:
+        directory: {type: string, minLength: 1, description: Destination directory; every local access is confined to its resolved root.}
+        stateDir: {type: string, description: Manifest directory; defaults to .go-icloud-state beneath destination.}
+        library: {type: string, default: root, description: Selected library identity. Legacy shared streams cannot be synchronized.}
+        albums: {type: array, items: {type: string}, description: Display/full names sorted for stable target identity; empty selects all.}
+        size: {type: string, enum: [original, medium, thumb], default: original}
+        livePhotoSize: {type: string, enum: [original, medium, thumb], default: original}
+        folderStructure: {type: string, default: none, description: none or Python strftime date folder pattern.}
+        recent: {type: integer, minimum: 1, maximum: 999999999, description: Include assets added within 1 through 999999999 UTC days.}
+        untilFound: {type: integer, minimum: 1, description: Stop after this many consecutive current resources.}
+        skipVideos: {type: boolean}
+        skipLivePhotos: {type: boolean}
+        alignRaw: {type: string, enum: [as-is, original, alternative], default: as-is}
+        xmpSidecar: {type: boolean}
+        setExifDatetime: {type: boolean}
+        keepIcloudRecentDays: {type: integer, minimum: 0, description: Soft-delete remote assets aged at least this nonnegative number of days only after all selected resources are locally confirmed.}
+        onlyPrintFilenames: {type: boolean}
+        dryRun: {type: boolean}
+        autoDelete: {type: boolean, description: Remove stale tracked local resources after complete enumeration.}
+    Request:
+      type: object
+      additionalProperties: false
+      required: [auth, options]
+      properties:
+        auth: {$ref: './client-models.openapi.yaml#/components/schemas/AuthContext'}
+        options: {$ref: '#/components/schemas/Options'}
+    Resource:
+      type: object
+      additionalProperties: false
+      required: [key, filename]
+      properties:
+        key: {type: string}
+        filename: {type: string}
+        type: {type: string}
+        url: {type: string}
+        size: {type: integer, format: int64, minimum: 0}
+        checksum: {type: string}
+    Asset:
+      type: object
+      additionalProperties: false
+      required: [id, filename, itemType, isLivePhoto, resources]
+      properties:
+        id: {type: string, x-go-name: ID}
+        album: {type: string, description: Selected source album for SDK lookup and download.}
+        library: {$ref: './client-models.openapi.yaml#/components/schemas/PhotoLibrary'}
+        filename: {type: string}
+        itemType: {type: string, enum: [image, movie]}
+        isLivePhoto: {type: boolean}
+        addedAt: {type: string, format: date-time}
+        takenAt: {type: string, format: date-time}
+        metadata: {$ref: './photo-materialize.openapi.yaml#/components/schemas/Metadata'}
+        resources: {type: object, additionalProperties: {$ref: '#/components/schemas/Resource'}}
+    TargetIdentity:
+      type: object
+      additionalProperties: false
+      required: [accountID, library, albums, directory, size, livePhotoSize, folderStructure, skipVideos, skipLivePhotos, alignRaw]
+      properties:
+        accountID: {type: string}
+        library: {type: string}
+        albums: {type: array, items: {type: string}}
+        directory: {type: string}
+        size: {type: string}
+        livePhotoSize: {type: string}
+        folderStructure: {type: string}
+        recent: {type: integer}
+        skipVideos: {type: boolean}
+        skipLivePhotos: {type: boolean}
+        alignRaw: {type: string}
+    SyncedResource:
+      type: object
+      additionalProperties: false
+      required: [assetID, resourceKey, relativePath]
+      properties:
+        assetID: {type: string}
+        resourceKey: {type: string}
+        relativePath: {type: string}
+        size: {type: integer, format: int64, minimum: 0, description: "Original provider resource byte length, retained as remote identity independently of local metadata transformations."}
+        localSize: {type: integer, format: int64, minimum: 0, description: "Materialized file byte length after local metadata transformations. Older manifests omit this field and use provider size for local validation."}
+        checksum: {type: string}
+        downloadedAt: {type: string, format: date-time}
+    Manifest:
+      type: object
+      additionalProperties: false
+      required: [targetKey, resources]
+      properties:
+        targetKey: {type: string, description: "Complete identity of account, selected library, destination and materialization options."}
+        cursor: {type: string}
+        resources: {type: array, items: {$ref: '#/components/schemas/SyncedResource'}}
+    Item:
+      type: object
+      additionalProperties: false
+      required: [assetID, resourceKey, path, action]
+      properties:
+        assetID: {type: string}
+        resourceKey: {type: string}
+        path: {type: string}
+        action: {type: string, enum: [downloaded, skipped, deleted, listed]}
+        reason: {type: string, enum: [unsafe-path, already-current, dry-run, print-only, missing-download-data, keep-icloud-recent-days]}
+    Result:
+      type: object
+      additionalProperties: false
+      required: [directory, statePath, library, albums, shortCircuited, downloadedCount, skippedCount, deletedCount, listedCount, items]
+      properties:
+        directory: {type: string}
+        statePath: {type: string}
+        library: {type: string}
+        albums: {type: array, items: {type: string}}
+        syncCursor: {type: string}
+        shortCircuited: {type: boolean}
+        downloadedCount: {type: integer, minimum: 0}
+        skippedCount: {type: integer, minimum: 0}
+        deletedCount: {type: integer, minimum: 0}
+        listedCount: {type: integer, minimum: 0}
+        items: {type: array, items: {$ref: '#/components/schemas/Item'}}
+    WatchOptions:
+      type: object
+      additionalProperties: false
+      required: [intervalSeconds]
+      properties:
+        intervalSeconds: {type: integer, minimum: 1, maximum: 9223372036, description: Wait 1 through 9223372036 seconds between runs within the native duration range.}
+        iterations: {type: integer, minimum: 1, description: Omit to continue until canceled.}
