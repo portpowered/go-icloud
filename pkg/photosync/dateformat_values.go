@@ -191,6 +191,7 @@ func formatDateInteger(value int, spec string) (string, error) {
 func dateIntegerText(value int, options dateValueSpec) (string, error) {
 	bases := map[string]int{"": dateDecimalBase, "d": dateDecimalBase, "n": dateDecimalBase,
 		"b": dateBinaryBase, "o": dateOctalBase, "x": dateHexBase, "X": dateHexBase}
+
 	base, ok := bases[options.kind]
 	if !ok {
 		if options.kind == "c" && value >= 0 && value <= utf8.MaxRune &&
@@ -248,6 +249,7 @@ func groupDateNumber(text, separator string, base int) string {
 
 func formatDateFloat(value int, options dateValueSpec) (string, error) {
 	kind := options.kind[0]
+
 	number := float64(value)
 	if kind == '%' {
 		number *= dateYearCentury
@@ -288,6 +290,7 @@ func padDateNumber(text string, options dateValueSpec, base int) string {
 
 	prefixLength := dateNumberPrefix(text)
 	prefix, rest := text[:prefixLength], text[prefixLength:]
+
 	suffixIndex := -1
 	if base == dateDecimalBase {
 		suffixIndex = strings.IndexAny(rest, ".eE%")
