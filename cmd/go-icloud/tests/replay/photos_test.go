@@ -149,6 +149,11 @@ func TestPhotoReadCommands(t *testing.T) {
 
 func runPhotoReadScenario(t *testing.T, operation string, row map[string]json.RawMessage) {
 	t.Helper()
+	runPhotoReadInputScenario(t, operation, row, false)
+}
+
+func runPhotoReadInputScenario(t *testing.T, operation string, row map[string]json.RawMessage, typed bool) {
+	t.Helper()
 
 	var exchanges []replay.Exchange
 
@@ -170,6 +175,11 @@ func runPhotoReadScenario(t *testing.T, operation string, row map[string]json.Ra
 
 	writeSyncJSON(t, session, fixtureAuth(t, row[expectedReplayInitialState]))
 	options := photoCLIArgs(t, operation, row)
+	if typed {
+		request := filepath.Join(directory, testRequestJSONFilename)
+		writeSyncJSON(t, request, typedPhotoFixtureInput(t, operation, row))
+		options = []string{expectedRequestOption, request}
+	}
 	args := make([]string, 0, 5+len(options))
 	args = append(args, sessionFlag, session, expectedReplaySaveResult, saved)
 	args = append(args, options...)

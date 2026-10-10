@@ -140,6 +140,51 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 	}
 
 	assertNativeCommandPersistence(t, path, operation, providerFailed, state, encoded)
+	if name == "auth-status-trusted" {
+		assertAuthenticatedCredentialExport(t, client, transport, path)
+	}
+}
+
+func assertAuthenticatedCredentialExport(t *testing.T, client icloud.Client,
+	transport *replay.HTTPTransport, source string,
+) {
+	t.Helper()
+
+	original, err := readReplayFile(t, source)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	destination := filepath.Join(t.TempDir(), "export.json")
+
+	var output, diagnostic bytes.Buffer
+
+	err = command.Run(t.Context(), client,
+		[]string{sessionFlag, source, "--export-session", destination, "credentials-export"}, &output, &diagnostic)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	exported, err := readReplayFile(t, destination)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(exported, original) || diagnostic.Len() != 0 {
+		t.Fatal("authenticated credential export lost private state or emitted diagnostics")
+	}
+
+	var summary map[string]string
+
+	decode(t, output.Bytes(), &summary)
+	if len(summary) != 1 || summary["sessionFile"] != destination {
+		t.Fatal("credential export exposed unexpected output", summary)
+	}
+
+	err = transport.AssertConsumed()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func assertNativeCommandPrivacy(t *testing.T, console string, secrets []string) {
