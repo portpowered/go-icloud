@@ -108,6 +108,7 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 	if trust, exists := session["trust_token"]; exists && result.State.TrustToken != trust {
 		t.Fatal("native authentication lost trust token rotation")
 	}
+
 	assertAuthDiscovery(t, state, &projection)
 	nativeFlowResponses(t, raw, result.Responses)
 }

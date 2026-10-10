@@ -24,6 +24,7 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 			original := nativeFlowBody(t, exchanges[1].Response.Body)
 			var challenge auth.AuthSRPInitResponse
 			authReplayDecode(t, original, &challenge)
+
 			switch control {
 			case "zero server":
 				challenge.B = []byte{0}

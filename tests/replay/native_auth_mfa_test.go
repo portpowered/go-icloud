@@ -14,6 +14,7 @@ import (
 
 func TestNativeMFAReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, name := range []string{"auth-2fa-trusted-device-accepted", "auth-2fa-trusted-device-accepted-conflict",
 		"auth-2fa-trusted-device-refused", "auth-2fa-trusted-device-rejected-conflict",
 		"auth-sms-validate-accepted", "auth-sms-validate-refused", "auth-sms-request", "auth-sms-request-refused",
@@ -79,6 +80,7 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 	switch operation {
 	case "validate_2fa_code":
 		var code string
+
 		authReplayDecode(t, inputs[0], &code)
 
 		result, err = client.VerifyTwoFactorCode(ctx, icloud.VerifyTwoFactorCodeRequest{
@@ -93,12 +95,14 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 			Auth: state.Auth, State: state, Device: nativeFixtureDevice(t, inputs[0])})
 	case "validate_verification_code":
 		var code string
+
 		authReplayDecode(t, inputs[1], &code)
 
 		result, err = client.VerifyTwoStepCode(ctx, icloud.VerifyTwoStepCodeRequest{Auth: state.Auth, State: state,
 			Device: nativeFixtureDevice(t, inputs[0]), Code: code})
 	default:
 		t.Fatalf("unknown native MFA fixture operation %s", operation)
+
 		return nil, errors.ErrUnsupported
 	}
 
@@ -145,6 +149,7 @@ func nativeFixtureMFAState(t *testing.T, raw map[string]json.RawMessage, state *
 		if data.PhoneNumberVerification != nil && data.PhoneNumberVerification.TrustedPhoneNumber != nil {
 			phones = append(phones, *data.PhoneNumberVerification.TrustedPhoneNumber)
 		}
+
 		for _, phone := range phones {
 			state.Challenge.PhoneNumbers = append(state.Challenge.PhoneNumbers, nativeFixturePhone(t, phone))
 		}
@@ -198,6 +203,7 @@ func nativeStatusReplay(t *testing.T, name string) {
 	if !reflect.DeepEqual(actual, expectedFlags) {
 		t.Fatalf("auth status differs: actual %v expected %v", actual, value)
 	}
+
 	nativeAssertState(t, raw, &icloud.NativeAuthResult{State: result.State, TrustedSession: result.TrustedSession,
 		RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep,
 		Responses: result.Responses, Success: result.Authenticated})

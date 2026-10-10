@@ -30,6 +30,7 @@ func TestNativeTermsTrustPreservesSourceDeliveryState(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			nativeAssertState(t, raw, result)
 			expected := authReplayObjectBytes(t, raw["result"])
 			var values []json.RawMessage

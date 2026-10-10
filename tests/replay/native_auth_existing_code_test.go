@@ -31,7 +31,8 @@ func TestNativeExistingTrustedDeviceCodeReplay(t *testing.T) {
 	if err != nil || !bytes.Equal(before, after) {
 		t.Fatal("existing-code selection mutated caller state")
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }

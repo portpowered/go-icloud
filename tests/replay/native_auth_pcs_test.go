@@ -96,6 +96,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 		failure.CookieScopeURL() != final.Request.Origin+final.Request.Path {
 		t.Fatal("account projection failure lost completed PCS response evidence")
 	}
+
 	metadata := append(failure.PriorResponses(), icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
 		Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
 	nativeFlowResponses(t, raw, metadata)
