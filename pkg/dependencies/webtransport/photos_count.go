@@ -181,18 +181,7 @@ func photosCountBody(auth RequestContext, index string) ([]byte, error) {
 		return nil, err
 	}
 
-	originalIdentity, err := referenceJSON(zone)
-	if err != nil {
-		return nil, err
-	}
-
-	orderedIdentity, err := referenceJSONFields(zone, []string{protocol.PhotosCKZoneIDReqZoneName,
-		protocol.PhotosCKZoneIDReqZoneType, protocol.PhotosCKZoneIDReqOwnerRecordName})
-	if err != nil {
-		return nil, err
-	}
-
-	return bytes.ReplaceAll(body, originalIdentity, orderedIdentity), nil
+	return photosOrderedZone(body, zone)
 }
 
 func photosCountRequest(auth RequestContext, body []byte) (*http.Request, error) {

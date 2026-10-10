@@ -121,24 +121,10 @@ func photosRecordsLookupBody(auth RequestContext, names []string) ([]byte, error
 		return nil, fmt.Errorf("encode photo records lookup: %w", err)
 	}
 
-	original, err := referenceJSON(zone)
+	body, err = photosOrderedZone(body, zone)
 	if err != nil {
 		return nil, fmt.Errorf("encode photo records lookup: %w", err)
 	}
-
-	ordered, err := referenceJSONFields(
-		zone,
-		[]string{
-			protocol.PhotosCKZoneIDReqZoneName,
-			protocol.PhotosCKZoneIDReqZoneType,
-			protocol.PhotosCKZoneIDReqOwnerRecordName,
-		},
-	)
-	if err != nil {
-		return nil, fmt.Errorf("encode photo records lookup: %w", err)
-	}
-
-	body = bytes.ReplaceAll(body, original, ordered)
 
 	return body, nil
 }
