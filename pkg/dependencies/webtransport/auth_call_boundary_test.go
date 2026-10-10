@@ -145,9 +145,11 @@ func TestAuthenticationCallRejectsUnknownDynamicTypesBeforeTransport(t *testing.
 			},
 			Body: []byte("arbitrary body"),
 		},
-		"non-https":       webtransport.GetAuthChallengeCall{Origin: "http://accounts.example.test", Params: nil},
-		"origin-path":     webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test/extra", Params: nil},
-		"origin-query":    webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test?extra=value", Params: nil},
+		"non-https":   webtransport.GetAuthChallengeCall{Origin: "http://accounts.example.test", Params: nil},
+		"origin-path": webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test/extra", Params: nil},
+		"origin-query": webtransport.GetAuthChallengeCall{
+			Origin: "https://accounts.example.test?extra=value", Params: nil,
+		},
 		"origin-fragment": webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test#extra", Params: nil},
 		"origin-userinfo": webtransport.GetAuthChallengeCall{Origin: "https://user@accounts.example.test", Params: nil},
 	} {
