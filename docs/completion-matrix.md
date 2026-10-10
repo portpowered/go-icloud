@@ -35,8 +35,8 @@ never ignore fields to accommodate the port (SCHEMA-10, LIB-05).
 ## Integration evidence and remaining blockers
 
 The CLI at `5bd9f0a4` pins the published SDK
-`v0.0.0-20261010102812-620a94af4ab3`, with no local replacement. Final checks
-against this pin remain pending. The SDK includes
+`v0.0.0-20261010102812-620a94af4ab3`, with no local replacement. Final
+complete-library acceptance against this pin remains pending. The SDK includes
 Source-paired fixes for adding a photo to an album without prior membership,
 empty Photos change zones, exact nullable change cursors, and Reminders document
 base64 decoding. Full SDK race/replay tests passed at `bda83e1`, affected schema
@@ -62,8 +62,13 @@ contributed 113/140 to each profile. The public CLI at `7d7d7c41`, pinned to
 SDK `c111`, also passed all three profiles with those same totals. That CI run
 failed only the Source recently-added-count expectation: one case expected 32
 functions after an unrelated global replacement, while the measured value was
-31/128. The `e638` correction passed focused Source checks. These CLI receipts
-require a fresh run against the current SDK pin above. Generated files are excluded; test relocation did not
+31/128. The `e638` correction passed focused Source checks. The complete CLI coverage
+command at runtime snapshot `b3de8aec`, using the
+published SDK `620a94af` and CLI `5bd9f0a4`, then passed with the same totals:
+985/1225 replay (80.4%), 543/1225 unit (44.3%) and 1013/1225 combined (82.7%).
+The command package contributed 872/1085, 430/1085 and 900/1085 respectively;
+saved-login contributed 113/140 to every profile. Its configured thresholds are
+80%/0%/80%; final changes still require their own exact-commit checks. Generated files are excluded; test relocation did not
 change the production denominator.
 
 At the generated Photos baseline `03528225`, SDK replay coverage passed at
@@ -75,10 +80,13 @@ These results exceed the enforced thresholds and remain below the preferred
 90% coverage target. The web transport profiles are 86.5%/36.8%/88.6%, and
 `pkg/icloud` profiles are 83.3%/18.8%/85.0%, in replay/unit/combined order.
 
-The current HTTP corpus contains 1,092 scenarios and 2,467 pairs. Focused Source
-checks for the new Photos and Reminders cases passed. The complete 139-test
-pinned Source suite at `b3de8aec` passed in 372.252 seconds. Fresh final integrated
-SDK/CLI gates and public-pin CLI profiles remain pending. The complete production
+At runtime snapshot `b3de8aec`, the HTTP corpus contained 1,092 scenarios and
+2,467 pairs. Focused Source checks for the new Photos and Reminders cases passed. The complete 139-test
+pinned Source suite at `b3de8aec` passed in 372.252 seconds. The exact `b3de8aec`
+[verification CI](https://github.com/portpowered/go-icloud/actions/runs/38045064715)
+passed every job, including the six supported Go/OS module combinations. The
+complete production gate and fresh checks for subsequent runtime/scenario
+changes remain open. The complete production
 source/model/network audit and its blocking Make/CI integration remain open.
 Focused proof controls passing does not establish actual-source conformance.
 
@@ -96,8 +104,13 @@ request variant/snippet checks. Inspection exposed a response documentation gap:
 known response fields, types, requiredness and alternatives are not presented as
 a schema graph. The renderer repair at `bc213a7` passes focused canonical response SSR controls
 and [blocking action CI](https://github.com/portpowered/api-docs-website-github-action/actions/runs/38046433431).
-It is the current library workflow pin; the final library export remains pending. Response
-discovery remains a template item 4 blocker until that proof; see
+It is the current library workflow pin. The exact `3f0cb80e`
+[documentation CI](https://github.com/portpowered/go-icloud/actions/runs/38046643223)
+and downloaded artifact inspection passed: complete response field graphs,
+requiredness, nullable alternatives and the existing response examples now
+render alongside request graphs, snippets and exact protobuf source. This closes
+the observed rendering omission for that artifact; final independent review,
+deployment and checks after subsequent changes remain open. See
 [the rendered inspection receipt](website.md). Final rendering and remote
 library publication are separate gates.
 

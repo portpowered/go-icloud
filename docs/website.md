@@ -113,3 +113,28 @@ request/response example slots remain. Both library workflows now pin this exact
 repair. The final library artifact must still verify those graphs together with
 the existing examples, snippets, exact payloads and navigation; the earlier
 `7d7d7c41` artifact cannot prove the repaired rendering.
+
+## Response graph artifact receipt at `3f0cb80e`
+
+The exact [documentation run 38046643223](https://github.com/portpowered/go-icloud/actions/runs/38046643223)
+passed with renderer `bc213a7` at library commit
+`3f0cb80e48a331d016e4a37dccb55a026cdf666b`. Its downloaded artifact contains
+100 HTML pages, including all 82 operations, both bridge directions and ten
+customer guides. Inspection excluding script/style content passed all 96 page
+expectations, 7,342 local links/anchors, unique IDs throughout the export and
+both exact canonical protobuf source blocks. The existing request variant and
+representative cURL checks also passed.
+
+Response-only table inspection confirms the repaired contracts: Photos query
+records expose the record/tombstone/error alternatives, a required string
+`serverErrorCode` and nullable `reason`; upload status exposes integer-or-null
+progress/error codes and its typed 429 response; authentication exposes nested
+fields, string/integer `sourceAppId` alternatives, nullable values and the
+default failure model. The existing JSON response examples remain in separate
+code blocks for all three pages. The checks distinguish response graph rows
+from request data and serialized script content.
+
+This receipt verifies the observed response graph omission is repaired in that
+export. It does not award independent standards approval or establish Pages
+deployment. New schemas, scenarios, models or renderer changes still require
+exact-commit checks and a fresh artifact inspection before final acceptance.
