@@ -1,3 +1,4 @@
+//nolint:testpackage // GO-15: verifies the private signed locator constructor and its typed URL failure cause.
 package webtransport
 
 import (
@@ -12,7 +13,9 @@ func TestPhotoUploadLocatorPreservesEscapedSignedTarget(t *testing.T) {
 	t.Parallel()
 
 	const target = "https://upload.example.test/a%2Fb?sig=first&sig=second"
+
 	content := strings.NewReader("abcde")
+
 	_, err := content.Seek(2, io.SeekStart)
 	if err != nil {
 		t.Fatal(err)
@@ -33,6 +36,7 @@ func TestPhotoUploadLocatorPreservesEscapedSignedTarget(t *testing.T) {
 	}
 
 	body, err := io.ReadAll(request.Body)
+
 	closeErr := request.Body.Close()
 	if err != nil || closeErr != nil || string(body) != "cde" {
 		t.Fatalf("upload body changed: body=%q read=%v close=%v", body, err, closeErr)
@@ -54,8 +58,11 @@ func TestPhotoUploadLocatorRejectsUntrustedTarget(t *testing.T) {
 			t.Parallel()
 
 			request, err := photoUploadBytesRequest(target, strings.NewReader("content"))
+
 			var failure *ResponseError
-			if request != nil || !errors.As(err, &failure) || failure.Stage != Configuration || !errors.Is(err, errPhotoContentURL) {
+
+			if request != nil || !errors.As(err, &failure) || failure.Stage != Configuration ||
+				!errors.Is(err, errPhotoContentURL) {
 				t.Fatalf("invalid upload target escaped configuration validation: request=%v error=%v", request, err)
 			}
 
