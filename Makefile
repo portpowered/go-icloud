@@ -45,6 +45,7 @@ endpoint-coverage:
 
 # Pinned generation of all shipping schemas, local configuration and output projections.
 generate-api:
+	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/httpboundary/config.yaml api/external/http-boundary-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config pkg/dependencymodels/photosmutations/config.yaml api/external/photos-mutations-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config cmd/go-icloud/internal/commandmodels/config.yaml cmd/go-icloud/api/command-models.openapi.yaml
 	$(GO) run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0 -config cmd/go-icloud/internal/photosynccommand/config.yaml cmd/go-icloud/api/photo-sync-command.openapi.yaml
