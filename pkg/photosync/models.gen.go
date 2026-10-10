@@ -297,9 +297,14 @@ type SyncedResource struct {
 	AssetID      string     `json:"assetID"`
 	Checksum     *string    `json:"checksum,omitempty"`
 	DownloadedAt *time.Time `json:"downloadedAt,omitempty"`
-	RelativePath string     `json:"relativePath"`
-	ResourceKey  string     `json:"resourceKey"`
-	Size         *int64     `json:"size,omitempty"`
+
+	// LocalSize Materialized file byte length after local metadata transformations. Older manifests omit this field and use provider size for local validation.
+	LocalSize    *int64 `json:"localSize,omitempty"`
+	RelativePath string `json:"relativePath"`
+	ResourceKey  string `json:"resourceKey"`
+
+	// Size Original provider resource byte length, retained as remote identity independently of local metadata transformations.
+	Size *int64 `json:"size,omitempty"`
 }
 
 // TargetIdentity defines model for TargetIdentity.

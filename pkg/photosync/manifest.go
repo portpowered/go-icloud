@@ -48,7 +48,7 @@ func validateManifestResources(resources []SyncedResource) error {
 	for _, resource := range resources {
 		identity := resourceID{asset: resource.AssetID, key: resource.ResourceKey}
 		if seen[identity] || resource.AssetID == "" || resource.ResourceKey == "" || resource.RelativePath == "" ||
-			resource.Size != nil && *resource.Size < 0 {
+			resource.Size != nil && *resource.Size < 0 || resource.LocalSize != nil && *resource.LocalSize < 0 {
 			return errManifest
 		}
 

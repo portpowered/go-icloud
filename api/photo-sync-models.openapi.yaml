@@ -91,7 +91,8 @@ components:
         assetID: {type: string}
         resourceKey: {type: string}
         relativePath: {type: string}
-        size: {type: integer, format: int64, minimum: 0}
+        size: {type: integer, format: int64, minimum: 0, description: "Original provider resource byte length, retained as remote identity independently of local metadata transformations."}
+        localSize: {type: integer, format: int64, minimum: 0, description: "Materialized file byte length after local metadata transformations. Older manifests omit this field and use provider size for local validation."}
         checksum: {type: string}
         downloadedAt: {type: string, format: date-time}
     Manifest:

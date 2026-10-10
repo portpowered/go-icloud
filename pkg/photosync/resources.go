@@ -89,10 +89,23 @@ func (engine *Engine) isCurrent(ctx context.Context, target string, previous *Sy
 		return false
 	}
 
+	if resource.Size != nil && (previous.Size == nil || *resource.Size != *previous.Size) {
+		return false
+	}
+
 	size, err := engine.files.Size(ctx, target)
-	if err != nil || resource.Size != nil && *resource.Size != size {
+	if err != nil || !materializedSizeMatches(*previous, size) {
 		return false
 	}
 
 	return resource.Checksum == nil || previous.Checksum == nil || *resource.Checksum == *previous.Checksum
+}
+
+func materializedSizeMatches(resource SyncedResource, size int64) bool {
+	expected := resource.LocalSize
+	if expected == nil {
+		expected = resource.Size
+	}
+
+	return expected == nil || *expected == size
 }

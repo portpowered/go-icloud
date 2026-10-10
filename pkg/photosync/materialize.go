@@ -43,7 +43,12 @@ func (state *runState) materialize(ctx context.Context, asset Asset, resource Re
 
 		state.consecutive++
 
-		return true, true, relative, state.localMetadata(ctx, target, asset, resource)
+		err = state.localMetadata(ctx, target, asset, resource)
+		if err == nil && !state.preview() {
+			err = state.refreshLocalSize(ctx, target, identity)
+		}
+
+		return true, true, relative, err
 	}
 
 	state.consecutive = 0
@@ -89,8 +94,13 @@ func (state *runState) download(ctx context.Context, asset Asset, resource Resou
 	}
 
 	now := state.engine.now().UTC()
+	localSize, err := state.engine.files.Size(ctx, target)
+	if err != nil {
+		return false, false, relative, fmt.Errorf("measure materialized photo: %w", err)
+	}
+
 	upsertResource(&state.manifest, SyncedResource{AssetID: asset.ID, ResourceKey: resource.Key,
-		RelativePath: relative, Size: resource.Size, Checksum: resource.Checksum, DownloadedAt: &now})
+		RelativePath: relative, Size: resource.Size, LocalSize: &localSize, Checksum: resource.Checksum, DownloadedAt: &now})
 
 	err = state.engine.saveManifest(ctx, state.result.StatePath, state.manifest)
 	if err != nil {
@@ -100,6 +110,22 @@ func (state *runState) download(ctx context.Context, asset Asset, resource Resou
 	state.addItem(asset.ID, resource.Key, relative, Downloaded, nil)
 
 	return true, true, relative, nil
+}
+
+func (state *runState) refreshLocalSize(ctx context.Context, target string, identity resourceID) error {
+	entry := manifestResource(state.manifest, identity)
+	localSize, err := state.engine.files.Size(ctx, target)
+	if err != nil {
+		return fmt.Errorf("measure materialized photo: %w", err)
+	}
+
+	if entry.LocalSize != nil && *entry.LocalSize == localSize {
+		return nil
+	}
+
+	entry.LocalSize = &localSize
+
+	return state.engine.saveManifest(ctx, state.result.StatePath, state.manifest)
 }
 
 func (state *runState) localMetadata(ctx context.Context, target string, asset Asset, resource Resource) error {

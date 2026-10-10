@@ -150,7 +150,7 @@ func (state *runState) shortCircuit(ctx context.Context) bool {
 		}
 
 		size, err := state.engine.files.Size(ctx, path)
-		if err != nil || entry.Size != nil && *entry.Size != size {
+		if err != nil || !materializedSizeMatches(entry, size) {
 			return false
 		}
 	}

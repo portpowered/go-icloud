@@ -47,6 +47,12 @@ Preview runs never create directories, update manifests or delete local or remot
 content. Missing transfer data prevents advancing the cursor and prevents remote
 deletion. Remote retention requires every selected resource to be locally ready.
 Empty, successfully downloaded files remain valid content.
+Manifests retain provider size as remote resource identity and record `localSize`
+after EXIF processing. Restart checks use that materialized size, so adding EXIF
+does not repeatedly download an unchanged original. Older manifests without
+`localSize` retain their provider-size validation until a successful run records
+the materialized length. A changed provider size still requires a new download,
+including when the provider supplies no checksum.
 
 Known metadata can produce an XMP sidecar and fill missing JPEG EXIF timestamps.
 Foreign or malformed sidecars are preserved. Existing EXIF capture timestamps are
