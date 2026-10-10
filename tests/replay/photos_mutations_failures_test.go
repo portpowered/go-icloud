@@ -181,12 +181,15 @@ func TestPhotoAlbumRenameSameNameDoesNotWrite(t *testing.T) {
 	client, transport := newPhotoMutationReplay(t, scenario)
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
+
 	result, err := client.RenamePhotoAlbum(t.Context(), icloud.RenamePhotoAlbumRequest{Auth: auth,
 		AlbumID: photoMutationAlbumID, Name: replayExpectedSynthetic0, Library: nil})
 	if err != nil || result == nil || result.Album.GetOrEmpty().Name != replayExpectedSynthetic0 {
 		t.Fatal("same-name rename failed", err)
 	}
+
 	checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -214,6 +217,7 @@ func runPhotoAlbumTypeControl(t *testing.T, kind icloud.PhotoAlbumType) {
 	body := contractAuthBody(t, last.Request.Body)
 	oldValue := []byte(`"albumType": {"type": "INT64", "value": 0}`)
 	newValue := []byte(fmt.Sprintf(`"albumType": {"type": "INT64", "value": %d}`, kind))
+
 	if bytes.Count(body, oldValue) != 1 {
 		t.Fatal("synthetic type control must replace exactly one album kind")
 	}
@@ -223,6 +227,7 @@ func runPhotoAlbumTypeControl(t *testing.T, kind icloud.PhotoAlbumType) {
 	client, transport := newPhotoMutationReplay(t, scenario)
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
+
 	result, err := client.CreatePhotoAlbum(t.Context(), icloud.CreatePhotoAlbumRequest{Auth: auth,
 		Name: syntheticNewPhotoAlbumName, Folder: true, Library: nil, Type: &kind})
 	if err != nil || result == nil || result.Album.IsNull() {
@@ -242,12 +247,14 @@ func TestPhotoAlbumCreationEntropyFailurePreservesInitialization(t *testing.T) {
 
 	scenario := readAccountScenario(t, replayExpectedAlbumFixturePath)
 	scenario.Exchanges = scenario.Exchanges[:1]
+
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	clockCalled := false
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport),
 		icloud.WithRandomSource(bytes.NewReader(nil)), icloud.WithClock(func() time.Time {
 			clockCalled = true

@@ -29,17 +29,21 @@ func nativeMFAReplay(t *testing.T, name string) {
 	t.Helper()
 	raw, transport, state := nativeFlowFixture(t, name)
 	nativeFixtureMFAState(t, raw, &state)
+
 	before, marshalErr := json.Marshal(state)
 	if marshalErr != nil {
 		t.Fatal(marshalErr)
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := nativeMFAOperation(t, client, raw, state)
 
 	nativeFlowExpectedError(t, raw, err)
+
 	if err == nil {
 		nativeAssertState(t, raw, result)
 		expected := authReplayObjectBytes(t, raw["result"])
@@ -47,17 +51,21 @@ func nativeMFAReplay(t *testing.T, name string) {
 		var accepted bool
 
 		authReplayDecode(t, expected["value"], &accepted)
+
 		if result.Success != accepted {
 			t.Fatal("authentication step acceptance differs")
 		}
 	}
+
 	after, marshalErr := json.Marshal(state)
 	if marshalErr != nil {
 		t.Fatal(marshalErr)
 	}
+
 	if !bytes.Equal(before, after) {
 		t.Fatal("authentication changed caller-owned state")
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -125,37 +133,46 @@ func nativeFixtureDevice(t *testing.T, raw json.RawMessage) icloud.TrustedAuthDe
 	var device auth.AuthTrustedDevice
 
 	authReplayDecode(t, raw, &device)
+
 	if device.Id == nil {
 		t.Fatal("fixture device identity is missing")
 	}
+
 	return icloud.TrustedAuthDevice{ID: *device.Id, Metadata: bytes.Clone(raw)}
 }
 
 func nativeFixtureMFAState(t *testing.T, raw map[string]json.RawMessage, state *icloud.NativeAuthState) {
 	t.Helper()
+
 	initial := authReplayObjectBytes(t, raw["initial_state"])
 	if delivery, exists := initial["delivery_method"]; exists {
 		authReplayDecode(t, delivery, &state.DeliveryMethod)
 	}
+
 	if requested, exists := initial["code_requested"]; exists {
 		authReplayDecode(t, requested, &state.CodeRequested)
 	}
+
 	if required, exists := initial["requires_mfa"]; exists {
 		authReplayDecode(t, required, &state.RequiresMFA)
 	}
+
 	if challenge, exists := initial["auth_data"]; exists {
 		state.Challenge.ProviderData = bytes.Clone(challenge)
 
 		var data auth.AuthChallenge
 
 		authReplayDecode(t, challenge, &data)
+
 		if data.Mode != nil {
 			state.Challenge.Mode = *data.Mode
 		}
+
 		phones := []auth.AuthTrustedPhoneNumber{}
 		if data.TrustedPhoneNumber != nil {
 			phones = append(phones, *data.TrustedPhoneNumber)
 		}
+
 		if data.PhoneNumberVerification != nil && data.PhoneNumberVerification.TrustedPhoneNumber != nil {
 			phones = append(phones, *data.PhoneNumberVerification.TrustedPhoneNumber)
 		}
@@ -168,6 +185,7 @@ func nativeFixtureMFAState(t *testing.T, raw map[string]json.RawMessage, state *
 
 func nativeFixturePhone(t *testing.T, phone auth.AuthTrustedPhoneNumber) icloud.TrustedPhoneNumber {
 	t.Helper()
+
 	encoded, err := json.Marshal(phone.Id)
 	if err != nil {
 		t.Fatal(err)
@@ -176,13 +194,16 @@ func nativeFixturePhone(t *testing.T, phone auth.AuthTrustedPhoneNumber) icloud.
 	var identifier icloud.TrustedPhoneNumberID
 
 	authReplayDecode(t, encoded, &identifier)
+
 	result := icloud.TrustedPhoneNumber{ID: identifier, Number: "", PushMode: "", NonFTEU: phone.NonFTEU}
 	if phone.PushMode != nil {
 		result.PushMode = *phone.PushMode
 	}
+
 	if phone.NumberWithDialCode != nil {
 		result.Number = *phone.NumberWithDialCode
 	}
+
 	return result
 }
 
@@ -198,14 +219,17 @@ func TestNativeAuthenticationStatusReplay(t *testing.T) {
 func nativeStatusReplay(t *testing.T, name string) {
 	t.Helper()
 	raw, transport, state := nativeFlowFixture(t, name)
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := client.GetAuthenticationStatus(t.Context(), icloud.NativeAuthRequest{Auth: state.Auth, State: state})
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	expected := authReplayObjectBytes(t, raw["result"])
 	value := authReplayObjectBytes(t, expected["value"])
 	actual := map[string]bool{"authenticated": result.Authenticated, "trusted_session": result.TrustedSession,
@@ -214,6 +238,7 @@ func nativeStatusReplay(t *testing.T, name string) {
 	var expectedFlags map[string]bool
 
 	authReplayDecode(t, expected["value"], &expectedFlags)
+
 	if !reflect.DeepEqual(actual, expectedFlags) {
 		t.Fatalf("auth status differs: actual %v expected %v", actual, value)
 	}
@@ -221,6 +246,7 @@ func nativeStatusReplay(t *testing.T, name string) {
 	nativeAssertState(t, raw, &icloud.NativeAuthResult{State: result.State, TrustedSession: result.TrustedSession,
 		RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep,
 		Responses: result.Responses, Success: result.Authenticated})
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)

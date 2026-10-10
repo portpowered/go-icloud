@@ -19,19 +19,23 @@ func TestNativeTrustedDevicesReplay(t *testing.T) {
 func nativeDevicesReplay(t *testing.T, name string) {
 	t.Helper()
 	raw, transport, state := nativeFlowFixture(t, name)
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := client.ListTrustedDevices(t.Context(), icloud.NativeAuthRequest{Auth: state.Auth, State: state})
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	expected := authReplayObjectBytes(t, raw["result"])
 
 	var devices []json.RawMessage
 
 	authReplayDecode(t, expected["value"], &devices)
+
 	if len(result.Devices) != len(devices) {
 		t.Fatal("trusted-device count differs")
 	}
@@ -43,6 +47,7 @@ func nativeDevicesReplay(t *testing.T, name string) {
 	}
 
 	nativeFlowResponses(t, raw, result.Responses)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)

@@ -44,6 +44,7 @@ func runPhotoMutationScenario(t *testing.T, name string) {
 	raw := authReplayObject(t, path)
 
 	var operation string
+
 	authReplayDecode(t, raw[replayExpectedOperation], &operation)
 
 	var inputs []json.RawMessage
@@ -72,6 +73,7 @@ func runPhotoMutationScenario(t *testing.T, name string) {
 		if scenario.Exchanges[len(scenario.Exchanges)-1].Response.Status >= 400 {
 			kind = reminderSyncFailureKind(scenario.Exchanges[len(scenario.Exchanges)-1].Response.Status)
 		}
+
 		checkPhotoMutationFailure(t, scenario, prefix, err, kind)
 	} else {
 		if err != nil {
@@ -90,6 +92,7 @@ func checkPhotoMutationAlbum(t *testing.T, album icloud.PhotoAlbum, raw json.Raw
 	t.Helper()
 
 	var expected map[string]json.RawMessage
+
 	authReplayDecode(t, raw, &expected)
 	expected[replayExpectedFullName] = expected[replayExpectedFullname]
 	delete(expected, replayExpectedFullname)
@@ -138,6 +141,7 @@ func discoverPhotoMutationLibrary(t *testing.T, client *icloud.SDK, auth icloud.
 		}
 
 		prefix = discovered.Responses
+
 		for _, candidate := range discovered.Libraries {
 			if candidate.IsSharedLibrary {
 				selected := candidate
@@ -168,6 +172,7 @@ func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 	switch operation {
 	case replayExpectedCreateAlbum:
 		var value string
+
 		authReplayDecode(t, inputs[0], &value)
 		result,
 			callErr := client.CreatePhotoAlbum(t.Context(),
@@ -184,6 +189,7 @@ func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 		}
 	case replayExpectedAlbumRename:
 		var value string
+
 		authReplayDecode(t, inputs[0], &value)
 		result,
 			callErr := client.RenamePhotoAlbum(t.Context(),
@@ -197,6 +203,7 @@ func callPhotoAlbumMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 			metadata = result.Responses
 
 			var expected map[string]json.RawMessage
+
 			authReplayDecode(t, scenario.Result, &expected)
 			checkPhotoMutationAlbum(t, result.Album.GetOrEmpty(), expected["album"])
 		}
@@ -243,6 +250,7 @@ func callPhotoAssetMutation(t *testing.T, client *icloud.SDK, auth icloud.AuthCo
 		}
 	case "photo_favorite":
 		var value bool
+
 		authReplayDecode(t, inputs[1], &value)
 		result,
 			callErr := client.SetPhotoFavorite(t.Context(),
@@ -307,6 +315,7 @@ func newPhotoMutationReplay(t *testing.T, scenario accountScenario) (*icloud.SDK
 
 func requirePhotoMutationAcknowledged(t *testing.T, acknowledged bool) {
 	t.Helper()
+
 	if !acknowledged {
 		t.Fatal("mutation not acknowledged")
 	}

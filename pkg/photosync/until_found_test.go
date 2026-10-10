@@ -45,6 +45,7 @@ func TestUntilFoundPreservesCursorForUnrestrictedRestart(t *testing.T) {
 
 	provider := &untilFoundSource{source: newSource(photo("current", "current.jpg")), trace: []string{}}
 	input := request(t.TempDir())
+
 	first, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)
@@ -55,6 +56,7 @@ func TestUntilFoundPreservesCursorForUnrestrictedRestart(t *testing.T) {
 	provider.cursor = testSecondCursor
 	limit := 1
 	input.Options.UntilFound = &limit
+
 	limited, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)
@@ -66,7 +68,9 @@ func TestUntilFoundPreservesCursorForUnrestrictedRestart(t *testing.T) {
 	}
 
 	checkUntilFoundManifest(t, first.StatePath, testFirstCursor, 2)
+
 	input.Options.UntilFound = nil
+
 	resumed, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)
@@ -78,6 +82,7 @@ func TestUntilFoundPreservesCursorForUnrestrictedRestart(t *testing.T) {
 	}
 
 	checkUntilFoundManifest(t, first.StatePath, testSecondCursor, 3)
+
 	last, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil || !last.ShortCircuited {
 		t.Fatalf("complete scan did not enable restart shortcut: %+v, %v", last, err)

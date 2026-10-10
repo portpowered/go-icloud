@@ -13,6 +13,7 @@ func TestReminderRequiredTimestampsRejectNullAtEndpoint(t *testing.T) {
 		"add-location-trigger"} {
 		t.Run(operation, func(t *testing.T) {
 			t.Parallel()
+
 			path := "../replay/fixtures/synthetic/http/reminders-" + operation + "-success.json"
 			pair := accountExchanges(t, path)[0]
 
@@ -27,6 +28,7 @@ func TestReminderRequiredTimestampsRejectNullAtEndpoint(t *testing.T) {
 			}
 
 			root := recurrenceContractObject(t, value)
+
 			operations, ok := root["operations"].([]any)
 			if !ok || len(operations) == 0 {
 				t.Fatal("timestamp operations absent")

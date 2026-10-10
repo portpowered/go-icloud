@@ -90,6 +90,7 @@ func photoCanceledUploadOperations(client *icloud.SDK) map[string]func(context.C
 		"file": func(ctx context.Context) error {
 			request := new(icloud.UploadPhotoFileRequest)
 			_, err := client.UploadPhotoFile(ctx, *request)
+
 			return err
 		},
 		"upload": func(ctx context.Context) error {
@@ -115,6 +116,7 @@ func TestPhotoUploadWaiterRejectsNil(t *testing.T) {
 
 func TestPhotoUploadClockRejectsNil(t *testing.T) {
 	t.Parallel()
+
 	_, err := icloud.New(icloud.WithPhotoUploadClock(nil))
 
 	var failure *icloud.ClientError

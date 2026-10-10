@@ -70,6 +70,7 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	if err != nil {
 		return nil, err
 	}
+
 	configuration, err := nativeBridgeConfig(options)
 	if err != nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, err)
@@ -85,10 +86,13 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 	if boot.TwoSV == nil || boot.TwoSV.BridgeInitiateData == nil {
 		return nil, newClientError(operation, Configuration, 0, nil, nil, errNativeAuthInput)
 	}
+
 	owner := new(NativeBridgeSession)
 	owner.sdk, owner.state, owner.responses = sdk, progress.state, []ResponseMetadata{}
+
 	connection, err := bridge.Start(ctx, *boot.TwoSV.BridgeInitiateData,
 		owner.bridgeOptions(configuration))
+
 	if err != nil {
 		failure := owner.failure(operation, err)
 		owner.bridgeFallbackNotice(err)
@@ -124,6 +128,7 @@ func (session *NativeBridgeSession) State() (*NativeBridgeSessionState, error) {
 	session.mutex.Lock()
 	state, responses := cloneNativeAuthState(session.state), cloneDriveResponses(session.responses)
 	session.mutex.Unlock()
+
 	transaction := nullable.NewNullNullable[string]()
 	if push.Payload.Txnid != nil {
 		transaction = nullable.NewNullableWithValue(*push.Payload.Txnid)
@@ -159,6 +164,7 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 	session.state.CodeRequested = false
 	state := cloneNativeAuthState(session.state)
 	session.mutex.Unlock()
+
 	if bridgeLegacy(push) {
 		return session.verifyLegacy(ctx, state, request.Code)
 	}
@@ -176,6 +182,7 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 	session.state.RequiresMFA = false
 	state = cloneNativeAuthState(session.state)
 	session.mutex.Unlock()
+
 	result, err := session.sdk.TrustSession(ctx, NativeAuthRequest{Auth: state.Auth, State: state})
 	if err != nil {
 		return nil, session.failure(operation, err)
@@ -207,11 +214,13 @@ func nativeBridgeConfig(options []NativeBridgeOption) (*nativeBridgeConfiguratio
 		if option == nil {
 			return nil, errNativeBridgeOption
 		}
+
 		err := option(configuration)
 		if err != nil {
 			return nil, err
 		}
 	}
+
 	return configuration, nil
 }
 
@@ -226,15 +235,20 @@ func (session *NativeBridgeSession) bridgeOptions(configuration *nativeBridgeCon
 		session.mutex.Lock()
 		state := cloneNativeAuthState(session.state)
 		session.mutex.Unlock()
+
 		input.Origin = nativeIDMSOrigin(state)
+
 		input.UserAgent = requestHeaders(state.Auth.Headers).Get(protocol.AuthHTTPUserAgentName)
+
 		if input.UserAgent == "" {
 			input.UserAgent = protocol.AuthUserAgentValue
 		}
+
 		return bridgewebsocket.Open(ctx, *input)
 	}
 	options.Exchange = session.exchange
 	options.Validate = session.validate
+
 	return *options
 }
 
@@ -244,6 +258,7 @@ func (session *NativeBridgeSession) exchange(ctx context.Context, input bridgeMo
 	session.mutex.Unlock()
 	state, metadata, err := session.sdk.nativeBridgeExchange(ctx, state, input)
 	session.record(state, metadata, err == nil)
+
 	return err
 }
 
@@ -251,10 +266,12 @@ func (session *NativeBridgeSession) validate(ctx context.Context, identifier, co
 	session.mutex.Lock()
 	state := cloneNativeAuthState(session.state)
 	session.mutex.Unlock()
+
 	input := new(auth.AuthBridgeCodeRequest)
 	input.SessionUUID, input.Code = identifier, code
 	state, metadata, status, err := session.sdk.nativeBridgeCode(ctx, state, *input)
 	session.record(state, metadata, err == nil)
+
 	return status != http.StatusPreconditionFailed, err
 }
 
@@ -284,6 +301,7 @@ func (session *NativeBridgeSession) result(success bool) (*NativeAuthResult, err
 	operation := new(nativeAuthOperation)
 	operation.name = "NativeBridgeSession.VerifyCode"
 	operation.state, operation.responses, operation.success = state, responses, success
+
 	return nativeAuthResult(operation)
 }
 
@@ -311,11 +329,13 @@ func (session *NativeBridgeSession) failure(operation string, err error) *Client
 		progress.record(&webtransport.BytesResponse{Status: client.status,
 			CookieScopeURL: client.cookieScopeURL, Headers: requestHeaders(client.headers), Body: nil})
 	}
+
 	session.state = cloneNativeAuthState(progress.state)
 	session.responses = append(session.responses, cloneDriveResponses(progress.responses)...)
 	session.mutex.Unlock()
 
 	client.prior = append(prior, client.prior...)
+
 	return client
 }
 
@@ -375,5 +395,6 @@ func (session *NativeBridgeSession) verifyLegacy(ctx context.Context, state Nati
 	}
 
 	session.recordResult(result)
+
 	return session.result(result.Success)
 }

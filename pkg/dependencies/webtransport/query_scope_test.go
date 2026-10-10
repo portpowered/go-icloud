@@ -21,6 +21,7 @@ func TestDriveTokenQueryScope(t *testing.T) {
 			calls := 0
 			client := webtransport.New(findMyRoundTrip(func(request *http.Request) (*http.Response, error) {
 				calls++
+
 				got := request.URL.Query().Get(protocol.DriveTokenName)
 				if drive && got != auth.DriveToken || !drive && got != "" {
 					t.Fatalf("Drive token escaped operation scope: drive=%v query=%q", drive, request.URL.RawQuery)

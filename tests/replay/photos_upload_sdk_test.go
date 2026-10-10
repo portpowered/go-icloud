@@ -58,12 +58,14 @@ type photoUploadReplay struct {
 
 func TestPhotoUploadSDKPortableScenarios(t *testing.T) {
 	t.Parallel()
+
 	paths, err := filepath.Glob("fixtures/synthetic/http/photos-upload-*.json")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	count := 0
+
 	for _, path := range paths {
 		if strings.Contains(filepath.Base(path), replayLiteralShared) {
 			continue
@@ -86,6 +88,7 @@ func runPhotoUploadSDK(t *testing.T, path string) {
 	t.Helper()
 	row := authReplayObject(t, path)
 	scenario := readAccountScenario(t, path)
+
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {
 		t.Fatal(err)
@@ -95,6 +98,7 @@ func runPhotoUploadSDK(t *testing.T, path string) {
 	authBefore := marshalFindMyRecovery(t, runner.auth)
 	result, callErr := runner.call(t)
 	checkSDKValue(t, runner.auth, authBefore)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -108,6 +112,7 @@ func newPhotoUploadReplay(t *testing.T, row map[string]json.RawMessage,
 	scenario accountScenario, transport *replay.HTTPTransport,
 ) *photoUploadReplay {
 	t.Helper()
+
 	var entropy struct {
 		UUIDs []string `json:"uuid4"`
 		//nolint:tagliatelle // LIB-05: pinned reference fixture spelling.
@@ -121,6 +126,7 @@ func newPhotoUploadReplay(t *testing.T, row map[string]json.RawMessage,
 	}
 
 	random := new(bytes.Buffer)
+
 	for _, identity := range entropy.UUIDs {
 		data, err := hex.DecodeString(strings.ReplaceAll(identity, "-", ""))
 		if err != nil {
@@ -132,11 +138,13 @@ func newPhotoUploadReplay(t *testing.T, row map[string]json.RawMessage,
 
 	start := time.Unix(entropy.Seconds, 0)
 	clock := &photoUploadReplayClock{instant: start, trace: []photoUploadReplayWait{}, expected: entropy.WaitTrace}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(random),
 		icloud.WithClock(func() time.Time { return start }), icloud.WithPhotoUploadClock(func() time.Time {
 			if len(clock.trace) < len(clock.expected) && clock.expected[len(clock.trace)].Kind == replayLiteralMonotonic {
 				clock.instant = start.Add(time.Duration(clock.expected[len(clock.trace)].Value * float64(time.Second)))
 			}
+
 			elapsed := clock.instant.Sub(start).Seconds()
 			clock.trace = append(clock.trace, photoUploadReplayWait{Kind: replayLiteralMonotonic, Value: elapsed})
 
@@ -158,6 +166,7 @@ func newPhotoUploadReplay(t *testing.T, row map[string]json.RawMessage,
 
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
+
 	var initial map[string]json.RawMessage
 
 	authReplayDecode(t, row[replayLiteralInitialState], &initial)
@@ -178,6 +187,7 @@ func (runner *photoUploadReplay) call(t *testing.T) (*photoUploadReplayResult, e
 		}
 
 		authReplayDecode(t, runner.row[replayLiteralKeywordInputs], &keywords)
+
 		result, err := runner.client.ReservePhotoUploads(t.Context(), icloud.ReservePhotoUploadsRequest{
 			Auth: runner.auth, Library: nil, Assets: maps.Clone(keywords.Assets)})
 		if result == nil {
@@ -190,6 +200,7 @@ func (runner *photoUploadReplay) call(t *testing.T) (*photoUploadReplayResult, e
 
 		authReplayDecode(t, runner.row["inputs"], &inputs)
 		_, content, _ := photoUploadContent(t, runner.row)
+
 		result, err := runner.client.SendPhotoUploadBytes(t.Context(), icloud.SendPhotoUploadBytesRequest{
 			Auth: runner.auth, Library: nil, URL: inputs[0], Content: content})
 		if result == nil {
@@ -203,6 +214,7 @@ func (runner *photoUploadReplay) call(t *testing.T) (*photoUploadReplayResult, e
 		var inputs [][]string
 
 		authReplayDecode(t, runner.row["inputs"], &inputs)
+
 		result, err := runner.client.GetPhotoUploadStatus(t.Context(), icloud.GetPhotoUploadStatusRequest{
 			Auth: runner.auth, Library: nil, JobIDs: inputs[0]})
 		if result == nil {
@@ -218,8 +230,10 @@ func (runner *photoUploadReplay) call(t *testing.T) (*photoUploadReplayResult, e
 //nolint:wrapcheck // LIB-05: preserve the SDK failure without changing its identity.
 func (runner *photoUploadReplay) upload(t *testing.T) (*photoUploadReplayResult, error) {
 	t.Helper()
+
 	if runner.scenario.Operation == photoUploadPipelineOperation {
 		request := runner.uploadRequest(t)
+
 		result, err := runner.client.UploadPhotoFile(t.Context(), icloud.UploadPhotoFileRequest{
 			Auth: request.Auth, Content: request.Content, Filename: request.Filename,
 			ImportGroup: request.ImportGroup, Library: request.Library, LocalTimeZoneID: request.LocalTimeZoneID,
@@ -227,10 +241,12 @@ func (runner *photoUploadReplay) upload(t *testing.T) (*photoUploadReplayResult,
 		if result == nil {
 			return nil, err
 		}
+
 		return &photoUploadReplayResult{value: result, responses: result.Responses}, err
 	}
 
 	request := runner.uploadRequest(t)
+
 	result, err := runner.client.UploadPhoto(t.Context(), request)
 	if result == nil {
 		return nil, err
@@ -242,6 +258,7 @@ func (runner *photoUploadReplay) upload(t *testing.T) (*photoUploadReplayResult,
 //nolint:wrapcheck // LIB-05: preserve the exact SDK error for failure-stage assertions.
 func (runner *photoUploadReplay) register(t *testing.T) (*photoUploadReplayResult, error) {
 	t.Helper()
+
 	var keywords struct {
 		Files []struct {
 			Filename string                    `json:"fileName"`
@@ -269,6 +286,7 @@ func (runner *photoUploadReplay) register(t *testing.T) (*photoUploadReplayResul
 	before := marshalFindMyRecovery(t, request)
 	result, err := runner.client.RegisterPhotoUploads(t.Context(), request)
 	checkSDKValue(t, request, before)
+
 	if result == nil {
 		return nil, err
 	}
@@ -278,6 +296,7 @@ func (runner *photoUploadReplay) register(t *testing.T) (*photoUploadReplayResul
 
 func photoUploadContent(t *testing.T, row map[string]json.RawMessage) (string, *bytes.Reader, time.Time) {
 	t.Helper()
+
 	var file struct {
 		Name string `json:"name"`
 		Body string `json:"body"`
@@ -286,6 +305,7 @@ func photoUploadContent(t *testing.T, row map[string]json.RawMessage) (string, *
 	}
 
 	authReplayDecode(t, row["file"], &file)
+
 	data, err := base64.StdEncoding.DecodeString(file.Body)
 	if err != nil {
 		t.Fatal(err)
@@ -296,11 +316,13 @@ func photoUploadContent(t *testing.T, row map[string]json.RawMessage) (string, *
 
 func (runner *photoUploadReplay) uploadRequest(t *testing.T) icloud.UploadPhotoRequest {
 	t.Helper()
+
 	request := new(icloud.UploadPhotoRequest)
 	request.Auth = runner.auth
 	request.Filename, request.Content, request.ModificationTime = photoUploadContent(t, runner.row)
 	request.Hydrate = runner.scenario.Operation == photoUploadServiceOperation
 	request.LocalTimeZoneID = "UTC"
+
 	var entropy, initial, keywords map[string]json.RawMessage
 
 	if raw := runner.row["entropy"]; len(raw) != 0 {
@@ -319,6 +341,7 @@ func (runner *photoUploadReplay) uploadRequest(t *testing.T) icloud.UploadPhotoR
 	request.HydrationTimeout = photoUploadDuration(t, initial["upload_hydration_timeout"])
 	request.HydrationInterval = photoUploadDuration(t, initial["upload_hydration_interval"])
 	authReplayDecode(t, runner.row[replayLiteralKeywordInputs], &keywords)
+
 	if raw := keywords["album"]; len(raw) != 0 {
 		var name string
 
@@ -331,6 +354,7 @@ func (runner *photoUploadReplay) uploadRequest(t *testing.T) icloud.UploadPhotoR
 
 func photoUploadDuration(t *testing.T, raw json.RawMessage) *time.Duration {
 	t.Helper()
+
 	if len(raw) == 0 {
 		return nil
 	}
@@ -345,6 +369,7 @@ func photoUploadDuration(t *testing.T, raw json.RawMessage) *time.Duration {
 
 func (runner *photoUploadReplay) checkEntropyAndWaits(t *testing.T) {
 	t.Helper()
+
 	if runner.entropy.Len() != 0 {
 		t.Fatal("upload did not consume declared identities")
 	}
@@ -366,6 +391,7 @@ func checkPhotoUploadOutcome(t *testing.T, runner *photoUploadReplay,
 	result *photoUploadReplayResult, callErr error,
 ) {
 	t.Helper()
+
 	if len(runner.scenario.Error) != 0 {
 		if result != nil {
 			t.Fatal("upload returned an acknowledgement on failure")
@@ -396,9 +422,11 @@ func checkPhotoUploadOutcome(t *testing.T, runner *photoUploadReplay,
 
 func photoUploadRegistration(t *testing.T, raw json.RawMessage) json.RawMessage {
 	t.Helper()
+
 	var source map[string]json.RawMessage
 
 	authReplayDecode(t, raw, &source)
+
 	for old, field := range map[string]string{
 		"uploadJobId": "jobID", "cplMaster": replayLiteralMasterID, "cplAsset": "photoID",
 	} {
@@ -406,12 +434,15 @@ func photoUploadRegistration(t *testing.T, raw json.RawMessage) json.RawMessage 
 		if len(source[field]) == 0 {
 			source[field] = json.RawMessage(photoUploadNull)
 		}
+
 		delete(source, old)
 	}
 
 	response := source[replayLiteralResponse]
 	delete(source, replayLiteralResponse)
+
 	duplicate := false
+
 	if len(response) != 0 && string(response) != photoUploadNull {
 		var status map[string]json.RawMessage
 
@@ -423,6 +454,7 @@ func photoUploadRegistration(t *testing.T, raw json.RawMessage) json.RawMessage 
 				status[name] = json.RawMessage(photoUploadNull)
 			}
 		}
+
 		delete(status, replayLiteralIsRetryable)
 		source["status"] = marshalFindMyRecovery(t, status)
 		duplicate = string(status["status"]) == "409"
@@ -437,9 +469,11 @@ func photoUploadRegistration(t *testing.T, raw json.RawMessage) json.RawMessage 
 
 func photoUploadRegistrations(t *testing.T, raw json.RawMessage) json.RawMessage {
 	t.Helper()
+
 	var source []json.RawMessage
 
 	authReplayDecode(t, raw, &source)
+
 	for index, item := range source {
 		source[index] = photoUploadRegistration(t, item)
 	}
@@ -449,6 +483,7 @@ func photoUploadRegistrations(t *testing.T, raw json.RawMessage) json.RawMessage
 
 func photoUploadStatuses(t *testing.T, raw json.RawMessage) json.RawMessage {
 	t.Helper()
+
 	var source map[string]struct {
 		Value map[string]json.RawMessage `json:"value"`
 		//nolint:tagliatelle // LIB-05: pinned reference fixture spelling.
@@ -458,6 +493,7 @@ func photoUploadStatuses(t *testing.T, raw json.RawMessage) json.RawMessage {
 	authReplayDecode(t, raw, &source)
 
 	result := make(map[string]map[string]json.RawMessage, len(source))
+
 	for name, item := range source {
 		item.Value["unknown"] = marshalFindMyRecovery(t, item.Unknown)
 		result[name] = item.Value
@@ -468,11 +504,13 @@ func photoUploadStatuses(t *testing.T, raw json.RawMessage) json.RawMessage {
 
 func checkPhotoUploadPipeline(t *testing.T, scenario accountScenario, actual any) {
 	t.Helper()
+
 	if scenario.Operation == photoUploadPipelineOperation {
 		result, ok := actual.(*icloud.UploadPhotoFileResult)
 		if !ok {
 			t.Fatal("pipeline result does not own typed registration")
 		}
+
 		var expected struct {
 			Value json.RawMessage `json:"value"`
 			//nolint:tagliatelle // LIB-05: pinned reference fixture spelling.
@@ -481,12 +519,14 @@ func checkPhotoUploadPipeline(t *testing.T, scenario accountScenario, actual any
 
 		authReplayDecode(t, scenario.Result, &expected)
 		checkSDKValue(t, result.Registration, photoUploadRegistration(t, expected.Value))
+
 		if result.Registration.Duplicate != expected.Duplicate {
 			t.Fatal("pipeline changed Source duplicate or indexing state")
 		}
 
 		return
 	}
+
 	result, ok := actual.(*icloud.UploadPhotoResult)
 	if !ok {
 		t.Fatal("service result does not own typed registration and photo")
@@ -512,6 +552,7 @@ func checkPhotoUploadPipeline(t *testing.T, scenario accountScenario, actual any
 
 func checkPhotoUploadFailure(t *testing.T, scenario accountScenario, callErr error) {
 	t.Helper()
+
 	var failure *icloud.ClientError
 
 	if !errors.As(callErr, &failure) {
@@ -539,6 +580,7 @@ func checkPhotoUploadFailure(t *testing.T, scenario accountScenario, callErr err
 
 	checkSDKMetadata(t, icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
 		Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()}, last)
+
 	lastRequest := scenario.Exchanges[len(scenario.Exchanges)-1].Request
 	if failure.CookieScopeURL() != lastRequest.Origin+lastRequest.Path {
 		t.Fatal("upload failure lost exact cookie scope")
@@ -550,6 +592,7 @@ func checkPhotoUploadFailure(t *testing.T, scenario accountScenario, callErr err
 func checkPhotoUploadResponses(t *testing.T, actual []icloud.ResponseMetadata, exchanges []replay.Exchange) {
 	t.Helper()
 	checkReminderSyncResponses(t, actual, exchanges)
+
 	for index, response := range actual {
 		request := exchanges[index].Request
 		if response.CookieScopeURL != request.Origin+request.Path {
@@ -562,6 +605,7 @@ func checkPhotoUploadServiceRegistration(t *testing.T,
 	scenario accountScenario, actual icloud.PhotoUploadRegistration,
 ) {
 	t.Helper()
+
 	for _, exchange := range scenario.Exchanges {
 		if exchange.Request.Path != protocol.PhotosUploadPhotosPutAssetPath {
 			continue
@@ -570,6 +614,7 @@ func checkPhotoUploadServiceRegistration(t *testing.T,
 		var rows []json.RawMessage
 
 		authReplayDecode(t, contractAuthBody(t, exchange.Response.Body), &rows)
+
 		if len(rows) != 1 {
 			t.Fatal("successful service upload did not own one registration")
 		}

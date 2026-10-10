@@ -72,7 +72,9 @@ func initialNativeAuthState(request AuthenticateRequest) NativeAuthState {
 	}
 
 	state.AccountName = request.AccountName
+
 	state.AcceptTerms = request.AcceptTerms
+
 	if state.Auth.SetupServiceURL == "" {
 		state.Auth.SetupServiceURL = protocol.AuthAccountServer0
 		if state.Auth.ChinaMainland != nil && *state.Auth.ChinaMainland {

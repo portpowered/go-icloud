@@ -27,6 +27,7 @@ type nativeLogoutCancelTransport struct {
 
 func (transport nativeLogoutCancelTransport) RoundTrip(request *http.Request) (*http.Response, error) {
 	transport.cancel()
+
 	return nil, fmt.Errorf("synthetic logout cancellation: %w", request.Context().Err())
 }
 
@@ -42,6 +43,7 @@ func TestNativeLogoutCancellation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := client.Logout(ctx, icloud.LogoutRequest{Auth: state.Auth, State: state, KeepTrusted: false,
 		AllSessions: false, PreserveLocalSession: false})
 
@@ -64,14 +66,17 @@ func nativeLogoutReplay(t *testing.T, name string) {
 	preserve, exists := keywords["clear_local_session"]
 	request := icloud.LogoutRequest{Auth: state.Auth, State: state, KeepTrusted: keywords["keep_trusted"],
 		AllSessions: keywords["all_sessions"], PreserveLocalSession: exists && !preserve}
+
 	before, err := json.Marshal(request)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := client.Logout(t.Context(), request)
 	if err != nil {
 		t.Fatal(err)
@@ -83,11 +88,13 @@ func nativeLogoutReplay(t *testing.T, name string) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if string(before) != string(after) {
 		t.Fatal("logout mutated caller state")
 	}
 
 	nativeFlowResponses(t, raw, result.Responses)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -106,9 +113,11 @@ func assertNativeLogoutResult(t *testing.T, raw map[string]json.RawMessage, stat
 
 	authReplayDecode(t, value["remote_logout_confirmed"], &confirmed)
 	authReplayDecode(t, value["local_session_cleared"], &cleared)
+
 	if result.RemoteConfirmed != confirmed || result.LocalCleared != cleared {
 		t.Fatal("logout confirmation mismatch")
 	}
+
 	if cleared {
 		assertNativeLogoutCredentials(t, result.State)
 		assertNativeLogoutProgress(t, result.State)
@@ -124,6 +133,7 @@ func assertNativeLogoutCredentials(t *testing.T, state icloud.NativeAuthState) {
 		state.TrustToken != "" {
 		t.Fatal("logout retained authentication-derived credentials")
 	}
+
 	services := []string{state.Auth.PhotosServiceURL, state.Auth.DriveServiceURL, state.Auth.FindMyServiceURL,
 		state.Auth.AccountServiceURL, state.Auth.RemindersServiceURL, state.Auth.DriveDocumentServiceURL}
 

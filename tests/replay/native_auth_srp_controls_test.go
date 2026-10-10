@@ -43,24 +43,31 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 			case nativeSRPProtocolControl:
 				challenge.Protocol = auth.AuthSRPProtocol(replayExpectedUnsupported)
 			}
+
 			body, err := json.Marshal(challenge)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			encoded, err := json.Marshal(base64.StdEncoding.EncodeToString(body))
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			exchanges[1].Response.Body.Value = encoded
+
 			transport, err := replay.NewHTTPTransport(exchanges)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			random := nativeFixtureEntropy(t, raw)
+
 			client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(bytes.NewReader(random)))
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			initial := authReplayObjectBytes(t, raw["initial_state"])
 
 			var password string
@@ -78,6 +85,7 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 				len(failure.PriorResponses()) != 1 {
 				t.Fatal("invalid SRP challenge lost typed error or response evidence")
 			}
+
 			err = transport.AssertConsumed()
 			if err != nil {
 				t.Fatal(err)
@@ -94,14 +102,17 @@ func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) 
 
 	authReplayDecode(t, raw["exchanges"], &exchanges)
 	exchanges[1].Response.Status = 503
+
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	_, err = client.Authenticate(t.Context(), icloud.AuthenticateRequest{Auth: state.Auth,
 		AccountName: state.AccountName, Password: "", TrustToken: state.TrustToken,
 		AccountCountryCode: state.AccountCountryCode, SavedState: &state, ForceRefresh: false,
@@ -112,6 +123,7 @@ func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) 
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Unauthorized {
 		t.Fatal("missing credentials after rejected saved session lost terminal classification")
 	}
+
 	prior := failure.PriorResponses()
 	if len(prior) != len(exchanges) {
 		t.Fatal("missing credentials discarded rejected saved-session evidence")
@@ -123,6 +135,7 @@ func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) 
 			t.Fatal("saved-session failure evidence changed status or headers")
 		}
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -136,6 +149,7 @@ func nativeFixtureEntropy(t *testing.T, raw map[string]json.RawMessage) []byte {
 	var randomBytes []string
 
 	authReplayDecode(t, entropy["random_bytes"], &randomBytes)
+
 	result := []byte{}
 
 	for _, value := range randomBytes {

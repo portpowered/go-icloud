@@ -31,23 +31,29 @@ func expandPublicPackages(root, baseline string, configured []string) ([]string,
 			if errors.Is(walkErr, fs.ErrNotExist) {
 				return nil
 			}
+
 			if walkErr != nil {
 				return walkErr
 			}
+
 			if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".go") || strings.HasSuffix(entry.Name(), "_test.go") {
 				return nil
 			}
+
 			relative, err := filepath.Rel(tree, filepath.Dir(path))
 			if err != nil {
 				return newGateError("resolve public package path", err)
 			}
+
 			packages[filepath.ToSlash(relative)] = true
+
 			return nil
 		})
 		if err != nil {
 			return nil, newGateError("inventory public packages", err)
 		}
 	}
+
 	if len(packages) == 0 {
 		return nil, newGateError("public package inventory is empty", nil)
 	}
@@ -68,6 +74,7 @@ func publicPackagePresence(current, baseline, path string) (publicPackageStatus,
 	if err != nil {
 		return publicPackagePresent, err
 	}
+
 	oldExists, err := publicPackageExists(filepath.Join(baseline, path))
 	if err != nil {
 		return publicPackagePresent, err
@@ -90,6 +97,7 @@ func publicPackageExists(path string) (bool, error) {
 	if errors.Is(err, fs.ErrNotExist) {
 		return false, nil
 	}
+
 	if err != nil {
 		return false, newGateError("read public package", err)
 	}
@@ -99,5 +107,6 @@ func publicPackageExists(path string) (bool, error) {
 			return true, nil
 		}
 	}
+
 	return false, nil
 }

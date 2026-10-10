@@ -16,6 +16,7 @@ const chunkedHeader = "transfer-encoding"
 func chunkedExchange() replay.Exchange {
 	exchange := sampleExchange()
 	exchange.Request.Headers[1] = replay.Pair{chunkedHeader, chunkedEncoding}
+
 	return exchange
 }
 
@@ -24,6 +25,7 @@ func chunkedRequest(t *testing.T) *http.Request {
 	request := sampleRequest(t)
 	request.ContentLength = -1
 	request.TransferEncoding = []string{chunkedEncoding}
+
 	return request
 }
 
@@ -33,19 +35,24 @@ func TestDeclaredChunkedReplay(t *testing.T) {
 	for _, empty := range []bool{false, true} {
 		t.Run(stringName(empty), func(t *testing.T) {
 			t.Parallel()
+
 			exchange := chunkedExchange()
 			request := chunkedRequest(t)
+
 			if empty {
 				exchange.Request.Body.Value = json.RawMessage(`""`)
 				request.Body = io.NopCloser(bytes.NewReader(nil))
 			}
+
 			transport := newTransport(t, exchange)
+
 			response, err := transport.RoundTrip(request)
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			consumeResponse(t, response)
+
 			err = transport.AssertConsumed()
 			if err != nil {
 				t.Fatal(err)
@@ -58,11 +65,13 @@ func stringName(empty bool) string {
 	if empty {
 		return "empty"
 	}
+
 	return "binary"
 }
 
 func TestDeclaredChunkedRejectsChangedFraming(t *testing.T) {
 	t.Parallel()
+
 	changes := map[string]func(*http.Request){
 		"missing":                 func(request *http.Request) { request.TransferEncoding = nil },
 		replayExpectedUnsupported: func(request *http.Request) { request.TransferEncoding = []string{"gzip"} },
@@ -83,6 +92,7 @@ func TestDeclaredChunkedRejectsChangedFraming(t *testing.T) {
 			request := chunkedRequest(t)
 			change(request)
 			assertRejected(t, transport, request)
+
 			if !errors.Is(transport.AssertConsumed(), replay.ErrMismatch) {
 				t.Fatal("caught framing rejection was forgotten")
 			}
@@ -100,6 +110,7 @@ func TestInvalidChunkedDeclarationsFailBeforeTraffic(t *testing.T) {
 	} {
 		exchange := chunkedExchange()
 		exchange.Request.Headers = headers
+
 		_, err := replay.NewHTTPTransport([]replay.Exchange{exchange})
 		if !errors.Is(err, replay.ErrFixture) {
 			t.Fatal("invalid framing declaration was accepted", err)

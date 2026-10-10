@@ -31,6 +31,7 @@ func (sdk *SDK) beginPhotosRead(
 	if err != nil {
 		return nil, driveContextFailure(operation, err)
 	}
+
 	library := selectedPhotoLibrary(libraries)
 
 	boundary, err := photosRequestContext(auth, library)
@@ -184,5 +185,6 @@ func selectedPhotoLibrary(libraries []*PhotoLibrary) *PhotoLibrary {
 	if len(libraries) == 0 {
 		return nil
 	}
+
 	return libraries[0]
 }

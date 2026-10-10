@@ -44,6 +44,7 @@ func TestPinnedSourceSDKMaterializationReplay(t *testing.T) {
 
 	recording := new(materializationRecording)
 	authReplayDecode(t, data, recording)
+
 	if len(recording.Provenance) == 0 || len(recording.Cases) == 0 {
 		t.Fatal("pinned Source materialization pairs are absent")
 	}
@@ -61,6 +62,7 @@ func replaySDKMaterialization(t *testing.T, variant materializationCase, targetI
 	t.Helper()
 
 	exchanges, auth := materializationTraffic(t, variant)
+
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
 		t.Fatal(err)
@@ -73,6 +75,7 @@ func replaySDKMaterialization(t *testing.T, variant materializationCase, targetI
 
 	session := new(icloud.ResumeSessionResult)
 	session.Auth, session.Responses = auth, []icloud.ResponseMetadata{}
+
 	provider, err := photosync.NewSDKSource(t.Context(), client, *session, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -111,6 +114,7 @@ func replaySDKMaterialization(t *testing.T, variant materializationCase, targetI
 	}
 
 	checkReminderSyncResponses(t, snapshot.Responses, exchanges)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -123,6 +127,7 @@ func materializationTraffic(t *testing.T, variant materializationCase) ([]replay
 	cursor := readAccountScenario(t, "fixtures/synthetic/http/photos-sync-cached.json")
 	assets := readAccountScenario(t, "fixtures/synthetic/http/photos-assets-1.json")
 	download := readAccountScenario(t, "fixtures/synthetic/http/photos-download-binary.json")
+
 	input, err := hex.DecodeString(variant.InputHex)
 	if err != nil {
 		t.Fatal(err)
@@ -165,6 +170,7 @@ func assertMaterializationResult(t *testing.T, input photosync.Request, actual *
 	item := photosync.Item{AssetID: "synthetic-asset-0", ResourceKey: "original", Path: materializedPhotoPath,
 		Action: photosync.Downloaded, Reason: nil}
 	want.DownloadedCount = 1
+
 	if repeated {
 		reason := photosync.AlreadyCurrent
 		item.Action, item.Reason = photosync.Skipped, &reason
@@ -202,9 +208,11 @@ func assertMaterializationManifest(t *testing.T, directory, key string, variant 
 
 	manifest := new(photosync.Manifest)
 	authReplayDecode(t, data, manifest)
+
 	providerSize, localSize := int64(len(variant.InputHex)/2), int64(len(variant.OutputHex)/2)
 	downloaded := time.Date(2026, time.April, 10, 0, 0, 0, 0, time.UTC)
 	cursor := "synthetic-sync"
+
 	want := photosync.Manifest{TargetKey: key, Cursor: &cursor,
 		Resources: []photosync.SyncedResource{{AssetID: "synthetic-asset-0", ResourceKey: "original",
 			RelativePath: materializedPhotoPath, Size: &providerSize, LocalSize: &localSize,
@@ -230,6 +238,7 @@ func materializationTargetKey(t *testing.T, identity json.RawMessage, directory 
 	}
 
 	relocated := bytes.ReplaceAll(identity, placeholder, encoded)
+
 	var canonical bytes.Buffer
 
 	err = json.Compact(&canonical, relocated)

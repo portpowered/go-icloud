@@ -29,6 +29,7 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 
 			fields := hashtagContractFields(t, hashtagContractOperations(t, hashtagContractObject(t, value))[0])
 			wrapper := hashtagContractObject(t, fields["ResolutionTokenMap"])
+
 			text, ok := wrapper[reminderWriteValue].(string)
 			if !ok {
 				t.Fatal("encoded token string absent")
@@ -42,6 +43,7 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 			}
 
 			schema := models.Components.Schemas[component].Value
+
 			err = schema.VisitJSON(decoded)
 			if err != nil {
 				t.Fatal(err)
@@ -49,6 +51,7 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 
 			inner := hashtagContractObject(t, hashtagContractObject(t, decoded)[reminderContractTokenMap])
 			inner["unexpectedToken"] = true
+
 			if schema.VisitJSON(decoded) == nil {
 				t.Fatal("unknown embedded token key accepted")
 			}

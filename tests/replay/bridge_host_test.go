@@ -52,6 +52,7 @@ func TestBridgeHostSourcePairs(t *testing.T) {
 			if host != scenario.Host || (hostError != nil) != scenario.Error {
 				t.Fatalf("host = %q, error = %v; Source host = %q, error = %t", host, hostError, scenario.Host, scenario.Error)
 			}
+
 			if scenario.ErrorType == replayExpectedSourceValueError {
 				if hostError == nil || !strings.HasSuffix(hostError.Error(), scenario.ErrorMessage) ||
 					errors.Unwrap(hostError) == nil {

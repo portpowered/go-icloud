@@ -29,6 +29,7 @@ func TestPhotoSyncFailedWriteCannotPersistOrDelete(t *testing.T) {
 	input.Options.KeepIcloudRecentDays = &days
 
 	files := failingPhotoFiles{OSFileSystem: photosync.OSFileSystem{}}
+
 	engine, err := photosync.New(provider, photosync.Configuration{Files: files, Now: nil, Wait: nil})
 	if err != nil {
 		t.Fatal(err)
@@ -76,6 +77,7 @@ func TestPhotoSyncSidecarCannotFollowOutsideDestination(t *testing.T) {
 
 	outside := filepath.Join(t.TempDir(), "outside.xmp")
 	files := escapingSidecarFiles{OSFileSystem: photosync.OSFileSystem{}, outside: outside}
+
 	engine, err := photosync.New(provider, photosync.Configuration{Files: files, Now: nil, Wait: nil})
 	if err != nil {
 		t.Fatal(err)
@@ -100,6 +102,7 @@ func TestPhotoSyncBoundedWatchDoesNotWaitAfterFinalRun(t *testing.T) {
 
 	provider := newSource(photo("asset-1", testPhotoFilename))
 	waits := 0
+
 	engine, err := photosync.New(provider, photosync.Configuration{Files: photosync.OSFileSystem{}, Now: nil,
 		Wait: func(context.Context, time.Duration) error {
 			waits++
@@ -111,6 +114,7 @@ func TestPhotoSyncBoundedWatchDoesNotWaitAfterFinalRun(t *testing.T) {
 	}
 
 	iterations, yields := 2, 0
+
 	err = engine.Watch(t.Context(), request(t.TempDir()),
 		photosync.WatchOptions{IntervalSeconds: 1, Iterations: &iterations},
 		func(photosync.Result) error {
@@ -118,6 +122,7 @@ func TestPhotoSyncBoundedWatchDoesNotWaitAfterFinalRun(t *testing.T) {
 
 			return nil
 		})
+
 	if err != nil || waits != 1 || yields != 2 {
 		t.Fatalf("bounded watch: waits=%d yields=%d error=%v", waits, yields, err)
 	}
@@ -130,6 +135,7 @@ func TestPhotoSyncRetentionDoesNotOverflowLargeDayIntervals(t *testing.T) {
 	input := request(t.TempDir())
 	days := 999999999
 	input.Options.KeepIcloudRecentDays = &days
+
 	result, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)
@@ -161,6 +167,7 @@ func TestPhotoSyncCollisionUsesSourceUnicodeCodePoints(t *testing.T) {
 	provider := newSource(photo("first", testSameFilename), photo("photo-\u76f8\u518c\u7f16\u53f7αβγδε", testSameFilename))
 	input := request(t.TempDir())
 	input.Options.OnlyPrintFilenames = true
+
 	result, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)

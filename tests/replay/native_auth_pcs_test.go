@@ -36,9 +36,12 @@ func nativePCSReplay(t *testing.T, name string) {
 		if duration != 5*time.Second {
 			t.Fatalf("unexpected PCS interval %s", duration)
 		}
+
 		waits++
+
 		return ctx.Err()
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithAuthenticationWait(wait))
 	if err != nil {
 		t.Fatal(err)
@@ -50,16 +53,19 @@ func nativePCSReplay(t *testing.T, name string) {
 	request := icloud.RequestPCSAccessRequest{Auth: state.Auth, State: state, Service: inputs[0]}
 	result, err := client.RequestPCSAccess(t.Context(), request)
 	nativeFlowExpectedError(t, raw, err)
+
 	if err == nil {
 		if !result.Success {
 			t.Fatal("completed Source PCS operation was not successful")
 		}
+
 		if !reflect.DeepEqual(accountJSON(t, result.State.AccountData), accountJSON(t, state.AccountData)) {
 			t.Fatal("PCS changed account discovery")
 		}
 
 		nativeFlowResponses(t, raw, result.Responses)
 	}
+
 	expected := map[string]int{
 		nativePCSLaterConsentFixture: 1, nativePCSLaterCookiesFixture: 1, nativePCSExhaustedFixture: 10,
 		nativePCSFalseConsentFixture: 1, nativePCSNullConsentFixture: 1,
@@ -67,6 +73,7 @@ func nativePCSReplay(t *testing.T, name string) {
 	if waits != expected[name] {
 		t.Fatalf("wait count %d, expected %d", waits, expected[name])
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -83,6 +90,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	_, err = client.RequestPCSAccess(t.Context(), icloud.RequestPCSAccessRequest{
 		Auth: state.Auth, State: state, Service: protocol.AuthWebServicesPhotos})
 
@@ -95,6 +103,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	var exchanges []replay.Exchange
 
 	authReplayDecode(t, raw["exchanges"], &exchanges)
+
 	final := exchanges[len(exchanges)-1]
 	if failure.StatusCode() != final.Response.Status ||
 		!reflect.DeepEqual(failure.ResponseBody(), nativeFlowBody(t, final.Response.Body)) ||
@@ -105,6 +114,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	metadata := append(failure.PriorResponses(), icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
 		Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
 	nativeFlowResponses(t, raw, metadata)
+
 	bodyCopy, headersCopy := failure.ResponseBody(), failure.ResponseHeaders()
 	bodyCopy[0] ^= 1
 	headersCopy[0].Value = nativeMutationProbe
@@ -113,6 +123,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 		!reflect.DeepEqual(failure.ResponseHeaders(), metadata[len(metadata)-1].Headers) {
 		t.Fatal("account projection failure exposes mutable response evidence")
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -129,14 +140,17 @@ func nativeFlowFixture(t *testing.T, name string) (
 	var exchanges []replay.Exchange
 
 	authReplayDecode(t, raw["exchanges"], &exchanges)
+
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	initial := authReplayObjectBytes(t, raw["initial_state"])
 	adapted := maps.Clone(raw)
 	adapted["keyword_inputs"] = json.RawMessage(`{}`)
 	resume := authReplayRequest(t, adapted)
+
 	country := resume.AccountCountryCode
 	if !country.IsSpecified() {
 		country.SetNull()
@@ -161,9 +175,11 @@ func nativeFlowFixture(t *testing.T, name string) (
 	var account auth.AuthAccountResponse
 
 	authReplayDecode(t, initial["account_data"], &account)
+
 	if account.DsInfo != nil && account.DsInfo.Dsid != nil {
 		state.Auth.AccountID = *account.DsInfo.Dsid
 	}
+
 	if account.Webservices != nil {
 		services := account.Webservices
 		state.Auth.AccountServiceURL = nativeFixtureService(services.Account)
@@ -176,13 +192,17 @@ func nativeFlowFixture(t *testing.T, name string) (
 		state.Auth.PhotosUploadServiceURL = nativeFixtureService(services.Photosupload)
 		state.Auth.SharedPhotosServiceURL = nativeFixtureService(services.Sharedstreams)
 	}
+
 	build, mastering := protocol.AuthClientBuildNumberValue, protocol.AuthClientMasteringNumberValue
 	state.Auth.ClientBuildNumber = &build
+
 	state.Auth.ClientMasteringNumber = &mastering
+
 	if resume.Auth.SessionToken != "" {
 		token := resume.Auth.SessionToken
 		state.Auth.SessionToken = &token
 	}
+
 	return raw, transport, state
 }
 
@@ -192,6 +212,7 @@ func authReplayObjectBytes(t *testing.T, value json.RawMessage) map[string]json.
 	var object map[string]json.RawMessage
 
 	authReplayDecode(t, value, &object)
+
 	return object
 }
 
@@ -202,6 +223,7 @@ func nativeFlowExpectedError(t *testing.T, raw map[string]json.RawMessage, err e
 	if expected != (err != nil) {
 		t.Fatalf("expected error %v, got %v", expected, err)
 	}
+
 	if err == nil {
 		return
 	}
@@ -215,10 +237,12 @@ func nativeFlowExpectedError(t *testing.T, raw map[string]json.RawMessage, err e
 	var exchanges []replay.Exchange
 
 	authReplayDecode(t, raw["exchanges"], &exchanges)
+
 	last := exchanges[len(exchanges)-1].Response
 	if failure.StatusCode() != last.Status || !reflect.DeepEqual(failure.ResponseBody(), nativeFlowBody(t, last.Body)) {
 		t.Fatal("authentication failure lost final response evidence")
 	}
+
 	if len(failure.PriorResponses()) != len(exchanges)-1 {
 		t.Fatal("authentication failure lost prior response metadata")
 	}
@@ -226,6 +250,7 @@ func nativeFlowExpectedError(t *testing.T, raw map[string]json.RawMessage, err e
 	metadata := append(failure.PriorResponses(), icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
 		Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
 	nativeFlowResponses(t, raw, metadata)
+
 	if failure.CookieScopeURL() != exchanges[len(exchanges)-1].Request.Origin+exchanges[len(exchanges)-1].Request.Path {
 		t.Fatal("authentication failure lost cookie scope")
 	}
@@ -254,6 +279,7 @@ func TestNativePCSWaitCancellation(t *testing.T) {
 	var exchanges []replay.Exchange
 
 	authReplayDecode(t, raw["exchanges"], &exchanges)
+
 	transport, err := replay.NewHTTPTransport(exchanges[:2])
 	if err != nil {
 		t.Fatal(err)
@@ -261,11 +287,16 @@ func TestNativePCSWaitCancellation(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	wait := func(ctx context.Context, _ time.Duration) error { cancel(); return ctx.Err() }
+	wait := func(ctx context.Context, _ time.Duration) error {
+		cancel()
+		return ctx.Err()
+	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithAuthenticationWait(wait))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	request := icloud.RequestPCSAccessRequest{Auth: state.Auth, State: state, Service: protocol.AuthWebServicesPhotos}
 	_, err = client.RequestPCSAccess(ctx, request)
 
@@ -274,9 +305,11 @@ func TestNativePCSWaitCancellation(t *testing.T) {
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Canceled || !errors.Is(err, context.Canceled) {
 		t.Fatalf("expected cancellable PCS wait, got %v", err)
 	}
+
 	if len(failure.PriorResponses()) != 2 {
 		t.Fatal("cancelled wait lost prior responses")
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -295,19 +328,24 @@ func TestNativePCSInvalidResponses(t *testing.T) {
 			var exchanges []replay.Exchange
 
 			authReplayDecode(t, raw["exchanges"], &exchanges)
+
 			encoded, marshalErr := json.Marshal(base64.StdEncoding.EncodeToString([]byte(body)))
 			if marshalErr != nil {
 				t.Fatal(marshalErr)
 			}
+
 			exchanges[0].Response.Body.Value = encoded
+
 			transport, err := replay.NewHTTPTransport(exchanges)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			client, err := icloud.New(icloud.WithHTTPTransport(transport))
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			request := icloud.RequestPCSAccessRequest{Auth: state.Auth, State: state, Service: protocol.AuthWebServicesPhotos}
 			_, err = client.RequestPCSAccess(t.Context(), request)
 
@@ -316,6 +354,7 @@ func TestNativePCSInvalidResponses(t *testing.T) {
 			if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse || string(failure.ResponseBody()) != body {
 				t.Fatalf("malformed PCS response accepted or evidence lost: %v", err)
 			}
+
 			err = transport.AssertConsumed()
 			if err != nil {
 				t.Fatal(err)
@@ -340,5 +379,6 @@ func nativeFixtureService(service *auth.AuthService) string {
 	if service == nil || service.Url == nil {
 		return ""
 	}
+
 	return *service.Url
 }

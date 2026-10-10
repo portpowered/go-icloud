@@ -19,14 +19,17 @@ func TestNativeTermsTrustPreservesSourceDeliveryState(t *testing.T) {
 			state.AcceptTerms = true
 			notice := "Synthetic retained delivery notice"
 			state.DeliveryNotice = &notice
+
 			before, err := json.Marshal(state)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			client, err := icloud.New(icloud.WithHTTPTransport(transport))
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			result, err := client.TrustSession(t.Context(), icloud.NativeAuthRequest{Auth: state.Auth, State: state})
 			if err != nil {
 				t.Fatal(err)
@@ -42,16 +45,20 @@ func TestNativeTermsTrustPreservesSourceDeliveryState(t *testing.T) {
 			var accepted bool
 
 			authReplayDecode(t, values[1], &accepted)
+
 			if result.Success != accepted || !result.State.AcceptTerms {
 				t.Fatal("terms trust lost acceptance policy or final trust verdict")
 			}
+
 			if accepted && result.State.DeliveryNotice != nil {
 				t.Fatal("accepted terms trust retained old notice")
 			}
+
 			after, err := json.Marshal(state)
 			if err != nil || !bytes.Equal(before, after) {
 				t.Fatal("terms trust mutated caller state")
 			}
+
 			err = transport.AssertConsumed()
 			if err != nil {
 				t.Fatal(err)

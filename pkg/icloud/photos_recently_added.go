@@ -66,6 +66,7 @@ func (read *photosRead) recentlyAdded(ctx context.Context) ([]Photo, error) {
 		}
 
 		selected := recentPhotoWindow(pairs, seen)
+
 		window, err := projectSelectedPhotoPage(selected, map[string]bool{}, nil, projectPhoto, read.photoVisitor())
 		if errors.Is(err, errPhotoVisitStopped) {
 			return append(photos, window...), nil
@@ -91,6 +92,7 @@ func recentPhotoWindow(pairs []photoPair, seen map[string]bool) []photoPair {
 		if seen[pair.asset.RecordName] {
 			continue
 		}
+
 		seen[pair.asset.RecordName] = true
 
 		selected = append(selected, pair)

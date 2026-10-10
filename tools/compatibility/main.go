@@ -240,14 +240,17 @@ func comparePackages(
 		if statusErr != nil {
 			return nil, statusErr
 		}
+
 		if status == publicPackageAdded {
 			continue
 		}
+
 		if status == publicPackageRemoved {
 			changes = append(changes, incompatibleChange{packageName: packageName, details: "public package removed"})
 
 			continue
 		}
+
 		packageChanges, err := comparePackage(
 			ctx,
 			tool,

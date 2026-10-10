@@ -11,6 +11,7 @@ func (sdk *SDK) UseExistingTrustedDeviceCode(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
+
 	operation.state.DeliveryNotice = nil
 	operation.state.CodeRequested = false
 	operation.state.DeliveryMethod = TwoFactorDeliveryTrustedDevice

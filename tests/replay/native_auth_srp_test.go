@@ -47,22 +47,28 @@ func nativeSRPReplay(t *testing.T, name string) {
 	request := icloud.AuthenticateRequest{Auth: state.Auth, AccountName: state.AccountName, Password: password,
 		TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode, SavedState: &state,
 		ForceRefresh: keywords["force_refresh"], PauseTwoFactor: keywords["pause_2fa"], Service: nil, AcceptTerms: false}
+
 	before, err := json.Marshal(request) //nolint:gosec // G117: synthetic-only ownership snapshot; never exported.
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := client.Authenticate(t.Context(), request)
 	nativeFlowExpectedError(t, raw, err)
+
 	if err == nil {
 		nativeAssertState(t, raw, result)
 	}
+
 	after, marshalErr := json.Marshal(request) //nolint:gosec // G117: synthetic-only ownership snapshot; never exported.
 	if marshalErr != nil {
 		t.Fatal(marshalErr)
 	}
+
 	if !bytes.Equal(before, after) {
 		t.Fatal("native SRP changed caller-owned credentials")
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -72,6 +78,7 @@ func nativeSRPReplay(t *testing.T, name string) {
 func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icloud.NativeAuthResult) {
 	t.Helper()
 	expected := authReplayObjectBytes(t, raw["result"])
+
 	state := authReplayObjectBytes(t, expected["auth_state"])
 	if !reflect.DeepEqual(accountJSON(t, result.State.AccountData), accountJSON(t, state["account"])) {
 		t.Fatal("native authentication changed account discovery")
@@ -84,25 +91,31 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 	authReplayDecode(t, state["requires_mfa"], &requires)
 	authReplayDecode(t, state["code_requested"], &requested)
 	authReplayDecode(t, state["delivery_method"], &delivery)
+
 	if result.State.RequiresMFA != requires || result.State.CodeRequested != requested ||
 		string(result.State.DeliveryMethod) != delivery {
 		t.Fatalf("native challenge status differs: %+v", result.State.Challenge)
 	}
+
 	provider := result.State.Challenge.ProviderData
 	if len(provider) == 0 {
 		provider = []byte("{}")
 	}
+
 	if !reflect.DeepEqual(accountJSON(t, provider), accountJSON(t, state["challenge"])) {
 		t.Fatal("native authentication lost normalized challenge metadata")
 	}
+
 	if notice, exists := state["delivery_notice"]; exists {
 		var expectedNotice string
 
 		authReplayDecode(t, notice, &expectedNotice)
+
 		if result.State.DeliveryNotice == nil || *result.State.DeliveryNotice != expectedNotice {
 			t.Fatal("native authentication lost delivery notice")
 		}
 	}
+
 	projection := icloud.ResumeSessionResult{Auth: result.State.Auth, TrustToken: result.State.TrustToken,
 		AccountCountryCode: result.State.AccountCountryCode, AccountData: result.State.AccountData,
 		Responses:      result.Responses,
@@ -112,10 +125,12 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 	assertResumedCookies(t, state, &projection)
 	session := nativeFixtureSession(t, state)
 	assertResumedCountry(t, session, &projection)
+
 	if token, exists := session["session_token"]; exists &&
 		(result.State.Auth.SessionToken == nil || *result.State.Auth.SessionToken != token) {
 		t.Fatal("native authentication lost session token rotation")
 	}
+
 	if trust, exists := session["trust_token"]; exists && result.State.TrustToken != trust {
 		t.Fatal("native authentication lost trust token rotation")
 	}
@@ -130,6 +145,7 @@ func nativeFixtureSession(t *testing.T, state map[string]json.RawMessage) map[st
 	var session map[string]string
 
 	authReplayDecode(t, state["session_data"], &session)
+
 	return session
 }
 

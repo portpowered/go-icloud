@@ -96,6 +96,7 @@ func (state *runState) download(ctx context.Context, asset Asset, resource Resou
 	}
 
 	now := state.engine.now().UTC()
+
 	localSize, err := state.engine.files.Size(ctx, target)
 	if err != nil {
 		return false, false, relative, fmt.Errorf(measureMaterializedPhotoError, err)
@@ -116,6 +117,7 @@ func (state *runState) download(ctx context.Context, asset Asset, resource Resou
 
 func (state *runState) refreshLocalSize(ctx context.Context, target string, identity resourceID) error {
 	entry := manifestResource(state.manifest, identity)
+
 	localSize, err := state.engine.files.Size(ctx, target)
 	if err != nil {
 		return fmt.Errorf(measureMaterializedPhotoError, err)

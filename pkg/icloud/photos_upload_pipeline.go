@@ -129,6 +129,7 @@ func (read *photosRead) uploadOnePhoto(ctx context.Context, request UploadPhotoR
 	var result photosupload.PhotosPutAssetResult
 
 	uploadAuth := read.uploadBoundary(request.Auth)
+
 	target, err := read.reservePhotoUpload(ctx, uploadAuth, identity, size, serviceFlow)
 	if err != nil {
 		return result, err

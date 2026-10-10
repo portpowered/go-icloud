@@ -20,6 +20,7 @@ func reminderBoolean(value bool) cloudkit.ReminderWriteBoolean {
 	if value {
 		result.Value = cloudkit.ReminderWriteBooleanTrue
 	}
+
 	return result
 }
 

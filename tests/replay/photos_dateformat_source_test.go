@@ -36,6 +36,7 @@ func TestPinnedSourceDateFormatPathsAndErrors(t *testing.T) {
 	}
 
 	oracle := new(dateFormatOracle)
+
 	err = json.Unmarshal(data, oracle)
 	if err != nil {
 		t.Fatal(err)
@@ -46,6 +47,7 @@ func TestPinnedSourceDateFormatPathsAndErrors(t *testing.T) {
 	}
 
 	directory := t.TempDir()
+
 	for _, test := range oracle.Cases {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
@@ -66,6 +68,7 @@ func runDateFormatCase(t *testing.T, test dateFormatCase, directory string) {
 	input.Options.OnlyPrintFilenames = true
 	input.Options.FolderStructure = test.Format
 	result, err := dateFormatEngine(t, asset).Run(t.Context(), input)
+
 	if test.RuntimeUnsupported {
 		var unsupported *photosync.UnsupportedDateFormatError
 		if !errors.As(err, &unsupported) {
@@ -123,6 +126,7 @@ func dateFormatEngine(t *testing.T, asset photosync.Asset) *photosync.Engine {
 	configuration := new(photosync.Configuration)
 	configuration.Files = dateFormatFileSystem{OSFileSystem: photosync.OSFileSystem{}}
 	configuration.Now = func() time.Time { return time.Date(2026, time.April, 10, 0, 0, 0, 0, time.UTC) }
+
 	client, err := photosync.New(newSource(asset), *configuration)
 	if err != nil {
 		t.Fatal(err)

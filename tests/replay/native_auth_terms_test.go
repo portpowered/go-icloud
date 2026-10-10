@@ -27,14 +27,18 @@ func nativeTermsReplay(t *testing.T, name string) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	result, err := client.Authenticate(t.Context(), request)
 	nativeFlowExpectedError(t, raw, err)
+
 	if err == nil {
 		expected := authReplayObjectBytes(t, raw["result"])
+
 		final := authReplayObjectBytes(t, expected["auth_state"])
 		if !reflect.DeepEqual(accountJSON(t, result.State.AccountData), accountJSON(t, final["account"])) {
 			t.Fatal("native terms/login account projection differs from Source")
@@ -42,13 +46,16 @@ func nativeTermsReplay(t *testing.T, name string) {
 
 		nativeFlowResponses(t, raw, result.Responses)
 	}
+
 	after, marshalErr := json.Marshal(request.SavedState)
 	if marshalErr != nil {
 		t.Fatal(marshalErr)
 	}
+
 	if string(before) != string(after) {
 		t.Fatal("native authentication mutated caller state")
 	}
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -61,15 +68,19 @@ func nativeTermsRequest(t *testing.T, raw map[string]json.RawMessage, state iclo
 	t.Helper()
 
 	initial := authReplayObjectBytes(t, raw["initial_state"])
+
 	request := icloud.AuthenticateRequest{Auth: state.Auth, AccountName: state.AccountName, Password: "",
 		AccountCountryCode: state.AccountCountryCode, TrustToken: state.TrustToken, SavedState: &state,
 		ForceRefresh: true, AcceptTerms: false, PauseTwoFactor: false, Service: nil}
+
 	if value, exists := initial["accept_terms"]; exists {
 		authReplayDecode(t, value, &request.AcceptTerms)
 	}
+
 	if value, exists := initial["synthetic_password"]; exists {
 		authReplayDecode(t, value, &request.Password)
 	}
+
 	if name == nativeOneFactorFixture {
 		service := "photos"
 		request.Service = &service

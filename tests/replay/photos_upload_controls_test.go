@@ -46,9 +46,11 @@ func TestPhotoUploadRejectsMalformedNullableContainers(t *testing.T) {
 
 func photoUploadControl(t *testing.T, filename, body string) (*photoUploadReplay, *replay.HTTPTransport) {
 	t.Helper()
+
 	path := filepath.Join(replayExpectedFixtures, replayExpectedSynthetic, "http", filename)
 	row := authReplayObject(t, path)
 	scenario := readAccountScenario(t, path)
+
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
 	if body != "" {
 		last.Body.Value = marshalFindMyRecovery(t, base64.StdEncoding.EncodeToString([]byte(body)))
@@ -64,9 +66,11 @@ func photoUploadControl(t *testing.T, filename, body string) (*photoUploadReplay
 
 func checkPhotoUploadControlEvidence(t *testing.T, scenario accountScenario, failure *icloud.ClientError) {
 	t.Helper()
+
 	last := scenario.Exchanges[len(scenario.Exchanges)-1].Response
 	checkSDKMetadata(t, icloud.ResponseMetadata{StatusCode: failure.StatusCode(), Headers: failure.ResponseHeaders(),
 		CookieScopeURL: failure.CookieScopeURL()}, last)
+
 	request := scenario.Exchanges[len(scenario.Exchanges)-1].Request
 	if failure.CookieScopeURL() != request.Origin+request.Path {
 		t.Fatal("malformed upload lost exact cookie scope")
@@ -77,11 +81,15 @@ func checkPhotoUploadControlEvidence(t *testing.T, scenario accountScenario, fai
 
 func TestPhotoUploadPreservesUnknownNumberPrecision(t *testing.T) {
 	t.Parallel()
+
 	const number = photoUploadOpaqueInteger
+
 	const body = `{"singleFile":{"referenceChecksum":"synthetic-reference","size":3,` +
 		`"fileChecksum":"synthetic-checksum","wrappingKey":"synthetic-key",` +
 		`"receipt":"synthetic-receipt","opaque":` + number + `}}`
+
 	runner, transport := photoUploadControl(t, replayLiteralPhotosUploadBytesBinaryJSON, body)
+
 	result, err := runner.call(t)
 	if err != nil {
 		t.Fatal(err)
@@ -111,6 +119,7 @@ func TestPhotoUploadPreservesCallerCursorAndReaderOwnership(t *testing.T) {
 	t.Parallel()
 	runner, transport := photoUploadControl(t, replayLiteralPhotosUploadBytesBinaryJSON, "")
 	_, content, _ := photoUploadContent(t, runner.row)
+
 	data, err := io.ReadAll(content)
 	if err != nil {
 		t.Fatal(err)
@@ -119,6 +128,7 @@ func TestPhotoUploadPreservesCallerCursorAndReaderOwnership(t *testing.T) {
 	const ignored = photoControlCursorPrefix
 
 	reader := &photoUploadOwnedReader{Reader: bytes.NewReader(append([]byte(ignored), data...)), closed: false}
+
 	_, err = reader.Seek(int64(len(ignored)), io.SeekStart)
 	if err != nil {
 		t.Fatal(err)
@@ -127,6 +137,7 @@ func TestPhotoUploadPreservesCallerCursorAndReaderOwnership(t *testing.T) {
 	var inputs []string
 
 	authReplayDecode(t, runner.row["inputs"], &inputs)
+
 	result, err := runner.client.SendPhotoUploadBytes(t.Context(), icloud.SendPhotoUploadBytesRequest{
 		Auth: runner.auth, Library: nil, URL: inputs[0], Content: reader})
 	if err != nil || result == nil || reader.closed {
@@ -143,6 +154,7 @@ func TestPhotoUploadPreservesCallerCursorAndReaderOwnership(t *testing.T) {
 
 func checkPhotoUploadControlConsumed(t *testing.T, transport *replay.HTTPTransport) {
 	t.Helper()
+
 	err := transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)

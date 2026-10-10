@@ -44,6 +44,7 @@ func runCookieBoundaryCase(t *testing.T, testcase cookieBoundaryCase) {
 	t.Helper()
 
 	state, seeds := cookieBoundaryState(t, testcase.authentication)
+
 	headers := make(http.Header)
 	if testcase.explicit {
 		headers.Set(protocol.CookieName, "explicit=owned")
@@ -96,6 +97,7 @@ func cookieBoundaryState(t *testing.T, authentication bool) (*webtransport.Cooki
 		{Cookie: syntheticBoundaryCookie("wrongpath", cookieBoundaryExcluded,
 			cookieBoundaryDomain, "/different"), HostOnly: false},
 	}
+
 	state, err := webtransport.NewCookieState(seeds)
 	if err != nil {
 		t.Fatal(err)

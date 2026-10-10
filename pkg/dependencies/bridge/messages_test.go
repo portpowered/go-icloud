@@ -29,6 +29,7 @@ func TestServerDuplicateFields(t *testing.T) {
 	second.Push = &bridgepb.PushMessage{Topic: []byte("other"), MessageId: proto.Uint64(2),
 		Payload: []byte("other payload")}
 	encoded := duplicateWire(t, first, second)
+
 	decoded, err := bridge.DecodeServerMessage(encoded)
 	if err != nil {
 		t.Fatal(err)
@@ -42,6 +43,7 @@ func TestServerDuplicateFields(t *testing.T) {
 	push := duplicateWire(t, first.GetPush(), second.GetPush())
 	nested := new(bridgepb.ServerMessage)
 	nested.ProtoReflect().SetUnknown(append(lengthDelimited(1, connection), lengthDelimited(2, push)...))
+
 	decoded, err = bridge.DecodeServerMessage(duplicateWire(t, nested))
 	if err != nil {
 		t.Fatal(err)

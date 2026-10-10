@@ -38,8 +38,10 @@ func TestEXIFMaterializedSizeAndProviderIdentity(t *testing.T) {
 			provider := &exifSizeSource{source: newSource(photo("exif", testPhotoFilename)),
 				data: []byte{0xff, 0xd8, 0xff, 0xd9}}
 			setEXIFProviderSize(provider)
+
 			input := request(t.TempDir())
 			input.Options.SetExifDatetime = !legacy
+
 			first, err := newEngine(t, provider).Run(t.Context(), input)
 			if err != nil {
 				t.Fatal(err)
@@ -60,12 +62,14 @@ func TestEXIFMaterializedSizeAndProviderIdentity(t *testing.T) {
 			}
 
 			checkEXIFMaterializedSize(t, provider, first.StatePath, input.Options.Directory)
+
 			if len(provider.downloads) != 1 {
 				t.Fatal("unchanged provider caused an additional download")
 			}
 
 			provider.data = []byte{0xff, 0xd8, 0xff, 0xe0, 0, 2, 0xff, 0xd9}
 			setEXIFProviderSize(provider)
+
 			changed, err := newEngine(t, provider).Run(t.Context(), input)
 			if err != nil || changed.DownloadedCount != 1 || len(provider.downloads) != 2 {
 				t.Fatalf("changed provider size without checksum did not download: %+v, %v", changed, err)
@@ -73,6 +77,7 @@ func TestEXIFMaterializedSizeAndProviderIdentity(t *testing.T) {
 
 			checkEXIFMaterializedSize(t, provider, first.StatePath, input.Options.Directory)
 			input.Options.SetExifDatetime = false
+
 			restarted, err := newEngine(t, provider).Run(t.Context(), input)
 			if err != nil || !restarted.ShortCircuited || len(provider.downloads) != 2 {
 				t.Fatalf("restart compared transformed bytes with provider size: %+v, %v", restarted, err)
@@ -86,8 +91,10 @@ func TestLegacyEXIFManifestRequiresRecordedMaterializedSize(t *testing.T) {
 
 	provider := &exifSizeSource{source: newSource(photo("exif", testPhotoFilename)), data: []byte{0xff, 0xd8, 0xff, 0xd9}}
 	setEXIFProviderSize(provider)
+
 	input := request(t.TempDir())
 	input.Options.SetExifDatetime = true
+
 	first, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)
@@ -96,12 +103,14 @@ func TestLegacyEXIFManifestRequiresRecordedMaterializedSize(t *testing.T) {
 	manifest := readEXIFManifest(t, first.StatePath)
 	manifest.Resources[0].LocalSize = nil
 	writeEXIFManifest(t, first.StatePath, manifest)
+
 	second, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil || second.DownloadedCount != 1 || len(provider.downloads) != 2 {
 		t.Fatalf("unrecorded transformed local size was trusted: %+v, %v", second, err)
 	}
 
 	checkEXIFMaterializedSize(t, provider, first.StatePath, input.Options.Directory)
+
 	third, err := newEngine(t, provider).Run(t.Context(), input)
 	if err != nil || third.DownloadedCount != 0 || len(provider.downloads) != 2 {
 		t.Fatalf("upgraded manifest did not reuse recorded size: %+v, %v", third, err)

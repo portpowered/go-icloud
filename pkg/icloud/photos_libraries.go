@@ -26,6 +26,7 @@ func (sdk *SDK) ListPhotoLibraries(
 	root.ZoneType.Set(protocol.PhotosPhotoPrimaryZoneTypeValue)
 	root.OwnerRecordName.SetNull()
 	root.SyncToken.SetNull()
+
 	if read.syncToken != nil {
 		root.SyncToken.Set(*read.syncToken)
 	}

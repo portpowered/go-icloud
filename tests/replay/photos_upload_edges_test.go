@@ -27,6 +27,7 @@ func TestPhotoUploadHighLevelTransfersOnlyRemainingContent(t *testing.T) {
 			if fileOnly {
 				name = "file-prefix"
 			}
+
 			if atEnd {
 				name += "-end"
 			}
@@ -41,6 +42,7 @@ func TestPhotoUploadHighLevelTransfersOnlyRemainingContent(t *testing.T) {
 
 func runPhotoUploadCursorControl(t *testing.T, fileOnly, atEnd bool) {
 	t.Helper()
+
 	filename := "photos-upload-service-ready.json"
 	if fileOnly {
 		filename = "photos-upload-pipeline-success.json"
@@ -51,6 +53,7 @@ func runPhotoUploadCursorControl(t *testing.T, fileOnly, atEnd bool) {
 	scenario := readAccountScenario(t, path)
 	scenario.Exchanges = scenario.Exchanges[:photoControlUploadStages]
 	_, content, _ := photoUploadContent(t, row)
+
 	payload, err := io.ReadAll(content)
 	if err != nil {
 		t.Fatal(err)
@@ -59,6 +62,7 @@ func runPhotoUploadCursorControl(t *testing.T, fileOnly, atEnd bool) {
 	reader := &photoUploadOwnedReader{
 		Reader: bytes.NewReader(append([]byte(photoControlCursorPrefix), payload...)), closed: false,
 	}
+
 	position := int64(len(photoControlCursorPrefix))
 	if atEnd {
 		position += int64(len(payload))
@@ -78,12 +82,15 @@ func runPhotoUploadCursorControl(t *testing.T, fileOnly, atEnd bool) {
 
 	runner := newPhotoUploadReplay(t, row, scenario, transport)
 	request := runner.uploadRequest(t)
+
 	request.Content, request.Hydrate = reader, false
+
 	if fileOnly {
 		input := icloud.UploadPhotoFileRequest{Auth: request.Auth, Library: request.Library,
 			Filename: request.Filename, Content: reader, ModificationTime: request.ModificationTime,
 			LocalTimeZoneID: request.LocalTimeZoneID, TimeZoneOffset: request.TimeZoneOffset,
 			ImportGroup: request.ImportGroup}
+
 		result, callErr := runner.client.UploadPhotoFile(t.Context(), input)
 		if callErr != nil || result == nil {
 			t.Fatal("file upload failed remaining-content control", callErr)
@@ -105,6 +112,7 @@ func runPhotoUploadCursorControl(t *testing.T, fileOnly, atEnd bool) {
 
 func photoUploadEmptyRange(t *testing.T, exchanges []replay.Exchange) {
 	t.Helper()
+
 	reserve := &exchanges[1].Request
 	body := bytes.Replace(contractAuthBody(t, reserve.Body), []byte(": 3}"), []byte(": 0}"), 1)
 	reserve.Body.Value = marshalFindMyRecovery(t, base64.StdEncoding.EncodeToString(body))
@@ -121,12 +129,14 @@ func photoUploadEmptyRange(t *testing.T, exchanges []replay.Exchange) {
 
 func TestPhotoUploadHydrationBackoffCannotOverflow(t *testing.T) {
 	t.Parallel()
+
 	path := "fixtures/synthetic/http/photos-upload-service-delayed.json"
 	row := authReplayObject(t, path)
 	scenario := readAccountScenario(t, path)
 	missing := scenario.Exchanges[photoControlUploadStages]
 	ready := scenario.Exchanges[len(scenario.Exchanges)-1]
 	scenario.Exchanges = append(scenario.Exchanges[:photoControlUploadStages+1], missing, ready)
+
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {
 		t.Fatal(err)
@@ -135,6 +145,7 @@ func TestPhotoUploadHydrationBackoffCannotOverflow(t *testing.T) {
 	runner := newPhotoUploadReplay(t, row, scenario, transport)
 	instant := runner.start
 	waits := []time.Duration{}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(runner.entropy),
 		icloud.WithClock(func() time.Time { return runner.start }),
 		icloud.WithPhotoUploadClock(func() time.Time { return instant }),
@@ -156,7 +167,9 @@ func TestPhotoUploadHydrationBackoffCannotOverflow(t *testing.T) {
 	maximum := time.Duration(math.MaxInt64)
 	request.HydrationInterval, request.HydrationTimeout = &maximum, &maximum
 	result, err := client.UploadPhoto(t.Context(), request)
+
 	const maximumBackoff = 8 * time.Second
+
 	if err != nil || result == nil || !result.Indexed || len(waits) != 2 || waits[0] != maximum ||
 		waits[1] != maximumBackoff {
 		t.Fatal("hydration delay was not safely saturated", waits, err)

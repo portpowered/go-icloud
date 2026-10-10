@@ -29,6 +29,7 @@ const sharedMalformedMasterRefRule = "malformed-master-ref"
 
 func TestSharedPhotosLegacyValueRules(t *testing.T) {
 	t.Parallel()
+
 	for _, mutation := range []string{sharedFilenameTextRule, sharedInvalidDateRule,
 		sharedFractionalSizeRule, sharedStringSizeRule, sharedTruthyLikedRule, sharedEmptyLikedRule,
 		sharedNullLikeCountRule, sharedStringLikeCountRule, sharedMissingWidthRule, sharedMissingHeightRule,
@@ -41,34 +42,45 @@ func runSharedValueRule(t *testing.T, mutation string) {
 	t.Helper()
 	scenario := readAccountScenario(t, "fixtures/synthetic/http/photos-upload-shared-get-found.json")
 	response := scenario.Exchanges[2].Response
+
 	var envelope map[string]json.RawMessage
+
 	var records []map[string]json.RawMessage
+
 	var fields map[string]json.RawMessage
+
 	authReplayDecode(t, contractAuthBody(t, response.Body), &envelope)
 	authReplayDecode(t, envelope["records"], &records)
 	authReplayDecode(t, records[0]["fields"], &fields)
 	mutateSharedRecordValues(mutation, fields, records)
 	records[0]["fields"] = sharedValueJSON(t, fields)
 	envelope["records"] = sharedValueJSON(t, records)
+
 	if mutation == sharedIgnoredRecordsRule {
 		ignored := json.RawMessage(`[null,42,"ignored",{"recordType":"future"},{"recordType":"CPLAsset","fields":42},`)
 		envelope["records"] = append(ignored, envelope["records"][1:]...)
 	}
+
 	if mutation == sharedScalarRecordsRule {
 		envelope["records"] = json.RawMessage(`42`)
 	}
+
 	response.Body.Value = sharedValueJSON(t, base64.StdEncoding.EncodeToString(sharedValueJSON(t, envelope)))
+
 	transport, err := replay.NewHTTPTransport(scenario.Exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	auth.SharedPhotosServiceURL = syntheticSharedPhotosOrigin
+
 	result, err := client.GetSharedPhoto(t.Context(), icloud.GetSharedPhotoRequest{
 		Auth: auth, Album: replayLiteralSyntheticStream0, PhotoID: photoMutationAssetID})
 	if mutation == sharedMissingWidthRule || mutation == sharedMissingHeightRule ||
@@ -76,36 +88,47 @@ func runSharedValueRule(t *testing.T, mutation string) {
 		if err == nil || result != nil {
 			t.Fatal("missing dimensions and malformed typed counts must fail projection")
 		}
+
 		var failure *icloud.ClientError
 		if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse {
 			t.Fatal("projection failure must be typed InvalidResponse", err)
 		}
+
 		consumeErr := transport.AssertConsumed()
 		if consumeErr != nil {
 			t.Fatal(consumeErr)
 		}
+
 		return
 	}
+
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if mutation == sharedScalarRecordsRule || mutation == sharedMalformedMasterRefRule {
 		if !result.Photo.IsNull() {
 			t.Fatal("Source ignores malformed records")
 		}
+
 		checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
+
 		consumeErr := transport.AssertConsumed()
 		if consumeErr != nil {
 			t.Fatal(consumeErr)
 		}
+
 		return
 	}
+
 	photo, err := result.Photo.Get()
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	checkSharedValueRule(t, photo, mutation)
 	checkReminderSyncResponses(t, result.Responses, scenario.Exchanges)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)
@@ -145,10 +168,12 @@ func checkSharedValueRule(t *testing.T, photo icloud.SharedPhoto, mutation strin
 
 func sharedValueJSON(t *testing.T, value any) json.RawMessage {
 	t.Helper()
+
 	encoded, err := json.Marshal(value)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	return encoded
 }
 

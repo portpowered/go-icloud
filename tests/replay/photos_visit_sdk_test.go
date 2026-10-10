@@ -103,32 +103,40 @@ func TestRecentlyAddedVisitorStopsBeforeAnotherWindow(t *testing.T) {
 	scenario := readAccountScenario(t,
 		filepath.Join(replayExpectedFixturesSyntheticHTTP, "photos-recently-added-overlap-partial-next.json"))
 	exchanges := scenario.Exchanges[:4]
+
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	visited := 0
 	request := icloud.ListRecentlyAddedPhotosRequest{Auth: auth, Library: nil}
+
 	result, err := client.VisitRecentlyAddedPhotos(t.Context(), request,
 		func(event icloud.PhotoVisitEvent) (bool, error) {
 			visited++
 
 			checkReminderSyncResponses(t, event.Responses, exchanges)
+
 			return false, nil
 		})
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if visited != 1 || len(result.Photos) != 1 {
 		t.Fatal("recent visitor eagerly continued")
 	}
+
 	checkReminderSyncResponses(t, result.Responses, exchanges)
+
 	err = transport.AssertConsumed()
 	if err != nil {
 		t.Fatal(err)

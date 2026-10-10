@@ -242,13 +242,16 @@ func selectedPhotoChangesLibrary(
 	key string,
 ) (*icloud.PhotoLibrary, []icloud.ResponseMetadata) {
 	t.Helper()
+
 	if key == "" {
 		return nil, []icloud.ResponseMetadata{}
 	}
+
 	libraries, err := client.ListPhotoLibraries(t.Context(), icloud.ListPhotoLibrariesRequest{Auth: auth})
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	for _, library := range libraries.Libraries {
 		if library.ID == key {
 			return &library, libraries.Responses
@@ -256,5 +259,6 @@ func selectedPhotoChangesLibrary(
 	}
 
 	t.Fatal("selected library missing")
+
 	return nil, nil
 }

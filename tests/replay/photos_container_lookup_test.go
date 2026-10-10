@@ -123,6 +123,7 @@ func checkPhotosContainerLookup(
 	err error,
 ) {
 	t.Helper()
+
 	if len(scenario.Error) != 0 {
 		var failure *webtransport.ResponseError
 		if result != nil || !errors.As(err, &failure) {
@@ -139,11 +140,14 @@ func checkPhotosContainerLookup(
 			},
 			scenario.Exchanges[len(scenario.Exchanges)-1],
 		)
+
 		return
 	}
+
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	checkPhotosContainerMetadata(t, result.Metadata, scenario.Exchanges[len(scenario.Exchanges)-1])
 	{
 		actual, encodeErr := json.Marshal(result.Data)
@@ -170,16 +174,20 @@ func sourceLookupDefault(key string, value any) bool {
 	if value == nil {
 		return true
 	}
+
 	fields, ok := value.(map[string]any)
+
 	return key == replayExpectedPluginFields && ok && len(fields) == 0
 }
 
 func checkPhotosContainerMetadata(t *testing.T, actual *webtransport.BytesResponse, exchange replay.Exchange) {
 	t.Helper()
+
 	expected := http.Header{}
 	for _, pair := range exchange.Response.Headers {
 		expected.Add(pair[0], pair[1])
 	}
+
 	if actual.Status != exchange.Response.Status || !reflect.DeepEqual(actual.Headers, expected) ||
 		string(actual.Body) != string(contractAuthBody(t, exchange.Response.Body)) ||
 		actual.CookieScopeURL != exchange.Request.Origin+exchange.Request.Path {

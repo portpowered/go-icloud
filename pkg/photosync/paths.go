@@ -58,7 +58,9 @@ func relativePath(asset Asset, resource Resource, format string) (string, error)
 
 func uniquePath(candidate, assetID, key string, reserved map[string]bool, tracked map[string]resourceID) string {
 	identity := pathIdentity(candidate)
+
 	owner, occupied := tracked[identity]
+
 	if !reserved[identity] && (!occupied || owner == (resourceID{asset: assetID, key: key})) {
 		return candidate
 	}

@@ -52,6 +52,7 @@ func replaySync(t *testing.T, scenario sourceScenario) {
 	provider := newSource(scenario.Assets...)
 
 	input := request(filepath.Join(t.TempDir(), "output"))
+
 	err := json.Unmarshal(scenario.Options, &input.Options)
 	if err != nil {
 		t.Fatal(err)

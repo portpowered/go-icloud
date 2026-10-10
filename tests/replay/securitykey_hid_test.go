@@ -56,12 +56,15 @@ type hidReplayConnection struct {
 
 func (connection *hidReplayConnection) exchange(ctx context.Context, packet []byte, write bool) (int, error) {
 	connection.t.Helper()
+
 	if connection.closed != 0 || len(connection.events) == 0 {
 		connection.t.Fatal("unexpected HID exchange or exchange after close")
 	}
 
 	event := connection.events[0]
+
 	connection.events = connection.events[1:]
+
 	if event.write != write {
 		connection.t.Fatal("HID read/write ordering differs from Source transcript")
 	}
@@ -118,6 +121,7 @@ func (backend *hidReplayBackend) Devices(ctx context.Context) ([]securitykey.Dev
 	if ctx != backend.ctx || backend.discovered || backend.opened != 0 {
 		backend.t.Fatal("unexpected discovery or discovery context")
 	}
+
 	backend.discovered = true
 
 	return []securitykey.Device{{ID: hidReplayDevice, Name: "Synthetic authenticator"}}, nil
@@ -137,6 +141,7 @@ func (backend *hidReplayBackend) Open(ctx context.Context, id string) (securityk
 
 func hidReplayHex(t *testing.T, value string) []byte {
 	t.Helper()
+
 	decoded, err := hex.DecodeString(value)
 	if err != nil {
 		t.Fatal(err)
@@ -147,6 +152,7 @@ func hidReplayHex(t *testing.T, value string) []byte {
 
 func hidReplayRead(t *testing.T, name string) hidReplayFixture {
 	t.Helper()
+
 	raw, err := fs.ReadFile(os.DirFS("fixtures/securitykey"), name)
 	if err != nil {
 		t.Fatal(err)
@@ -165,11 +171,13 @@ func hidReplayRead(t *testing.T, name string) hidReplayFixture {
 func hidReplayHandle(t *testing.T, steps []hidReplayStep) *hidReplayConnection {
 	t.Helper()
 	connection := &hidReplayConnection{t: t, ctx: t.Context(), events: nil, closed: 0, closeFailure: nil}
+
 	for _, step := range steps {
 		for _, packet := range step.Writes {
 			connection.events = append(connection.events, hidReplayEvent{
 				write: true, packet: hidReplayHex(t, packet), failure: nil})
 		}
+
 		for _, packet := range step.Reads {
 			connection.events = append(connection.events, hidReplayEvent{
 				write: false, packet: hidReplayHex(t, packet), failure: nil})
@@ -187,6 +195,7 @@ func hidReplayProvider(t *testing.T, connections ...*hidReplayConnection) (*secu
 		"0000000000000000000000000000000000000000000000000000000000000001")...)
 	reader := bytes.NewReader(entropy)
 	waits := 0
+
 	provider, err := securitykey.New(backend, reader, securitykey.WithWaiter(func(ctx context.Context, delay time.Duration) error {
 		if ctx != t.Context() || delay != hidReplayPollDelay {
 			t.Fatal("unexpected presence retry context or delay")
@@ -225,6 +234,7 @@ func TestSecurityKeySourceHIDReplay(t *testing.T) {
 			discovery := hidReplayHandle(t, fixture.Steps[:1])
 			assertion := hidReplayHandle(t, fixture.Steps)
 			provider, backend, entropy, waits := hidReplayProvider(t, discovery, assertion)
+
 			devices, err := provider.Devices(t.Context())
 			if err != nil || len(devices) != 1 || devices[0].ID != hidReplayDevice ||
 				devices[0].Name != "Synthetic authenticator" {
@@ -243,20 +253,25 @@ func TestSecurityKeySourceHIDReplay(t *testing.T) {
 
 				hidReplayResult(t, result, fixture)
 			}
+
 			if backend.opened != len(backend.connections) || discovery.closed != 1 || assertion.closed != 1 {
 				t.Fatal("discovery and assertion must own separate consumed handles")
 			}
+
 			expectedWaits := 0
 			if name == "python-u2f-synthetic.json" || name == "python-fallback-synthetic.json" {
 				expectedWaits = 1
 			}
+
 			if *waits != expectedWaits {
 				t.Fatal("Source presence retry count differs")
 			}
+
 			expectedEntropy := hidReplayScalarBytes
 			if name == "python-uv1-synthetic.json" || name == "python-uv2-synthetic.json" {
 				expectedEntropy = 0
 			}
+
 			if entropy.Len() != expectedEntropy {
 				t.Fatal("unexpected nonce or PIN/UV entropy consumption")
 			}
@@ -266,6 +281,7 @@ func TestSecurityKeySourceHIDReplay(t *testing.T) {
 
 func hidReplayResult(t *testing.T, result securitykey.Assertion, fixture hidReplayFixture) {
 	t.Helper()
+
 	for name, pair := range map[string][2][]byte{
 		"client data":        {result.ClientData, hidReplayHex(t, fixture.ClientData)},
 		"authenticator data": {result.AuthenticatorData, hidReplayHex(t, fixture.AuthenticatorData)},
@@ -276,6 +292,7 @@ func hidReplayResult(t *testing.T, result securitykey.Assertion, fixture hidRepl
 			t.Fatalf("%s differs from pinned Source", name)
 		}
 	}
+
 	if len(result.UserHandle) != 0 {
 		t.Fatal("unexpected user handle")
 	}
@@ -292,6 +309,7 @@ func TestSecurityKeyHIDFailureReplay(t *testing.T) {
 			fixture := hidReplayRead(t, "python-u2f-synthetic.json")
 			connection := hidReplayHandle(t, fixture.Steps)
 			cause := securitykey.ErrProtocol
+
 			switch name {
 			case "short report":
 				connection.events = connection.events[:2]
@@ -322,10 +340,13 @@ func TestSecurityKeyHIDFailureReplay(t *testing.T) {
 			}
 
 			provider, backend, _, _ := hidReplayProvider(t, connection)
+
 			result, err := provider.Assert(t.Context(), hidReplayRequest(fixture))
+
 			if !errors.Is(err, cause) || backend.opened != 1 || connection.closed != 1 {
 				t.Fatalf("failure cause or handle ownership differs: %v", err)
 			}
+
 			if name == "close failure" {
 				hidReplayResult(t, result, fixture)
 			} else if len(result.Signature) != 0 {
