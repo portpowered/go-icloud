@@ -1,0 +1,133 @@
+package bridge
+
+import (
+	"errors"
+	"fmt"
+	"net/netip"
+	"strings"
+
+	"golang.org/x/text/unicode/norm"
+)
+
+var (
+	errHostBrackets = errors.New("Invalid IPv6 URL")
+	errHostFuture   = errors.New("IPvFuture address is invalid")
+	errHostIPv4     = errors.New("An IPv4 address cannot be in brackets")
+)
+
+// sourceURLHostname projects Python urlsplit's authority and hostname rules.
+// In particular, ports and percent escapes are not parsed or validated here.
+func sourceURLHostname(candidate string) (string, error) {
+	remaining := strings.TrimLeftFunc(candidate, func(value rune) bool { return value <= ' ' })
+	remaining = strings.NewReplacer("\t", "", "\r", "", "\n", "").Replace(remaining)
+	if scheme, tail, found := strings.Cut(remaining, ":"); found && validHostScheme(scheme) {
+		remaining = tail
+	}
+
+	if !strings.HasPrefix(remaining, "//") {
+		return "", nil
+	}
+
+	authority := remaining[2:]
+	if end := strings.IndexAny(authority, "/?#"); end >= 0 {
+		authority = authority[:end]
+	}
+
+	err := validateHostAuthority(authority)
+	if err != nil {
+		return "", err
+	}
+
+	if separator := strings.LastIndex(authority, "@"); separator >= 0 {
+		authority = authority[separator+1:]
+	}
+
+	if _, bracketed, found := strings.Cut(authority, "["); found {
+		host, _, _ := strings.Cut(bracketed, "]")
+		return host, nil
+	}
+
+	host, _, _ := strings.Cut(authority, ":")
+	return host, nil
+}
+
+func validHostScheme(scheme string) bool {
+	if scheme == "" || !asciiHostLetter(scheme[0]) {
+		return false
+	}
+
+	for _, value := range []byte(scheme) {
+		if !asciiHostLetter(value) && (value < '0' || value > '9') && value != '+' && value != '-' && value != '.' {
+			return false
+		}
+	}
+
+	return true
+}
+
+func asciiHostLetter(value byte) bool {
+	return value >= 'a' && value <= 'z' || value >= 'A' && value <= 'Z'
+}
+
+func validateHostAuthority(authority string) error {
+	open, closeBracket := strings.Contains(authority, "["), strings.Contains(authority, "]")
+	if open != closeBracket {
+		return errHostBrackets
+	}
+
+	if open {
+		_, remainder, _ := strings.Cut(authority, "[")
+		bracketed, _, _ := strings.Cut(remainder, "]")
+		if err := validateBracketedHost(bracketed); err != nil {
+			return err
+		}
+	}
+
+	withoutSyntax := strings.NewReplacer("@", "", ":", "", "#", "", "?", "").Replace(authority)
+	if normalized := norm.NFKC.String(withoutSyntax); normalized != withoutSyntax && strings.ContainsAny(normalized, "/?#@:") {
+		return fmt.Errorf("netloc '%s' contains invalid characters under NFKC normalization", authority)
+	}
+
+	return nil
+}
+
+func validateBracketedHost(host string) error {
+	if strings.HasPrefix(host, "v") {
+		version, address, found := strings.Cut(host[1:], ".")
+		if !found || version == "" || address == "" || strings.ContainsAny(address, "\r\n") || !hostHexadecimal(version) {
+			return errHostFuture
+		}
+
+		return nil
+	}
+
+	literal, zone, scoped := strings.Cut(host, "%")
+	if scoped && (zone == "" || strings.Contains(zone, "%")) {
+		return fmt.Errorf("'%s' does not appear to be an IPv4 or IPv6 address", host)
+	}
+
+	address, err := netip.ParseAddr(literal)
+	if err != nil {
+		return fmt.Errorf("'%s' does not appear to be an IPv4 or IPv6 address", host)
+	}
+
+	if address.Is4() {
+		if scoped {
+			return fmt.Errorf("'%s' does not appear to be an IPv4 or IPv6 address", host)
+		}
+
+		return errHostIPv4
+	}
+
+	return nil
+}
+
+func hostHexadecimal(text string) bool {
+	for _, value := range []byte(text) {
+		if (value < '0' || value > '9') && (value < 'a' || value > 'f') && (value < 'A' || value > 'F') {
+			return false
+		}
+	}
+
+	return true
+}

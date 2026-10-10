@@ -19,7 +19,7 @@ servers:
     protocol: wss
     description: Host normalized from the bridge bootstrap URL, with APNS environment fallback.
     x-host-normalization:
-      version: 1
+      version: 2
       schemeSeparator: '://'
       pathSeparator: '/'
       uriField: hostname
@@ -27,6 +27,15 @@ servers:
       percentSpelling: preserve
       hostnameCase: unicode-lowercase-before-zone
       zoneDelimiter: '%'
+      preprocessing: python-urlsplit-c0-tab-cr-lf
+      scheme: ascii-letter-then-letter-digit-plus-minus-dot
+      authorityPrefix: '//'
+      authorityTerminators: '/?#'
+      userinfoDelimiter: '@'
+      portDelimiter: ':'
+      bracketedHost: python-ipv6-or-ipvfuture
+      authorityNormalization: nfkc-reject-introduced-separators
+      portValidation: none
     variables:
       host:
         default: websocket.push.apple.com

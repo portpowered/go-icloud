@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/url"
 	"slices"
 	"strings"
 
@@ -105,15 +104,13 @@ func SocketHost(data models.BridgeInitiateData) (string, error) {
 
 func explicitSocketHost(candidate string) (string, error) {
 	if strings.Contains(candidate, "://") {
-		// Python's hostname property retains percent spelling, including zone IDs.
-		// Escape percent for Go's parser so its decoding recovers the original text.
-		parsed, err := url.Parse(strings.ReplaceAll(candidate, "%", "%25"))
+		host, err := sourceURLHostname(candidate)
 		if err != nil {
 			return "", fmt.Errorf("parse bridge host: %w", err)
 		}
 
-		if parsed.Hostname() != "" {
-			return lowercaseSocketHostname(parsed.Hostname()), nil
+		if host != "" {
+			return lowercaseSocketHostname(host), nil
 		}
 	}
 

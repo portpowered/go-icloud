@@ -129,14 +129,238 @@
     {
       "name": "missing",
       "input": {},
-      "error": true
+      "error": true,
+      "errorType": "PyiCloudTrustedDevicePromptException",
+      "errorMessage": "Missing HSA2 websocket host for the trusted-device bridge."
     },
     {
       "name": "unknown-environment",
       "input": {
         "apnsEnvironment": "other"
       },
-      "error": true
+      "error": true,
+      "errorType": "PyiCloudTrustedDevicePromptException",
+      "errorMessage": "Missing HSA2 websocket host for the trusted-device bridge."
+    },
+    {
+      "name": "invalid-port-text",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE:bad/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "invalid-port-range",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE:999999/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "invalid-scheme-fallback",
+      "input": {
+        "webSocketUrl": "not a scheme://EXAMPLE/a"
+      },
+      "host": "not a scheme:"
+    },
+    {
+      "name": "numeric-scheme-fallback",
+      "input": {
+        "webSocketUrl": "123://EXAMPLE/a"
+      },
+      "host": "123:"
+    },
+    {
+      "name": "unicode-scheme-fallback",
+      "input": {
+        "webSocketUrl": "\u00e9://EXAMPLE/a"
+      },
+      "host": "\u00e9:"
+    },
+    {
+      "name": "scheme-plus",
+      "input": {
+        "webSocketUrl": "wss+test://EXAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "embedded-tab",
+      "input": {
+        "webSocketUrl": "wss://EX\tAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "embedded-newlines",
+      "input": {
+        "webSocketUrl": "wss://EX\r\nAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "leading-controls",
+      "input": {
+        "webSocketUrl": "\u0001 \tWSS://EXAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "trailing-space",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE /a"
+      },
+      "host": "example "
+    },
+    {
+      "name": "query-end",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE?query"
+      },
+      "host": "example"
+    },
+    {
+      "name": "fragment-end",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE#fragment"
+      },
+      "host": "example"
+    },
+    {
+      "name": "multiple-userinfo",
+      "input": {
+        "webSocketUrl": "wss://a@b@EXAMPLE/a"
+      },
+      "host": "example"
+    },
+    {
+      "name": "empty-host",
+      "input": {
+        "webSocketUrl": "wss://user@:bad/a"
+      },
+      "host": "wss:"
+    },
+    {
+      "name": "bare-controls-preserved",
+      "input": {
+        "webSocketUrl": "MiX\tED/a"
+      },
+      "host": "MiX\tED"
+    },
+    {
+      "name": "invalid-ipv6",
+      "input": {
+        "webSocketUrl": "wss://[nonsense]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'nonsense' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "bracketed-ipv4",
+      "input": {
+        "webSocketUrl": "wss://[127.0.0.1]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "An IPv4 address cannot be in brackets"
+    },
+    {
+      "name": "missing-close-bracket",
+      "input": {
+        "webSocketUrl": "wss://[::1/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "Invalid IPv6 URL"
+    },
+    {
+      "name": "missing-open-bracket",
+      "input": {
+        "webSocketUrl": "wss://::1]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "Invalid IPv6 URL"
+    },
+    {
+      "name": "invalid-ipvfuture-version",
+      "input": {
+        "webSocketUrl": "wss://[vZ.ABC]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "IPvFuture address is invalid"
+    },
+    {
+      "name": "invalid-ipvfuture-empty",
+      "input": {
+        "webSocketUrl": "wss://[v1.]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "IPvFuture address is invalid"
+    },
+    {
+      "name": "uppercase-ipvfuture",
+      "input": {
+        "webSocketUrl": "wss://[V1.ABC]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'V1.ABC' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "empty-zone",
+      "input": {
+        "webSocketUrl": "wss://[fe80::1%]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'fe80::1%' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "multiple-zone",
+      "input": {
+        "webSocketUrl": "wss://[fe80::1%a%b]/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'fe80::1%a%b' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "nfkc-slash",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE\u2100/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "netloc 'EXAMPLE\u2100' contains invalid characters under NFKC normalization"
+    },
+    {
+      "name": "nfkc-colon",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE\uff1a80/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "netloc 'EXAMPLE\uff1a80' contains invalid characters under NFKC normalization"
+    },
+    {
+      "name": "nfkc-at",
+      "input": {
+        "webSocketUrl": "wss://EXAMPLE\uff20HOST/a"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "netloc 'EXAMPLE\uff20HOST' contains invalid characters under NFKC normalization"
+    },
+    {
+      "name": "nfkc-safe",
+      "input": {
+        "webSocketUrl": "wss://\uff25XAMPLE/a"
+      },
+      "host": "\uff45xample"
     }
   ]
 }

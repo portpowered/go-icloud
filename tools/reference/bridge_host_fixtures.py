@@ -67,14 +67,44 @@ def fixtures(resolve):
         ("explicit-over-environment", {"webSocketUrl": "wss://EXAMPLE/a", "apnsEnvironment": "sandbox"}),
         ("missing", {}),
         ("unknown-environment", {"apnsEnvironment": "other"}),
+        ("invalid-port-text", {"webSocketUrl": "wss://EXAMPLE:bad/a"}),
+        ("invalid-port-range", {"webSocketUrl": "wss://EXAMPLE:999999/a"}),
+        ("invalid-scheme-fallback", {"webSocketUrl": "not a scheme://EXAMPLE/a"}),
+        ("numeric-scheme-fallback", {"webSocketUrl": "123://EXAMPLE/a"}),
+        ("unicode-scheme-fallback", {"webSocketUrl": "\u00e9://EXAMPLE/a"}),
+        ("scheme-plus", {"webSocketUrl": "wss+test://EXAMPLE/a"}),
+        ("embedded-tab", {"webSocketUrl": "wss://EX\tAMPLE/a"}),
+        ("embedded-newlines", {"webSocketUrl": "wss://EX\r\nAMPLE/a"}),
+        ("leading-controls", {"webSocketUrl": "\u0001 \tWSS://EXAMPLE/a"}),
+        ("trailing-space", {"webSocketUrl": "wss://EXAMPLE /a"}),
+        ("query-end", {"webSocketUrl": "wss://EXAMPLE?query"}),
+        ("fragment-end", {"webSocketUrl": "wss://EXAMPLE#fragment"}),
+        ("multiple-userinfo", {"webSocketUrl": "wss://a@b@EXAMPLE/a"}),
+        ("empty-host", {"webSocketUrl": "wss://user@:bad/a"}),
+        ("bare-controls-preserved", {"webSocketUrl": "MiX\tED/a"}),
+        ("invalid-ipv6", {"webSocketUrl": "wss://[nonsense]/a"}),
+        ("bracketed-ipv4", {"webSocketUrl": "wss://[127.0.0.1]/a"}),
+        ("missing-close-bracket", {"webSocketUrl": "wss://[::1/a"}),
+        ("missing-open-bracket", {"webSocketUrl": "wss://::1]/a"}),
+        ("invalid-ipvfuture-version", {"webSocketUrl": "wss://[vZ.ABC]/a"}),
+        ("invalid-ipvfuture-empty", {"webSocketUrl": "wss://[v1.]/a"}),
+        ("uppercase-ipvfuture", {"webSocketUrl": "wss://[V1.ABC]/a"}),
+        ("empty-zone", {"webSocketUrl": "wss://[fe80::1%]/a"}),
+        ("multiple-zone", {"webSocketUrl": "wss://[fe80::1%a%b]/a"}),
+        ("nfkc-slash", {"webSocketUrl": "wss://EXAMPLE\u2100/a"}),
+        ("nfkc-colon", {"webSocketUrl": "wss://EXAMPLE\uff1a80/a"}),
+        ("nfkc-at", {"webSocketUrl": "wss://EXAMPLE\uff20HOST/a"}),
+        ("nfkc-safe", {"webSocketUrl": "wss://\uff25XAMPLE/a"}),
     ]
     rows = []
     for name, data in inputs:
         row = {"name": name, "input": data}
         try:
             row["host"] = resolve(SimpleNamespace(bridge_initiate_data=data))
-        except PyiCloudTrustedDevicePromptException:
+        except (PyiCloudTrustedDevicePromptException, ValueError) as error:
             row["error"] = True
+            row["errorType"] = type(error).__name__
+            row["errorMessage"] = str(error)
         rows.append(row)
     return rows
 
