@@ -23,15 +23,15 @@ func writeCommand(operation string) bool {
 	}
 
 	switch operation {
-	case "reminder-create", "reminder-update", "reminder-delete":
+	case writeReminderCreate, writeReminderUpdate, writeReminderDelete:
 		return true
-	case "reminder-hashtag-create", "reminder-hashtag-update", "reminder-hashtag-delete":
+	case writeHashtagCreate, writeHashtagUpdate, writeHashtagDelete:
 		return true
-	case "reminder-recurrence-create", "reminder-recurrence-update", "reminder-recurrence-delete":
+	case writeRecurrenceCreate, writeRecurrenceUpdate, writeRecurrenceDelete:
 		return true
-	case "reminder-attachment-create", "reminder-attachment-update", "reminder-attachment-delete":
+	case writeAttachmentCreate, writeAttachmentUpdate, writeAttachmentDelete:
 		return true
-	case "reminder-location-add":
+	case writeLocationAdd:
 		return true
 	case writePhotoAlbumCreate, writePhotoAlbumRename, writePhotoAlbumDelete:
 		return true
@@ -50,15 +50,15 @@ func runWrite(ctx context.Context, client icloud.Client,
 	}
 
 	switch operation {
-	case "reminder-create", "reminder-update", "reminder-delete":
+	case writeReminderCreate, writeReminderUpdate, writeReminderDelete:
 		return runReminderWrite(ctx, client, auth, operation, path, resultPath)
-	case "reminder-hashtag-create", "reminder-hashtag-update", "reminder-hashtag-delete":
+	case writeHashtagCreate, writeHashtagUpdate, writeHashtagDelete:
 		return runHashtagWrite(ctx, client, auth, operation, path, resultPath)
-	case "reminder-recurrence-create", "reminder-recurrence-update", "reminder-recurrence-delete":
+	case writeRecurrenceCreate, writeRecurrenceUpdate, writeRecurrenceDelete:
 		return runRecurrenceWrite(ctx, client, auth, operation, path, resultPath)
-	case "reminder-attachment-create", "reminder-attachment-update", "reminder-attachment-delete":
+	case writeAttachmentCreate, writeAttachmentUpdate, writeAttachmentDelete:
 		return runAttachmentWrite(ctx, client, auth, operation, path, resultPath)
-	case "reminder-location-add":
+	case writeLocationAdd:
 		return runLocationWrite(ctx, client, auth, operation, path, resultPath)
 	case writePhotoAlbumCreate, writePhotoAlbumRename, writePhotoAlbumDelete:
 		return runAlbumWrite(ctx, client, auth, operation, path, resultPath)

@@ -27,7 +27,8 @@ func (failure *WriteRequestError) Error() string { return errWriteRequest.Error(
 func (failure *WriteRequestError) Unwrap() error { return failure.Cause }
 
 func readWriteRequest[Request any](ctx context.Context, path string) (*Request, error) {
-	if err := ctx.Err(); err != nil {
+	err := ctx.Err()
+	if err != nil {
 		return nil, &WriteRequestError{Cause: err}
 	}
 
@@ -66,15 +67,17 @@ func openWriteFile(path string) (*os.File, error) {
 
 func decodeWriteRequest[Request any](input io.Reader) (*Request, error) {
 	decoder := json.NewDecoder(input)
+
 	var raw json.RawMessage
 
-	if err := decoder.Decode(&raw); err != nil {
+	err := decoder.Decode(&raw)
+	if err != nil {
 		return nil, fmt.Errorf("decode write JSON: %w", err)
 	}
 
 	var trailing json.RawMessage
 
-	err := decoder.Decode(&trailing)
+	err = decoder.Decode(&trailing)
 	if !errors.Is(err, io.EOF) {
 		if err != nil {
 			return nil, fmt.Errorf("decode request end: %w", err)
@@ -82,13 +85,17 @@ func decodeWriteRequest[Request any](input io.Reader) (*Request, error) {
 		return nil, errWriteTrailing
 	}
 
-	if err = validateWriteJSON(raw); err != nil {
+	err = validateWriteJSON(raw)
+	if err != nil {
 		return nil, err
 	}
 	typed := json.NewDecoder(bytes.NewReader(raw))
 	typed.DisallowUnknownFields()
+
 	var request *Request
-	if err = typed.Decode(&request); err != nil {
+
+	err = typed.Decode(&request)
+	if err != nil {
 		return nil, fmt.Errorf("decode typed request: %w", err)
 	}
 	if request == nil {
@@ -105,7 +112,9 @@ func invokeWrite[Request, Result any](ctx context.Context, path, resultPath stri
 	if err != nil {
 		return nil, err
 	}
-	if err = ctx.Err(); err != nil {
+
+	err = ctx.Err()
+	if err != nil {
 		return nil, &WriteRequestError{Cause: err}
 	}
 

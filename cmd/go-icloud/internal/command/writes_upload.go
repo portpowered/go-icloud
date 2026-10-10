@@ -10,7 +10,8 @@ import (
 var errWriteReceipt = errors.New("provide --save-result for composable photo upload commands")
 
 func phaseWriteCommand(operation string) bool {
-	return operation == "photo-upload-reserve" || operation == "photo-upload-send" || operation == writePhotoUploadRegister
+	return operation == writePhotoUploadReserve || operation == writePhotoUploadSend ||
+		operation == writePhotoUploadRegister
 }
 
 func runUploadWrite(ctx context.Context, client icloud.Client,
@@ -19,8 +20,9 @@ func runUploadWrite(ctx context.Context, client icloud.Client,
 	if resultPath == "" {
 		return nil, errWriteReceipt
 	}
+
 	switch operation {
-	case "photo-upload-reserve":
+	case writePhotoUploadReserve:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.ReservePhotoUploadsRequest) (*icloud.ReservePhotoUploadsResult, error) {
 				input.Auth = auth

@@ -18,17 +18,17 @@ func TestTypedPhotoReadsPairedReferenceReplay(t *testing.T) {
 	t.Parallel()
 
 	for _, scenario := range []writeReplayCase{
-		{"photo-libraries", "photos-libraries-empty"},
-		{"photo-cursor", "photos-sync-cached"},
-		{"photo-changes", "photos-changes-empty"},
-		{"photo-library-changes", "photos-container-private-changes-0"},
-		{"photos-recently-added", "photos-recently-added-one"},
-		{"shared-photo-albums", "photos-upload-shared-albums-0"},
-		{"shared-photo-count", "photos-upload-shared-count-1"},
-		{"shared-photos", "photos-upload-shared-assets-1"},
-		{"shared-photo", "photos-upload-shared-get-missing"},
-		{"shared-photo-download", "photos-upload-shared-download-binary"},
-		{"photo-upload-status", "photos-upload-status-1"},
+		{testPhotoLibrariesCommand, "photos-libraries-empty"},
+		{testPhotoCursorCommand, "photos-sync-cached"},
+		{testPhotoChangesCommand, "photos-changes-empty"},
+		{testPhotoLibraryChangesCommand, "photos-container-private-changes-0"},
+		{testPhotosRecentlyAddedCommand, "photos-recently-added-one"},
+		{testSharedPhotoAlbumsCommand, "photos-upload-shared-albums-0"},
+		{testSharedPhotoCountCommand, "photos-upload-shared-count-1"},
+		{testSharedPhotosCommand, "photos-upload-shared-assets-1"},
+		{testSharedPhotoCommand, "photos-upload-shared-get-missing"},
+		{testSharedPhotoDownloadCommand, "photos-upload-shared-download-binary"},
+		{testPhotoUploadStatusCommand, "photos-upload-status-1"},
 	} {
 		t.Run(scenario.fixture, func(t *testing.T) { t.Parallel(); runTypedReadReplay(t, scenario) })
 	}
@@ -47,42 +47,49 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 		decodeWriteFixture(t, origin, &auth.SharedPhotosServiceURL)
 	}
 	directory := t.TempDir()
-	session := filepath.Join(directory, "session.json")
-	request, result := filepath.Join(directory, "request.json"), filepath.Join(directory, "result.json")
+	session := filepath.Join(directory, testSessionJsonFilename)
+	request, result := filepath.Join(directory, testRequestJsonFilename), filepath.Join(directory, testResultJsonFilename)
+
 	writeFixtureValue(t, session, auth)
 	input := typedReadFixtureRequest(scenario.operation, fixture)
-	input["auth"] = map[string]any{"accountID": "foreign", "photosServiceURL": "https://foreign.example.invalid"}
+	input["auth"] = map[string]any{testAccountIDKey: "foreign", "photosServiceURL": "https://foreign.example.invalid"}
 	writeFixtureValue(t, request, input)
+
 	var output, diagnostic bytes.Buffer
-	args := []string{"--session", session, "--request", request, "--save-result", result, scenario.operation}
+
+	args := []string{testSessionFlag, session, testRequestFlag, request, testSaveResultFlag, result, scenario.operation}
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 	private, err := os.ReadFile(result)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var original map[string]json.RawMessage
+
 	var actual map[string]any
 
 	decodeWriteFixture(t, private, &original)
 	decodeWriteFixture(t, output.Bytes(), &actual)
+
 	var responses []icloud.ResponseMetadata
 
-	decodeWriteFixture(t, original["responses"], &responses)
+	decodeWriteFixture(t, original[testResponsesKey], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
-	if scenario.operation == "photo-libraries" {
+	if scenario.operation == testPhotoLibrariesCommand {
 		libraries, listPresent := actual["libraries"].([]any)
 		if !listPresent || len(libraries) != 1 {
-			t.Fatal("root inventory differs")
+			t.Fatal(testRootInventoryDiffers)
 		}
 		library, objectPresent := libraries[0].(map[string]any)
 		if !objectPresent || library["id"] != "root" {
-			t.Fatal("root inventory differs")
+			t.Fatal(testRootInventoryDiffers)
 		}
 		return
 	}
@@ -90,6 +97,7 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("console projection differs\nactual: %#v\nSource: %#v", actual, expected)
 	}
+
 	for _, secret := range []string{
 		"https://assets.example.invalid", "synthetic-next", "synthetic-cached", "synthetic-account",
 	} {
@@ -101,13 +109,13 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 
 func typedReadFixtureRequest(operation string, fixture writeFixture) map[string]any {
 	switch operation {
-	case "photo-changes":
+	case testPhotoChangesCommand:
 		return map[string]any{"since": fixture.Keywords["since"]}
-	case "shared-photo-count", "shared-photos":
-		return map[string]any{"album": "synthetic-stream-0"}
-	case "shared-photo", "shared-photo-download":
-		return map[string]any{"album": "synthetic-stream-0", "photoID": fixture.Inputs[0]}
-	case "photo-upload-status":
+	case testSharedPhotoCountCommand, testSharedPhotosCommand:
+		return map[string]any{"album": testSyntheticStream0}
+	case testSharedPhotoCommand, testSharedPhotoDownloadCommand:
+		return map[string]any{"album": testSyntheticStream0, "photoID": fixture.Inputs[0]}
+	case testPhotoUploadStatusCommand:
 		return map[string]any{"jobIDs": fixture.Inputs[0]}
 	default:
 		return map[string]any{}
@@ -116,24 +124,25 @@ func typedReadFixtureRequest(operation string, fixture writeFixture) map[string]
 
 func typedReadFixtureExpected(t *testing.T, operation string, fixture writeFixture) map[string]any {
 	t.Helper()
+
 	switch operation {
-	case "photo-cursor":
+	case testPhotoCursorCommand:
 		return map[string]any{}
-	case "photo-changes":
+	case testPhotoChangesCommand:
 		return map[string]any{"changes": []any{}}
-	case "photo-library-changes":
+	case testPhotoLibraryChangesCommand:
 		return map[string]any{"zones": []any{}, "moreComing": false}
-	case "shared-photo-albums":
+	case testSharedPhotoAlbumsCommand:
 		return map[string]any{"albums": []any{}}
-	case "shared-photo-count":
+	case testSharedPhotoCountCommand:
 		return map[string]any{"count": fixture.Result}
-	case "shared-photo":
+	case testSharedPhotoCommand:
 		return map[string]any{"photo": nil}
-	case "shared-photo-download":
+	case testSharedPhotoDownloadCommand:
 		return map[string]any{"content": fixture.Result}
-	case "photos-recently-added", "shared-photos":
-		return map[string]any{"photos": typedReadSourcePhotos(t, fixture.Result, operation == "shared-photos")}
-	case "photo-upload-status":
+	case testPhotosRecentlyAddedCommand, testSharedPhotosCommand:
+		return map[string]any{"photos": typedReadSourcePhotos(t, fixture.Result, operation == testSharedPhotosCommand)}
+	case testPhotoUploadStatusCommand:
 		jobs := make(map[string]any)
 		source, objectPresent := fixture.Result.(map[string]any)
 		if !objectPresent {
@@ -141,8 +150,8 @@ func typedReadFixtureExpected(t *testing.T, operation string, fixture writeFixtu
 		}
 
 		for id, raw := range source {
-			job := raw.(map[string]any)
-			value := sourceWriteProjection(job["value"]).(map[string]any)
+			job := sourceServiceObject(t, raw)
+			value := sourceServiceObject(t, sourceWriteProjection(t, job["value"]))
 			value["unknown"] = job["is_unknown"]
 			jobs[id] = value
 		}
@@ -155,20 +164,22 @@ func typedReadFixtureExpected(t *testing.T, operation string, fixture writeFixtu
 
 func typedReadSourcePhotos(t *testing.T, source any, shared bool) []any {
 	t.Helper()
-	photos := sourceWriteProjection(source).([]any)
+	photos := sourceServiceList(t, sourceWriteProjection(t, source))
+
 	for index, raw := range photos {
-		photo := raw.(map[string]any)
-		for _, key := range []string{"assetMetadata", "masterMetadata", "versions", "dimensions", "size", "checksum"} {
+		photo := sourceServiceObject(t, raw)
+		for _, key := range []string{testAssetMetadataKey, testMasterMetadataKey, testVersionsKey,
+			testDimensionsKey, "size", testChecksumKey} {
 			delete(photo, key)
 		}
-		if _, exists := photo["isLivePhoto"]; !exists {
-			photo["isLivePhoto"] = false
+		if _, exists := photo[testIsLivePhotoKey]; !exists {
+			photo[testIsLivePhotoKey] = false
 		}
 		if shared {
-			likeCount, liked := photo["likeCount"], photo["liked"]
-			delete(photo, "likeCount")
+			likeCount, liked := photo[testLikeCountKey], photo["liked"]
+			delete(photo, testLikeCountKey)
 			delete(photo, "liked")
-			photos[index] = map[string]any{"photo": photo, "likeCount": likeCount, "liked": liked}
+			photos[index] = map[string]any{"photo": photo, testLikeCountKey: likeCount, "liked": liked}
 		}
 	}
 	return photos

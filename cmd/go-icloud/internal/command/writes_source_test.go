@@ -7,12 +7,14 @@ import (
 	"time"
 )
 
-func sourceWriteProjection(value any) any {
+func sourceWriteProjection(t *testing.T, value any) any {
+	t.Helper()
+
 	switch node := value.(type) {
 	case []any:
 		result := make([]any, 0, len(node))
 		for _, child := range node {
-			result = append(result, sourceWriteProjection(child))
+			result = append(result, sourceWriteProjection(t, child))
 		}
 		return result
 	case map[string]any:
@@ -20,12 +22,12 @@ func sourceWriteProjection(value any) any {
 			return sourceWriteDate(text)
 		}
 		if model, wrapped := node["$model"].(string); wrapped {
-			result := sourceWriteProjection(node["value"])
+			result := sourceWriteProjection(t, node["value"])
 			if model == "Reminder" {
-				defaultWriteReminder(result.(map[string]any))
+				defaultWriteReminder(sourceServiceObject(t, result))
 			}
 			if model == "URLAttachment" {
-				attachment := result.(map[string]any)
+				attachment := sourceServiceObject(t, result)
 				if _, exists := attachment["uti"]; !exists {
 					attachment["uti"] = "public.url"
 				}
@@ -38,7 +40,7 @@ func sourceWriteProjection(value any) any {
 			if text, ok := child.(string); ok && writeDateField(name) {
 				result[name] = sourceWriteDate(text)
 			} else {
-				result[name] = sourceWriteProjection(child)
+				result[name] = sourceWriteProjection(t, child)
 			}
 		}
 		return result
@@ -50,19 +52,19 @@ func sourceWriteProjection(value any) any {
 func sourceWriteField(key string) string {
 	switch key {
 	case "desc":
-		return "description"
+		return testDescriptionKey
 	case "fullname":
 		return "fullName"
 	case "asset":
-		return "assetMetadata"
+		return testAssetMetadataKey
 	}
 	names := map[string]string{
-		"list_id": "listID", "reminder_id": "reminderID", "parent_reminder_id": "parentReminderID",
-		"hashtag_ids": "hashtagIDs", "attachment_ids": "attachmentIDs",
-		"alarm_ids": "alarmIDs", "recurrence_rule_ids": "recurrenceRuleIDs",
+		"list_id": "listID", "reminder_id": testReminderIDKey, "parent_reminder_id": "parentReminderID",
+		"hashtag_ids": testHashtagIDsKey, "attachment_ids": testAttachmentIDsKey,
+		"alarm_ids": testAlarmIDsKey, "recurrence_rule_ids": testRecurrenceRuleIDsKey,
 		"alarm_id": "alarmID", "alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID",
 		"file_asset_url": "fileAssetURL",
-		"master_id":      "masterID",
+		"master_id":      testMasterIDKey,
 	}
 	if name, known := names[key]; known {
 		return name
@@ -79,7 +81,7 @@ func sourceWriteField(key string) string {
 }
 
 func defaultWriteReminder(value map[string]any) {
-	for _, key := range []string{"alarmIDs", "attachmentIDs", "hashtagIDs", "recurrenceRuleIDs"} {
+	for _, key := range []string{testAlarmIDsKey, testAttachmentIDsKey, testHashtagIDsKey, testRecurrenceRuleIDsKey} {
 		if _, exists := value[key]; !exists {
 			value[key] = []any{}
 		}
@@ -88,7 +90,7 @@ func defaultWriteReminder(value map[string]any) {
 
 func writeDateField(key string) bool {
 	switch key {
-	case "added", "created", "modified", "completedDate", "dueDate", "startDate":
+	case "added", "created", testModifiedKey, "completedDate", "dueDate", "startDate":
 		return true
 	default:
 		return false
@@ -96,12 +98,16 @@ func writeDateField(key string) bool {
 }
 
 func sourceWriteDate(text string) string {
-	if instant, err := time.Parse(time.RFC3339Nano, text); err == nil {
+	instant, err := time.Parse(time.RFC3339Nano, text)
+	if err == nil {
 		return instant.UTC().Format(time.RFC3339Nano)
 	}
-	if instant, err := time.Parse("2006-01-02T15:04:05", text); err == nil {
+
+	instant, err = time.Parse("2006-01-02T15:04:05", text)
+	if err == nil {
 		return instant.UTC().Format(time.RFC3339Nano)
 	}
+
 	return text
 }
 
@@ -109,41 +115,41 @@ func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map
 	t.Helper()
 	request := map[string]any{}
 	if fixture.Keywords != nil {
-		request = sourceWriteProjection(fixture.Keywords).(map[string]any)
+		request = sourceServiceObject(t, sourceWriteProjection(t, fixture.Keywords))
 	}
-	inputs := sourceWriteProjection(fixture.Inputs).([]any)
+	inputs := sourceServiceList(t, sourceWriteProjection(t, fixture.Inputs))
 
 	switch operation {
-	case "reminder-create":
+	case testReminderCreateCommand:
 		request["listID"], request["title"] = inputs[0], inputs[1]
 		if len(inputs) > 2 {
-			request["description"] = inputs[2]
+			request[testDescriptionKey] = inputs[2]
 		}
-	case "reminder-update":
-		request["reminder"] = inputs[0]
-	case "reminder-delete":
-		reminder := inputs[0].(map[string]any)
-		request["reminderID"], request["recordChangeTag"] = reminder["id"], reminder["recordChangeTag"]
-	case "reminder-hashtag-create":
-		request["reminder"], request["name"] = inputs[0], inputs[1]
-	case "reminder-hashtag-update":
+	case testReminderUpdateCommand:
+		request[testReminderKey] = inputs[0]
+	case testReminderDeleteCommand:
+		reminder := sourceServiceObject(t, inputs[0])
+		request[testReminderIDKey], request[testRecordChangeTagKey] = reminder["id"], reminder[testRecordChangeTagKey]
+	case testReminderHashtagCreateCommand:
+		request[testReminderKey], request["name"] = inputs[0], inputs[1]
+	case testReminderHashtagUpdateCommand:
 		request["hashtag"], request["name"] = inputs[0], inputs[1]
-	case "reminder-hashtag-delete":
-		request["reminder"], request["hashtag"] = inputs[0], inputs[1]
-	case "reminder-recurrence-create":
-		request["reminder"] = inputs[0]
-	case "reminder-recurrence-update":
-		request["recurrenceRule"] = inputs[0]
-	case "reminder-recurrence-delete":
-		request["reminder"], request["recurrenceRule"] = inputs[0], inputs[1]
-	case "reminder-attachment-create":
-		request["reminder"], request["url"] = inputs[0], inputs[1]
-	case "reminder-attachment-update":
-		request["attachment"] = inputs[0]
-	case "reminder-attachment-delete":
-		request["reminder"], request["attachment"] = inputs[0], inputs[1]
-	case "reminder-location-add":
-		request["reminder"] = inputs[0]
+	case testReminderHashtagDeleteCommand:
+		request[testReminderKey], request["hashtag"] = inputs[0], inputs[1]
+	case testReminderRecurrenceCreateCommand:
+		request[testReminderKey] = inputs[0]
+	case testReminderRecurrenceUpdateCommand:
+		request[testRecurrenceRuleKey] = inputs[0]
+	case testReminderRecurrenceDeleteCommand:
+		request[testReminderKey], request[testRecurrenceRuleKey] = inputs[0], inputs[1]
+	case testReminderAttachmentCreateCommand:
+		request[testReminderKey], request["url"] = inputs[0], inputs[1]
+	case testReminderAttachmentUpdateCommand:
+		request[testAttachmentKey] = inputs[0]
+	case testReminderAttachmentDeleteCommand:
+		request[testReminderKey], request[testAttachmentKey] = inputs[0], inputs[1]
+	case testReminderLocationAddCommand:
+		request[testReminderKey] = inputs[0]
 	default:
 		photoWriteInput(t, request, operation, inputs)
 	}
@@ -153,17 +159,17 @@ func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map
 func photoWriteInput(t *testing.T, request map[string]any, operation string, inputs []any) {
 	t.Helper()
 	switch operation {
-	case "photo-album-create":
+	case testPhotoAlbumCreateCommand:
 		request["name"] = inputs[0]
-	case "photo-album-rename":
-		request["albumID"], request["name"] = "synthetic-album-0", inputs[0]
-	case "photo-album-delete":
-		request["albumID"] = "synthetic-album-0"
-	case "photo-album-add":
-		request["albumID"], request["photoID"] = "synthetic-album-0", inputs[0]
-	case "photo-favorite":
+	case testPhotoAlbumRenameCommand:
+		request["albumID"], request["name"] = testSyntheticAlbum0, inputs[0]
+	case testPhotoAlbumDeleteCommand:
+		request["albumID"] = testSyntheticAlbum0
+	case testPhotoAlbumAddCommand:
+		request["albumID"], request["photoID"] = testSyntheticAlbum0, inputs[0]
+	case testPhotoFavoriteCommand:
 		request["photoID"], request["favorite"] = inputs[0], inputs[1]
-	case "photo-delete":
+	case testPhotoDeleteCommand:
 		request["photoID"] = inputs[0]
 	default:
 		t.Fatal("unknown Source write adapter", operation)
@@ -172,29 +178,30 @@ func photoWriteInput(t *testing.T, request map[string]any, operation string, inp
 
 func fixtureWriteExpected(t *testing.T, operation string, fixture writeFixture) any {
 	t.Helper()
-	result := sourceWriteProjection(fixture.Result)
-	if operation == "reminder-create" {
-		return map[string]any{"reminder": result}
+	result := sourceWriteProjection(t, fixture.Result)
+	if operation == testReminderCreateCommand {
+		return map[string]any{testReminderKey: result}
 	}
-	if operation == "photo-delete" || operation == "photo-album-delete" {
+	if operation == testPhotoDeleteCommand || operation == testPhotoAlbumDeleteCommand {
 		return map[string]any{"deleted": true}
 	}
-	if operation == "photo-album-add" {
+	if operation == testPhotoAlbumAddCommand {
 		return map[string]any{"added": true}
 	}
-	if operation == "photo-album-create" {
+	if operation == testPhotoAlbumCreateCommand {
 		return map[string]any{"album": result}
 	}
 	observed, objectPresent := result.(map[string]any)
 	if !objectPresent {
 		t.Fatal("Source write result is not an object", operation)
 	}
-	if operation == "photo-album-rename" {
+	if operation == testPhotoAlbumRenameCommand {
 		return map[string]any{"album": observed["album"]}
 	}
-	if operation == "photo-favorite" {
-		photo := observed["photo"].(map[string]any)
-		for _, key := range []string{"assetMetadata", "masterMetadata", "versions", "dimensions", "size", "checksum"} {
+	if operation == testPhotoFavoriteCommand {
+		photo := sourceServiceObject(t, observed["photo"])
+		for _, key := range []string{testAssetMetadataKey, testMasterMetadataKey, testVersionsKey,
+			testDimensionsKey, "size", testChecksumKey} {
 			delete(photo, key)
 		}
 		return map[string]any{"photo": photo}
@@ -208,39 +215,41 @@ func fixtureWriteExpected(t *testing.T, operation string, fixture writeFixture) 
 
 func expectedReminderWrite(t *testing.T, operation string, value any, arguments []any) any {
 	t.Helper()
+
 	switch operation {
-	case "reminder-update":
-		return map[string]any{"reminder": arguments[0]}
-	case "reminder-delete":
-		reminder := arguments[0].(map[string]any)
+	case testReminderUpdateCommand:
+		return map[string]any{testReminderKey: arguments[0]}
+	case testReminderDeleteCommand:
+		reminder := sourceServiceObject(t, arguments[0])
 		return map[string]any{
-			"deleted": true, "modified": reminder["modified"], "recordChangeTag": reminder["recordChangeTag"],
+			"deleted": true, testModifiedKey: reminder[testModifiedKey],
+			testRecordChangeTagKey: reminder[testRecordChangeTagKey],
 		}
-	case "reminder-hashtag-create":
-		return map[string]any{"hashtag": value, "reminder": arguments[0]}
-	case "reminder-hashtag-update":
+	case testReminderHashtagCreateCommand:
+		return map[string]any{"hashtag": value, testReminderKey: arguments[0]}
+	case testReminderHashtagUpdateCommand:
 		return map[string]any{"hashtag": arguments[0]}
-	case "reminder-hashtag-delete":
-		return map[string]any{"hashtag": arguments[1], "reminder": arguments[0]}
-	case "reminder-recurrence-create":
-		return map[string]any{"recurrenceRule": value, "reminder": arguments[0]}
-	case "reminder-recurrence-update":
-		return map[string]any{"recurrenceRule": arguments[0]}
-	case "reminder-recurrence-delete":
-		return map[string]any{"recurrenceRule": arguments[1], "reminder": arguments[0]}
-	case "reminder-attachment-create":
-		return map[string]any{"attachment": value, "reminder": arguments[0]}
-	case "reminder-attachment-update":
-		return map[string]any{"attachment": arguments[0]}
-	case "reminder-attachment-delete":
-		return map[string]any{"attachment": arguments[1], "reminder": arguments[0]}
-	case "reminder-location-add":
+	case testReminderHashtagDeleteCommand:
+		return map[string]any{"hashtag": arguments[1], testReminderKey: arguments[0]}
+	case testReminderRecurrenceCreateCommand:
+		return map[string]any{testRecurrenceRuleKey: value, testReminderKey: arguments[0]}
+	case testReminderRecurrenceUpdateCommand:
+		return map[string]any{testRecurrenceRuleKey: arguments[0]}
+	case testReminderRecurrenceDeleteCommand:
+		return map[string]any{testRecurrenceRuleKey: arguments[1], testReminderKey: arguments[0]}
+	case testReminderAttachmentCreateCommand:
+		return map[string]any{testAttachmentKey: value, testReminderKey: arguments[0]}
+	case testReminderAttachmentUpdateCommand:
+		return map[string]any{testAttachmentKey: arguments[0]}
+	case testReminderAttachmentDeleteCommand:
+		return map[string]any{testAttachmentKey: arguments[1], testReminderKey: arguments[0]}
+	case testReminderLocationAddCommand:
 		returned, ok := value.([]any)
 		if !ok || len(returned) != 2 {
 			t.Fatal("Source location result lost alarm/trigger tuple")
 		}
-		projectSourceLocationNumbers(t, returned[1].(map[string]any))
-		return map[string]any{"alarm": returned[0], "trigger": returned[1], "reminder": arguments[0]}
+		projectSourceLocationNumbers(t, sourceServiceObject(t, returned[1]))
+		return map[string]any{"alarm": returned[0], "trigger": returned[1], testReminderKey: arguments[0]}
 	default:
 		t.Fatal("unknown Source result adapter: " + operation)
 	}
@@ -252,7 +261,7 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 // schema fields; integer identifiers and exact provider request bytes stay intact.
 func projectSourceLocationNumbers(t *testing.T, trigger map[string]any) {
 	t.Helper()
-	for _, key := range []string{"latitude", "longitude", "radius"} {
+	for _, key := range []string{testLatitudeKey, testLongitudeKey, "radius"} {
 		number, ok := trigger[key].(json.Number)
 		if !ok {
 			t.Fatalf("Source location %s is not numeric", key)
@@ -271,11 +280,12 @@ func projectSourceLocationNumbers(t *testing.T, trigger map[string]any) {
 
 func TestSourceLocationProjectionPreservesNumericValues(t *testing.T) {
 	t.Parallel()
-	trigger := map[string]any{"latitude": json.Number("1.25"), "longitude": json.Number("2.5"),
-		"radius": json.Number("50.0"), "proximity": json.Number("2"), "opaqueInteger": json.Number("9007199254740993")}
+	trigger := map[string]any{testLatitudeKey: json.Number("1.25"), testLongitudeKey: json.Number("2.5"),
+		"radius": json.Number("50.0"), testProximityKey: json.Number("2"),
+		testOpaqueIntegerKey: json.Number(testOpaqueLargeInteger)}
 	projectSourceLocationNumbers(t, trigger)
-	for key, expected := range map[string]json.Number{"latitude": "1.25", "longitude": "2.5", "radius": "50",
-		"proximity": "2", "opaqueInteger": "9007199254740993"} {
+	for key, expected := range map[string]json.Number{testLatitudeKey: "1.25", testLongitudeKey: "2.5", "radius": "50",
+		testProximityKey: "2", testOpaqueIntegerKey: testOpaqueLargeInteger} {
 		if trigger[key] != expected {
 			t.Fatalf("%s: want %s, got %v", key, expected, trigger[key])
 		}

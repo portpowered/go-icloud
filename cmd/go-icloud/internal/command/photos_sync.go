@@ -60,7 +60,9 @@ func runPhotosSync(ctx context.Context, client icloud.Client, config options, ou
 	progress := newPhotosSyncProgress(sdk, state, config.session)
 	defer func() { failure = errors.Join(failure, progress.persist(ctx)) }()
 	request.Auth = state.Auth
+
 	err = progress.bind(ctx, request.Options.Library)
+
 	if err != nil {
 		return err
 	}

@@ -93,7 +93,7 @@ func resumeInput(config options) (*savedlogin.Login, error) {
 func saveNativeSession(ctx context.Context, path string, result *icloud.ResumeSessionResult) error {
 	err := ctx.Err()
 	if err != nil {
-		return fmt.Errorf("private session canceled: %w", err)
+		return fmt.Errorf(privateSessionCanceledError, err)
 	}
 
 	data, err := json.Marshal(result)
@@ -107,7 +107,7 @@ func saveNativeSession(ctx context.Context, path string, result *icloud.ResumeSe
 func savePrivateData(ctx context.Context, path string, data []byte) error {
 	err := ctx.Err()
 	if err != nil {
-		return fmt.Errorf("private session canceled: %w", err)
+		return fmt.Errorf(privateSessionCanceledError, err)
 	}
 
 	path = filepath.Clean(path)
@@ -131,7 +131,7 @@ func savePrivateData(ctx context.Context, path string, data []byte) error {
 
 	err = ctx.Err()
 	if err != nil {
-		return cleanupSessionFailure(temporary, fmt.Errorf("private session canceled: %w", err))
+		return cleanupSessionFailure(temporary, fmt.Errorf(privateSessionCanceledError, err))
 	}
 
 	err = os.Rename(temporary, path)

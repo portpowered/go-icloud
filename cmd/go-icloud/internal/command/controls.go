@@ -38,7 +38,7 @@ func controlFindMy(ctx context.Context, client icloud.Client,
 	session, err := client.OpenFindMySession(ctx, icloud.OpenFindMySessionRequest{Auth: auth,
 		IncludeFamily: config.family}, icloud.WithFindMyMonitorInterval(0))
 	if err != nil {
-		return nil, fmt.Errorf("discover Find My devices: %w", err)
+		return nil, fmt.Errorf(findMyDiscoveryError, err)
 	}
 
 	result, operationErr := findMyOperation(ctx, session, config)
@@ -65,10 +65,10 @@ func findMyOperation(ctx context.Context, session *icloud.FindMySession, config 
 			Subject: config.subject, Text: config.message, Sound: false, Strobe: false, Vibrate: false}))
 	case findMyLostCommand:
 		return wrap(session.MarkLost(ctx, icloud.FindMyLostRequest{DeviceID: config.deviceID,
-			PhoneNumber: config.phoneNumber, Text: config.message, Passcode: os.Getenv("GO_ICLOUD_DEVICE_PASSCODE")}))
+			PhoneNumber: config.phoneNumber, Text: config.message, Passcode: os.Getenv(devicePasscodeEnvironment)}))
 	case findMyEraseCommand:
 		return wrap(session.Erase(ctx, icloud.FindMyEraseRequest{DeviceID: config.deviceID,
-			Text: config.message, Passcode: os.Getenv("GO_ICLOUD_DEVICE_PASSCODE")}))
+			Text: config.message, Passcode: os.Getenv(devicePasscodeEnvironment)}))
 	default:
 		return nil, errCommand
 	}

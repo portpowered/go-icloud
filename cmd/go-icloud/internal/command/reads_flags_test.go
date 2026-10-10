@@ -26,27 +26,37 @@ func (probe legacyPhotoProbe) GetPhoto(_ context.Context, _ icloud.GetPhotoReque
 
 func TestLegacyPhotoFlagsKeepOriginalOnlyInPrivateResult(t *testing.T) {
 	t.Parallel()
+
 	var resource icloud.PhotoResource
+
 	resource.Url = json.RawMessage(`"https://assets.example.invalid/photo?token=synthetic-private-url"`)
+
 	var photo icloud.Photo
-	photo.ID = "synthetic-photo"
+
+	photo.ID = testSyntheticPhotoID
 	photo.AssetMetadata = json.RawMessage(`{"unreviewed":"synthetic-private-metadata"}`)
 	photo.Versions = map[string]icloud.PhotoResource{"original": resource}
+
 	var result icloud.GetPhotoResult
+
 	result.Photo = nullable.NewNullableWithValue(photo)
 	result.Responses = []icloud.ResponseMetadata{}
 	probe := legacyPhotoProbe{Client: nil, result: &result}
 	directory := t.TempDir()
-	session, saved := filepath.Join(directory, "session.json"), filepath.Join(directory, "result.json")
+	session, saved := filepath.Join(directory, testSessionJsonFilename), filepath.Join(directory, testResultJsonFilename)
 	writeFixtureValue(t, session, resultAuth())
+
 	var output, diagnostic bytes.Buffer
+
 	err := command.Run(t.Context(), probe,
-		[]string{"--session", session, "--album", "Library", "--photo", "synthetic-photo", "--save-result", saved, "photo"},
+		[]string{testSessionFlag, session, "--album", "Library", "--photo", testSyntheticPhotoID,
+			testSaveResultFlag, saved, "photo"},
 		&output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, marker := range []string{"synthetic-private-url", "synthetic-private-metadata", "versions", "assetMetadata"} {
+	for _, marker := range []string{"synthetic-private-url", "synthetic-private-metadata",
+		testVersionsKey, testAssetMetadataKey} {
 		if strings.Contains(output.String(), marker) {
 			t.Fatal("legacy flags exposed private provider data", marker)
 		}

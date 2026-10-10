@@ -10,21 +10,21 @@ func runReminderWrite(ctx context.Context, client icloud.Client,
 	auth icloud.AuthContext, operation, path, resultPath string,
 ) (any, error) {
 	switch operation {
-	case "reminder-create":
+	case writeReminderCreate:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.CreateReminderRequest) (*icloud.ReminderMutationResult, error) {
 				input.Auth = auth
 
 				return client.CreateReminder(ctx, input)
 			})
-	case "reminder-update":
+	case writeReminderUpdate:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.UpdateReminderRequest) (*icloud.ReminderMutationResult, error) {
 				input.Auth = auth
 
 				return client.UpdateReminder(ctx, input)
 			})
-	case "reminder-delete":
+	case writeReminderDelete:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.DeleteReminderRequest) (*icloud.DeleteReminderResult, error) {
 				input.Auth = auth

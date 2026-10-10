@@ -10,21 +10,21 @@ func runHashtagWrite(ctx context.Context, client icloud.Client,
 	auth icloud.AuthContext, operation, path, resultPath string,
 ) (any, error) {
 	switch operation {
-	case "reminder-hashtag-create":
+	case writeHashtagCreate:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.CreateReminderHashtagRequest) (*icloud.ReminderHashtagRelationResult, error) {
 				input.Auth = auth
 
 				return client.CreateReminderHashtag(ctx, input)
 			})
-	case "reminder-hashtag-update":
+	case writeHashtagUpdate:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.UpdateReminderHashtagRequest) (*icloud.ReminderHashtagMutationResult, error) {
 				input.Auth = auth
 
 				return client.UpdateReminderHashtag(ctx, input)
 			})
-	case "reminder-hashtag-delete":
+	case writeHashtagDelete:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.DeleteReminderHashtagRequest) (*icloud.ReminderHashtagRelationResult, error) {
 				input.Auth = auth

@@ -26,7 +26,7 @@ func readSecret(ctx context.Context, input io.ReadCloser, environment Environmen
 ) (string, error) {
 	contextErr := ctx.Err()
 	if contextErr != nil {
-		return "", fmt.Errorf("secret input canceled: %w", contextErr)
+		return "", fmt.Errorf(secretInputCanceledError, contextErr)
 	}
 
 	if !stdin {
@@ -54,7 +54,7 @@ func readSecret(ctx context.Context, input io.ReadCloser, environment Environmen
 
 		<-result
 
-		return "", errors.Join(fmt.Errorf("secret input canceled: %w", ctx.Err()), closeErr)
+		return "", errors.Join(fmt.Errorf(secretInputCanceledError, ctx.Err()), closeErr)
 	case read := <-result:
 		return read.value, read.err
 	}

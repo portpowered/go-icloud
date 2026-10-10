@@ -10,21 +10,21 @@ func runRecurrenceWrite(ctx context.Context, client icloud.Client,
 	auth icloud.AuthContext, operation, path, resultPath string,
 ) (any, error) {
 	switch operation {
-	case "reminder-recurrence-create":
+	case writeRecurrenceCreate:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.CreateReminderRecurrenceRuleRequest) (*icloud.ReminderRecurrenceRuleRelationResult, error) {
 				input.Auth = auth
 
 				return client.CreateReminderRecurrenceRule(ctx, input)
 			})
-	case "reminder-recurrence-update":
+	case writeRecurrenceUpdate:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.UpdateReminderRecurrenceRuleRequest) (*icloud.ReminderRecurrenceRuleMutationResult, error) {
 				input.Auth = auth
 
 				return client.UpdateReminderRecurrenceRule(ctx, input)
 			})
-	case "reminder-recurrence-delete":
+	case writeRecurrenceDelete:
 		return invokeWrite(ctx, path, resultPath,
 			func(input icloud.DeleteReminderRecurrenceRuleRequest) (*icloud.ReminderRecurrenceRuleRelationResult, error) {
 				input.Auth = auth

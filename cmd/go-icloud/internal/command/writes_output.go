@@ -23,15 +23,19 @@ func (failure *WriteResultError) Error() string { return errWriteResult.Error() 
 func (failure *WriteResultError) Unwrap() error { return failure.Cause }
 
 func finishWriteResult(ctx context.Context, result any, path string) (any, error) {
-	if err := ctx.Err(); err != nil {
+	err := ctx.Err()
+	if err != nil {
 		return nil, &WriteResultError{Cause: err}
 	}
+
 	if path != "" {
 		data, err := json.Marshal(result)
 		if err != nil {
 			return nil, &WriteResultError{Cause: err}
 		}
-		if err = savePrivateData(ctx, path, data); err != nil {
+
+		err = savePrivateData(ctx, path, data)
+		if err != nil {
 			return nil, &WriteResultError{Cause: err}
 		}
 	}
@@ -44,15 +48,19 @@ func finishWriteResult(ctx context.Context, result any, path string) (any, error
 func safeWriteResult(result any) (any, error) {
 	result = typedWriteProjection(result)
 	result = typedReadProjection(result)
+
 	data, err := json.Marshal(result)
 	if err != nil {
 		return nil, fmt.Errorf("encode write projection: %w", err)
 	}
 
 	var value any
+
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
-	if err = decoder.Decode(&value); err != nil {
+
+	err = decoder.Decode(&value)
+	if err != nil {
 		return nil, fmt.Errorf("decode write projection: %w", err)
 	}
 
@@ -82,7 +90,7 @@ func stripWriteSecrets(value any) {
 
 func privateWriteField(key string) bool {
 	switch key {
-	case "auth", "accountID", "clientID", "dsid", "cookies", "headers", "metadata", "responses",
+	case "auth", "accountID", "clientID", "dsid", "cookies", "headers", privateMetadataField, privateResponsesField,
 		"assetMetadata", "masterMetadata", "versions", "dimensions", "size", "checksum",
 		"fileAssetURL", "uploadURLs", "receipt", "wrappingKey", "uploadToken", "syncToken", "syncCursor", "errorMessage",
 		"additionalMetadata", "location", "publicURL", "ownerID", "ownerRecordName":
@@ -127,6 +135,7 @@ func typedWriteProjection(result any) any {
 
 func writePhotoRegistration(value icloud.PhotoUploadRegistration) icloud.PhotoUploadRegistration {
 	value.AdditionalProperties = nil
+
 	value.Status = maps.Clone(value.Status)
 	if value.Status.IsSpecified() && !value.Status.IsNull() {
 		status := value.Status.GetOrEmpty()

@@ -24,12 +24,16 @@ func validateWriteJSON(data []byte) error {
 	}
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
-	if err := walkWriteJSON(decoder, 0); err != nil {
+
+	err := walkWriteJSON(decoder, 0)
+	if err != nil {
 		return err
 	}
 
 	var object map[string]json.RawMessage
-	if err := json.Unmarshal(data, &object); err != nil {
+
+	err = json.Unmarshal(data, &object)
+	if err != nil {
 		return fmt.Errorf("inspect typed request: %w", err)
 	}
 	attachment, exists := object["attachment"]
@@ -67,11 +71,15 @@ func walkWriteJSON(decoder *json.Decoder, depth int) error {
 			}
 			seen[name] = true
 		}
-		if err = walkWriteJSON(decoder, depth+1); err != nil {
+
+		err = walkWriteJSON(decoder, depth+1)
+		if err != nil {
 			return err
 		}
 	}
-	if _, err = decoder.Token(); err != nil {
+
+	_, err = decoder.Token()
+	if err != nil {
 		return fmt.Errorf("inspect JSON boundary: %w", err)
 	}
 
@@ -80,13 +88,14 @@ func walkWriteJSON(decoder *json.Decoder, depth int) error {
 
 func validateWriteAttachment(data []byte) error {
 	var fields map[string]json.RawMessage
-	if err := json.Unmarshal(data, &fields); err != nil {
+
+	err := json.Unmarshal(data, &fields)
+	if err != nil {
 		return fmt.Errorf("inspect attachment variant: %w", err)
 	}
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
 
-	var err error
 	if _, selected := fields["url"]; selected {
 		var attachment icloud.ReminderURLAttachment
 
@@ -96,6 +105,7 @@ func validateWriteAttachment(data []byte) error {
 
 		err = decoder.Decode(&attachment)
 	}
+
 	if err != nil {
 		return fmt.Errorf("decode attachment variant: %w", err)
 	}

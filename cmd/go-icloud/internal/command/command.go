@@ -139,7 +139,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	controlFlags(flags, &config)
 	flags.StringVar(&config.node, "node", "", "Drive node identifier for drive-node")
 	photoFlags(flags, &config)
-	flags.StringVar(&config.reminderID, "reminder", "", "Raw or complete reminder identifier for reminder")
+	flags.StringVar(&config.reminderID, reminderCommand, "", "Raw or complete reminder identifier for reminder")
 	flags.Func("since", "Optional cursor for reminder-changes; omission starts an initial read", func(value string) error {
 		config.since = &value
 
@@ -220,15 +220,15 @@ func loadSession(path string) (icloud.AuthContext, error) {
 
 func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-legacy-snapshot", "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync",
-		"reminder-changes",
-		"reminders", "reminder-snapshot",
-		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", reminderAlarmsCommand:
+	case reminderLegacySnapshotCommand, reminderZonesCommand, reminderListsCommand, reminderCommand, reminderSyncCommand,
+		reminderChangesCommand,
+		remindersCommand, reminderSnapshotCommand,
+		reminderTagsCommand, reminderAttachmentsCommand, reminderRecurrencesCommand, reminderAlarmsCommand:
 		return readReminders(ctx, client, auth, config)
 	case photosStatusCommand, photoAlbumsCommand, photoCountCommand,
 		photoAssetsCommand, photoCommand, photoDownloadCommand:
 		return photoFlagResult(ctx, client, auth, config)
-	case accountDevicesCommand, "account-family", "account-storage", "account-plan":
+	case accountDevicesCommand, accountFamilyCommand, accountStorageCommand, accountPlanCommand:
 		return readAccount(ctx, client, auth, config.operation)
 	case "drive-libraries":
 		return wrap(client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth}))
@@ -245,23 +245,23 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 
 func readReminders(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "reminder-legacy-snapshot":
+	case reminderLegacySnapshotCommand:
 		return wrap(client.GetLegacyRemindersSnapshot(ctx, icloud.GetLegacyRemindersSnapshotRequest{Auth: auth}))
-	case "reminder-zones":
+	case reminderZonesCommand:
 		return wrap(client.ListReminderZones(ctx, icloud.ListReminderZonesRequest{Auth: auth}))
 	case reminderCommand:
 		return wrap(client.GetReminder(ctx, icloud.GetReminderRequest{Auth: auth, ReminderID: config.reminderID}))
-	case "reminder-sync":
+	case reminderSyncCommand:
 		return wrap(client.GetReminderSyncCursor(ctx, icloud.GetReminderSyncCursorRequest{Auth: auth}))
-	case "reminder-changes":
+	case reminderChangesCommand:
 		return wrap(client.ListReminderChanges(ctx, icloud.ListReminderChangesRequest{Auth: auth, Since: config.since}))
-	case "reminders":
+	case remindersCommand:
 		return wrap(client.ListReminders(ctx, icloud.ListRemindersRequest{Auth: auth, ListID: config.listID,
 			IncludeCompleted: &config.includeCompleted, ResultsLimit: config.resultsLimit}))
-	case "reminder-snapshot":
+	case reminderSnapshotCommand:
 		return wrap(client.ListReminderSnapshot(ctx,
 			icloud.ListReminderSnapshotRequest{Auth: auth, ListID: &config.listID}))
-	case "reminder-lists":
+	case reminderListsCommand:
 		return wrap(client.ListReminderLists(ctx, icloud.ListReminderListsRequest{Auth: auth}))
 	default:
 		return readReminderRelated(ctx, client, auth, config)
@@ -272,7 +272,7 @@ func findMy(ctx context.Context, client icloud.Client, auth icloud.AuthContext, 
 	session, err := client.OpenFindMySession(ctx, icloud.OpenFindMySessionRequest{Auth: auth, IncludeFamily: family},
 		icloud.WithFindMyMonitorInterval(0))
 	if err != nil {
-		return nil, fmt.Errorf("discover Find My devices: %w", err)
+		return nil, fmt.Errorf(findMyDiscoveryError, err)
 	}
 
 	snapshot, snapshotErr := session.Snapshot()
@@ -294,9 +294,10 @@ func writeResult(output io.Writer, result any) error {
 	}
 
 	var object map[string]json.RawMessage
+
 	if json.Unmarshal(data, &object) == nil && object != nil {
-		delete(object, "metadata")
-		delete(object, "responses")
+		delete(object, privateMetadataField)
+		delete(object, privateResponsesField)
 		result = object
 	}
 
@@ -335,12 +336,12 @@ func readReminderRelated(ctx context.Context, client icloud.Client,
 	auth icloud.AuthContext, config options,
 ) (any, error) {
 	switch config.operation {
-	case "reminder-tags":
+	case reminderTagsCommand:
 		return wrap(client.ListReminderTags(ctx, icloud.ListReminderTagsRequest{Auth: auth, IDs: config.relatedIDs}))
-	case "reminder-attachments":
+	case reminderAttachmentsCommand:
 		return wrap(client.ListReminderAttachments(ctx,
 			icloud.ListReminderAttachmentsRequest{Auth: auth, IDs: config.relatedIDs}))
-	case "reminder-recurrence-rules":
+	case reminderRecurrencesCommand:
 		return wrap(client.ListReminderRecurrenceRules(ctx,
 			icloud.ListReminderRecurrenceRulesRequest{Auth: auth, IDs: config.relatedIDs}))
 	case reminderAlarmsCommand:
@@ -384,11 +385,11 @@ func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthCont
 	switch operation {
 	case accountDevicesCommand:
 		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
-	case "account-family":
+	case accountFamilyCommand:
 		return wrap(client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth}))
-	case "account-storage":
+	case accountStorageCommand:
 		return wrap(client.GetAccountStorage(ctx, icloud.GetAccountStorageRequest{Auth: auth}))
-	case "account-plan":
+	case accountPlanCommand:
 		return wrap(client.GetAccountPlanSummary(ctx, icloud.GetAccountPlanSummaryRequest{Auth: auth}))
 
 	default:

@@ -17,5 +17,6 @@ func typedReadProjection(result any) any {
 		status.AdditionalProperties = nil
 		copied.Jobs[id] = status
 	}
+
 	return &copied
 }
