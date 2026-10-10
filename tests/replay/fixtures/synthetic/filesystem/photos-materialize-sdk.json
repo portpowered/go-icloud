@@ -1,0 +1,1872 @@
+{
+  "provenance": {
+    "kind": "synthetic",
+    "source": "timlaing/pyicloud",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e",
+    "description": "Pinned Source set_exif_datetime_if_missing and write_xmp_sidecar executed with real files on declared JPEG streams and CloudKit metadata. HTTP request templates come from paired synthetic Source scenarios; no captures."
+  },
+  "cases": [
+    {
+      "name": "DateTime-only",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000000000400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000000000400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "DateTimeOriginal-only",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020000000200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000000000200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020000000200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000000000200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "DateTimeDigitized-only",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020000000200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020000000200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020000000200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020000000200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "inline-ASCII",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020032010200020000004100000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200020000004100000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "empty-timestamps",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a000000000000000000000000000000000000000000000000000000020003900200140000005800000004900200140000006c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a000000000000000000000000000000000000000000000000000000020003900200140000005800000004900200140000006c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "unknown-byte-order",
+      "inputHex": "ffd8ffe100884578696600005a5a2a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe100884578696600005a5a2a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "invalid-IFD-offset",
+      "inputHex": "ffd8ffe1008845786966000049492a00ffffffff020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1008845786966000049492a00ffffffff020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "invalid-IFD-count",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000ffff32010200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1008845786966000049492a0008000000ffff32010200140000002600000069870400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "invalid-pointer-type",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020000000200140000002600000069870100010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1008845786966000049492a0008000000020000000200140000002600000069870100010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "invalid-pointer-count",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020000000200140000002600000069870400020000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1008845786966000049492a0008000000020000000200140000002600000069870400020000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "invalid-ASCII-offset",
+      "inputHex": "ffd8ffe1008845786966000049492a000800000002003201020014000000ffffffff00000400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1008845786966000049492a000800000002003201020014000000ffffffff00000400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "zero-ASCII-count",
+      "inputHex": "ffd8ffe1008845786966000049492a0008000000020032010200000000002600000000000400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1008845786966000049492a0008000000020032010200000000002600000000000400010000003a00000000000000323032343a30313a30322030333a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "big-endian",
+      "inputHex": "ffd8ffe100884578696600004d4d002a00000008000201320002000000140000002687690004000000010000003a00000000323032343a30313a30322030333a30343a303500000290030002000000140000005890040002000000140000006c00000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "outputHex": "ffd8ffe100884578696600004d4d002a00000008000201320002000000140000002687690004000000010000003a00000000323032343a30313a30322030333a30343a303500000290030002000000140000005890040002000000140000006c00000000323032343a30313a30322030333a30343a303500323032343a30313a30322030333a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 142
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "missing-EXIF",
+      "inputHex": "ffd8ffd9",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffd9",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 4
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "invalid-JPEG",
+      "inputHex": "6e6f742061204a504547",
+      "outputHex": "6e6f742061204a504547",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 10
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "truncated-SOI",
+      "inputHex": "ffd8",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 2
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "truncated-APP1",
+      "inputHex": "ffd8ffe1ffff",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe1ffff",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 6
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "invalid-segment-length",
+      "inputHex": "ffd8ffe10001",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffe10001",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 6
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDCmAQIDBAUGVWhlbGxvUAkIEAcjP/QAAAAAAAAIDxUWFxgaAAAAAAAAAQEAAAAAAAAABwAAAAAAAAAAAAAAAAAAACM="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "YnBsaXN0MDDVAQIDBAUGBwgJClNhbHRTbGF0U2xvblVzcGVlZFl0aW1lc3RhbXAjAAAAAAAAAAAjQEnAAAAAAAAjv+AAAAAAAAAjQAgAAAAAAAAzQcWh2lKAAAAIExcbHyUvOEFKUwAAAAAAAAEBAAAAAAAAAAsAAAAAAAAAAAAAAAAAAABc"
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    },
+    {
+      "name": "start-of-scan",
+      "inputHex": "ffd8ffda0002",
+      "outputHex": "ffd8ffe1008845786966000049492a0008000000020032010200140000002600000069870400010000003a00000000000000323032343a30313a30322030343a30343a303500020003900200140000005800000004900200140000006c00000000000000323032343a30313a30322030343a30343a303500323032343a30313a30322030343a30343a303500ffda0002",
+      "records": {
+        "records": [
+          {
+            "recordName": "synthetic-master-0",
+            "recordType": "CPLMaster",
+            "fields": {
+              "filenameEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "c3ludGhldGljLTAuanBn"
+              },
+              "itemType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalFileType": {
+                "type": "STRING",
+                "value": "public.jpeg"
+              },
+              "resOriginalWidth": {
+                "type": "INT64",
+                "value": 640
+              },
+              "resOriginalHeight": {
+                "type": "INT64",
+                "value": 480
+              },
+              "resOriginalRes": {
+                "type": "ASSETID",
+                "value": {
+                  "downloadURL": "https://assets.example.invalid/photo-0",
+                  "size": 6
+                }
+              }
+            },
+            "recordChangeTag": "synthetic-master-tag"
+          },
+          {
+            "recordName": "synthetic-asset-0",
+            "recordType": "CPLAsset",
+            "fields": {
+              "masterRef": {
+                "type": "REFERENCE",
+                "value": {
+                  "recordName": "synthetic-master-0",
+                  "action": "VALIDATE"
+                }
+              },
+              "assetDate": {
+                "type": "TIMESTAMP",
+                "value": 1704168245000
+              },
+              "addedDate": {
+                "type": "TIMESTAMP",
+                "value": 1700000001000
+              },
+              "isFavorite": {
+                "type": "INT64",
+                "value": 1
+              },
+              "captionEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "QSA8cGhvdG8+ICYgdGl0bGU="
+              },
+              "extendedDescEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "b25lCnR3bw=="
+              },
+              "adjustmentSimpleDataEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "q1bKTS1JTEksSVSyqlbKL8pMzStJLMnMz1OyMqitBQA="
+              },
+              "keywordsEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8YXJyYXk+Cgk8c3RyaW5nPmhlbGxvPC9zdHJpbmc+Cgk8c3RyaW5nPjwvc3RyaW5nPgoJPHRydWUvPgoJPGZhbHNlLz4KCTxpbnRlZ2VyPjc8L2ludGVnZXI+Cgk8cmVhbD4xLjI1PC9yZWFsPgo8L2FycmF5Pgo8L3BsaXN0Pgo="
+              },
+              "locationEnc": {
+                "type": "ENCRYPTED_BYTES",
+                "value": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHBsaXN0IFBVQkxJQyAiLS8vQXBwbGUvL0RURCBQTElTVCAxLjAvL0VOIiAiaHR0cDovL3d3dy5hcHBsZS5jb20vRFREcy9Qcm9wZXJ0eUxpc3QtMS4wLmR0ZCI+CjxwbGlzdCB2ZXJzaW9uPSIxLjAiPgo8ZGljdD4KCTxrZXk+YWx0PC9rZXk+Cgk8cmVhbD4wLjA8L3JlYWw+Cgk8a2V5PmxhdDwva2V5PgoJPHJlYWw+NTEuNTwvcmVhbD4KCTxrZXk+bG9uPC9rZXk+Cgk8cmVhbD4tMC41PC9yZWFsPgoJPGtleT5zcGVlZDwva2V5PgoJPHJlYWw+My4wPC9yZWFsPgoJPGtleT50aW1lc3RhbXA8L2tleT4KCTxkYXRlPjIwMjQtMDEtMDJUMDM6MDQ6MDVaPC9kYXRlPgo8L2RpY3Q+CjwvcGxpc3Q+Cg=="
+              },
+              "timeZoneOffset": {
+                "type": "INT64",
+                "value": 3600
+              },
+              "assetSubtypeV2": {
+                "type": "INT64",
+                "value": 3
+              }
+            },
+            "recordChangeTag": "synthetic-old-tag"
+          }
+        ]
+      },
+      "xmp": "<?xml version='1.0' encoding='utf-8'?>\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"pyicloud photos-cloudkit\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><dc:title>A &lt;photo&gt; &amp; title</dc:title><dc:description>one\ntwo</dc:description><dc:subject><rdf:Seq><rdf:li>hello</rdf:li><rdf:li /><rdf:li>True</rdf:li><rdf:li>False</rdf:li><rdf:li>7</rdf:li><rdf:li>1.25</rdf:li></rdf:Seq></dc:subject></rdf:Description><rdf:Description rdf:about=\"\" xmlns:exif=\"http://ns.adobe.com/exif/1.0/\"><exif:GPSAltitude>0.0</exif:GPSAltitude><exif:GPSLatitude>51.5</exif:GPSLatitude><exif:GPSLongitude>-0.5</exif:GPSLongitude><exif:GPSSpeed>3.0</exif:GPSSpeed><exif:GPSTimeStamp>2024-01-02T03:04:05</exif:GPSTimeStamp></rdf:Description><rdf:Description rdf:about=\"\" xmlns:Iptc4xmpExt=\"http://iptc.org/std/Iptc4xmpExt/2008-02-29/\"><Iptc4xmpExt:DigitalSourceType>screenCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description><rdf:Description rdf:about=\"\" xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\"><photoshop:DateCreated>2024-01-02T05:04:05+0100</photoshop:DateCreated></rdf:Description><rdf:Description rdf:about=\"\" xmlns:tiff=\"http://ns.adobe.com/tiff/1.0/\"><tiff:Orientation>0</tiff:Orientation><tiff:Make>Screenshot</tiff:Make></rdf:Description><rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"><xmp:CreateDate>2024-01-02T05:04:05+0100</xmp:CreateDate><xmp:Rating>5</xmp:Rating></rdf:Description></rdf:RDF></x:xmpmeta>"
+    }
+  ]
+}
