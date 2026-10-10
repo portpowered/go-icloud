@@ -95,6 +95,13 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	metadata := append(failure.PriorResponses(), icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
 		Headers: failure.ResponseHeaders(), CookieScopeURL: failure.CookieScopeURL()})
 	nativeFlowResponses(t, raw, metadata)
+	bodyCopy, headersCopy := failure.ResponseBody(), failure.ResponseHeaders()
+	bodyCopy[0] ^= 1
+	headersCopy[0].Value = "mutation-probe"
+	if !reflect.DeepEqual(failure.ResponseBody(), nativeFlowBody(t, final.Response.Body)) ||
+		!reflect.DeepEqual(failure.ResponseHeaders(), metadata[len(metadata)-1].Headers) {
+		t.Fatal("account projection failure exposes mutable response evidence")
+	}
 	if err = transport.AssertConsumed(); err != nil {
 		t.Fatal(err)
 	}
