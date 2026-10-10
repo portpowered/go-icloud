@@ -11,7 +11,7 @@ import (
 func TestNativeTermsReplay(t *testing.T) {
 	t.Parallel()
 
-	for _, scenario := range []string{"auth-terms-accepted", "auth-terms-missing-version", "auth-terms-refused",
+	for _, scenario := range []string{"auth-terms-accepted", "auth-terms-missing-version", nativeTermsRefusedFixture,
 		nativeOneFactorFixture} {
 		t.Run(scenario, func(t *testing.T) { t.Parallel(); nativeTermsReplay(t, scenario) })
 	}

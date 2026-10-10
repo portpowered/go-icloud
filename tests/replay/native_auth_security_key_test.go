@@ -16,6 +16,7 @@ import (
 
 func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, ceremony := range []bool{false, true} {
 		t.Run(map[bool]string{false: "caller assertion", true: "device ceremony"}[ceremony], func(t *testing.T) {
 			t.Parallel()
@@ -32,6 +33,7 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			var result *icloud.NativeAuthResult
 
 			if ceremony {
@@ -67,7 +69,9 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage,
 ) icloud.SecurityKeyAssertion {
 	t.Helper()
 	initial := authReplayObjectBytes(t, raw["initial_state"])
+
 	var challenge auth.AuthChallenge
+
 	authReplayDecode(t, initial["auth_data"], &challenge)
 	if challenge.FsaChallenge == nil {
 		t.Fatal("security challenge missing")
@@ -82,7 +86,9 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage,
 		Inputs []json.RawMessage `json:"inputs"`
 	}
 	authReplayDecode(t, raw["inputs"], &flow)
+
 	var payload auth.AuthWebAuthnAssertion
+
 	authReplayDecode(t, flow[0].Inputs[0], &payload)
 	return icloud.SecurityKeyAssertion{ClientData: payload.ClientData, Signature: payload.SignatureData,
 		AuthenticatorData: payload.AuthenticatorData, CredentialID: payload.CredentialID, UserHandle: payload.UserHandle}
@@ -111,6 +117,7 @@ func (provider *nativeFixtureAuthenticator) Assert(_ context.Context, request ic
 
 func TestNativeSecurityKeyBindingRejectsInvalidAssertions(t *testing.T) {
 	t.Parallel()
+
 	for _, control := range []string{nativeKeyChallengeControl, nativeKeyOriginControl, nativeKeyClientTypeControl,
 		nativeKeyCrossOriginControl, nativeKeyCredentialControl, nativeKeyRPHashControl,
 		nativeKeySignatureControl, nativeKeyShortAuthenticatorControl} {
@@ -144,7 +151,9 @@ func TestNativeSecurityKeyBindingRejectsInvalidAssertions(t *testing.T) {
 			}
 			_, err = client.VerifySecurityKey(t.Context(), icloud.VerifySecurityKeyRequest{
 				Auth: state.Auth, State: state, Assertion: assertion})
+
 			var failure *icloud.ClientError
+
 			if !errors.As(err, &failure) || failure.Kind() != icloud.Configuration {
 				t.Fatal("invalid assertion was not rejected before HTTP")
 			}
@@ -190,7 +199,9 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 			}
 			_, err = client.ConfirmSecurityKey(t.Context(), icloud.ConfirmSecurityKeyRequest{
 				Auth: state.Auth, State: state, DeviceID: nativeKeyDeviceID})
+
 			var failure *icloud.ClientError
+
 			if !errors.As(err, &failure) || failure.Kind() != control.kind || !errors.Is(err, control.cause) {
 				t.Fatal("security-key error lost class or cause")
 			}

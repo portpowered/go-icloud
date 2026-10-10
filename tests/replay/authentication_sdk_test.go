@@ -19,19 +19,19 @@ import (
 func TestResumeSavedSessions(t *testing.T) {
 	t.Parallel()
 
-	for _, name := range []string{"auth-authenticate-cloudkit-discovery",
-		replayExpectedAuthAuthenticateCached, "auth-authenticate-paused", "auth-authenticate-refresh",
-		"auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation",
-		"auth-authenticate-validation-201", "auth-authenticate-refresh-202",
-		"auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh",
-		"auth-authenticate-quoted-cookie", "auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie"} {
+	for _, name := range []string{nativeCloudKitDiscoveryFixture,
+		replayExpectedAuthAuthenticateCached, nativePausedAuthenticationFixture, nativeRefreshAuthenticationFixture,
+		nativeUntrustedRefreshFixture, nativeStaleTokenFixture, nativeTokenRotationFixture,
+		nativeValidation201Fixture, nativeRefresh202Fixture,
+		nativeEmptyHeadersFixture, nativeEmptyHeadersRefreshFixture,
+		nativeQuotedCookieFixture, nativeQuotedCookieRotationFixture, nativeExplicitCookieFixture} {
 		t.Run(name, func(t *testing.T) { t.Parallel(); resumeSavedSession(t, name) })
 	}
 }
 
 func resumeSavedSession(t *testing.T, name string) {
 	t.Helper()
-	raw := authReplayObject(t, filepath.Join(replayExpectedFixturesSyntheticHttp, name+".json"))
+	raw := authReplayObject(t, filepath.Join(replayExpectedFixturesSyntheticHTTP, name+".json"))
 
 	var exchanges []replay.Exchange
 
@@ -223,14 +223,14 @@ func TestResumeAuthenticationFailures(t *testing.T) {
 	t.Parallel()
 
 	cases := map[string]icloud.ErrorKind{
-		"auth-terms-refused":                      icloud.TermsRequired,
+		nativeTermsRefusedFixture:                 icloud.TermsRequired,
 		"auth-token-login-needs-2fa":              icloud.AuthenticationRequired,
 		"auth-authenticate-untrusted-no-password": icloud.AuthenticationRequired,
 	}
 	for name, kind := range cases {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			raw := authReplayObject(t, filepath.Join(replayExpectedFixturesSyntheticHttp, name+".json"))
+			raw := authReplayObject(t, filepath.Join(replayExpectedFixturesSyntheticHTTP, name+".json"))
 
 			var exchanges []replay.Exchange
 
@@ -265,6 +265,7 @@ func assertResumeFailure(t *testing.T, result *icloud.ResumeSessionResult, err e
 	t.Helper()
 
 	var failure *icloud.ClientError
+
 	if result != nil || !errors.As(err, &failure) || failure.Kind() != kind {
 		t.Fatalf("authentication failure: %v", err)
 	}

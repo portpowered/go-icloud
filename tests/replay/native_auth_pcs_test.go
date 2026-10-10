@@ -45,6 +45,7 @@ func nativePCSReplay(t *testing.T, name string) {
 	}
 
 	var inputs []string
+
 	authReplayDecode(t, raw["inputs"], &inputs)
 	request := icloud.RequestPCSAccessRequest{Auth: state.Auth, State: state, Service: inputs[0]}
 	result, err := client.RequestPCSAccess(t.Context(), request)
@@ -90,6 +91,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse {
 		t.Fatalf("expected malformed account projection failure, got %v", err)
 	}
+
 	var exchanges []replay.Exchange
 
 	authReplayDecode(t, raw["exchanges"], &exchanges)
@@ -141,6 +143,7 @@ func nativeFlowFixture(t *testing.T, name string) (
 	}
 
 	var boundary icloud.AuthContext
+
 	boundary.ClientID = resume.Auth.ClientID
 	boundary.ChinaMainland = resume.Auth.ChinaMainland
 	boundary.Cookies = resume.Auth.Cookies
@@ -156,6 +159,7 @@ func nativeFlowFixture(t *testing.T, name string) (
 	authReplayDecode(t, initial["account_name"], &state.AccountName)
 
 	var account auth.AuthAccountResponse
+
 	authReplayDecode(t, initial["account_data"], &account)
 	if account.DsInfo != nil && account.DsInfo.Dsid != nil {
 		state.Auth.AccountID = *account.DsInfo.Dsid
@@ -186,6 +190,7 @@ func authReplayObjectBytes(t *testing.T, value json.RawMessage) map[string]json.
 	t.Helper()
 
 	var object map[string]json.RawMessage
+
 	authReplayDecode(t, value, &object)
 	return object
 }
@@ -202,6 +207,7 @@ func nativeFlowExpectedError(t *testing.T, raw map[string]json.RawMessage, err e
 	}
 
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) {
 		t.Fatalf("untyped authentication error %T", err)
 	}
@@ -235,6 +241,7 @@ func nativeFlowResponses(t *testing.T, raw map[string]json.RawMessage, actual []
 	t.Helper()
 
 	var result icloud.ResumeSessionResult
+
 	result.Responses = actual
 	assertAuthResponses(t, raw, &result)
 }
@@ -263,6 +270,7 @@ func TestNativePCSWaitCancellation(t *testing.T) {
 	_, err = client.RequestPCSAccess(ctx, request)
 
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Canceled || !errors.Is(err, context.Canceled) {
 		t.Fatalf("expected cancellable PCS wait, got %v", err)
 	}
@@ -283,6 +291,7 @@ func TestNativePCSInvalidResponses(t *testing.T) {
 			t.Parallel()
 
 			raw, _, state := nativeFlowFixture(t, nativePCSEnabledFixture)
+
 			var exchanges []replay.Exchange
 
 			authReplayDecode(t, raw["exchanges"], &exchanges)
@@ -301,7 +310,9 @@ func TestNativePCSInvalidResponses(t *testing.T) {
 			}
 			request := icloud.RequestPCSAccessRequest{Auth: state.Auth, State: state, Service: protocol.AuthWebServicesPhotos}
 			_, err = client.RequestPCSAccess(t.Context(), request)
+
 			var failure *icloud.ClientError
+
 			if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse || string(failure.ResponseBody()) != body {
 				t.Fatalf("malformed PCS response accepted or evidence lost: %v", err)
 			}
@@ -319,6 +330,7 @@ func TestNativeAuthWaitConfiguration(t *testing.T) {
 	_, err := icloud.New(icloud.WithAuthenticationWait(nil))
 
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Configuration {
 		t.Fatalf("nil authentication wait accepted: %v", err)
 	}

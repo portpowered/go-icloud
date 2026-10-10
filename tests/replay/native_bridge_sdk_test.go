@@ -124,6 +124,7 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 		if err != nil || len(nonce) != 17 {
 			return 0, errInvalidFixtureNonce
 		}
+
 		copy(destination, nonce[9:])
 		r.signing = true
 	case 16:
@@ -157,7 +158,9 @@ func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, erro
 	if r.overlap && !r.overlapChecked && strings.HasSuffix(request.URL.Path, "/bridge/step/2") {
 		r.overlapChecked = true
 		_, err := r.session.VerifyCode(r.t.Context(), icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
+
 		var failure *icloud.ClientError
+
 		if !errors.Is(err, bridge.ErrBusy) || !errors.As(err, &failure) || failure.Kind() != icloud.Busy {
 			r.t.Fatalf("overlap guard lost: %v", err)
 		}
@@ -235,7 +238,9 @@ type sdkBridgeSocket struct {
 func (s *sdkBridgeSocket) Write(payload []byte) (int, error) {
 	s.mark("send", s.cursor)
 	original := len(payload)
+
 	var err error
+
 	if s.cursor == 0 {
 		payload, err = s.upgrade(payload)
 	} else {
@@ -277,7 +282,8 @@ func (s *sdkBridgeSocket) validateBootstrap(path string) {
 		s.owner.t.Fatal("noncanonical bootstrap path")
 	}
 	message := new(bridgepb.ClientMessage)
-	if err = proto.Unmarshal(raw, message); err != nil {
+	err = proto.Unmarshal(raw, message)
+	if err != nil {
 		s.owner.t.Fatal(err)
 	}
 	canonical, err := proto.Marshal(message)
@@ -325,6 +331,7 @@ func TestNativeBridgeSDKReplay(t *testing.T) {
 	if len(paths) != 30 {
 		t.Fatalf("bridge HTTP inventory changed: %d", len(paths))
 	}
+
 	for _, path := range paths {
 		t.Run(strings.TrimSuffix(filepath.Base(path), ".json"), func(t *testing.T) {
 			t.Parallel()
@@ -374,7 +381,9 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 
 	nativeBridgeFixtureChallenge(t, raw, &state)
 	if snapshot {
+
 		var identifier icloud.TrustedPhoneNumberID
+
 		authReplayDecode(t, json.RawMessage(`1`), &identifier)
 		nonFTEU := true
 		state.Challenge.PhoneNumbers = append(state.Challenge.PhoneNumbers,
@@ -390,7 +399,9 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	runner.entropy.replay = runner
 	if entropy, ok := raw["entropy"]; ok {
 		values := authReplayObjectBytes(t, entropy)
+
 		var random []string
+
 		authReplayDecode(t, values["random_bytes"], &random)
 		if len(random) > 0 {
 			value, _ := base64.StdEncoding.DecodeString(random[0])
@@ -407,7 +418,9 @@ func nativeBridgeSDKScenario(t *testing.T, name string, controls sdkBridgeContro
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var operation string
+
 	authReplayDecode(t, raw["operation"], &operation)
 	actions := []sdkBridgeAction{}
 	if operation == "flow" {
@@ -478,7 +491,9 @@ func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, sessio
 	}
 	fields := authReplayObjectBytes(t, bridgeState)
 	var identifier, step string
+
 	var active bool
+
 	authReplayDecode(t, fields["session_uuid"], &identifier)
 	authReplayDecode(t, fields["next_step"], &step)
 	authReplayDecode(t, fields["websocket_active"], &active)
@@ -489,7 +504,9 @@ func nativeBridgeProjection(t *testing.T, raw map[string]json.RawMessage, sessio
 	if progress.SessionID != identifier || progress.NextStep != step || progress.Active != active {
 		t.Fatal("Source bridge progress differs")
 	}
+
 	var transaction *string
+
 	authReplayDecode(t, fields["txnid"], &transaction)
 	if transaction == nil {
 		if !progress.TransactionID.IsNull() {
@@ -508,6 +525,7 @@ func nativeBridgeSnapshotOwnership(t *testing.T, session *icloud.NativeBridgeSes
 	progress *icloud.NativeBridgeSessionState) {
 	t.Helper()
 	// Mutating detached snapshots must not change the owner.
+
 	var identifierBefore []byte
 
 	if len(progress.State.Challenge.PhoneNumbers) > 0 {
@@ -520,6 +538,7 @@ func nativeBridgeSnapshotOwnership(t *testing.T, session *icloud.NativeBridgeSes
 			identifier[0] = '9'
 		}
 	}
+
 	progress.State.Auth.Headers = append(progress.State.Auth.Headers,
 		icloud.Header{Name: "synthetic-mutation", Value: "synthetic"})
 	if len(progress.State.Challenge.PhoneNumbers) > 0 && progress.State.Challenge.PhoneNumbers[0].NonFTEU != nil {
@@ -549,7 +568,9 @@ func nativeBridgeSnapshotOwnership(t *testing.T, session *icloud.NativeBridgeSes
 
 func nativeBridgeTrustFailureFixture(t *testing.T, raw map[string]json.RawMessage) *replay.HTTPTransport {
 	t.Helper()
+
 	var exchanges []replay.Exchange
+
 	authReplayDecode(t, raw["exchanges"], &exchanges)
 	exchanges = exchanges[:6]
 	exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{{bridgeFixtureContentType,
@@ -557,9 +578,12 @@ func nativeBridgeTrustFailureFixture(t *testing.T, raw map[string]json.RawMessag
 		"synthetic-rotated-session"}, {"X-Apple-Session-Token", "synthetic-rotated-token"},
 		{"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"}, {accountCookieUpdateHeader,
 			"synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"}},
+		BodyRepresentation: "",
 		Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`),
 			Matchers: nil, ContentTypePattern: "", Parts: nil}}
+
 	var network sdkBridgeNetwork
+
 	authReplayDecode(t, raw["bridge_network"], &network)
 	network.Timeline = network.Timeline[:len(network.Timeline)-1]
 	raw["bridge_network"] = nativeBridgeMarshal(t, network)
@@ -576,7 +600,9 @@ func nativeBridgeFixtureChallenge(t *testing.T, raw map[string]json.RawMessage, 
 	t.Helper()
 	nativeFixtureMFAState(t, raw, state)
 	initial := authReplayObjectBytes(t, raw["initial_state"])
+
 	var challenge map[string]json.RawMessage
+
 	authReplayDecode(t, initial["auth_data"], &challenge)
 	var account struct {
 		Webservices map[string]map[string]string `json:"webservices"`
@@ -618,11 +644,15 @@ func nativeBridgeActions(t *testing.T, client *icloud.SDK, runner *sdkBridgeRepl
 	flow.state = state
 	flow.values = []any{}
 	flow.responses = []icloud.ResponseMetadata{}
+
 	var err error
+
 	for _, action := range actions {
 		switch action.Operation {
 		case "authenticate":
+
 			var password string
+
 			authReplayDecode(t, initial["synthetic_password"], &password)
 			flow.result, err = client.Authenticate(t.Context(), icloud.AuthenticateRequest{Auth: flow.state.Auth,
 				AccountName: flow.state.AccountName, Password: password, TrustToken: flow.state.TrustToken,
@@ -636,6 +666,7 @@ func nativeBridgeActions(t *testing.T, client *icloud.SDK, runner *sdkBridgeRepl
 					icloud.OpenNativeBridgeSessionRequest{Auth: flow.state.Auth,
 						State: flow.state}, icloud.WithNativeBridgeDial(runner.dial))
 			}
+
 			flow.values = append(flow.values, nil)
 		case "request_2fa_code":
 			flow.result, err = client.RequestTwoFactorCode(t.Context(),
@@ -675,7 +706,7 @@ func nativeBridgeActions(t *testing.T, client *icloud.SDK, runner *sdkBridgeRepl
 			runner.session = flow.session
 		}
 	}
-	if err != nil && name == "auth-bridge-sms-fallback" {
+	if err != nil && name == nativeBridgeSMSFallbackFixture {
 		err = nativeBridgeSMSFallback(t, client, flow, err)
 	}
 	return flow, err
@@ -691,10 +722,13 @@ func nativeBridgeSMSFallback(t *testing.T, client *icloud.SDK, flow *sdkBridgeFl
 		}
 		flow.state = progress.State
 	}
+
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) {
 		t.Fatal(err)
 	}
+
 	flow.responses = append(flow.responses, failure.PriorResponses()...)
 	if failure.StatusCode() != 0 {
 		flow.responses = append(flow.responses, icloud.ResponseMetadata{StatusCode: failure.StatusCode(),
@@ -723,7 +757,9 @@ func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage,
 	operation string, err error, _ *icloud.NativeBridgeSession,
 	_ bool) {
 	t.Helper()
+
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) {
 		t.Fatalf("untyped bridge error %T", err)
 	}
@@ -742,7 +778,9 @@ func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage,
 		t.Fatal("public bridge error operation label lost")
 	}
 	expectedFailure := authReplayObjectBytes(t, raw["error"])
+
 	var message string
+
 	if expected, ok := expectedFailure["message"]; ok {
 		authReplayDecode(t, expected, &message)
 	}
@@ -750,7 +788,9 @@ func nativeBridgeFailure(t *testing.T, raw map[string]json.RawMessage,
 		t.Fatal("Source HTTP failure stage lost")
 	}
 	if strings.Contains(message, "decrypt") {
+
 		var stage *bridge.ProtocolError
+
 		if !errors.As(failure, &stage) || stage.Stage != "decrypt" {
 			t.Fatal("Source decrypt failure cause lost")
 		}
@@ -765,9 +805,13 @@ func nativeBridgeSuccess(t *testing.T, raw map[string]json.RawMessage,
 	values []any, responses []icloud.ResponseMetadata, session *icloud.NativeBridgeSession) {
 	t.Helper()
 	expected := authReplayObjectBytes(t, raw["result"])
+
 	var want any
+
 	authReplayDecode(t, expected["value"], &want)
+
 	var actual any = values
+
 	if operation != "flow" {
 		actual = values[0]
 	}
@@ -784,9 +828,10 @@ func nativeBridgeSuccess(t *testing.T, raw map[string]json.RawMessage,
 		result.Responses = append(result.Responses, responses...)
 		result.Responses = append(result.Responses, progress.Responses...)
 	}
-	if session == nil || name == "auth-bridge-sms-fallback" {
+	if session == nil || name == nativeBridgeSMSFallbackFixture {
 		result.Responses = responses
 	}
+
 	nativeAssertState(t, raw, result)
 	projection := icloud.ResumeSessionResult{Auth: result.State.Auth,
 		TrustToken: result.State.TrustToken, AccountCountryCode: result.State.AccountCountryCode,
@@ -797,15 +842,21 @@ func nativeBridgeSuccess(t *testing.T, raw map[string]json.RawMessage,
 	nativeBridgeProjection(t, raw, session)
 	expectedState := authReplayObjectBytes(t, expected["auth_state"])
 	if notice, ok := expectedState["delivery_notice"]; ok {
+
 		var expectedNotice string
+
 		authReplayDecode(t, notice, &expectedNotice)
 		if state.DeliveryNotice == nil || *state.DeliveryNotice != expectedNotice {
 			t.Fatal("Source delivery notice changed")
 		}
 	}
+
 	var provider any
+
 	authReplayDecode(t, expectedState["challenge"], &provider)
+
 	var actualProvider any
+
 	if len(state.Challenge.ProviderData) == 0 {
 		actualProvider = map[string]any{}
 	} else {
@@ -842,6 +893,7 @@ func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, ses
 		t.Fatal("partial trust continuation headers lost")
 	}
 	found := false
+
 	for _, cookie := range progress.State.Auth.Cookies {
 		if cookie.Name == "synthetic-rotated-cookie" && cookie.Value == "synthetic-rotated-value" {
 			found = true
@@ -853,6 +905,7 @@ func nativeBridgeTrustFailure(t *testing.T, result *icloud.NativeAuthResult, ses
 }
 
 func (r *sdkBridgeEntropy) readScalar(destination []byte) (int, error) {
+
 	var scalar *big.Int
 
 	switch {
@@ -945,6 +998,7 @@ func TestNativeBridgeSDKCancellationAndIdempotentClose(t *testing.T) {
 			_, err := session.VerifyCode(ctx, icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
 
 			var failure *icloud.ClientError
+
 			if !errors.Is(err, context.Canceled) || !errors.As(err, &failure) || failure.Kind() != icloud.Canceled {
 				t.Fatalf("SDK cancellation ownership: %v", err)
 			}
@@ -967,11 +1021,14 @@ func TestNativeBridgeSDKCancellationAndIdempotentClose(t *testing.T) {
 
 func nativeBridgeConcurrentClose(t *testing.T, session *icloud.NativeBridgeSession) {
 	t.Helper()
+
 	var group sync.WaitGroup
+
 	failures := make(chan error, 8)
 	for range cap(failures) {
 		group.Go(func() { failures <- session.Close() })
 	}
+
 	group.Wait()
 	close(failures)
 	for err := range failures {
@@ -1012,6 +1069,7 @@ func TestNativeBridgeFailedOpenReturnsClosedOwner(t *testing.T) {
 			_, err = session.VerifyCode(t.Context(), icloud.VerifyNativeBridgeCodeRequest{Code: "123456"})
 
 			var failure *icloud.ClientError
+
 			if !errors.Is(err, bridge.ErrClosed) || !errors.As(err, &failure) || failure.Kind() != icloud.Closed {
 				t.Fatalf("failed-open verification: %v", err)
 			}

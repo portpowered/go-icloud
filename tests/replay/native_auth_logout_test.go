@@ -37,6 +37,7 @@ func TestNativeLogoutCancellation(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
+
 	client, err := icloud.New(icloud.WithHTTPTransport(nativeLogoutCancelTransport{cancel: cancel}))
 	if err != nil {
 		t.Fatal(err)
@@ -45,6 +46,7 @@ func TestNativeLogoutCancellation(t *testing.T) {
 		AllSessions: false, PreserveLocalSession: false})
 
 	var failure *icloud.ClientError
+
 	if result != nil || !errors.As(err, &failure) || failure.Kind() != icloud.Canceled ||
 		!errors.Is(err, context.Canceled) {
 		t.Fatalf("cancelled logout cleared local state or lost cancellation: %v", err)

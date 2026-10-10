@@ -70,6 +70,7 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 	t.Helper()
 
 	var operation string
+
 	var inputs []json.RawMessage
 
 	authReplayDecode(t, raw["operation"], &operation)
@@ -84,6 +85,7 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 
 	switch operation {
 	case "validate_2fa_code":
+
 		var code string
 
 		authReplayDecode(t, inputs[0], &code)
@@ -99,6 +101,7 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 		result, err = client.SendTwoStepCode(ctx, icloud.SendTwoStepCodeRequest{
 			Auth: state.Auth, State: state, Device: nativeFixtureDevice(t, inputs[0])})
 	case "validate_verification_code":
+
 		var code string
 
 		authReplayDecode(t, inputs[1], &code)
@@ -120,6 +123,7 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 
 func nativeFixtureDevice(t *testing.T, raw json.RawMessage) icloud.TrustedAuthDevice {
 	t.Helper()
+
 	var device auth.AuthTrustedDevice
 
 	authReplayDecode(t, raw, &device)
@@ -143,7 +147,9 @@ func nativeFixtureMFAState(t *testing.T, raw map[string]json.RawMessage, state *
 	}
 	if challenge, exists := initial["auth_data"]; exists {
 		state.Challenge.ProviderData = bytes.Clone(challenge)
+
 		var data auth.AuthChallenge
+
 		authReplayDecode(t, challenge, &data)
 		if data.Mode != nil {
 			state.Challenge.Mode = *data.Mode
@@ -168,7 +174,9 @@ func nativeFixturePhone(t *testing.T, phone auth.AuthTrustedPhoneNumber) icloud.
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	var identifier icloud.TrustedPhoneNumberID
+
 	authReplayDecode(t, encoded, &identifier)
 	result := icloud.TrustedPhoneNumber{ID: identifier, Number: "", PushMode: "", NonFTEU: phone.NonFTEU}
 	if phone.PushMode != nil {
@@ -204,6 +212,7 @@ func nativeStatusReplay(t *testing.T, name string) {
 	value := authReplayObjectBytes(t, expected["value"])
 	actual := map[string]bool{"authenticated": result.Authenticated, "trusted_session": result.TrustedSession,
 		"requires_2fa": result.RequiresTwoFactor, "requires_2sa": result.RequiresTwoStep}
+
 	var expectedFlags map[string]bool
 
 	authReplayDecode(t, expected["value"], &expectedFlags)

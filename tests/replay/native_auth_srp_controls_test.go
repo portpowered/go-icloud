@@ -19,11 +19,15 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 		t.Run(control, func(t *testing.T) {
 			t.Parallel()
 			raw, _, state := nativeFlowFixture(t, "auth-srp-s2k")
+
 			var exchanges []replay.Exchange
+
 			authReplayDecode(t, raw["exchanges"], &exchanges)
 			exchanges = exchanges[:2]
 			original := nativeFlowBody(t, exchanges[1].Response.Body)
+
 			var challenge auth.AuthSRPInitResponse
+
 			authReplayDecode(t, original, &challenge)
 
 			switch control {
@@ -57,13 +61,17 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 				t.Fatal(err)
 			}
 			initial := authReplayObjectBytes(t, raw["initial_state"])
+
 			var password string
+
 			authReplayDecode(t, initial["synthetic_password"], &password)
 			_, err = client.Authenticate(t.Context(), icloud.AuthenticateRequest{
 				Auth: state.Auth, AccountName: state.AccountName,
 				Password: password, TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode, ForceRefresh: true,
 				PauseTwoFactor: false, Service: nil, SavedState: &state, AcceptTerms: false})
+
 			var failure *icloud.ClientError
+
 			if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse ||
 				failure.StatusCode() != exchanges[1].Response.Status || !bytes.Equal(failure.ResponseBody(), body) ||
 				len(failure.PriorResponses()) != 1 {
@@ -79,8 +87,10 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 
 func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) {
 	t.Parallel()
-	raw, _, state := nativeFlowFixture(t, "auth-authenticate-stale-token")
+	raw, _, state := nativeFlowFixture(t, nativeStaleTokenFixture)
+
 	var exchanges []replay.Exchange
+
 	authReplayDecode(t, raw["exchanges"], &exchanges)
 	exchanges[1].Response.Status = 503
 	transport, err := replay.NewHTTPTransport(exchanges)
@@ -95,7 +105,9 @@ func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) 
 		AccountName: state.AccountName, Password: "", TrustToken: state.TrustToken,
 		AccountCountryCode: state.AccountCountryCode, SavedState: &state, ForceRefresh: false,
 		PauseTwoFactor: false, Service: nil, AcceptTerms: false})
+
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Unauthorized {
 		t.Fatal("missing credentials after rejected saved session lost terminal classification")
 	}

@@ -33,9 +33,13 @@ func TestNativeTermsTrustPreservesSourceDeliveryState(t *testing.T) {
 
 			nativeAssertState(t, raw, result)
 			expected := authReplayObjectBytes(t, raw["result"])
+
 			var values []json.RawMessage
+
 			authReplayDecode(t, expected["value"], &values)
+
 			var accepted bool
+
 			authReplayDecode(t, values[1], &accepted)
 			if result.Success != accepted || !result.State.AcceptTerms {
 				t.Fatal("terms trust lost acceptance policy or final trust verdict")

@@ -1,6 +1,21 @@
 package replay_test
 
 const (
+	nativeCloudKitDiscoveryFixture     = "auth-authenticate-cloudkit-discovery"
+	nativePausedAuthenticationFixture  = "auth-authenticate-paused"
+	nativeStaleTokenFixture            = "auth-authenticate-stale-token"
+	nativeRefresh202Fixture            = "auth-authenticate-refresh-202"
+	nativeEmptyHeadersFixture          = "auth-authenticate-empty-headers"
+	nativeExplicitCookieFixture        = "auth-authenticate-explicit-cookie"
+	nativeTermsRefusedFixture          = "auth-terms-refused"
+	nativeBridgeSMSFallbackFixture     = "auth-bridge-sms-fallback"
+	nativeRefreshAuthenticationFixture = "auth-authenticate-refresh"
+	nativeUntrustedRefreshFixture      = "auth-authenticate-untrusted-refresh"
+	nativeTokenRotationFixture         = "auth-token-cookie-rotation"
+	nativeValidation201Fixture         = "auth-authenticate-validation-201"
+	nativeEmptyHeadersRefreshFixture   = "auth-authenticate-empty-headers-refresh"
+	nativeQuotedCookieFixture          = "auth-authenticate-quoted-cookie"
+	nativeQuotedCookieRotationFixture  = "auth-authenticate-quoted-cookie-rotation"
 	nativeKeyDeviceID                  = "synthetic-device"
 	nativeKeyDeviceName                = "Synthetic key"
 	nativeKeyAcceptedFixture           = "auth-security-key-assertion-accepted"
