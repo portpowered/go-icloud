@@ -34,6 +34,11 @@ requested RAW versus JPEG representation without mutating the input asset map.
 Recent filtering uses added time with capture time fallback. `UntilFound` stops
 after consecutive already-current resources. It cannot be combined with stale
 cleanup or remote retention.
+An `UntilFound` stop preserves the prior manifest cursor while retaining any
+successfully downloaded resources. A later unrestricted run must enumerate the
+remaining assets before its cursor can enable a restart shortcut. This deliberately
+corrects the pinned Source's unconditional cursor advance after a limited scan;
+the stop threshold and visited-resource behavior remain the same.
 
 Persistent manifests track asset/resource identity, relative path, size, checksum,
 download time and the last successful cursor. A restarted engine may skip an

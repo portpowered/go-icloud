@@ -207,7 +207,15 @@ func (state *runState) visit(ctx context.Context, asset Asset) (bool, error) {
 		return false, err
 	}
 
-	return !state.untilFound(), nil
+	if state.untilFound() {
+		// The remaining assets are unvisited, so this cursor cannot certify the
+		// full target even though every visited resource is already current.
+		state.complete = false
+
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func (state *runState) includeAsset(asset Asset) bool {
