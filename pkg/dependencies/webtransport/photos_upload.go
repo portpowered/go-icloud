@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/photosuploadapi"
@@ -226,8 +225,12 @@ func (client *Client) PhotosUploadBytes(ctx context.Context, auth RequestContext
 }
 
 func photoUploadBytesRequest(targetURL string, content io.ReadSeeker) (*http.Request, error) {
-	target, err := url.Parse(targetURL)
-	if err != nil || target.Scheme != "https" || target.Host == "" || target.User != nil || target.Fragment != "" {
+	target, err := contentLocatorTarget(targetURL)
+	if err != nil {
+		return nil, failure(Configuration, errors.Join(errPhotoContentURL, err), nil, nil)
+	}
+
+	if target.Scheme != protocol.DriveHTTPSchemeValue || target.Host == "" || target.User != nil || target.Fragment != "" {
 		return nil, failure(Configuration, errPhotoContentURL, nil, nil)
 	}
 
