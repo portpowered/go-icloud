@@ -3,7 +3,20 @@
     "kind": "synthetic",
     "source": "timlaing/pyicloud",
     "commit": "e2e44ab875d47dab4475096021da60030f26c35e",
-    "description": "Pinned Source set_exif_datetime_if_missing and write_xmp_sidecar executed with real files on declared JPEG streams and CloudKit metadata. HTTP request templates come from paired synthetic Source scenarios; no captures."
+    "description": "Pinned Source set_exif_datetime_if_missing and write_xmp_sidecar executed with real files on declared JPEG streams and CloudKit metadata. HTTP request templates come from paired synthetic Source scenarios; no captures.",
+    "identityDescription": "Synthetic Go persisted-format expectation from api/photo-sync-models.openapi.yaml TargetIdentity; directory is explicitly relocated from $DESTINATION before canonical JSON hashing. This expectation is separate from pinned Source file outputs."
+  },
+  "targetIdentity": {
+    "accountID": "synthetic-account",
+    "albums": [],
+    "alignRaw": "as-is",
+    "directory": "$DESTINATION",
+    "folderStructure": "%Y/%m/%d",
+    "library": "root",
+    "livePhotoSize": "original",
+    "size": "original",
+    "skipLivePhotos": false,
+    "skipVideos": false
   },
   "cases": [
     {

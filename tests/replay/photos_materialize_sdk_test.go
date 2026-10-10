@@ -1,6 +1,7 @@
 package replay_test
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
@@ -27,8 +28,9 @@ type materializationCase struct {
 }
 
 type materializationRecording struct {
-	Provenance json.RawMessage       `json:"provenance"`
-	Cases      []materializationCase `json:"cases"`
+	Provenance     json.RawMessage       `json:"provenance"`
+	TargetIdentity json.RawMessage       `json:"targetIdentity"`
+	Cases          []materializationCase `json:"cases"`
 }
 
 // LIB-05: the complete SDK traffic precedes comparison with independent Source files.
@@ -50,12 +52,12 @@ func TestPinnedSourceSDKMaterializationReplay(t *testing.T) {
 		t.Run(variant.Name, func(t *testing.T) {
 			t.Parallel()
 
-			replaySDKMaterialization(t, variant)
+			replaySDKMaterialization(t, variant, recording.TargetIdentity)
 		})
 	}
 }
 
-func replaySDKMaterialization(t *testing.T, variant materializationCase) {
+func replaySDKMaterialization(t *testing.T, variant materializationCase, targetIdentity json.RawMessage) {
 	t.Helper()
 
 	exchanges, auth := materializationTraffic(t, variant)
@@ -81,24 +83,25 @@ func replaySDKMaterialization(t *testing.T, variant materializationCase) {
 	input.Auth = auth
 	input.Options.SetExifDatetime, input.Options.XmpSidecar = true, true
 	input.Options.FolderStructure = "%Y/%m/%d"
+	key := materializationTargetKey(t, targetIdentity, input.Options.Directory)
 
 	first, err := engine.Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	assertMaterializationResult(t, input, first, false)
+	assertMaterializationResult(t, input, first, key, false)
 	assertMaterializationFiles(t, input.Options.Directory, variant)
-	manifest := assertMaterializationManifest(t, first, variant)
+	manifest := assertMaterializationManifest(t, input.Options.Directory, key, variant)
 
 	second, err := engine.Run(t.Context(), input)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	assertMaterializationResult(t, input, second, true)
+	assertMaterializationResult(t, input, second, key, true)
 	assertMaterializationFiles(t, input.Options.Directory, variant)
-	if repeated := assertMaterializationManifest(t, second, variant); !reflect.DeepEqual(repeated, manifest) {
+	if repeated := assertMaterializationManifest(t, input.Options.Directory, key, variant); !reflect.DeepEqual(repeated, manifest) {
 		t.Fatal("repeat sync changed provider identity or persisted materialized size")
 	}
 
@@ -151,12 +154,12 @@ func materializationEntity(t *testing.T, entity *replay.Entity, data []byte) {
 	entity.Value = value
 }
 
-func assertMaterializationResult(t *testing.T, input photosync.Request, actual *photosync.Result, repeated bool) {
+func assertMaterializationResult(t *testing.T, input photosync.Request, actual *photosync.Result, key string, repeated bool) {
 	t.Helper()
 
 	want := new(photosync.Result)
 	want.Albums, want.Library, want.Directory = []string{}, input.Options.Library, input.Options.Directory
-	want.StatePath = actual.StatePath
+	want.StatePath = filepath.Join(input.Options.Directory, ".go-icloud-state", key+".json")
 	cursor := "synthetic-sync"
 	want.SyncCursor = &cursor
 	item := photosync.Item{AssetID: "synthetic-asset-0", ResourceKey: "original", Path: materializedPhotoPath,
@@ -177,44 +180,32 @@ func assertMaterializationResult(t *testing.T, input photosync.Request, actual *
 func assertMaterializationFiles(t *testing.T, directory string, variant materializationCase) {
 	t.Helper()
 
-	path := filepath.Join(directory, filepath.FromSlash(materializedPhotoPath))
-	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatal(err)
-	}
+	root := materializationRoot(t, directory)
+	data := materializationRead(t, root, filepath.FromSlash(materializedPhotoPath))
 
 	if hex.EncodeToString(data) != variant.OutputHex {
 		t.Fatalf("JPEG differs from complete pinned Source output: %x", data)
 	}
 
-	xmp, err := os.ReadFile(path + ".xmp")
-	if err != nil {
-		t.Fatal(err)
-	}
+	xmp := materializationRead(t, root, filepath.FromSlash(materializedPhotoPath)+".xmp")
 
 	if string(xmp) != variant.XMP {
 		t.Fatalf("sidecar differs from complete pinned Source output: %s", xmp)
 	}
 }
 
-func assertMaterializationManifest(t *testing.T, result *photosync.Result, variant materializationCase) photosync.Manifest {
+func assertMaterializationManifest(t *testing.T, directory, key string, variant materializationCase) photosync.Manifest {
 	t.Helper()
 
-	data, err := os.ReadFile(result.StatePath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	root := materializationRoot(t, directory)
+	data := materializationRead(t, root, filepath.Join(".go-icloud-state", key+".json"))
 
 	manifest := new(photosync.Manifest)
 	authReplayDecode(t, data, manifest)
-	if len(manifest.TargetKey) != hex.EncodedLen(sha256.Size) ||
-		result.StatePath != filepath.Join(result.Directory, ".go-icloud-state", manifest.TargetKey+".json") {
-		t.Fatal("manifest is not bound to the returned destination and target identity")
-	}
-
 	providerSize, localSize := int64(len(variant.InputHex)/2), int64(len(variant.OutputHex)/2)
 	downloaded := time.Date(2026, time.April, 10, 0, 0, 0, 0, time.UTC)
-	want := photosync.Manifest{TargetKey: manifest.TargetKey, Cursor: result.SyncCursor,
+	cursor := "synthetic-sync"
+	want := photosync.Manifest{TargetKey: key, Cursor: &cursor,
 		Resources: []photosync.SyncedResource{{AssetID: "synthetic-asset-0", ResourceKey: "original",
 			RelativePath: materializedPhotoPath, Size: &providerSize, LocalSize: &localSize,
 			Checksum: nil, DownloadedAt: &downloaded}}}
@@ -223,4 +214,61 @@ func assertMaterializationManifest(t *testing.T, result *photosync.Result, varia
 	}
 
 	return *manifest
+}
+
+func materializationTargetKey(t *testing.T, identity json.RawMessage, directory string) string {
+	t.Helper()
+
+	encoded, err := json.Marshal(directory)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	placeholder := []byte(`"$DESTINATION"`)
+	if bytes.Count(identity, placeholder) != 1 {
+		t.Fatal("fixture must declare exactly one directory relocation")
+	}
+
+	relocated := bytes.ReplaceAll(identity, placeholder, encoded)
+	var canonical bytes.Buffer
+
+	err = json.Compact(&canonical, relocated)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// The fixture fixes contract values and JSON order independently of Options,
+	// TargetIdentity's generated struct, and the production identity helper.
+	digest := sha256.Sum256(canonical.Bytes())
+
+	return hex.EncodeToString(digest[:])
+}
+
+func materializationRoot(t *testing.T, directory string) *os.Root {
+	t.Helper()
+
+	root, err := os.OpenRoot(directory)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		err := root.Close()
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	return root
+}
+
+func materializationRead(t *testing.T, root *os.Root, relative string) []byte {
+	t.Helper()
+
+	data, err := root.ReadFile(relative)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return data
 }
