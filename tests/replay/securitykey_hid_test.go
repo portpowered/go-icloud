@@ -247,7 +247,7 @@ func TestSecurityKeySourceHIDReplay(t *testing.T) {
 				t.Fatal("discovery and assertion must own separate consumed handles")
 			}
 			expectedWaits := 0
-			if name == "python-u2f-synthetic.json" {
+			if name == "python-u2f-synthetic.json" || name == "python-fallback-synthetic.json" {
 				expectedWaits = 1
 			}
 			if *waits != expectedWaits {
