@@ -14,6 +14,7 @@ const photosCredentialSaveTimeout = 5 * time.Second
 
 func (progress *photosSyncProgress) bind(ctx context.Context, library string) error {
 	libraries := []icloud.PhotoLibrary{}
+
 	if library != string(photosync.RootLibrary) {
 		result, err := progress.client.ListPhotoLibraries(ctx, icloud.ListPhotoLibrariesRequest{Auth: progress.session.Auth})
 		if err != nil {

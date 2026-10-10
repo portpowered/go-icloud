@@ -21,7 +21,8 @@ func executeService(ctx context.Context, client icloud.Client, auth icloud.AuthC
 
 func photoFlagCommand(operation string) bool {
 	switch operation {
-	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo", "photo-download":
+	case photosStatusCommand, photoAlbumsCommand, photoCountCommand,
+		photoAssetsCommand, photoCommand, photoDownloadCommand:
 		return true
 	default:
 		return false

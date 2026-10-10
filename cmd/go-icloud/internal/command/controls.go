@@ -55,18 +55,18 @@ func controlFindMy(ctx context.Context, client icloud.Client,
 
 func findMyOperation(ctx context.Context, session *icloud.FindMySession, config options) (any, error) {
 	switch config.operation {
-	case "findmy-device":
+	case findMyDeviceCommand:
 		return wrap(session.DescribeDevice(icloud.FindMyDeviceDescriptionRequest{
 			DeviceID: config.deviceID, AdditionalStatus: nil}))
-	case "findmy-sound":
+	case findMySoundCommand:
 		return wrap(session.PlaySound(ctx, icloud.FindMySoundRequest{DeviceID: config.deviceID, Subject: config.subject}))
-	case "findmy-message":
+	case findMyMessageCommand:
 		return wrap(session.SendMessage(ctx, icloud.FindMyMessageRequest{DeviceID: config.deviceID,
 			Subject: config.subject, Text: config.message, Sound: false, Strobe: false, Vibrate: false}))
-	case "findmy-lost":
+	case findMyLostCommand:
 		return wrap(session.MarkLost(ctx, icloud.FindMyLostRequest{DeviceID: config.deviceID,
 			PhoneNumber: config.phoneNumber, Text: config.message, Passcode: os.Getenv("GO_ICLOUD_DEVICE_PASSCODE")}))
-	case "findmy-erase":
+	case findMyEraseCommand:
 		return wrap(session.Erase(ctx, icloud.FindMyEraseRequest{DeviceID: config.deviceID,
 			Text: config.message, Passcode: os.Getenv("GO_ICLOUD_DEVICE_PASSCODE")}))
 	default:

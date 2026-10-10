@@ -19,12 +19,14 @@ const (
 
 var (
 	errPhotosSyncRequest = errors.New("provide --request with the generated Photos sync or watch request")
-	errPhotosSyncClient  = errors.New("Photos synchronization SDK capabilities are unavailable")
+	errPhotosSyncClient  = errors.New("photos synchronization SDK capabilities are unavailable")
 )
 
 type photosSyncClient interface {
 	photosync.SDKClient
-	ListPhotoLibraries(context.Context, icloud.ListPhotoLibrariesRequest) (*icloud.ListPhotoLibrariesResult, error)
+	ListPhotoLibraries(ctx context.Context,
+		request icloud.ListPhotoLibrariesRequest,
+	) (*icloud.ListPhotoLibrariesResult, error)
 }
 
 type photosSyncProgress struct {
@@ -63,7 +65,8 @@ func runPhotosSync(ctx context.Context, client icloud.Client, config options, ou
 		return err
 	}
 
-	engine, err := photosync.New(progress.source, photosync.Configuration{Files: photosync.OSFileSystem{}, Now: nil, Wait: nil})
+	engine, err := photosync.New(progress.source,
+		photosync.Configuration{Files: photosync.OSFileSystem{}, Now: nil, Wait: nil})
 	if err != nil {
 		return fmt.Errorf("create Photos synchronization: %w", err)
 	}

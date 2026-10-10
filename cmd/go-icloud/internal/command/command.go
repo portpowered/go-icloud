@@ -126,7 +126,8 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	flags := flag.NewFlagSet("go-icloud", flag.ContinueOnError)
 	flags.SetOutput(diagnostic)
 	flags.StringVar(&config.session, "session", "", "Private JSON containing an icloud.AuthContext")
-	flags.StringVar(&config.requestFile, "request", "", "Private JSON containing the generated request for the selected command")
+	flags.StringVar(&config.requestFile, "request", "",
+		"Private JSON containing the generated request for the selected command")
 	flags.StringVar(&config.contentFile, "file", "", "Local content file for a named upload")
 	flags.StringVar(&config.saveResult, "save-result", "",
 		"Explicit private destination for complete generated results and receipts")
@@ -174,6 +175,7 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 			return config, err
 		}
 	}
+
 	if config.operation == reminderCommand && config.reminderID == "" {
 		return config, errReminder
 	}
@@ -221,11 +223,12 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 	case "reminder-legacy-snapshot", "reminder-zones", "reminder-lists", reminderCommand, "reminder-sync",
 		"reminder-changes",
 		"reminders", "reminder-snapshot",
-		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", "reminder-alarms":
+		"reminder-tags", "reminder-attachments", "reminder-recurrence-rules", reminderAlarmsCommand:
 		return readReminders(ctx, client, auth, config)
-	case "photos-status", "photo-albums", "photo-count", "photo-assets", "photo", "photo-download":
+	case photosStatusCommand, photoAlbumsCommand, photoCountCommand,
+		photoAssetsCommand, photoCommand, photoDownloadCommand:
 		return photoFlagResult(ctx, client, auth, config)
-	case "account-devices", "account-family", "account-storage", "account-plan":
+	case accountDevicesCommand, "account-family", "account-storage", "account-plan":
 		return readAccount(ctx, client, auth, config.operation)
 	case "drive-libraries":
 		return wrap(client.ListDriveLibraries(ctx, icloud.ListDriveLibrariesRequest{Auth: auth}))
@@ -233,7 +236,7 @@ func read(ctx context.Context, client icloud.Client, auth icloud.AuthContext, co
 		return wrap(client.GetDriveNode(ctx, icloud.GetDriveNodeRequest{Auth: auth, NodeID: config.node, ShareID: nil}))
 	case "findmy":
 		return findMy(ctx, client, auth, config.family)
-	case "findmy-device", "findmy-sound", "findmy-message", "findmy-lost", "findmy-erase":
+	case findMyDeviceCommand, findMySoundCommand, findMyMessageCommand, findMyLostCommand, findMyEraseCommand:
 		return controlFindMy(ctx, client, auth, config)
 	default:
 		return nil, errCommand
@@ -340,7 +343,7 @@ func readReminderRelated(ctx context.Context, client icloud.Client,
 	case "reminder-recurrence-rules":
 		return wrap(client.ListReminderRecurrenceRules(ctx,
 			icloud.ListReminderRecurrenceRulesRequest{Auth: auth, IDs: config.relatedIDs}))
-	case "reminder-alarms":
+	case reminderAlarmsCommand:
 		return wrap(client.ListReminderAlarms(ctx, icloud.ListReminderAlarmsRequest{Auth: auth, IDs: config.relatedIDs}))
 	default:
 		return nil, errCommand
@@ -358,25 +361,28 @@ func photoFlagResult(ctx context.Context, client icloud.Client, auth icloud.Auth
 
 func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthContext, config options) (any, error) {
 	switch config.operation {
-	case "photos-status":
-		return wrap(client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{Auth: auth}))
-	case "photo-count":
-		return wrap(client.GetPhotoAlbumCount(ctx, icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: config.album}))
-	case "photo-assets":
-		return wrap(client.ListPhotoAssets(ctx, icloud.ListPhotoAssetsRequest{Auth: auth, Album: config.album}))
-	case "photo-download":
+	case photosStatusCommand:
+		return wrap(client.GetPhotosStatus(ctx, icloud.GetPhotosStatusRequest{Auth: auth, Library: nil}))
+	case photoCountCommand:
+		return wrap(client.GetPhotoAlbumCount(ctx,
+			icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: config.album, Library: nil}))
+	case photoAssetsCommand:
+		return wrap(client.ListPhotoAssets(ctx,
+			icloud.ListPhotoAssetsRequest{Auth: auth, Album: config.album, Library: nil}))
+	case photoDownloadCommand:
 		return wrap(client.DownloadPhoto(ctx, icloud.DownloadPhotoRequest{Auth: auth, Album: config.album,
-			PhotoID: config.photoID, Version: config.photoVersion}))
-	case "photo":
-		return wrap(client.GetPhoto(ctx, icloud.GetPhotoRequest{Auth: auth, Album: config.album, PhotoID: config.photoID}))
+			PhotoID: config.photoID, Version: config.photoVersion, Library: nil}))
+	case photoCommand:
+		return wrap(client.GetPhoto(ctx, icloud.GetPhotoRequest{Auth: auth, Album: config.album,
+			PhotoID: config.photoID, Library: nil}))
 	default:
-		return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth}))
+		return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth, Library: nil}))
 	}
 }
 
 func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthContext, operation string) (any, error) {
 	switch operation {
-	case "account-devices":
+	case accountDevicesCommand:
 		return wrap(client.GetAccountDevices(ctx, icloud.GetAccountDevicesRequest{Auth: auth}))
 	case "account-family":
 		return wrap(client.GetAccountFamily(ctx, icloud.GetAccountFamilyRequest{Auth: auth}))
@@ -392,7 +398,7 @@ func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthCont
 
 func photoFlags(flags *flag.FlagSet, config *options) {
 	flags.StringVar(&config.album, "album", "Library", "Photo album identifier or display/full name")
-	flags.StringVar(&config.photoID, "photo", "", "Photo asset identifier for photo or photo-download")
+	flags.StringVar(&config.photoID, photoCommand, "", "Photo asset identifier for photo or photo-download")
 	flags.Func("version", "Photo rendition for photo-download; omission selects original", func(value string) error {
 		version := icloud.PhotoVersion(value)
 		config.photoVersion = &version

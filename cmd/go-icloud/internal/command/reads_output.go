@@ -9,8 +9,10 @@ func typedReadProjection(result any) any {
 	if !ok || value == nil {
 		return result
 	}
+
 	copied := *value
 	copied.Jobs = make(map[string]icloud.PhotoUploadStatus, len(value.Jobs))
+
 	for id, status := range value.Jobs {
 		status.AdditionalProperties = nil
 		copied.Jobs[id] = status
