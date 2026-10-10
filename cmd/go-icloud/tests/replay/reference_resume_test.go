@@ -260,7 +260,7 @@ func runReferenceResumeRead(t *testing.T, row map[string]json.RawMessage,
 		t.Fatal(err)
 	}
 
-	expected, err := json.Marshal(map[string]json.RawMessage{"auth_state": row["authState"]})
+	expected, err := json.Marshal(map[string]json.RawMessage{expectedAuthStateKey: row["authState"]})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -316,7 +316,7 @@ func assertSecondReferenceResume(t *testing.T, client icloud.Client, row map[str
 		t.Fatalf("second saved-session resume: %v", err)
 	}
 
-	expected, err := json.Marshal(map[string]json.RawMessage{"auth_state": row["restoredAuthState"]})
+	expected, err := json.Marshal(map[string]json.RawMessage{expectedAuthStateKey: row["restoredAuthState"]})
 	if err != nil {
 		t.Fatal(err)
 	}

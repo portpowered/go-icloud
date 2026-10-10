@@ -95,6 +95,7 @@ func (sdk *SDK) OpenNativeBridgeSession(ctx context.Context, request OpenNativeB
 
 		return owner, failure
 	}
+
 	owner.connection = connection
 	owner.state.CodeRequested = true
 	owner.state.DeliveryMethod = TwoFactorDeliveryTrustedDevice
@@ -161,6 +162,7 @@ func (session *NativeBridgeSession) VerifyCode(ctx context.Context,
 	if bridgeLegacy(push) {
 		return session.verifyLegacy(ctx, state, request.Code)
 	}
+
 	verified, err := session.connection.VerifyCode(ctx, request.Code)
 	if err != nil {
 		return nil, session.failure(operation, err)

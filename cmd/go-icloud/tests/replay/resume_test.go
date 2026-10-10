@@ -19,13 +19,13 @@ import (
 func TestNativeResumeCommands(t *testing.T) {
 	t.Parallel()
 
-	names := []string{"auth-authenticate-cloudkit-discovery", "auth-authenticate-cached", "auth-authenticate-paused",
+	names := []string{"auth-authenticate-cloudkit-discovery", expectedCachedAuthFixture, "auth-authenticate-paused",
 		"auth-authenticate-refresh",
 		"auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation",
 		"auth-authenticate-validation-201", "auth-authenticate-refresh-202", "auth-authenticate-empty-headers",
 		"auth-authenticate-empty-headers-refresh", "auth-authenticate-quoted-cookie",
 		"auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie",
-		"auth-terms-refused", "auth-token-login-needs-2fa", "auth-authenticate-untrusted-no-password"}
+		expectedTermsRefusedFixture, "auth-token-login-needs-2fa", "auth-authenticate-untrusted-no-password"}
 	for _, name := range names {
 		t.Run(name, func(t *testing.T) { t.Parallel(); runNativeResume(t, name) })
 	}
@@ -125,7 +125,7 @@ func nativeAuthInput(t *testing.T, raw map[string]json.RawMessage) icloud.Resume
 	var result icloud.ResumeSessionResult
 
 	result.Auth.ClientID = params["clientId"]
-	result.Auth.SetupServiceURL = "https://setup.icloud.com"
+	result.Auth.SetupServiceURL = expectedAuthSetupURL
 	token := session["session_token"]
 	result.Auth.SessionToken = &token
 
@@ -185,7 +185,7 @@ func assertNativeSaved(t *testing.T, raw map[string]json.RawMessage, path string
 	var expected, state map[string]json.RawMessage
 
 	decode(t, raw["result"], &expected)
-	decode(t, expected["auth_state"], &state)
+	decode(t, expected[expectedAuthStateKey], &state)
 
 	var actualAccount, expectedAccount any
 
@@ -229,7 +229,8 @@ func assertNativeSaved(t *testing.T, raw map[string]json.RawMessage, path string
 func assertResumeConsolePrivacy(t *testing.T, session map[string]string, output []byte) {
 	t.Helper()
 
-	secrets := []string{session["session_token"], session["trust_token"], "synthetic-cookie", "synthetic-dsid"}
+	secrets := []string{session["session_token"], session["trust_token"],
+		expectedSyntheticAuthCookie, expectedSyntheticDSID}
 	for _, secret := range secrets {
 		if secret != "" && strings.Contains(string(output), secret) {
 			t.Fatal("resume printed private credentials")
@@ -274,7 +275,7 @@ func assertResumeRefusal(t *testing.T, name string, raw map[string]json.RawMessa
 	}
 
 	expectedKind := icloud.AuthenticationRequired
-	if name == "auth-terms-refused" {
+	if name == expectedTermsRefusedFixture {
 		expectedKind = icloud.TermsRequired
 	}
 

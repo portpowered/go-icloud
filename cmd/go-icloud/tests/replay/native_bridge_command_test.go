@@ -120,20 +120,22 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 			t.Fatal("failed bridge accepted before SMS fallback")
 		}
 		err = command.RunWithInput(t.Context(), client,
-			[]string{sessionFlag, savedPath, "--phone-id", "1", "mfa-request"},
+			[]string{sessionFlag, savedPath, "--phone-id", "1", expectedMFARequestCommand},
 			io.NopCloser(strings.NewReader("")), environment, &output, &diagnostic)
 	}
 	expectedError := nativeBridgeCommandAcceptance(t, raw, path, promptOnly, lateFailure, err)
 	nativeBridgeCommandSavedState(t, raw, path, savedPath, client.owner, expectedError, lateFailure)
 	console := output.String() + diagnostic.String()
-	for _, secret := range []string{"123456", "synthetic-token", "synthetic-trust", "synthetic-cookie",
-		"synthetic@example.invalid", "synthetic-rotated", `"responses"`, expectedAccountDataField} {
+	for _, secret := range []string{"123456", "synthetic-token", "synthetic-trust", expectedSyntheticAuthCookie,
+		"synthetic@example.invalid", "synthetic-rotated", expectedReplayResponsesField, expectedAccountDataField} {
 		if strings.Contains(console, secret) {
 			t.Fatal("console disclosed private bridge data")
 		}
 	}
 	nativeBridgeCommandConsumed(t, runner, transport)
-	if err = client.owner.Close(); err != nil {
+
+	err = client.owner.Close()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -150,18 +152,20 @@ func nativeBridgeCommandReplay(t *testing.T, raw map[string]json.RawMessage,
 	runner.t = t
 	// Timeline events contain bounded fixture indexes. Decode this entire network
 	// with the same JSON numeric representation as the events emitted below.
-	if networkErr := json.Unmarshal(raw["bridge_network"], &runner.network); networkErr != nil {
+	networkErr := json.Unmarshal(raw["bridge_network"], &runner.network)
+	if networkErr != nil {
 		t.Fatal(networkErr)
 	}
 	if lateFailure {
 		exchanges = exchanges[:6]
-		exchanges[5].Response = &replay.Response{Status: 503, Headers: []replay.Pair{
+		exchanges[5].Response = &replay.Response{BodyRepresentation: "", Status: 503, Headers: []replay.Pair{
 			{"Content-Type", "application/json"}, {"scnt", "synthetic-rotated-scnt"},
 			{"X-Apple-ID-Session-Id", "synthetic-rotated-session"},
-			{"X-Apple-Session-Token", "synthetic-rotated-token"},
-			{"X-Apple-TwoSV-Trust-Token", "synthetic-rotated-trust"},
+			{"X-Apple-Session-Token", expectedRotatedSessionToken},
+			{"X-Apple-TwoSV-Trust-Token", expectedRotatedTrustToken},
 			{expectedSetCookieHeader, "synthetic-rotated-cookie=synthetic-rotated-value; Path=/; Secure; HttpOnly"},
-		}, Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`)}}
+		}, Body: replay.Entity{Encoding: "base64", Value: json.RawMessage(`"e30="`),
+			Matchers: nil, ContentTypePattern: "", Parts: nil}}
 		runner.network.Timeline = runner.network.Timeline[:len(runner.network.Timeline)-1]
 	}
 	transport, err := replay.NewHTTPTransport(exchanges)
@@ -213,7 +217,9 @@ func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage,
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = os.WriteFile(savedPath, encoded, 0o600); err != nil {
+
+	err = os.WriteFile(savedPath, encoded, 0o600)
+	if err != nil {
 		t.Fatal(err)
 	}
 	if strings.Contains(filepath.Base(path), "-full-") {
@@ -221,7 +227,7 @@ func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage,
 		// SDK. The command under test is mfa-bridge; CLI login's explicit pause flag
 		// is covered separately and would change the canonical SRP request bytes.
 		prepared, prepareErr := sdk.Authenticate(t.Context(), icloud.AuthenticateRequest{
-			Auth: state.Auth, AccountName: state.AccountName, Password: "invented-password", SavedState: &state,
+			Auth: state.Auth, AccountName: state.AccountName, Password: expectedInventedPassword, SavedState: &state,
 			TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode,
 			AcceptTerms: false, ForceRefresh: false, PauseTwoFactor: false, Service: nil,
 		})
@@ -232,7 +238,9 @@ func nativeBridgePrepareCommand(t *testing.T, raw map[string]json.RawMessage,
 		if marshalErr != nil {
 			t.Fatal(marshalErr)
 		}
-		if writeErr := os.WriteFile(savedPath, preparedJSON, 0o600); writeErr != nil {
+
+		writeErr := os.WriteFile(savedPath, preparedJSON, 0o600)
+		if writeErr != nil {
 			t.Fatal(writeErr)
 		}
 	}
@@ -248,7 +256,7 @@ func nativeBridgeCommandEnvironment(state icloud.NativeAuthState) func(string) s
 		case expectedAccountEnvironment:
 			return state.AccountName
 		case expectedPasswordEnvironment:
-			return "invented-password"
+			return expectedInventedPassword
 		default:
 			return ""
 		}
@@ -354,8 +362,8 @@ func nativeBridgeCommandSavedState(t *testing.T, raw map[string]json.RawMessage,
 		}
 	}
 	if lateFailure {
-		if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != "synthetic-rotated-token" ||
-			saved.TrustToken != "synthetic-rotated-trust" || saved.CodeRequested || saved.RequiresMFA {
+		if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != expectedRotatedSessionToken ||
+			saved.TrustToken != expectedRotatedTrustToken || saved.CodeRequested || saved.RequiresMFA {
 			t.Fatal("failed trust lost rotated tokens or completion progress")
 		}
 		found := false
@@ -375,7 +383,9 @@ func nativeBridgeCommandSavedState(t *testing.T, raw map[string]json.RawMessage,
 
 func nativeBridgeCommandConsumed(t *testing.T, runner *sdkBridgeReplay, transport *replay.HTTPTransport) {
 	t.Helper()
-	if err := transport.AssertConsumed(); err != nil {
+
+	err := transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 	runner.mu.Lock()
@@ -441,7 +451,7 @@ func nativeBridgeCommandState(t *testing.T, raw map[string]json.RawMessage) iclo
 
 func nativeBridgeCommandSourceState(t *testing.T, raw map[string]json.RawMessage, state icloud.NativeAuthState) {
 	t.Helper()
-	expected := readRawObject(t, readRawObject(t, raw["result"])["auth_state"])
+	expected := readRawObject(t, readRawObject(t, raw["result"])[expectedAuthStateKey])
 	var account, actualAccount any
 	decode(t, expected["account"], &account)
 	decode(t, state.AccountData, &actualAccount)

@@ -93,6 +93,7 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 	defer r.mu.Unlock()
 
 	clear(destination)
+
 	switch len(destination) {
 	case 256:
 		if len(r.initial) != 256 {
@@ -192,6 +193,7 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 		bridgeScriptSocket: &bridgeScriptSocket{mu: sync.Mutex{},
 			events: append([]bridgeSocketEvent(nil), expected.Events...), pending: nil,
 			cursor: 0, closed: false, failure: nil}}
+
 	r.mu.Lock()
 	r.sockets = append(r.sockets, socket)
 	r.mu.Unlock()
@@ -276,12 +278,14 @@ func (s *sdkBridgeSocket) validateBootstrap(path string) {
 		s.owner.t.Fatal("noncanonical bootstrap path")
 	}
 	message := new(bridgepb.ClientMessage)
-	if err = proto.Unmarshal(raw, message); err != nil {
+	err = proto.Unmarshal(raw, message)
+	if err != nil {
 		s.owner.t.Fatal(err)
 	}
 	canonical, err := proto.Marshal(message)
-	if err != nil || !bytes.Equal(canonical, raw) || message.Connection == nil ||
-		message.Subscription != nil || message.Acknowledgement != nil || len(message.ProtoReflect().GetUnknown()) != 0 {
+	if err != nil || !bytes.Equal(canonical, raw) || message.GetConnection() == nil ||
+		message.GetSubscription() != nil || message.GetAcknowledgement() != nil ||
+		len(message.ProtoReflect().GetUnknown()) != 0 {
 		s.owner.t.Fatal("bootstrap envelope differs")
 	}
 	body := message.GetConnection()

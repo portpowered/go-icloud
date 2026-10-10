@@ -22,37 +22,38 @@ const expectedAccountDataKey = "accountData"
 
 func TestNativeAuthenticationCommands(t *testing.T) {
 	t.Parallel()
+
 	for _, test := range []struct{ fixture, operation string }{
-		{fixture: "auth-sms-request", operation: "mfa-request"},
-		{fixture: "auth-sms-request-refused", operation: "mfa-request"},
-		{fixture: "auth-sms-validate-accepted", operation: "mfa-verify"},
-		{fixture: "auth-sms-validate-refused", operation: "mfa-verify"},
+		{fixture: "auth-sms-request", operation: expectedMFARequestCommand},
+		{fixture: "auth-sms-request-refused", operation: expectedMFARequestCommand},
+		{fixture: "auth-sms-validate-accepted", operation: expectedMFAVerifyCommand},
+		{fixture: "auth-sms-validate-refused", operation: expectedMFAVerifyCommand},
 		{fixture: "auth-trust-success", operation: "trust"},
 		{fixture: "auth-trust-refused", operation: "trust"},
 		{fixture: "auth-trust-untrusted-account", operation: "trust"},
-		{fixture: "auth-authenticate-cached", operation: "login"},
-		{fixture: "auth-status-trusted", operation: "auth-status"},
-		{fixture: "auth-status-untrusted", operation: "auth-status"},
-		{fixture: "auth-status-rejected", operation: "auth-status"},
-		{fixture: "auth-status-no-token", operation: "auth-status"},
-		{fixture: "auth-status-no-cookie", operation: "auth-status"},
-		{fixture: "auth-trusted-devices-0", operation: "mfa-devices"},
-		{fixture: "auth-trusted-devices-1", operation: "mfa-devices"},
-		{fixture: "auth-trusted-devices-3", operation: "mfa-devices"},
+		{fixture: expectedCachedAuthFixture, operation: "login"},
+		{fixture: "auth-status-trusted", operation: expectedAuthStatusCommand},
+		{fixture: "auth-status-untrusted", operation: expectedAuthStatusCommand},
+		{fixture: "auth-status-rejected", operation: expectedAuthStatusCommand},
+		{fixture: "auth-status-no-token", operation: expectedAuthStatusCommand},
+		{fixture: "auth-status-no-cookie", operation: expectedAuthStatusCommand},
+		{fixture: "auth-trusted-devices-0", operation: expectedMFADevicesCommand},
+		{fixture: "auth-trusted-devices-1", operation: expectedMFADevicesCommand},
+		{fixture: "auth-trusted-devices-3", operation: expectedMFADevicesCommand},
 		{fixture: "auth-logout-default", operation: "logout"},
 		{fixture: "auth-logout-remote-error", operation: "logout"},
 		{fixture: "auth-logout-remote-refused", operation: "logout"},
 		{fixture: "auth-logout-no-cookie", operation: "logout"},
-		{fixture: "auth-pcs-enabled", operation: "pcs-access"},
-		{fixture: "auth-pcs-consented", operation: "pcs-access"},
-		{fixture: "auth-pcs-consent-later", operation: "pcs-access"},
-		{fixture: "auth-pcs-consent-refused", operation: "pcs-access"},
-		{fixture: "auth-pcs-cookies-later", operation: "pcs-access"},
-		{fixture: "auth-pcs-retries-exhausted", operation: "pcs-access"},
-		{fixture: "auth-pcs-unknown-state", operation: "pcs-access"},
-		{fixture: "auth-pcs-consent-omitted", operation: "pcs-access"},
-		{fixture: "auth-pcs-consent-false", operation: "pcs-access"},
-		{fixture: "auth-pcs-consent-null", operation: "pcs-access"},
+		{fixture: "auth-pcs-enabled", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-consented", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-consent-later", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-consent-refused", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-cookies-later", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-retries-exhausted", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-unknown-state", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-consent-omitted", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-consent-false", operation: expectedPCSAccessCommand},
+		{fixture: "auth-pcs-consent-null", operation: expectedPCSAccessCommand},
 	} {
 		t.Run(test.fixture, func(t *testing.T) { t.Parallel(); runNativeAuthentication(t, test.fixture, test.operation) })
 	}
@@ -61,7 +62,9 @@ func TestNativeAuthenticationCommands(t *testing.T) {
 func runNativeAuthentication(t *testing.T, name, operation string) {
 	t.Helper()
 	raw := readObject(t, filepath.Join("../../../../tests/replay/fixtures/synthetic/http", name+".json"))
+
 	var exchanges []replay.Exchange
+
 	decode(t, raw["exchanges"], &exchanges)
 	transport, err := replay.NewHTTPTransport(exchanges)
 	if err != nil {
@@ -79,10 +82,14 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 		t.Fatal(err)
 	}
 	path := filepath.Join(t.TempDir(), "private.json")
-	if err = os.WriteFile(path, encoded, 0o600); err != nil {
+
+	err = os.WriteFile(path, encoded, 0o600)
+	if err != nil {
 		t.Fatal(err)
 	}
+
 	var inputs []string
+
 	decode(t, raw["inputs"], &inputs)
 	environment := func(string) string {
 		if len(inputs) > 0 {
@@ -92,7 +99,7 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 	}
 	var output, diagnostic bytes.Buffer
 	arguments := []string{sessionFlag, path}
-	if operation == "pcs-access" {
+	if operation == expectedPCSAccessCommand {
 		arguments = append(arguments, "--service", inputs[0])
 	}
 
@@ -111,8 +118,11 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 		}
 	}
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
-		"synthetic-token", "synthetic-trust", "synthetic-cookie", "synthetic@example.invalid", "responses", expectedAccountDataKey})
-	if err = transport.AssertConsumed(); err != nil {
+		"synthetic-token", "synthetic-trust", expectedSyntheticAuthCookie,
+		"synthetic@example.invalid", expectedReplayResponses, expectedAccountDataKey})
+
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 	assertNativeCommandPersistence(t, path, operation, providerFailed, state, encoded)
@@ -134,7 +144,8 @@ func assertNativeCommandPersistence(t *testing.T, path, operation string, provid
 	t.Helper()
 
 	if operation == "logout" {
-		if _, readErr := os.Stat(path); !os.IsNotExist(readErr) {
+		_, readErr := os.Stat(path)
+		if !os.IsNotExist(readErr) {
 			t.Fatal("explicit logout retained local credentials")
 		}
 
@@ -155,7 +166,7 @@ func assertNativeCommandPersistence(t *testing.T, path, operation string, provid
 	if saved.Auth.ClientID != state.Auth.ClientID || saved.AccountName != state.AccountName {
 		t.Fatal("private native state lost identity")
 	}
-	if operation == "pcs-access" {
+	if operation == expectedPCSAccessCommand {
 		savedState, marshalErr := json.Marshal(saved)
 		if marshalErr != nil {
 			t.Fatal(marshalErr)
@@ -175,9 +186,9 @@ func nativeCommandAccepted(t *testing.T, raw map[string]json.RawMessage, operati
 	value := readRawObject(t, result)["value"]
 
 	switch operation {
-	case "login", "auth-status", "mfa-devices":
+	case "login", expectedAuthStatusCommand, expectedMFADevicesCommand:
 		return true
-	case "pcs-access":
+	case expectedPCSAccessCommand:
 		if string(value) != "null" {
 			t.Fatal("Source PCS completion must return None")
 		}
@@ -195,8 +206,11 @@ func nativeCommandAccepted(t *testing.T, raw map[string]json.RawMessage, operati
 
 func readRawObject(t *testing.T, raw json.RawMessage) map[string]json.RawMessage {
 	t.Helper()
+
 	var object map[string]json.RawMessage
+
 	decode(t, raw, &object)
+
 	return object
 }
 
@@ -220,9 +234,10 @@ func nativeCommandState(t *testing.T, raw json.RawMessage) icloud.NativeAuthStat
 	}
 	decode(t, initial["account_name"], &state.AccountName)
 	decode(t, params["clientId"], &state.Auth.ClientID)
-	state.Auth.SetupServiceURL = "https://setup.icloud.com"
+	state.Auth.SetupServiceURL = expectedAuthSetupURL
 	if token, exists := session["session_token"]; exists {
 		var value string
+
 		decode(t, token, &value)
 		state.Auth.SessionToken = &value
 	}
@@ -231,6 +246,7 @@ func nativeCommandState(t *testing.T, raw json.RawMessage) icloud.NativeAuthStat
 	}
 	if country, exists := session["account_country"]; exists {
 		var value string
+
 		decode(t, country, &value)
 		state.AccountCountryCode.Set(value)
 	}
@@ -275,11 +291,13 @@ func nativeSourceParameters(t *testing.T, raw map[string]json.RawMessage, state 
 	parameters := readRawObject(t, readRawObject(t, raw["initial_state"])["params"])
 	if build, found := parameters["clientBuildNumber"]; found {
 		var value string
+
 		decode(t, build, &value)
 		state.Auth.ClientBuildNumber = &value
 	}
 	if mastering, found := parameters["clientMasteringNumber"]; found {
 		var value string
+
 		decode(t, mastering, &value)
 		state.Auth.ClientMasteringNumber = &value
 	}

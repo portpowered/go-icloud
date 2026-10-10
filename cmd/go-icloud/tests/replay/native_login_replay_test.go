@@ -37,10 +37,12 @@ func TestNativePasswordLoginCommands(t *testing.T) {
 func TestNativePasswordLoginRefusals(t *testing.T) {
 	t.Parallel()
 
-	for _, name := range []string{"auth-srp-authorize-refused", "auth-srp-init-refused", "auth-srp-complete-refused"} {
+	for _, name := range []string{
+		"auth-srp-authorize-refused", "auth-srp-init-refused", expectedSRPCompleteRefusedFixture,
+	} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
-			nativePasswordLoginCommand(t, name, "login", true, name == "auth-srp-complete-refused")
+			nativePasswordLoginCommand(t, name, "login", true, name == expectedSRPCompleteRefusedFixture)
 		})
 	}
 }
@@ -49,6 +51,7 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 	t.Helper()
 	raw := readObject(t, filepath.Join("../../../../tests/replay/fixtures/synthetic/http", name+".json"))
 	var exchanges []replay.Exchange
+
 	decode(t, raw["exchanges"], &exchanges)
 	if adaptPause {
 		// Synthetic CLI control: the refusal fixture predates the explicit pause
@@ -76,13 +79,16 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 		t.Fatal(err)
 	}
 	path := filepath.Join(t.TempDir(), "private.json")
-	if err = os.WriteFile(path, encoded, 0o600); err != nil {
+
+	err = os.WriteFile(path, encoded, 0o600)
+	if err != nil {
 		t.Fatal(err)
 	}
 	args := []string{sessionFlag, path}
 	if stdin {
 		args = append(args, "--secret-stdin")
 	}
+
 	args = append(args, operation)
 
 	environment := func(key string) string {
@@ -90,11 +96,12 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 			return state.AccountName
 		}
 		if key == expectedPasswordEnvironment {
-			return "invented-password"
+			return expectedInventedPassword
 		}
 		return ""
 	}
 	var output, diagnostic bytes.Buffer
+
 	err = command.RunWithInput(t.Context(), client, args,
 		io.NopCloser(strings.NewReader("invented-password\n")), environment, &output, &diagnostic)
 	_, refused := raw["error"]
@@ -107,7 +114,9 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 			t.Fatalf("password failure lost typed HTTP boundary: %v", err)
 		}
 	}
-	if consumedErr := transport.AssertConsumed(); consumedErr != nil {
+
+	consumedErr := transport.AssertConsumed()
+	if consumedErr != nil {
 		t.Fatal(consumedErr)
 	}
 	if random.Len() != 0 {
@@ -115,8 +124,8 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 	}
 	assertNativeLoginPersistence(t, path, raw, refused, encoded)
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
-		"invented-password", "synthetic-srp-token", "synthetic-srp-cookie", "synthetic-auth-value",
-		"synthetic@example.invalid", `"responses"`, expectedAccountDataField})
+		expectedInventedPassword, "synthetic-srp-token", "synthetic-srp-cookie", "synthetic-auth-value",
+		"synthetic@example.invalid", expectedReplayResponsesField, expectedAccountDataField})
 }
 
 func nativeLoginEntropy(t *testing.T, raw map[string]json.RawMessage) []byte {
@@ -161,7 +170,7 @@ func assertNativeLoginPersistence(t *testing.T, path string, raw map[string]json
 	var saved icloud.NativeAuthState
 
 	decode(t, savedJSON, &saved)
-	expected := readRawObject(t, readRawObject(t, raw["result"])["auth_state"])
+	expected := readRawObject(t, readRawObject(t, raw["result"])[expectedAuthStateKey])
 
 	var account, actualAccount any
 
@@ -177,7 +186,7 @@ func assertNativeLoginPersistence(t *testing.T, path string, raw map[string]json
 
 	decode(t, session["session_token"], &token)
 	if saved.Auth.SessionToken == nil || *saved.Auth.SessionToken != token ||
-		saved.Auth.AccountID != "synthetic-dsid" || saved.CodeRequested || saved.RequiresMFA {
+		saved.Auth.AccountID != expectedSyntheticDSID || saved.CodeRequested || saved.RequiresMFA {
 		t.Fatal("Source paused login credentials or progress changed")
 	}
 }
