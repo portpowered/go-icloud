@@ -1,28 +1,17 @@
 package icloud
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-	"net/http"
-
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
+	"net/http"
 )
 
-type nativeRequestBuilder func(io.Reader) (*http.Request, error)
-
-func nativeEncodedRequest(input any, builder nativeRequestBuilder) (*http.Request, error) {
-	body, err := webtransport.EncodeAuthenticationRequest(input)
+func nativeEncodedRequest(call webtransport.AuthenticationCall) (webtransport.AuthenticationCall, error) {
+	err := webtransport.ValidateAuthenticationCall(call)
 	if err != nil {
-		return nil, fmt.Errorf("prepare authentication body: %w", err)
+		return nil, err
 	}
 
-	request, err := builder(bytes.NewReader(body))
-	if err != nil {
-		return nil, fmt.Errorf("prepare authentication request: %w", err)
-	}
-
-	return request, nil
+	return call, nil
 }
 
 func nativeResponseError(operation *nativeAuthOperation, response *webtransport.BytesResponse,
@@ -50,12 +39,4 @@ func nativeRequireSuccess(operation *nativeAuthOperation, response *webtransport
 	}
 
 	return nil
-}
-
-func nativeGeneratedRequest(request *http.Request, err error) (*http.Request, error) {
-	if err != nil {
-		return nil, fmt.Errorf("construct generated authentication request: %w", err)
-	}
-
-	return request, nil
 }

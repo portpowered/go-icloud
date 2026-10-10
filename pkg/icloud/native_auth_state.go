@@ -5,12 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"maps"
 	"net/http"
 	"slices"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
@@ -117,7 +117,7 @@ func (operation *nativeAuthOperation) failure(err error) *ClientError {
 }
 
 func (sdk *SDK) nativeAuthExchange(ctx context.Context, operation *nativeAuthOperation,
-	request *http.Request, headers http.Header,
+	request webtransport.AuthenticationCall, headers http.Header,
 ) (*webtransport.BytesResponse, error) {
 	response, err := sdk.web.ExchangeAuthentication(ctx, request, headers, operation.cookies)
 	if err != nil {

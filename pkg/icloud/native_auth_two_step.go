@@ -3,9 +3,8 @@ package icloud
 import (
 	"context"
 	"encoding/json"
-	"io"
-	"net/http"
 
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
@@ -19,7 +18,7 @@ func (sdk *SDK) ListTrustedDevices(ctx context.Context, request NativeAuthReques
 
 	params := nativeAuthParams(operation.state)
 
-	wire, err := authapi.NewListAuthTrustedDevicesRequest(operation.state.Auth.SetupServiceURL, &params)
+	wire, err := nativeEncodedRequest(webtransport.ListAuthTrustedDevicesCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -64,11 +63,7 @@ func (sdk *SDK) SendTwoStepCode(ctx context.Context, request SendTwoStepCodeRequ
 
 	params := authapi.SendAuthVerificationCodeParams(nativeAuthParams(operation.state))
 
-	wire, err := nativeEncodedRequest(device, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewSendAuthVerificationCodeRequestWithBody(
-			operation.state.Auth.SetupServiceURL, &params,
-			nativeJSONMedia(), body))
-	})
+	wire, err := nativeEncodedRequest(webtransport.SendAuthVerificationCodeCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: device})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -112,11 +107,7 @@ func (sdk *SDK) VerifyTwoStepCode(ctx context.Context, request VerifyTwoStepCode
 	device.TrustBrowser = &trust
 	params := authapi.ValidateAuthVerificationCodeParams(nativeAuthParams(operation.state))
 
-	wire, err := nativeEncodedRequest(device, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewValidateAuthVerificationCodeRequestWithBody(
-			operation.state.Auth.SetupServiceURL, &params,
-			nativeJSONMedia(), body))
-	})
+	wire, err := nativeEncodedRequest(webtransport.ValidateAuthVerificationCodeCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: device})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

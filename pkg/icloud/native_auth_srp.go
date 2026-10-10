@@ -3,7 +3,6 @@ package icloud
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
@@ -64,7 +63,7 @@ func (sdk *SDK) nativeAuthorize(ctx context.Context, operation *nativeAuthOperat
 		Iframeid: &state.Auth.ClientID, ClientId: &widget, ResponseType: &responseType, RedirectUri: &home,
 		ResponseMode: &mode, State: &state.Auth.ClientID, AuthVersion: &latest, Cookie: nil}
 
-	request, err := authapi.NewAuthorizeAuthSignInRequest(nativeIDMSOrigin(state), &params)
+	request, err := nativeEncodedRequest(webtransport.AuthorizeAuthSignInCall{Origin: nativeIDMSOrigin(state), Params: &params})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -83,10 +82,7 @@ func (sdk *SDK) nativeSRPChallenge(ctx context.Context, operation *nativeAuthOpe
 	input := auth.AuthSRPInitRequest{A: public, AccountName: operation.state.AccountName,
 		Protocols: []auth.AuthSRPProtocol{auth.S2k, auth.S2kFo}}
 
-	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewInitAuthSRPRequestWithBody(nativeIDMSOrigin(operation.state), nil,
-			nativeJSONMedia(), body))
-	})
+	request, err := nativeEncodedRequest(webtransport.InitAuthSRPCall{Origin: nativeIDMSOrigin(operation.state), Params: nil, Body: input})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -150,10 +146,7 @@ func (sdk *SDK) nativeSRPComplete(ctx context.Context, operation *nativeAuthOper
 		XAppleAuthAttributes:        nil,
 	}
 
-	request, err := nativeEncodedRequest(data, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewCompleteAuthSRPRequestWithBody(nativeIDMSOrigin(operation.state), &params,
-			nativeJSONMedia(), body))
-	})
+	request, err := nativeEncodedRequest(webtransport.CompleteAuthSRPCall{Origin: nativeIDMSOrigin(operation.state), Params: &params, Body: data})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

@@ -4,11 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/portpowered/go-icloud/pkg/dependencies/securitykey"
-	"io"
-	"net/http"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"slices"
 
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
@@ -122,10 +120,7 @@ func (sdk *SDK) VerifySecurityKey(ctx context.Context, request VerifySecurityKey
 		UserHandle: request.Assertion.UserHandle, CredentialID: request.Assertion.CredentialID,
 		RpId: challenge.RelyingPartyID}
 
-	wire, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewVerifyAuthSecurityKeyRequestWithBody(nativeIDMSOrigin(operation.state), nil,
-			nativeJSONMedia(), body))
-	})
+	wire, err := nativeEncodedRequest(webtransport.VerifyAuthSecurityKeyCall{Origin: nativeIDMSOrigin(operation.state), Params: nil, Body: input})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

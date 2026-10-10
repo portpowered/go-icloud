@@ -5,11 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"time"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
@@ -79,16 +79,16 @@ func (sdk *SDK) nativePCSConsent(ctx context.Context, operation *nativeAuthOpera
 	params := nativeAuthParams(operation.state)
 
 	var (
-		request *http.Request
+		request webtransport.AuthenticationCall
 		err     error
 	)
 
 	if notify {
 		converted := authapi.EnableAuthPCSConsentParams(params)
-		request, err = authapi.NewEnableAuthPCSConsentRequest(operation.state.Auth.SetupServiceURL, &converted)
+		request, err = nativeEncodedRequest(webtransport.EnableAuthPCSConsentCall{Origin: operation.state.Auth.SetupServiceURL, Params: &converted})
 	} else {
 		converted := authapi.GetAuthWebAccessStateParams(params)
-		request, err = authapi.NewGetAuthWebAccessStateRequest(operation.state.Auth.SetupServiceURL, &converted)
+		request, err = nativeEncodedRequest(webtransport.GetAuthWebAccessStateCall{Origin: operation.state.Auth.SetupServiceURL, Params: &converted})
 	}
 
 	if err != nil {
@@ -199,11 +199,7 @@ func (sdk *SDK) nativePCSRequest(ctx context.Context, operation *nativeAuthOpera
 	input := auth.AuthPCSRequest{AppName: service, DerivedFromUserAction: derived}
 	params := authapi.RequestAuthPCSParams(nativeAuthParams(operation.state))
 
-	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewRequestAuthPCSRequestWithBody(
-			operation.state.Auth.SetupServiceURL, &params,
-			nativeJSONMedia(), body))
-	})
+	request, err := nativeEncodedRequest(webtransport.RequestAuthPCSCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: input})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

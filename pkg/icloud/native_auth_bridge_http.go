@@ -4,13 +4,11 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"io"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"net/http"
 	"strconv"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 	bridgemodels "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )
@@ -50,10 +48,8 @@ func (sdk *SDK) nativeBridgeExchange(ctx context.Context, state NativeAuthState,
 
 func (sdk *SDK) nativeBridgeStart(ctx context.Context, state NativeAuthState, input auth.AuthBridgeStartRequest,
 ) (NativeAuthState, ResponseMetadata, *auth.AuthBridgeResponse, error) {
-	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep0RequestWithBody(nativeIDMSOrigin(state), nil,
-			nativeJSONMedia(), body))
-	})
+	request, err := nativeEncodedRequest(webtransport.AuthBridgeStep0Call{
+		Origin: nativeIDMSOrigin(state), Body: input})
 	if err != nil {
 		return state, ResponseMetadata{}, nil, newClientError("OpenNativeBridgeSession", Configuration, 0, nil, nil, err)
 	}
@@ -63,9 +59,7 @@ func (sdk *SDK) nativeBridgeStart(ctx context.Context, state NativeAuthState, in
 
 func (sdk *SDK) nativeBridgeStep(ctx context.Context, state NativeAuthState, step int, input auth.AuthBridgeStepRequest,
 ) (NativeAuthState, ResponseMetadata, *auth.AuthBridgeResponse, error) {
-	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeBridgeStepRequest(state, step, body)
-	})
+	request, err := nativeBridgeStepRequest(state, step, input)
 	if err != nil {
 		return state, ResponseMetadata{}, nil, newClientError("OpenNativeBridgeSession", Configuration, 0, nil, nil, err)
 	}
@@ -73,23 +67,22 @@ func (sdk *SDK) nativeBridgeStep(ctx context.Context, state NativeAuthState, ste
 	return sdk.nativeBridgeHTTP(ctx, state, request)
 }
 
-func nativeBridgeStepRequest(state NativeAuthState, step int, body io.Reader) (*http.Request, error) {
+func nativeBridgeStepRequest(state NativeAuthState, step int,
+	body auth.AuthBridgeStepRequest,
+) (webtransport.AuthenticationCall, error) {
 	switch auth.AuthBridgeStepRequestNextStep(step) {
 	case auth.N2:
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep2RequestWithBody(nativeIDMSOrigin(state), nil,
-			nativeJSONMedia(), body))
+		return nativeEncodedRequest(webtransport.AuthBridgeStep2Call{Origin: nativeIDMSOrigin(state), Body: body})
 	case auth.N4:
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep4RequestWithBody(nativeIDMSOrigin(state), nil,
-			nativeJSONMedia(), body))
+		return nativeEncodedRequest(webtransport.AuthBridgeStep4Call{Origin: nativeIDMSOrigin(state), Body: body})
 	case auth.N6:
-		return nativeGeneratedRequest(authapi.NewAuthBridgeStep6RequestWithBody(nativeIDMSOrigin(state), nil,
-			nativeJSONMedia(), body))
+		return nativeEncodedRequest(webtransport.AuthBridgeStep6Call{Origin: nativeIDMSOrigin(state), Body: body})
 	default:
 		return nil, errNativeAuthInput
 	}
 }
 
-func (sdk *SDK) nativeBridgeHTTP(ctx context.Context, state NativeAuthState, request *http.Request,
+func (sdk *SDK) nativeBridgeHTTP(ctx context.Context, state NativeAuthState, request webtransport.AuthenticationCall,
 ) (NativeAuthState, ResponseMetadata, *auth.AuthBridgeResponse, error) {
 	operation, err := newNativeAuthOperation(ctx, "OpenNativeBridgeSession", state.Auth, state)
 	if err != nil {
@@ -122,10 +115,8 @@ func (sdk *SDK) nativeBridgeCode(ctx context.Context, state NativeAuthState, inp
 		return state, ResponseMetadata{}, 0, err
 	}
 
-	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewValidateAuthBridgeCodeRequestWithBody(nativeIDMSOrigin(state), nil,
-			nativeJSONMedia(), body))
-	})
+	request, err := nativeEncodedRequest(webtransport.ValidateAuthBridgeCodeCall{
+		Origin: nativeIDMSOrigin(state), Body: input})
 	if err != nil {
 		return state, ResponseMetadata{}, 0, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

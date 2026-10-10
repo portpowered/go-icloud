@@ -12,7 +12,18 @@ var errUnknownAuthRoute = errors.New("authentication route is absent from the pr
 
 // ExchangeAuthentication sends a generated authentication request and retains exact response evidence.
 // Conflict and precondition responses are returned so the specific verifier can interpret their verdict.
-func (client *Client) ExchangeAuthentication(ctx context.Context, request *http.Request,
+func (client *Client) ExchangeAuthentication(ctx context.Context, call AuthenticationCall,
+	headers http.Header, cookies *CookieState,
+) (*BytesResponse, error) {
+	request, err := buildAuthenticationRequest(call)
+	if err != nil {
+		return nil, failure(Configuration, err, nil, nil)
+	}
+
+	return client.exchangeAuthentication(ctx, request, headers, cookies)
+}
+
+func (client *Client) exchangeAuthentication(ctx context.Context, request *http.Request,
 	headers http.Header, cookies *CookieState,
 ) (*BytesResponse, error) {
 	if request == nil || request.URL == nil || request.URL.User != nil || request.URL.Fragment != "" ||

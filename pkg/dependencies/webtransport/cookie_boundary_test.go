@@ -6,7 +6,6 @@ import (
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 )
 
 const (
@@ -62,10 +61,7 @@ func runCookieBoundaryCase(t *testing.T, testcase cookieBoundaryCase) {
 	var err error
 
 	if testcase.authentication {
-		request, requestErr := authapi.NewGetAuthChallengeRequest("https://accounts.example.test", nil)
-		if requestErr != nil {
-			t.Fatal(requestErr)
-		}
+		request := webtransport.GetAuthChallengeCall{Origin: "https://accounts.example.test"}
 
 		_, err = client.ExchangeAuthentication(t.Context(), request, headers, state)
 	} else {

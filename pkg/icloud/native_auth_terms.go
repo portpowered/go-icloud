@@ -3,8 +3,6 @@ package icloud
 import (
 	"context"
 	"encoding/json"
-	"io"
-	"net/http"
 
 	"github.com/oapi-codegen/nullable"
 	"github.com/portpowered/go-icloud/internal/protocol"
@@ -16,11 +14,12 @@ import (
 func (sdk *SDK) nativeAcceptTerms(ctx context.Context, operation *nativeAuthOperation,
 	login auth.AuthTokenLoginRequest, account auth.AuthAccountResponse,
 ) (bool, error) {
-	return sdk.nativeAcceptTermsLogin(ctx, operation, login, account)
+	return sdk.nativeAcceptTermsLogin(ctx, operation, webtransport.LoginAuthTokenCall{
+		Origin: operation.state.Auth.SetupServiceURL, Body: login}, account)
 }
 
 func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAuthOperation,
-	login any, account auth.AuthAccountResponse,
+	login webtransport.AuthenticationCall, account auth.AuthAccountResponse,
 ) (bool, error) {
 	locale := protocol.AuthDefaultLocaleValue
 	if account.DsInfo != nil && account.DsInfo.LanguageCode != nil {
@@ -31,11 +30,7 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 
 	input := auth.AuthGetTermsRequest{Locale: locale}
 
-	request, err := nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewGetAuthTermsRequestWithBody(
-			operation.state.Auth.SetupServiceURL, &params,
-			nativeJSONMedia(), body))
-	})
+	request, err := nativeEncodedRequest(webtransport.GetAuthTermsCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: input})
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -72,12 +67,7 @@ func (sdk *SDK) nativeAcceptTermsLogin(ctx context.Context, operation *nativeAut
 func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOperation, version int) error {
 	params := authapi.AcceptAuthTermsParams(nativeAuthParams(operation.state))
 
-	request, err := nativeEncodedRequest(auth.AuthAcceptTermsRequest{AcceptedICloudTerms: version},
-		func(body io.Reader) (*http.Request, error) {
-			return nativeGeneratedRequest(authapi.NewAcceptAuthTermsRequestWithBody(
-				operation.state.Auth.SetupServiceURL, &params,
-				nativeJSONMedia(), body))
-		})
+	request, err := nativeEncodedRequest(webtransport.AcceptAuthTermsCall{Origin: operation.state.Auth.SetupServiceURL, Params: &params, Body: auth.AuthAcceptTermsRequest{AcceptedICloudTerms: version}})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -90,11 +80,10 @@ func (sdk *SDK) nativeRepairTerms(ctx context.Context, operation *nativeAuthOper
 	return nativeRequireSuccess(operation, response)
 }
 
-func (sdk *SDK) nativeTermsRelogin(ctx context.Context, operation *nativeAuthOperation, login any) (bool, error) {
-	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL, nil,
-			nativeJSONMedia(), body))
-	})
+func (sdk *SDK) nativeTermsRelogin(ctx context.Context, operation *nativeAuthOperation,
+	login webtransport.AuthenticationCall,
+) (bool, error) {
+	request, err := nativeEncodedRequest(login)
 	if err != nil {
 		return false, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
@@ -177,7 +166,8 @@ func (sdk *SDK) nativeOneFactorTerms(ctx context.Context, operation *nativeAuthO
 		return nativeResponseError(operation, response, errUpdatedTerms, TermsRequired)
 	}
 
-	_, err := sdk.nativeAcceptTermsLogin(ctx, operation, login, account)
+	_, err := sdk.nativeAcceptTermsLogin(ctx, operation, webtransport.LoginAuthCredentialsCall{
+		Origin: operation.state.Auth.SetupServiceURL, Body: login}, account)
 
 	return err
 }
@@ -203,10 +193,7 @@ func (sdk *SDK) nativeOneFactorValidate(ctx context.Context, operation *nativeAu
 func (sdk *SDK) nativeOneFactorLogin(ctx context.Context, operation *nativeAuthOperation,
 	login auth.AuthCredentialsLoginRequest,
 ) (*webtransport.BytesResponse, error) {
-	request, err := nativeEncodedRequest(login, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewLoginAuthTokenRequestWithBody(operation.state.Auth.SetupServiceURL, nil,
-			nativeJSONMedia(), body))
-	})
+	request, err := nativeEncodedRequest(webtransport.LoginAuthCredentialsCall{Origin: operation.state.Auth.SetupServiceURL, Params: nil, Body: login})
 	if err != nil {
 		return nil, newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}

@@ -3,12 +3,10 @@ package icloud
 import (
 	"context"
 	"encoding/json"
-	"io"
+	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
 )
 
@@ -113,15 +111,12 @@ func nativeCodeAccepted(delivery TwoFactorDeliveryMethod, response *webtransport
 	return accepted
 }
 
-func nativeVerificationRequest(state NativeAuthState, code string) (*http.Request, error) {
+func nativeVerificationRequest(state NativeAuthState, code string) (webtransport.AuthenticationCall, error) {
 	securityCode := auth.AuthSecurityCode{Code: code}
 	if state.DeliveryMethod != TwoFactorDeliverySMS {
 		input := auth.AuthTrustedCodeRequest{SecurityCode: securityCode}
 
-		return nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-			return nativeGeneratedRequest(authapi.NewVerifyAuthTrustedCodeRequestWithBody(nativeIDMSOrigin(state), nil,
-				nativeJSONMedia(), body))
-		})
+		return nativeEncodedRequest(webtransport.VerifyAuthTrustedCodeCall{Origin: nativeIDMSOrigin(state), Params: nil, Body: input})
 	}
 
 	phone, err := nativeSelectedPhone(state.Challenge, nil)
@@ -141,8 +136,5 @@ func nativeVerificationRequest(state NativeAuthState, code string) (*http.Reques
 
 	input := auth.AuthSMSVerificationRequest{PhoneNumber: payload, SecurityCode: securityCode, Mode: mode}
 
-	return nativeEncodedRequest(input, func(body io.Reader) (*http.Request, error) {
-		return nativeGeneratedRequest(authapi.NewVerifyAuthSMSRequestWithBody(nativeIDMSOrigin(state), nil,
-			nativeJSONMedia(), body))
-	})
+	return nativeEncodedRequest(webtransport.VerifyAuthSMSCall{Origin: nativeIDMSOrigin(state), Params: nil, Body: input})
 }

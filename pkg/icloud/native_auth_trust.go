@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
-	"github.com/portpowered/go-icloud/pkg/dependencies/webtransport/authapi"
 )
 
 // TrustSession obtains provider trust and refreshed account discovery using copied credentials.
@@ -27,7 +26,7 @@ func (sdk *SDK) TrustSession(ctx context.Context, request NativeAuthRequest) (*N
 func (sdk *SDK) nativeTrust(ctx context.Context, operation *nativeAuthOperation) error {
 	operation.state.RequiresMFA = false
 
-	request, err := authapi.NewTrustAuthSessionRequest(nativeIDMSOrigin(operation.state), nil)
+	request, err := nativeEncodedRequest(webtransport.TrustAuthSessionCall{Origin: nativeIDMSOrigin(operation.state), Params: nil})
 	if err != nil {
 		return newClientError(operation.name, Configuration, 0, nil, nil, err)
 	}
