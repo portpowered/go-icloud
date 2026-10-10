@@ -29,6 +29,7 @@ func (client *Client) PhotosHydrateUpload(ctx context.Context, auth RequestConte
 	}
 	input.ZoneID = *zone
 	desired := photoUploadDesiredKeys()
+
 	keys := make([]string, len(desired))
 	for index, key := range desired {
 		keys[index] = string(key)
