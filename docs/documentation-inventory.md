@@ -1,7 +1,7 @@
 # Documentation audience audit
 
 This inventory covers every tracked Markdown and MDX file in the integrated
-documentation source audited through library commit `df29e1bd`. The original
+documentation source audited through library commit `d363127b`. The original
 45-file baseline was recorded at `ca02c17`; this inventory now contains all
 47 tracked Markdown and MDX files. It separates customer
 usage from contributor contracts, provenance and review records (LIB-17;
@@ -37,7 +37,7 @@ are integrated. This source audit does not certify the rendered deployment.
 | `docs/reminder-writes.md` | Contributor CRDT/mutation evidence and exceptions | Owned by Reminders integration; retained separate detailed evidence. |
 | `docs/reminders-text-protocol.md` | Contributor binary text/protobuf provenance | Retained byte-level decoding decisions, generation pin and corpus boundaries; linked write encoder evidence. |
 | `docs/library-standards.md` | Contributor shared acceptance requirements | Authoritative standards retained, never duplicated as customer prose. |
-| `docs/completion-matrix.md` | Contributor current implementation acceptance record | Preserved; integration/review owners update verdicts. |
+| `docs/completion-matrix.md` | Contributor current implementation and acceptance record | Exact-commit completed verification is separated from historical receipts and pending runtime changes; integration/review owners update verdicts. |
 | `docs/migration-checklist.md` | Contributor ordered migration work record | Historical snapshots explicitly separated; original receipts and acceptance boxes preserved; current work linked to completion matrix. |
 | `docs/independent-review.md` | Independent reviewers' verdict and evidence | Original reviewer receipts preserved; current acceptance introduction maintained separately; documentation work cannot award itself approval. |
 | `docs/operation-matrix.md` | Contributor historical live capture scope | Retained account-specific observations; remaining gaps labeled historical batch scope. |

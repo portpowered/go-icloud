@@ -20,9 +20,9 @@ operation parity. No row below grants final merge or release acceptance.
 | Reminders | Create, update, soft delete; CRDT encoding and resolution tokens | Implemented; 11 paired scenarios, full local checks and two scoped reviews |
 | Reminders hashtags | Create, rename, soft delete; atomic parent links and revision updates | Implemented; 6 paired scenarios and full local checks; final review pending |
 | Other Reminders relations | Location alarm/trigger, URL/image attachment updates, recurrence rules | Implemented; 15 paired scenarios and an empty-ID control; scoped race checks; integrated acceptance pending |
-| Auth login | Native SRP s2k/s2k_fo, service one-factor paths, paused MFA and returned credentials | Implemented; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
-| Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Implemented, including portable hardware adapter; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
-| Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Implemented, including resumed consent policy; SDK race/replay passed at `bda83e1`; final integrated acceptance pending |
+| Auth login | Native SRP s2k/s2k_fo, service one-factor paths, paused MFA and returned credentials | Implemented; CI passed at `46878751`; final integrated acceptance pending |
+| Auth verification | Status, trusted devices, two-step codes, trusted-device/SMS two-factor codes, trust, hardware assertion | Implemented, including portable hardware adapter; CI passed at `46878751`; final integrated acceptance pending |
+| Auth consent/logout | PCS/web consent polling, logout scopes, failure-stage rotations and credential ownership | Implemented, including resumed consent policy; CI passed at `46878751`; final integrated acceptance pending |
 | Auth sockets | Injected raw WebSocket, protobuf bootstrap/subscription/ACK, signing/proofs, modern/legacy bridge, teardown | Implemented; 53 socket and 30 combined paired timelines plus lifecycle controls; integrated acceptance pending |
 | CLI | Public SDK workflows for all supported reads/writes, native login/verification/logout, cancellation and cleanup | Implemented; published SDK `c49557a2` pinned; exact-commit test and coverage receipts below; final public-pin checks and acceptance pending |
 
@@ -32,9 +32,27 @@ scenario, assert full consumption, and add missing functional and negative
 controls. Validate time, randomness and framed payload meaning explicitly;
 never ignore fields to accommodate the port (SCHEMA-10, LIB-05).
 
-## Integration evidence and remaining blockers
+## Latest completed verification receipt
 
-The CLI at `5366cdcb` pins the published SDK
+[Blocking CI run 38049103597](https://github.com/portpowered/go-icloud/actions/runs/38049103597)
+passed at exact commit `46878751e0562633e89a430531daa110b8dec7be`, including all
+144 pinned Source tests. Non-generated SDK coverage was replay 11024/13129
+(84.0%), unit 4520/13129 (34.4%) and combined 11420/13129 (87.0%). The separate
+public-pin CLI profiles passed at replay 985/1225 (80.4%), unit 543/1225 (44.3%)
+and combined 1013/1225 (82.7%). Both modules meet the configured 80%/0%/80%
+replay/unit/combined thresholds; replay and combined remain below the preferred
+90% target. These are measured compatibility results, not complete-operation or
+complete-branch coverage.
+
+Subsequent bridge opaque-JSON/null/schema changes through `d363127b` are outside
+that receipt. Their final public SDK publication, CLI pin, strict union/gate
+checks and exact-commit complete verification remain pending. The installation
+pins below identify the latest documented published preview; they are not a
+final release. Keep final acceptance and independent reviews open.
+
+## Historical verification receipts and current blockers
+
+The published preview CLI at `5366cdcb` pins the published SDK
 `v0.0.0-20261010112114-c49557a2ffca`, with no local replacement. Final
 complete-library acceptance against this pin remains pending. The SDK includes
 Source-paired fixes for adding a photo to an album without prior membership,
@@ -44,7 +62,8 @@ contracts passed at `a033a9d`, and all-enabled SDK lint passed at `0765205`.
 Those are exact-commit baseline receipts. The current SDK additionally fixes
 Source trust-session refusal for reason-bearing HTTP 200 replies and validates
 the canonical bridge request target before dialing. Its additional Auth, Photos
-and Reminders replay cases require fresh integrated checks and coverage.
+and Reminders replay cases are included in the `46878751` receipt above. Later
+bridge schema changes still require their own integrated checks and coverage.
 
 The full `make check` baseline at `7586fc3` passed SDK and CLI race tests,
 contracts, all 136 pinned Source tests, and the HTTP occurrence gate
@@ -89,11 +108,12 @@ pinned Source suite at `b3de8aec` passed in 372.252 seconds. The exact `b3de8aec
 passed every job, including the six supported Go/OS module combinations. The
 complete production gate and fresh checks for subsequent runtime/scenario
 changes remain open. At `df29e1bd`, the current HTTP inventory contains 1,107
-scenarios, 2,515 pairs and 15 multipart requests; the complete 144-test Source
-suite and new SDK/CLI coverage profiles remain pending. The earlier `b3de8aec`
-results above do not prove this newer runtime. The `df29e1bd` verification run
+scenarios, 2,515 pairs and 15 multipart requests. The complete 144-test Source
+suite and updated SDK/CLI profiles subsequently passed at `46878751` as recorded
+above. The earlier `b3de8aec` results do not prove this newer runtime. The `df29e1bd` verification run
 failed a stale Reminders inventory count; `d6f5c1ab` corrects that assertion to
-366 scenarios/432 pairs. Its fresh exact-commit verification remains pending.
+366 scenarios/432 pairs. The corrected inventory is included in the passing
+`46878751` verification receipt.
 The complete production
 source/model/network audit and its blocking Make/CI integration remain open.
 Focused proof controls passing does not establish actual-source conformance.
