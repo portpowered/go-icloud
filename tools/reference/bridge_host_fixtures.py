@@ -21,7 +21,10 @@ def source_resolver(checkout, revision):
     actual = subprocess.check_output(
         ["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True
     ).strip()
-    if actual != revision:
+    dirty = subprocess.check_output(
+        ["git", "-C", str(checkout), "status", "--porcelain"], text=True
+    ).strip()
+    if actual != revision or dirty:
         raise RuntimeError("Host fixture source revision does not match pin")
     path = checkout / "pyicloud" / "hsa2_bridge.py"
     tree = ast.parse(path.read_text(encoding="utf-8"))

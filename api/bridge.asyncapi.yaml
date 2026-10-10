@@ -54,6 +54,7 @@ channels:
     parameters:
       connection:
         description: Hex protobuf ClientMessage connection request with signed nonce.
+        x-message: {$ref: '#/channels/~1v2~1{connection}/publish/message'}
         schema: {type: string, pattern: '^[0-9a-f]+$'}
     publish:
       message:
