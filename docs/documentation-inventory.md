@@ -1,7 +1,9 @@
 # Documentation audience audit
 
 This inventory covers every tracked Markdown and MDX file in the integrated
-documentation source based on library commit `ca02c17`. It separates customer
+documentation source audited through library commit `f9c2985`. The original
+45-file baseline was recorded at `ca02c17`; this inventory now contains all
+47 tracked Markdown and MDX files. It separates customer
 usage from contributor contracts, provenance and review records (LIB-17;
 template items 12–13). Add new documents here when their implementation commits
 are integrated. This source audit does not certify the rendered deployment.
@@ -47,11 +49,13 @@ are integrated. This source audit does not certify the rendered deployment.
 | `docs/verification.md` | Contributor gate ownership and commands | Removed duplicated standards/control checklist and stale bootstrap-only claims. |
 | `docs/website.md` | Contributor renderer/deployment procedure | Updated pinned action, recursive schema view, site gate and unresolved external rollout. |
 | `docs/documentation-inventory.md` | Contributor audience/duplication audit | This exhaustive baseline record; no independent acceptance verdict. |
+| `api/templates/README.md` | Contributor HTTP generation template ownership | Records the pinned upstream license, retained request constructors and removed generated network senders; generation and active traffic remain subject to the default gate. |
 | `tests/replay/README.md` | Contributor matcher and SDK replay distinction | Removed stale counts and zero-SDK claims; retained exact matching/normalization rules. |
 | `tests/replay/fixtures/captured/README.md` | Contributor captured artifact provenance | Retained unique live evidence/sanitation classification. |
 | `tests/replay/fixtures/synthetic/README.md` | Contributor synthetic artifact provenance | Retained unique implementation-derived classification. |
 | `tests/replay/fixtures/synthetic/http/README.md` | Contributor HTTP scenario families and observations | Retained unique Source evidence descriptions; corrected date exception guidance. |
 | `tests/replay/fixtures/synthetic/socket/README.md` | Contributor socket timeline evidence limits | Retained transcript framing/clock/provenance obligations; historical seam cannot prove complete native auth. |
+| `tests/replay/fixtures/synthetic/bridge-host.md` | Contributor hostname and Unicode fixture provenance | Records 62 pinned Source input/output pairs, generated Unicode dependency data and exact parser-error semantics without claiming arbitrary-input completeness. |
 | `pkg/dependencies/srp/testdata/README.md` | Contributor SRP corpus provenance | Preserved pinned Source vectors, synthetic input classification and private-secret exclusion. |
 
 Contributor documents are linked from repository instructions, contracts and

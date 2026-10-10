@@ -5,6 +5,15 @@ are available; a final release requires every item in the
 [migration checklist](migration-checklist.md) and two independent reviews of the
 exact release commit under the [library standards](library-standards.md).
 
+A reviewed library merge and a stable release have separate receipts. Before
+merge, verify the final public SDK pseudo-version and the CLI module's exact SDK
+pin without a workspace or replacement, pass blocking CI and both independent
+reviews, and verify the complete documentation artifact and Pages workflow
+configuration. The normal main push then deploys Pages; check the actual site,
+navigation and coverage destinations after deployment. A passing pull-request
+artifact does not establish that those URLs are already live. No stable SDK or
+nested CLI tag is created by merging the implementation.
+
 Before tagging:
 
 1. Run blocking `make lint` and `make check` for the SDK and CLI, including generated
