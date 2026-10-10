@@ -14,8 +14,11 @@ import (
 // ValidateAuthenticationCall checks that the typed operation can prepare its generated request.
 // ExchangeAuthentication independently constructs the request it sends from the same typed call.
 func ValidateAuthenticationCall(call AuthenticationCall) error {
-	_, err := buildAuthenticationRequest(call)
-	return err
+	request, err := buildAuthenticationRequest(call)
+	if err != nil {
+		return err
+	}
+	return validateAuthenticationMedia(request.Header, nil, authenticationCallMedia(call))
 }
 
 func buildAuthenticationRequest(call AuthenticationCall) (*http.Request, error) {

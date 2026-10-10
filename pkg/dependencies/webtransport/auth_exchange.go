@@ -12,6 +12,7 @@ var errUnknownAuthRoute = errors.New("authentication route is absent from the pr
 
 // ExchangeAuthentication sends a generated authentication request and retains exact response evidence.
 // Conflict and precondition responses are returned so the specific verifier can interpret their verdict.
+// Content-Type in generated parameters and caller headers must match the typed operation's media.
 func (client *Client) ExchangeAuthentication(ctx context.Context, call AuthenticationCall,
 	headers http.Header, cookies *CookieState,
 ) (*BytesResponse, error) {
@@ -38,11 +39,16 @@ func (client *Client) exchangeAuthenticationCall(ctx context.Context, call Authe
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	return client.exchangeAuthentication(ctx, request, headers, cookies)
+	media := authenticationCallMedia(call)
+	err = validateAuthenticationMedia(request.Header, headers, media)
+	if err != nil {
+		return nil, failure(Configuration, err, nil, nil)
+	}
+	return client.exchangeAuthentication(ctx, request, headers, cookies, media)
 }
 
 func (client *Client) exchangeAuthentication(ctx context.Context, request *http.Request,
-	headers http.Header, cookies *CookieState,
+	headers http.Header, cookies *CookieState, media string,
 ) (*BytesResponse, error) {
 	if request == nil || request.URL == nil || request.URL.User != nil || request.URL.Fragment != "" ||
 		!knownAuthenticationRoute(request) {
@@ -55,13 +61,7 @@ func (client *Client) exchangeAuthentication(ctx context.Context, request *http.
 	}
 
 	request = request.WithContext(ctx)
-	contentType := request.Header.Get(protocol.AuthHTTPContentTypeName)
-
-	request.Header = callerHeaders(headers)
-
-	if request.Header.Get(protocol.AuthHTTPContentTypeName) == "" && contentType != "" {
-		request.Header.Set(protocol.AuthHTTPContentTypeName, contentType)
-	}
+	authenticationHeaders(request, headers, media)
 
 	policy := authenticationContent
 	if authenticationBridgeRoute(request.URL.Path) {

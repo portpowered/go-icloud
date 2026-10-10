@@ -19,8 +19,9 @@ func TestAuthenticationAdmissionAndConstructionCoverTheSameCalls(t *testing.T) {
 	root := filepath.Dir(source)
 	admitted := authenticationTypeCases(t, filepath.Join(root, "auth_exchange.go"), "ExchangeAuthentication")
 	constructed := authenticationTypeCases(t, filepath.Join(root, "auth_call_requests.go"), "buildAuthenticationRequest")
-	if len(admitted) == 0 || !reflect.DeepEqual(admitted, constructed) {
-		t.Fatalf("authentication admission and construction differ: admission=%v construction=%v", admitted, constructed)
+	media := authenticationTypeCases(t, filepath.Join(root, "auth_call_media.go"), "authenticationCallMedia")
+	if len(admitted) == 0 || !reflect.DeepEqual(admitted, constructed) || !reflect.DeepEqual(admitted, media) {
+		t.Fatalf("authentication admission, construction, and media differ: admission=%v construction=%v media=%v", admitted, constructed, media)
 	}
 }
 
