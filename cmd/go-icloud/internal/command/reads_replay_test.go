@@ -16,6 +16,7 @@ import (
 
 func TestTypedPhotoReadsPairedReferenceReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, scenario := range []writeReplayCase{
 		{"photo-libraries", "photos-libraries-empty"},
 		{"photo-cursor", "photos-sync-cached"},
@@ -46,13 +47,15 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 		decodeWriteFixture(t, origin, &auth.SharedPhotosServiceURL)
 	}
 	directory := t.TempDir()
-	session, request, result := filepath.Join(directory, "session.json"), filepath.Join(directory, "request.json"), filepath.Join(directory, "result.json")
+	session := filepath.Join(directory, "session.json")
+	request, result := filepath.Join(directory, "request.json"), filepath.Join(directory, "result.json")
 	writeFixtureValue(t, session, auth)
 	input := typedReadFixtureRequest(scenario.operation, fixture)
 	input["auth"] = map[string]any{"accountID": "foreign", "photosServiceURL": "https://foreign.example.invalid"}
 	writeFixtureValue(t, request, input)
 	var output, diagnostic bytes.Buffer
-	err = command.Run(t.Context(), client, []string{"--session", session, "--request", request, "--save-result", result, scenario.operation}, &output, &diagnostic)
+	args := []string{"--session", session, "--request", request, "--save-result", result, scenario.operation}
+	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,14 +68,20 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 	}
 	var original map[string]json.RawMessage
 	var actual map[string]any
+
 	decodeWriteFixture(t, private, &original)
 	decodeWriteFixture(t, output.Bytes(), &actual)
 	var responses []icloud.ResponseMetadata
+
 	decodeWriteFixture(t, original["responses"], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
 	if scenario.operation == "photo-libraries" {
-		libraries := actual["libraries"].([]any)
-		if len(libraries) != 1 || libraries[0].(map[string]any)["id"] != "root" {
+		libraries, listPresent := actual["libraries"].([]any)
+		if !listPresent || len(libraries) != 1 {
+			t.Fatal("root inventory differs")
+		}
+		library, objectPresent := libraries[0].(map[string]any)
+		if !objectPresent || library["id"] != "root" {
 			t.Fatal("root inventory differs")
 		}
 		return
@@ -81,7 +90,9 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("console projection differs\nactual: %#v\nSource: %#v", actual, expected)
 	}
-	for _, secret := range []string{"https://assets.example.invalid", "synthetic-next", "synthetic-cached", "synthetic-account"} {
+	for _, secret := range []string{
+		"https://assets.example.invalid", "synthetic-next", "synthetic-cached", "synthetic-account",
+	} {
 		if strings.Contains(output.String(), secret) {
 			t.Fatal("private provider state reached ordinary output")
 		}
@@ -124,7 +135,12 @@ func typedReadFixtureExpected(t *testing.T, operation string, fixture writeFixtu
 		return map[string]any{"photos": typedReadSourcePhotos(t, fixture.Result, operation == "shared-photos")}
 	case "photo-upload-status":
 		jobs := make(map[string]any)
-		for id, raw := range fixture.Result.(map[string]any) {
+		source, objectPresent := fixture.Result.(map[string]any)
+		if !objectPresent {
+			t.Fatal("Source upload status is not an object")
+		}
+
+		for id, raw := range source {
 			job := raw.(map[string]any)
 			value := sourceWriteProjection(job["value"]).(map[string]any)
 			value["unknown"] = job["is_unknown"]

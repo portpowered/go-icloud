@@ -14,14 +14,18 @@ import (
 	"testing"
 
 	"github.com/oapi-codegen/nullable"
+
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/photosynccommand"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 	"github.com/portpowered/go-icloud/pkg/photosync"
 )
 
+var errSyncOutputRejected = errors.New("synthetic output rejection")
+
 type syncCLIClient struct {
 	icloud.Client
+
 	t         *testing.T
 	cursors   int
 	visits    int
@@ -30,7 +34,9 @@ type syncCLIClient struct {
 	named     bool
 }
 
-func (client *syncCLIClient) GetPhotosCursor(_ context.Context, request icloud.GetPhotosCursorRequest) (*icloud.GetPhotosCursorResult, error) {
+func (client *syncCLIClient) GetPhotosCursor(
+	_ context.Context, request icloud.GetPhotosCursorRequest,
+) (*icloud.GetPhotosCursorResult, error) {
 	client.t.Helper()
 	if request.Auth.AccountID != "stored-account" {
 		client.t.Fatal("request authentication displaced the saved native account")
@@ -39,20 +45,28 @@ func (client *syncCLIClient) GetPhotosCursor(_ context.Context, request icloud.G
 		client.t.Fatal("cursor lost the discovered library selection")
 	}
 	client.cursors++
-	return &icloud.GetPhotosCursorResult{SyncToken: fmt.Sprintf("cursor-%d", client.cursors), Responses: syncReceipt("cursor")}, nil
+	return &icloud.GetPhotosCursorResult{
+		SyncToken: fmt.Sprintf("cursor-%d", client.cursors), Responses: syncReceipt("cursor"),
+	}, nil
 }
 
-func (client *syncCLIClient) ListPhotoLibraries(_ context.Context, request icloud.ListPhotoLibrariesRequest) (*icloud.ListPhotoLibrariesResult, error) {
+func (client *syncCLIClient) ListPhotoLibraries(
+	_ context.Context, request icloud.ListPhotoLibrariesRequest,
+) (*icloud.ListPhotoLibrariesResult, error) {
 	client.t.Helper()
 	if !client.named || request.Auth.AccountID != "stored-account" {
 		client.t.Fatal("unexpected discovery or incorrect saved authentication")
 	}
 	var library icloud.PhotoLibrary
 	decode(client.t, json.RawMessage(`{"id":"selected","zoneName":"selected-zone","zoneType":"REGULAR_CUSTOM_ZONE","ownerRecordName":null,"shared":false,"isSharedLibrary":false,"indexingState":"FINISHED","syncToken":null}`), &library)
-	return &icloud.ListPhotoLibrariesResult{Libraries: []icloud.PhotoLibrary{library}, Responses: syncReceipt("discovery")}, nil
+	return &icloud.ListPhotoLibrariesResult{
+		Libraries: []icloud.PhotoLibrary{library}, Responses: syncReceipt("discovery"),
+	}, nil
 }
 
-func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.ListPhotoAssetsRequest, visitor icloud.PhotoVisitor) (*icloud.ListPhotoAssetsResult, error) {
+func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.ListPhotoAssetsRequest,
+	visitor icloud.PhotoVisitor,
+) (*icloud.ListPhotoAssetsResult, error) {
 	client.t.Helper()
 	client.visits++
 	var photo icloud.Photo
@@ -69,18 +83,26 @@ func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.List
 	return &icloud.ListPhotoAssetsResult{Photos: []icloud.Photo{photo}, Responses: responses}, nil
 }
 
-func (client *syncCLIClient) DownloadPhoto(_ context.Context, request icloud.DownloadPhotoRequest) (*icloud.DownloadPhotoResult, error) {
+func (client *syncCLIClient) DownloadPhoto(
+	_ context.Context, request icloud.DownloadPhotoRequest,
+) (*icloud.DownloadPhotoResult, error) {
 	client.t.Helper()
+	//nolint:gosec // GO-15: this synthetic snapshot verifies page credential rotation before download.
 	encoded, err := json.Marshal(request.Auth)
 	if err != nil || !bytes.Contains(encoded, []byte("page-secret")) {
 		client.t.Fatal("download did not consume the page credential rotation")
 	}
 	client.downloads++
-	return &icloud.DownloadPhotoResult{Content: nullable.NewNullableWithValue([]byte("x")), Responses: syncReceipt("download")}, nil
+	return &icloud.DownloadPhotoResult{
+		Content: nullable.NewNullableWithValue([]byte("x")), Responses: syncReceipt("download"),
+	}, nil
 }
 
 func syncReceipt(stage string) []icloud.ResponseMetadata {
-	return []icloud.ResponseMetadata{{StatusCode: 200, CookieScopeURL: "https://photos.example.invalid/", Headers: []icloud.Header{{Name: "Set-Cookie", Value: "session=" + stage + "-secret; Path=/; Secure"}}}}
+	return []icloud.ResponseMetadata{{
+		StatusCode: 200, CookieScopeURL: "https://photos.example.invalid/",
+		Headers: []icloud.Header{{Name: "Set-Cookie", Value: "session=" + stage + "-secret; Path=/; Secure"}},
+	}}
 }
 
 func TestPhotosSyncNativeSessionAndMaterialization(t *testing.T) {
@@ -128,7 +150,8 @@ func TestPhotosWatchBoundedIterations(t *testing.T) {
 		t.Fatal(err)
 	}
 	if client.cursors != 2 || client.visits != 2 || strings.Count(output.String(), "\n") != 2 {
-		t.Fatalf("watch did not stop at two synchronous results: cursors=%d visits=%d output=%s", client.cursors, client.visits, output.String())
+		t.Fatalf("watch did not stop at two synchronous results: cursors=%d visits=%d output=%s",
+			client.cursors, client.visits, output.String())
 	}
 	checkSyncState(t, session, before, "page-secret")
 }
@@ -140,10 +163,11 @@ func (writer rejectedSyncOutput) Write([]byte) (int, error) { return 0, writer.c
 func TestPhotosWatchOutputFailureStopsAfterPersistingIteration(t *testing.T) {
 	t.Parallel()
 	client, session, request, before := syncCLISetup(t, true)
-	cause := errors.New("synthetic output rejection")
+	cause := errSyncOutputRejected
 	err := runSyncCLI(t.Context(), client, session, request, "photos-watch", "", rejectedSyncOutput{cause: cause})
 	if !errors.Is(err, cause) || client.cursors != 1 || client.visits != 1 {
-		t.Fatalf("watch continued after rejected output or lost cause: %v, cursors=%d visits=%d", err, client.cursors, client.visits)
+		t.Fatalf("watch continued after rejected output or lost cause: %v, cursors=%d visits=%d",
+			err, client.cursors, client.visits)
 	}
 	checkSyncState(t, session, before, "page-secret")
 }
@@ -151,6 +175,7 @@ func TestPhotosWatchOutputFailureStopsAfterPersistingIteration(t *testing.T) {
 func TestPhotosSyncCancellationPreservesReceiptAndRotatesCredentials(t *testing.T) {
 	t.Parallel()
 	client, session, request, before := syncCLISetup(t, false)
+
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	client.cancel = cancel
@@ -231,13 +256,16 @@ func writeSyncJSON(t *testing.T, path string, value any) {
 	}
 }
 
-func runSyncCLI(ctx context.Context, client icloud.Client, session, request, operation, result string, output io.Writer) error {
+func runSyncCLI(ctx context.Context, client icloud.Client, session, request, operation, result string,
+	output io.Writer,
+) error {
 	args := []string{"--session", session, "--request", request, "--timeout", "10s"}
 	if result != "" {
 		args = append(args, "--save-result", result)
 	}
 	args = append(args, operation)
-	return command.RunWithInput(ctx, client, args, io.NopCloser(strings.NewReader("")), func(string) string { return "" }, output, io.Discard)
+	return command.RunWithInput(ctx, client, args, io.NopCloser(strings.NewReader("")),
+		func(string) string { return "" }, output, io.Discard)
 }
 
 func checkSyncState(t *testing.T, path string, expected icloud.NativeAuthState, cookie string) {

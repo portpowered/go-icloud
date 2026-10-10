@@ -25,10 +25,13 @@ const photoLookupCommand = "photo"
 
 type photoPrivacyClient struct {
 	icloud.Client
+
 	result *icloud.ListPhotoAssetsResult
 }
 
-func (client *photoPrivacyClient) ListPhotoAssets(context.Context, icloud.ListPhotoAssetsRequest) (*icloud.ListPhotoAssetsResult, error) {
+func (client *photoPrivacyClient) ListPhotoAssets(
+	context.Context, icloud.ListPhotoAssetsRequest,
+) (*icloud.ListPhotoAssetsResult, error) {
 	return client.result, nil
 }
 
@@ -41,9 +44,14 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 	original := reminderCLIEncode(t, result)
 	directory := t.TempDir()
 	session, saved := filepath.Join(directory, "session.json"), filepath.Join(directory, "result.json")
-	writeSyncJSON(t, session, icloud.AuthContext{AccountID: "synthetic-account", ClientID: "synthetic-client", PhotosServiceURL: "https://photos.example.invalid", Headers: []icloud.Header{}})
+	var auth icloud.AuthContext
+
+	auth.AccountID, auth.ClientID = "synthetic-account", "synthetic-client"
+	auth.PhotosServiceURL = "https://photos.example.invalid"
+	auth.Headers = []icloud.Header{}
+	writeSyncJSON(t, session, auth)
 	var output, diagnostic bytes.Buffer
-	err := command.Run(t.Context(), &photoPrivacyClient{result: &result},
+	err := command.Run(t.Context(), &photoPrivacyClient{Client: nil, result: &result},
 		[]string{sessionFlag, session, "--save-result", saved, photoAssetsCommand}, &output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
@@ -59,7 +67,10 @@ func TestPhotoReadOpaquePrivacy(t *testing.T) {
 	var expected map[string]json.RawMessage
 	decode(t, json.RawMessage(`{"photos":[{"id":"public-id","masterID":"public-master","filename":"public.jpg","itemType":"image","isLivePhoto":false,"created":"2020-01-01T00:00:00Z","added":"2020-01-02T00:00:00Z"}]}`), &expected)
 	checkReminderCLIValue(t, output.Bytes(), expected)
-	for _, marker := range []string{"asset-secret", "metadata-secret", "resource-secret", "checksum-secret", "dimension-secret", "size-secret", "receipt-secret"} {
+	for _, marker := range []string{
+		"asset-secret", "metadata-secret", "resource-secret", "checksum-secret", "dimension-secret",
+		"size-secret", "receipt-secret",
+	} {
 		if !bytes.Contains(private, []byte(marker)) || strings.Contains(output.String(), marker) {
 			t.Fatal("opaque private value was lost from the private result or exposed on stdout")
 		}
@@ -125,8 +136,10 @@ func runPhotoReadScenario(t *testing.T, operation string, row map[string]json.Ra
 	directory := t.TempDir()
 	session, saved := filepath.Join(directory, "session.json"), filepath.Join(directory, "result.json")
 	writeSyncJSON(t, session, fixtureAuth(t, row["initial_state"]))
-	args := []string{sessionFlag, session, "--save-result", saved}
-	args = append(args, photoCLIArgs(t, operation, row)...)
+	options := photoCLIArgs(t, operation, row)
+	args := make([]string, 0, 5+len(options))
+	args = append(args, sessionFlag, session, "--save-result", saved)
+	args = append(args, options...)
 	args = append(args, operation)
 	var output, diagnostic bytes.Buffer
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
@@ -176,7 +189,9 @@ func checkPhotoReadPrivateSource(t *testing.T, operation string, row map[string]
 	checkReminderCLIValue(t, output, photoReadConsoleProjection(t, operation, complete))
 }
 
-func photoReadConsoleProjection(t *testing.T, operation string, complete map[string]json.RawMessage) map[string]json.RawMessage {
+func photoReadConsoleProjection(t *testing.T, operation string,
+	complete map[string]json.RawMessage,
+) map[string]json.RawMessage {
 	t.Helper()
 	result := maps.Clone(complete)
 	switch operation {

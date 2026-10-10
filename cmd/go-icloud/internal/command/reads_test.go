@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/oapi-codegen/nullable"
+
 	"github.com/portpowered/go-icloud/cmd/go-icloud/internal/command"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
@@ -33,12 +34,15 @@ func TestTypedReadInputFailures(t *testing.T) {
 
 type readProbe struct {
 	icloud.Client
+
 	calls  int
 	auth   icloud.AuthContext
 	result *icloud.GetPhotoUploadStatusResult
 }
 
-func (probe *readProbe) GetPhotoUploadStatus(_ context.Context, request icloud.GetPhotoUploadStatusRequest) (*icloud.GetPhotoUploadStatusResult, error) {
+func (probe *readProbe) GetPhotoUploadStatus(
+	_ context.Context, request icloud.GetPhotoUploadStatusRequest,
+) (*icloud.GetPhotoUploadStatusResult, error) {
 	probe.calls++
 	probe.auth = request.Auth
 	return probe.result, nil
@@ -49,29 +53,36 @@ func TestTypedReadUnknownProviderFieldsRemainPrivate(t *testing.T) {
 	var status icloud.PhotoUploadStatus
 	status.Progress = nullable.NewNullableWithValue(100)
 	status.ErrorCode.SetNull()
-	status.AdditionalProperties = map[string]icloud.UnknownJSONValue{"unreviewedProviderField": json.RawMessage(`"synthetic-private-status"`)}
+	status.AdditionalProperties = map[string]icloud.UnknownJSONValue{
+		"unreviewedProviderField": json.RawMessage(`"synthetic-private-status"`),
+	}
 	var result icloud.GetPhotoUploadStatusResult
 	result.Jobs = map[string]icloud.PhotoUploadStatus{"synthetic-job": status}
 	result.Responses = []icloud.ResponseMetadata{}
 	probe := &readProbe{Client: nil, calls: 0, auth: resultAuth(), result: &result}
 	directory := t.TempDir()
-	session, request, saved := filepath.Join(directory, "session.json"), filepath.Join(directory, "request.json"), filepath.Join(directory, "result.json")
+	session := filepath.Join(directory, "session.json")
+	request, saved := filepath.Join(directory, "request.json"), filepath.Join(directory, "result.json")
 	auth := resultAuth()
 	writeFixtureValue(t, session, auth)
-	writeFixtureValue(t, request, map[string]any{"auth": map[string]any{"accountID": "foreign"}, "jobIDs": []string{"synthetic-job"}})
+	writeFixtureValue(t, request, map[string]any{
+		"auth": map[string]any{"accountID": "foreign"}, "jobIDs": []string{"synthetic-job"},
+	})
 	original, err := json.Marshal(result)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var output, diagnostic bytes.Buffer
-	err = command.Run(t.Context(), probe, []string{"--session", session, "--request", request, "--save-result", saved, "photo-upload-status"}, &output, &diagnostic)
+	args := []string{"--session", session, "--request", request, "--save-result", saved, "photo-upload-status"}
+	err = command.Run(t.Context(), probe, args, &output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if probe.calls != 1 || !reflect.DeepEqual(probe.auth, auth) {
 		t.Fatal("stored authentication was not selected")
 	}
-	if strings.Contains(output.String(), "synthetic-private-status") || strings.Contains(output.String(), "unreviewedProviderField") {
+	if strings.Contains(output.String(), "synthetic-private-status") ||
+		strings.Contains(output.String(), "unreviewedProviderField") {
 		t.Fatal("opaque provider fields reached console")
 	}
 	private, err := os.ReadFile(saved)

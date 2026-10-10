@@ -16,6 +16,7 @@ import (
 
 type legacyPhotoProbe struct {
 	icloud.Client
+
 	result *icloud.GetPhotoResult
 }
 
