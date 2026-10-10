@@ -37,7 +37,7 @@ func (sdk *SDK) GetPhotosStatus(ctx context.Context, request GetPhotosStatusRequ
 		return nil, photosStatusFailure(Unavailable, errPhotosIndexing, response.Metadata)
 	}
 
-	result := &GetPhotosStatusResult{State: GetPhotosStatusResultState(state), SyncToken: response.Data.SyncToken,
+	result := &GetPhotosStatusResult{State: GetPhotosStatusResultStateFINISHED, SyncToken: response.Data.SyncToken,
 		Metadata: publicMetadata(response.Metadata)}
 	if !result.SyncToken.IsSpecified() {
 		result.SyncToken.SetNull()
