@@ -3,9 +3,10 @@
 Run `make endpoint-coverage` from the repository root to list portable HTTP
 occurrences and missing routes. This Go audit (LIB-13) reads checked-in synthetic
 fixtures and requires their source pin to match the draft inventory and
-`tools/reference/source.json`. `make check` and CI run its diagnostic mode.
+`tools/reference/source.json`. `make endpoint-coverage`, `make check` and CI
+run strict occurrence mode with `-summary -require-covered`.
 
-For JSON with each fixture and zero-based exchange index:
+For diagnostic JSON with each fixture and zero-based exchange index:
 
 ```powershell
 go run ./tools/endpointcoverage
@@ -32,8 +33,9 @@ Album-location prefixes similarly require a referenced location. A future
 response cannot supply an earlier request's URL.
 
 This establishes occurrence, not the exact response field/helper supplying a
-URL, its query/header/body, or authority-selection policy. The eventual source
-and schema gate must prove those bindings. Paired reference replay already
+URL, its query/header/body, or authority-selection policy. The source/model
+provenance and socket gates verify their own declared bindings; their success
+must be assessed separately from occurrence coverage. Paired reference replay
 checks complete prepared exchanges, semantic outcomes, order and consumption;
 this audit does not replace it. HTTP counts classify statuses 200–399, statuses
 at least 400 and other statuses; a 200 response may contain a provider record

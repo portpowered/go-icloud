@@ -1,7 +1,7 @@
 # Documentation audience audit
 
 This inventory covers every tracked Markdown and MDX file in the integrated
-documentation source based on library commit `84d69c6`. It separates customer
+documentation source based on library commit `ca02c17`. It separates customer
 usage from contributor contracts, provenance and review records (LIB-17;
 template items 12–13). Add new documents here when their implementation commits
 are integrated. This source audit does not certify the rendered deployment.
@@ -36,7 +36,7 @@ are integrated. This source audit does not certify the rendered deployment.
 | `docs/reminders-text-protocol.md` | Contributor binary text/protobuf provenance | Retained byte-level decoding decisions, generation pin and corpus boundaries; linked write encoder evidence. |
 | `docs/library-standards.md` | Contributor shared acceptance requirements | Authoritative standards retained, never duplicated as customer prose. |
 | `docs/completion-matrix.md` | Contributor current implementation acceptance record | Preserved; integration/review owners update verdicts. |
-| `docs/migration-checklist.md` | Contributor ordered migration work record | Preserved existing status and review ownership. |
+| `docs/migration-checklist.md` | Contributor ordered migration work record | Historical snapshots explicitly separated; original receipts and acceptance boxes preserved; current work linked to completion matrix. |
 | `docs/independent-review.md` | Independent reviewers' verdict and evidence | Preserved verbatim; documentation work cannot award itself approval. |
 | `docs/operation-matrix.md` | Contributor historical live capture scope | Retained account-specific observations; remaining gaps labeled historical batch scope. |
 | `docs/python-provider-migration-playbook.md` | Contributor reference-first evidence workflow | Replaced copied second checklist with concise workflow and authoritative links. |

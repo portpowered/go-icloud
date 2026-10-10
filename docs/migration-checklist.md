@@ -1,5 +1,14 @@
 # iCloud migration checklist
 
+The [completion matrix](completion-matrix.md) is the current implementation and
+acceptance work list. This file preserves the migration objective, unchecked
+acceptance requirements and original milestone receipts. The historical notes
+retain their original counts, review results and words such as “now”, “current”
+and “next”; those words refer to the individual milestone, not today's checkout
+(LIB-12). A scoped milestone approval does not approve the complete library.
+
+## Historical milestone snapshots
+
 Primary photo asset enumeration now has a stateless `ListPhotoAssets` SDK
 operation and schema-generated photo/resource models. One hundred and nine strict
 Source/Go scenarios consume 427 pairs; one hundred and five new cases bring the HTTP
@@ -131,6 +140,8 @@ lookup cases, entered 592/905 functions and covered 3,293/5,398 body statements
 (61.0%) and 1,012/2,076 branch exits. Public Go Photos semantic parity, remaining
 Reminders operations, native login and full template acceptance remain open.
 
+## Migration objective
+
 Objective: cover every relevant endpoint/function in Photos, Find My/devices,
 Drive, account, and reminders; establish portable reference scenarios; implement
 the equivalent Go library and CLI; publish, verify, and iterate until two fresh
@@ -187,7 +198,12 @@ See [independent review](independent-review.md) for findings and verification.
 | 15 | Portable paired replay with strict match/bindings, failures, and teardown | Open |
 | 16 | Separate published SDK-consuming CLI; guide workflow, controls/logout, offline tests | Open |
 
-## Current coverage baseline
+## Historical coverage and implementation snapshots
+
+The entries below preserve earlier coverage baselines and implementation steps.
+Their then-open gaps and branch-local totals are historical evidence; use the
+[completion matrix](completion-matrix.md) and current verification commands for
+the integrated checkout. No original receipt below is a final acceptance verdict.
 
 The owner clarified that endpoint behavior for the selected five services and
 required authentication is the priority. Further generic malformed-input and

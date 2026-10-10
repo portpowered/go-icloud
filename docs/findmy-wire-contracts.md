@@ -84,7 +84,11 @@ remain opaque and do not establish completed device action. The SDK returns
 typed refusal evidence, preserves account isolation and sends each command once
 without automatic retries (API-11, API-14).
 
-## Remaining acceptance
+## Historical acceptance snapshot
+
+The following receipt preserves its milestone scenario totals and then-open
+work. Current implementation and acceptance work is in the
+[completion matrix](completion-matrix.md).
 
 The [public Find My session](findmy-session.md) now executes all 71 current
 portable scenarios and 140 pairs through the SDK with semantic projection checks.

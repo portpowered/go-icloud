@@ -30,8 +30,8 @@ The renderer opts into JSON encoding for canonical `plain/text` and wildcard
 request media aliases. The reference graph schema view preserves conjunctions,
 alternatives, required fields, examples and named component links without eagerly
 expanding recursive intersections. Native request snippets and the playground
-remain available. The shared action commit must be published before GitHub can
-resolve the workflow pin. Deployment, external link checks and both independent
+remain available. The pinned shared action commit is published and available to
+the workflow. Deployment, external link checks and both independent
 reviews remain release gates.
 
 See [the documentation inventory](documentation-inventory.md), [release procedure](releasing.md),

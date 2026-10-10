@@ -82,7 +82,7 @@ three measurements. `make check` and blocking CI require at least 80% replay
 and combined coverage; CI saves separate profiles. Schema-owned protocol
 constants include inline operation parameters and have syntax/collision checks.
 
-## Unknown values and remaining work
+## Unknown values
 
 Additional provider fields retain raw JSON, including nulls and integers beyond
 floating-point precision. The reference does not define concrete subscription
@@ -98,6 +98,12 @@ Unknown JSON and subscription values explicitly allow every JSON type, including
 null and arrays containing null. An OpenAPI 3.0 union keeps raw additional fields
 compatible with the pinned generator while permitting null in schema validation.
 Named nullable values retain separate absent/explicit-null wrappers.
+
+## Historical acceptance snapshot
+
+The following then-open statements are preserved from the account milestone;
+current implementation and acceptance work is in the
+[completion matrix](completion-matrix.md).
 
 The error object describes currently known JSON fields. Authentication-specific
 error classification, complete failure/framing contracts and the full

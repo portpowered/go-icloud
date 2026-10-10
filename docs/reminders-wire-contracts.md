@@ -84,7 +84,7 @@ request builders and models establish wire infrastructure; MIME-selected generat
 response convenience parsers do not replace the reference's unconditional JSON
 parsing, error classification or public service orchestration.
 
-## Evidence and checks
+## Historical evidence and checks
 
 The current 302 implementation-derived synthetic Reminders scenarios contain
 363 paired exchanges: 360 POST pairs and three membership-asset downloads. Contract
@@ -148,7 +148,11 @@ normal-record union membership, unknown/null/large values, schema examples,
 generation and protocol-constant drift, and unissued assets. No fixture matching
 rule was relaxed and no live operation was performed.
 
-## Remaining work
+## Historical implementation milestones
+
+The following receipts retain their milestone-specific status and totals; they
+do not enumerate current implementation gaps. See the
+[completion matrix](completion-matrix.md) for the current work list.
 
 The internal [text protocol adapter](reminders-text-protocol.md) now decodes
 versioned CRDT title and notes bytes against a separate portable Source corpus.
