@@ -1,4 +1,4 @@
-package command_test
+package replay_test
 
 import (
 	"encoding/json"
@@ -63,11 +63,11 @@ func sourceWriteField(key string) string {
 	case "fullname":
 		return "fullName"
 	case "asset":
-		return testAssetMetadataKey
+		return expectedReplayAssetMetadata
 	}
 
 	names := map[string]string{
-		"list_id": "listID", "reminder_id": testReminderIDKey, "parent_reminder_id": "parentReminderID",
+		"list_id": "listID", "reminder_id": expectedReplayReminderID, "parent_reminder_id": "parentReminderID",
 		"hashtag_ids": testHashtagIDsKey, "attachment_ids": testAttachmentIDsKey,
 		"alarm_ids": testAlarmIDsKey, "recurrence_rule_ids": testRecurrenceRuleIDsKey,
 		"alarm_id": "alarmID", "alarm_uid": "alarmUID", "trigger_id": "triggerID", "location_uid": "locationUID",
@@ -138,30 +138,30 @@ func fixtureWriteInput(t *testing.T, operation string, fixture writeFixture) map
 			request[testDescriptionKey] = inputs[2]
 		}
 	case testReminderUpdateCommand:
-		request[testReminderKey] = inputs[0]
+		request[reminderCommand] = inputs[0]
 	case testReminderDeleteCommand:
 		reminder := sourceServiceObject(t, inputs[0])
-		request[testReminderIDKey], request[testRecordChangeTagKey] = reminder["id"], reminder[testRecordChangeTagKey]
+		request[expectedReplayReminderID], request[reminderCLIRevisionField] = reminder["id"], reminder[reminderCLIRevisionField]
 	case testReminderHashtagCreateCommand:
-		request[testReminderKey], request["name"] = inputs[0], inputs[1]
+		request[reminderCommand], request["name"] = inputs[0], inputs[1]
 	case testReminderHashtagUpdateCommand:
 		request["hashtag"], request["name"] = inputs[0], inputs[1]
 	case testReminderHashtagDeleteCommand:
-		request[testReminderKey], request["hashtag"] = inputs[0], inputs[1]
+		request[reminderCommand], request["hashtag"] = inputs[0], inputs[1]
 	case testReminderRecurrenceCreateCommand:
-		request[testReminderKey] = inputs[0]
+		request[reminderCommand] = inputs[0]
 	case testReminderRecurrenceUpdateCommand:
 		request[testRecurrenceRuleKey] = inputs[0]
 	case testReminderRecurrenceDeleteCommand:
-		request[testReminderKey], request[testRecurrenceRuleKey] = inputs[0], inputs[1]
+		request[reminderCommand], request[testRecurrenceRuleKey] = inputs[0], inputs[1]
 	case testReminderAttachmentCreateCommand:
-		request[testReminderKey], request["url"] = inputs[0], inputs[1]
+		request[reminderCommand], request["url"] = inputs[0], inputs[1]
 	case testReminderAttachmentUpdateCommand:
 		request[testAttachmentKey] = inputs[0]
 	case testReminderAttachmentDeleteCommand:
-		request[testReminderKey], request[testAttachmentKey] = inputs[0], inputs[1]
+		request[reminderCommand], request[testAttachmentKey] = inputs[0], inputs[1]
 	case testReminderLocationAddCommand:
-		request[testReminderKey] = inputs[0]
+		request[reminderCommand] = inputs[0]
 	default:
 		photoWriteInput(t, request, operation, inputs)
 	}
@@ -195,7 +195,7 @@ func fixtureWriteExpected(t *testing.T, operation string, fixture writeFixture) 
 
 	result := sourceWriteProjection(t, fixture.Result)
 	if operation == testReminderCreateCommand {
-		return map[string]any{testReminderKey: result}
+		return map[string]any{reminderCommand: result}
 	}
 
 	if operation == testPhotoDeleteCommand || operation == testPhotoAlbumDeleteCommand {
@@ -221,7 +221,7 @@ func fixtureWriteExpected(t *testing.T, operation string, fixture writeFixture) 
 
 	if operation == testPhotoFavoriteCommand {
 		photo := sourceServiceObject(t, observed["photo"])
-		for _, key := range []string{testAssetMetadataKey, testMasterMetadataKey, testVersionsKey,
+		for _, key := range []string{expectedReplayAssetMetadata, testMasterMetadataKey, testVersionsKey,
 			testDimensionsKey, "size", testChecksumKey} {
 			delete(photo, key)
 		}
@@ -242,32 +242,32 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 
 	switch operation {
 	case testReminderUpdateCommand:
-		return map[string]any{testReminderKey: arguments[0]}
+		return map[string]any{reminderCommand: arguments[0]}
 	case testReminderDeleteCommand:
 		reminder := sourceServiceObject(t, arguments[0])
 
 		return map[string]any{
 			"deleted": true, testModifiedKey: reminder[testModifiedKey],
-			testRecordChangeTagKey: reminder[testRecordChangeTagKey],
+			reminderCLIRevisionField: reminder[reminderCLIRevisionField],
 		}
 	case testReminderHashtagCreateCommand:
-		return map[string]any{"hashtag": value, testReminderKey: arguments[0]}
+		return map[string]any{"hashtag": value, reminderCommand: arguments[0]}
 	case testReminderHashtagUpdateCommand:
 		return map[string]any{"hashtag": arguments[0]}
 	case testReminderHashtagDeleteCommand:
-		return map[string]any{"hashtag": arguments[1], testReminderKey: arguments[0]}
+		return map[string]any{"hashtag": arguments[1], reminderCommand: arguments[0]}
 	case testReminderRecurrenceCreateCommand:
-		return map[string]any{testRecurrenceRuleKey: value, testReminderKey: arguments[0]}
+		return map[string]any{testRecurrenceRuleKey: value, reminderCommand: arguments[0]}
 	case testReminderRecurrenceUpdateCommand:
 		return map[string]any{testRecurrenceRuleKey: arguments[0]}
 	case testReminderRecurrenceDeleteCommand:
-		return map[string]any{testRecurrenceRuleKey: arguments[1], testReminderKey: arguments[0]}
+		return map[string]any{testRecurrenceRuleKey: arguments[1], reminderCommand: arguments[0]}
 	case testReminderAttachmentCreateCommand:
-		return map[string]any{testAttachmentKey: value, testReminderKey: arguments[0]}
+		return map[string]any{testAttachmentKey: value, reminderCommand: arguments[0]}
 	case testReminderAttachmentUpdateCommand:
 		return map[string]any{testAttachmentKey: arguments[0]}
 	case testReminderAttachmentDeleteCommand:
-		return map[string]any{testAttachmentKey: arguments[1], testReminderKey: arguments[0]}
+		return map[string]any{testAttachmentKey: arguments[1], reminderCommand: arguments[0]}
 	case testReminderLocationAddCommand:
 		returned, ok := value.([]any)
 		if !ok || len(returned) != 2 {
@@ -276,7 +276,7 @@ func expectedReminderWrite(t *testing.T, operation string, value any, arguments 
 
 		projectSourceLocationNumbers(t, sourceServiceObject(t, returned[1]))
 
-		return map[string]any{"alarm": returned[0], "trigger": returned[1], testReminderKey: arguments[0]}
+		return map[string]any{"alarm": returned[0], "trigger": returned[1], reminderCommand: arguments[0]}
 	default:
 		t.Fatal("unknown Source result adapter: " + operation)
 	}

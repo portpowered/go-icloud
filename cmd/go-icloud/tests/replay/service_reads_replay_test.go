@@ -1,4 +1,4 @@
-package command_test
+package replay_test
 
 import (
 	"bytes"
@@ -50,8 +50,8 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 	}
 
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJSONFilename)
-	request, result := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, testResultJSONFilename)
+	session := filepath.Join(directory, expectedReplaySessionJSON)
+	request, result := filepath.Join(directory, testRequestJSONFilename), filepath.Join(directory, expectedReplayResultJSON)
 
 	writeFixtureValue(t, session, auth)
 
@@ -61,7 +61,7 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 
 	var output, diagnostic bytes.Buffer
 
-	args := []string{testSessionFlag, session, testRequestFlag, request, testSaveResultFlag, result, scenario.operation}
+	args := []string{sessionFlag, session, expectedRequestOption, request, expectedReplaySaveResult, result, scenario.operation}
 
 	err = command.Run(t.Context(), client, args, &output, &diagnostic)
 	if err != nil {
@@ -87,7 +87,7 @@ func runTypedReadReplay(t *testing.T, scenario writeReplayCase) {
 
 	var responses []icloud.ResponseMetadata
 
-	decodeWriteFixture(t, original[testResponsesKey], &responses)
+	decodeWriteFixture(t, original[expectedReplayResponses], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
 
 	if scenario.operation == testPhotoLibrariesCommand {
@@ -182,7 +182,7 @@ func typedReadSourcePhotos(t *testing.T, source any, shared bool) []any {
 
 	for index, raw := range photos {
 		photo := sourceServiceObject(t, raw)
-		for _, key := range []string{testAssetMetadataKey, testMasterMetadataKey, testVersionsKey,
+		for _, key := range []string{expectedReplayAssetMetadata, testMasterMetadataKey, testVersionsKey,
 			testDimensionsKey, "size", testChecksumKey} {
 			delete(photo, key)
 		}

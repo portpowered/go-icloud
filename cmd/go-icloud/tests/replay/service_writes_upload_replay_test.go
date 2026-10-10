@@ -1,4 +1,4 @@
-package command_test
+package replay_test
 
 import (
 	"bytes"
@@ -40,13 +40,13 @@ func runUploadWriteReplay(t *testing.T, scenario writeReplayCase) {
 
 	client := fixtureWriteClient(t, fixture, transport)
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJSONFilename)
+	session := filepath.Join(directory, expectedReplaySessionJSON)
 	request := filepath.Join(directory, testRequestJSONFilename)
-	result := filepath.Join(directory, testResultJSONFilename)
+	result := filepath.Join(directory, expectedReplayResultJSON)
 
 	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
 	writeFixtureValue(t, request, uploadWriteRequest(t, scenario.operation, fixture))
-	args := []string{testSessionFlag, session, testRequestFlag, request, testSaveResultFlag, result}
+	args := []string{sessionFlag, session, expectedRequestOption, request, expectedReplaySaveResult, result}
 
 	if len(fixture.File) != 0 {
 		content := filepath.Join(directory, "content")
@@ -155,7 +155,7 @@ func checkUploadWriteResult(t *testing.T, operation string, fixture writeFixture
 
 	var responses []icloud.ResponseMetadata
 
-	decodeWriteFixture(t, result[testResponsesKey], &responses)
+	decodeWriteFixture(t, result[expectedReplayResponses], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
 
 	var console any
@@ -189,7 +189,7 @@ func checkUploadWriteResult(t *testing.T, operation string, fixture writeFixture
 
 		if operation == testPhotoUploadCommand {
 			photo := sourceServiceObject(t, sourceWriteProjection(t, observed))
-			for _, key := range []string{testAssetMetadataKey, testMasterMetadataKey, testVersionsKey,
+			for _, key := range []string{expectedReplayAssetMetadata, testMasterMetadataKey, testVersionsKey,
 				testDimensionsKey, "size", testChecksumKey} {
 				delete(photo, key)
 			}

@@ -1,4 +1,4 @@
-package command_test
+package replay_test
 
 import (
 	"encoding/json"

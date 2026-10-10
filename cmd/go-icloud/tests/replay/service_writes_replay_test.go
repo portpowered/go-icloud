@@ -1,4 +1,4 @@
-package command_test
+package replay_test
 
 import (
 	"bytes"
@@ -99,8 +99,8 @@ func loadWriteFixture(t *testing.T, name string) writeFixture {
 		decodeWriteFixture(t, row["file"], &fixture.File)
 	}
 
-	if len(row[testKeywordInputs]) != 0 {
-		decodeWriteFixture(t, row[testKeywordInputs], &fixture.Keywords)
+	if len(row[expectedReplayKeywordInputs]) != 0 {
+		decodeWriteFixture(t, row[expectedReplayKeywordInputs], &fixture.Keywords)
 	}
 
 	if len(row["result"]) != 0 {
@@ -213,16 +213,16 @@ func runWriteReplay(t *testing.T, scenario writeReplayCase) {
 	// A foreign account in the request must never replace the selected stored session.
 	request["auth"] = map[string]any{"clientID": "foreign", testAccountIDKey: "foreign", "headers": []any{}}
 	directory := t.TempDir()
-	session := filepath.Join(directory, testSessionJSONFilename)
+	session := filepath.Join(directory, expectedReplaySessionJSON)
 	input := filepath.Join(directory, testRequestJSONFilename)
-	result := filepath.Join(directory, testResultJSONFilename)
+	result := filepath.Join(directory, expectedReplayResultJSON)
 
 	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
 	writeFixtureValue(t, input, request)
 
 	var output, diagnostic bytes.Buffer
 
-	args := []string{testSessionFlag, session, testRequestFlag, input, testSaveResultFlag, result, scenario.operation}
+	args := []string{sessionFlag, session, expectedRequestOption, input, expectedReplaySaveResult, result, scenario.operation}
 	err = command.Run(t.Context(), client, args,
 		&output, &diagnostic)
 	checkWriteReplayResult(t, scenario, fixture, output.Bytes(), result, err)
@@ -242,6 +242,15 @@ func writeFixtureValue(t *testing.T, path string, value any) {
 	}
 
 	writeProbeFile(t, path, data)
+}
+
+func writeProbeFile(t *testing.T, path string, data []byte) {
+	t.Helper()
+
+	err := os.WriteFile(path, data, 0o600)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writeFixture,
@@ -295,7 +304,7 @@ func checkWriteReplayResult(t *testing.T, scenario writeReplayCase, fixture writ
 
 	var responses []icloud.ResponseMetadata
 
-	decodeWriteFixture(t, saved[testResponsesKey], &responses)
+	decodeWriteFixture(t, saved[expectedReplayResponses], &responses)
 	checkWriteResponses(t, responses, fixture.Exchanges)
 }
 
