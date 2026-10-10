@@ -23,28 +23,23 @@ func (client *Client) PhotosHydrateUpload(ctx context.Context, auth RequestConte
 		zone = auth.PhotoZone
 	}
 
-	identity, err := referenceJSONFields(zone, []string{protocol.PhotosCKZoneIDReqZoneName,
-		protocol.PhotosCKZoneIDReqZoneType, protocol.PhotosCKZoneIDReqOwnerRecordName})
-	if err != nil {
-		return nil, failure(Configuration, err, nil, nil)
-	}
-
-	descriptors := []cloudkit.CKLookupDescriptor{
+	input := new(cloudkit.CKLookupRequest)
+	input.Records = []cloudkit.CKLookupDescriptor{
 		{RecordName: masterName, AdditionalProperties: nil}, {RecordName: assetName, AdditionalProperties: nil},
 	}
+	input.ZoneID = *zone
+	input.DesiredKeys.Set(photoUploadDesiredKeys())
 
-	records, err := referenceJSON(descriptors)
+	body, err := referenceJSONFields(input, []string{protocol.PhotosUploadCKLookupRequestRecords,
+		protocol.PhotosUploadCKLookupRequestZoneID, protocol.PhotosUploadCKLookupRequestDesiredKeys})
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	keys, err := referenceJSON(photoUploadDesiredKeys())
+	body, err = photosOrderedZone(body, *zone)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
-
-	body := fmt.Sprintf("{%q: %s, %q: %s, %q: %s}", protocol.PhotosUploadCKLookupRequestRecords, records,
-		protocol.PhotosUploadCKLookupRequestZoneID, identity, protocol.PhotosUploadCKLookupRequestDesiredKeys, keys)
 
 	request, err := photoUploadLookupRequest(auth, body)
 	if err != nil {
@@ -64,7 +59,7 @@ func (client *Client) PhotosHydrateUpload(ctx context.Context, auth RequestConte
 	return &ReminderLookupResponse{Data: data, Metadata: response}, nil
 }
 
-func photoUploadLookupRequest(auth RequestContext, body string) (*http.Request, error) {
+func photoUploadLookupRequest(auth RequestContext, body []byte) (*http.Request, error) {
 	var (
 		request *http.Request
 		err     error
@@ -72,10 +67,10 @@ func photoUploadLookupRequest(auth RequestContext, body string) (*http.Request, 
 
 	if auth.PhotoShared {
 		request, err = photosuploadapi.NewPhotosHydrateUploadedAssetSharedRequestWithBody(auth.Origin, nil,
-			jsonMedia(), bytes.NewBufferString(body))
+			jsonMedia(), bytes.NewReader(body))
 	} else {
 		request, err = photosuploadapi.NewPhotosHydrateUploadedAssetRequestWithBody(auth.Origin, nil,
-			jsonMedia(), bytes.NewBufferString(body))
+			jsonMedia(), bytes.NewReader(body))
 	}
 
 	if err != nil {

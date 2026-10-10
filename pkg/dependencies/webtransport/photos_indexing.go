@@ -11,6 +11,8 @@ import (
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/cloudkit"
 )
 
+const photosIndexingResultsLimit = 1
+
 // PhotosQueryResponse retains validated CloudKit query records and exact response evidence.
 type PhotosQueryResponse struct {
 	Data     cloudkit.CKQueryResponse
@@ -53,17 +55,23 @@ func (client *Client) PhotosLibraryIndexing(ctx context.Context, auth RequestCon
 func (client *Client) photosZoneIndexing(ctx context.Context, auth RequestContext,
 	zone cloudkit.CKZoneIDReq, shared bool,
 ) (*PhotosQueryResponse, error) {
-	identity, err := referenceJSONFields(zone, []string{protocol.PhotosCKZoneIDReqZoneName,
-		protocol.PhotosCKZoneIDReqZoneType, protocol.PhotosCKZoneIDReqOwnerRecordName})
+	input := new(cloudkit.CKQueryRequest)
+	input.Query.RecordType = protocol.PhotosPhotoIndexingRecordTypeValue
+	input.ZoneID.Set(zone)
+	input.ResultsLimit.Set(photosIndexingResultsLimit)
+
+	body, err := referenceJSONFields(input, []string{protocol.PhotosCKQueryRequestQuery,
+		protocol.PhotosCKQueryRequestZoneID, protocol.PhotosCKQueryRequestResultsLimit})
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
 	}
 
-	body := fmt.Sprintf("{%q: {%q: %q}, %q: %s, %q: %d}", protocol.PhotosCKQueryRequestQuery,
-		protocol.PhotosCKQueryObjectRecordType, protocol.PhotosPhotoIndexingRecordTypeValue,
-		protocol.PhotosCKQueryRequestZoneID, identity, protocol.PhotosCKQueryRequestResultsLimit, 1)
+	body, err = photosOrderedZone(body, zone)
+	if err != nil {
+		return nil, failure(Configuration, err, nil, nil)
+	}
 
-	return client.photosScopedQueryBytes(ctx, auth, body, shared)
+	return client.photosScopedQueryBytes(ctx, auth, string(body), shared)
 }
 
 func (client *Client) photosQueryBytes(
