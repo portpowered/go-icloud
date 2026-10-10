@@ -103,6 +103,9 @@ func runPhotoChangesSDK(t *testing.T, path string, scenario accountScenario) {
 
 		checkPhotoChangesProjection(t, actual.Changes, scenario.Result)
 		checkReminderSyncResponses(t, append(prior, actual.Responses...), scenario.Exchanges)
+		if filepath.Base(path) == "photos-changes-empty-zones.json" && !actual.SyncToken.IsNull() {
+			t.Fatal("empty provider zone page returned a fabricated cursor")
+		}
 	}
 
 	err = transport.AssertConsumed()
