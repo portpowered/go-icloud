@@ -43,7 +43,12 @@ func runPhotoVisitorReplay(t *testing.T, scenario writeReplayCase) {
 	request := filepath.Join(directory, testRequestJSONFilename)
 	result := filepath.Join(directory, expectedReplayResultJSON)
 	writeFixtureValue(t, session, fixtureWriteAuthentication(t, fixture))
-	writeFixtureValue(t, request, map[string]any{})
+	input := map[string]any{}
+	if scenario.operation == "photo-assets-visit" {
+		input["album"] = "Library"
+	}
+
+	writeFixtureValue(t, request, input)
 
 	var output, diagnostic bytes.Buffer
 
@@ -74,8 +79,8 @@ func runPhotoVisitorReplay(t *testing.T, scenario writeReplayCase) {
 
 	decodeWriteFixture(t, data, &receipt)
 	checkWriteResponses(t, receipt.Responses, fixture.Exchanges)
-	if len(receipt.Photos) != 0 {
-		t.Fatal("photo visitor duplicated streamed assets in private summary")
+	if len(receipt.Photos) != len(sourceServiceList(t, fixture.Result)) {
+		t.Fatal("photo visitor lost retained assets in private summary")
 	}
 }
 
@@ -84,7 +89,8 @@ func checkPhotoVisitorSourceStream(t *testing.T, fixture writeFixture, output io
 	decoder := json.NewDecoder(output)
 	decoder.UseNumber()
 
-	for _, photo := range typedReadSourcePhotos(t, fixture.Result, false) {
+	photos := typedReadSourcePhotos(t, fixture.Result, false)
+	for _, photo := range photos {
 		var event any
 
 		err := decoder.Decode(&event)
@@ -104,7 +110,7 @@ func checkPhotoVisitorSourceStream(t *testing.T, fixture writeFixture, output io
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(summary, map[string]any{"photos": []any{}}) {
+	if !reflect.DeepEqual(summary, map[string]any{"photos": photos}) {
 		t.Fatal("photo visitor summary differs", summary)
 	}
 
