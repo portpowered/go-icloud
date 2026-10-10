@@ -692,6 +692,8 @@ class SyntheticTests(unittest.TestCase):
             "unpadded-string",
             "ignored-base64",
             "empty-decoded-bytes",
+            "nonascii-string",
+            "nonascii-bytes",
         ]:
             path = FIXTURES / f"reminders-get-{name}.json"
             scenario = json.loads(path.read_text(encoding="utf-8"))

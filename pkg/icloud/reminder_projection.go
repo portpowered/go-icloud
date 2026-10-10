@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
 	"github.com/portpowered/go-icloud/internal/reminderstext"
@@ -78,6 +79,10 @@ func reminderDocumentText(record cloudkit.CKRecord, name, absent, unreadable str
 	}
 
 	if !bytes {
+		if strings.ContainsFunc(encoded, func(character rune) bool { return character >= utf8.RuneSelf }) {
+			return unreadable
+		}
+
 		padding := (reminderBase64Quantum - len(encoded)%reminderBase64Quantum) % reminderBase64Quantum
 		encoded += strings.Repeat("=", padding)
 	}
