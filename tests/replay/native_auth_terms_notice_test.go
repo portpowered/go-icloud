@@ -47,7 +47,8 @@ func TestNativeTermsTrustPreservesSourceDeliveryState(t *testing.T) {
 			if err != nil || !bytes.Equal(before, after) {
 				t.Fatal("terms trust mutated caller state")
 			}
-			if err = transport.AssertConsumed(); err != nil {
+			err = transport.AssertConsumed()
+			if err != nil {
 				t.Fatal(err)
 			}
 		})

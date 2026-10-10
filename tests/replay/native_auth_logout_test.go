@@ -14,7 +14,7 @@ import (
 func TestNativeLogoutReplay(t *testing.T) {
 	t.Parallel()
 
-	for _, scenario := range []string{"auth-logout-default", "auth-logout-all_sessions", "auth-logout-keep_trusted",
+	for _, scenario := range []string{nativeLogoutDefaultFixture, "auth-logout-all_sessions", "auth-logout-keep_trusted",
 		"auth-logout-clear_local_session", "auth-logout-no-cookie", "auth-logout-remote-error",
 		"auth-logout-remote-refused"} {
 		t.Run(scenario, func(t *testing.T) { t.Parallel(); nativeLogoutReplay(t, scenario) })
@@ -33,7 +33,7 @@ func (transport nativeLogoutCancelTransport) RoundTrip(request *http.Request) (*
 func TestNativeLogoutCancellation(t *testing.T) {
 	t.Parallel()
 
-	_, _, state := nativeFlowFixture(t, "auth-logout-default")
+	_, _, state := nativeFlowFixture(t, nativeLogoutDefaultFixture)
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
@@ -86,7 +86,8 @@ func nativeLogoutReplay(t *testing.T, name string) {
 	}
 
 	nativeFlowResponses(t, raw, result.Responses)
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -98,6 +99,7 @@ func assertNativeLogoutResult(t *testing.T, raw map[string]json.RawMessage, stat
 
 	expected := authReplayObjectBytes(t, raw["result"])
 	value := authReplayObjectBytes(t, expected["value"])
+
 	var confirmed, cleared bool
 
 	authReplayDecode(t, value["remote_logout_confirmed"], &confirmed)

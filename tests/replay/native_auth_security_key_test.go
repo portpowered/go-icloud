@@ -19,10 +19,10 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 	for _, ceremony := range []bool{false, true} {
 		t.Run(map[bool]string{false: "caller assertion", true: "device ceremony"}[ceremony], func(t *testing.T) {
 			t.Parallel()
-			raw, transport, state := nativeFlowFixture(t, "auth-security-key-assertion-accepted")
+			raw, transport, state := nativeFlowFixture(t, nativeKeyAcceptedFixture)
 			assertion := nativeFixtureAssertion(t, raw, &state)
 			provider := &nativeFixtureAuthenticator{
-				devices:   []icloud.SecurityKeyDevice{{ID: "synthetic-device", Name: "Synthetic key"}},
+				devices:   []icloud.SecurityKeyDevice{{ID: nativeKeyDeviceID, Name: nativeKeyDeviceName}},
 				assertion: assertion, err: nil, request: nil, mutateInput: true}
 			client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithSecurityKeyAuthenticator(provider))
 			if err != nil {
@@ -50,11 +50,12 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 			if err != nil || !bytes.Equal(before, after) {
 				t.Fatal("security-key verification changed caller state")
 			}
-			if ceremony && (provider.request == nil || provider.request.DeviceID != "synthetic-device" ||
+			if ceremony && (provider.request == nil || provider.request.DeviceID != nativeKeyDeviceID ||
 				provider.request.Origin != icloud.HttpsappleCom || provider.request.UserVerification != icloud.Discouraged) {
 				t.Fatal("security-key ceremony binding differs")
 			}
-			if err = transport.AssertConsumed(); err != nil {
+			err = transport.AssertConsumed()
+			if err != nil {
 				t.Fatal(err)
 			}
 		})
@@ -74,6 +75,7 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage,
 	key := challenge.FsaChallenge
 	state.Challenge.SecurityKeyChallenge = &icloud.SecurityKeyChallenge{Challenge: *key.Challenge,
 		CredentialIDs: append([]string{}, *key.KeyHandles...), RelyingPartyID: *key.RpId}
+
 	state.Challenge.SecurityKeyNames = append([]string{}, *challenge.KeyNames...)
 	state.Challenge.ProviderData = bytes.Clone(initial["auth_data"])
 	var flow []struct {
@@ -109,30 +111,31 @@ func (provider *nativeFixtureAuthenticator) Assert(_ context.Context, request ic
 
 func TestNativeSecurityKeyBindingRejectsInvalidAssertions(t *testing.T) {
 	t.Parallel()
-	for _, control := range []string{"challenge", "origin", "client type", "cross origin", "credential", "rp hash",
-		"empty signature", "short authenticator"} {
+	for _, control := range []string{nativeKeyChallengeControl, nativeKeyOriginControl, nativeKeyClientTypeControl,
+		nativeKeyCrossOriginControl, nativeKeyCredentialControl, nativeKeyRPHashControl,
+		nativeKeySignatureControl, nativeKeyShortAuthenticatorControl} {
 		t.Run(control, func(t *testing.T) {
 			t.Parallel()
-			raw, _, state := nativeFlowFixture(t, "auth-security-key-assertion-accepted")
+			raw, _, state := nativeFlowFixture(t, nativeKeyAcceptedFixture)
 			assertion := nativeFixtureAssertion(t, raw, &state)
 
 			switch control {
-			case "challenge":
+			case nativeKeyChallengeControl:
 				state.Challenge.SecurityKeyChallenge.Challenge = "d3Jvbmc"
-			case "origin":
+			case nativeKeyOriginControl:
 				assertion.ClientData = bytes.ReplaceAll(assertion.ClientData,
 					[]byte("https://apple.com"), []byte("https://wrong.example.invalid"))
-			case "client type":
+			case nativeKeyClientTypeControl:
 				assertion.ClientData = bytes.ReplaceAll(assertion.ClientData, []byte("webauthn.get"), []byte("webauthn.create"))
-			case "cross origin":
+			case nativeKeyCrossOriginControl:
 				assertion.ClientData = bytes.ReplaceAll(assertion.ClientData, []byte("false"), []byte("true"))
-			case "credential":
+			case nativeKeyCredentialControl:
 				assertion.CredentialID = []byte("wrong")
-			case "rp hash":
+			case nativeKeyRPHashControl:
 				assertion.AuthenticatorData[0] ^= 1
-			case "empty signature":
+			case nativeKeySignatureControl:
 				assertion.Signature = nil
-			case "short authenticator":
+			case nativeKeyShortAuthenticatorControl:
 				assertion.AuthenticatorData = assertion.AuthenticatorData[:32]
 			}
 			client, err := icloud.New(icloud.WithHTTPTransport(nativeNoAuthTransport{test: t}))
@@ -158,6 +161,7 @@ func (transport nativeNoAuthTransport) RoundTrip(_ *http.Request) (*http.Respons
 
 func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 	t.Parallel()
+
 	for _, control := range []struct {
 		name  string
 		cause error
@@ -174,10 +178,10 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 	} {
 		t.Run(control.name, func(t *testing.T) {
 			t.Parallel()
-			raw, _, state := nativeFlowFixture(t, "auth-security-key-assertion-accepted")
+			raw, _, state := nativeFlowFixture(t, nativeKeyAcceptedFixture)
 			assertion := nativeFixtureAssertion(t, raw, &state)
 			provider := &nativeFixtureAuthenticator{
-				devices:   []icloud.SecurityKeyDevice{{ID: "synthetic-device", Name: "Synthetic key"}},
+				devices:   []icloud.SecurityKeyDevice{{ID: nativeKeyDeviceID, Name: nativeKeyDeviceName}},
 				assertion: assertion, err: control.cause, request: nil, mutateInput: false}
 			client, err := icloud.New(icloud.WithHTTPTransport(nativeNoAuthTransport{test: t}),
 				icloud.WithSecurityKeyAuthenticator(provider))
@@ -185,7 +189,7 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 				t.Fatal(err)
 			}
 			_, err = client.ConfirmSecurityKey(t.Context(), icloud.ConfirmSecurityKeyRequest{
-				Auth: state.Auth, State: state, DeviceID: "synthetic-device"})
+				Auth: state.Auth, State: state, DeviceID: nativeKeyDeviceID})
 			var failure *icloud.ClientError
 			if !errors.As(err, &failure) || failure.Kind() != control.kind || !errors.Is(err, control.cause) {
 				t.Fatal("security-key error lost class or cause")

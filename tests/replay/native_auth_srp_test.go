@@ -57,7 +57,8 @@ func nativeSRPReplay(t *testing.T, name string) {
 	if !bytes.Equal(before, after) {
 		t.Fatal("native SRP changed caller-owned credentials")
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }

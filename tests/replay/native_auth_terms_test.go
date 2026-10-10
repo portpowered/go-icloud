@@ -12,7 +12,7 @@ func TestNativeTermsReplay(t *testing.T) {
 	t.Parallel()
 
 	for _, scenario := range []string{"auth-terms-accepted", "auth-terms-missing-version", "auth-terms-refused",
-		"auth-one-factor-service"} {
+		nativeOneFactorFixture} {
 		t.Run(scenario, func(t *testing.T) { t.Parallel(); nativeTermsReplay(t, scenario) })
 	}
 }
@@ -49,7 +49,8 @@ func nativeTermsReplay(t *testing.T, name string) {
 	if string(before) != string(after) {
 		t.Fatal("native authentication mutated caller state")
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -69,7 +70,7 @@ func nativeTermsRequest(t *testing.T, raw map[string]json.RawMessage, state iclo
 	if value, exists := initial["synthetic_password"]; exists {
 		authReplayDecode(t, value, &request.Password)
 	}
-	if name == "auth-one-factor-service" {
+	if name == nativeOneFactorFixture {
 		service := "photos"
 		request.Service = &service
 	}

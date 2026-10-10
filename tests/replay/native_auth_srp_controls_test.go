@@ -14,7 +14,8 @@ import (
 
 func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 	t.Parallel()
-	for _, control := range []string{"zero server", "empty salt", "empty context", "zero iterations", "unknown protocol"} {
+	for _, control := range []string{nativeSRPZeroServerControl, nativeSRPEmptySaltControl, nativeSRPEmptyContextControl,
+		nativeSRPZeroIterationsControl, nativeSRPProtocolControl} {
 		t.Run(control, func(t *testing.T) {
 			t.Parallel()
 			raw, _, state := nativeFlowFixture(t, "auth-srp-s2k")
@@ -26,15 +27,15 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 			authReplayDecode(t, original, &challenge)
 
 			switch control {
-			case "zero server":
+			case nativeSRPZeroServerControl:
 				challenge.B = []byte{0}
-			case "empty salt":
+			case nativeSRPEmptySaltControl:
 				challenge.Salt = nil
-			case "empty context":
+			case nativeSRPEmptyContextControl:
 				challenge.C = ""
-			case "zero iterations":
+			case nativeSRPZeroIterationsControl:
 				challenge.Iteration = 0
-			case "unknown protocol":
+			case nativeSRPProtocolControl:
 				challenge.Protocol = auth.AuthSRPProtocol("unsupported")
 			}
 			body, err := json.Marshal(challenge)
@@ -68,7 +69,8 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 				len(failure.PriorResponses()) != 1 {
 				t.Fatal("invalid SRP challenge lost typed error or response evidence")
 			}
-			if err = transport.AssertConsumed(); err != nil {
+			err = transport.AssertConsumed()
+			if err != nil {
 				t.Fatal(err)
 			}
 		})
@@ -101,13 +103,15 @@ func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) 
 	if len(prior) != len(exchanges) {
 		t.Fatal("missing credentials discarded rejected saved-session evidence")
 	}
+
 	for index, exchange := range exchanges {
 		if prior[index].StatusCode != exchange.Response.Status ||
 			len(prior[index].Headers) != len(exchange.Response.Headers) {
 			t.Fatal("saved-session failure evidence changed status or headers")
 		}
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -120,12 +124,15 @@ func nativeFixtureEntropy(t *testing.T, raw map[string]json.RawMessage) []byte {
 
 	authReplayDecode(t, entropy["random_bytes"], &randomBytes)
 	result := []byte{}
+
 	for _, value := range randomBytes {
 		decoded, err := base64.StdEncoding.DecodeString(value)
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		result = append(result, decoded...)
 	}
+
 	return result
 }

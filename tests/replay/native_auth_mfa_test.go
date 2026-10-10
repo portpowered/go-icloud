@@ -43,7 +43,9 @@ func nativeMFAReplay(t *testing.T, name string) {
 	if err == nil {
 		nativeAssertState(t, raw, result)
 		expected := authReplayObjectBytes(t, raw["result"])
+
 		var accepted bool
+
 		authReplayDecode(t, expected["value"], &accepted)
 		if result.Success != accepted {
 			t.Fatal("authentication step acceptance differs")
@@ -56,7 +58,8 @@ func nativeMFAReplay(t *testing.T, name string) {
 	if !bytes.Equal(before, after) {
 		t.Fatal("authentication changed caller-owned state")
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -65,8 +68,10 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 	raw map[string]json.RawMessage, state icloud.NativeAuthState,
 ) (*icloud.NativeAuthResult, error) {
 	t.Helper()
+
 	var operation string
 	var inputs []json.RawMessage
+
 	authReplayDecode(t, raw["operation"], &operation)
 	authReplayDecode(t, raw["inputs"], &inputs)
 
@@ -116,6 +121,7 @@ func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 func nativeFixtureDevice(t *testing.T, raw json.RawMessage) icloud.TrustedAuthDevice {
 	t.Helper()
 	var device auth.AuthTrustedDevice
+
 	authReplayDecode(t, raw, &device)
 	if device.Id == nil {
 		t.Fatal("fixture device identity is missing")
@@ -176,6 +182,7 @@ func nativeFixturePhone(t *testing.T, phone auth.AuthTrustedPhoneNumber) icloud.
 
 func TestNativeAuthenticationStatusReplay(t *testing.T) {
 	t.Parallel()
+
 	for _, name := range []string{"auth-status-trusted", "auth-status-untrusted", "auth-status-rejected",
 		"auth-status-no-token", "auth-status-no-cookie"} {
 		t.Run(name, func(t *testing.T) { t.Parallel(); nativeStatusReplay(t, name) })
@@ -207,7 +214,8 @@ func nativeStatusReplay(t *testing.T, name string) {
 	nativeAssertState(t, raw, &icloud.NativeAuthResult{State: result.State, TrustedSession: result.TrustedSession,
 		RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep,
 		Responses: result.Responses, Success: result.Authenticated})
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }

@@ -20,9 +20,9 @@ import (
 func TestNativePCSReplay(t *testing.T) {
 	t.Parallel()
 
-	for _, scenario := range []string{"auth-pcs-enabled", "auth-pcs-consented", "auth-pcs-consent-later",
-		"auth-pcs-consent-refused", "auth-pcs-cookies-later", "auth-pcs-retries-exhausted", "auth-pcs-unknown-state",
-		"auth-pcs-consent-omitted", "auth-pcs-consent-false", "auth-pcs-consent-null"} {
+	for _, scenario := range []string{nativePCSEnabledFixture, "auth-pcs-consented", nativePCSLaterConsentFixture,
+		"auth-pcs-consent-refused", nativePCSLaterCookiesFixture, nativePCSExhaustedFixture, "auth-pcs-unknown-state",
+		"auth-pcs-consent-omitted", nativePCSFalseConsentFixture, nativePCSNullConsentFixture} {
 		t.Run(scenario, func(t *testing.T) { t.Parallel(); nativePCSReplay(t, scenario) })
 	}
 }
@@ -59,12 +59,15 @@ func nativePCSReplay(t *testing.T, name string) {
 
 		nativeFlowResponses(t, raw, result.Responses)
 	}
-	expected := map[string]int{"auth-pcs-consent-later": 1, "auth-pcs-cookies-later": 1, "auth-pcs-retries-exhausted": 10,
-		"auth-pcs-consent-false": 1, "auth-pcs-consent-null": 1}
+	expected := map[string]int{
+		nativePCSLaterConsentFixture: 1, nativePCSLaterCookiesFixture: 1, nativePCSExhaustedFixture: 10,
+		nativePCSFalseConsentFixture: 1, nativePCSNullConsentFixture: 1,
+	}
 	if waits != expected[name] {
 		t.Fatalf("wait count %d, expected %d", waits, expected[name])
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -72,7 +75,7 @@ func nativePCSReplay(t *testing.T, name string) {
 func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	t.Parallel()
 
-	raw, transport, state := nativeFlowFixture(t, "auth-pcs-enabled")
+	raw, transport, state := nativeFlowFixture(t, nativePCSEnabledFixture)
 	state.AccountData = json.RawMessage(`{`)
 
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
@@ -108,7 +111,8 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 		!reflect.DeepEqual(failure.ResponseHeaders(), metadata[len(metadata)-1].Headers) {
 		t.Fatal("account projection failure exposes mutable response evidence")
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -238,7 +242,7 @@ func nativeFlowResponses(t *testing.T, raw map[string]json.RawMessage, actual []
 func TestNativePCSWaitCancellation(t *testing.T) {
 	t.Parallel()
 
-	raw, _, state := nativeFlowFixture(t, "auth-pcs-consent-later")
+	raw, _, state := nativeFlowFixture(t, nativePCSLaterConsentFixture)
 
 	var exchanges []replay.Exchange
 
@@ -265,7 +269,8 @@ func TestNativePCSWaitCancellation(t *testing.T) {
 	if len(failure.PriorResponses()) != 2 {
 		t.Fatal("cancelled wait lost prior responses")
 	}
-	if err = transport.AssertConsumed(); err != nil {
+	err = transport.AssertConsumed()
+	if err != nil {
 		t.Fatal(err)
 	}
 }
@@ -277,7 +282,7 @@ func TestNativePCSInvalidResponses(t *testing.T) {
 		t.Run(body, func(t *testing.T) {
 			t.Parallel()
 
-			raw, _, state := nativeFlowFixture(t, "auth-pcs-enabled")
+			raw, _, state := nativeFlowFixture(t, nativePCSEnabledFixture)
 			var exchanges []replay.Exchange
 
 			authReplayDecode(t, raw["exchanges"], &exchanges)
@@ -300,7 +305,8 @@ func TestNativePCSInvalidResponses(t *testing.T) {
 			if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse || string(failure.ResponseBody()) != body {
 				t.Fatalf("malformed PCS response accepted or evidence lost: %v", err)
 			}
-			if err = transport.AssertConsumed(); err != nil {
+			err = transport.AssertConsumed()
+			if err != nil {
 				t.Fatal(err)
 			}
 		})

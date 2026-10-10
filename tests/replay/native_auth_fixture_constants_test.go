@@ -1,0 +1,28 @@
+package replay_test
+
+const (
+	nativeKeyDeviceID                  = "synthetic-device"
+	nativeKeyDeviceName                = "Synthetic key"
+	nativeKeyAcceptedFixture           = "auth-security-key-assertion-accepted"
+	nativeKeyChallengeControl          = "challenge"
+	nativeKeyOriginControl             = "origin"
+	nativeKeyClientTypeControl         = "client type"
+	nativeKeyCredentialControl         = "credential"
+	nativeKeyCrossOriginControl        = "cross origin"
+	nativeKeySignatureControl          = "empty signature"
+	nativeKeyRPHashControl             = "rp hash"
+	nativeKeyShortAuthenticatorControl = "short authenticator"
+	nativeSRPEmptyContextControl       = "empty context"
+	nativeSRPEmptySaltControl          = "empty salt"
+	nativeSRPProtocolControl           = "unknown protocol"
+	nativeSRPZeroIterationsControl     = "zero iterations"
+	nativeSRPZeroServerControl         = "zero server"
+	nativeLogoutDefaultFixture         = "auth-logout-default"
+	nativePCSEnabledFixture            = "auth-pcs-enabled"
+	nativePCSLaterConsentFixture       = "auth-pcs-consent-later"
+	nativePCSFalseConsentFixture       = "auth-pcs-consent-false"
+	nativePCSNullConsentFixture        = "auth-pcs-consent-null"
+	nativePCSLaterCookiesFixture       = "auth-pcs-cookies-later"
+	nativePCSExhaustedFixture          = "auth-pcs-retries-exhausted"
+	nativeOneFactorFixture             = "auth-one-factor-service"
+)
