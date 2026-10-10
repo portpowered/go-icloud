@@ -1,0 +1,85 @@
+---
+title: Authentication and credential ownership
+description: Authenticate natively, finish verification, and persist complete caller-owned state.
+---
+
+Create one reusable client; each request owns its account state. Native password
+authentication uses SRP and returns explicit verification progress:
+
+```go
+client, err := icloud.New()
+if err != nil { return err }
+login, err := client.Authenticate(ctx, icloud.AuthenticateRequest{
+    AccountName: accountName, Password: password,
+})
+if err != nil { return err }
+state := login.State
+```
+
+Persist the complete `NativeAuthState` privately, including `Auth`, `TrustToken`,
+`AccountCountryCode`, `AccountData`, account name and challenge/delivery progress.
+Saving only `AuthContext` loses information needed to continue MFA. The reusable
+client does not write credentials to disk. Check the returned success, MFA and
+trust indicators before service calls.
+
+`GetAuthenticationStatus` probes existing credentials without starting password
+login or requesting a code. `GetAuthenticationChallenge` explicitly reads the
+current verification choices and bridge bootstrap. Use `RequestTwoFactorCode`
+with a selected trusted phone ID for SMS; use `UseExistingTrustedDeviceCode`
+when a code is already displayed on another trusted device.
+
+```go
+verified, err := client.VerifyTwoFactorCode(ctx, icloud.VerifyTwoFactorCodeRequest{
+    Auth: state.Auth, State: state, Code: code,
+})
+if err != nil { return err }
+state = verified.State
+```
+
+Persist each returned state before continuing. Two-step accounts use
+`ListTrustedDevices`, `SendTwoStepCode` and `VerifyTwoStepCode`. Select the
+device from the returned discovery result. `TrustSession` refreshes session trust
+and service discovery; `RequestPCSAccess` performs explicit service consent.
+Accept updated provider terms only when the caller authorizes `AcceptTerms`.
+
+Trusted-device socket prompts use `OpenNativeBridgeSession`, followed by
+`VerifyCode` on the owned session. Inspect `State()` for rotated credentials and
+close the session after use. Verification closes the socket on success or failure.
+A bootstrap failure can still return a closed session containing useful credential
+progress; preserve that state before selecting SMS or another route. Supply
+`WithNativeBridgeDial` when your application owns the secured connection edge.
+
+Hardware security keys use `ListSecurityKeyDevices` and `ConfirmSecurityKey`.
+The default backend uses portable, cgo-free HID access on Windows, Linux and macOS.
+A caller can inject `WithSecurityKeyAuthenticator` for its own device lifecycle,
+or submit a caller-owned WebAuthn assertion through `VerifySecurityKey`. Select
+the discovered device and preserve the exact challenge/origin binding. Go 1.25
+is required by the pinned portable backend.
+
+Saved-session renewal remains supported:
+
+```go
+resumed, err := client.ResumeSession(ctx, icloud.ResumeSessionRequest{Auth: saved})
+if err != nil { return err }
+auth := resumed.Auth
+```
+
+`ResumeSession` validates saved cookies and can exchange saved tokens when
+validation fails. `ForceRefresh` skips validation. A session still requiring
+verification remains paused even if service URLs were discovered.
+`ApplySessionResponses` applies ordered metadata to a copied
+`ResumeSessionResult` without network I/O. When updating a native session from
+service responses, retain its MFA fields while replacing the rotated auth, trust,
+country and account-data fields from that copied result.
+
+Cookies preserve domain, path, secure and host-only scope. An empty domain binds
+to the operation's first request host. Complete responses may carry credentials;
+keep their metadata, signed URLs, challenge data and bodies out of ordinary logs.
+`Logout` terminates selected remote sessions and returns explicit local credential
+clearing. Apply that result to your own store.
+
+The [CLI](/docs/guides/cli) stores complete native state in a private platform
+configuration file and offers named login, verification, renewal, trust and logout
+commands. Its bridge command owns the complete lifecycle in one process.
+See the [authentication wire reference](/docs/openapi/unknown/LoginAuthToken)
+and [configuration and failures](/docs/guides/configuration).

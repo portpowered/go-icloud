@@ -1,5 +1,10 @@
 # Account wire contracts
 
+Contributor contract history: measured counts and remaining-work statements below
+refer to their individual milestones. Current acceptance is maintained in
+[completion matrix](completion-matrix.md); customer usage belongs in MDX guides.
+
+
 `api/external/account.openapi.yaml` describes the five selected account routes:
 account devices, family members, member photos, storage usage and plan summary.
 `pkg/dependencymodels/account/models.gen.go` is generated with oapi-codegen v2.8.0.

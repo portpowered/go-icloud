@@ -1,5 +1,10 @@
 # Find My wire contracts
 
+Contributor contract history: measured counts and remaining-work statements below
+refer to their individual milestones. Current acceptance is maintained in
+[completion matrix](completion-matrix.md); customer usage belongs in MDX guides.
+
+
 `api/external/findmy.openapi.yaml` describes seven Find My HTTP operations:
 device initialization and refresh, sound, messaging, lost mode, erase-token
 lookup and remote erase. Authenticated discovery supplies the caller's Find My

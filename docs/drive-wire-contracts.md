@@ -1,5 +1,10 @@
 # Drive wire contracts
 
+Contributor contract history: measured counts and remaining-work statements below
+refer to their individual milestones. Current acceptance is maintained in
+[completion matrix](completion-matrix.md); customer usage belongs in MDX guides.
+
+
 The pinned reference's Drive service uses eleven fixed or zone-parameterized
 operations for node details, app libraries, folder creation, rename, move, trash,
 recovery, deletion, download tokens, upload destinations and document registration.

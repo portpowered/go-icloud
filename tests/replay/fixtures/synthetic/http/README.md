@@ -50,8 +50,9 @@ facade's delegation to the root node. These eight cases are synthetic, with
 These examples preserve a pinned-reference date defect: a negative offset with
 nonzero minutes is decoded incorrectly: `2024-01-02T03:04:05-07:30` yields
 `09:34:05` rather than the correct UTC `10:34:05`.
-The Go client should parse RFC 3339 offsets correctly and document this deliberate
-departure rather than reproduce the defect. No fixture contains live file data.
+The raw RFC 3339 field is retained. The Source-derived convenience projection
+preserves this defect for replay conformance; applications needing a corrected
+timestamp can parse the raw field. No fixture contains live file data.
 
 Find My scenarios cover service initialization, zero/one/many devices, sound,
 messaging, lost mode, erase-token exchange and erase request shapes, unavailable

@@ -1,30 +1,31 @@
-# Documentation website requirements
+# Documentation publishing
 
-The documentation website and its publishing workflow are pending. No generated
-API reference or Pages deployment exists yet. The current CI workflow verifies
-the reference capture bootstrap only.
+Customer material lives under `docs/guides/` as MDX. Contributor contracts,
+fixture provenance, generation commands and reviewer evidence remain repository
+Markdown and are excluded from the customer navigation (LIB-17, template 12–13).
 
-Implement the website with the shared Fumadocs documentation action in
-`portpowered/api-docs-website-github-action`. Select and pin a reviewed action
-revision when the workflow is implemented. Generate references from canonical,
-responsibility-specific iCloud schemas; do not use the template's widget schema.
-Mark implementation-derived contracts and synthetic examples accurately.
+The Pages workflow builds all OpenAPI operations and AsyncAPI channels with the shared Fumadocs action,
+pinned to `ca7008e2b4de6e600ec5157f9adb015fafd54961`. Pull requests build
+and check the same export used for main deployment. Configure GitHub Pages to use
+GitHub Actions before the first deployment. Coverage HTML and badge JSON belong
+under `coverage/` in the same Pages artifact.
 
-Write customer-facing MDX guides under `docs/guides/` for authentication, saved
-session lifecycle, each supported service, errors, caller configuration, and CLI
-installation and workflows. Keep contributor inventories, migration notes,
-coverage mechanics, and reviewer evidence in repository Markdown. Link guides
-to matching generated references rather than duplicating wire definitions.
+The full-site gate is `go run ./tools/docsite`. It inventories every exported HTML
+page, including the landing page and generated references, checks local links and
+fragment destinations, inspects canonical schema `externalDocs` URLs, and checks
+expected rendered text from `docs/site-expectations.json`. It also traverses
+AsyncAPI `externalDocs` links, including nested channel documentation. Missing guide content
+fails even when a fallback page exists. The gate is an automated aid; inspect
+required fields, known variants, example values and request snippets visually
+before final independent approval.
 
-Build the whole site in pull request CI and publish reviewed `main` commits to
-GitHub Pages. Include the non-generated SDK coverage HTML report and badge JSON
-in that deployment. The currently available Python reference measurement is a
-separate contributor tool and is not the public SDK coverage report.
+The renderer opts into JSON encoding for canonical `plain/text` and wildcard
+request media aliases. The reference graph schema view preserves conjunctions,
+alternatives, required fields, examples and named component links without eagerly
+expanding recursive intersections. Native request snippets and the playground
+remain available. The shared action commit must be published before GitHub can
+resolve the workflow pin. Deployment, external link checks, final API guide
+updates and both independent reviews remain release gates.
 
-Before release, inspect rendered fields, discriminated variants, complete
-schema-valid examples, and generated request snippets. Audit every internal
-link from every rendered page, including the root and generated reference;
-verify runtime schema links such as `externalDocs`, external destinations, and
-release-note links. Verify destination content rather than relying on HTTP 200.
-Keep [the migration checklist](migration-checklist.md) open until deployment and
-both independent reviewer audits establish these requirements.
+See [the documentation inventory](documentation-inventory.md), [release procedure](releasing.md),
+and [completion matrix](completion-matrix.md).

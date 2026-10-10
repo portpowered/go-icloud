@@ -1,0 +1,46 @@
+---
+title: Find My devices
+description: Discover devices and own a cancellable refresh session.
+---
+
+Open a session with [authenticated](/docs/guides/authentication) service discovery. Keep its
+opening context alive while you use it, and close it when finished:
+
+```go
+session, err := client.OpenFindMySession(ctx, icloud.OpenFindMySessionRequest{
+    Auth: auth, IncludeFamily: true,
+}, icloud.WithFindMyMonitorInterval(0))
+if err != nil { return err }
+defer session.Close()
+devices, err := session.Snapshot()
+if err != nil { return err }
+fresh, err := session.Refresh(ctx, icloud.RefreshFindMyRequest{Locate: true})
+if err != nil { return err }
+_ = devices
+_ = fresh
+```
+
+The zero monitor interval enables manual refresh. Otherwise the session refreshes
+every five minutes. Opening includes bounded family readiness polling. `Snapshot`
+reads a copied cache; request `Refresh` when fresh location data is needed.
+
+Choose a device ID from discovery. `DescribeDevice` returns its capabilities,
+available location and status. Explicit controls are `PlaySound`, `SendMessage`,
+`MarkLost`, and `Erase`. Each checks the discovered capability and sends once:
+
+```go
+sound, err := session.PlaySound(ctx, icloud.FindMySoundRequest{DeviceID: deviceID})
+if err != nil { return err }
+_ = sound
+```
+
+Acknowledgement does not establish completed device behavior. Persist copied
+credentials from `Authentication()` if you need them later. `LastResponses`,
+`LastError`, and `MonitorDone` expose evidence and background lifecycle state.
+Repeated `Close` cancels requests and waits safely; copied snapshots remain
+available afterward. These controls are verified with synthetic paired replay;
+live exploration has exercised reads.
+
+See [discovery](/docs/openapi/unknown/FindMyInitialize),
+[refresh](/docs/openapi/unknown/FindMyRefreshDevices), and
+[sound](/docs/openapi/unknown/FindMyPlaySound) in the wire reference.

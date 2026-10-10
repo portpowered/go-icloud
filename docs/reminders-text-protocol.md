@@ -56,9 +56,9 @@ to match the source's replacement-character policy, including one replacement
 for a truncated multibyte sequence. The paired lookup cases bind this conversion
 for both titles and notes.
 
-This milestone ports decoding infrastructure. It does not implement CRDT writes,
-UTF-16 substring lengths, resolution tokens, public Reminders methods or complete
-service result/state parity. The 52 cases are document decoding evidence rather
-than additional HTTP endpoints or full SDK replay acceptance. Native auth,
-Photos, Reminders orchestration, publication and final full independent audits
-remain open (LIB-05, LIB-07, LIB-18).
+The encoder also builds versioned CRDT write documents, including UTF-16 text
+lengths and resolution tokens. The public write orchestration and its synthetic
+paired request/result evidence are described in [reminder writes](reminder-writes.md).
+The 52 decoding cases remain document evidence rather than additional HTTP
+endpoints. Service acceptance and independent review are tracked separately in
+the [completion matrix](completion-matrix.md) (LIB-05, LIB-07, LIB-18).

@@ -18,8 +18,9 @@ failure on a missing inventoried HTTP route or unmatched exchange:
 go run ./tools/endpointcoverage -summary -require-covered
 ```
 
-That strict command currently fails. Diagnostic success means the inputs were
-audited successfully; final endpoint acceptance remains open.
+Diagnostic success means the inputs were audited successfully. Strict success
+means every active inventoried HTTP route has an occurrence; it does not prove
+SDK request/result parity or channel and binary behavior.
 
 ## Matching and limitations
 
@@ -43,16 +44,12 @@ do not prove zero/one/many, pagination, transport, mutation or lifecycle matrice
 The separate TLS/WebSocket inventory entry is excluded. Function and branch
 measurement remains `make reference-coverage`.
 
-## Current occurrences and scoped gap
+## Occurrences and active inventory
 
-The current audit maps 456 scenarios and 1030 exchanges to 74/75 HTTP routes,
-with no unmatched exchange. The sole missing occurrence is physical security-key
-verification, explicitly deferred. Strict mode continues to report that gap.
-
-The initial 373-scenario, 804-exchange audit mapped 66/75 routes. Source inspection
-and 40 additional scenarios cover Photos container changes, shared lookup and
-library operations, and Reminders zone discovery. Shared library asset discovery
-also revealed an active shared batch-count route, now included in the inventory.
+Run the audit for current scenario, exchange and route totals. The corpus grows
+as reference behavior is ported; fixed totals here would become stale. Physical
+security-key verification requires its own explicit boundary and evidence; an
+HTTP occurrence alone cannot verify a hardware interaction.
 
 Reminders database changes is retained under `dormant_definitions`, outside the
 active denominator. Inspection of the pinned service, adapter, public exports
@@ -61,6 +58,6 @@ container helper. Reminders zone discovery is exposed by the reference CLI and
 remains included. Introducing a Reminders database-change operation requires
 restoring its active entry and binding schemas and replay cases (LIB-18).
 
-The inventory is a draft with pending source/schema/model gates. Resolve actual
-send sites and active dependencies, correct dormant entries, and bind applicable
-functional cases before treating occurrences as complete endpoint coverage.
+The runtime wire gate independently binds actual send sites, active dependencies
+and canonical models. Keep dormant entries justified by source inspection and
+bind functional cases before treating occurrences as complete service coverage.

@@ -1,0 +1,124 @@
+---
+title: Photos libraries, uploads and synchronization
+description: Discover account libraries, read and change photos, upload files, and materialize them locally.
+---
+
+Authenticate and retain the returned service URLs before Photos calls. Each
+library must finish indexing. `GetPhotosStatus` reports readiness and its cursor;
+`ListPhotoLibraries` discovers initialized private and shared libraries.
+
+```go
+libraries, err := client.ListPhotoLibraries(ctx, icloud.ListPhotoLibrariesRequest{Auth: auth})
+if err != nil { return err }
+// Select a returned library for this account.
+library := libraries.Libraries[0]
+albums, err := client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{
+    Auth: auth, Library: &library,
+})
+if err != nil { return err }
+assets, err := client.ListPhotoAssets(ctx, icloud.ListPhotoAssetsRequest{
+    Auth: auth, Library: &library, Album: "Library",
+})
+if err != nil { return err }
+_ = albums
+_ = assets.Photos
+```
+
+Omitting `Library` selects the primary library. Keep a discovered library bound to
+the same account, including its zone name and owner. A discovered shared library
+can use a private CloudKit database; preserve its returned identity rather than
+guessing its database from a display name.
+
+Choose an album by returned ID, name or full folder path. `GetPhotoAlbumCount`
+reads its indexed count. `GetPhoto` finds an asset by ID with direct lookup and
+paged fallback; an absent photo is null. `ListRecentlyAddedPhotos` reads newest
+additions with overlap deduplication. `VisitPhotoAssets` and
+`VisitRecentlyAddedPhotos` deliver generated `PhotoVisitEvent` values
+synchronously. Return false to stop, or return an error to propagate a failure;
+these visitor routes avoid accumulating the entire photo collection.
+
+Select a rendition from the photo's versions:
+
+```go
+version := icloud.PhotoThumb
+download, err := client.DownloadPhoto(ctx, icloud.DownloadPhotoRequest{
+    Auth: auth, Library: &library, Album: "Library",
+    PhotoID: assetID, Version: &version,
+})
+if err != nil { return err }
+_ = download.Content
+```
+
+Omit `Version` for the original. Unavailable content is null; available empty
+content is an empty byte slice. Signed URLs, exact bytes and opaque metadata in
+SDK results belong in private storage.
+
+`GetPhotosCursor` obtains a library cursor. `GetPhotoChanges` returns ordered
+updates, tombstones and the final cursor; pass your saved cursor through `Since`.
+`GetPhotoLibraryChanges` returns changed/deleted zones and a separate database
+cursor. Save cursors privately only after handling the corresponding result.
+
+Album writes use `CreatePhotoAlbum`, `RenamePhotoAlbum`, `DeletePhotoAlbum` and
+`AddPhotoToAlbum`. Select album and photo IDs from current discovery results.
+`SetPhotoFavorite` returns an updated photo snapshot; `DeletePhoto` performs
+a soft delete. Per-record rejection produces a typed provider error. In
+particular, Go surfaces a Photos mutation `CKErrorItem` instead of preserving
+the Source implementation's successful boolean for that rejection.
+
+A one-file upload owns no caller file handle:
+
+```go
+file, err := os.Open(path)
+if err != nil { return err }
+defer file.Close()
+info, err := file.Stat()
+if err != nil { return err }
+uploaded, err := client.UploadPhoto(ctx, icloud.UploadPhotoRequest{
+    Auth: auth, Library: &library, Content: file, Filename: info.Name(),
+    ModificationTime: info.ModTime(), LocalTimeZoneID: "UTC", TimeZoneOffset: 0,
+    Hydrate: true,
+})
+if err != nil { return err }
+_ = uploaded.Registration
+_ = uploaded.Indexed
+```
+
+Upload reads from the seekable content's current cursor. `UploadPhotoFile`
+reserves, transfers and registers without waiting for indexing. `UploadPhoto`
+can hydrate the indexed photo, with a bounded retry interval/timeout, and add it
+to an optional `AlbumID`. A successful registration remains available when
+indexing times out; inspect `Indexed` and the nullable photo separately.
+
+For explicit phase ownership use `ReservePhotoUploads`, `SendPhotoUploadBytes`
+and `RegisterPhotoUploads`. Preserve signed destinations and complete receipts;
+the registration request uses generated `PhotoUploadFile` values.
+`GetPhotoUploadStatus` reports ingest progress and unknown jobs separately from
+CloudKit indexing. Keep unknown acknowledgement fields private.
+
+Legacy shared streams use a separate account-discovered shared-stream service.
+`ListSharedPhotoAlbums`, `CountSharedPhotos`, `ListSharedPhotos`,
+`GetSharedPhoto` and `DownloadSharedPhoto` cover their read-only workflow.
+See [shared Photos](/docs/guides/shared-photos) for discovery and unavailable-content
+semantics.
+
+Local materialization is exposed through `pkg/photosync`. Bind an explicit
+`ResumeSessionResult` and discovered libraries using `NewSDKSource`; its
+`Snapshot` returns rotated credentials and response receipts. Create an
+`Engine` with `New` and run a generated `Request` using `Run`, or use
+`Watch` with explicit interval and iteration options and a synchronous callback.
+`DefaultOptions(directory)` supplies the default local policy. Applications
+own the filesystem, clock and wait edges through `Configuration`; cancellation
+stops active downloads and waits.
+
+Synchronization state uses the documented native JSON format. Advanced date
+formatting follows the pinned CPython 3.12 Windows, `LC_TIME=C` dialect, including
+its host-independent captured behavior. Runtime-specific Python formatting cases
+return `UnsupportedDateFormatError`; this does not imply unrestricted
+`str.format` or every host's native locale/POSIX extension behavior.
+
+The [CLI](/docs/guides/cli) exposes typed request files for all these reads and
+writes, synchronous visitor commands, and `photos-sync`/`photos-watch`.
+Ordinary output omits opaque metadata, signed resources and cursors; use explicit
+private `--save-result` receipts for values needed by subsequent phases.
+See [query requests](/docs/openapi/unknown/PhotosQueryRecords) and
+[asset lookup](/docs/openapi/unknown/PhotosLookupRecords) in the wire reference.

@@ -1,31 +1,31 @@
-# Release requirements
+# Release procedure
 
-No SDK or CLI release has been published. The repository currently provides
-reference capture and replay tooling. Keep release readiness open until every
-item in [the migration checklist](migration-checklist.md) is independently
-verified under [the library standards](library-standards.md).
+The public SDK and separate CLI module already exist. Development pseudo-versions
+are available; a final release requires every item in the
+[migration checklist](migration-checklist.md) and two independent reviews of the
+exact release commit under the [library standards](library-standards.md).
 
-Before tagging, implement the public SDK under `pkg/icloud` and the separate CLI
-module under `cmd/go-icloud`. Use `github.com/portpowered/go-icloud` for the SDK
-module and `github.com/portpowered/go-icloud/cmd/go-icloud` for the CLI module.
-Require blocking checks for both modules, generation drift, complete endpoint
-and model provenance, strict paired replay, coverage, consumer builds, rendered
-website verification, and two independent audits of the exact release commit.
-`make check` currently verifies the bootstrap only; it does not prove these
-pending SDK requirements.
+Before tagging:
 
-The release workflow is still to be implemented. It must rerun the pinned
-all-linters and complete verification gates on the tag commit, check public API
-compatibility against the prior stable version, and validate public Go module
-proxy downloads in an isolated consumer without local replacements. Publish the
-SDK before the CLI version that depends on it. CLI nested-module tags use the
-form `cmd/go-icloud/vMAJOR.MINOR.PATCH`; SDK tags use `vMAJOR.MINOR.PATCH`.
+1. Run blocking `make lint` and `make check` for the SDK and CLI, including generated
+   drift, paired replay, race checks, coverage and separate consumer builds.
+2. Verify the complete source/model/network inventories and their negative controls.
+   Coverage percentages do not establish complete operation or transport coverage.
+3. Build and inspect the rendered [Pages documentation](website.md). Check every
+   customer guide against the current exported SDK and CLI, every reference variant,
+   external destinations and the actual coverage/release badge destinations.
+4. Have both independent reviewers disposition every finding on the final commit
+   and confirm its blocking CI. Keep unresolved checklist items open.
 
-A public proxy release requires public repository access. Confirm repository
-visibility as part of publication; the account owner made this repository public
-on 2026-10-08. Public visibility is not evidence of a published SDK or CLI. Test
-`go install github.com/portpowered/go-icloud/cmd/go-icloud@<released-version>`
-from a clean environment and record that command in the published guide. Verify
-release-note links against the deployed guides and generated reference before
-closing the checklist. Never publish raw captures, credentials, or executables
-from local exploration.
+Publish SDK tags as `vMAJOR.MINOR.PATCH`. Publish the SDK before the CLI version that
+depends on it, then publish the nested module as
+`cmd/go-icloud/vMAJOR.MINOR.PATCH`. Verify proxy downloads and
+`go install github.com/portpowered/go-icloud/cmd/go-icloud@<version>` from an isolated
+consumer without local replacements. Check public API compatibility against the
+previous stable version when one exists.
+
+Release notes should state supported customer workflows and material differences
+from the reference. Link to the deployed authentication, Photos, Reminders and CLI
+guides under `https://portpowered.github.io/go-icloud/docs/guides/`; verify their
+content before publishing the notes. Do not include capture logs, credentials,
+signed URLs or locally generated executables in release artifacts.
