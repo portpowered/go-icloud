@@ -1,3 +1,4 @@
+//nolint:testpackage // GO-15: this unit verifies copying at the private selection boundary.
 package icloud
 
 import "testing"

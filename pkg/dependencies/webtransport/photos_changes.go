@@ -57,33 +57,40 @@ func photosChangesBody(auth RequestContext, since *string) ([]byte, error) {
 		ZoneType: nil, OwnerRecordName: nil}
 	primaryType := protocol.PhotosPhotoPrimaryZoneTypeValue
 	zone.ZoneType = &primaryType
+
 	if auth.PhotoZone != nil {
 		zone.ZoneName = auth.PhotoZone.ZoneName
 		zone.ZoneType = nil
+
 		value, err := auth.PhotoZone.ZoneType.Get()
 		if err == nil {
 			zone.ZoneType = &value
 		}
+
 		value, err = auth.PhotoZone.OwnerRecordName.Get()
 		if err == nil {
 			zone.OwnerRecordName = &value
 		}
 	}
+
 	input := cloudkit.PhotosChangesRequest{Zones: []cloudkit.PhotosChangesZoneRequest{
 		{ZoneID: zone, SyncToken: since, Reverse: cloudkit.PhotoChangesForwardValue},
 	}}
+
 	return referenceJSON(input)
 }
 
 func photosChangesRequest(auth RequestContext, body []byte) (*http.Request, error) {
 	if auth.PhotoShared {
 		params := photosSharedZoneChangesParams(auth)
+
 		request, err := photosapi.NewPhotosSharedZoneChangesRequestWithBody(
 			auth.Origin,
 			params,
 			protocol.PhotosMediaApplicationJson,
 			bytes.NewReader(body),
 		)
+
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo changes: %w", err)
 		}
@@ -92,6 +99,7 @@ func photosChangesRequest(auth RequestContext, body []byte) (*http.Request, erro
 	}
 
 	params := photosZoneChangesParams(auth)
+
 	request, err := photosapi.NewPhotosZoneChangesRequestWithBody(
 		auth.Origin,
 		params,

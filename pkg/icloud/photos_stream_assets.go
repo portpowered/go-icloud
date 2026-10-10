@@ -48,10 +48,7 @@ func (read *photosRead) sharedPages(ctx context.Context, album sharedphotos.Shar
 
 		read.responses = append(read.responses, response.Metadata)
 
-		pairs, err := projectSharedPairs(response.Records)
-		if err != nil {
-			return nil, read.failure(err, InvalidResponse)
-		}
+		pairs := projectSharedPairs(response.Records)
 
 		selected, err := projectSharedPage(pairs, seen, photoID, complete)
 		if err != nil {
@@ -76,7 +73,7 @@ func (read *photosRead) sharedPages(ctx context.Context, album sharedphotos.Shar
 	}
 }
 
-func projectSharedPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
+func projectSharedPairs(records []cloudkit.CKRecord) []photoPair {
 	assets := map[string]cloudkit.CKRecord{}
 	masters := []cloudkit.CKRecord{}
 
@@ -105,7 +102,7 @@ func projectSharedPairs(records []cloudkit.CKRecord) ([]photoPair, error) {
 		}
 	}
 
-	return result, nil
+	return result
 }
 
 func projectSharedPage(pairs []photoPair, seen map[string]bool, photoID *string, complete bool,

@@ -68,7 +68,6 @@ func (sdk *SDK) beginPhotosRead(
 	read.responses = append(read.responses, response.Metadata)
 
 	token, tokenErr := response.Data.SyncToken.Get()
-
 	if tokenErr == nil {
 		read.syncToken = &token
 	}

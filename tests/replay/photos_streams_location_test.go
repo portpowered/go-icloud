@@ -36,7 +36,7 @@ func TestSharedPhotosNestedProviderLocation(t *testing.T) {
 
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
-	auth.SharedPhotosServiceURL = "https://shared.example.invalid"
+	auth.SharedPhotosServiceURL = syntheticSharedPhotosOrigin
 
 	result, err := client.ListSharedPhotos(t.Context(), icloud.ListSharedPhotosRequest{
 		Auth: auth, Album: "synthetic-stream-0"})

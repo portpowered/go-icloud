@@ -19,7 +19,6 @@ func (sdk *SDK) GetPhotoLibraryChanges(
 	read.auth.PhotoShared = request.Shared
 
 	response, err := sdk.web.PhotosDatabaseChanges(ctx, read.auth, request.Since)
-
 	if err != nil {
 		return nil, read.failure(err, InvalidResponse)
 	}

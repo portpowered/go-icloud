@@ -10,11 +10,12 @@ import (
 )
 
 const canceledSharedPhotoID = "synthetic-shared-photo"
+const sharedPhotoCountOperation = "count"
 
 func TestSharedPhotosCanceledBeforeNetwork(t *testing.T) {
 	t.Parallel()
 
-	for _, operation := range []string{"albums", "count", "list", "get", "download"} {
+	for _, operation := range []string{"albums", sharedPhotoCountOperation, "list", "get", "download"} {
 		t.Run(operation, func(t *testing.T) {
 			t.Parallel()
 
@@ -51,7 +52,7 @@ func callCanceledSharedPhotos(ctx context.Context, client *icloud.SDK, operation
 		_, err := client.ListSharedPhotoAlbums(ctx, icloud.ListSharedPhotoAlbumsRequest{Auth: auth})
 
 		return err
-	case "count":
+	case sharedPhotoCountOperation:
 		_, err := client.CountSharedPhotos(ctx, icloud.CountSharedPhotosRequest{Auth: auth, Album: canceledSharedPhotoID})
 
 		return err

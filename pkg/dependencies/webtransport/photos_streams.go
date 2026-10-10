@@ -184,50 +184,77 @@ func (client *Client) PhotosSharedAssets(ctx context.Context, auth RequestContex
 
 func decodeSharedRecords(body []byte) ([]cloudkit.CKRecord, error) {
 	var envelope map[string]json.RawMessage
+
 	if json.Unmarshal(body, &envelope) != nil || envelope == nil {
 		return nil, errPhotosCountShape
 	}
-	var rawRecords []json.RawMessage
-	if json.Unmarshal(envelope[protocol.SharedPhotosSharedRecordsResponseRecords], &rawRecords) != nil {
-		return []cloudkit.CKRecord{}, nil
-	}
+
+	rawRecords := sharedRecordList(envelope[protocol.SharedPhotosSharedRecordsResponseRecords])
 	records := []cloudkit.CKRecord{}
+
 	for _, raw := range rawRecords {
-		var fields map[string]json.RawMessage
-		if json.Unmarshal(raw, &fields) != nil || fields == nil {
+		if !sharedRecordEligible(raw) {
 			continue
 		}
-		var kind cloudkit.PhotoRecordKind
-		_ = json.Unmarshal(fields[protocol.PhotosCKRecordRecordType], &kind)
-		if kind != cloudkit.CPLAsset && kind != cloudkit.CPLMaster {
-			continue
-		}
-		if kind == cloudkit.CPLAsset && !sharedAssetReference(fields[protocol.PhotosCKRecordFields]) {
-			continue
-		}
-		if kind == cloudkit.CPLMaster {
-			var name string
-			if json.Unmarshal(fields[protocol.PhotosCKRecordRecordName], &name) != nil {
-				continue
-			}
-		}
+
 		var record cloudkit.CKRecord
+
 		if json.Unmarshal(raw, &record) != nil {
 			return nil, errPhotosCountShape
 		}
+
 		records = append(records, record)
 	}
+
 	return records, nil
+}
+
+func sharedRecordList(raw json.RawMessage) []json.RawMessage {
+	var records []json.RawMessage
+
+	if json.Unmarshal(raw, &records) != nil {
+		return nil
+	}
+
+	return records
+}
+
+func sharedRecordEligible(raw json.RawMessage) bool {
+	var fields map[string]json.RawMessage
+
+	if json.Unmarshal(raw, &fields) != nil || fields == nil {
+		return false
+	}
+
+	var kind cloudkit.PhotoRecordKind
+
+	if json.Unmarshal(fields[protocol.PhotosCKRecordRecordType], &kind) != nil {
+		return false
+	}
+
+	switch kind {
+	case cloudkit.CPLAsset:
+		return sharedAssetReference(fields[protocol.PhotosCKRecordFields])
+	case cloudkit.CPLMaster:
+		var name string
+
+		return json.Unmarshal(fields[protocol.PhotosCKRecordRecordName], &name) == nil
+	default:
+		return false
+	}
 }
 
 func sharedAssetReference(raw json.RawMessage) bool {
 	var fields, wrapper, reference map[string]json.RawMessage
+
 	if json.Unmarshal(raw, &fields) != nil || fields == nil ||
 		json.Unmarshal(fields[protocol.SharedPhotosSharedAssetFieldsMasterRef], &wrapper) != nil || wrapper == nil ||
 		json.Unmarshal(wrapper[protocol.PhotosCKPassthroughFieldValue], &reference) != nil || reference == nil {
 		return false
 	}
+
 	var name string
+
 	return json.Unmarshal(reference[protocol.PhotosCKReferenceRecordName], &name) == nil
 }
 

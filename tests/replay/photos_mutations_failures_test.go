@@ -14,6 +14,8 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
+const syntheticNewPhotoAlbumName = "New synthetic"
+
 func TestPhotoMutationInvalidAcknowledgements(t *testing.T) {
 	t.Parallel()
 
@@ -119,7 +121,7 @@ func TestPhotoAlbumCreationEmptyAcknowledgement(t *testing.T) {
 	auth.PhotosServiceURL = scenario.Initial.Origin
 
 	result, err := client.CreatePhotoAlbum(t.Context(), icloud.CreatePhotoAlbumRequest{Auth: auth,
-		Name: "New synthetic", Library: nil, Folder: false, Type: nil})
+		Name: syntheticNewPhotoAlbumName, Library: nil, Folder: false, Type: nil})
 	if err != nil || result == nil || !result.Album.IsNull() {
 		t.Fatal("empty creation ACK not explicit null", err)
 	}
@@ -220,7 +222,7 @@ func runPhotoAlbumTypeControl(t *testing.T, kind icloud.PhotoAlbumType) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	result, err := client.CreatePhotoAlbum(t.Context(), icloud.CreatePhotoAlbumRequest{Auth: auth,
-		Name: "New synthetic", Folder: true, Library: nil, Type: &kind})
+		Name: syntheticNewPhotoAlbumName, Folder: true, Library: nil, Type: &kind})
 	if err != nil || result == nil || result.Album.IsNull() {
 		t.Fatal("explicit album type not acknowledged", err)
 	}
@@ -257,7 +259,7 @@ func TestPhotoAlbumCreationEntropyFailurePreservesInitialization(t *testing.T) {
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
 	_, err = client.CreatePhotoAlbum(t.Context(), icloud.CreatePhotoAlbumRequest{Auth: auth,
-		Name: "New synthetic", Folder: false, Type: nil, Library: nil})
+		Name: syntheticNewPhotoAlbumName, Folder: false, Type: nil, Library: nil})
 
 	var failure *icloud.ClientError
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Configuration || !clockCalled {

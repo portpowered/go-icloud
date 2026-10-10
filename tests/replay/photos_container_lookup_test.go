@@ -146,7 +146,6 @@ func checkPhotosContainerLookup(
 	}
 	checkPhotosContainerMetadata(t, result.Metadata, scenario.Exchanges[len(scenario.Exchanges)-1])
 	{
-
 		actual, encodeErr := json.Marshal(result.Data)
 		if encodeErr != nil {
 			t.Fatal(encodeErr)
@@ -164,7 +163,6 @@ func checkPhotosContainerLookup(
 
 		checkSDKValue(t, json.RawMessage(encoded), scenario.Result)
 	}
-
 }
 
 func sourceLookupDefault(key string, value any) bool {

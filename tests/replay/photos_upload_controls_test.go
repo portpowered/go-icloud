@@ -97,6 +97,7 @@ func TestPhotoUploadPreservesUnknownNumberPrecision(t *testing.T) {
 
 type photoUploadOwnedReader struct {
 	*bytes.Reader
+
 	closed bool
 }
 

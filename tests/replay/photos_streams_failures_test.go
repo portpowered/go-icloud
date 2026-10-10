@@ -71,7 +71,7 @@ func runSharedPhotosFailure(t *testing.T, path, mutation string) {
 
 	auth := sdkAccountAuth(scenario.Initial)
 	auth.PhotosServiceURL = scenario.Initial.Origin
-	auth.SharedPhotosServiceURL = "https://shared.example.invalid"
+	auth.SharedPhotosServiceURL = syntheticSharedPhotosOrigin
 	empty, err := callSharedPhotosFailure(t, client, auth, scenario.Operation)
 
 	checkSharedFailureEvidence(t, empty, err, kind, body, scenario)

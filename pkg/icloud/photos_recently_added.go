@@ -93,6 +93,8 @@ func recentPhotoWindow(pairs []photoPair, seen map[string]bool) []photoPair {
 		seen[pair.asset.RecordName] = true
 		selected = append(selected, pair)
 	}
+
 	slices.Reverse(selected)
+
 	return selected
 }

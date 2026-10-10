@@ -48,6 +48,8 @@ func TestPinnedSourceDateFormatPathsAndErrors(t *testing.T) {
 	directory := t.TempDir()
 	for _, test := range oracle.Cases {
 		t.Run(test.Name, func(t *testing.T) {
+			t.Parallel()
+
 			runDateFormatCase(t, test, directory)
 		})
 	}
