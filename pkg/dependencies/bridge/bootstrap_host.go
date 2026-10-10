@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/netip"
 	"strings"
+	"unicode"
 
 	"golang.org/x/text/unicode/norm"
 )
@@ -103,23 +104,61 @@ func validateBracketedHost(host string) error {
 
 	literal, zone, scoped := strings.Cut(host, "%")
 	if scoped && (zone == "" || strings.Contains(zone, "%")) {
-		return fmt.Errorf("'%s' does not appear to be an IPv4 or IPv6 address", host)
+		return invalidHostIP(host)
 	}
 
 	address, err := netip.ParseAddr(literal)
 	if err != nil {
-		return fmt.Errorf("'%s' does not appear to be an IPv4 or IPv6 address", host)
+		return invalidHostIP(host)
 	}
 
 	if address.Is4() {
 		if scoped {
-			return fmt.Errorf("'%s' does not appear to be an IPv4 or IPv6 address", host)
+			return invalidHostIP(host)
 		}
 
 		return errHostIPv4
 	}
 
 	return nil
+}
+
+func invalidHostIP(host string) error {
+	return fmt.Errorf("%s does not appear to be an IPv4 or IPv6 address", pythonHostRepresentation(host))
+}
+
+// Python ipaddress errors use repr for invalid literals, unlike the NFKC error.
+func pythonHostRepresentation(text string) string {
+	quote := byte('\'')
+	if strings.Contains(text, "'") && !strings.Contains(text, "\"") {
+		quote = '"'
+	}
+
+	var output strings.Builder
+	output.WriteByte(quote)
+	for _, value := range text {
+		switch {
+		case value == rune(quote) || value == '\\':
+			output.WriteByte('\\')
+			output.WriteRune(value)
+		case value == '\t':
+			output.WriteString("\\t")
+		case value == '\r':
+			output.WriteString("\\r")
+		case value == '\n':
+			output.WriteString("\\n")
+		case value == ' ' || unicode.IsPrint(value) && !unicode.IsSpace(value):
+			output.WriteRune(value)
+		case value <= 0xff:
+			fmt.Fprintf(&output, "\\x%02x", value)
+		case value <= 0xffff:
+			fmt.Fprintf(&output, "\\u%04x", value)
+		default:
+			fmt.Fprintf(&output, "\\U%08x", value)
+		}
+	}
+	output.WriteByte(quote)
+	return output.String()
 }
 
 func hostHexadecimal(text string) bool {

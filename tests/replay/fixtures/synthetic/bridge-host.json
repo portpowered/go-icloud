@@ -361,6 +361,78 @@
         "webSocketUrl": "wss://\uff25XAMPLE/a"
       },
       "host": "\uff45xample"
+    },
+    {
+      "name": "invalid-ip-single-quote",
+      "input": {
+        "webSocketUrl": "wss://[bad'ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "\"bad'ip\" does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-double-quote",
+      "input": {
+        "webSocketUrl": "wss://[bad\"ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'bad\"ip' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-both-quotes",
+      "input": {
+        "webSocketUrl": "wss://[bad'\"ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'bad\\'\"ip' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-backslash",
+      "input": {
+        "webSocketUrl": "wss://[bad\\ip]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'bad\\\\ip' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-nul",
+      "input": {
+        "webSocketUrl": "wss://[ab\u0000]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'ab\\x00' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-ip-nonbreaking-space",
+      "input": {
+        "webSocketUrl": "wss://[ab\u00a0]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'ab\\xa0' does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "invalid-zone-quote",
+      "input": {
+        "webSocketUrl": "wss://[fe80::1%a'%b]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "\"fe80::1%a'%b\" does not appear to be an IPv4 or IPv6 address"
+    },
+    {
+      "name": "bracketed-scoped-ipv4",
+      "input": {
+        "webSocketUrl": "wss://[127.0.0.1%Zone]/"
+      },
+      "error": true,
+      "errorType": "ValueError",
+      "errorMessage": "'127.0.0.1%Zone' does not appear to be an IPv4 or IPv6 address"
     }
   ]
 }

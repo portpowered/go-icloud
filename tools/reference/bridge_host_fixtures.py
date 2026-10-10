@@ -95,6 +95,14 @@ def fixtures(resolve):
         ("nfkc-colon", {"webSocketUrl": "wss://EXAMPLE\uff1a80/a"}),
         ("nfkc-at", {"webSocketUrl": "wss://EXAMPLE\uff20HOST/a"}),
         ("nfkc-safe", {"webSocketUrl": "wss://\uff25XAMPLE/a"}),
+        ("invalid-ip-single-quote", {"webSocketUrl": "wss://[bad'ip]/"}),
+        ("invalid-ip-double-quote", {"webSocketUrl": 'wss://[bad"ip]/'}),
+        ("invalid-ip-both-quotes", {"webSocketUrl": 'wss://[bad\'"ip]/'}),
+        ("invalid-ip-backslash", {"webSocketUrl": "wss://[bad\\ip]/"}),
+        ("invalid-ip-nul", {"webSocketUrl": "wss://[ab\u0000]/"}),
+        ("invalid-ip-nonbreaking-space", {"webSocketUrl": "wss://[ab\u00a0]/"}),
+        ("invalid-zone-quote", {"webSocketUrl": "wss://[fe80::1%a'%b]/"}),
+        ("bracketed-scoped-ipv4", {"webSocketUrl": "wss://[127.0.0.1%Zone]/"}),
     ]
     rows = []
     for name, data in inputs:

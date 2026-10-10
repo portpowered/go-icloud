@@ -1,6 +1,6 @@
 # Bridge hostname examples
 
-The 47 cases in `bridge-host.json` execute `_resolve_websocket_host` extracted
+The 55 cases in `bridge-host.json` execute `_resolve_websocket_host` extracted
 from the pinned Python source with invented bootstrap objects. They are offline
 implementation-derived examples, not provider captures. Run
 `python tools/reference/bridge_host_fixtures.py --source PATH_TO_PINNED_CHECKOUT`
