@@ -28,6 +28,21 @@ class SyntheticTests(unittest.TestCase):
                     replay_synthetic(FIXTURES / (name + ".json")), exchanges
                 )
 
+    def test_authentication_delivery_edges_and_success_status_refusal(self):
+        for name, exchanges in [
+            ("auth-srp-direct-phone-nonfteu-true", 6),
+            ("auth-srp-nested-phone-nonfteu-false", 6),
+            ("auth-srp-security-key-delivery", 4),
+            ("auth-srp-non-sms-delivery", 5),
+            ("auth-trust-locked-success-status", 1),
+            ("auth-trust-locked-forbidden", 1),
+            ("auth-trust-service-errors-without-reason", 2),
+        ]:
+            with self.subTest(name=name):
+                self.assertEqual(
+                    replay_synthetic(FIXTURES / (name + ".json")), exchanges
+                )
+
     def test_image_attachment_deletion(self):
         self.assertEqual(
             replay_synthetic(FIXTURES / "reminders-delete-image-success.json"), 1

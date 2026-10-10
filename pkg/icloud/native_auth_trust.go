@@ -2,6 +2,7 @@ package icloud
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/portpowered/go-icloud/internal/protocol"
@@ -36,7 +37,7 @@ func (sdk *SDK) nativeTrust(ctx context.Context, operation *nativeAuthOperation)
 	response, err := sdk.nativeAuthExchange(ctx, operation, request,
 		nativeAuthHeaders(operation.state, protocol.AuthAcceptValue))
 	if err != nil {
-		if nativeCanRetry(err) {
+		if nativeTrustRefused(err) {
 			operation.success = false
 
 			return nil
@@ -61,7 +62,21 @@ func (sdk *SDK) nativeTrust(ctx context.Context, operation *nativeAuthOperation)
 	return nil
 }
 
+func nativeTrustRefused(err error) bool {
+	if nativeCanRetry(err) {
+		return true
+	}
+
+	var failure *ClientError
+
+	// Source's successful-status JSON dispatcher treats a reason-bearing body as
+	// an API refusal. Its locked-account exception is raised only for non-OK HTTP
+	// responses; preserve that distinction after shared failure classification.
+	return errors.As(err, &failure) && failure.Kind() == AccountLocked &&
+		failure.StatusCode() >= http.StatusOK && failure.StatusCode() < http.StatusMultipleChoices
+}
+
 func nativeTrustAccepted(response *webtransport.BytesResponse) bool {
-	return !nativeLockedBody(response.Body) && response.Status >= http.StatusOK &&
+	return response.Status >= http.StatusOK &&
 		response.Status < http.StatusMultipleChoices
 }
