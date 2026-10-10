@@ -25,8 +25,11 @@ var errCompilerVersion = errors.New("bridge generation requires protoc 31.1")
 
 func main() {
 	root := flag.String("root", ".", "Repository root")
+
 	flag.Parse()
-	if err := generate(context.Background(), *root); err != nil {
+
+	err := generate(context.Background(), *root)
+	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
@@ -37,6 +40,7 @@ func generate(ctx context.Context, root string) (resultErr error) {
 	if err != nil {
 		return fmt.Errorf("inspect pinned protobuf compiler: %w", err)
 	}
+
 	if strings.TrimSpace(string(version)) != compilerVersion {
 		return errCompilerVersion
 	}
@@ -44,16 +48,22 @@ func generate(ctx context.Context, root string) (resultErr error) {
 	if err != nil {
 		return fmt.Errorf("create private generator directory: %w", err)
 	}
+
 	defer func() {
-		if cleanupErr := os.RemoveAll(directory); cleanupErr != nil {
+		cleanupErr := os.RemoveAll(directory)
+		if cleanupErr != nil {
 			resultErr = errors.Join(resultErr, fmt.Errorf("remove private generator directory: %w", cleanupErr))
 		}
 	}()
+
 	install := exec.CommandContext(ctx, "go", "install", pluginPackage)
+
 	install.Env = append(os.Environ(), "GOBIN="+directory, "GOWORK=off")
-	if output, installErr := install.CombinedOutput(); installErr != nil {
+	output, installErr := install.CombinedOutput()
+	if installErr != nil {
 		return fmt.Errorf("install pinned protobuf plugin: %w: %s", installErr, output)
 	}
+
 	return compile(ctx, root, directory)
 }
 
@@ -62,14 +72,27 @@ func compile(ctx context.Context, root, directory string) error {
 	if runtime.GOOS == "windows" {
 		plugin += ".exe"
 	}
-	command := exec.CommandContext(ctx, "protoc", "--plugin=protoc-gen-go="+plugin,
-		"--go_out=.", moduleOption, sourceFile)
+
+	_, err := os.Stat(plugin)
+	if err != nil {
+		return fmt.Errorf("inspect private pinned protobuf plugin: %w", err)
+	}
+
+	// Protoc resolves protoc-gen-go from this private directory before the host PATH.
+	// The compiler and complete argument vector remain fixed; no shell interprets either path.
+	command := exec.CommandContext(ctx, "protoc", "--go_out=.", moduleOption, sourceFile)
+
+	command.Env = append(os.Environ(), "PATH="+directory+string(os.PathListSeparator)+os.Getenv("PATH"))
 	command.Dir = filepath.Clean(root)
-	if output, err := command.CombinedOutput(); err != nil {
+	output, err := command.CombinedOutput()
+	if err != nil {
 		return fmt.Errorf("generate schema-owned bridge protobuf: %w: %s", err, output)
 	}
-	if _, err := os.Stat(filepath.Join(root, outputFile)); err != nil {
+
+	_, err = os.Stat(filepath.Join(root, outputFile))
+	if err != nil {
 		return fmt.Errorf("inspect generated bridge models: %w", err)
 	}
+
 	return nil
 }

@@ -28,7 +28,8 @@ func TestPhotoSyncFailedWriteCannotPersistOrDelete(t *testing.T) {
 	days := 0
 	input.Options.KeepIcloudRecentDays = &days
 
-	engine, err := photosync.New(provider, photosync.Configuration{Files: failingPhotoFiles{}, Now: nil, Wait: nil})
+	files := failingPhotoFiles{OSFileSystem: photosync.OSFileSystem{}}
+	engine, err := photosync.New(provider, photosync.Configuration{Files: files, Now: nil, Wait: nil})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -156,7 +157,7 @@ func TestPhotoSyncRecentCutoffRejectsPythonDateOverflow(t *testing.T) {
 func TestPhotoSyncCollisionUsesSourceUnicodeCodePoints(t *testing.T) {
 	t.Parallel()
 
-	provider := newSource(photo("first", "same.jpg"), photo("photo-相册编号αβγδε", "same.jpg"))
+	provider := newSource(photo("first", "same.jpg"), photo("photo-\u76f8\u518c\u7f16\u53f7αβγδε", "same.jpg"))
 	input := request(t.TempDir())
 	input.Options.OnlyPrintFilenames = true
 	result, err := newEngine(t, provider).Run(t.Context(), input)
@@ -165,7 +166,7 @@ func TestPhotoSyncCollisionUsesSourceUnicodeCodePoints(t *testing.T) {
 	}
 
 	// Pinned Source _unique_relative_path uses Python's first eight Unicode code points.
-	if len(result.Items) != 2 || result.Items[1].Path != "same_photo-相册.jpg" {
+	if len(result.Items) != 2 || result.Items[1].Path != "same_photo-\u76f8\u518c.jpg" {
 		t.Fatalf("Unicode Source discriminator differs: %+v", result.Items)
 	}
 }

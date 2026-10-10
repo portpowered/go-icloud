@@ -36,6 +36,7 @@ func (state *dateFormatState) render(format string, depth int) (string, error) {
 		}
 
 		output.WriteString(text)
+
 		index = next
 	}
 
@@ -68,6 +69,7 @@ func (state *dateFormatState) segment(format string, index, depth int) (int, str
 
 func replacementEnd(format string, index int) (int, error) {
 	nesting := 0
+
 	for cursor := index; cursor < len(format); cursor++ {
 		switch format[cursor] {
 		case '{':
@@ -93,7 +95,7 @@ func parseReplacement(field string) (dateReplacement, error) {
 
 	name, conversion, hasConversion := strings.Cut(name, "!")
 	if hasConversion {
-		if len(conversion) != 1 || !strings.Contains("sra", conversion) {
+		if len(conversion) != 1 || !strings.ContainsRune("sra", rune(conversion[0])) {
 			return *result, errFolderFormat
 		}
 
@@ -151,6 +153,7 @@ func (state *dateFormatState) value(name string) (dateFormatValue, error) {
 	value.instant = state.instant
 	value.kind = dateObjectValue
 	value.aware = true
+
 	for _, attribute := range parts[1:] {
 		updated, err := value.attribute(attribute)
 		if err != nil {

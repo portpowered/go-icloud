@@ -95,7 +95,8 @@ type dateValueSpec struct {
 }
 
 func parseDateValueSpec(spec string) (dateValueSpec, error) {
-	pattern := regexp.MustCompile(`^(?:(.)([<>=^])|([<>=^]))?([+ -])?(z)?(#)?(0)?([0-9]*)([_,])?(?:\.([0-9]+))?([bcdeEfFgGnosxX%]?)$`)
+	pattern := regexp.MustCompile(`^(?:(.)([<>=^])|([<>=^]))?([+ -])?(z)?(#)?(0)?` +
+		`([0-9]*)([_,])?(?:\.([0-9]+))?([bcdeEfFgGnosxX%]?)$`)
 	match := pattern.FindStringSubmatch(spec)
 	result := new(dateValueSpec)
 	result.precision = -1
@@ -171,6 +172,7 @@ func formatDateInteger(value int, spec string) (string, error) {
 	}
 
 	base := dateDecimalBase
+
 	switch options.kind {
 	case "b":
 		base = dateBinaryBase
@@ -201,6 +203,7 @@ func dateIntegerText(value int, options dateValueSpec) (string, error) {
 	}
 
 	text := strconv.FormatInt(int64(value), base)
+
 	if options.sharp && base != dateDecimalBase {
 		prefixes := map[int]string{dateBinaryBase: "0b", dateOctalBase: "0o", dateHexBase: "0x"}
 		text = prefixes[base] + text
@@ -224,12 +227,14 @@ func groupDateNumber(text, separator string, base int) string {
 	}
 
 	var output strings.Builder
+
 	first := len(text) % group
 	if first == 0 {
 		first = group
 	}
 
 	output.WriteString(text[:first])
+
 	for index := first; index < len(text); index += group {
 		output.WriteString(separator)
 		output.WriteString(text[index : index+group])
@@ -256,10 +261,12 @@ func formatDateFloat(value int, options dateValueSpec) (string, error) {
 	}
 
 	text := strconv.FormatFloat(number, kind, precision, 64)
+
 	if options.sharp {
 		format := "%#.*" + string(kind)
 		text = fmt.Sprintf(format, precision, number)
 	}
+
 	if options.kind == "%" {
 		text += "%"
 	}
@@ -313,7 +320,7 @@ func dateNumberPrefix(text string) int {
 		length++
 	}
 
-	if len(text) >= length+2 && text[length] == '0' && strings.Contains("boxBOX", text[length+1:length+2]) {
+	if len(text) >= length+2 && text[length] == '0' && strings.ContainsRune("boxBOX", rune(text[length+1])) {
 		length += 2
 	}
 
@@ -357,7 +364,7 @@ func alignDateValue(text, fill, align string, padding int) string {
 			prefix++
 		}
 
-		if len(text) >= prefix+2 && strings.Contains("boxBOX", text[prefix+1:prefix+2]) && text[prefix] == '0' {
+		if len(text) >= prefix+2 && strings.ContainsRune("boxBOX", rune(text[prefix+1])) && text[prefix] == '0' {
 			prefix += 2
 		}
 
