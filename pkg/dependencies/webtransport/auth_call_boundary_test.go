@@ -41,6 +41,7 @@ func TestAuthenticationCallRejectsIncompatibleMediaBeforeTransport(t *testing.T)
 		"typed-parameters": {
 			call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin,
 				Params: params, Body: srpBody},
+			headers: nil,
 		},
 		"body-header": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
 			headers: http.Header{authBoundaryMediaHeader: {wrong}}},
@@ -86,12 +87,13 @@ func TestAuthenticationCallEmitsItsCanonicalMedia(t *testing.T) {
 		media   string
 	}{
 		"json-default": {call: webtransport.InitAuthSRPCall{Origin: authBoundaryOrigin, Params: nil, Body: srpBody},
-			media: authBoundaryJSONMedia},
+			headers: nil, media: authBoundaryJSONMedia},
 		"logout-default": {call: webtransport.LogoutAuthSessionCall{
 			Origin: authBoundaryOrigin, Params: nil, Body: logoutBody,
 		},
-			media: authBoundaryLogoutMedia},
-		"retrieval-absent": {call: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil}},
+			headers: nil, media: authBoundaryLogoutMedia},
+		"retrieval-absent": {call: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil},
+			headers: nil, media: ""},
 		"retrieval-json": {call: webtransport.GetAuthChallengeCall{Origin: authBoundaryOrigin, Params: nil},
 			headers: http.Header{authBoundaryMediaHeader: {authBoundaryJSONMedia, authBoundaryJSONMedia}},
 			media:   authBoundaryJSONMedia},
