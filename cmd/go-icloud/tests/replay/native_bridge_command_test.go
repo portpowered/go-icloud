@@ -349,11 +349,16 @@ func nativeBridgeCommandConsumed(t *testing.T, runner *sdkBridgeReplay, transpor
 	if err := transport.AssertConsumed(); err != nil {
 		t.Fatal(err)
 	}
-	if runner.timeline != len(runner.network.Timeline) {
-		t.Fatalf("combined timeline consumed %d/%d", runner.timeline, len(runner.network.Timeline))
+	runner.mu.Lock()
+	timeline := runner.timeline
+	sockets := append([]*sdkBridgeSocket(nil), runner.sockets...)
+	runner.mu.Unlock()
+
+	if timeline != len(runner.network.Timeline) {
+		t.Fatalf("combined timeline consumed %d/%d", timeline, len(runner.network.Timeline))
 	}
 
-	for _, socket := range runner.sockets {
+	for _, socket := range sockets {
 		socket.mu.Lock()
 		complete := socket.closed && socket.cursor == len(socket.events) && socket.failure == nil
 		socket.mu.Unlock()
@@ -361,7 +366,11 @@ func nativeBridgeCommandConsumed(t *testing.T, runner *sdkBridgeReplay, transpor
 			t.Fatal("socket transcript incomplete or left open")
 		}
 	}
-	if runner.entropy.private != len(runner.network.PrivateScalars) || runner.entropy.prover != len(runner.network.ProverRandom) || runner.entropy.nonceReads != len(runner.network.Connections) || len(runner.entropy.initial) != 0 {
+	runner.entropy.mu.Lock()
+	entropyComplete := runner.entropy.private == len(runner.network.PrivateScalars) && runner.entropy.prover == len(runner.network.ProverRandom) && runner.entropy.nonceReads == len(runner.network.Connections) && len(runner.entropy.initial) == 0
+	runner.entropy.mu.Unlock()
+
+	if !entropyComplete {
 		t.Fatal("declared entropy not consumed")
 	}
 }

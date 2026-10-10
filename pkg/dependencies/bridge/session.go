@@ -57,6 +57,8 @@ type Options struct {
 // Close interrupts active work; verification never retries an uncertain HTTP step.
 type Session struct {
 	mutex      sync.Mutex
+	closeOnce  sync.Once
+	closeError error
 	socket     Socket
 	push       *Push
 	identifier string
@@ -232,25 +234,28 @@ func openAttempt(ctx context.Context, host, topic string, key *ecdsa.PrivateKey,
 	return session, nil
 }
 
-// Close detaches the connection exactly once and interrupts active I/O.
+// Close detaches the connection exactly once, interrupts active I/O, and waits
+// for the owned socket to close. Concurrent calls return the same close result.
 func (session *Session) Close() error {
-	session.mutex.Lock()
-	socket := session.socket
-	session.socket = nil
-	session.mutex.Unlock()
+	session.closeOnce.Do(func() {
+		session.mutex.Lock()
+		socket := session.socket
+		session.socket = nil
+		session.mutex.Unlock()
 
-	if socket == nil {
-		return nil
-	}
+		if socket == nil {
+			return
+		}
 
-	session.cancel()
+		session.cancel()
 
-	err := socket.Close()
-	if err != nil {
-		return &ProtocolError{Stage: "close", Cause: err}
-	}
+		err := socket.Close()
+		if err != nil {
+			session.closeError = &ProtocolError{Stage: "close", Cause: err}
+		}
+	})
 
-	return nil
+	return session.closeError
 }
 
 // Active reports whether the connection is attached to a live session owner.

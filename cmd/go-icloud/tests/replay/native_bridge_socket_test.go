@@ -78,6 +78,7 @@ type sdkBridgeReplay struct {
 }
 
 type sdkBridgeEntropy struct {
+	mu                                               sync.Mutex
 	replay                                           *sdkBridgeReplay
 	initial                                          []byte
 	private, prover                                  int
@@ -86,6 +87,9 @@ type sdkBridgeEntropy struct {
 }
 
 func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
 	clear(destination)
 	switch len(destination) {
 	case 256:
@@ -106,7 +110,9 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 		r.nonceReads++
 		r.uuid = false
 		r.signatureReads = 0
+		r.replay.mu.Lock()
 		index := r.replay.connectionIndex
+		r.replay.mu.Unlock()
 		if index >= len(r.replay.network.Connections) {
 			return 0, io.EOF
 		}
@@ -144,8 +150,12 @@ func (r *sdkBridgeEntropy) Read(destination []byte) (int, error) {
 }
 
 func (r *sdkBridgeReplay) RoundTrip(request *http.Request) (*http.Response, error) {
-	r.take(map[string]any{"surface": "http", "exchange": float64(r.httpIndex)})
+	r.mu.Lock()
+	index := r.httpIndex
 	r.httpIndex++
+	r.mu.Unlock()
+
+	r.take(map[string]any{"surface": "http", "exchange": float64(index)})
 	return r.http.RoundTrip(request)
 }
 func (r *sdkBridgeReplay) take(event map[string]any) {
@@ -166,7 +176,9 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	if !bounded || time.Until(deadline) <= 0 || time.Until(deadline) > 30*time.Second {
 		return nil, errBridgeSecureDialDeadlineDiffers
 	}
+	r.mu.Lock()
 	index := r.connectionIndex
+	r.mu.Unlock()
 	if index >= len(r.network.Connections) {
 		return nil, errBridgeUndeclaredBridgeConnection
 	}
@@ -174,27 +186,40 @@ func (r *sdkBridgeReplay) dial(ctx context.Context, network, address string) (ne
 	if network != "tcp" || address != "bridge.example.invalid:443" {
 		return nil, errBridgeUnexpectedSecureDialTarget
 	}
-	socket := &sdkBridgeSocket{owner: r, index: index, bridgeScriptSocket: &bridgeScriptSocket{mu: sync.Mutex{}, events: append([]bridgeSocketEvent(nil), expected.Events...), pending: nil, cursor: 0, closed: false, failure: nil}}
+	socket := &sdkBridgeSocket{owner: r, index: index, closeOnce: sync.Once{}, closeError: nil, bridgeScriptSocket: &bridgeScriptSocket{mu: sync.Mutex{}, events: append([]bridgeSocketEvent(nil), expected.Events...), pending: nil, cursor: 0, closed: false, failure: nil}}
+	r.mu.Lock()
 	r.sockets = append(r.sockets, socket)
+	r.mu.Unlock()
 	for _, operation := range []string{"connect", "wrap", "timeout"} {
 		socket.mark(operation, 0)
 	}
+	r.mu.Lock()
 	r.connectionIndex++
+	r.mu.Unlock()
+
+	r.entropy.mu.Lock()
 	r.entropy.signing = false
+	r.entropy.mu.Unlock()
 	return socket, nil
 }
 
 type sdkBridgeSocket struct {
 	*bridgeScriptSocket
-	owner *sdkBridgeReplay
-	index int
+	owner      *sdkBridgeReplay
+	index      int
+	closeOnce  sync.Once
+	closeError error
 }
 
 func (s *sdkBridgeSocket) Write(payload []byte) (int, error) {
-	s.mark("send", s.cursor)
+	s.mu.Lock()
+	cursor := s.cursor
+	s.mu.Unlock()
+
+	s.mark("send", cursor)
 	original := len(payload)
 	var err error
-	if s.cursor == 0 {
+	if cursor == 0 {
 		payload, err = s.upgrade(payload)
 	} else {
 		payload, err = bridgeFixtureUnmask(payload)
@@ -207,17 +232,27 @@ func (s *sdkBridgeSocket) Write(payload []byte) (int, error) {
 }
 
 func (s *sdkBridgeSocket) Read(destination []byte) (int, error) {
-	if len(s.pending) == 0 {
-		s.mark("receive", s.cursor)
+	s.mu.Lock()
+	empty, cursor := len(s.pending) == 0, s.cursor
+	s.mu.Unlock()
+
+	if empty {
+		s.mark("receive", cursor)
 	}
 	return s.bridgeScriptSocket.Read(destination)
 }
 
 func (s *sdkBridgeSocket) Close() error {
-	if !s.closed {
-		s.mark("close", s.cursor)
-	}
-	return s.bridgeScriptSocket.Close()
+	s.closeOnce.Do(func() {
+		s.mu.Lock()
+		cursor := s.cursor
+		s.mu.Unlock()
+
+		s.mark("close", cursor)
+		s.closeError = s.bridgeScriptSocket.Close()
+	})
+
+	return s.closeError
 }
 
 func (s *sdkBridgeSocket) mark(operation string, event int) {
