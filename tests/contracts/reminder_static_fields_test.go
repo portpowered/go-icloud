@@ -13,10 +13,10 @@ func TestReminderEndpointRejectsImpossibleStaticFields(t *testing.T) {
 	schema := document.Paths.Value("/database/1/com.apple.reminders/production/private/records/modify").Post.
 		RequestBody.Value.Content["application/json"].Schema.Value
 
-	for _, name := range []string{reminderCreateBasicFixture, "update-basic", "delete-success",
+	for _, name := range []string{reminderCreateBasicFixture, reminderUpdateBasicFixture, reminderDeleteFixture,
 		reminderCreateHashtagFixture, "update-hashtag-success", "delete-hashtag-success",
 		reminderCreateRecurrenceFixture, "update-recurrence-rule-success", "delete-recurrence-rule-success",
-		"create-url-attachment-success", "delete-attachment-success", reminderAddLocationFixture} {
+		reminderURLAttachmentFixture, reminderDeleteAttachmentFixture, reminderAddLocationFixture} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			pair := accountExchanges(t, "../replay/fixtures/synthetic/http/reminders-"+name+".json")[0]
@@ -26,7 +26,8 @@ func TestReminderEndpointRejectsImpossibleStaticFields(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if err = schema.VisitJSON(value); err != nil {
+			err = schema.VisitJSON(value)
+			if err != nil {
 				t.Fatal(err)
 			}
 
@@ -53,6 +54,7 @@ func checkReminderStaticOperations(t *testing.T, schema *openapi3.Schema, value 
 			}
 
 			root["operations"] = same
+
 			if schema.VisitJSON(value) == nil {
 				t.Fatal("duplicate atomic operation kind accepted")
 			}

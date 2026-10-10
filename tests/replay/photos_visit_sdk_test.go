@@ -118,6 +118,7 @@ func TestRecentlyAddedVisitorStopsBeforeAnotherWindow(t *testing.T) {
 	result, err := client.VisitRecentlyAddedPhotos(t.Context(), request,
 		func(event icloud.PhotoVisitEvent) (bool, error) {
 			visited++
+
 			checkReminderSyncResponses(t, event.Responses, exchanges)
 			return false, nil
 		})

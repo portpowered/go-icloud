@@ -319,7 +319,9 @@ func TestRemindersAssetBindingRejectsUnissuedRequests(t *testing.T) {
 
 	document := loadDriveDocument(t, remindersSchemaPath)
 
-	for _, mutation := range []string{reminderAssetOriginControl, mutationPath, "asset-query", "orphan", mutationMethod} {
+	for _, mutation := range []string{
+		reminderAssetOriginControl, mutationPath, reminderAssetQueryControl, "orphan", mutationMethod,
+	} {
 		t.Run(mutation, func(t *testing.T) {
 			t.Parallel()
 			exchanges := accountExchanges(t, "../replay/fixtures/synthetic/http/reminders-lists-asset-membership-1.json")
@@ -328,10 +330,10 @@ func TestRemindersAssetBindingRejectsUnissuedRequests(t *testing.T) {
 
 			switch mutation {
 			case reminderAssetOriginControl:
-				request.Origin = "https://unissued.example.invalid"
+				request.Origin = unissuedContractOrigin
 			case mutationPath:
 				request.Path = "/unissued.json"
-			case "asset-query":
+			case reminderAssetQueryControl:
 				request.Query = []replay.Pair{{"unissued", "value"}}
 			case "orphan":
 				preceding = nil

@@ -19,8 +19,10 @@ func TestReminderWriteVariantsBindCompleteRequests(t *testing.T) {
 	for variant, names := range map[string][]string{
 		reminderCreationRequestSchema: {reminderCreateBasicFixture, "create-completed", "create-dated-child",
 			"create-lookup-empty", "create-record-error"},
-		reminderUpdateRequestSchema:   {"update-basic", "update-completed", "update-dated-child", "update-record-error"},
-		reminderDeletionRequestSchema: {"delete-success", "delete-record-error"},
+		reminderUpdateRequestSchema: {
+			reminderUpdateBasicFixture, "update-completed", "update-dated-child", "update-record-error",
+		},
+		reminderDeletionRequestSchema: {reminderDeleteFixture, "delete-record-error"},
 	} {
 		for _, name := range names {
 			t.Run(name, func(t *testing.T) {
@@ -93,7 +95,7 @@ func checkReminderWriteNegatives(t *testing.T, schema *openapi3.Schema, value an
 		fields[key] = original
 	}
 
-	for _, key := range []string{"TitleDocument", reminderNotesDocumentField, "ResolutionTokenMap"} {
+	for _, key := range []string{reminderTitleDocumentField, reminderNotesDocumentField, "ResolutionTokenMap"} {
 		original, exists := fields[key]
 		if !exists {
 			continue
@@ -118,7 +120,7 @@ func checkMissingReminderWriteFields(t *testing.T, schema *openapi3.Schema, valu
 	fields := reminderWriteFields(t, value)
 	missing := make(map[string]any)
 
-	for _, key := range []string{"TitleDocument", reminderNotesDocumentField, "Deleted"} {
+	for _, key := range []string{reminderTitleDocumentField, reminderNotesDocumentField, "Deleted"} {
 		if field, exists := fields[key]; exists {
 			missing[key] = field
 
@@ -183,7 +185,7 @@ func checkEmbeddedReminderTokens(t *testing.T, document *openapi3.T, variant str
 	}
 
 	for _, invalid := range []any{nil, true, map[string]any{reminderContractTokenMap: map[string]any{}},
-		map[string]any{reminderContractTokenMap: tokens, "futureTokens": true}} {
+		map[string]any{reminderContractTokenMap: tokens, reminderFutureTokensField: true}} {
 		if schema.VisitJSON(invalid) == nil {
 			t.Fatal("invalid embedded token payload accepted")
 		}

@@ -21,9 +21,9 @@ const (
 func TestReminderAttachmentValidationBeforeNetwork(t *testing.T) {
 	t.Parallel()
 
-	for _, mode := range []string{"url-empty-update", "image-empty-update", "invalid-union",
-		"negative-size", "negative-width", "negative-height", reminderAttachmentWrongParent,
-		reminderAttachmentCancelCreate, "cancel-update", reminderAttachmentCancelDelete} {
+	for _, mode := range []string{"url-empty-update", "image-empty-update", testInvalidUnion,
+		"negative-size", "negative-width", testNegativeHeight, reminderAttachmentWrongParent,
+		reminderAttachmentCancelCreate, testCancelUpdate, reminderAttachmentCancelDelete} {
 		t.Run(mode, func(t *testing.T) {
 			t.Parallel()
 			checkAttachmentPreparation(t, mode)
@@ -51,7 +51,7 @@ func checkAttachmentPreparation(t *testing.T, mode string) {
 
 	kind := icloud.Configuration
 
-	if mode == reminderAttachmentCancelCreate || mode == "cancel-update" || mode == reminderAttachmentCancelDelete {
+	if mode == reminderAttachmentCancelCreate || mode == testCancelUpdate || mode == reminderAttachmentCancelDelete {
 		cancel()
 
 		kind = icloud.Canceled
@@ -115,18 +115,18 @@ func callAttachmentPreparation(ctx context.Context, client *icloud.SDK, mode str
 
 func preparationAttachment(mode string) icloud.ReminderAttachment {
 	attachment := new(icloud.ReminderAttachment)
-	if mode == "invalid-union" {
+	if mode == testInvalidUnion {
 		return *attachment
 	}
 
 	if mode == "url-empty-update" || mode == reminderAttachmentWrongParent {
 		url := new(icloud.ReminderURLAttachment)
-		url.ID = "Attachment/synthetic"
+		url.ID = testAttachmentID
 		url.ReminderID = "Reminder/another"
 		_ = attachment.FromReminderURLAttachment(*url)
 	} else {
 		image := new(icloud.ReminderImageAttachment)
-		image.ID = "Attachment/synthetic"
+		image.ID = testAttachmentID
 		_ = attachment.FromReminderImageAttachment(*image)
 	}
 
@@ -145,7 +145,7 @@ func assignAttachmentInvalidValue(request *icloud.UpdateReminderAttachmentReques
 		request.FileSize = value
 	case "negative-width":
 		request.Width = value
-	case "negative-height":
+	case testNegativeHeight:
 		request.Height = value
 	}
 }

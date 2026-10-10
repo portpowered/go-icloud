@@ -77,9 +77,9 @@ func TestDeleteReminderHashtagNormalizesEveryLinkAndPreservesAcknowledgements(t 
 	request.Reminder.ID = reminderTestRecordName
 	request.Reminder.HashtagIDs = []string{reminderHashtagRawID, reminderHashtagTestName,
 		"Hashtag/keep", reminderHashtagRetainedID, ""}
-	request.Reminder.RecordChangeTag.Set("parent-old")
+	request.Reminder.RecordChangeTag.Set(testParentChangeTag)
 	request.Hashtag.ID = reminderHashtagRawID
-	request.Hashtag.RecordChangeTag.Set("child-old")
+	request.Hashtag.RecordChangeTag.Set(testChildChangeTag)
 
 	result, err := client.DeleteReminderHashtag(t.Context(), *request)
 	if err != nil {
@@ -88,8 +88,8 @@ func TestDeleteReminderHashtagNormalizesEveryLinkAndPreservesAcknowledgements(t 
 
 	expectedIDs := []string{reminderHashtagRetainedID, reminderHashtagRetainedID, ""}
 	if !reflect.DeepEqual(result.Reminder.HashtagIDs, expectedIDs) ||
-		result.Reminder.RecordChangeTag.GetOrEmpty() != "parent-old" ||
-		result.Hashtag.RecordChangeTag.GetOrEmpty() != "child-old" || result.Hashtag.ID != request.Hashtag.ID {
+		result.Reminder.RecordChangeTag.GetOrEmpty() != testParentChangeTag ||
+		result.Hashtag.RecordChangeTag.GetOrEmpty() != testChildChangeTag || result.Hashtag.ID != request.Hashtag.ID {
 		t.Fatal("normalization or acknowledgement preservation differs from Source")
 	}
 
@@ -98,8 +98,8 @@ func TestDeleteReminderHashtagNormalizesEveryLinkAndPreservesAcknowledgements(t 
 	result.Hashtag.RecordChangeTag.Set(reminderHashtagMutatedValue)
 
 	if request.Reminder.HashtagIDs[0] != reminderHashtagRawID ||
-		request.Reminder.RecordChangeTag.GetOrEmpty() != "parent-old" ||
-		request.Hashtag.RecordChangeTag.GetOrEmpty() != "child-old" {
+		request.Reminder.RecordChangeTag.GetOrEmpty() != testParentChangeTag ||
+		request.Hashtag.RecordChangeTag.GetOrEmpty() != testChildChangeTag {
 		t.Fatal("returned relation state aliases caller-owned snapshots")
 	}
 }

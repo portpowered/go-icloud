@@ -20,10 +20,12 @@ func TestPhotosChangeAndContainerWireContracts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	paths = append(paths, lookups...)
 	if len(paths) != 25 {
 		t.Fatalf("changes/container fixture denominator changed: %d", len(paths))
 	}
+
 	for _, path := range paths {
 		t.Run(
 			filepath.Base(path),

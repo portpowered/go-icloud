@@ -31,3 +31,24 @@ const (
 	remindersZonesOperation          = "RemindersListZones"
 	reminderAssetOriginControl       = "asset-origin"
 )
+
+// Independent literals preserve schema spellings and negative controls.
+const (
+	authWebTokenField               = "dsWebAuthToken"
+	nullableErrorControl            = "nullable-error"
+	contractSyntheticName           = "synthetic"
+	issuerMethodControl             = "issuer-method"
+	unissuedContractOrigin          = "https://unissued.example.invalid"
+	findMyLostDeviceSchema          = "FindMyLostDevice"
+	repeatedParameterControl        = "repeated"
+	photoOriginalResourceKey        = "resOriginalRes"
+	photoRecentInvalidJSONFixture   = "photos-recently-added-shared-invalid-json.json"
+	reminderURLAttachmentFixture    = "create-url-attachment-success"
+	reminderDeleteAttachmentFixture = "delete-attachment-success"
+	reminderUpdateBasicFixture      = "update-basic"
+	reminderDeleteFixture           = "delete-success"
+	reminderRecordErrorOutcome      = "record-error"
+	reminderFutureTokensField       = "futureTokens"
+	reminderTitleDocumentField      = "TitleDocument"
+	reminderAssetQueryControl       = "asset-query"
+)

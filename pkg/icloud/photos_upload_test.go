@@ -116,7 +116,9 @@ func TestPhotoUploadWaiterRejectsNil(t *testing.T) {
 func TestPhotoUploadClockRejectsNil(t *testing.T) {
 	t.Parallel()
 	_, err := icloud.New(icloud.WithPhotoUploadClock(nil))
+
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) || failure.Kind() != icloud.Configuration {
 		t.Fatal("nil indexing elapsed clock was accepted", err)
 	}

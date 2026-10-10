@@ -11,10 +11,10 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 
 	for name, component := range map[string]string{
 		reminderCreateBasicFixture:      reminderCreationTokensSchema,
-		"update-basic":                  reminderUpdateTokensSchema,
-		"delete-success":                reminderDeletionResolutionSchema,
+		reminderUpdateBasicFixture:      reminderUpdateTokensSchema,
+		reminderDeleteFixture:           reminderDeletionResolutionSchema,
 		reminderCreateHashtagFixture:    "ReminderHashtagLinkTokensMap",
-		"create-url-attachment-success": "ReminderAttachmentLinkTokensMap",
+		reminderURLAttachmentFixture:    "ReminderAttachmentLinkTokensMap",
 		reminderCreateRecurrenceFixture: "ReminderRecurrenceLinkTokensMap",
 		reminderAddLocationFixture:      "ReminderAlarmLinkTokensMap",
 	} {
@@ -35,6 +35,7 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 			}
 
 			var decoded any
+
 			err = json.Unmarshal([]byte(text), &decoded)
 			if err != nil {
 				t.Fatal(err)
@@ -53,6 +54,7 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 			}
 
 			delete(inner, "unexpectedToken")
+
 			for _, token := range inner {
 				hashtagContractObject(t, token)["counter"] = 2
 
@@ -79,7 +81,7 @@ func TestReminderEndpointRejectsInvalidDocumentBase64(t *testing.T) {
 	}
 
 	fields := hashtagContractFields(t, hashtagContractOperations(t, hashtagContractObject(t, value))[0])
-	wrapper := hashtagContractObject(t, fields["TitleDocument"])
+	wrapper := hashtagContractObject(t, fields[reminderTitleDocumentField])
 
 	for _, invalid := range []string{"", "A", "AAA", "!!!!", "AAAA="} {
 		wrapper[reminderWriteValue] = invalid

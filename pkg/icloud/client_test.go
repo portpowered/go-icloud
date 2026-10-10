@@ -44,7 +44,7 @@ func sdkForResponse(t *testing.T, status int, body string) *icloud.SDK {
 		response.Body = io.NopCloser(strings.NewReader(body))
 		response.Header = make(http.Header)
 		response.Header.Set("X-Synthetic", "synthetic-header")
-		response.Header.Set("Content-Type", "application/json")
+		response.Header.Set("Content-Type", testJSONMedia)
 
 		return response, nil
 	})))

@@ -27,7 +27,7 @@ func findMyAuth() icloud.AuthContext {
 	auth := deviceRequest().Auth
 	auth.FindMyServiceURL = "https://findmy.example.invalid"
 	auth.SetupServiceURL = "https://setup.example.invalid"
-	token := "synthetic-session-token"
+	token := testSessionToken
 	auth.SessionToken = &token
 
 	return auth
@@ -38,7 +38,7 @@ func findMyReply(status int, body string) *http.Response {
 	response.StatusCode = status
 	response.Body = io.NopCloser(strings.NewReader(body))
 	response.Header = make(http.Header)
-	response.Header.Set("Content-Type", "application/json")
+	response.Header.Set("Content-Type", testJSONMedia)
 
 	return response
 }

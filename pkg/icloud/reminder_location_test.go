@@ -111,7 +111,7 @@ func TestReminderLocationFailureEvidence(t *testing.T) {
 	for name, row := range map[string]struct {
 		body string
 		kind icloud.ErrorKind
-	}{"invalid-json": {body: "not JSON", kind: icloud.InvalidResponse},
+	}{testInvalidJSON: {body: "not JSON", kind: icloud.InvalidResponse},
 		"invalid-record": {body: `{"records":[false]}`, kind: icloud.InvalidResponse},
 		"record-rejection": {body: `{"records":[{"recordName":"Alarm/synthetic","serverErrorCode":"CONFLICT"}]}`,
 			kind: icloud.Provider}} {

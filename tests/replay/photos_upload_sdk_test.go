@@ -415,6 +415,7 @@ func photoUploadRegistration(t *testing.T, raw json.RawMessage) json.RawMessage 
 
 		authReplayDecode(t, response, &status)
 		status["retryable"] = status["isRetryable"]
+
 		for _, name := range []string{"retryable", "status", "errorMessage"} {
 			if len(status[name]) == 0 {
 				status[name] = json.RawMessage(photoUploadNull)

@@ -44,7 +44,7 @@ func TestReminderLocationClockOrderAndParentOwnership(t *testing.T) {
 	request := locationTestRequest()
 	request.Latitude, request.Longitude = 1e20, 1e-7
 	request.Reminder.Modified.Set(time.Unix(1, 0).UTC())
-	request.Reminder.AlarmIDs = []string{"Alarm/keep", "keep"}
+	request.Reminder.AlarmIDs = []string{testRetainedAlarm, "keep"}
 	request.Reminder.RecordChangeTag.Set("existing-revision")
 
 	result, err := client.AddReminderLocationTrigger(t.Context(), request)
@@ -67,7 +67,7 @@ func checkLocationParentOwnership(t *testing.T, request icloud.AddReminderLocati
 	result.Reminder.AlarmIDs[0] = "mutated"
 	result.Reminder.Modified.SetNull()
 
-	if request.Reminder.AlarmIDs[0] != "Alarm/keep" || request.Reminder.Modified.IsNull() {
+	if request.Reminder.AlarmIDs[0] != testRetainedAlarm || request.Reminder.Modified.IsNull() {
 		t.Fatal("location result shares caller state")
 	}
 
@@ -107,8 +107,8 @@ func checkLocationClockPayload(t *testing.T, request *http.Request) {
 
 	if parent.Record.Fields.LastModifiedDate.Value != 1700000000000 ||
 		alarm.Record.Fields.DueDateResolutionTokenAsNonce.Value != "100721692800.25" ||
-		tokens.Map.AlarmIDs.ModificationTime != "721692800.5" ||
-		tokens.Map.LastModifiedDate.ModificationTime != "721692800.5" {
+		tokens.Map.AlarmIDs.ModificationTime != testFractionalReminderTime ||
+		tokens.Map.LastModifiedDate.ModificationTime != testFractionalReminderTime {
 		t.Fatal("Source independent timestamp, nonce and resolution clock samples changed")
 	}
 }

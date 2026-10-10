@@ -217,7 +217,7 @@ func TestFindMyRouteAndQueryBindingRejectsUnknowns(t *testing.T) {
 
 	exchange := accountExchanges(t, "../replay/fixtures/synthetic/http/findmy-devices-one.json")[0]
 
-	for _, mutation := range []string{"path", "method", "required", "repeated", "unknown", "token-query"} {
+	for _, mutation := range []string{"path", "method", "required", repeatedParameterControl, "unknown", "token-query"} {
 		t.Run(mutation, func(t *testing.T) {
 			t.Parallel()
 
@@ -245,7 +245,7 @@ func mutateFindMyBinding(request *replay.Request, query url.Values, mutation str
 		request.Method = "GET"
 	case "required":
 		delete(query, "dsid")
-	case "repeated":
+	case repeatedParameterControl:
 		query.Add("dsid", "another-account")
 	case "unknown":
 		query.Set("unexpected", "value")

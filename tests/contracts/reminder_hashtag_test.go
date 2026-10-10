@@ -52,7 +52,7 @@ func TestReminderHashtagWritesBindCompleteRequests(t *testing.T) {
 		"ReminderHashtagCreationRequest": "create", "ReminderHashtagUpdateRequest": "update",
 		"ReminderHashtagDeletionRequest": "delete",
 	} {
-		for _, outcome := range []string{"success", "record-error"} {
+		for _, outcome := range []string{"success", reminderRecordErrorOutcome} {
 			t.Run(operation+"/"+outcome, func(t *testing.T) {
 				t.Parallel()
 
@@ -172,7 +172,7 @@ func checkHashtagEmbeddedTokens(t *testing.T, document *openapi3.T, value any) {
 	}
 
 	for _, invalid := range []any{nil, true, map[string]any{reminderContractTokenMap: map[string]any{}},
-		map[string]any{reminderContractTokenMap: tokens, "futureTokens": true}} {
+		map[string]any{reminderContractTokenMap: tokens, reminderFutureTokensField: true}} {
 		if schema.VisitJSON(invalid) == nil {
 			t.Fatal("invalid embedded hashtag resolution tokens accepted")
 		}

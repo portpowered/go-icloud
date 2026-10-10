@@ -11,6 +11,12 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
+const (
+	testFolderPrefix       = "FOLDER::SYNTHETIC_ZONE::TempId-"
+	testUploadCookie       = "X-SYNTHETIC-COOKIE"
+	testUploadTokenPattern = `\bt=([^;]+)`
+)
+
 func TestAccountProtocolConstantsHaveNoDrift(t *testing.T) {
 	t.Parallel()
 
@@ -196,10 +202,10 @@ func TestDrivePrefixConstantsFollowCompletePatternAndExtension(t *testing.T) {
 	models := driveModelsDocument(t)
 	field := models.Components.Schemas["DriveFolderCreation"].Value.Properties["clientId"].Value
 	field.Pattern = strings.ReplaceAll(field.Pattern, "UNKNOWN_ZONE", "SYNTHETIC_ZONE")
-	field.Extensions["x-protocol-prefix"] = "FOLDER::SYNTHETIC_ZONE::TempId-"
+	field.Extensions["x-protocol-prefix"] = testFolderPrefix
 
 	values, err := externalConstants(driveConstantsDocument(t), models)
-	if err != nil || values["DriveFolderCreationClientIdPrefix"] != "FOLDER::SYNTHETIC_ZONE::TempId-" {
+	if err != nil || values["DriveFolderCreationClientIdPrefix"] != testFolderPrefix {
 		t.Fatal("prefix did not follow the canonical model declaration")
 	}
 
@@ -234,8 +240,8 @@ func TestDriveScalarConstantsFollowSchema(t *testing.T) {
 	t.Parallel()
 
 	models := driveModelsDocument(t)
-	models.Components.Schemas["DriveUploadValidationCookieName"].Value.Enum = []any{"X-SYNTHETIC-COOKIE"}
-	models.Components.Schemas["DriveUploadTokenCookieValue"].Value.Pattern = `\bt=([^;]+)`
+	models.Components.Schemas["DriveUploadValidationCookieName"].Value.Enum = []any{testUploadCookie}
+	models.Components.Schemas["DriveUploadTokenCookieValue"].Value.Pattern = testUploadTokenPattern
 	field := models.Components.Schemas["DriveUploadContentDisposition"].Value
 	field.Pattern = `^synthetic; name="[^"]*"; filename="[^"]*"$`
 	field.Extensions["x-protocol-template"] = `synthetic; name="%s"; filename="%s"`
@@ -245,8 +251,8 @@ func TestDriveScalarConstantsFollowSchema(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if values["DriveUploadValidationCookieNameValue"] != "X-SYNTHETIC-COOKIE" ||
-		values["DriveUploadTokenCookieValuePattern"] != `\bt=([^;]+)` ||
+	if values["DriveUploadValidationCookieNameValue"] != testUploadCookie ||
+		values["DriveUploadTokenCookieValuePattern"] != testUploadTokenPattern ||
 		values["DriveUploadContentDispositionTemplate"] != field.Extensions["x-protocol-template"] {
 		t.Fatal("scalar constants did not follow their canonical declarations")
 	}

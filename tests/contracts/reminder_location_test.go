@@ -13,7 +13,7 @@ func TestReminderLocationRequestContract(t *testing.T) {
 	models := loadDriveDocument(t, cloudKitModelsPath)
 	endpoint := document.Paths.Value("/database/1/com.apple.reminders/production/private/records/modify").Post
 
-	for _, name := range []string{"success", "record-error"} {
+	for _, name := range []string{"success", reminderRecordErrorOutcome} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			pair := accountExchanges(t, "../replay/fixtures/synthetic/http/reminders-add-location-trigger-"+name+".json")[0]

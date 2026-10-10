@@ -15,10 +15,10 @@ func TestReminderAttachmentWriteSchemas(t *testing.T) {
 	endpoint := document.Paths.Value("/database/1/com.apple.reminders/production/private/records/modify").Post
 
 	for variant, names := range map[string][]string{
-		"ReminderAttachmentURLCreationRequest": {"create-url-attachment-success", "create-url-attachment-record-error"},
+		"ReminderAttachmentURLCreationRequest": {reminderURLAttachmentFixture, "create-url-attachment-record-error"},
 		"ReminderAttachmentURLUpdateRequest":   {"update-attachment-success", "update-attachment-record-error"},
 		"ReminderAttachmentImageUpdateRequest": {"update-image-success"},
-		"ReminderAttachmentDeletionRequest": {"delete-attachment-success", "delete-attachment-record-error",
+		"ReminderAttachmentDeletionRequest": {reminderDeleteAttachmentFixture, "delete-attachment-record-error",
 			"delete-attachment-empty-id-success"},
 	} {
 		for _, name := range names {

@@ -470,7 +470,7 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 	documents := loadDriveDocuments(t)
 
 	for _, mutation := range []string{
-		"origin", mutationPath, mutationMethod, "issuer", "issuer-prefix", "issuer-method", "first",
+		"origin", mutationPath, mutationMethod, "issuer", "issuer-prefix", issuerMethodControl, "first",
 	} {
 		t.Run(mutation, func(t *testing.T) {
 			t.Parallel()
@@ -480,7 +480,7 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 
 			switch mutation {
 			case "origin":
-				exchanges[index].Request.Origin = "https://unissued.example.invalid"
+				exchanges[index].Request.Origin = unissuedContractOrigin
 			case mutationPath:
 				exchanges[index].Request.Path += "/unissued"
 			case mutationMethod:
@@ -489,7 +489,7 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 				exchanges[0].Request.Path = unregisteredContractPath
 			case "issuer-prefix":
 				exchanges[0].Request.Path = unregisteredContractPath + exchanges[0].Request.Path
-			case "issuer-method":
+			case issuerMethodControl:
 				exchanges[0].Request.Method = http.MethodPost
 			case "first":
 				exchanges = exchanges[1:]

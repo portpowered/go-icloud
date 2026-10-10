@@ -62,6 +62,7 @@ func runPhotoUploadCursorControl(t *testing.T, fileOnly, atEnd bool) {
 	position := int64(len(photoControlCursorPrefix))
 	if atEnd {
 		position += int64(len(payload))
+
 		photoUploadEmptyRange(t, scenario.Exchanges)
 	}
 

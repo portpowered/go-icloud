@@ -23,7 +23,7 @@ func TestReminderRecurrenceVariantsBindPairedRequests(t *testing.T) {
 		"ReminderRecurrenceCreationRequest": "create", "ReminderRecurrenceUpdateRequest": "update",
 		"ReminderRecurrenceDeletionRequest": "delete",
 	} {
-		for _, outcome := range []string{"success", "record-error"} {
+		for _, outcome := range []string{"success", reminderRecordErrorOutcome} {
 			t.Run(operation+outcome, func(t *testing.T) {
 				t.Parallel()
 

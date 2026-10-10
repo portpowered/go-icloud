@@ -76,7 +76,7 @@ func TestDriveMutationsOwnBodiesOnReadAndCloseFailure(t *testing.T) {
 				response := new(http.Response)
 				response.StatusCode = http.StatusOK
 				response.Header = make(http.Header)
-				response.Header.Set("Content-Type", "application/json")
+				response.Header.Set("Content-Type", testJSONMedia)
 				response.Body = body
 
 				return response, nil
@@ -129,18 +129,18 @@ func TestDriveCreationOverridesContentTypeWithoutChangingCallerHeaders(t *testin
 	t.Parallel()
 
 	auth := driveAuth()
-	auth.Headers = []icloud.Header{{Name: "Content-Type", Value: "application/json"},
-		{Name: "Cookie", Value: "synthetic-private"}}
+	auth.Headers = []icloud.Header{{Name: "Content-Type", Value: testJSONMedia},
+		{Name: "Cookie", Value: testPrivateCookie}}
 
 	client, err := icloud.New(icloud.WithHTTPTransport(sdkRoundTrip(func(request *http.Request) (*http.Response, error) {
-		if request.Header.Get("Content-Type") != "plain/text" || request.Header.Get("Cookie") != "synthetic-private" {
+		if request.Header.Get("Content-Type") != "plain/text" || request.Header.Get("Cookie") != testPrivateCookie {
 			t.Fatal("creation did not apply its explicit reference header override")
 		}
 
 		response := new(http.Response)
 		response.StatusCode = http.StatusOK
 		response.Header = make(http.Header)
-		response.Header.Set("Content-Type", "application/json")
+		response.Header.Set("Content-Type", testJSONMedia)
 		response.Body = io.NopCloser(strings.NewReader(`{"folders":[]}`))
 
 		return response, nil
@@ -152,7 +152,7 @@ func TestDriveCreationOverridesContentTypeWithoutChangingCallerHeaders(t *testin
 	result, err := client.CreateDriveFolder(t.Context(), icloud.CreateDriveFolderRequest{
 		Auth: auth, ParentID: testDriveNodeID, Name: testDriveDesiredName,
 	})
-	if err != nil || result.Folders == nil || len(*result.Folders) != 0 || auth.Headers[0].Value != "application/json" {
+	if err != nil || result.Folders == nil || len(*result.Folders) != 0 || auth.Headers[0].Value != testJSONMedia {
 		t.Fatal("creation lost empty records or changed the caller's header state")
 	}
 }
@@ -171,7 +171,7 @@ func TestDriveMutationRetainsUnknownEnvelopeAndMissingItems(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if result.Items != nil || string(result.AdditionalMetadata["future"]) != "18446744073709551615" ||
+	if result.Items != nil || string(result.AdditionalMetadata["future"]) != testMaximumUint64 ||
 		string(result.AdditionalMetadata["nullable"]) != testJSONNull {
 		t.Fatal("mutation lost missing-list presence or unknown JSON values")
 	}

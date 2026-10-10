@@ -39,7 +39,7 @@ func TestReminderWritesCancellationAndEntropyFailure(t *testing.T) {
 				continue
 			}
 
-			t.Run(operation+map[bool]string{false: "/entropy", true: "/canceled"}[canceled], func(t *testing.T) {
+			t.Run(operation+map[bool]string{false: "/entropy", true: testCanceledSuffix}[canceled], func(t *testing.T) {
 				t.Parallel()
 				checkReminderPreparationFailure(t, operation, canceled)
 			})

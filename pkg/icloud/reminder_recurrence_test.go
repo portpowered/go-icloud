@@ -36,7 +36,7 @@ func TestReminderRecurrenceUnlinkRemovesEmptyIDs(t *testing.T) {
 	var reminder icloud.Reminder
 
 	reminder.ID = reminderTestRecordName
-	reminder.RecurrenceRuleIDs = []string{"", "RecurrenceRule/keep", recurrenceKeepID, ""}
+	reminder.RecurrenceRuleIDs = []string{"", testRetainedRecurrence, recurrenceKeepID, ""}
 	rule := recurrenceTestRule()
 	rule.ID = ""
 
@@ -50,7 +50,7 @@ func TestReminderRecurrenceUnlinkRemovesEmptyIDs(t *testing.T) {
 		t.Fatal("empty child unlink lost ordered duplicate IDs", result.Reminder.RecurrenceRuleIDs)
 	}
 
-	if !slices.Equal(reminder.RecurrenceRuleIDs, []string{"", "RecurrenceRule/keep", recurrenceKeepID, ""}) {
+	if !slices.Equal(reminder.RecurrenceRuleIDs, []string{"", testRetainedRecurrence, recurrenceKeepID, ""}) {
 		t.Fatal("unlink mutated caller ID list")
 	}
 }
@@ -69,7 +69,7 @@ func TestReminderRecurrencePreparationGuards(t *testing.T) {
 				continue
 			}
 
-			t.Run(operation+map[bool]string{true: "/canceled", false: "/entropy"}[canceled], func(t *testing.T) {
+			t.Run(operation+map[bool]string{true: testCanceledSuffix, false: "/entropy"}[canceled], func(t *testing.T) {
 				t.Parallel()
 
 				entropy := new(reminderFailingEntropy)

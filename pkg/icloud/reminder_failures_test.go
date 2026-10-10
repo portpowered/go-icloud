@@ -21,7 +21,7 @@ func TestReminderWritesPreserveHTTPAndInvalidResponseFailures(t *testing.T) {
 		}{
 			"http-unavailable": {body: `{"reason":"synthetic provider failure"}`,
 				status: http.StatusServiceUnavailable, kind: icloud.Unavailable},
-			"invalid-json":    {body: `not JSON`, status: http.StatusOK, kind: icloud.InvalidResponse},
+			testInvalidJSON:   {body: `not JSON`, status: http.StatusOK, kind: icloud.InvalidResponse},
 			"null-records":    {body: `{"records":null}`, status: http.StatusOK, kind: icloud.InvalidResponse},
 			"invalid-records": {body: `{"records":[false]}`, status: http.StatusOK, kind: icloud.InvalidResponse},
 		} {

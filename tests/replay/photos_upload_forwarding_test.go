@@ -90,6 +90,7 @@ func photoUploadOpaqueRequest(t *testing.T, request *replay.Request) {
 	t.Helper()
 	body := photoUploadOpaqueBody(t, request.Body)
 	request.Body.Value = marshalFindMyRecovery(t, base64.StdEncoding.EncodeToString(body))
+
 	for index := range request.Headers {
 		if request.Headers[index][0] == "content-length" {
 			request.Headers[index][1] = strconv.Itoa(len(body))

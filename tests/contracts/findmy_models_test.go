@@ -127,7 +127,7 @@ func TestGeneratedFindMyCommandParsersPreserveReplyBytes(t *testing.T) {
 			}
 
 			switch operation.OperationID {
-			case "FindMyPlaySound", "FindMySendMessage", "FindMyLostDevice", findMyEraseDeviceSchema:
+			case "FindMyPlaySound", "FindMySendMessage", findMyLostDeviceSchema, findMyEraseDeviceSchema:
 				body := findMyEntityBytes(t, exchange.Response.Body)
 				response := new(http.Response)
 				response.StatusCode = exchange.Response.Status
@@ -173,7 +173,7 @@ func parseFindMyCommandBody(t *testing.T, operation string, response *http.Respo
 		}
 
 		return result.Body
-	case "FindMyLostDevice":
+	case findMyLostDeviceSchema:
 		result, err := findmyapi.ParseFindMyLostDeviceResponse(response)
 		if err != nil {
 			t.Fatal(err)
