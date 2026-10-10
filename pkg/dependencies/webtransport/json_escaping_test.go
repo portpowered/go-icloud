@@ -34,7 +34,7 @@ func TestReferenceJSONEscapesPreservesValuesAndSourceSpelling(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			actual := webtransport.TestReferenceJSONEscapes([]byte(test.input))
+			actual := webtransport.ExportReferenceJSONEscapes([]byte(test.input))
 			if string(actual) != test.expected {
 				t.Fatalf("normalized JSON = %s, want %s", actual, test.expected)
 			}

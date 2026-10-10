@@ -10,7 +10,7 @@ import (
 func TestPhotosGeneratedAssetQueryPreservesSourceBytes(t *testing.T) {
 	t.Parallel()
 
-	body, err := webtransport.TestPhotosAssetBodyLimit(cloudkit.CPLAssetAndMasterByAddedDate, cloudkit.ASCENDING, -1,
+	body, err := webtransport.ExportPhotosAssetBodyLimit(cloudkit.CPLAssetAndMasterByAddedDate, cloudkit.ASCENDING, -1,
 		[]webtransport.PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldRecordName, Value: `synthetic<&>"`}}, 2)
 	if err != nil {
 		t.Fatal(err)
@@ -22,6 +22,7 @@ func TestPhotosGeneratedAssetQueryPreservesSourceBytes(t *testing.T) {
 		`{"comparator": "EQUALS", "fieldName": "recordName", "fieldValue": {"type": "STRING", ` +
 		`"value": "synthetic<&>\""}}]}, ` +
 		`"zoneID": {"zoneName": "PrimarySync", "zoneType": "REGULAR_CUSTOM_ZONE"}, "resultsLimit": 2}`
+
 	if body != expected {
 		t.Fatalf("asset query bytes = %s, want %s", body, expected)
 	}
@@ -35,7 +36,8 @@ func TestPhotosGeneratedAlbumQueryPreservesSourceBytes(t *testing.T) {
 	zone.ZoneName = "synthetic-é"
 	zone.ZoneType.Set("REGULAR_CUSTOM_ZONE")
 	zone.OwnerRecordName.Set("synthetic-owner")
-	body, err := webtransport.TestPhotosAlbumBody(&parent, &continuation, zone)
+
+	body, err := webtransport.ExportPhotosAlbumBody(&parent, &continuation, zone)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,6 +46,7 @@ func TestPhotosGeneratedAlbumQueryPreservesSourceBytes(t *testing.T) {
 		`{"comparator": "EQUALS", "fieldName": "parentId", "fieldValue": {"type": "STRING", "value": "parent<&>"}}]}, ` +
 		`"zoneID": {"zoneName": "synthetic-\u00e9", "zoneType": "REGULAR_CUSTOM_ZONE", ` +
 		`"ownerRecordName": "synthetic-owner"}, "continuationMarker": "next<&>"}`
+
 	if body != expected {
 		t.Fatalf("album query bytes = %s, want %s", body, expected)
 	}
