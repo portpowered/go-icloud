@@ -9,12 +9,14 @@ func TestPhotoSelectionCopiesCallerState(t *testing.T) {
 	t.Parallel()
 
 	var auth AuthContext
+
 	auth.AccountID = "synthetic-account"
 	auth.ClientID = "synthetic-client"
 	auth.PhotosServiceURL = "https://photos.example.invalid"
 	auth.Headers = []Header{{Name: "X-Synthetic", Value: "before"}}
 
 	var library PhotoLibrary
+
 	library.ZoneName = selectedPhotoZone
 	library.Shared = true
 	library.ZoneType.Set("REGULAR_CUSTOM_ZONE")

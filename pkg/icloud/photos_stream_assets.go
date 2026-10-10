@@ -247,6 +247,7 @@ func fillSharedPhoto(photo *Photo, pair photoPair) error {
 		if valueErr != nil || len(value) == 0 {
 			return errSharedDimensions
 		}
+
 		photo.Dimensions = append(photo.Dimensions, value)
 	}
 

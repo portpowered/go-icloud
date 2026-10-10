@@ -54,13 +54,13 @@ func (client *Client) PhotosDatabaseChanges(
 func photosDatabaseRequest(auth RequestContext, body []byte) (*http.Request, error) {
 	if auth.PhotoShared {
 		params := photosSharedDatabaseChangesParams(auth)
+
 		request, err := photosapi.NewPhotosSharedDatabaseChangesRequestWithBody(
 			auth.Origin,
 			params,
 			protocol.PhotosMediaApplicationJson,
 			bytes.NewReader(body),
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf("construct shared photo database changes: %w", err)
 		}
