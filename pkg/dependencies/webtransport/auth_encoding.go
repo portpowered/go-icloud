@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/portpowered/go-icloud/pkg/dependencymodels/auth"
+	bridgemodels "github.com/portpowered/go-icloud/pkg/dependencymodels/bridge"
 )
 
 // EncodeAuthenticationRequest formats schema-owned authentication models like the pinned source.
@@ -24,7 +25,7 @@ func EncodeAuthenticationRequest(input any) ([]byte, error) {
 }
 
 // EncodeBridgeOpaqueData preserves provider-defined metadata and encodes object values inside JSON strings.
-func EncodeBridgeOpaqueData(input any) (json.RawMessage, error) {
+func EncodeBridgeOpaqueData(input bridgemodels.BridgeExchangeAkdata) (json.RawMessage, error) {
 	if input == nil {
 		return nil, nil
 	}

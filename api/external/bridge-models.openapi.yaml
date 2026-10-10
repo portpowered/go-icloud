@@ -122,7 +122,11 @@ components:
         nextStep: {$ref: '#/components/schemas/BridgeStep'}
         data: {type: string}
         idmsdata: {type: string}
-        akdata: {}
+        akdata:
+          $ref: '#/components/schemas/BridgeExchangeAkdata'
+          x-go-type-skip-optional-pointer: true
+    BridgeExchangeAkdata:
+      description: Uninterpreted provider JSON supplied to the native bridge exchange.
     BridgeCompletionData:
       type: string
       enum: [ZG9uZQ==]
