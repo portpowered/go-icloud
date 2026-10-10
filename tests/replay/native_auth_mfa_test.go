@@ -2,8 +2,9 @@ package replay_test
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -35,7 +36,7 @@ func nativeMFAReplay(t *testing.T, name string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err := nativeMFAOperation(t, t.Context(), client, raw, state)
+	result, err := nativeMFAOperation(t, client, raw, state)
 
 	nativeFlowExpectedError(t, raw, err)
 	if err == nil {
@@ -59,7 +60,7 @@ func nativeMFAReplay(t *testing.T, name string) {
 	}
 }
 
-func nativeMFAOperation(t *testing.T, ctx context.Context, client *icloud.SDK,
+func nativeMFAOperation(t *testing.T, client *icloud.SDK,
 	raw map[string]json.RawMessage, state icloud.NativeAuthState,
 ) (*icloud.NativeAuthResult, error) {
 	t.Helper()
@@ -67,26 +68,45 @@ func nativeMFAOperation(t *testing.T, ctx context.Context, client *icloud.SDK,
 	var inputs []json.RawMessage
 	authReplayDecode(t, raw["operation"], &operation)
 	authReplayDecode(t, raw["inputs"], &inputs)
+
+	ctx := t.Context()
+
+	var (
+		result *icloud.NativeAuthResult
+		err    error
+	)
+
 	switch operation {
 	case "validate_2fa_code":
 		var code string
 		authReplayDecode(t, inputs[0], &code)
-		return client.VerifyTwoFactorCode(ctx, icloud.VerifyTwoFactorCodeRequest{Auth: state.Auth, State: state, Code: code})
+
+		result, err = client.VerifyTwoFactorCode(ctx, icloud.VerifyTwoFactorCodeRequest{
+			Auth: state.Auth, State: state, Code: code})
 	case "request_2fa_code":
-		return client.RequestTwoFactorCode(ctx, icloud.RequestTwoFactorCodeRequest{Auth: state.Auth, State: state, PhoneNumberID: nil})
+		result, err = client.RequestTwoFactorCode(ctx, icloud.RequestTwoFactorCodeRequest{
+			Auth: state.Auth, State: state, PhoneNumberID: nil})
 	case "trust_session":
-		return client.TrustSession(ctx, icloud.NativeAuthRequest{Auth: state.Auth, State: state})
+		result, err = client.TrustSession(ctx, icloud.NativeAuthRequest{Auth: state.Auth, State: state})
 	case "send_verification_code":
-		return client.SendTwoStepCode(ctx, icloud.SendTwoStepCodeRequest{Auth: state.Auth, State: state, Device: nativeFixtureDevice(t, inputs[0])})
+		result, err = client.SendTwoStepCode(ctx, icloud.SendTwoStepCodeRequest{
+			Auth: state.Auth, State: state, Device: nativeFixtureDevice(t, inputs[0])})
 	case "validate_verification_code":
 		var code string
 		authReplayDecode(t, inputs[1], &code)
-		return client.VerifyTwoStepCode(ctx, icloud.VerifyTwoStepCodeRequest{Auth: state.Auth, State: state,
+
+		result, err = client.VerifyTwoStepCode(ctx, icloud.VerifyTwoStepCodeRequest{Auth: state.Auth, State: state,
 			Device: nativeFixtureDevice(t, inputs[0]), Code: code})
 	default:
 		t.Fatalf("unknown native MFA fixture operation %s", operation)
-		return nil, nil
+		return nil, errors.ErrUnsupported
 	}
+
+	if err != nil {
+		return nil, fmt.Errorf("native MFA fixture operation: %w", err)
+	}
+
+	return result, nil
 }
 
 func nativeFixtureDevice(t *testing.T, raw json.RawMessage) icloud.TrustedAuthDevice {
@@ -173,11 +193,14 @@ func nativeStatusReplay(t *testing.T, name string) {
 	actual := map[string]bool{"authenticated": result.Authenticated, "trusted_session": result.TrustedSession,
 		"requires_2fa": result.RequiresTwoFactor, "requires_2sa": result.RequiresTwoStep}
 	var expectedFlags map[string]bool
+
 	authReplayDecode(t, expected["value"], &expectedFlags)
 	if !reflect.DeepEqual(actual, expectedFlags) {
 		t.Fatalf("auth status differs: actual %v expected %v", actual, value)
 	}
-	nativeAssertState(t, raw, &icloud.NativeAuthResult{State: result.State, TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep, Responses: result.Responses, Success: result.Authenticated})
+	nativeAssertState(t, raw, &icloud.NativeAuthResult{State: result.State, TrustedSession: result.TrustedSession,
+		RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep,
+		Responses: result.Responses, Success: result.Authenticated})
 	if err = transport.AssertConsumed(); err != nil {
 		t.Fatal(err)
 	}

@@ -57,11 +57,14 @@ func TestNativeSRPRejectsInvalidChallengeWithResponseEvidence(t *testing.T) {
 			initial := authReplayObjectBytes(t, raw["initial_state"])
 			var password string
 			authReplayDecode(t, initial["synthetic_password"], &password)
-			_, err = client.Authenticate(t.Context(), icloud.AuthenticateRequest{Auth: state.Auth, AccountName: state.AccountName,
+			_, err = client.Authenticate(t.Context(), icloud.AuthenticateRequest{
+				Auth: state.Auth, AccountName: state.AccountName,
 				Password: password, TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode, ForceRefresh: true,
 				PauseTwoFactor: false, Service: nil, SavedState: &state, AcceptTerms: false})
 			var failure *icloud.ClientError
-			if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse || failure.StatusCode() != exchanges[1].Response.Status || !bytes.Equal(failure.ResponseBody(), body) || len(failure.PriorResponses()) != 1 {
+			if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse ||
+				failure.StatusCode() != exchanges[1].Response.Status || !bytes.Equal(failure.ResponseBody(), body) ||
+				len(failure.PriorResponses()) != 1 {
 				t.Fatal("invalid SRP challenge lost typed error or response evidence")
 			}
 			if err = transport.AssertConsumed(); err != nil {
@@ -98,7 +101,8 @@ func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) 
 		t.Fatal("missing credentials discarded rejected saved-session evidence")
 	}
 	for index, exchange := range exchanges {
-		if prior[index].StatusCode != exchange.Response.Status || len(prior[index].Headers) != len(exchange.Response.Headers) {
+		if prior[index].StatusCode != exchange.Response.Status ||
+			len(prior[index].Headers) != len(exchange.Response.Headers) {
 			t.Fatal("saved-session failure evidence changed status or headers")
 		}
 	}
@@ -109,12 +113,13 @@ func TestNativeMissingPasswordRetainsRejectedSavedSessionEvidence(t *testing.T) 
 
 func nativeFixtureEntropy(t *testing.T, raw map[string]json.RawMessage) []byte {
 	t.Helper()
-	var entropy struct {
-		RandomBytes []string `json:"random_bytes"`
-	}
-	authReplayDecode(t, raw["entropy"], &entropy)
+	entropy := authReplayObjectBytes(t, raw["entropy"])
+
+	var randomBytes []string
+
+	authReplayDecode(t, entropy["random_bytes"], &randomBytes)
 	result := []byte{}
-	for _, value := range entropy.RandomBytes {
+	for _, value := range randomBytes {
 		decoded, err := base64.StdEncoding.DecodeString(value)
 		if err != nil {
 			t.Fatal(err)

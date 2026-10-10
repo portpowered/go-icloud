@@ -28,6 +28,7 @@ func nativeDevicesReplay(t *testing.T, name string) {
 	}
 	expected := authReplayObjectBytes(t, raw["result"])
 	var devices []json.RawMessage
+
 	authReplayDecode(t, expected["value"], &devices)
 	if len(result.Devices) != len(devices) {
 		t.Fatal("trusted-device count differs")
@@ -37,6 +38,7 @@ func nativeDevicesReplay(t *testing.T, name string) {
 			t.Fatal("trusted-device metadata differs")
 		}
 	}
+
 	nativeFlowResponses(t, raw, result.Responses)
 	if err = transport.AssertConsumed(); err != nil {
 		t.Fatal(err)

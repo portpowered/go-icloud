@@ -2,7 +2,6 @@ package replay_test
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"reflect"
 	"testing"
@@ -27,20 +26,7 @@ func nativeSRPReplay(t *testing.T, name string) {
 	if encoded, exists := initial["synthetic_password"]; exists {
 		authReplayDecode(t, encoded, &password)
 	}
-	var entropy struct {
-		RandomBytes []string `json:"random_bytes"`
-	}
-	if value, exists := raw["entropy"]; exists {
-		authReplayDecode(t, value, &entropy)
-	}
-	var random []byte
-	for _, value := range entropy.RandomBytes {
-		decoded, decodeErr := base64.StdEncoding.DecodeString(value)
-		if decodeErr != nil {
-			t.Fatal(decodeErr)
-		}
-		random = append(random, decoded...)
-	}
+	random := nativeFixtureEntropy(t, raw)
 	client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithRandomSource(bytes.NewReader(random)))
 	if err != nil {
 		t.Fatal(err)
@@ -50,7 +36,7 @@ func nativeSRPReplay(t *testing.T, name string) {
 	request := icloud.AuthenticateRequest{Auth: state.Auth, AccountName: state.AccountName, Password: password,
 		TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode, SavedState: &state,
 		ForceRefresh: keywords["force_refresh"], PauseTwoFactor: keywords["pause_2fa"], Service: nil, AcceptTerms: false}
-	before, err := json.Marshal(request)
+	before, err := json.Marshal(request) //nolint:gosec // G117: synthetic-only ownership snapshot; never exported.
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +45,7 @@ func nativeSRPReplay(t *testing.T, name string) {
 	if err == nil {
 		nativeAssertState(t, raw, result)
 	}
-	after, marshalErr := json.Marshal(request)
+	after, marshalErr := json.Marshal(request) //nolint:gosec // G117: synthetic-only ownership snapshot; never exported.
 	if marshalErr != nil {
 		t.Fatal(marshalErr)
 	}
@@ -83,7 +69,8 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 	authReplayDecode(t, state["requires_mfa"], &requires)
 	authReplayDecode(t, state["code_requested"], &requested)
 	authReplayDecode(t, state["delivery_method"], &delivery)
-	if result.State.RequiresMFA != requires || result.State.CodeRequested != requested || string(result.State.DeliveryMethod) != delivery {
+	if result.State.RequiresMFA != requires || result.State.CodeRequested != requested ||
+		string(result.State.DeliveryMethod) != delivery {
 		t.Fatalf("native challenge status differs: %+v", result.State.Challenge)
 	}
 	provider := result.State.Challenge.ProviderData
@@ -101,13 +88,16 @@ func nativeAssertState(t *testing.T, raw map[string]json.RawMessage, result *icl
 		}
 	}
 	projection := icloud.ResumeSessionResult{Auth: result.State.Auth, TrustToken: result.State.TrustToken,
-		AccountCountryCode: result.State.AccountCountryCode, AccountData: result.State.AccountData, Responses: result.Responses,
-		TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor, RequiresTwoStep: result.RequiresTwoStep}
+		AccountCountryCode: result.State.AccountCountryCode, AccountData: result.State.AccountData,
+		Responses:      result.Responses,
+		TrustedSession: result.TrustedSession, RequiresTwoFactor: result.RequiresTwoFactor,
+		RequiresTwoStep: result.RequiresTwoStep}
 	assertAuthFlags(t, state, &projection)
 	assertResumedCookies(t, state, &projection)
 	session := nativeFixtureSession(t, state)
 	assertResumedCountry(t, session, &projection)
-	if token, exists := session["session_token"]; exists && (result.State.Auth.SessionToken == nil || *result.State.Auth.SessionToken != token) {
+	if token, exists := session["session_token"]; exists &&
+		(result.State.Auth.SessionToken == nil || *result.State.Auth.SessionToken != token) {
 		t.Fatal("native authentication lost session token rotation")
 	}
 	if trust, exists := session["trust_token"]; exists && result.State.TrustToken != trust {
@@ -126,7 +116,11 @@ func nativeFixtureSession(t *testing.T, state map[string]json.RawMessage) map[st
 
 func TestNativeSavedSessionReplay(t *testing.T) {
 	t.Parallel()
-	for _, name := range []string{"auth-authenticate-cloudkit-discovery", "auth-authenticate-cached", "auth-authenticate-paused", "auth-authenticate-refresh", "auth-authenticate-untrusted-refresh", "auth-authenticate-stale-token", "auth-token-cookie-rotation", "auth-authenticate-validation-201", "auth-authenticate-refresh-202", "auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh", "auth-authenticate-quoted-cookie", "auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie"} {
+	for _, name := range []string{"auth-authenticate-cloudkit-discovery", "auth-authenticate-cached",
+		"auth-authenticate-paused", "auth-authenticate-refresh", "auth-authenticate-untrusted-refresh",
+		"auth-authenticate-stale-token", "auth-token-cookie-rotation", "auth-authenticate-validation-201",
+		"auth-authenticate-refresh-202", "auth-authenticate-empty-headers", "auth-authenticate-empty-headers-refresh",
+		"auth-authenticate-quoted-cookie", "auth-authenticate-quoted-cookie-rotation", "auth-authenticate-explicit-cookie"} {
 		t.Run(name, func(t *testing.T) { t.Parallel(); nativeSRPReplay(t, name) })
 	}
 }

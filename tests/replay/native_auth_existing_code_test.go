@@ -20,10 +20,12 @@ func TestNativeExistingTrustedDeviceCodeReplay(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err := client.UseExistingTrustedDeviceCode(t.Context(), icloud.NativeAuthRequest{Auth: state.Auth, State: state})
+	result, err := client.UseExistingTrustedDeviceCode(t.Context(), icloud.NativeAuthRequest{
+		Auth: state.Auth, State: state})
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	nativeAssertState(t, raw, result)
 	after, err := json.Marshal(state)
 	if err != nil || !bytes.Equal(before, after) {

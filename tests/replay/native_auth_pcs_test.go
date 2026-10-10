@@ -74,17 +74,21 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 
 	raw, transport, state := nativeFlowFixture(t, "auth-pcs-enabled")
 	state.AccountData = json.RawMessage(`{`)
+
 	client, err := icloud.New(icloud.WithHTTPTransport(transport))
 	if err != nil {
 		t.Fatal(err)
 	}
 	_, err = client.RequestPCSAccess(t.Context(), icloud.RequestPCSAccessRequest{
 		Auth: state.Auth, State: state, Service: protocol.AuthWebServicesPhotos})
+
 	var failure *icloud.ClientError
+
 	if !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse {
 		t.Fatalf("expected malformed account projection failure, got %v", err)
 	}
 	var exchanges []replay.Exchange
+
 	authReplayDecode(t, raw["exchanges"], &exchanges)
 	final := exchanges[len(exchanges)-1]
 	if failure.StatusCode() != final.Response.Status ||
@@ -98,6 +102,7 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	bodyCopy, headersCopy := failure.ResponseBody(), failure.ResponseHeaders()
 	bodyCopy[0] ^= 1
 	headersCopy[0].Value = "mutation-probe"
+
 	if !reflect.DeepEqual(failure.ResponseBody(), nativeFlowBody(t, final.Response.Body)) ||
 		!reflect.DeepEqual(failure.ResponseHeaders(), metadata[len(metadata)-1].Headers) {
 		t.Fatal("account projection failure exposes mutable response evidence")
@@ -107,7 +112,9 @@ func TestNativePCSAccountProjectionFailure(t *testing.T) {
 	}
 }
 
-func nativeFlowFixture(t *testing.T, name string) (map[string]json.RawMessage, *replay.HTTPTransport, icloud.NativeAuthState) {
+func nativeFlowFixture(t *testing.T, name string) (
+	map[string]json.RawMessage, *replay.HTTPTransport, icloud.NativeAuthState,
+) {
 	t.Helper()
 
 	raw := authReplayObject(t, filepath.Join("fixtures/synthetic/http", name+".json"))
@@ -134,10 +141,12 @@ func nativeFlowFixture(t *testing.T, name string) (map[string]json.RawMessage, *
 	boundary.Cookies = resume.Auth.Cookies
 	boundary.Headers = resume.Auth.Headers
 	boundary.SetupServiceURL = resume.Auth.SetupServiceURL
-	state := icloud.NativeAuthState{Auth: boundary, AccountName: "", AcceptTerms: false, DeliveryNotice: nil, AccountCountryCode: country,
-		AccountData: initial["account_data"], TrustToken: resume.TrustToken, Challenge: icloud.NativeAuthChallenge{
+	state := icloud.NativeAuthState{Auth: boundary, AccountName: "", AcceptTerms: false, DeliveryNotice: nil,
+		AccountCountryCode: country,
+		AccountData:        initial["account_data"], TrustToken: resume.TrustToken, Challenge: icloud.NativeAuthChallenge{
 			Mode: "", AuthInitialRoute: "", HasTrustedDevices: false, PhoneNumbers: []icloud.TrustedPhoneNumber{},
-			AuthFactors: []string{}, SecurityKeyNames: []string{}, BridgeBootstrap: nil, SecurityKeyChallenge: nil, ProviderData: nil},
+			AuthFactors: []string{}, SecurityKeyNames: []string{}, BridgeBootstrap: nil,
+			SecurityKeyChallenge: nil, ProviderData: nil},
 		CodeRequested: false, RequiresMFA: false, DeliveryMethod: icloud.TwoFactorDeliveryUnknown}
 	authReplayDecode(t, initial["account_name"], &state.AccountName)
 
