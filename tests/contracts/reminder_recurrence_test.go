@@ -138,15 +138,15 @@ func checkRecurrenceFieldNegatives(t *testing.T, schema *openapi3.Schema, value 
 		fields[key] = original
 	}
 
-	reference := fields["Reminder"]
+	reference := fields[reminderRecordTypeName]
 	if reference != nil {
-		fields["Reminder"] = map[string]any{recurrenceContractType: "REFERENCE"}
+		fields[reminderRecordTypeName] = map[string]any{recurrenceContractType: "REFERENCE"}
 
 		if schema.VisitJSON(value) == nil {
 			t.Fatal("recurrence reference missing value accepted")
 		}
 
-		fields["Reminder"] = reference
+		fields[reminderRecordTypeName] = reference
 	}
 
 	fields["UnknownKnownField"] = map[string]any{

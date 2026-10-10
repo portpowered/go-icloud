@@ -13,10 +13,10 @@ func TestReminderEndpointRejectsImpossibleStaticFields(t *testing.T) {
 	schema := document.Paths.Value("/database/1/com.apple.reminders/production/private/records/modify").Post.
 		RequestBody.Value.Content["application/json"].Schema.Value
 
-	for _, name := range []string{"create-basic", "update-basic", "delete-success",
-		"create-hashtag-success", "update-hashtag-success", "delete-hashtag-success",
-		"create-recurrence-rule-success", "update-recurrence-rule-success", "delete-recurrence-rule-success",
-		"create-url-attachment-success", "delete-attachment-success", "add-location-trigger-success"} {
+	for _, name := range []string{reminderCreateBasicFixture, "update-basic", "delete-success",
+		reminderCreateHashtagFixture, "update-hashtag-success", "delete-hashtag-success",
+		reminderCreateRecurrenceFixture, "update-recurrence-rule-success", "delete-recurrence-rule-success",
+		"create-url-attachment-success", "delete-attachment-success", reminderAddLocationFixture} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			pair := accountExchanges(t, "../replay/fixtures/synthetic/http/reminders-"+name+".json")[0]
@@ -93,7 +93,7 @@ func checkReminderStaticFieldValues(t *testing.T, schema *openapi3.Schema,
 		wrapper[reminderWriteValue] = previous
 	}
 
-	for _, key := range []string{"Reminder", "List"} {
+	for _, key := range []string{reminderRecordTypeName, "List"} {
 		input, present := fields[key]
 		if !present {
 			continue
@@ -114,6 +114,7 @@ func checkReminderRequiredReference(t *testing.T, schema *openapi3.Schema, value
 	}
 
 	reference["action"] = previous
+
 	delete(wrapper, reminderWriteValue)
 
 	if schema.VisitJSON(value) == nil {

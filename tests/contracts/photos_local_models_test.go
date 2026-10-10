@@ -11,9 +11,9 @@ func TestLocalPhotoModelGeneration(t *testing.T) {
 	t.Parallel()
 
 	artifacts := []generationArtifact{
-		{Schema: "../../api/photo-sync-models.openapi.yaml", Config: "../../pkg/photosync/config.yaml",
+		{Schema: photoSyncModelsPath, Config: "../../pkg/photosync/config.yaml",
 			Output: "../../pkg/photosync/models.gen.go"},
-		{Schema: "../../api/photo-materialize.openapi.yaml", Config: "../../internal/photomaterialize/config.yaml",
+		{Schema: photoMaterializeModelsPath, Config: "../../internal/photomaterialize/config.yaml",
 			Output: "../../internal/photomaterialize/models.gen.go"},
 	}
 	for _, artifact := range artifacts {
@@ -24,7 +24,7 @@ func TestLocalPhotoModelGeneration(t *testing.T) {
 func TestLocalPhotoSchemasValidate(t *testing.T) {
 	t.Parallel()
 
-	for _, path := range []string{"../../api/photo-sync-models.openapi.yaml", "../../api/photo-materialize.openapi.yaml"} {
+	for _, path := range []string{photoSyncModelsPath, photoMaterializeModelsPath} {
 		loader := openapi3.NewLoader()
 		loader.IsExternalRefsAllowed = true
 

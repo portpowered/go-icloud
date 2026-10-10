@@ -87,12 +87,12 @@ func validateAccountConstraints(t *testing.T, document *openapi3.T) {
 	t.Helper()
 
 	for name, invalid := range map[string]string{
-		"AccountDevicesResponse": `{}`,
-		"AccountDevice":          `{"name":false}`,
-		"AccountStorageResponse": `{"storageUsageInfo":{"usedStorageInBytes":-1,"totalStorageInBytes":100}}`,
-		"AccountStorageUsage":    `{"usedStorageInBytes":"15","totalStorageInBytes":100}`,
-		"AccountQuota":           `{"overQuota":"true"}`,
-		"AccountMediaUsage":      `{}`,
+		accountDevicesResponseSchema: `{}`,
+		"AccountDevice":              `{"name":false}`,
+		accountStorageResponseSchema: `{"storageUsageInfo":{"usedStorageInBytes":-1,"totalStorageInBytes":100}}`,
+		"AccountStorageUsage":        `{"usedStorageInBytes":"15","totalStorageInBytes":100}`,
+		"AccountQuota":               `{"overQuota":"true"}`,
+		"AccountMediaUsage":          `{}`,
 	} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
@@ -165,7 +165,7 @@ func validateAccountExchange(t *testing.T, document *openapi3.T, exchange replay
 
 	planPath := regexp.MustCompile(`^/acsegateway/v3/accounts/[^/]+/subscriptions/features/cloud\.storage/plan-summary$`)
 	if planPath.MatchString(path) {
-		path = "/acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary"
+		path = accountStorageSubscriptionPath
 	}
 
 	item := document.Paths.Value(path)
@@ -287,12 +287,12 @@ func accountJSONBody(t *testing.T, entity replay.Entity) any {
 func accountComponent(path string) string {
 	switch path {
 	case "/setup/web/device/getDevices":
-		return "AccountDevicesResponse"
+		return accountDevicesResponseSchema
 	case "/setup/web/family/getFamilyDetails":
 		return "AccountFamilyResponse"
 	case "/setup/ws/1/storageUsageInfo":
-		return "AccountStorageResponse"
-	case "/acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary":
+		return accountStorageResponseSchema
+	case accountStorageSubscriptionPath:
 		return "AccountPlanSummary"
 	case "/setup/web/family/getMemberPhoto":
 		return binaryComponent
@@ -367,7 +367,7 @@ func TestAccountGenerationHasNoDrift(t *testing.T) {
 			Output: "../../pkg/dependencymodels/account/models.gen.go"},
 		{Schema: accountSchemaPath, Config: "../../pkg/dependencies/webtransport/accountapi/config.yaml",
 			Output: "../../pkg/dependencies/webtransport/accountapi/client.gen.go"},
-		{Schema: "../../api/client-models.openapi.yaml", Config: "../../pkg/icloud/config.yaml",
+		{Schema: clientModelsSchemaPath, Config: "../../pkg/icloud/config.yaml",
 			Output: "../../pkg/icloud/models.gen.go"},
 	} {
 		t.Run(filepath.Base(artifact.Output), func(t *testing.T) {

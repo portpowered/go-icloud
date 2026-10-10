@@ -74,7 +74,8 @@ func TestSharedPhotosGenerationHasNoDrift(t *testing.T) {
 	t.Parallel()
 
 	for _, artifact := range []generationArtifact{
-		{Schema: "../../api/external/sharedphotos.openapi.yaml", Config: "../../pkg/dependencies/webtransport/sharedphotosapi/config.yaml",
+		{Schema: "../../api/external/sharedphotos.openapi.yaml",
+			Config: "../../pkg/dependencies/webtransport/sharedphotosapi/config.yaml",
 			Output: "../../pkg/dependencies/webtransport/sharedphotosapi/client.gen.go"},
 		{Schema: "../../api/external/sharedphotos-models.openapi.yaml",
 			Config: "../../pkg/dependencymodels/sharedphotos/config.yaml",

@@ -1,0 +1,33 @@
+package contracts_test
+
+// Independent expected spellings keep malformed contract controls stable.
+const (
+	accountDevicesResponseSchema     = "AccountDevicesResponse"
+	accountStorageResponseSchema     = "AccountStorageResponse"
+	accountStorageSubscriptionPath   = "/acsegateway/v3/accounts/{dsid}/subscriptions/features/cloud.storage/plan-summary"
+	clientModelsSchemaPath           = "../../api/client-models.openapi.yaml"
+	authenticationCountryCodeField   = "accountCountryCode"
+	unregisteredContractPath         = "/unregistered"
+	findMyEraseDeviceSchema          = "FindMyEraseDevice"
+	unknownContractPath              = "/unknown"
+	photoSyncModelsPath              = "../../api/photo-sync-models.openapi.yaml"
+	photoMaterializeModelsPath       = "../../api/photo-materialize.openapi.yaml"
+	reminderCreationTokensSchema     = "ReminderCreationTokensMap"
+	reminderUpdateTokensSchema       = "ReminderUpdateTokensMap"
+	reminderDeletionResolutionSchema = "ReminderDeletionResolutionMap"
+	reminderCreateHashtagFixture     = "create-hashtag-success"
+	reminderCreateRecurrenceFixture  = "create-recurrence-rule-success"
+	reminderAddLocationFixture       = "add-location-trigger-success"
+	reminderCreateBasicFixture       = "create-basic"
+	reminderRecordTypeName           = "Reminder"
+	reminderCreationRequestSchema    = "ReminderCreationRequest"
+	reminderUpdateRequestSchema      = "ReminderUpdateRequest"
+	reminderDeletionRequestSchema    = "ReminderDeletionRequest"
+	reminderNotesDocumentField       = "NotesDocument"
+	remindersLookupOperation         = "RemindersLookupRecords"
+	remindersQueryOperation          = "RemindersQueryRecords"
+	remindersModifyOperation         = "RemindersModifyRecords"
+	remindersChangesOperation        = "RemindersZoneChanges"
+	remindersZonesOperation          = "RemindersListZones"
+	reminderAssetOriginControl       = "asset-origin"
+)

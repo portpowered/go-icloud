@@ -82,7 +82,8 @@ func TestPhotosInitializationWireContracts(t *testing.T) {
 func TestPhotosGenerationHasNoDrift(t *testing.T) {
 	t.Parallel()
 	verifyGeneration(t, generationArtifact{Schema: "../../api/external/photos.openapi.yaml",
-		Config: "../../pkg/dependencies/webtransport/photosapi/config.yaml", Output: "../../pkg/dependencies/webtransport/photosapi/client.gen.go"})
+		Config: "../../pkg/dependencies/webtransport/photosapi/config.yaml",
+		Output: "../../pkg/dependencies/webtransport/photosapi/client.gen.go"})
 }
 
 func validatePhotosInitialization(t *testing.T, document *openapi3.T, path string) {

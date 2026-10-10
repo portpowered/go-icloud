@@ -66,11 +66,11 @@ func TestAuthTokenRequiredFields(t *testing.T) {
 	document := loadDriveDocument(t, "../../api/external/auth-models.openapi.yaml")
 	schema := document.Components.Schemas["AuthTokenLoginRequest"].Value
 
-	for _, field := range []string{"accountCountryCode", "dsWebAuthToken", "extended_login", "trustToken"} {
+	for _, field := range []string{authenticationCountryCodeField, "dsWebAuthToken", "extended_login", "trustToken"} {
 		t.Run(field, func(t *testing.T) {
 			t.Parallel()
 
-			value := map[string]any{"accountCountryCode": nil, "dsWebAuthToken": "synthetic-saved-token",
+			value := map[string]any{authenticationCountryCodeField: nil, "dsWebAuthToken": "synthetic-saved-token",
 				"extended_login": true, "trustToken": ""}
 			delete(value, field)
 

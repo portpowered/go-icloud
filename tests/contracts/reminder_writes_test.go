@@ -17,10 +17,10 @@ func TestReminderWriteVariantsBindCompleteRequests(t *testing.T) {
 	endpoint := document.Paths.Value("/database/1/com.apple.reminders/production/private/records/modify").Post
 
 	for variant, names := range map[string][]string{
-		"ReminderCreationRequest": {"create-basic", "create-completed", "create-dated-child",
+		reminderCreationRequestSchema: {reminderCreateBasicFixture, "create-completed", "create-dated-child",
 			"create-lookup-empty", "create-record-error"},
-		"ReminderUpdateRequest":   {"update-basic", "update-completed", "update-dated-child", "update-record-error"},
-		"ReminderDeletionRequest": {"delete-success", "delete-record-error"},
+		reminderUpdateRequestSchema:   {"update-basic", "update-completed", "update-dated-child", "update-record-error"},
+		reminderDeletionRequestSchema: {"delete-success", "delete-record-error"},
 	} {
 		for _, name := range names {
 			t.Run(name, func(t *testing.T) {
@@ -93,7 +93,7 @@ func checkReminderWriteNegatives(t *testing.T, schema *openapi3.Schema, value an
 		fields[key] = original
 	}
 
-	for _, key := range []string{"TitleDocument", "NotesDocument", "ResolutionTokenMap"} {
+	for _, key := range []string{"TitleDocument", reminderNotesDocumentField, "ResolutionTokenMap"} {
 		original, exists := fields[key]
 		if !exists {
 			continue
@@ -118,7 +118,7 @@ func checkMissingReminderWriteFields(t *testing.T, schema *openapi3.Schema, valu
 	fields := reminderWriteFields(t, value)
 	missing := make(map[string]any)
 
-	for _, key := range []string{"TitleDocument", "NotesDocument", "Deleted"} {
+	for _, key := range []string{"TitleDocument", reminderNotesDocumentField, "Deleted"} {
 		if field, exists := fields[key]; exists {
 			missing[key] = field
 
@@ -172,9 +172,9 @@ func checkEmbeddedReminderTokens(t *testing.T, document *openapi3.T, variant str
 		t.Fatal(err)
 	}
 
-	component := map[string]string{"ReminderCreationRequest": "ReminderCreationTokensMap",
-		"ReminderUpdateRequest":   "ReminderUpdateTokensMap",
-		"ReminderDeletionRequest": "ReminderDeletionResolutionMap"}[variant]
+	component := map[string]string{reminderCreationRequestSchema: reminderCreationTokensSchema,
+		reminderUpdateRequestSchema:   reminderUpdateTokensSchema,
+		reminderDeletionRequestSchema: reminderDeletionResolutionSchema}[variant]
 	schema := document.Components.Schemas[component].Value
 
 	err = schema.VisitJSON(tokens)

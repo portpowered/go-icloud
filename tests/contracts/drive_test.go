@@ -486,9 +486,9 @@ func TestDriveContentBindingRejectsUnissuedTargets(t *testing.T) {
 			case mutationMethod:
 				exchanges[index].Request.Method = http.MethodPost
 			case "issuer":
-				exchanges[0].Request.Path = "/unregistered"
+				exchanges[0].Request.Path = unregisteredContractPath
 			case "issuer-prefix":
-				exchanges[0].Request.Path = "/unregistered" + exchanges[0].Request.Path
+				exchanges[0].Request.Path = unregisteredContractPath + exchanges[0].Request.Path
 			case "issuer-method":
 				exchanges[0].Request.Method = http.MethodPost
 			case "first":
@@ -517,7 +517,7 @@ func TestDriveRouteBindingRejectsUnknownMethodOrPath(t *testing.T) {
 			if mutation == mutationMethod {
 				exchanges[0].Request.Method = http.MethodGet
 			} else {
-				exchanges[0].Request.Path = "/unregistered"
+				exchanges[0].Request.Path = unregisteredContractPath
 			}
 
 			_, err := bindDriveOperation(documents, exchanges, 0)

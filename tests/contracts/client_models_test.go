@@ -12,7 +12,7 @@ func TestPublicClientModelExamples(t *testing.T) {
 
 	loader := openapi3.NewLoader()
 
-	document, err := loader.LoadFromFile("../../api/client-models.openapi.yaml")
+	document, err := loader.LoadFromFile(clientModelsSchemaPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func TestUnknownMetadataSchemasAcceptEveryJSONKind(t *testing.T) {
 	loader := openapi3.NewLoader()
 	loader.IsExternalRefsAllowed = true
 
-	for _, path := range []string{"../../api/client-models.openapi.yaml", accountModelsPath} {
+	for _, path := range []string{clientModelsSchemaPath, accountModelsPath} {
 		document, err := loader.LoadFromFile(path)
 		if err != nil {
 			t.Fatal(err)

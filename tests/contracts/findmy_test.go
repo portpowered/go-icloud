@@ -240,7 +240,7 @@ func TestFindMyRouteAndQueryBindingRejectsUnknowns(t *testing.T) {
 func mutateFindMyBinding(request *replay.Request, query url.Values, mutation string) {
 	switch mutation {
 	case "path":
-		request.Path += "/unknown"
+		request.Path += unknownContractPath
 	case "method":
 		request.Method = "GET"
 	case "required":

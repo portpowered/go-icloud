@@ -10,13 +10,13 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 	models := loadDriveDocument(t, cloudKitModelsPath)
 
 	for name, component := range map[string]string{
-		"create-basic":                   "ReminderCreationTokensMap",
-		"update-basic":                   "ReminderUpdateTokensMap",
-		"delete-success":                 "ReminderDeletionResolutionMap",
-		"create-hashtag-success":         "ReminderHashtagLinkTokensMap",
-		"create-url-attachment-success":  "ReminderAttachmentLinkTokensMap",
-		"create-recurrence-rule-success": "ReminderRecurrenceLinkTokensMap",
-		"add-location-trigger-success":   "ReminderAlarmLinkTokensMap",
+		reminderCreateBasicFixture:      reminderCreationTokensSchema,
+		"update-basic":                  reminderUpdateTokensSchema,
+		"delete-success":                reminderDeletionResolutionSchema,
+		reminderCreateHashtagFixture:    "ReminderHashtagLinkTokensMap",
+		"create-url-attachment-success": "ReminderAttachmentLinkTokensMap",
+		reminderCreateRecurrenceFixture: "ReminderRecurrenceLinkTokensMap",
+		reminderAddLocationFixture:      "ReminderAlarmLinkTokensMap",
 	} {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
@@ -35,12 +35,14 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 			}
 
 			var decoded any
-			if err = json.Unmarshal([]byte(text), &decoded); err != nil {
+			err = json.Unmarshal([]byte(text), &decoded)
+			if err != nil {
 				t.Fatal(err)
 			}
 
 			schema := models.Components.Schemas[component].Value
-			if err = schema.VisitJSON(decoded); err != nil {
+			err = schema.VisitJSON(decoded)
+			if err != nil {
 				t.Fatal(err)
 			}
 
@@ -53,6 +55,7 @@ func TestReminderAllEmbeddedTokenModelsRejectMalformedValues(t *testing.T) {
 			delete(inner, "unexpectedToken")
 			for _, token := range inner {
 				hashtagContractObject(t, token)["counter"] = 2
+
 				break
 			}
 
@@ -77,8 +80,10 @@ func TestReminderEndpointRejectsInvalidDocumentBase64(t *testing.T) {
 
 	fields := hashtagContractFields(t, hashtagContractOperations(t, hashtagContractObject(t, value))[0])
 	wrapper := hashtagContractObject(t, fields["TitleDocument"])
+
 	for _, invalid := range []string{"", "A", "AAA", "!!!!", "AAAA="} {
 		wrapper[reminderWriteValue] = invalid
+
 		if schema.VisitJSON(value) == nil {
 			t.Fatalf("invalid document base64 accepted: %q", invalid)
 		}

@@ -34,7 +34,9 @@ func TestPhotosChangeAndContainerWireContracts(t *testing.T) {
 
 func validatePhotosChangesContract(t *testing.T, document *openapi3.T, path string) {
 	t.Helper()
+
 	exchanges := accountExchanges(t, path)
+
 	for index, exchange := range exchanges {
 		item := document.Paths.Value(exchange.Request.Path)
 		if item == nil {
@@ -62,16 +64,16 @@ func checkPhotosChangeRequestNegatives(t *testing.T, operation *openapi3.Operati
 		t.Fatal(err)
 	}
 	schema := operation.RequestBody.Value.Content["application/json"].Schema.Value
-	fields, ok := value.(map[string]any)
-	if !ok {
+	fields, objectPresent := value.(map[string]any)
+	if !objectPresent {
 		t.Fatal("changes request object missing")
 	}
-	zones, ok := fields["zones"].([]any)
-	if !ok || len(zones) != 1 {
+	zones, zonesPresent := fields["zones"].([]any)
+	if !zonesPresent || len(zones) != 1 {
 		t.Fatal("changes request zone missing")
 	}
-	zone, ok := zones[0].(map[string]any)
-	if !ok {
+	zone, zonePresent := zones[0].(map[string]any)
+	if !zonePresent {
 		t.Fatal("changes zone object missing")
 	}
 	zone["reverse"] = true

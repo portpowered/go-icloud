@@ -21,7 +21,8 @@ func TestReminderRequiredTimestampsRejectNullAtEndpoint(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if err = schema.VisitJSON(value); err != nil {
+			err = schema.VisitJSON(value)
+			if err != nil {
 				t.Fatal(err)
 			}
 
