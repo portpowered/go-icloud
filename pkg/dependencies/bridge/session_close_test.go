@@ -19,6 +19,7 @@ var errBlockedSocketClose = errors.New("synthetic blocked socket close failure")
 
 type blockingCloseSocket struct {
 	*sessionSocket
+
 	entered chan struct{}
 	release chan struct{}
 	once    sync.Once
@@ -41,7 +42,9 @@ func TestSessionConcurrentCloseWaitsForCancellationCleanup(t *testing.T) {
 	socket.entered, socket.release = make(chan struct{}), make(chan struct{})
 	releaseOnce := new(sync.Once)
 	unblock := func() { releaseOnce.Do(func() { close(socket.release) }) }
+
 	defer unblock()
+
 	enqueueToken(t, socket.sessionSocket, pb.Status_STATUS_OK, 0)
 	enqueuePush(t, socket.sessionSocket, unitSession, models.ProverShareStep, `,"salt":"`+unitSalt+`"`)
 	options := unitOptions(t, socket.sessionSocket)
@@ -50,7 +53,9 @@ func TestSessionConcurrentCloseWaitsForCancellationCleanup(t *testing.T) {
 
 		return socket, nil
 	}
+
 	ctx, cancel := context.WithCancel(t.Context())
+
 	defer cancel()
 
 	session, err := bridge.Start(ctx, unitData(), options)
@@ -61,13 +66,16 @@ func TestSessionConcurrentCloseWaitsForCancellationCleanup(t *testing.T) {
 	// Cancellation owns the first Close and deliberately blocks inside socket I/O.
 	cancel()
 	<-socket.entered
+
 	if session.Active() {
 		t.Fatal("closing session still exposes an active connection")
 	}
 
 	returned := make(chan error, 1)
 	go func() { returned <- session.Close() }()
+
 	observation := time.NewTimer(concurrentCloseObservation)
+
 	defer observation.Stop()
 
 	select {
@@ -78,9 +86,11 @@ func TestSessionConcurrentCloseWaitsForCancellationCleanup(t *testing.T) {
 	}
 
 	unblock()
+
 	closeErr := <-returned
 	assertBlockedCloseFailure(t, closeErr)
 	assertBlockedCloseFailure(t, session.Close())
+
 	if socket.calls.Load() != 1 {
 		t.Fatalf("underlying socket closed %d times", socket.calls.Load())
 	}
