@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: iCloud HTTP boundary models
+  version: 0.1.0
+  description: Caller-owned HTTP extension headers supplied through the public Header API.
+paths: {}
+components:
+  schemas:
+    CallerHeaderName:
+      type: string
+      description: Caller-supplied header name. The caller owns this extension key; SDK fixed header names use their generated protocol constants.
+    CallerHeaderValue:
+      type: string
+      description: Caller-supplied HTTP header value, preserved without normalization.
+    CallerHeaderValues:
+      type: array
+      items: {$ref: '#/components/schemas/CallerHeaderValue'}
+      description: Ordered caller-supplied values for one header name, including duplicates and empty values.
+    CallerHeader:
+      type: object
+      required: [name, values]
+      properties:
+        name: {$ref: '#/components/schemas/CallerHeaderName'}
+        values: {$ref: '#/components/schemas/CallerHeaderValues'}
+      additionalProperties: false
+      description: One caller-owned header and its ordered values.
+    CallerHeaderRecords:
+      type: array
+      items: {$ref: '#/components/schemas/CallerHeader'}
+      description: Ordered caller-owned header records; repeated names remain distinct before HTTP canonicalization.
+    CallerHeaderMap:
+      type: object
+      additionalProperties: {$ref: '#/components/schemas/CallerHeaderValues'}
+      description: Caller-owned extension names map to their ordered string values. Each key must originate from caller input; this open shape does not authorize SDK-invented fixed header names.
