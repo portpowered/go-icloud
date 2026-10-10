@@ -269,7 +269,9 @@ def execute(api, scenario, observations=None):
                 return [
                     {
                         **asdict(item),
-                        "modified": item.modified.isoformat() if item.modified else None,
+                        "modified": (
+                            item.modified.isoformat() if item.modified else None
+                        ),
                     }
                     for item in value
                 ]

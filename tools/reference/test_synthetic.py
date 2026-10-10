@@ -22,7 +22,8 @@ class SyntheticTests(unittest.TestCase):
         paths = [
             path
             for path in sorted(FIXTURES.glob("photos-*changes*.json"))
-            if json.loads(path.read_text(encoding="utf-8"))["operation"] == "iter_changes"
+            if json.loads(path.read_text(encoding="utf-8"))["operation"]
+            == "iter_changes"
         ]
         self.assertEqual(len(paths), 11)
         self.assertEqual(sum(replay_synthetic(path) for path in paths), 37)
