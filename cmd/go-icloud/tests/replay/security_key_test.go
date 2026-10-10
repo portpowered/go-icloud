@@ -44,7 +44,8 @@ func TestSecurityKeyCommandUsesSelectedDeviceAndSourceAssertion(t *testing.T) {
 	t.Parallel()
 
 	for _, control := range []string{
-		expectedAcceptedResponse, expectedCallerAssertionControl, expectedMissingDeviceControl, expectedCancelledCeremonyControl,
+		expectedAcceptedResponse, expectedCallerAssertionControl,
+		expectedMissingDeviceControl, expectedCancelledCeremonyControl,
 	} {
 		t.Run(control, func(t *testing.T) {
 			t.Parallel()

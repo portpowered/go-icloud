@@ -148,8 +148,10 @@ func runNativeBridgeCommand(t *testing.T, path string, stdin, lateFailure bool) 
 	nativeBridgeCommandSavedState(t, raw, path, savedPath, client.owner, expectedError, lateFailure)
 
 	console := output.String() + diagnostic.String()
-	for _, secret := range []string{"123456", expectedSyntheticSessionValue, expectedSyntheticTrustValue, expectedSyntheticAuthCookie,
-		expectedSyntheticAccountName, "synthetic-rotated", expectedReplayResponsesField, expectedAccountDataField} {
+	for _, secret := range []string{
+		"123456", expectedSyntheticSessionValue, expectedSyntheticTrustValue, expectedSyntheticAuthCookie,
+		expectedSyntheticAccountName, "synthetic-rotated", expectedReplayResponsesField, expectedAccountDataField,
+	} {
 		if strings.Contains(console, secret) {
 			t.Fatal("console disclosed private bridge data")
 		}

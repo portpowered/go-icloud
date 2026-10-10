@@ -124,8 +124,6 @@ func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.List
 		if err != nil {
 			return nil, fmt.Errorf("visit synthetic photo assets: %w", err)
 		}
-
-		return nil, nil
 	}
 
 	return &icloud.ListPhotoAssetsResult{Photos: []icloud.Photo{photo}, Responses: responses}, nil
