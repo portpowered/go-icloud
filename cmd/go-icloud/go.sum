@@ -26,8 +26,8 @@ github.com/oapi-codegen/runtime v1.7.0 h1:t7358VYPvNbWJ9gdAkIK/smVeHpBf6yp8VTsaZ
 github.com/oapi-codegen/runtime v1.7.0/go.mod h1:GwV7hC2hviaMzj+ITfHVRESK5J2W/GefVwIND/bMGvU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/portpowered/go-icloud v0.0.0-20261010021755-81ab20d63d5a h1:8gw78dF9gwjvb2HpjGkxzWnKYHwFiO3JoEjjO6YHjtk=
-github.com/portpowered/go-icloud v0.0.0-20261010021755-81ab20d63d5a/go.mod h1:5rTN60+0zoYtYsVfd84Okck1FbLkNk8j4cAWdmOGaFg=
+github.com/portpowered/go-icloud v0.0.0-20261010022446-ed7c72b31b4c h1:/4K/Jf8sq2XJGflWpBB4uzVP493nxiTQwFcM8xepxuQ=
+github.com/portpowered/go-icloud v0.0.0-20261010022446-ed7c72b31b4c/go.mod h1:7yRjJFd3tLYaxbYQCJGwhHK/oLmRSLWpMSHOklNH0A8=
 github.com/spkg/bom v0.0.0-20160624110644-59b7046e48ad/go.mod h1:qLr4V1qq6nMqFKkMo8ZTx3f+BZEkzsRUY10Xsm2mwU0=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
