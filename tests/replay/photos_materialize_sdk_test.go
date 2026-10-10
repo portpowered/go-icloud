@@ -25,7 +25,7 @@ const (
 	materializedSyncCursor  = "synthetic-sync"
 	materializedResourceKey = "original"
 	// Windows ERROR_PRIVILEGE_NOT_HELD is the sole optional symlink capability failure.
-	materializationSymlinkPrivilegeError syscall.Errno = 1314
+	errMaterializationSymlinkPrivilege syscall.Errno = 1314
 )
 
 type materializationCase struct {
@@ -82,7 +82,7 @@ func TestPinnedSourceSDKMaterializationSymlinkDestinationReplay(t *testing.T) {
 
 	err := os.Symlink(parent, alias)
 	if err != nil {
-		if runtime.GOOS == "windows" && errors.Is(err, materializationSymlinkPrivilegeError) {
+		if runtime.GOOS == "windows" && errors.Is(err, errMaterializationSymlinkPrivilege) {
 			t.Skipf("Windows symlink creation requires permission: %v", err)
 		}
 
@@ -90,6 +90,7 @@ func TestPinnedSourceSDKMaterializationSymlinkDestinationReplay(t *testing.T) {
 	}
 
 	destination := filepath.Join(alias, "output")
+
 	_, err = os.Stat(destination)
 	if !errors.Is(err, os.ErrNotExist) {
 		t.Fatal("destination leaf must be absent before materialization", err)
