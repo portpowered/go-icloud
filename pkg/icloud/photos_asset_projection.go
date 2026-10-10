@@ -84,7 +84,7 @@ func photoMasterValues(record cloudkit.CKRecord, names []cloudkit.PhotoMasterFie
 func photoKind(master cloudkit.CKRecord, filename string) (PhotoItemType, error) {
 	values, err := photoMasterValues(master, []cloudkit.PhotoMasterField{cloudkit.ItemType, cloudkit.ResOriginalFileType})
 	if err != nil {
-		return "", err
+		return Image, err
 	}
 
 	for _, value := range values {

@@ -66,7 +66,7 @@ func selectReminderRecord(data cloudkit.CKLookupResponse, name string) (cloudkit
 		}
 
 		if record.RecordType != "" && record.RecordName == name {
-			return record, "", nil
+			return record, InvalidResponse, nil
 		}
 	}
 
