@@ -24,8 +24,9 @@ type secretRead struct {
 func readSecret(ctx context.Context, input io.ReadCloser, environment Environment,
 	name string, stdin bool,
 ) (string, error) {
-	if err := ctx.Err(); err != nil {
-		return "", fmt.Errorf("secret input canceled: %w", err)
+	contextErr := ctx.Err()
+	if contextErr != nil {
+		return "", fmt.Errorf("secret input canceled: %w", contextErr)
 	}
 
 	if !stdin {
@@ -50,6 +51,7 @@ func readSecret(ctx context.Context, input io.ReadCloser, environment Environmen
 	select {
 	case <-ctx.Done():
 		closeErr := input.Close()
+
 		<-result
 
 		return "", errors.Join(fmt.Errorf("secret input canceled: %w", ctx.Err()), closeErr)

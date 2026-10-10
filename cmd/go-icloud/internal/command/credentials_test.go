@@ -11,6 +11,11 @@ import (
 	"testing"
 )
 
+const (
+	credentialSessionFlag   = "--session"
+	credentialExportCommand = "credentials-export"
+)
+
 func TestCredentialExportExplicitAndPrivate(t *testing.T) {
 	t.Parallel()
 	root := t.TempDir()
@@ -25,8 +30,8 @@ func TestCredentialExportExplicitAndPrivate(t *testing.T) {
 
 	var output, diagnostic bytes.Buffer
 
-	err = Run(t.Context(), nil, []string{"--session", source, "--export-session", destination,
-		"credentials-export"}, &output, &diagnostic)
+	err = Run(t.Context(), nil, []string{credentialSessionFlag, source, "--export-session", destination,
+		credentialExportCommand}, &output, &diagnostic)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +53,8 @@ func TestCredentialExportRequiresDestination(t *testing.T) {
 
 	var output, diagnostic bytes.Buffer
 
-	err := Run(t.Context(), nil, []string{"--session", "unused.json", "credentials-export"}, &output, &diagnostic)
+	err := Run(t.Context(), nil, []string{credentialSessionFlag, "unused.json", credentialExportCommand},
+		&output, &diagnostic)
 	if !errors.Is(err, errExportDestination) || output.Len() != 0 {
 		t.Fatalf("export did not require explicit destination: %v", err)
 	}
