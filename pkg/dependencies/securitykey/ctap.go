@@ -30,6 +30,7 @@ func (channel *channel) call(ctx context.Context, command wire.CTAPCommand, requ
 	if err != nil {
 		return err
 	}
+
 	payload := []byte{commandByte}
 
 	if request != nil {
@@ -499,6 +500,7 @@ func checkedCommand(command wire.CTAPCommand) (byte, error) {
 	if command < 0 || command > math.MaxUint8 {
 		return 0, keyFailure("CTAP command", ErrProtocol)
 	}
+
 	return byte(command), nil
 }
 
@@ -544,6 +546,7 @@ func selectionRetry(err error, maximum, count int) (int, int, error) {
 		if maximum <= 1 {
 			return 0, 0, err
 		}
+
 		return maximum - 1, 0, nil
 	case int(wire.NoCredentials):
 		return maximum, count, nil

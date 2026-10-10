@@ -210,8 +210,10 @@ func (channel *channel) readReport(ctx context.Context) ([]byte, error) {
 	if count != len(packet) {
 		return nil, keyFailure("report", ErrProtocol)
 	}
+
 	if binary.BigEndian.Uint32(packet) != channel.id {
 		return nil, keyFailure("response channel", ErrProtocol)
 	}
+
 	return packet, nil
 }
