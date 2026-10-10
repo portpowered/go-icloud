@@ -9,13 +9,13 @@ import (
 func TestPhotosGeneratedAssetQueryPreservesSourceBytes(t *testing.T) {
 	t.Parallel()
 
-	body, err := photosAssetBodyLimit(cloudkit.CPLAssetByAssetDate, cloudkit.ASCENDING, -1,
+	body, err := photosAssetBodyLimit(cloudkit.CPLAssetAndMasterByAddedDate, cloudkit.ASCENDING, -1,
 		[]PhotosAssetSelector{{Field: cloudkit.PhotoAssetQueryFieldRecordName, Value: `synthetic<&>"`}}, 2)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	const expected = `{"query": {"recordType": "CPLAssetByAssetDate", "filterBy": [` +
+	const expected = `{"query": {"recordType": "CPLAssetAndMasterByAddedDate", "filterBy": [` +
 		`{"comparator": "EQUALS", "fieldName": "direction", "fieldValue": {"type": "STRING", "value": "ASCENDING"}}, ` +
 		`{"comparator": "EQUALS", "fieldName": "startRank", "fieldValue": {"type": "INT64", "value": 0}}, ` +
 		`{"comparator": "EQUALS", "fieldName": "recordName", "fieldValue": {"type": "STRING", ` +
