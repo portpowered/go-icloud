@@ -3,6 +3,8 @@ generate:
   models: true
 output: pkg/dependencymodels/auth/models.gen.go
 output-options:
+  user-templates:
+    typedef.tmpl: api/templates/schema-types.tmpl
   skip-prune: true
   nullable-type: true
 import-mapping:

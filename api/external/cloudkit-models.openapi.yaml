@@ -417,6 +417,7 @@
         "type": "object"
       },
       "CKEmptyRequest": {
+        "x-go-type": "struct{}",
         "additionalProperties": false,
         "description": "Empty payload for zone discovery.",
         "example": {},

@@ -24,20 +24,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "nullable": true,
-                "enum": [
-                  null
-                ]
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSessionValidationRequest"
               }
             },
             "*/*": {
               "schema": {
-                "type": "object",
-                "nullable": true,
-                "enum": [
-                  null
-                ]
+                "$ref": "./auth-models.openapi.yaml#/components/schemas/AuthSessionValidationRequest"
               }
             }
           },

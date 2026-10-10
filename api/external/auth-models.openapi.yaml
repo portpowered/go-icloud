@@ -8,6 +8,12 @@
   "paths": {},
   "components": {
     "schemas": {
+      "AuthSessionValidationRequest": {
+        "description": "Saved-session validation submits only the JSON null value.",
+        "type": "object",
+        "nullable": true,
+        "enum": [null]
+      },
       "UnknownJSONValue": {
         "description": "Uninterpreted provider metadata retained without loss.",
         "anyOf": [
