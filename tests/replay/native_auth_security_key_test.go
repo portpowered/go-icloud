@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"slices"
 	"testing"
 
 	"github.com/portpowered/go-icloud/pkg/dependencies/securitykey"
@@ -13,6 +14,8 @@ import (
 	keymodels "github.com/portpowered/go-icloud/pkg/dependencymodels/securitykey"
 	"github.com/portpowered/go-icloud/pkg/icloud"
 )
+
+const nativeFixtureCeremonyOrigin = "https://apple.com"
 
 func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 	t.Parallel()
@@ -22,9 +25,7 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 			t.Parallel()
 			raw, transport, state := nativeFlowFixture(t, nativeKeyAcceptedFixture)
 			assertion := nativeFixtureAssertion(t, raw, &state)
-			provider := &nativeFixtureAuthenticator{
-				devices:   []icloud.SecurityKeyDevice{{ID: nativeKeyDeviceID, Name: nativeKeyDeviceName}},
-				assertion: assertion, err: nil, request: nil, mutateInput: true}
+			provider := newNativeFixtureAuthenticator(t, raw, assertion, nil, true)
 			client, err := icloud.New(icloud.WithHTTPTransport(transport), icloud.WithSecurityKeyAuthenticator(provider))
 			if err != nil {
 				t.Fatal(err)
@@ -52,10 +53,7 @@ func TestNativeSecurityKeyAssertionReplay(t *testing.T) {
 			if err != nil || !bytes.Equal(before, after) {
 				t.Fatal("security-key verification changed caller state")
 			}
-			if ceremony && (provider.request == nil || provider.request.DeviceID != nativeKeyDeviceID ||
-				provider.request.Origin != icloud.HttpsappleCom || provider.request.UserVerification != icloud.Discouraged) {
-				t.Fatal("security-key ceremony binding differs")
-			}
+			provider.assertConsumed(ceremony)
 			err = transport.AssertConsumed()
 			if err != nil {
 				t.Fatal(err)
@@ -96,7 +94,39 @@ func nativeFixtureAssertion(t *testing.T, raw map[string]json.RawMessage,
 		AuthenticatorData: payload.AuthenticatorData, CredentialID: payload.CredentialID, UserHandle: payload.UserHandle}
 }
 
+// LIB-05: derive the hardware boundary directly from the fixture, independently
+// of the mutable state supplied to the SDK and the canned provider assertion.
+func newNativeFixtureAuthenticator(t *testing.T, raw map[string]json.RawMessage,
+	assertion icloud.SecurityKeyAssertion, failure error, mutate bool,
+) *nativeFixtureAuthenticator {
+	t.Helper()
+	initial := authReplayObjectBytes(t, raw["initial_state"])
+
+	var challenge auth.AuthChallenge
+
+	authReplayDecode(t, initial["auth_data"], &challenge)
+	if challenge.FsaChallenge == nil {
+		t.Fatal("security challenge missing")
+	}
+
+	key := challenge.FsaChallenge
+
+	return &nativeFixtureAuthenticator{
+		test: t, calls: nil,
+		devices:   []icloud.SecurityKeyDevice{{ID: nativeKeyDeviceID, Name: nativeKeyDeviceName}},
+		assertion: assertion, err: failure, request: nil, mutateInput: mutate,
+		expected: icloud.SecurityKeyCeremony{
+			DeviceID: nativeKeyDeviceID, Origin: nativeFixtureCeremonyOrigin, UserVerification: "discouraged",
+			Challenge: icloud.SecurityKeyChallenge{Challenge: *key.Challenge,
+				CredentialIDs: slices.Clone(*key.KeyHandles), RelyingPartyID: *key.RpId},
+		},
+	}
+}
+
 type nativeFixtureAuthenticator struct {
+	test        *testing.T
+	calls       []string
+	expected    icloud.SecurityKeyCeremony
 	devices     []icloud.SecurityKeyDevice
 	assertion   icloud.SecurityKeyAssertion
 	err         error
@@ -104,17 +134,64 @@ type nativeFixtureAuthenticator struct {
 	mutateInput bool
 }
 
-func (provider *nativeFixtureAuthenticator) Devices(_ context.Context) ([]icloud.SecurityKeyDevice, error) {
+func (provider *nativeFixtureAuthenticator) Devices(ctx context.Context) ([]icloud.SecurityKeyDevice, error) {
+	provider.test.Helper()
+
+	if ctx != provider.test.Context() || ctx.Err() != nil || len(provider.calls) != 0 {
+		provider.test.Fatal("security-key discovery context, order, or count differs")
+	}
+
+	provider.calls = append(provider.calls, "Devices")
+
 	return provider.devices, nil
 }
-func (provider *nativeFixtureAuthenticator) Assert(_ context.Context, request icloud.SecurityKeyCeremony) (
+
+func (provider *nativeFixtureAuthenticator) Assert(ctx context.Context, request icloud.SecurityKeyCeremony) (
 	icloud.SecurityKeyAssertion, error,
 ) {
-	provider.request = &request
+	provider.test.Helper()
+
+	if ctx != provider.test.Context() || ctx.Err() != nil || !slices.Equal(provider.calls, []string{"Devices"}) {
+		provider.test.Fatal("security-key assertion context, order, or count differs")
+	}
+
+	expected := provider.expected
+	if request.DeviceID != expected.DeviceID || request.Origin != expected.Origin ||
+		request.UserVerification != expected.UserVerification ||
+		request.Challenge.Challenge != expected.Challenge.Challenge ||
+		request.Challenge.RelyingPartyID != expected.Challenge.RelyingPartyID ||
+		!slices.Equal(request.Challenge.CredentialIDs, expected.Challenge.CredentialIDs) {
+		provider.test.Fatal("security-key ceremony binding differs from fixture")
+	}
+
+	provider.calls = append(provider.calls, "Assert")
+
+	snapshot := request
+	snapshot.Challenge.CredentialIDs = slices.Clone(request.Challenge.CredentialIDs)
+	provider.request = &snapshot
+
 	if provider.mutateInput {
 		request.Challenge.CredentialIDs[0] = nativeMutationProbe
 	}
+
 	return provider.assertion, provider.err
+}
+
+func (provider *nativeFixtureAuthenticator) assertConsumed(ceremony bool) {
+	provider.test.Helper()
+
+	if !ceremony {
+		if len(provider.calls) != 0 || provider.request != nil {
+			provider.test.Fatal("caller assertion unexpectedly invoked hardware")
+		}
+
+		return
+	}
+
+	if !slices.Equal(provider.calls, []string{"Devices", "Assert"}) || provider.request == nil ||
+		!slices.Equal(provider.request.Challenge.CredentialIDs, provider.expected.Challenge.CredentialIDs) {
+		provider.test.Fatal("security-key ceremony incomplete or request snapshot mutated")
+	}
 }
 
 func TestNativeSecurityKeyBindingRejectsInvalidAssertions(t *testing.T) {
@@ -133,7 +210,7 @@ func TestNativeSecurityKeyBindingRejectsInvalidAssertions(t *testing.T) {
 				state.Challenge.SecurityKeyChallenge.Challenge = "d3Jvbmc"
 			case nativeKeyOriginControl:
 				assertion.ClientData = bytes.ReplaceAll(assertion.ClientData,
-					[]byte("https://apple.com"), []byte("https://wrong.example.invalid"))
+					[]byte(nativeFixtureCeremonyOrigin), []byte("https://wrong.example.invalid"))
 			case nativeKeyClientTypeControl:
 				assertion.ClientData = bytes.ReplaceAll(assertion.ClientData, []byte("webauthn.get"), []byte("webauthn.create"))
 			case nativeKeyCrossOriginControl:
@@ -191,9 +268,7 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 			t.Parallel()
 			raw, _, state := nativeFlowFixture(t, nativeKeyAcceptedFixture)
 			assertion := nativeFixtureAssertion(t, raw, &state)
-			provider := &nativeFixtureAuthenticator{
-				devices:   []icloud.SecurityKeyDevice{{ID: nativeKeyDeviceID, Name: nativeKeyDeviceName}},
-				assertion: assertion, err: control.cause, request: nil, mutateInput: false}
+			provider := newNativeFixtureAuthenticator(t, raw, assertion, control.cause, false)
 			client, err := icloud.New(icloud.WithHTTPTransport(nativeNoAuthTransport{test: t}),
 				icloud.WithSecurityKeyAuthenticator(provider))
 			if err != nil {
@@ -207,6 +282,8 @@ func TestNativeSecurityKeyProviderErrorsRemainInspectable(t *testing.T) {
 			if !errors.As(err, &failure) || failure.Kind() != control.kind || !errors.Is(err, control.cause) {
 				t.Fatal("security-key error lost class or cause")
 			}
+
+			provider.assertConsumed(true)
 		})
 	}
 }
