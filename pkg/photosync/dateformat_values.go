@@ -100,6 +100,7 @@ func parseDateValueSpec(spec string) (dateValueSpec, error) {
 		`([0-9]*)([_,])?(?:\.([0-9]+))?([bcdeEfFgGnosxX%]?)$`)
 	match := pattern.FindStringSubmatch(spec)
 	result := new(dateValueSpec)
+
 	result.precision = -1
 	if match == nil {
 		return *result, errFolderFormat
