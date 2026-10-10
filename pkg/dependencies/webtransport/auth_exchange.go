@@ -15,6 +15,24 @@ var errUnknownAuthRoute = errors.New("authentication route is absent from the pr
 func (client *Client) ExchangeAuthentication(ctx context.Context, call AuthenticationCall,
 	headers http.Header, cookies *CookieState,
 ) (*BytesResponse, error) {
+	switch call.(type) {
+	case AuthorizeAuthSignInCall, GetAuthChallengeCall, TrustAuthSessionCall,
+		ListAuthTrustedDevicesCall, GetAuthWebAccessStateCall, EnableAuthPCSConsentCall,
+		InitAuthSRPCall, CompleteAuthSRPCall, LoginAuthTokenCall, LoginAuthCredentialsCall,
+		RequestAuthSMSCall, VerifyAuthSMSCall, VerifyAuthTrustedCodeCall, VerifyAuthSecurityKeyCall,
+		SendAuthVerificationCodeCall, ValidateAuthVerificationCodeCall,
+		GetAuthTermsCall, AcceptAuthTermsCall, LogoutAuthSessionCall, RequestAuthPCSCall,
+		AuthBridgeStep0Call, AuthBridgeStep2Call, AuthBridgeStep4Call, AuthBridgeStep6Call,
+		ValidateAuthBridgeCodeCall:
+		return client.exchangeAuthenticationCall(ctx, call, headers, cookies)
+	default:
+		return nil, failure(Configuration, errUnknownAuthRoute, nil, nil)
+	}
+}
+
+func (client *Client) exchangeAuthenticationCall(ctx context.Context, call AuthenticationCall,
+	headers http.Header, cookies *CookieState,
+) (*BytesResponse, error) {
 	request, err := buildAuthenticationRequest(call)
 	if err != nil {
 		return nil, failure(Configuration, err, nil, nil)
