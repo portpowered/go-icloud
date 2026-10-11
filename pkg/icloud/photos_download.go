@@ -30,7 +30,7 @@ func (sdk *SDK) DownloadPhoto(ctx context.Context, request DownloadPhotoRequest)
 		return nil, read.failure(errPhotoAlbumMissing, NotFound)
 	}
 
-	photos, err := read.lookupPhoto(ctx, entry, request.PhotoID, projectPhotoResources)
+	photos, err := read.lookupPhoto(ctx, entry, request.PhotoID, false, projectPhotoResources)
 	if err != nil {
 		return nil, err
 	}

@@ -143,12 +143,13 @@ func (read *photosRead) lookupMutationPhoto(ctx context.Context, entry photoAlbu
 ) (cloudkit.CKRecord, cloudkit.CKRecord, bool, error) {
 	var master, asset cloudkit.CKRecord
 
-	photos, err := read.lookupPhoto(ctx, entry, photoID, func(masterRecord, assetRecord cloudkit.CKRecord) (Photo, error) {
-		master = masterRecord
-		asset = assetRecord
+	photos, err := read.lookupPhoto(ctx, entry, photoID, false,
+		func(masterRecord, assetRecord cloudkit.CKRecord) (Photo, error) {
+			master = masterRecord
+			asset = assetRecord
 
-		return projectPhoto(masterRecord, assetRecord)
-	})
+			return projectPhoto(masterRecord, assetRecord)
+		})
 
 	return master, asset, len(photos) != 0, err
 }

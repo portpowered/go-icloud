@@ -1728,7 +1728,7 @@ type GetPhotoLibraryChangesResult struct {
 	Zones      []PhotoLibraryChange      `json:"zones"`
 }
 
-// GetPhotoRequest Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.
+// GetPhotoRequest Find one primary album photo by asset identifier. Enumeration fallback is enabled unless directLookupOnly is true.
 //
 // Example: {"album":"Library","auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"},"photoID":"synthetic-asset"}
 type GetPhotoRequest struct {
@@ -1737,6 +1737,9 @@ type GetPhotoRequest struct {
 
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
+
+	// DirectLookupOnly Return explicit null after a direct lookup miss without enumerating the album. Useful for bounded reads of previously listed asset identifiers.
+	DirectLookupOnly *bool `json:"directLookupOnly,omitempty"`
 
 	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.
 	//
