@@ -428,7 +428,7 @@ func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthConte
 			PhotoID: config.photoID, Version: config.photoVersion, Library: nil}))
 	case photoCommand:
 		return wrap(client.GetPhoto(ctx, icloud.GetPhotoRequest{Auth: auth, Album: config.album,
-			PhotoID: config.photoID, Library: nil}))
+			PhotoID: config.photoID, Library: nil, DirectLookupOnly: nil}))
 	default:
 		return wrap(client.ListPhotoAlbums(ctx, icloud.ListPhotoAlbumsRequest{Auth: auth, Library: nil}))
 	}
