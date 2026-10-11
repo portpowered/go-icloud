@@ -16,6 +16,7 @@ const malformedDriveReceiptVariant = "malformed"
 
 func TestDriveUploadStructuredReceipt(t *testing.T) {
 	t.Parallel()
+
 	for _, variant := range []string{"structured", "rejected", "missing-code", malformedDriveReceiptVariant} {
 		t.Run(variant, func(t *testing.T) {
 			t.Parallel()
