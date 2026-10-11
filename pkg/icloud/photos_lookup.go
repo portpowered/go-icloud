@@ -6,7 +6,7 @@ import (
 )
 
 // GetPhoto checks the direct album lookup, then scans album pages until the asset is found.
-// A photo absent from both sources is returned as explicit null with complete response evidence.
+// DirectLookupOnly disables enumeration fallback. An absent photo is explicit null.
 func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhotoResult, error) {
 	read, err := sdk.beginPhotosRead(ctx, request.Auth, "GetPhoto", request.Library)
 	if err != nil {
@@ -28,7 +28,9 @@ func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhot
 		return nil, read.failure(errPhotoAlbumMissing, NotFound)
 	}
 
-	photos, err := read.lookupPhoto(ctx, entry, request.PhotoID, projectPhoto)
+	directOnly := request.DirectLookupOnly != nil && *request.DirectLookupOnly
+
+	photos, err := read.lookupPhoto(ctx, entry, request.PhotoID, directOnly, projectPhoto)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +48,7 @@ func (sdk *SDK) GetPhoto(ctx context.Context, request GetPhotoRequest) (*GetPhot
 type photoProjection func(cloudkit.CKRecord, cloudkit.CKRecord) (Photo, error)
 
 func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, photoID string,
-	project photoProjection,
+	directOnly bool, project photoProjection,
 ) ([]Photo, error) {
 	spec := read.querySpec(entry)
 
@@ -62,7 +64,7 @@ func (read *photosRead) lookupPhoto(ctx context.Context, entry photoAlbumEntry, 
 		return nil, read.failure(err, InvalidResponse)
 	}
 
-	if len(photos) != 0 {
+	if len(photos) != 0 || directOnly {
 		return photos, nil
 	}
 

@@ -31,7 +31,9 @@ guessing its database from a display name.
 
 Choose an album by returned ID, name or full folder path. `GetPhotoAlbumCount`
 reads its indexed count. `GetPhoto` finds an asset by ID with direct lookup and
-paged fallback; an absent photo is null. `ListRecentlyAddedPhotos` reads newest
+paged fallback; an absent photo is null. Set `GetPhotoRequest.DirectLookupOnly`
+to true to return null after a direct lookup miss without scanning album pages.
+This keeps checks of previously listed asset IDs bounded. `ListRecentlyAddedPhotos` reads newest
 additions with overlap deduplication. `VisitPhotoAssets` and
 `VisitRecentlyAddedPhotos` deliver generated `PhotoVisitEvent` values
 synchronously. Return false to stop, or return an error to propagate a failure;

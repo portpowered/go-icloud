@@ -2601,7 +2601,7 @@
         "type": "object"
       },
       "GetPhotoRequest": {
-        "description": "Find one primary album photo by asset identifier, with enumeration fallback when direct lookup misses.",
+        "description": "Find one primary album photo by asset identifier. Enumeration fallback is enabled unless directLookupOnly is true.",
         "example": {
           "album": "Library",
           "auth": {
@@ -2619,6 +2619,10 @@
           },
           "auth": {
             "$ref": "#/components/schemas/AuthContext"
+          },
+          "directLookupOnly": {
+            "description": "Return explicit null after a direct lookup miss without enumerating the album. Useful for bounded reads of previously listed asset identifiers.",
+            "type": "boolean"
           },
           "library": {
             "$ref": "#/components/schemas/PhotoLibrary",
