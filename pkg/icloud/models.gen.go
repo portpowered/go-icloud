@@ -1738,7 +1738,7 @@ type GetPhotoRequest struct {
 	// Auth Caller-owned account identity and web authentication headers. The reusable client never saves this state.
 	Auth AuthContext `json:"auth"`
 
-	// DirectLookupOnly Return explicit null after a direct lookup miss without enumerating the album. Useful for bounded reads of previously listed asset identifiers.
+	// DirectLookupOnly Disable album enumeration. Library query misses use bounded asset and master record lookups; deleted or hidden assets return null. Other albums use only their indexed query.
 	DirectLookupOnly *bool `json:"directLookupOnly,omitempty"`
 
 	// Library Caller-owned library identity; SharedSync zones discovered privately retain the private database.

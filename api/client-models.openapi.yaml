@@ -2621,7 +2621,7 @@
             "$ref": "#/components/schemas/AuthContext"
           },
           "directLookupOnly": {
-            "description": "Return explicit null after a direct lookup miss without enumerating the album. Useful for bounded reads of previously listed asset identifiers.",
+            "description": "Disable album enumeration. Library query misses use bounded asset and master record lookups; deleted or hidden assets return null. Other albums use only their indexed query.",
             "type": "boolean"
           },
           "library": {
