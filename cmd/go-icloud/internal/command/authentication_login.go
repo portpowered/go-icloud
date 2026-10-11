@@ -12,6 +12,7 @@ import (
 
 func login(ctx context.Context, client icloud.Client, config options,
 	input io.ReadCloser, environment Environment, output io.Writer,
+	diagnostic io.Writer,
 ) error {
 	if environment == nil {
 		return errAccountEnvironment
@@ -28,7 +29,16 @@ func login(ctx context.Context, client icloud.Client, config options,
 	}
 
 	if account == "" {
-		return errAccountEnvironment
+		if !config.interactive {
+			return errAccountEnvironment
+		}
+
+		_, _ = fmt.Fprint(diagnostic, "Apple ID: ")
+
+		account, err = readSecret(ctx, input, environment, "GO_ICLOUD_ACCOUNT", true)
+		if err != nil {
+			return err
+		}
 	}
 
 	if state.AccountName != "" && state.AccountName != account {
@@ -37,6 +47,11 @@ func login(ctx context.Context, client icloud.Client, config options,
 
 	password := environment("GO_ICLOUD_PASSWORD")
 	if config.secretStdin || password != "" || state.Auth.SessionToken == nil {
+		if config.interactive && password == "" {
+			_, _ = fmt.Fprint(diagnostic, "Password (hidden on a terminal): ")
+			config.secretStdin = true
+		}
+
 		password, err = readSecret(ctx, input, environment, "GO_ICLOUD_PASSWORD", config.secretStdin)
 		if err != nil {
 			return err
@@ -49,7 +64,7 @@ func login(ctx context.Context, client icloud.Client, config options,
 
 	request := icloud.AuthenticateRequest{Auth: state.Auth, AccountName: account, Password: password,
 		SavedState: nil, TrustToken: state.TrustToken, AccountCountryCode: state.AccountCountryCode,
-		ForceRefresh: config.forceRefresh || config.operation == authRenewCommand, PauseTwoFactor: true,
+		ForceRefresh: config.forceRefresh || config.operation == authRenewCommand, PauseTwoFactor: !config.interactive,
 		AcceptTerms: config.acceptTerms, Service: nil}
 
 	if config.authService != "" {
@@ -63,6 +78,10 @@ func login(ctx context.Context, client icloud.Client, config options,
 	result, err := client.Authenticate(ctx, request)
 	if err != nil {
 		return fmt.Errorf("login: %w", err)
+	}
+
+	if config.interactive {
+		return completeInteractiveLogin(ctx, client, config, result, input, environment, output, diagnostic)
 	}
 
 	return storeAuthenticationResult(ctx, config.session, result, output)

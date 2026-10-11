@@ -1,11 +1,12 @@
 package command
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
+	"golang.org/x/term"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -61,7 +62,40 @@ func readSecret(ctx context.Context, input io.ReadCloser, environment Environmen
 }
 
 func readSecretLine(input io.Reader) secretRead {
-	data, err := bufio.NewReader(io.LimitReader(input, maximumSecretBytes+1)).ReadString('\n')
+	if file, ok := input.(*os.File); ok && term.IsTerminal(int(file.Fd())) {
+		data, err := term.ReadPassword(int(file.Fd()))
+		if err != nil {
+			return secretRead{value: "", err: fmt.Errorf("read terminal secret: %w", err)}
+		}
+
+		if len(data) == 0 || len(data) > maximumSecretBytes {
+			return secretRead{value: "", err: errSecret}
+		}
+
+		return secretRead{value: string(data), err: nil}
+	}
+	// Do not read ahead: interactive login consumes account, password and code
+	// consecutively from the same input, including piped automation.
+	var (
+		data string
+		err  error
+	)
+
+	for len(data) <= maximumSecretBytes {
+		var next [1]byte
+
+		_, err = io.ReadFull(input, next[:])
+		if err != nil {
+			break
+		}
+
+		data += string(next[:])
+
+		if next[0] == '\n' {
+			break
+		}
+	}
+
 	if err != nil && !errors.Is(err, io.EOF) {
 		return secretRead{value: "", err: fmt.Errorf("read secret input: %w", err)}
 	}

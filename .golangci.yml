@@ -25,6 +25,9 @@ linters:
           list-mode: strict
           allow:
             - $gostd
+            # CLI parsing and terminal secret input use maintained libraries.
+            - github.com/urfave/cli/v3
+            - golang.org/x/term
             # Incremental DEFLATE preserves Source output at truncated HTTP EOF.
             - github.com/dsnet/compress/flate
             - github.com/portpowered/go-icloud

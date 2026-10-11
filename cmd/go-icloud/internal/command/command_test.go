@@ -30,6 +30,23 @@ func TestHelpWithoutCredentials(t *testing.T) {
 	}
 }
 
+func TestCLIFlagsPreserveLiteralCommas(t *testing.T) {
+	t.Parallel()
+
+	const literalMessage = "Hello, phone"
+
+	var diagnostic bytes.Buffer
+
+	config, err := parse(t.Context(), []string{"--message", literalMessage, "findmy-message"}, &diagnostic)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if config.message == nil || *config.message != literalMessage {
+		t.Fatal("framework split a literal message at its comma")
+	}
+}
+
 func TestMissingSessionPreservesCause(t *testing.T) {
 	t.Parallel()
 	_, err := loadSession(filepath.Join(t.TempDir(), "missing.json"))
