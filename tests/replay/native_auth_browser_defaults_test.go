@@ -9,7 +9,7 @@ import (
 
 func TestNativeLoginDefaultsReachAccountTokenExchange(t *testing.T) {
 	t.Parallel()
-	raw := authReplayObject(t, "fixtures/synthetic/http/auth-native-browser-defaults.json")
+	raw := authReplayObject(t, "fixtures/synthetic/sdk/auth-native-browser-defaults.json")
 
 	var exchanges []replay.Exchange
 
