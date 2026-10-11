@@ -285,6 +285,44 @@ components:
         status: {type: string, description: Open provider status; OK is known.}
         documents: {type: array, items: {$ref: '#/components/schemas/DriveDocumentResult'}}
       additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    DriveRegistrationStatus:
+      type: object
+      description: Structured document-service acknowledgement; preserve status codes and messages without inventing success.
+      properties:
+        status_code: {type: integer, format: int64}
+        error_message: {type: string}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    DriveRegisteredDocument:
+      type: object
+      properties:
+        document_id: {type: string}
+        status: {$ref: '#/components/schemas/DriveRegistrationStatus'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    DriveRegistrationResult:
+      type: object
+      properties:
+        status: {$ref: '#/components/schemas/DriveRegistrationStatus'}
+        document: {$ref: '#/components/schemas/DriveRegisteredDocument'}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    DriveStructuredUpdatedDocuments:
+      type: object
+      example:
+        status: {status_code: 0, error_message: ''}
+        results:
+          - status: {status_code: 0, error_message: ''}
+            document:
+              document_id: synthetic-document
+              status: {status_code: 0, error_message: ''}
+              name: synthetic.txt
+      properties:
+        status: {$ref: '#/components/schemas/DriveRegistrationStatus'}
+        results: {type: array, items: {$ref: '#/components/schemas/DriveRegistrationResult'}}
+      additionalProperties: {$ref: '#/components/schemas/UnknownJSONValue'}
+    DriveRegistrationEnvelope:
+      description: Registration can return the legacy string acknowledgement or structured status and per-operation results.
+      anyOf:
+        - {$ref: '#/components/schemas/DriveUpdatedDocuments'}
+        - {$ref: '#/components/schemas/DriveStructuredUpdatedDocuments'}
     DriveError:
       type: object
       description: Extensible JSON error envelope; raw response bytes must also remain available.

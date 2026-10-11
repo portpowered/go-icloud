@@ -22,13 +22,14 @@ type DriveUploadInput struct {
 
 // DriveUploadResponse preserves every completed response and registration acknowledgement.
 type DriveUploadResponse struct {
-	Token        string
-	Destination  drive.DriveUploadDestination
-	Receipt      drive.DriveUploadReceipt
-	Registration drive.DriveUpdatedDocuments
-	Preparation  *BytesResponse
-	Transfer     *BytesResponse
-	Registered   *BytesResponse
+	Token                  string
+	Destination            drive.DriveUploadDestination
+	Receipt                drive.DriveUploadReceipt
+	Registration           drive.DriveUpdatedDocuments
+	StructuredRegistration *drive.DriveStructuredUpdatedDocuments
+	Preparation            *BytesResponse
+	Transfer               *BytesResponse
+	Registered             *BytesResponse
 }
 
 // UploadDriveFile prepares, transfers and registers without retrying an uncertain write.
@@ -48,14 +49,15 @@ func (client *Client) UploadDriveFile(ctx context.Context, auth RequestContext,
 		return nil, withUploadPrior(err, token, preparation)
 	}
 
-	registered, data, err := client.registerDriveUpload(ctx, auth, input, destination.DocumentId,
+	registered, data, structured, err := client.registerDriveUpload(ctx, auth, input, destination.DocumentId,
 		token, receipt.SingleFile)
 	if err != nil {
 		return nil, withUploadPrior(err, token, preparation, transfer)
 	}
 
 	return &DriveUploadResponse{Token: token, Destination: destination, Receipt: receipt, Registration: data,
-		Preparation: preparation, Transfer: transfer, Registered: registered}, nil
+		StructuredRegistration: structured,
+		Preparation:            preparation, Transfer: transfer, Registered: registered}, nil
 }
 
 func withUploadPrior(err error, token string, responses ...*BytesResponse) error {

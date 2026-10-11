@@ -4309,6 +4309,9 @@
           "status": {
             "description": "Open provider acknowledgement status.",
             "type": "string"
+          },
+          "statusDetails": {
+            "$ref": "#/components/schemas/DriveRegistrationStatus"
           }
         },
         "type": "object"
@@ -5825,6 +5828,15 @@
           },
           "uploadedFile": {
             "$ref": "#/components/schemas/UploadedDriveFile"
+          },
+          "statusDetails": {
+            "$ref": "#/components/schemas/DriveRegistrationStatus"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DriveRegistrationResult"
+            }
           }
         },
         "required": [
@@ -8728,6 +8740,36 @@
           "responses"
         ],
         "type": "object"
+      },
+      "DriveRegistrationStatus": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "description": "Structured registration acknowledgement. Inspect statusCode and errorMessage; no uncertain mutation is retried.",
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
+      },
+      "DriveRegistrationResult": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/RegisteredDriveDocument"
+          },
+          "statusDetails": {
+            "$ref": "#/components/schemas/DriveRegistrationStatus"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/UnknownJSONValue"
+        }
       }
     }
   },

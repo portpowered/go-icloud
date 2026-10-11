@@ -4,6 +4,7 @@ generate:
   client: true
 output: pkg/dependencies/webtransport/driveapi/client.gen.go
 output-options:
+  skip-prune: true
   user-templates:
     client.tmpl: api/templates/http-request-builders.tmpl
     client-with-responses.tmpl: api/templates/http-response-parsers.tmpl

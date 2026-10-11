@@ -74,7 +74,7 @@ func projectDriveUpload(response *webtransport.DriveUploadResponse) *UploadDrive
 
 	file := response.Receipt.SingleFile
 
-	return &UploadDriveFileResult{UploadToken: response.Token, DocumentID: response.Destination.DocumentId,
+	result := &UploadDriveFileResult{UploadToken: response.Token, DocumentID: response.Destination.DocumentId,
 		UploadedFile: UploadedDriveFile{FileChecksum: file.FileChecksum, WrappingKey: file.WrappingKey,
 			ReferenceChecksum: file.ReferenceChecksum, Size: file.Size, Receipt: file.Receipt,
 			AdditionalProperties: copyAccountMetadata(file.AdditionalProperties)},
@@ -84,4 +84,9 @@ func projectDriveUpload(response *webtransport.DriveUploadResponse) *UploadDrive
 		PreparationMetadata:            publicMetadata(response.Preparation),
 		TransferMetadata:               publicMetadata(response.Transfer),
 		RegistrationMetadata:           publicMetadata(response.Registered)}
+	if response.StructuredRegistration != nil {
+		projectStructuredDriveRegistration(result, response.StructuredRegistration)
+	}
+
+	return result
 }

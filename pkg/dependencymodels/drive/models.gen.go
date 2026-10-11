@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/oapi-codegen/nullable"
+	"github.com/oapi-codegen/runtime"
 )
 
 // Defines values for DriveDefaultDocumentZone.
@@ -426,6 +427,36 @@ type DriveRecoveryItem struct {
 	Etag      string `json:"etag"`
 }
 
+// DriveRegisteredDocument defines model for DriveRegisteredDocument.
+type DriveRegisteredDocument struct {
+	DocumentId *string `json:"document_id,omitempty"`
+
+	// Status Structured document-service acknowledgement; preserve status codes and messages without inventing success.
+	Status               *DriveRegistrationStatus    `json:"status,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// DriveRegistrationEnvelope Registration can return the legacy string acknowledgement or structured status and per-operation results.
+type DriveRegistrationEnvelope struct {
+	union json.RawMessage
+}
+
+// DriveRegistrationResult defines model for DriveRegistrationResult.
+type DriveRegistrationResult struct {
+	Document *DriveRegisteredDocument `json:"document,omitempty"`
+
+	// Status Structured document-service acknowledgement; preserve status codes and messages without inventing success.
+	Status               *DriveRegistrationStatus    `json:"status,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// DriveRegistrationStatus Structured document-service acknowledgement; preserve status codes and messages without inventing success.
+type DriveRegistrationStatus struct {
+	ErrorMessage         *string                     `json:"error_message,omitempty"`
+	StatusCode           *int64                      `json:"status_code,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
 // DriveRenameItem defines model for DriveRenameItem.
 type DriveRenameItem struct {
 	Drivewsid string `json:"drivewsid"`
@@ -446,6 +477,15 @@ type DriveShareID struct {
 	Owner                *string                     `json:"owner,omitempty"`
 	Share                *string                     `json:"share,omitempty"`
 	Zone                 *string                     `json:"zone,omitempty"`
+	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
+}
+
+// DriveStructuredUpdatedDocuments defines model for DriveStructuredUpdatedDocuments.
+type DriveStructuredUpdatedDocuments struct {
+	Results *[]DriveRegistrationResult `json:"results,omitempty"`
+
+	// Status Structured document-service acknowledgement; preserve status codes and messages without inventing success.
+	Status               *DriveRegistrationStatus    `json:"status,omitempty"`
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
@@ -1375,6 +1415,255 @@ func (a DriveNode) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
+// Getter for additional properties for DriveRegisteredDocument. Returns the specified
+// element and whether it was found
+func (a DriveRegisteredDocument) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DriveRegisteredDocument
+func (a *DriveRegisteredDocument) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DriveRegisteredDocument to handle AdditionalProperties
+func (a *DriveRegisteredDocument) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["document_id"]; found {
+		err = json.Unmarshal(raw, &a.DocumentId)
+		if err != nil {
+			return fmt.Errorf("error reading 'document_id': %w", err)
+		}
+		delete(object, "document_id")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DriveRegisteredDocument to handle AdditionalProperties
+func (a DriveRegisteredDocument) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.DocumentId != nil {
+		object["document_id"], err = json.Marshal(a.DocumentId)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'document_id': %w", err)
+		}
+	}
+
+	if a.Status != nil {
+		object["status"], err = json.Marshal(a.Status)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DriveRegistrationResult. Returns the specified
+// element and whether it was found
+func (a DriveRegistrationResult) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DriveRegistrationResult
+func (a *DriveRegistrationResult) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DriveRegistrationResult to handle AdditionalProperties
+func (a *DriveRegistrationResult) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["document"]; found {
+		err = json.Unmarshal(raw, &a.Document)
+		if err != nil {
+			return fmt.Errorf("error reading 'document': %w", err)
+		}
+		delete(object, "document")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DriveRegistrationResult to handle AdditionalProperties
+func (a DriveRegistrationResult) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Document != nil {
+		object["document"], err = json.Marshal(a.Document)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'document': %w", err)
+		}
+	}
+
+	if a.Status != nil {
+		object["status"], err = json.Marshal(a.Status)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DriveRegistrationStatus. Returns the specified
+// element and whether it was found
+func (a DriveRegistrationStatus) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DriveRegistrationStatus
+func (a *DriveRegistrationStatus) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DriveRegistrationStatus to handle AdditionalProperties
+func (a *DriveRegistrationStatus) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["error_message"]; found {
+		err = json.Unmarshal(raw, &a.ErrorMessage)
+		if err != nil {
+			return fmt.Errorf("error reading 'error_message': %w", err)
+		}
+		delete(object, "error_message")
+	}
+
+	if raw, found := object["status_code"]; found {
+		err = json.Unmarshal(raw, &a.StatusCode)
+		if err != nil {
+			return fmt.Errorf("error reading 'status_code': %w", err)
+		}
+		delete(object, "status_code")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DriveRegistrationStatus to handle AdditionalProperties
+func (a DriveRegistrationStatus) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.ErrorMessage != nil {
+		object["error_message"], err = json.Marshal(a.ErrorMessage)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'error_message': %w", err)
+		}
+	}
+
+	if a.StatusCode != nil {
+		object["status_code"], err = json.Marshal(a.StatusCode)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status_code': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
 // Getter for additional properties for DriveShareID. Returns the specified
 // element and whether it was found
 func (a DriveShareID) Get(fieldName string) (value UnknownJSONValue, found bool) {
@@ -1461,6 +1750,89 @@ func (a DriveShareID) MarshalJSON() ([]byte, error) {
 		object["zone"], err = json.Marshal(a.Zone)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'zone': %w", err)
+		}
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// Getter for additional properties for DriveStructuredUpdatedDocuments. Returns the specified
+// element and whether it was found
+func (a DriveStructuredUpdatedDocuments) Get(fieldName string) (value UnknownJSONValue, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for DriveStructuredUpdatedDocuments
+func (a *DriveStructuredUpdatedDocuments) Set(fieldName string, value UnknownJSONValue) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for DriveStructuredUpdatedDocuments to handle AdditionalProperties
+func (a *DriveStructuredUpdatedDocuments) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["results"]; found {
+		err = json.Unmarshal(raw, &a.Results)
+		if err != nil {
+			return fmt.Errorf("error reading 'results': %w", err)
+		}
+		delete(object, "results")
+	}
+
+	if raw, found := object["status"]; found {
+		err = json.Unmarshal(raw, &a.Status)
+		if err != nil {
+			return fmt.Errorf("error reading 'status': %w", err)
+		}
+		delete(object, "status")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]UnknownJSONValue)
+		for fieldName, fieldBuf := range object {
+			var fieldVal UnknownJSONValue
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for DriveStructuredUpdatedDocuments to handle AdditionalProperties
+func (a DriveStructuredUpdatedDocuments) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.Results != nil {
+		object["results"], err = json.Marshal(a.Results)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'results': %w", err)
+		}
+	}
+
+	if a.Status != nil {
+		object["status"], err = json.Marshal(a.Status)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'status': %w", err)
 		}
 	}
 
@@ -1819,4 +2191,66 @@ func (a DriveUploadedFile) MarshalJSON() ([]byte, error) {
 		}
 	}
 	return json.Marshal(object)
+}
+
+// AsDriveUpdatedDocuments returns the union data inside the DriveRegistrationEnvelope as a DriveUpdatedDocuments
+func (t DriveRegistrationEnvelope) AsDriveUpdatedDocuments() (DriveUpdatedDocuments, error) {
+	var body DriveUpdatedDocuments
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDriveUpdatedDocuments overwrites any union data inside the DriveRegistrationEnvelope as the provided DriveUpdatedDocuments
+func (t *DriveRegistrationEnvelope) FromDriveUpdatedDocuments(v DriveUpdatedDocuments) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeDriveUpdatedDocuments performs a merge with any union data inside the DriveRegistrationEnvelope, using the provided DriveUpdatedDocuments
+func (t *DriveRegistrationEnvelope) MergeDriveUpdatedDocuments(v DriveUpdatedDocuments) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsDriveStructuredUpdatedDocuments returns the union data inside the DriveRegistrationEnvelope as a DriveStructuredUpdatedDocuments
+func (t DriveRegistrationEnvelope) AsDriveStructuredUpdatedDocuments() (DriveStructuredUpdatedDocuments, error) {
+	var body DriveStructuredUpdatedDocuments
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDriveStructuredUpdatedDocuments overwrites any union data inside the DriveRegistrationEnvelope as the provided DriveStructuredUpdatedDocuments
+func (t *DriveRegistrationEnvelope) FromDriveStructuredUpdatedDocuments(v DriveStructuredUpdatedDocuments) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeDriveStructuredUpdatedDocuments performs a merge with any union data inside the DriveRegistrationEnvelope, using the provided DriveStructuredUpdatedDocuments
+func (t *DriveRegistrationEnvelope) MergeDriveStructuredUpdatedDocuments(v DriveStructuredUpdatedDocuments) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t DriveRegistrationEnvelope) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *DriveRegistrationEnvelope) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
 }

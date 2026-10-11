@@ -37,12 +37,12 @@ func uploadDocument(input DriveUploadInput, documentID string, file drive.DriveU
 
 func (client *Client) registerDriveUpload(ctx context.Context, auth RequestContext, input DriveUploadInput,
 	documentID, token string, file drive.DriveUploadedFile,
-) (*BytesResponse, drive.DriveUpdatedDocuments, error) {
+) (*BytesResponse, drive.DriveUpdatedDocuments, *drive.DriveStructuredUpdatedDocuments, error) {
 	var data drive.DriveUpdatedDocuments
 
 	body, err := referenceJSON(uploadDocument(input, documentID, file))
 	if err != nil {
-		return nil, data, failure(Configuration, err, nil, nil)
+		return nil, data, nil, failure(Configuration, err, nil, nil)
 	}
 
 	params := driveapi.DriveRegisterDocumentParams{ClientId: auth.Params.ClientId, Dsid: auth.Params.Dsid,
@@ -53,19 +53,31 @@ func (client *Client) registerDriveUpload(ctx context.Context, auth RequestConte
 	request, err := driveapi.NewDriveRegisterDocumentRequestWithBody(auth.Origin, input.Zone, &params,
 		plainTextMedia(), bytes.NewReader(body))
 	if err != nil {
-		return nil, data, failure(Configuration, err, nil, nil)
+		return nil, data, nil, failure(Configuration, err, nil, nil)
 	}
 
 	response, err := client.readWithPolicy(ctx, plainTextUploadAuth(auth), request,
 		"&"+queryPart(protocol.DriveRegisterDocumentTokenName, token), successfulContent, true)
 	if err != nil {
-		return nil, data, err
+		return nil, data, nil, err
 	}
 
-	err = decodeDriveObject(response.Body, &data)
+	var envelope drive.DriveRegistrationEnvelope
+
+	err = decodeDriveObject(response.Body, &envelope)
 	if err != nil {
-		return nil, data, responseFailure(Decode, err, response)
+		return nil, data, nil, responseFailure(Decode, err, response)
 	}
 
-	return response, data, nil
+	structured, structuredErr := envelope.AsDriveStructuredUpdatedDocuments()
+	if structuredErr == nil && (structured.Status != nil || structured.Results != nil) {
+		return response, data, &structured, nil
+	}
+
+	data, err = envelope.AsDriveUpdatedDocuments()
+	if err != nil {
+		return nil, data, nil, responseFailure(Decode, err, response)
+	}
+
+	return response, data, nil, nil
 }
