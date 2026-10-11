@@ -144,7 +144,7 @@ func nativePasswordLoginCommand(t *testing.T, name, operation string, stdin, ada
 
 	assertNativeLoginPersistence(t, path, raw, refused, encoded)
 	assertNativeCommandPrivacy(t, output.String()+diagnostic.String(), []string{
-		expectedInventedPassword, "synthetic-srp-token", "synthetic-srp-cookie", "synthetic-auth-value",
+		expectedInventedPassword, interactiveReplayToken, "synthetic-srp-cookie", interactiveReplayCookie,
 		expectedSyntheticAccountName, expectedReplayResponsesField, expectedAccountDataField})
 }
 

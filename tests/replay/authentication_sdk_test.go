@@ -100,6 +100,9 @@ func authReplayRequest(t *testing.T, raw map[string]json.RawMessage) icloud.Resu
 	request.Auth.SessionToken = session[replayExpectedSessionStateField]
 
 	request.Auth.Cookies = sdkAccountCookies(cookies)
+	// These fixtures explicitly replace the reference's complete session headers,
+	// including an empty set; distinguish that from omitted native defaults.
+	request.Auth.Headers = []icloud.Header{}
 	for index := range request.Auth.Cookies {
 		request.Auth.Cookies[index].HTTPOnly = true
 	}

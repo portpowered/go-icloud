@@ -124,7 +124,7 @@ func commandKeyArguments(t *testing.T, control, path, identifier string,
 	t.Helper()
 
 	if control != expectedCallerAssertionControl {
-		return []string{sessionFlag, path, "--security-key", identifier, "mfa-security-key"}
+		return []string{sessionFlag, path, "--security-key", identifier, interactiveSecurityKeyCommand}
 	}
 
 	var boundary icloud.AuthContext

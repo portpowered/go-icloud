@@ -27,6 +27,12 @@ is true. Inspect `DeliveryMethod`, `CodeRequested` and the discovered challenge
 before choosing a verification operation; do not label every false result as bad
 credentials.
 
+Omitting `Auth.Headers` on native login supplies the reference browser's user
+agent, iCloud Origin and Referer. These defaults remain in the returned state so
+the final account-token exchange and saved-session renewal use the same browser
+context. An explicitly supplied header slice remains caller-owned, including an
+empty slice; custom callers should supply their complete browser headers.
+
 `GetAuthenticationStatus` probes existing credentials without starting password
 login or requesting a code. `GetAuthenticationChallenge` explicitly reads the
 current verification choices and bridge bootstrap. Use `RequestTwoFactorCode`
