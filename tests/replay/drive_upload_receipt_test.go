@@ -12,9 +12,11 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
+const malformedDriveReceiptVariant = "malformed"
+
 func TestDriveUploadStructuredReceipt(t *testing.T) {
 	t.Parallel()
-	for _, variant := range []string{"structured", "rejected", "missing-code", "malformed"} {
+	for _, variant := range []string{"structured", "rejected", "missing-code", malformedDriveReceiptVariant} {
 		t.Run(variant, func(t *testing.T) {
 			t.Parallel()
 			checkDriveStructuredReceipt(t, variant)
@@ -51,19 +53,25 @@ func checkDriveStructuredReceipt(t *testing.T, variant string) {
 
 	request, _ := sdkUploadRequest(t, scenario)
 	result, err := client.UploadDriveFile(t.Context(), request)
-	if variant == "malformed" {
+
+	switch {
+	case variant == malformedDriveReceiptVariant:
 		var failure *icloud.ClientError
-		if result != nil || !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse || len(failure.PriorResponses()) != 2 {
+
+		if result != nil || !errors.As(err, &failure) || failure.Kind() != icloud.InvalidResponse ||
+			len(failure.PriorResponses()) != 2 {
 			t.Fatal("malformed receipt must preserve completed stages and fail without retry", err)
 		}
-	} else if err != nil || result == nil {
+	case err != nil || result == nil:
 		t.Fatal("accepted upload receipt was rejected", err)
-	} else {
+	default:
 		checkSDKMetadata(t, result.PreparationMetadata, scenario.Exchanges[0].Response)
 		checkSDKMetadata(t, result.TransferMetadata, scenario.Exchanges[1].Response)
 		checkSDKMetadata(t, result.RegistrationMetadata, scenario.Exchanges[2].Response)
 		checkSDKValue(t, map[string]any{"statusDetails": result.StatusDetails, "results": result.Results,
-			"documents": result.Documents, "additionalRegistrationMetadata": result.AdditionalRegistrationMetadata}, scenario.Result)
+			"documents": result.Documents, "additionalRegistrationMetadata": result.AdditionalRegistrationMetadata},
+			scenario.Result)
+
 		if result.Status != nil {
 			t.Fatal("structured status was converted to an invented legacy status")
 		}
@@ -73,5 +81,4 @@ func checkDriveStructuredReceipt(t *testing.T, variant string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 }

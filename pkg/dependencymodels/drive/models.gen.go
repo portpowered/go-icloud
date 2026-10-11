@@ -480,7 +480,7 @@ type DriveShareID struct {
 	AdditionalProperties map[string]UnknownJSONValue `json:"-"`
 }
 
-// DriveStructuredUpdatedDocuments defines model for DriveStructuredUpdatedDocuments.
+// DriveStructuredUpdatedDocuments Example: {"results":[{"document":{"document_id":"synthetic-document","name":"synthetic.txt","status":{"error_message":"","status_code":0}},"status":{"error_message":"","status_code":0}}],"status":{"error_message":"","status_code":0}}
 type DriveStructuredUpdatedDocuments struct {
 	Results *[]DriveRegistrationResult `json:"results,omitempty"`
 
