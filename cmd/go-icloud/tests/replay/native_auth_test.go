@@ -18,6 +18,8 @@ import (
 	"github.com/portpowered/go-icloud/tests/replay"
 )
 
+const interactiveLoginCommand = "auth login"
+
 const expectedAccountDataKey = "accountData"
 
 func TestNativeAuthenticationCommands(t *testing.T) {
@@ -32,6 +34,7 @@ func TestNativeAuthenticationCommands(t *testing.T) {
 		{fixture: "auth-trust-refused", operation: "trust"},
 		{fixture: "auth-trust-untrusted-account", operation: "trust"},
 		{fixture: expectedCachedAuthFixture, operation: "login"},
+		{fixture: expectedCachedAuthFixture, operation: interactiveLoginCommand},
 		{fixture: expectedTrustedStatusFixture, operation: expectedAuthStatusCommand},
 		{fixture: "auth-status-untrusted", operation: expectedAuthStatusCommand},
 		{fixture: "auth-status-rejected", operation: expectedAuthStatusCommand},
@@ -112,7 +115,7 @@ func runNativeAuthentication(t *testing.T, name, operation string) {
 		arguments = append(arguments, "--service", inputs[0])
 	}
 
-	arguments = append(arguments, operation)
+	arguments = append(arguments, strings.Fields(operation)...)
 	err = command.RunWithInput(t.Context(), client, arguments,
 		io.NopCloser(strings.NewReader("")), environment, &output, &diagnostic)
 	_, providerFailed := raw["error"]
@@ -253,7 +256,7 @@ func nativeCommandAccepted(t *testing.T, raw map[string]json.RawMessage, operati
 	value := readRawObject(t, result)["value"]
 
 	switch operation {
-	case "login", expectedAuthStatusCommand, expectedMFADevicesCommand:
+	case "login", interactiveLoginCommand, expectedAuthStatusCommand, expectedMFADevicesCommand:
 		return true
 	case expectedPCSAccessCommand:
 		if string(value) != "null" {
