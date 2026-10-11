@@ -3,7 +3,6 @@ package command
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 
@@ -12,7 +11,7 @@ import (
 
 var errDevice = errors.New("provide --device with an identifier returned by findmy")
 
-func controlFlags(flags *flag.FlagSet, config *options) {
+func controlFlags(flags *commandFlags, config *options) {
 	flags.StringVar(&config.deviceID, "device", "", "Discovered Find My device identifier")
 	flags.StringVar(&config.phoneNumber, "phone", "", "Contact number for findmy-lost")
 	flags.StringVar(&config.exportSession, "export-session", "", "Private destination for credentials-export")

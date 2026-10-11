@@ -25,9 +25,10 @@ type authSummary = commandmodels.AuthenticationSummary
 
 func authenticateCommand(ctx context.Context, client icloud.Client, config options,
 	input io.ReadCloser, environment Environment, output io.Writer,
+	diagnostic io.Writer,
 ) error {
 	if config.operation == authLoginCommand || config.operation == authRenewCommand {
-		return login(ctx, client, config, input, environment, output)
+		return login(ctx, client, config, input, environment, output, diagnostic)
 	}
 
 	if config.operation == authSecurityKeysCommand {

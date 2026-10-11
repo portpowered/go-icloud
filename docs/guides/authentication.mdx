@@ -20,7 +20,12 @@ Persist the complete `NativeAuthState` privately, including `Auth`, `TrustToken`
 `AccountCountryCode`, `AccountData`, account name and challenge/delivery progress.
 Saving only `AuthContext` loses information needed to continue MFA. The reusable
 client does not write credentials to disk. Check the returned success, MFA and
-trust indicators before service calls.
+trust indicators before service calls. `Success` describes the last authentication
+step, not whether the password was accepted. In particular, a trusted-device
+bridge or hardware-key route can return `Success: false` while `State.RequiresMFA`
+is true. Inspect `DeliveryMethod`, `CodeRequested` and the discovered challenge
+before choosing a verification operation; do not label every false result as bad
+credentials.
 
 `GetAuthenticationStatus` probes existing credentials without starting password
 login or requesting a code. `GetAuthenticationChallenge` explicitly reads the

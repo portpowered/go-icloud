@@ -1,13 +1,12 @@
 package command
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 )
 
-func authenticationFlags(flags *flag.FlagSet, config *options) {
+func authenticationFlags(flags *commandFlags, config *options) {
 	flags.StringVar(&config.phoneID, "phone-id", "", "Identifier returned by auth-challenge for SMS verification")
 	flags.StringVar(&config.trustedDeviceID, "trusted-device", "",
 		"Identifier returned by mfa-devices for two-step verification")

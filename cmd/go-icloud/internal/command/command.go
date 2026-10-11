@@ -2,11 +2,12 @@
 package command
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
+	"github.com/urfave/cli/v3"
 	"io"
 	"os"
 	"path/filepath"
@@ -18,12 +19,14 @@ import (
 const defaultTimeout = 60 * time.Second
 
 const reminderCommand = "reminder"
+const cliApplicationName = "go-icloud"
 
 var (
-	errArguments = errors.New("provide a private session and command, or --reference-state <directory> resume")
-	errSession   = errors.New("cannot access private session data")
-	errCommand   = errors.New("unsupported command")
-	errReminder  = errors.New("provide --reminder <identifier> for reminder")
+	errCommandHelp = errors.New("command help displayed")
+	errArguments   = errors.New("provide a private session and command, or --reference-state <directory> resume")
+	errSession     = errors.New("cannot access private session data")
+	errCommand     = errors.New("unsupported command")
+	errReminder    = errors.New("provide --reminder <identifier> for reminder")
 )
 
 type options struct {
@@ -41,6 +44,7 @@ type options struct {
 	family           bool
 	timeout          time.Duration
 	operation        string
+	interactive      bool
 	referenceState   string
 	saveSession      string
 	forceRefresh     bool
@@ -75,8 +79,8 @@ func Run(ctx context.Context, client icloud.Client, args []string, output, diagn
 func RunWithInput(ctx context.Context, client icloud.Client, args []string,
 	input io.ReadCloser, environment Environment, output, diagnostic io.Writer,
 ) error {
-	config, err := parse(args, diagnostic)
-	if errors.Is(err, flag.ErrHelp) {
+	config, err := parse(ctx, args, diagnostic)
+	if errors.Is(err, errCommandHelp) {
 		return nil
 	}
 
@@ -88,7 +92,7 @@ func RunWithInput(ctx context.Context, client icloud.Client, args []string,
 	defer cancel()
 
 	if authenticationCommand(config.operation) {
-		return authenticateCommand(requestContext, client, config, input, environment, output)
+		return authenticateCommand(requestContext, client, config, input, environment, output, diagnostic)
 	}
 
 	if config.operation == "credentials-export" {
@@ -120,11 +124,10 @@ func RunWithInput(ctx context.Context, client icloud.Client, args []string,
 	return writeResult(output, result)
 }
 
-func parse(args []string, diagnostic io.Writer) (options, error) {
+func parse(ctx context.Context, args []string, diagnostic io.Writer) (options, error) {
 	var config options
 
-	flags := flag.NewFlagSet("go-icloud", flag.ContinueOnError)
-	flags.SetOutput(diagnostic)
+	flags := &commandFlags{flags: nil}
 	flags.StringVar(&config.session, "session", "", "Private JSON containing an icloud.AuthContext")
 	flags.StringVar(&config.requestFile, "request", "",
 		"Private JSON containing the generated request for the selected command")
@@ -154,21 +157,71 @@ func parse(args []string, diagnostic io.Writer) (options, error) {
 	reminderQueryFlags(flags, &config)
 	flags.DurationVar(&config.timeout, "timeout", defaultTimeout, "Request deadline")
 
-	flags.Usage = func() {
-		printUsage(diagnostic)
-		flags.PrintDefaults()
+	var description bytes.Buffer
+
+	printUsage(&description)
+
+	parsed := false
+	selectOperation := func(operation string, interactive bool) cli.ActionFunc {
+		return func(_ context.Context, cmd *cli.Command) error {
+			if cmd.Args().Len() != 0 {
+				return errArguments
+			}
+
+			config.operation, config.interactive, parsed = operation, interactive, true
+
+			return nil
+		}
+	}
+	authOperations := []struct{ name, operation string }{
+		{"login", authLoginCommand}, {"renew", authRenewCommand}, {"status", authStatusCommand},
+		{"challenge", authChallengeCommand}, {"request-code", authMFARequestCommand}, {"verify", authMFAVerifyCommand},
+		{"bridge", authBridgeCommand}, {"trust", authTrustCommand}, {"logout", authLogoutCommand},
+		{"devices", authMFADevicesCommand},
 	}
 
-	err := flags.Parse(args)
+	authCommands := make([]*cli.Command, 0, len(authOperations))
+
+	for _, entry := range authOperations {
+		var child cli.Command
+
+		child.Name, child.Action = entry.name, selectOperation(entry.operation, entry.name == "login")
+		authCommands = append(authCommands, &child)
+	}
+
+	var auth cli.Command
+
+	auth.Name, auth.Usage, auth.Commands = "auth", "Sign in and manage authentication", authCommands
+
+	var app cli.Command
+
+	app.Name, app.Usage = cliApplicationName, "iCloud account, files, photos and devices"
+	app.Description = description.String()
+	app.DisableSliceFlagSeparator = true
+	app.Writer, app.ErrWriter, app.Flags, app.Commands = diagnostic, diagnostic, flags.flags, []*cli.Command{&auth}
+	app.Action = func(_ context.Context, cmd *cli.Command) error {
+		if cmd.Args().Len() != 1 {
+			return errArguments
+		}
+
+		config.operation, parsed = cmd.Args().First(), true
+
+		return nil
+	}
+
+	err := app.Run(ctx, append([]string{cliApplicationName}, args...))
 	if err != nil {
 		return config, fmt.Errorf("parse command: %w", err)
 	}
 
-	if flags.NArg() != 1 || config.timeout <= 0 {
+	if !parsed {
+		return config, errCommandHelp
+	}
+
+	if config.timeout <= 0 {
 		return config, errArguments
 	}
 
-	config.operation = flags.Arg(0)
 	if config.session == "" && config.referenceState == "" {
 		config.session, err = defaultSessionPath()
 		if err != nil {
@@ -397,7 +450,7 @@ func readAccount(ctx context.Context, client icloud.Client, auth icloud.AuthCont
 	}
 }
 
-func photoFlags(flags *flag.FlagSet, config *options) {
+func photoFlags(flags *commandFlags, config *options) {
 	flags.StringVar(&config.album, "album", "Library", "Photo album identifier or display/full name")
 	flags.StringVar(&config.photoID, photoCommand, "", "Photo asset identifier for photo or photo-download")
 	flags.Func("version", "Photo rendition for photo-download; omission selects original", func(value string) error {

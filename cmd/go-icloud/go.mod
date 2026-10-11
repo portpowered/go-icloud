@@ -5,6 +5,8 @@ go 1.25.0
 require (
 	github.com/oapi-codegen/nullable v1.2.0
 	github.com/portpowered/go-icloud v0.0.0-20261010121958-12f42d499619
+	github.com/urfave/cli/v3 v3.14.0
+	golang.org/x/term v0.38.0
 	google.golang.org/protobuf v1.36.11
 )
 

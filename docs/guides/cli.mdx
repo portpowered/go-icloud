@@ -6,7 +6,7 @@ description: Authenticate, select account resources, and run typed commands with
 Install the development CLI containing these commands with Go 1.25 or newer:
 
 ```sh
-go install github.com/portpowered/go-icloud/cmd/go-icloud@49e9368f
+go install github.com/portpowered/go-icloud/cmd/go-icloud@main
 go-icloud --help
 ```
 
@@ -14,6 +14,20 @@ This published development version pins the public SDK
 `v0.0.0-20261010121958-12f42d499619`. Final conformance and stable SDK/CLI
 releases remain pending. After release, select its explicit CLI version; `@latest`
 may currently resolve to an earlier feature set.
+
+Run `go-icloud auth login` for an interactive sign-in. The command prompts for
+Apple ID, hides the password and code when using a terminal, saves MFA progress
+privately, and continues SMS or trusted-device bridge verification in the same
+process. `--timeout` also covers waiting for user input; use, for example,
+`go-icloud auth login --timeout 5m`. A hardware-key route reports the named
+commands needed to continue with the saved session.
+
+A pending MFA route is distinct from rejected credentials. The output reports
+`requiresTwoFactor`, `requiresTwoStep`, `deliveryMethod` and `codeRequested`;
+these describe provider progress and do not establish a usable session. Complete
+verification and check `go-icloud auth status` before service calls. The nested
+`auth` group also provides `challenge`, `request-code`, `verify`, `bridge`,
+`renew`, `trust`, `devices` and `logout`. Existing flat commands remain supported.
 
 Supply your account through `GO_ICLOUD_ACCOUNT` and your password through
 `GO_ICLOUD_PASSWORD` from your secret store, or pipe it to `--secret-stdin login`.
