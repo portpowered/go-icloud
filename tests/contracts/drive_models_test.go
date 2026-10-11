@@ -28,7 +28,7 @@ func TestDriveModelExamples(t *testing.T) {
 		examples++
 	}
 
-	if examples != 4 {
+	if examples != 5 {
 		t.Fatalf("Drive example inventory changed: %d", examples)
 	}
 }

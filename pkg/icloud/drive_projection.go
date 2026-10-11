@@ -66,6 +66,7 @@ func projectDriveUpload(response *webtransport.DriveUploadResponse) *UploadDrive
 		values := make([]RegisteredDriveDocument, 0, len(*response.Registration.Documents))
 		for _, document := range *response.Registration.Documents {
 			values = append(values, RegisteredDriveDocument{DocumentID: document.DocumentId, Status: document.Status,
+				StatusDetails:        nil,
 				AdditionalProperties: copyAccountMetadata(document.AdditionalProperties)})
 		}
 
@@ -74,14 +75,19 @@ func projectDriveUpload(response *webtransport.DriveUploadResponse) *UploadDrive
 
 	file := response.Receipt.SingleFile
 
-	return &UploadDriveFileResult{UploadToken: response.Token, DocumentID: response.Destination.DocumentId,
+	result := &UploadDriveFileResult{UploadToken: response.Token, DocumentID: response.Destination.DocumentId,
 		UploadedFile: UploadedDriveFile{FileChecksum: file.FileChecksum, WrappingKey: file.WrappingKey,
 			ReferenceChecksum: file.ReferenceChecksum, Size: file.Size, Receipt: file.Receipt,
 			AdditionalProperties: copyAccountMetadata(file.AdditionalProperties)},
-		Documents: documents, Status: response.Registration.Status,
+		Documents: documents, Status: response.Registration.Status, StatusDetails: nil, Results: nil,
 		AdditionalReceiptMetadata:      copyAccountMetadata(response.Receipt.AdditionalProperties),
 		AdditionalRegistrationMetadata: copyAccountMetadata(response.Registration.AdditionalProperties),
 		PreparationMetadata:            publicMetadata(response.Preparation),
 		TransferMetadata:               publicMetadata(response.Transfer),
 		RegistrationMetadata:           publicMetadata(response.Registered)}
+	if response.StructuredRegistration != nil {
+		projectStructuredDriveRegistration(result, response.StructuredRegistration)
+	}
+
+	return result
 }

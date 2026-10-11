@@ -35,6 +35,12 @@ content without a network transfer. `Upload` accepts a caller-owned seekable rea
 and filename; it prepares, transfers, and registers the content in order. Preserve
 the returned evidence if a later stage fails.
 
+Registration responses expose legacy `Status` values or structured `StatusDetails`
+and per-operation `Results`. Inspect each status code and message before treating
+the upload as accepted. Registered documents retain provider metadata; completed
+HTTP response metadata remains available even when receipt decoding fails. Do not
+repeat an upload solely because a response is uncertain.
+
 The session retains credential updates for subsequent calls. Store a copy from
 `Authentication()` when finished. `LastResponses()` reports the latest network
 operation; cache reads leave it unchanged. Drive navigation, controls and transfers

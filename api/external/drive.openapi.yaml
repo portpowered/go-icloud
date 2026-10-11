@@ -364,12 +364,12 @@ paths:
           description: Provider registration result.
           content:
             application/json:
-              schema: {$ref: '#/components/schemas/DriveUpdatedDocuments'}
+              schema: {$ref: '#/components/schemas/DriveRegistrationEnvelope'}
         '200':
           description: Provider registration result.
           content:
             application/json:
-              schema: {$ref: '#/components/schemas/DriveUpdatedDocuments'}
+              schema: {$ref: '#/components/schemas/DriveRegistrationEnvelope'}
         default: {$ref: '#/components/responses/DriveFailure'}
 components:
   parameters:
@@ -464,6 +464,7 @@ components:
     DriveNodes: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveNodes'}
     DriveUpdateDocument: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUpdateDocument'}
     DriveUpdatedDocuments: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUpdatedDocuments'}
+    DriveRegistrationEnvelope: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveRegistrationEnvelope'}
     DriveUploadDestinations: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUploadDestinations'}
     DriveUploadRequest: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveUploadRequest'}
     DriveRenameItems: {$ref: './drive-models.openapi.yaml#/components/schemas/DriveRenameItems'}

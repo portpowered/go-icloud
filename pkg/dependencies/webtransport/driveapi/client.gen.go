@@ -51,6 +51,9 @@ type DriveNodes = externalRef0.DriveNodes
 // DriveRecoverItems defines model for DriveRecoverItems.
 type DriveRecoverItems = externalRef0.DriveRecoverItems
 
+// DriveRegistrationEnvelope Registration can return the legacy string acknowledgement or structured status and per-operation results.
+type DriveRegistrationEnvelope = externalRef0.DriveRegistrationEnvelope
+
 // DriveRenameItems defines model for DriveRenameItems.
 type DriveRenameItems = externalRef0.DriveRenameItems
 
@@ -3028,20 +3031,20 @@ type DriveRegisterDocumentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *DriveUpdatedDocuments
+	JSON200 *DriveRegistrationEnvelope
 	// JSON2XX the response for an HTTP 2XX `application/json` response
-	JSON2XX *DriveUpdatedDocuments
+	JSON2XX *DriveRegistrationEnvelope
 	// JSONDefault the response for an HTTP default `application/json` response
 	JSONDefault *DriveFailure
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r DriveRegisterDocumentResponse) GetJSON200() *DriveUpdatedDocuments {
+func (r DriveRegisterDocumentResponse) GetJSON200() *DriveRegistrationEnvelope {
 	return r.JSON200
 }
 
 // GetJSON2XX returns the response for an HTTP 2XX `application/json` response
-func (r DriveRegisterDocumentResponse) GetJSON2XX() *DriveUpdatedDocuments {
+func (r DriveRegisterDocumentResponse) GetJSON2XX() *DriveRegistrationEnvelope {
 	return r.JSON2XX
 }
 
@@ -3446,14 +3449,14 @@ func ParseDriveRegisterDocumentResponse(rsp *http.Response) (*DriveRegisterDocum
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest DriveUpdatedDocuments
+		var dest DriveRegistrationEnvelope
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode/100 == 2:
-		var dest DriveUpdatedDocuments
+		var dest DriveRegistrationEnvelope
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
