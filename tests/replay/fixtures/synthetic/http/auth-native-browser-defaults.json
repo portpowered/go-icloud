@@ -1,0 +1,85 @@
+{
+  "format": "portos.service-scenario.v1",
+  "evidence": "synthetic; default browser session constructor and account-token regression",
+  "source": {
+    "url": "https://github.com/timlaing/pyicloud.git",
+    "commit": "e2e44ab875d47dab4475096021da60030f26c35e"
+  },
+  "request": {
+    "accountName": "synthetic@example.invalid",
+    "forceRefresh": true,
+    "trustToken": "synthetic-trust",
+    "auth": {
+      "clientID": "synthetic-client",
+      "sessionToken": "synthetic-token",
+      "setupServiceURL": "https://setup.icloud.com"
+    }
+  },
+  "expectedDefaultHeaders": [
+    {
+      "name": "User-Agent",
+      "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+    },
+    {
+      "name": "Origin",
+      "value": "https://www.icloud.com"
+    },
+    {
+      "name": "Referer",
+      "value": "https://www.icloud.com/"
+    }
+  ],
+  "exchanges": [
+    {
+      "request": {
+        "method": "POST",
+        "origin": "https://setup.icloud.com",
+        "path": "/setup/ws/1/accountLogin",
+        "query": [],
+        "headers": [
+          [
+            "accept",
+            "application/json"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "content-length",
+            "122"
+          ],
+          [
+            "user-agent",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3.1 Safari/605.1.15"
+          ],
+          [
+            "origin",
+            "https://www.icloud.com"
+          ],
+          [
+            "referer",
+            "https://www.icloud.com/"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJhY2NvdW50Q291bnRyeUNvZGUiOiBudWxsLCAiZHNXZWJBdXRoVG9rZW4iOiAic3ludGhldGljLXRva2VuIiwgImV4dGVuZGVkX2xvZ2luIjogdHJ1ZSwgInRydXN0VG9rZW4iOiAic3ludGhldGljLXRydXN0In0="
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "value": "eyJkc0luZm8iOiB7ImRzaWQiOiAic3ludGhldGljLWFjY291bnQiLCAiaHNhVmVyc2lvbiI6IDJ9LCAiaHNhVHJ1c3RlZEJyb3dzZXIiOiB0cnVlLCAid2Vic2VydmljZXMiOiB7fX0="
+        }
+      }
+    }
+  ]
+}

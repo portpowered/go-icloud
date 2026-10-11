@@ -72,6 +72,13 @@ func initialNativeAuthState(request AuthenticateRequest) NativeAuthState {
 	}
 
 	state.AccountName = request.AccountName
+	if request.Auth.Headers == nil {
+		state.Auth.Headers = []Header{
+			{Name: protocol.AuthHTTPUserAgentName, Value: protocol.AuthUserAgentValue},
+			{Name: protocol.OriginName, Value: nativeHomeOrigin(state)},
+			{Name: protocol.AuthHTTPRefererName, Value: nativeHomeOrigin(state) + "/"},
+		}
+	}
 
 	state.AcceptTerms = request.AcceptTerms
 
