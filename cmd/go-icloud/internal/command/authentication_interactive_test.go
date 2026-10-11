@@ -36,6 +36,7 @@ func (p *interactiveAuthProbe) Authenticate(_ context.Context, req icloud.Authen
 
 	if p.pendingSMS {
 		var voice, sms icloud.TrustedPhoneNumberID
+
 		err := voice.FromTrustedPhoneNumberID0(1)
 		if err != nil {
 			return nil, fmt.Errorf("encode synthetic phone: %w", err)

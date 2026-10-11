@@ -10,7 +10,7 @@ import (
 )
 
 var errSecurityKeyLogin = errors.New("use mfa-security-keys and mfa-security-key with the saved session")
-var errNoSMSVerification = errors.New("Apple supplied no SMS route; use auth challenge or auth bridge with this session")
+var errNoSMSVerification = errors.New("no SMS route supplied; use auth challenge or auth bridge with saved session")
 
 func completeInteractiveLogin(ctx context.Context, client icloud.Client, config options,
 	result *icloud.NativeAuthResult, input io.ReadCloser, environment Environment, output, diagnostic io.Writer,
