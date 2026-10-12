@@ -32,7 +32,7 @@ func TestPhotoVisitorStopsBeforeLaterPage(t *testing.T) {
 
 	result, err := client.VisitPhotoAssets(
 		t.Context(),
-		icloud.ListPhotoAssetsRequest{Auth: auth, Album: photoLibraryFixtureName, Library: nil},
+		icloud.ListPhotoAssetsRequest{MaxResults: nil, Offset: nil, Auth: auth, Album: photoLibraryFixtureName, Library: nil},
 		func(event icloud.PhotoVisitEvent) (bool, error) {
 			visited++
 
@@ -82,7 +82,7 @@ func TestPhotoVisitorPreservesCallerFailure(t *testing.T) {
 
 	result, err := client.VisitPhotoAssets(
 		t.Context(),
-		icloud.ListPhotoAssetsRequest{Auth: auth, Album: photoLibraryFixtureName, Library: nil},
+		icloud.ListPhotoAssetsRequest{MaxResults: nil, Offset: nil, Auth: auth, Album: photoLibraryFixtureName, Library: nil},
 		func(_ icloud.PhotoVisitEvent) (bool, error) { return false, cause },
 	)
 

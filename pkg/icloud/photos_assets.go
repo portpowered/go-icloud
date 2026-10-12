@@ -11,6 +11,11 @@ import (
 
 const photoSourcePageSize = 100
 
+var (
+	errPhotoOffsetWithoutLimit = errors.New("offset requires maxResults")
+	errPhotoPageInvalid        = errors.New("invalid photo page size or offset")
+)
+
 // ListPhotoAssets enumerates the selected primary album with Source ordering and deduplication.
 func (sdk *SDK) ListPhotoAssets(ctx context.Context, request ListPhotoAssetsRequest) (*ListPhotoAssetsResult, error) {
 	return sdk.listPhotoAssets(ctx, request, nil)
@@ -43,12 +48,90 @@ func (sdk *SDK) listPhotoAssets(
 		return nil, read.failure(errPhotoAlbumMissing, NotFound)
 	}
 
+	if request.MaxResults != nil {
+		return read.assetPage(ctx, entry, request)
+	}
+
+	if request.Offset != nil {
+		return nil, read.failure(errPhotoOffsetWithoutLimit, Configuration)
+	}
+
 	photos, err := read.assets(ctx, entry)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ListPhotoAssetsResult{Photos: photos, Responses: read.metadata()}, nil
+	return &ListPhotoAssetsResult{NextOffset: nil, Photos: photos, Responses: read.metadata()}, nil
+}
+
+// assetPage resumes directly at the provider rank, without scanning earlier assets.
+func (read *photosRead) assetPage(ctx context.Context, entry photoAlbumEntry,
+	request ListPhotoAssetsRequest,
+) (*ListPhotoAssetsResult, error) {
+	limit := *request.MaxResults
+	if limit < 1 || limit > photoSourcePageSize || (request.Offset != nil && *request.Offset < 0) {
+		return nil, read.failure(errPhotoPageInvalid, Configuration)
+	}
+
+	spec := read.querySpec(entry)
+
+	var (
+		offset int64
+		err    error
+	)
+
+	if request.Offset != nil {
+		offset = *request.Offset
+	} else {
+		offset, err = read.assetOffset(ctx, entry, spec)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if offset < 0 {
+		return &ListPhotoAssetsResult{NextOffset: nil, Photos: []Photo{}, Responses: read.metadata()}, nil
+	}
+
+	response, err := read.sdk.web.PhotosAssetQuery(ctx, read.auth, spec.index, spec.direction, offset, spec.filters)
+	if err != nil {
+		return nil, read.failure(err, InvalidResponse)
+	}
+
+	read.responses = append(read.responses, response.Metadata)
+
+	records, err := photoNormalRecords(response.Data)
+	if err != nil {
+		return nil, read.failure(err, InvalidResponse)
+	}
+
+	pairs, err := projectPhotoPairs(records)
+	if err != nil {
+		return nil, read.failure(err, InvalidResponse)
+	}
+
+	consumed := min(limit, len(pairs))
+
+	photos, err := projectSelectedPhotoPage(pairs[:consumed], map[string]bool{}, nil, projectPhoto)
+	if err != nil {
+		return nil, read.failure(err, InvalidResponse)
+	}
+
+	result := &ListPhotoAssetsResult{NextOffset: nil, Photos: photos, Responses: read.metadata()}
+
+	more := consumed < len(pairs) || !photoPageFinished(nil, photos, pairs)
+
+	if spec.direction == cloudkit.DESCENDING {
+		offset -= int64(consumed)
+	} else {
+		offset += int64(consumed)
+	}
+
+	if more && consumed > 0 && offset >= 0 {
+		result.NextOffset = &offset
+	}
+
+	return result, nil
 }
 
 func findPhotoAlbumEntry(entries []photoAlbumEntry, selector string) (photoAlbumEntry, bool) {

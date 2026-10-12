@@ -1959,14 +1959,22 @@ type ListPhotoAssetsRequest struct {
 	//
 	// Example: {"id":"root","indexingState":"FINISHED","isSharedLibrary":false,"ownerRecordName":null,"shared":false,"syncToken":"synthetic-sync","zoneName":"PrimarySync","zoneType":"REGULAR_CUSTOM_ZONE"}
 	Library *PhotoLibrary `json:"library,omitempty"`
+
+	// MaxResults When supplied, read one bounded provider page and return a continuation rank. Omit to enumerate all assets.
+	MaxResults *int `json:"maxResults,omitempty"`
+
+	// Offset Continuation rank from nextOffset. Requires maxResults. Omit on the first page.
+	Offset *int64 `json:"offset,omitempty"`
 }
 
 // ListPhotoAssetsResult Complete deduplicated photos and every initialization, discovery, count and page response.
 //
 // Example: {"photos":[],"responses":[]}
 type ListPhotoAssetsResult struct {
-	Photos    []Photo            `json:"photos"`
-	Responses []ResponseMetadata `json:"responses"`
+	// NextOffset Continuation rank in provider order; absent when exhausted. Paging observes the live library, not a frozen snapshot.
+	NextOffset *int64             `json:"nextOffset,omitempty"`
+	Photos     []Photo            `json:"photos"`
+	Responses  []ResponseMetadata `json:"responses"`
 }
 
 // ListPhotoLibrariesRequest Example: {"auth":{"accountID":"synthetic-account","clientID":"synthetic-client","headers":[],"photosServiceURL":"https://photos.example.invalid"}}

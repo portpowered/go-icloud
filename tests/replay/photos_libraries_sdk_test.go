@@ -48,7 +48,8 @@ func TestSharedPhotoLibraryAssetReads(t *testing.T) {
 
 			result, err := client.ListPhotoAssets(
 				t.Context(),
-				icloud.ListPhotoAssetsRequest{Auth: auth, Album: photoLibraryFixtureName, Library: &library},
+				icloud.ListPhotoAssetsRequest{
+					MaxResults: nil, Offset: nil, Auth: auth, Album: photoLibraryFixtureName, Library: &library},
 			)
 			if err != nil {
 				t.Fatal(err)

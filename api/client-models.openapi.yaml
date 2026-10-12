@@ -3001,6 +3001,18 @@
           "library": {
             "$ref": "#/components/schemas/PhotoLibrary",
             "description": "Omission selects the primary library."
+          },
+          "maxResults": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "When supplied, read one bounded provider page and return a continuation rank. Omit to enumerate all assets."
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Continuation rank from nextOffset. Requires maxResults. Omit on the first page."
           }
         },
         "required": [
@@ -3027,6 +3039,11 @@
               "$ref": "#/components/schemas/ResponseMetadata"
             },
             "type": "array"
+          },
+          "nextOffset": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Continuation rank in provider order; absent when exhausted. Paging observes the live library, not a frozen snapshot."
           }
         },
         "required": [

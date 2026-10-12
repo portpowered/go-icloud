@@ -336,7 +336,7 @@ func (source *SDKSource) enumerate(ctx context.Context, auth icloud.AuthContext,
 	}
 
 	result, err := source.client.VisitPhotoAssets(ctx,
-		icloud.ListPhotoAssetsRequest{Auth: auth, Library: library, Album: album}, visitor)
+		icloud.ListPhotoAssetsRequest{MaxResults: nil, Offset: nil, Auth: auth, Library: library, Album: album}, visitor)
 	if err != nil {
 		return nil, fmt.Errorf("visit photo album: %w", err)
 	}

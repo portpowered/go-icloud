@@ -422,7 +422,7 @@ func readPhotos(ctx context.Context, client icloud.Client, auth icloud.AuthConte
 			icloud.GetPhotoAlbumCountRequest{Auth: auth, Album: config.album, Library: nil}))
 	case photoAssetsCommand:
 		return wrap(client.ListPhotoAssets(ctx,
-			icloud.ListPhotoAssetsRequest{Auth: auth, Album: config.album, Library: nil}))
+			icloud.ListPhotoAssetsRequest{MaxResults: nil, Offset: nil, Auth: auth, Album: config.album, Library: nil}))
 	case photoDownloadCommand:
 		return wrap(client.DownloadPhoto(ctx, icloud.DownloadPhotoRequest{Auth: auth, Album: config.album,
 			PhotoID: config.photoID, Version: config.photoVersion, Library: nil}))

@@ -126,7 +126,7 @@ func (client *syncCLIClient) VisitPhotoAssets(ctx context.Context, _ icloud.List
 		}
 	}
 
-	return &icloud.ListPhotoAssetsResult{Photos: []icloud.Photo{photo}, Responses: responses}, nil
+	return &icloud.ListPhotoAssetsResult{NextOffset: nil, Photos: []icloud.Photo{photo}, Responses: responses}, nil
 }
 
 func (client *syncCLIClient) DownloadPhoto(

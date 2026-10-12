@@ -52,7 +52,7 @@ func (client *sdkSourceClient) VisitPhotoAssets(_ context.Context, input icloud.
 	responses := cookieReceipt("page")
 	_, err := visitor(icloud.PhotoVisitEvent{Photo: client.photo, Responses: responses})
 
-	return &icloud.ListPhotoAssetsResult{Photos: []icloud.Photo{client.photo}, Responses: responses}, err
+	return &icloud.ListPhotoAssetsResult{NextOffset: nil, Photos: []icloud.Photo{client.photo}, Responses: responses}, err
 }
 
 func (client *sdkSourceClient) DownloadPhoto(_ context.Context,
